@@ -831,6 +831,7 @@ void Volume::initVolumeInfo()
     if(m_volume)
         m_canMount = g_volume_can_mount(m_volume);
 
+    g_object_unref(gicon);
     g_free(gname);
     g_free(guuid);
     g_free(gdevice);
@@ -1023,6 +1024,7 @@ void Drive::initDriveInfo(){
     } else {
         m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, m_device);
     }
+    g_object_unref(gicon);
 }
 
 QString Drive::name() const
