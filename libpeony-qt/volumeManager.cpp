@@ -825,22 +825,7 @@ void Volume::initVolumeInfo()
             }
         }
     } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
-        }
+        m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
     }
 
     if(m_volume)
@@ -1036,16 +1021,7 @@ void Drive::initDriveInfo(){
             }
         }
     } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(icon_name) == "drive-harddisk-usb") {
-            double size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
-        }
+        m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, m_device);
     }
 }
 
@@ -1256,25 +1232,10 @@ void Mount::initMountInfo(){
             }
         }
     } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
-        }
+        m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
     }
+    g_object_unref (gicon);
 }
-
-
 
 void Mount::queryDeviceByMountpoint(){
     const char* device;

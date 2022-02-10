@@ -1041,6 +1041,38 @@ QString FileUtils::getFileSystemType(QString uri)
     return fsType;
 }
 
+QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
+{
+    QString iconName;
+    if (G_IS_THEMED_ICON (gicon)) {
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
+        if(icon_names) {
+            iconName = *icon_names;
+
+            // fix #81852, refer to #57660, #70014, #96652, task #25343
+            if (QString(iconName) == "drive-harddisk-usb") {
+                double size = 0.0;
+                if(!deviceFile.isEmpty()){
+                    size = Peony::FileUtils::getDeviceSize(deviceFile.toUtf8().constData());
+                    if (size < 128) {
+                        iconName = "drive-removable-media-usb";
+                    }
+                }
+            }
+        }
+    } else if (G_IS_FILE_ICON (gicon)) {
+        g_autofree gchar *icon_name = g_icon_to_string(gicon);
+        iconName = icon_name;
+    } else if (G_IS_EMBLEMED_ICON (gicon)) {
+        GIcon *icon_emblemed = g_emblemed_icon_get_icon((GEmblemedIcon *)(gicon));
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)icon_emblemed);
+        if(icon_names) {
+            iconName = *icon_names;
+        }
+    }
+    return iconName;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";
