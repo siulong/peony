@@ -4,6 +4,7 @@
 #include <QThread>
 #include<QMessageBox>
 #include<QProcess>
+#include <QInputDialog>
 #include"sync-thread.h"
 #include "file-utils.h"
 
@@ -12,6 +13,28 @@
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
+
+static void askPasswdCallback(GMountOperation  *op,
+                              gchar            *message,
+                              gchar            *default_user,
+                              gchar            *default_domain,
+                              GAskPasswordFlags flags,
+                              gpointer          user_data) {
+    //Q_UNUSED (message)
+    Q_UNUSED (default_user)
+    Q_UNUSED (default_domain)
+    if (flags & G_ASK_PASSWORD_NEED_PASSWORD) {
+        if (g_mount_operation_get_password(op)) {
+            g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
+            return;
+        } else {
+            auto object = G_OBJECT (user_data);
+            g_object_set_data_full(object, "message", gpointer(g_strdup(message)), g_free);
+            g_object_set_data(object, "need-password", gpointer(true));
+        }
+    }
+    g_mount_operation_reply(op, G_MOUNT_OPERATION_UNHANDLED);
+}
 
 QString getDeviceUUID(const char *device) {
     struct stat statbuf;
@@ -899,7 +922,25 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
     GError *err = nullptr;
     bool successed = g_volume_mount_finish(volume, res, &err);
     if (err) {
-        //QMessageBox::critical(0, 0, err->message);
+        if (g_error_matches(err, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
+            bool need_password = bool (g_object_get_data(G_OBJECT (volume), "need-password"));
+            if (need_password) {
+                QInputDialog d;
+                d.setTextEchoMode(QLineEdit::Password);
+                d.setLabelText(QString(static_cast<char *>(g_object_get_data(G_OBJECT (volume), "message"))));
+                if (d.exec()) {
+                    auto password = d.textValue();
+                    auto mount_op = g_mount_operation_new();
+                    gulong signal = g_signal_connect(mount_op, "ask-password", G_CALLBACK (askPasswdCallback), volume);
+                    g_object_set_data(G_OBJECT (volume), "signal", gpointer(signal));
+                    g_mount_operation_set_password(mount_op, password.toUtf8().constData());
+                    g_volume_mount(volume, G_MOUNT_MOUNT_NONE, mount_op, nullptr, GAsyncReadyCallback (mount_async_callback), p_this);
+                    g_object_unref(mount_op);
+                }
+            }
+        }
+
+        //QMessageBox::critical(0, 0, QString("%1 %2 %3").arg(g_quark_to_string(err->domain)).arg(err->code).arg(err->message));
         g_error_free(err);
     }
 
@@ -911,13 +952,20 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
 }
 void Volume::mount()
 {
-    if(m_volume)
+    if(m_volume) {
+        auto mount_op = g_mount_operation_new();
+        gulong signal = g_signal_connect(mount_op, "ask-password", G_CALLBACK (askPasswdCallback), m_volume);
+        g_object_set_data(G_OBJECT (m_volume), "signal", gpointer(signal));
+
         g_volume_mount(m_volume,
                        G_MOUNT_MOUNT_NONE,
-                       nullptr,
+                       mount_op,
                        nullptr,
                        GAsyncReadyCallback(mount_async_callback),
                        this);
+
+        g_object_unref(mount_op);
+    }
 }
 
 bool Volume::getHidden() const

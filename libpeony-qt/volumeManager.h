@@ -87,6 +87,7 @@ Q_SIGNALS:
     void mountRemove(const QString& device);
     void signal_unmountFinished(const QString &uri);/* 卸载完成信号 */
     void signal_mountFinished();/* 挂载完成信号，目前用于侧边栏设备挂载后路径跳转 */
+    void signal_encryptedVolumeMountFinished(const QString &uri);
 };
 
 class Q_DECL_EXPORT Drive{
