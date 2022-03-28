@@ -196,6 +196,7 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
         return;
     QString device,name;
     char *gdevice,*gname;
+
     QHash<QString,Volume*>::iterator findItem,end;
     //情景：使用其他工具修改卷标后，卷标需要更新
     gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
@@ -205,11 +206,19 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
     g_free(gdevice);
     g_free(gname);
 
-    findItem = pThis->m_volumeList->find(device);
-    end = pThis->m_volumeList->end();
-    if(findItem != end && name != findItem.value()->name()){
-        findItem.value()->setLabel(name);
-        Q_EMIT pThis->volumeUpdate(Volume(*findItem.value()),"name");//更新name属性
+//    findItem = pThis->m_volumeList->find(device);
+//    end = pThis->m_volumeList->end();
+//    if(findItem != end && name != findItem.value()->name()){
+//        findItem.value()->setLabel(name);
+//        Q_EMIT pThis->volumeUpdate(Volume(*findItem.value()),"name");//更新name属性
+//    }
+    // note: volume device file might be changed while mounting/unmounting an encrypted volume.
+    // use gvolume for quering volume item is more reliable for now.
+    for (auto volumeItem : pThis->m_volumeList->values()) {
+        if (volumeItem->getGVolume() == gvolume) {
+            volumeItem->setLabel(name);
+            Q_EMIT pThis->volumeUpdate(Volume(*volumeItem),"name");
+        }
     }
 }
 
@@ -229,6 +238,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         QString device = addItem->device();
         pThis->m_volumeList->remove(device);
         Q_EMIT pThis->volumeRemove(device);
+        pThis->m_volumeList->remove(device);
         pThis->m_volumeList->insert(device, addItem);
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
         //情景1、关闭gparted时，所有具有卸载属性的设备均会触发volume-added信号
@@ -249,6 +259,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         //情景1、未打开gparted时插入新设备
         //情景2、已打开gparted->插入新设备不拔出->关闭gparted后触发volume-added信号
         //情景3、默认用数据线连接的手机("仅充电")
+        pThis->m_volumeList->remove(addItem->device());
         pThis->m_volumeList->insert(addItem->device(),addItem);
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
     }
@@ -258,6 +269,16 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
     if(!pThis->m_volumeList)
         return;
+
+    // note: volume device file might be changed while mounting/unmounting an encrypted volume.
+    // use gvolume for quering volume item is more reliable for now.
+    for (auto volumeItem : pThis->m_volumeList->values()) {
+        if (volumeItem->getGVolume() == gvolume) {
+            pThis->m_volumeList->remove(volumeItem->device());
+            Q_EMIT pThis->volumeRemove(volumeItem->device());
+            delete volumeItem;
+        }
+    }
 
     GDrive *gdrive = g_volume_get_drive(gvolume);
     if (gdrive) {
@@ -482,6 +503,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         }
 
         if(volume->canEject()){
+            pThis->m_volumeList->remove(device);
             pThis->m_volumeList->insert(device, volume);
             Q_EMIT pThis->volumeAdd(Volume(*volume));
         }
@@ -582,6 +604,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     //根文件系统
     Volume* rootVolume = new Volume(nullptr);
     rootVolume->initRootVolume();
+    m_volumeList->remove(rootVolume->device());
     m_volumeList->insert(rootVolume->device(),rootVolume);
 
     //vaildVolumeList = std::make_shared<QList<Volume*>>();
@@ -589,6 +612,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         Volume* volumeItem = new Volume(nullptr);
         volumeItem->setFromMount(*mounts.at(i));//从Mount对象构造Volume对象数据
         //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+        m_volumeList->remove(volumeItem->device());
         m_volumeList->insert(volumeItem->device(),volumeItem);
     }
 
@@ -600,6 +624,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
             if(m_volumeList->contains(volumeItem->device()))
                 continue;
             //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(),volumeItem);
         }
     }
@@ -626,9 +651,11 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
             continue;
 
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
         }
         if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
 
             // try fix #90641, a docking station should be hidden.
