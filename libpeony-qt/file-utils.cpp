@@ -636,7 +636,7 @@ bool FileUtils::queryVolumeInfo(const QString &volumeUri, QString &volumeName, Q
 
     GFile *file = g_file_new_for_uri(volumeUri.toUtf8().constData());
     GFileInfo *info = g_file_query_info(file,
-                                        "*",
+                                        G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE","G_FILE_ATTRIBUTE_STANDARD_TARGET_URI,
                                         G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                         nullptr,
                                         nullptr);
