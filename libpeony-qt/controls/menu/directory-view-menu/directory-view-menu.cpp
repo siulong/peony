@@ -507,10 +507,13 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
                     while (l) {
                         auto app_info = static_cast<GAppInfo*>(l->data);
                         if (!isOnlyUnref) {
-                            GThemedIcon *icon = G_THEMED_ICON(g_app_info_get_icon(app_info));
-                            const char * const * icon_names = g_themed_icon_get_names(icon);
-                            if (icon_names)
-                                tmpIcon = QIcon::fromTheme(*icon_names);
+                            GIcon *icon = g_app_info_get_icon(app_info);
+                            QString iconName = FileUtils::getIconStringFromGIcon(icon);
+                            if (iconName.startsWith("/")) {
+                                tmpIcon.addFile(iconName);
+                            } else {
+                                tmpIcon = QIcon::fromTheme(iconName);
+                            }
                             if(!tmpIcon.isNull())
                                 isOnlyUnref = true;
                         }
