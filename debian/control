@@ -1,0 +1,99 @@
+Source: peony
+Section: utils
+Priority: optional
+Maintainer: Kylin Team <team+kylin@tracker.debian.org>
+Uploaders: Aron Xu <aron@debian.org>,
+           handsome_feng <jianfengli@ubuntukylin.com>
+Build-Depends: debhelper-compat (=12),
+               libcanberra-dev,
+               libdconf-dev,
+               libglib2.0-dev,
+               libgsettings-qt-dev,
+               libkf5wayland-dev,
+               libkf5windowsystem-dev(>=5.68.0-0kylin1k2~),
+               libnotify-dev,
+               libpoppler-dev,
+               libpoppler-qt5-dev,
+               libqt5x11extras5-dev,
+               libssl-dev,
+               libudisks2-dev,
+               libukui-log4qt-dev,
+               libwayland-dev,
+               libx11-xcb-dev,
+               pkg-config,
+               qt5-qmake,
+               qtbase5-dev,
+               qtbase5-dev-tools,
+               qtchooser,
+               qttools5-dev-tools
+Standards-Version: 4.5.0
+Rules-Requires-Root: no
+Homepage: https://www.ukui.org/
+Vcs-Git: https://github.com/ukui/peony.git
+Vcs-Browser: https://github.com/ukui/peony
+
+Package: peony
+Architecture: any
+Multi-Arch: foreign
+Depends: libpeony3 (= ${binary:Version}),
+         peony-common (= ${source:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Recommends: gvfs-backends, peony-extensions(>=3.2.2+1015)
+Description: file Manager for the UKUI desktop
+ Peony is the official file manager for the UKUI desktop. It allows one
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the UKUI
+ desktop. It works on local and remote filesystems.
+
+Package: peony-common
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}
+Breaks: peony (<< 2.2.0-1)
+Replaces: peony (<< 2.2.0-1)
+Description: file manager for the UKUI desktop (common files)
+ Peony is the official file manager for the UKUI desktop. It allows one
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the UKUI
+ desktop. It works on local and remote filesystems.
+ .
+ This package contains the architecture independent files.
+
+Package: libpeony3
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: dvd+rw-tools, gvfs, ${misc:Depends}, ${shlibs:Depends}
+Provides: libpeony
+Breaks: libpeony2, peony (<< 2.2.0-1)
+Replaces: libpeony2, peony (<< 2.2.0-1)
+Recommends: gvfs-backends, qt5-gtk-platformtheme
+Description: libraries for Peony components
+ Peony is the official file manager for the UKUI desktop. It allows one
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the UKUI
+ desktop. It works on local and remote filesystems.
+ .
+ This package contains a few runtime libraries needed by Peony's
+ extensions.
+
+Package: libpeony-dev
+Section: libdevel
+Architecture: any
+Depends: libcanberra-dev,
+         libglib2.0-dev,
+         libgsettings-qt-dev,
+         libnotify-dev,
+         libpeony3 (= ${binary:Version}),
+         libpoppler-qt5-dev,
+         qtbase5-dev,
+         ${misc:Depends}
+Description: libraries for Peony components (development files)
+ Peony is the official file manager for the UKUI desktop. It allows one
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the UKUI
+ desktop. It works on local and remote filesystems.
+ .
+ This package contains the development files for the libraries needed
+ by Peony's extensions.
