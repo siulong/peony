@@ -410,9 +410,9 @@ void HeaderBar::addMenuButtons()
     connect(sortTypeMenu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
     connect(sortTypeMenu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
         if (order == Qt::AscendingOrder) {
-            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
-        } else {
             sortType->setIcon(QIcon::fromTheme("view-sort-descending-symbolic"));
+        } else {
+            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
         }
         m_window->setCurrentSortOrder(order);
     });
