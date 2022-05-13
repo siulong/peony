@@ -489,6 +489,9 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
         sourceSize.setWidth(realPixmapWidth);
     }
 
+    // 规避xcb下闪线的问题
+    sourceSize = sourceSize - QSize(1, 1);
+
     qDebug() << "=========getDestRect sourceSize:" << sourceSize;
     QPoint offsetPoint = this->rect().topLeft();
     offsetPoint += QPoint(offsetX, offsetY);
