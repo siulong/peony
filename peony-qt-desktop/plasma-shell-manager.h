@@ -37,6 +37,8 @@ public:
     bool setPos(QWindow *window, const QPoint &pos);
     bool supportPlasmaShell();
 
+    KWayland::Client::PlasmaShellSurface *createSurface(QWindow *window);
+
 private:
     explicit PlasmaShellManager(QObject *parent = nullptr);
 

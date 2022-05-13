@@ -7,6 +7,8 @@
 #include <QVariantAnimation>
 #include <QTimeLine>
 #include <KWindowSystem>
+#include <QPlatformSurfaceEvent>
+#include "plasma-shell-manager.h"
 
 static int desktop_window_id = 0;
 static QTimeLine *gTimeLine = nullptr;
@@ -242,6 +244,32 @@ QScreen *DesktopBackgroundWindow::screen() const
     return m_screen;
 }
 
+bool DesktopBackgroundWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::PlatformSurface) {
+        auto e = static_cast<QPlatformSurfaceEvent *>(event);
+        switch (e->surfaceEventType()) {
+        case QPlatformSurfaceEvent::SurfaceCreated: {
+            m_shellSurface = PlasmaShellManager::getInstance()->createSurface(this->windowHandle());
+            m_shellSurface->setRole(KWayland::Client::PlasmaShellSurface::Role::Desktop);
+            m_shellSurface->setSkipSwitcher(true);
+            m_shellSurface->setSkipTaskbar(true);
+            // wayland中构造函数的move只能在这里生效
+            m_shellSurface->setPosition(m_screen->geometry().topLeft());
+            break;
+        }
+        case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed: {
+            m_shellSurface->deleteLater();
+            m_shellSurface = nullptr;
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return QMainWindow::event(event);
+}
+
 void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 {
     qInfo()<<"bg window geometry changed"<<screen()->name()<<geometry<<screen()->geometry();
@@ -256,6 +284,9 @@ void DesktopBackgroundWindow::updateWindowGeometry()
 {
     auto geometry = m_screen->geometry();
     move(geometry.topLeft());
+    if (m_shellSurface) {
+        m_shellSurface->setPosition(geometry.topLeft());
+    }
     setFixedSize(geometry.size());
 
     qInfo()<<"bg window geometry changed slot"<<screen()->name()<<geometry;

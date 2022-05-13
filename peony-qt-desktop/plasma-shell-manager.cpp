@@ -79,6 +79,19 @@ bool PlasmaShellManager::supportPlasmaShell()
     return m_shell;
 }
 
+KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow *window)
+{
+    if (!supportPlasmaShell())
+        return nullptr;
+
+    auto surface = KWayland::Client::Surface::fromWindow(window);
+    if (!surface)
+        return nullptr;
+
+    auto plasmaShellSurface = m_shell->createSurface(surface, window);
+    return plasmaShellSurface;
+}
+
 PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
 {
     if (QX11Info::isPlatformX11() || QString(qgetenv("QT_QPA_PLATFORM")) != "wayland" || !QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland"))
