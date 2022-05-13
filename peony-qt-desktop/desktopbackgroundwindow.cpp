@@ -19,6 +19,9 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
     setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
+    KWindowSystem::setType(this->winId(), NET::Desktop);
+    KWindowSystem::setState(this->winId(), NET::SkipTaskbar|NET::SkipPager|NET::SkipSwitcher);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
