@@ -15,6 +15,8 @@ static QTimeLine *gTimeLine = nullptr;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
 {
+    connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
+
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);
     }
@@ -103,6 +105,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
 {
     auto manager = DesktopBackgroundManager::globalInstance();
     if (!manager->getPaintBackground())
+        return;
+
+    if (!m_screen)
         return;
 
     QPainter p(this);
@@ -244,6 +249,11 @@ QScreen *DesktopBackgroundWindow::screen() const
     return m_screen;
 }
 
+void DesktopBackgroundWindow::invaidScreen()
+{
+    m_screen = nullptr;
+}
+
 bool DesktopBackgroundWindow::event(QEvent *event)
 {
     if (event->type() == QEvent::PlatformSurface) {
@@ -251,16 +261,22 @@ bool DesktopBackgroundWindow::event(QEvent *event)
         switch (e->surfaceEventType()) {
         case QPlatformSurfaceEvent::SurfaceCreated: {
             m_shellSurface = PlasmaShellManager::getInstance()->createSurface(this->windowHandle());
-            m_shellSurface->setRole(KWayland::Client::PlasmaShellSurface::Role::Desktop);
-            m_shellSurface->setSkipSwitcher(true);
-            m_shellSurface->setSkipTaskbar(true);
-            // wayland中构造函数的move只能在这里生效
-            m_shellSurface->setPosition(m_screen->geometry().topLeft());
+            if (m_shellSurface) {
+                m_shellSurface->setRole(KWayland::Client::PlasmaShellSurface::Role::Desktop);
+                m_shellSurface->setSkipSwitcher(true);
+                m_shellSurface->setSkipTaskbar(true);
+                // wayland中构造函数的move只能在这里生效
+                if (m_screen) {
+                    m_shellSurface->setPosition(m_screen->geometry().topLeft());
+                }
+            }
             break;
         }
         case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed: {
-            m_shellSurface->deleteLater();
-            m_shellSurface = nullptr;
+            if (m_shellSurface) {
+                m_shellSurface->deleteLater();
+                m_shellSurface = nullptr;
+            }
             break;
         }
         default:
@@ -282,6 +298,9 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 
 void DesktopBackgroundWindow::updateWindowGeometry()
 {
+    if (!m_screen) {
+        return;
+    }
     auto geometry = m_screen->geometry();
     move(geometry.topLeft());
     if (m_shellSurface) {
@@ -317,6 +336,9 @@ void DesktopBackgroundWindow::setId(int id)
 //获取iconview中图标的相对位置
 QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
 {
+    if (!m_screen) {
+        return pos;
+    }
     QPoint relativePos = pos;
     if (m_screen == QApplication::primaryScreen()) {
         if (m_panelSetting) {
@@ -401,7 +423,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
 
 QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
 {
-    QRect virtualGeometry = m_screen->virtualGeometry();
+    QRect virtualGeometry;
+    if (m_screen) {
+        virtualGeometry = m_screen->virtualGeometry();
+    } else {
+        virtualGeometry = screenGeometry;
+    }
     qreal pixWidth = pixmap.width();
     qreal pixHeight = pixmap.height();
 
