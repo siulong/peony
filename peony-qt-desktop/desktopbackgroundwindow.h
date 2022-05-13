@@ -33,6 +33,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
+    void invaidScreen();
 
 protected Q_SLOTS:
     void updateWindowGeometry();
