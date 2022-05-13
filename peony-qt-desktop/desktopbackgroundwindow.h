@@ -5,6 +5,12 @@
 #include <QGSettings>
 #include "desktop-icon-view.h"
 
+namespace KWayland {
+namespace Client {
+class PlasmaShellSurface;
+}
+}
+
 class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
@@ -17,6 +23,8 @@ public:
     QScreen *screen() const;
     Peony::DesktopIconView *getIconView();
     void setId(int id);
+
+    bool event(QEvent *event) override;
 
 Q_SIGNALS:
     void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
@@ -47,6 +55,8 @@ private:
     QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
     Peony::DesktopIconView *m_desktopIconView = nullptr;
+
+    KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H
