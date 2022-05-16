@@ -588,19 +588,24 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     {
         Volume* volumeItem = new Volume(nullptr);
         volumeItem->setFromDrive(*entry);
+
         // 如果有volume，应该被隐藏
+        bool bHasVolume = false;
         GList *volumes = g_drive_get_volumes(entry->getGDrive());
         if (volumes) {
             volumeItem->setHidden(true);
+            bHasVolume = true;
             g_list_free_full(volumes, g_object_unref);
         }
+
         QString device = volumeItem->device();
-        if(m_volumeList->contains(volumeItem->device()))
+        if(m_volumeList->contains(device))
             continue;
+
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
             m_volumeList->insert(volumeItem->device(), volumeItem);
         }
-        if(volumeItem->canEject()&&device.contains("/dev/sd")){/* 异常U盘设备 */
+        if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
             m_volumeList->insert(volumeItem->device(), volumeItem);
 
             // try fix #90641, a docking station should be hidden.
@@ -618,7 +623,11 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     }
                 }
             }
+            if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
+                volumeItem->setHidden(true);
+            }
         }
+
     }
 
 
