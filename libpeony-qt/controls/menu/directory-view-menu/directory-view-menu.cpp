@@ -56,7 +56,7 @@
 #include "gerror-wrapper.h"
 
 #include "global-settings.h"
-
+#include "sound-effect.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -1001,6 +1001,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                                                                           "Once you start a deletion, the files deleting will never be "
                                                                                           "restored again."));
                 if (result == QMessageBox::Yes) {
+                    SoundEffect::getInstance()->recycleBinClearMusic();
                     auto uris = m_top_window->getCurrentAllFileUris();
                     FileOperationUtils::remove(uris);
                 }
@@ -1021,6 +1022,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                                                                           "Once you start a deletion, the files deleting will never be "
                                                                                           "restored again."));
                 if (result == QMessageBox::Yes) {
+                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
                 }
             });

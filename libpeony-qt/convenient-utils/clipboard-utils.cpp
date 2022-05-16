@@ -30,6 +30,7 @@
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
 #include "file-copy-operation.h"
+#include "sound-effect.h"
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -222,6 +223,8 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
 
     auto fileOpMgr = FileOperationManager::getInstance();
     if (isClipboardFilesBeCut()) {
+
+        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug()<<uris;
         auto moveOp = new FileMoveOperation(uris, targetDirUri);
         moveOp->setAction(Qt::TargetMoveAction);
@@ -230,6 +233,7 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
         QApplication::clipboard()->clear();
     } else {
 
+        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug() << "clipboard:" << uris;
         auto copyOp = new FileCopyOperation(uris, targetDirUri);
         op = copyOp;
