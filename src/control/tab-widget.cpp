@@ -175,7 +175,16 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(id);
             setPreviewPage(plugin->createPreviewPage());
         } else {
-            setPreviewPage(nullptr);
+            bool isSetPreviewPageNull = true;
+            for(auto action : m_preview_action_group->actions()){
+                if(action->isChecked() && action->isVisible()){
+                    isSetPreviewPageNull = false;
+                    break;
+                }
+            }
+            if(isSetPreviewPageNull){
+                setPreviewPage(nullptr);
+            }
         }
     });
 
@@ -259,6 +268,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
         });
     }
     previewButtons->addActions(group->actions());
+    m_preview_action_group = group;
     for (auto action : group->actions()) {
         auto button = qobject_cast<QToolButton *>(previewButtons->widgetForAction(action));
         button->setFixedSize(26, 26);
@@ -792,19 +802,23 @@ void TabWidget::updatePreviewPageVisible()
 {
     auto currentUri = getCurrentUri();
     if(currentUri.startsWith("computer://")){
-        m_preview_action->setVisible(false);
+        m_preview_action_group->setVisible(false);
     }else{
-        m_preview_action->setVisible(true);
+        m_preview_action_group->setVisible(true);
     }
 
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
     for (auto name : pluginNames) {
         auto factory = manager->getPlugin(name);
-        if(m_preview_action->isChecked() && m_preview_action->isVisible()){
-            Q_EMIT m_buttons->previewPageButtonTrigger(true, factory->name());
-        }else{
-            Q_EMIT m_buttons->previewPageButtonTrigger(false, factory->name());
+        for (auto action : m_preview_action_group->actions()){
+            if(!action->text().compare(name)){
+                if(action->isChecked() && action->isVisible()){
+                    Q_EMIT m_buttons->previewPageButtonTrigger(true, factory->name());
+                }else{
+                    Q_EMIT m_buttons->previewPageButtonTrigger(false, factory->name());
+                }
+            }
         }
     }
 }
