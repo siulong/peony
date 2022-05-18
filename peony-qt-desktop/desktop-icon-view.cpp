@@ -229,18 +229,18 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 int posY = marginTop;
                 for (auto item : needRelayoutItems) {
                     QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
-                    while (notEmptyRegion.contains(itemRect.center())) {
+                    while (notEmptyRegion.intersects(itemRect)) {
                         if (posY + 2*gridHeight > this->viewport()->height()) {
                             posY = marginTop;
                             posX += gridWidth;
                         } else {
                             posY += gridHeight;
                         }
-                        if (this->viewport()->geometry().contains(itemRect.topLeft())) {
-                            itemRect.moveTo(posX, posY);
-                        } else {
-                            itemRect.moveTo(0, 0);
-                        }
+                    }
+                    if (this->viewport()->geometry().contains(itemRect)) {
+                        itemRect.moveTo(posX, posY);
+                    } else {
+                        itemRect.moveTo(0, 0);
                     }
                     notEmptyRegion += itemRect;
                     m_item_rect_hash.insert(item, itemRect);
@@ -838,7 +838,7 @@ void DesktopIconView::resolutionChange()
             int posY = marginTop;
 
             for (int i = 0; i < needChanged.count(); i++) {
-                while (notEmptyRegion.contains(QPoint(posX + iconWidth/2, posY + iconHeigth/2))) {
+                while (notEmptyRegion.intersects(QRect(posX, posY, iconWidth, iconHeigth))) {
                     if (posY + 2 * iconHeigth > screenSize.height()) {
                         posY = marginTop;
                         posX += iconWidth;
@@ -1483,8 +1483,7 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
         }
 
         auto itemRect = QRect(m_item_rect_hash.value(uri).topLeft(), itemRectSize);
-        auto itemCenter = itemRect.center();
-        if (notEmptyRegion.contains(itemCenter)) {
+        if (notEmptyRegion.intersects(itemRect)) {
             // handle overlapped
             qWarning()<<"unexpected overrlapped happend";
             qDebug()<<"check item rect hash"<<m_item_rect_hash;
@@ -1601,7 +1600,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
         if (!allFileUris.contains(uri))
             continue;
         auto indexRect = QRect(QPoint(marginLeft, marginTop), m_item_rect_hash.values().first().size());
-        if (notEmptyRegion.contains(indexRect.center())) {
+        if (notEmptyRegion.intersects(indexRect)) {
 
             // move index to closest empty grid.
             auto next = indexRect;
@@ -1619,7 +1618,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     //put item to next column first row
                     next.moveTo(next.x() + grid.width(), top);
                 }
-                if (notEmptyRegion.contains(next.center()))
+                if (notEmptyRegion.intersects(next))
                     continue;
 
                 isEmptyPos = true;
@@ -2009,7 +2008,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             for (auto index : unoverlappedIndexes) {
                 QRect visualRect = QListView::visualRect(index);
-                if (dirtyRegion.contains(visualRect.center())) {
+                if (dirtyRegion.intersects(visualRect)) {
                     unoverlappedIndexes.removeOne(index);
                     overlappedIndexes.append(index);
                 }
@@ -2032,7 +2031,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             for (auto dragedIndex : overlappedIndexes) {
                 auto indexRect = QListView::visualRect(dragedIndex);
-                if (notEmptyRegion.contains(indexRect.center())) {
+                if (notEmptyRegion.intersects(indexRect)) {
                     // move index to closest empty grid.
                     auto next = indexRect;
                     bool isEmptyPos = false;
@@ -2049,7 +2048,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                             //put item to next column first column
                             next.moveTo(next.x() + grid.width(), top);
                         }
-                        if (notEmptyRegion.contains(next.center())) {
+                        if (notEmptyRegion.intersects(next)) {
                             continue;
                         }
 
@@ -2089,7 +2088,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                     next.translate(0, -grid.height());
                 }
 
-                while (notEmptyRegion.contains(next.center())) {
+                while (notEmptyRegion.intersects(next)) {
                     next.translate(0, grid.height());
                     if (next.bottom() > viewRect.bottom()) {
                         int top = next.y();
