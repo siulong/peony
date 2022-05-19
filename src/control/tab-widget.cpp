@@ -1158,6 +1158,9 @@ int TabWidget::getSortType()
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
     auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
+    if (getCurrentUri() != "trash:///" && sortType == 4) {
+        sortType = 0;
+    }
 
     return sortType;
 

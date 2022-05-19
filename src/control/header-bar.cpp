@@ -417,6 +417,8 @@ void HeaderBar::addMenuButtons()
         m_window->setCurrentSortOrder(order);
     });
     connect(sortTypeMenu, &QMenu::aboutToShow, sortTypeMenu, [=]() {
+        bool originPathVisible = m_window->getCurrentUri() == "trash:///";
+        sortTypeMenu->setOriginPathVisible(originPathVisible);
         sortTypeMenu->setSortType(m_window->getCurrentSortColumn());
         sortTypeMenu->setSortOrder(m_window->getCurrentSortOrder());
     });

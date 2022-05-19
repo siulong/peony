@@ -418,6 +418,10 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
        info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
     }
+    if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
+        auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+        info->setProperty("orig-path", origPath);
+    }
 
     m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);
     // update peony qt color list after meta info updated.

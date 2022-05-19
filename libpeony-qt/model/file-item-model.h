@@ -57,6 +57,7 @@ public:
         ModifiedDate,
         FileType,
         FileSize,
+        TrashOriginPath,
         Owner,
         Other
     };

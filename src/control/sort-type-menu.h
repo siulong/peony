@@ -31,6 +31,8 @@ class SortTypeMenu : public QMenu
 public:
     explicit SortTypeMenu(QWidget *parent = nullptr);
 
+    void setOriginPathVisible(bool visible);
+
 Q_SIGNALS:
     void switchSortTypeRequest(int type);
     void switchSortOrderRequest(Qt::SortOrder order);
@@ -43,6 +45,7 @@ private:
     int m_sort_type = 0;
     Qt::SortOrder m_sort_order = Qt::AscendingOrder;
 
+    QAction *m_origin_path = nullptr;
     QActionGroup *m_sort_types;
     QActionGroup *m_sort_orders;
 };
