@@ -199,6 +199,9 @@ QModelIndex FileItemModel::parent(const QModelIndex &child) const
 int FileItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+    if (m_root_uri == "trash:///") {
+        return FileSize + 2;
+    }
     return FileSize+1;
 }
 
@@ -312,6 +315,17 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     }
+    case TrashOriginPath: {
+        switch (role) {
+        case Qt::DisplayRole:
+        case Qt::ToolTipRole: {
+            return item->m_info->property("orig-path");
+            break;
+        }
+        default:
+            break;
+        }
+    }
     default:
         return QVariant();
     }
@@ -335,6 +349,8 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Type");
         case FileSize:
             return tr("File Size");
+        case TrashOriginPath:
+            return tr("Original Path");
         default:
             return QVariant();
         }
