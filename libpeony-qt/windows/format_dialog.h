@@ -59,6 +59,7 @@ struct CreateformatData{
     const gchar *erase_type;
     const gchar *filesystem_name;
     int *format_finish;
+    GVariantBuilder *builder;
     Format_Dialog *dl;
 };
 

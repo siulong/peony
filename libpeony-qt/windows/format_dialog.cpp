@@ -326,6 +326,8 @@ void Format_Dialog::slot_format(bool enable)
 
 static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
 {
+    qDebug()<<"unmount finished";
+
     int flags = 0;
     GError *err = nullptr;
     Format_Dialog *pthis = (Format_Dialog *)udata;
@@ -462,10 +464,12 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
     UDisksObject *object ;
     UDisksClient *client =udisks_client_new_sync (NULL,NULL);
     object = get_object_from_block_device(client,device_name);
-    GList *jobs;
-    jobs = udisks_client_get_jobs_for_object(client,object);
-    g_clear_object(&client);
-    g_object_unref(object);
+    GList *jobs = NULL;
+    if (object) {
+        jobs = udisks_client_get_jobs_for_object(client,object);
+        g_clear_object(&client);
+        g_object_unref(object);
+    }
     if(jobs!=NULL)
     {
         UDisksJob *job =(UDisksJob *)jobs->data;
@@ -479,7 +483,7 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
                 return res;
         }
 
-    g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
+        g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
         g_list_free (jobs);
     }
 
@@ -570,8 +574,7 @@ void Format_Dialog::volume_disconnect(GVolumeMonitor *vm, GDrive *v, gpointer da
 }
 
 void Format_Dialog::cancel_format(const gchar* device_name){
-
-      this->close();
+    this->close();
 
 //    UDisksObject *object ;
 //    UDisksBlock *block;
@@ -659,8 +662,13 @@ void Format_Dialog::ensure_unused_cb(CreateformatData *data)
 
 static void createformatfree(CreateformatData *data)
 {
-    g_object_unref(data->object);
-    g_object_unref(data->block);
+    g_variant_builder_clear(data->builder);
+    if (data->object) {
+        g_object_unref(data->object);
+    }
+    if (data->block) {
+        g_object_unref(data->block);
+    }
     if(data->drive_object!=NULL)
     {
         g_object_unref(data->drive_object);
@@ -773,6 +781,8 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
 
     createformatfree(data);
     qDebug()<<"format cb end";
+
+    data->dl->deleteLater();
 };
 
 
@@ -844,40 +854,40 @@ bool Format_Dialog::format_makesure_dialog(){
 void Format_Dialog::ensure_format_cb (CreateformatData *data){
 
     qDebug()<<"ensure format cb start";
-    GVariantBuilder options_builder;
+    GVariantBuilder *options_builder = data->builder;
 
-    g_variant_builder_init(&options_builder,G_VARIANT_TYPE_VARDICT);
+    g_variant_builder_init(options_builder, G_VARIANT_TYPE ("a{sv}"));
 
     if (g_strcmp0 (data->format_type, "empty") != 0){
-        g_variant_builder_add (&options_builder, "{sv}", "label",
+        g_variant_builder_add (options_builder, "{sv}", "label",
                                g_variant_new_string (data->filesystem_name));
     };
 
     if (g_strcmp0 (data->format_type, "vfat") != 0 &&
             g_strcmp0 (data->format_type, "ntfs") != 0 &&
             g_strcmp0 (data->format_type, "exfat") != 0) {
-        g_variant_builder_add (&options_builder, "{sv}", "take-ownership",
+        g_variant_builder_add (options_builder, "{sv}", "take-ownership",
                                g_variant_new_boolean (TRUE));
     }
 
     QString password = data->dl->property("password").toString();
     if (!password.isEmpty()) {
         const gchar *passphrase = password.toUtf8().constData();
-        g_variant_builder_add (&options_builder, "{sv}", "encrypt.passphrase",
+        g_variant_builder_add (options_builder, "{sv}", "encrypt.passphrase",
                                g_variant_new_string(passphrase));
     }
 
     if (data->erase_type != NULL){
-        g_variant_builder_add (&options_builder, "{sv}", "erase",
+        g_variant_builder_add (options_builder, "{sv}", "erase",
                                g_variant_new_string (data->erase_type));
     }
 
-    g_variant_builder_add (&options_builder, "{sv}", "update-partition-type",
+    g_variant_builder_add (options_builder, "{sv}", "update-partition-type",
                            g_variant_new_boolean (TRUE));
 
     udisks_block_call_format (data->block,
                               data->format_type,
-                              g_variant_builder_end (&options_builder),
+                              g_variant_builder_end (options_builder),
                               NULL,
                               format_cb,
                               data);
@@ -903,12 +913,12 @@ void Format_Dialog::ensure_format_disk(CreateformatData *data){
         g_return_if_fail (data->drive_block);
 
 
-        GVariantBuilder options_builder;
-        g_variant_builder_init(&options_builder,G_VARIANT_TYPE_VARDICT);
+        GVariantBuilder *options_builder = data->builder;
+        g_variant_builder_init(options_builder,G_VARIANT_TYPE_VARDICT);
 
 
         if (g_strcmp0 (data->format_type, "empty") != 0){
-            g_variant_builder_add (&options_builder, "{sv}", "label",
+            g_variant_builder_add (options_builder, "{sv}", "label",
                                    g_variant_new_string (data->filesystem_name));
         };
 
@@ -916,22 +926,22 @@ void Format_Dialog::ensure_format_disk(CreateformatData *data){
         if (g_strcmp0 (data->format_type, "vfat") != 0 &&
                 g_strcmp0 (data->format_type, "ntfs") != 0 &&
                 g_strcmp0 (data->format_type, "exfat") != 0) {
-            g_variant_builder_add (&options_builder, "{sv}", "take-ownership",
+            g_variant_builder_add (options_builder, "{sv}", "take-ownership",
                                    g_variant_new_boolean (TRUE));
         }
 
         if (data->erase_type != NULL){
-            g_variant_builder_add (&options_builder, "{sv}", "erase",
+            g_variant_builder_add (options_builder, "{sv}", "erase",
                                    g_variant_new_string (data->erase_type));
         }
 
-        g_variant_builder_add (&options_builder, "{sv}", "update-partition-type",
+        g_variant_builder_add (options_builder, "{sv}", "update-partition-type",
                                g_variant_new_boolean (TRUE));
 
 
         udisks_block_call_format(data->drive_block,
                         data->format_type,
-                        g_variant_builder_end(&options_builder),
+                        g_variant_builder_end(options_builder),
                         NULL,
                         format_cb,
                         data);
@@ -984,6 +994,7 @@ UDisksObject *Format_Dialog::get_object_from_block_device (UDisksClient *client,
 void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_type,const gchar * erase_type,
                                 const gchar * filesystem_name,int *format_finish){
 
+    qDebug()<<"do format";
     CreateformatData *data;
     data = g_new(CreateformatData,1);
 
@@ -994,6 +1005,10 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
     data->filesystem_name = filesystem_name;
     data->format_finish = format_finish;
 
+    data->builder = g_variant_builder_new(G_VARIANT_TYPE_ARRAY);
+
+    data->object = NULL;
+    data->block = NULL;
     data->drive_object = NULL;
     data->drive_block = NULL;
     data->dl = this;
@@ -1006,15 +1021,21 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
 
         ensure_unused_cb(data);
     } else {
+        // 也许是加密分区卸载后device name变更导致，需要先做处理
+
         // fix #103344
         QMessageBox::critical(0, tr("Error"), tr("Block not existed!"));
-        this->close();
+        mTimer->stop();
+        this->cancel_format(data->device_name);
+        createformatfree(data);
+        this->deleteLater();
     }
 }
 
 
 Format_Dialog::~Format_Dialog()
 {
+    g_signal_handlers_disconnect_by_data(mVolumeMonitor, this);
 //    delete ui;
     if (mTimer)             mTimer->deleteLater();
     if (mNameEdit)          mNameEdit->deleteLater();
