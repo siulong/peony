@@ -24,6 +24,7 @@
 #include "file-info.h"
 
 //create link
+#include "shared-file-link-operation.h"
 #include <file-operation-manager.h>
 #include <file-link-operation.h>
 #include <file-info.h>
@@ -51,6 +52,7 @@ MenuPluginManager::MenuPluginManager(QObject *parent) : QObject(parent)
 {
     registerPlugin(new CreateLinkInternalPlugin(this));
     registerPlugin(new FileLabelInternalMenuPlugin(this));
+    registerPlugin(new CreateSharedFileLinkMenuPlugin(this));
 }
 
 MenuPluginManager::~MenuPluginManager()
@@ -120,6 +122,9 @@ QList<QAction *> CreateLinkInternalPlugin::menuActions(MenuPluginInterface::Type
                         || selectionUris.first().startsWith("trash:///")
                         || selectionUris.first().startsWith("recent:///")
                         || selectionUris.first().startsWith("mtp://")
+                        || selectionUris.first().startsWith("sftp://")
+                        || selectionUris.first().startsWith("ftp://")
+                        || selectionUris.first().startsWith("smb://")
                         || originPath == desktopPath) {
                     return l;
                 }
@@ -201,6 +206,51 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
             });
             action->setMenu(menu);
             l<<action;
+        }
+    }
+    return l;
+}
+
+CreateSharedFileLinkMenuPlugin::CreateSharedFileLinkMenuPlugin(QObject *parent) : QObject (parent)
+{
+
+}
+
+QList<QAction *> CreateSharedFileLinkMenuPlugin::menuActions(MenuPluginInterface::Types types, const QString &uri, const QStringList &selectionUris)
+{
+    QList<QAction *> l;
+    if (types == MenuPluginInterface::DesktopWindow || types == MenuPluginInterface::DirectoryView) {
+        if (selectionUris.count() == 1) {
+            auto select_file_info = FileInfo::fromUri(selectionUris[0]);
+            if(select_file_info->isSymbolLink())
+                return l;
+
+            QString str_cmp = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+            str_cmp.insert(0, QString("file://"));
+            //在桌面文件夹中屏蔽 “发送到桌面快捷方式” 和 “创建链接到...” - Block "Create link to desktop" and "Create link to..." in the desktop folder
+            if(QString::compare(QUrl::fromPercentEncoding(uri.toLocal8Bit()), str_cmp))
+            {
+                QAction* createLinkToDesktop = new QAction(QIcon::fromTheme("emblem-link-symbolic"), tr("Create Link to Desktop"), nullptr);
+                auto info = FileInfo::fromUri(selectionUris.first());
+                QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+                QString originPath = QUrl(selectionUris.first()).path();
+                //special type mountable, or isVirtual then return
+                if ( !selectionUris.first().startsWith("smb://")
+                        &&  !selectionUris.first().startsWith("ftp://")
+                        &&  !selectionUris.first().startsWith("sftp://") ) {
+                    return l;
+                }
+
+                connect(createLinkToDesktop, &QAction::triggered, [=]() {
+                    //QUrl src = selectionUris.first();
+                    QString desktopUri = "file://" + desktopPath;
+                    SharedFileLinkOperation *op = new SharedFileLinkOperation(selectionUris.first(), desktopUri);
+                    op->setAutoDelete(true);
+                    FileOperationManager::getInstance()->startOperation(op, false);
+                });
+                l<<createLinkToDesktop;
+
+            }
         }
     }
     return l;

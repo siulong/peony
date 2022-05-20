@@ -1227,7 +1227,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
         QString rootDir = info.get()->uri();
-        if (!info.get()->isDir()) {
+        if (info.get()->uri().startsWith("file:///") && !info.get()->isDir()) {
             rootDir = Peony::FileUtils::getParentUri(rootDir);
         }
 
