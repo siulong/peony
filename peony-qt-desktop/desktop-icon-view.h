@@ -106,6 +106,7 @@ public:
 
 private:
     QRect getScreenArea(QScreen* screen);
+    bool execSharedFileLink(const QString uri);
 
 Q_SIGNALS:
     void zoomLevelChanged(ZoomLevel level);
