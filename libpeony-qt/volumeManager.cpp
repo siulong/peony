@@ -275,8 +275,8 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
     // use gvolume for quering volume item is more reliable for now.
     for (auto volumeItem : pThis->m_volumeList->values()) {
         if (volumeItem->getGVolume() == gvolume) {
-            pThis->m_volumeList->remove(volumeItem->device());
-            Q_EMIT pThis->volumeRemove(volumeItem->device());
+            pThis->m_volumeList->remove(volumeItem->originalDevice());
+            Q_EMIT pThis->volumeRemove(volumeItem->originalDevice());
             delete volumeItem;
         }
     }
@@ -784,6 +784,7 @@ Volume::Volume(GVolume* gvolume):m_volume(gvolume){
 
 Volume::Volume(const Volume& other){
     m_name = other.m_name;
+    m_originalDevice = other.m_originalDevice;
     m_device = other.m_device;
     m_uuid = other.m_uuid;
     m_icon = other.m_icon;
@@ -856,6 +857,7 @@ void Volume::initVolumeInfo()
 
     m_name = gname;
     m_uuid = guuid;
+    m_originalDevice = gdevice;
     m_device = gdevice;
     GIcon* gicon = g_volume_get_icon(m_volume);
     m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
@@ -886,11 +888,11 @@ void Volume::initVolumeInfo()
 
 //利用设备路径(也可用uuid)判断设备是否相同
 bool Volume::operator==(const Volume& other) const{
-    return m_device == other.m_device;
+    return m_originalDevice == other.m_originalDevice;
 }
 
 bool Volume::operator==(const Volume* other) const{
-    return m_device == other->m_device;
+    return m_originalDevice == other->m_originalDevice;
 }
 
 //bool Volume::operator==(const QString& device) const{
@@ -1005,6 +1007,7 @@ void Volume::setFromMount(const Mount& mount){
     m_name = mount.name();
     m_uuid = mount.uuid();
     m_icon = mount.icon();
+    m_originalDevice = mount.device();
     m_device = mount.device();
     m_canEject = mount.canEject();
     m_canStop = mount.canStop();
@@ -1020,6 +1023,7 @@ void Volume::setFromDrive(const Drive &drive)
     m_canEject = drive.canEject();
     m_canStop = drive.canStop();
     m_icon = drive.icon();
+    m_originalDevice = drive.device();
     m_device = drive.device();
     m_gdrive = (GDrive*)g_object_ref(drive.getGDrive());
 }
@@ -1060,6 +1064,7 @@ Volume* Volume::initRootVolume(){
 
     const char* device = g_unix_mount_get_device_path(entry);
     m_device = device;
+    m_originalDevice = device;
     g_unix_mount_free(entry);
 
     return this;
@@ -1343,6 +1348,11 @@ QString Volume::icon() const{
 
 QString Volume::device() const{
     return m_device;
+}
+
+QString Volume::originalDevice() const
+{
+    return m_originalDevice;
 }
 
 QString Volume::mountPoint() const{

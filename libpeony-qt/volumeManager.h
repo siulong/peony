@@ -156,6 +156,7 @@ public:
     QString icon() const;
     QString uuid() const;
     QString device() const;
+    QString originalDevice() const;
     QString mountPoint() const;
     GVolume* getGVolume() const;
     //property-to-set
@@ -195,6 +196,7 @@ private:
     QString  m_name;
     QString  m_uuid;
     QString  m_icon;
+    QString  m_originalDevice;
     QString  m_device;
     QString  m_mountPoint;
 
