@@ -358,6 +358,10 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
         <source>Use global sorting</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Original Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TabStatusBar</name>

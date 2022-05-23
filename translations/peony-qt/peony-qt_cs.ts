@@ -100,7 +100,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="424"/>
+        <location filename="../../src/control/header-bar.cpp" line="426"/>
         <source>Option</source>
         <translation type="unfinished"></translation>
     </message>
@@ -115,12 +115,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="582"/>
+        <location filename="../../src/control/header-bar.cpp" line="584"/>
         <source>Restore</source>
         <translation type="unfinished">Onar</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="585"/>
+        <location filename="../../src/control/header-bar.cpp" line="587"/>
         <source>Maximize</source>
         <translation type="unfinished">Büyüt</translation>
     </message>
@@ -136,7 +136,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="742"/>
+        <location filename="../../src/control/header-bar.cpp" line="744"/>
         <source>Minimize</source>
         <translation type="unfinished">Küçült</translation>
     </message>
@@ -149,7 +149,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Büyüt</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="767"/>
+        <location filename="../../src/control/header-bar.cpp" line="769"/>
         <source>Close</source>
         <translation type="unfinished">Kapat</translation>
     </message>
@@ -157,52 +157,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="317"/>
+        <location filename="../../src/windows/main-window.cpp" line="318"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="324"/>
+        <location filename="../../src/windows/main-window.cpp" line="325"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="667"/>
+        <location filename="../../src/windows/main-window.cpp" line="668"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="667"/>
+        <location filename="../../src/windows/main-window.cpp" line="668"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="731"/>
+        <location filename="../../src/windows/main-window.cpp" line="732"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="733"/>
+        <location filename="../../src/windows/main-window.cpp" line="734"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1589"/>
+        <location filename="../../src/windows/main-window.cpp" line="1590"/>
         <source>Delete Permanently</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1590"/>
+        <location filename="../../src/windows/main-window.cpp" line="1591"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1599"/>
+        <location filename="../../src/windows/main-window.cpp" line="1601"/>
         <source>Tips info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1600"/>
+        <location filename="../../src/windows/main-window.cpp" line="1602"/>
         <source>Trash has no file need to be cleaned.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -211,7 +211,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="746"/>
+        <location filename="../../src/windows/main-window.cpp" line="747"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -487,7 +487,12 @@ Telif (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</translatio
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="77"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="50"/>
+        <source>Original Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
         <source>Use global sorting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -506,12 +511,12 @@ Telif (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</translatio
         <translation type="vanished">Düzenlenen Veri</translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="71"/>
         <source>Ascending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="61"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
         <source>Descending</source>
         <translation type="unfinished"></translation>
     </message>
@@ -537,63 +542,63 @@ Telif (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</translatio
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="287"/>
+        <location filename="../../src/control/tab-widget.cpp" line="297"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="291"/>
+        <location filename="../../src/control/tab-widget.cpp" line="301"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="296"/>
+        <location filename="../../src/control/tab-widget.cpp" line="306"/>
         <source>Recover</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="408"/>
+        <location filename="../../src/control/tab-widget.cpp" line="418"/>
         <source>Close Filter.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="420"/>
+        <location filename="../../src/control/tab-widget.cpp" line="430"/>
         <source>Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="431"/>
+        <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Choose other path to search.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="440"/>
+        <location filename="../../src/control/tab-widget.cpp" line="450"/>
         <source>Search recursively</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="517"/>
+        <location filename="../../src/control/tab-widget.cpp" line="527"/>
         <source>Select Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="574"/>
-        <location filename="../../src/control/tab-widget.cpp" line="710"/>
+        <location filename="../../src/control/tab-widget.cpp" line="584"/>
+        <location filename="../../src/control/tab-widget.cpp" line="720"/>
         <source>is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="592"/>
+        <location filename="../../src/control/tab-widget.cpp" line="602"/>
         <source>Please input key words...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1557"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1574"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1558"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1575"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -602,130 +607,130 @@ Telif (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</translatio
         <translation type="vanished">Lütfen anahtar kelimeler girin ...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="671"/>
-        <location filename="../../src/control/tab-widget.cpp" line="694"/>
+        <location filename="../../src/control/tab-widget.cpp" line="681"/>
+        <location filename="../../src/control/tab-widget.cpp" line="704"/>
         <source>contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="271"/>
+        <location filename="../../src/control/tab-widget.h" line="273"/>
         <source>name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="271"/>
+        <location filename="../../src/control/tab-widget.h" line="273"/>
         <source>type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="271"/>
+        <location filename="../../src/control/tab-widget.h" line="273"/>
         <source>modify time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="271"/>
+        <location filename="../../src/control/tab-widget.h" line="273"/>
         <source>file size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="272"/>
         <location filename="../../src/control/tab-widget.h" line="274"/>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="272"/>
+        <location filename="../../src/control/tab-widget.h" line="274"/>
         <source>file folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="272"/>
+        <location filename="../../src/control/tab-widget.h" line="274"/>
         <source>image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="272"/>
+        <location filename="../../src/control/tab-widget.h" line="274"/>
         <source>video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="273"/>
+        <location filename="../../src/control/tab-widget.h" line="275"/>
         <source>text file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="273"/>
+        <location filename="../../src/control/tab-widget.h" line="275"/>
         <source>audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="273"/>
+        <location filename="../../src/control/tab-widget.h" line="275"/>
         <source>others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="273"/>
+        <location filename="../../src/control/tab-widget.h" line="275"/>
         <source>wps file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="274"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
         <source>today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="274"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
         <source>this week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="274"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
         <source>this month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="274"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
         <source>this year</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="274"/>
+        <location filename="../../src/control/tab-widget.h" line="276"/>
         <source>year ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>tiny(0-16K)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>small(16k-1M)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>empty(0K)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>medium(1M-128M)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>big(128M-1G)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>large(1-4G)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="275"/>
+        <location filename="../../src/control/tab-widget.h" line="277"/>
         <source>great(&gt;4G)</source>
         <translation type="unfinished"></translation>
     </message>

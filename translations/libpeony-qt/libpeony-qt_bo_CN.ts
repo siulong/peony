@@ -173,6 +173,22 @@
         <source>Block not existed!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set password for volume based on LUKS (only ext4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password too short, please retype a password more than 6 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MainProgressBar</name>
@@ -697,6 +713,13 @@
     </message>
 </context>
 <context>
+    <name>Peony::CreateSharedFileLinkMenuPlugin</name>
+    <message>
+        <source>Create Link to Desktop</source>
+        <translation type="unfinished">སྒྲོག་ངོས་ཀྱི་མྱུར་ལམ་རི་མོར་བསྐུར་བ།</translation>
+    </message>
+</context>
+<context>
     <name>Peony::CreateTemplateOperation</name>
     <message>
         <source>NewFile</source>
@@ -1042,6 +1065,10 @@
         <source>Peony-Qt filesafe menu Extension</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Orignal Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FMWindow</name>
@@ -1234,6 +1261,10 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <source>Modified Date</source>
         <translation>ཟླ་ཚེས་བཅོས་བསྒྱུར།</translation>
+    </message>
+    <message>
+        <source>Original Path</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2060,6 +2091,13 @@ Do you want to delete the link file?</source>
     <message>
         <source>text file</source>
         <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::SharedFileLinkOperation</name>
+    <message>
+        <source>Symbolic Link</source>
+        <translation type="unfinished">མྱུར་ལམ་རི་མོ།</translation>
     </message>
 </context>
 <context>
