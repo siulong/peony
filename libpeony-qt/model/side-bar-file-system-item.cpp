@@ -371,12 +371,37 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
     if(property != "name")
         return;
 
+    auto gvolume = updateDevice.getGVolume();
     device = updateDevice.device();
     for(auto& item:*m_children){
-        if(item->m_device == device){
+        auto fs_item = qobject_cast<SideBarFileSystemItem *>(item);
+        auto item_gvolume = fs_item->getVolume().getGVolume();
+        if(item_gvolume == gvolume){
             item->m_displayName = updateDevice.name() + "(" + device + ")";
             item->m_hidden = updateDevice.getHidden();
             item->m_iconName = updateDevice.icon();
+            // 更新mount信息, 加密分区改变时需要
+            g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);
+            if (gmount) {
+                item->m_mounted = true;            /* 更新挂载状态 */
+                QString mountPoint = updateDevice.mountPoint();
+                item->m_mountPoint = mountPoint;     /* 设置挂载点，属性页会用到 */
+                item->m_mountable = updateDevice.canMount();
+                item->m_unmountable = true;
+                item->m_iconName = updateDevice.icon();
+                /* 更新uri,为了枚举操作 */
+                if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
+                    item->m_uri = "computer:///" + updateDevice.name() + ".volume";
+                else if(item->m_device.contains("/dev/sr") &&
+                        (item->m_displayName.contains("DVD") ||item->m_displayName.contains("CD")))/* 空光盘 */
+                {
+                    item->m_uri="burn:///";
+                }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
+                    item->m_uri = mountPoint;
+                }else{
+                    item->m_uri = "file://" + mountPoint;
+                }//end
+            }
             //model更新
              m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
             break;
