@@ -160,6 +160,7 @@ public:
     GVolume* getGVolume() const;
     //property-to-set
     void setLabel(const QString& label);
+    void setDevice(const QString &device);
     void setFromMount(const Mount& mount);//通过Mount求Volume
     void setFromDrive(const Drive& drive);//通过Drive获取Volume
     void setMountPoint(QString point);

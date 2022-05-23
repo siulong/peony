@@ -217,6 +217,7 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
     for (auto volumeItem : pThis->m_volumeList->values()) {
         if (volumeItem->getGVolume() == gvolume) {
             volumeItem->setLabel(name);
+            volumeItem->setDevice(device);
             Q_EMIT pThis->volumeUpdate(Volume(*volumeItem),"name");
         }
     }
@@ -1035,6 +1036,11 @@ QString Volume::getMountPoint()
 
 void Volume::setLabel(const QString &label){
     m_name = label;
+}
+
+void Volume::setDevice(const QString &device)
+{
+    m_device = device;
 }
 
 //根分区信息
