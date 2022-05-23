@@ -416,6 +416,16 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
     GMount* mount = (GMount*)g_object_ref(gmount);
     Mount* mountItem = new Mount(mount);
     QString device = mountItem->device();
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    if (gvolume) {
+        for (auto volume : pThis->m_volumeList->values()) {
+            if (volume->getGVolume() == gvolume) {
+                // 加密U盘的device name可能改变，列表需要按之前的调整
+                device = volume->originalDevice();
+                break;
+            }
+        }
+    }
     g_signal_connect(gmount, "changed", G_CALLBACK(mountChangedCallback),pThis);/* 监听mount的changed信号，获取mountPoint */
     //qDebug()<<__func__<<__LINE__<<device<<mountItem->name()<<endl;
     if(device.isEmpty()){
@@ -428,6 +438,7 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
 
     Volume* volume = new Volume(nullptr);
     volume->setFromMount(*mountItem);
+    volume->setDevice(device);
 
     if(pThis->m_volumeList->contains(device)){
         //情景1、2、3在volumeAddCallback()情景2中已添加至链表，更新挂载点信息即可
@@ -455,6 +466,16 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     Mount* mountItem = new Mount(mount);
 
     QString device = mountItem->device();
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    if (gvolume) {
+        for (auto volume : pThis->m_volumeList->values()) {
+            if (volume->getGVolume() == gvolume) {
+                // 加密U盘的device name可能改变，列表需要按之前的调整
+                device = volume->originalDevice();
+                break;
+            }
+        }
+    }
     if( pThis->m_volumeList->contains(device) && pThis->m_volumeList->value(device)->getMountPoint().isEmpty()){
         pThis->m_volumeList->value(device)->setMountPoint(mountPoint);/* 更新m_volumeList中volume的mounpoint */
         Q_EMIT pThis->mountAdd(*(pThis->m_volumeList->value(device)));/* 发出更新item的moun属性的信号，手机挂载 */
