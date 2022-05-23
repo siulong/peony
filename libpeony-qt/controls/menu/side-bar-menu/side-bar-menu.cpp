@@ -22,6 +22,7 @@
 
 #include "side-bar-menu.h"
 #include "side-bar-abstract-item.h"
+#include "side-bar-file-system-item.h"
 
 #include "bookmark-manager.h"
 #include "properties-window.h"
@@ -163,6 +164,15 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         uri = getComputerUriFromUnixDevice(unixDevice);
     else
         uri=m_uri;
+
+    if (!unixDevice.isEmpty() && uri.isEmpty()) {
+        //可能是加密分区数据未同步问题，尝试同步
+        auto fsItem = qobject_cast<SideBarFileSystemItem *>(m_item);
+        auto gvolume = fsItem->getVolume().getGVolume();
+        g_autofree gchar *unix_device = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        unixDevice = unix_device;
+        uri = getComputerUriFromUnixDevice(unixDevice);
+    }
 
     //not allow format data block, fix bug#66471，66479
     QString targetUri = FileUtils::getTargetUri(m_uri);
