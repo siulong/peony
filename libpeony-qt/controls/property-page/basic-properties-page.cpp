@@ -647,7 +647,7 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
 
     connect(m_countOp, &FileOperation::operationPreparedOne, this, &BasicPropertiesPage::onFileCountOne, Qt::BlockingQueuedConnection);
 
-    connect(m_countOp, &FileCountOperation::countDone, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+    connect(m_countOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
         m_countOp = nullptr;
         m_folderContainFiles = file_count - m_folderContainFolders;
         m_fileSizeCount = total_size;
