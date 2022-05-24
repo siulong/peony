@@ -33,6 +33,8 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <QApplication>
+
 using namespace Peony;
 static ToolButtonStyle *global_instance = nullptr;
 SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
@@ -236,9 +238,9 @@ void ToolButtonStyle::drawComplexControl(QStyle::ComplexControl control, const Q
         QPainterPath path;
         path.addEllipse(widget->rect().adjusted(2, 2, -2, -2));
         painter->setClipPath(path);
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        qApp->style()->drawComplexControl(control, option, painter, widget);
         painter->restore();
     } else {
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        qApp->style()->drawComplexControl(control, option, painter, widget);
     }
 }

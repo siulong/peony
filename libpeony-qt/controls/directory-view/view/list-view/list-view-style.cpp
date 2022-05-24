@@ -28,6 +28,8 @@
 #include <QStyleOptionViewItem>
 #include <QTextLayout>
 
+#include <QApplication>
+
 using namespace Peony;
 using namespace Peony::DirectoryView;
 
@@ -180,7 +182,7 @@ void ListViewStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
             }
         }
-        return QProxyStyle::drawPrimitive(element, &opt, painter, widget);
+        return qApp->style()->drawPrimitive(element, &opt, painter, widget);
     }
     case QStyle::PE_IndicatorItemViewItemDrop: {
         if (option->rect.height() <= 1) {
@@ -195,7 +197,7 @@ void ListViewStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
         return;
     }
     default:
-        return QProxyStyle::drawPrimitive(element, option, painter, widget);
+        return qApp->style()->drawPrimitive(element, option, painter, widget);
     }
 }
 
@@ -279,7 +281,7 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
     default:
         break;
     }
-    return QProxyStyle::drawControl(element, option, painter, widget);
+    return qApp->style()->drawControl(element, option, painter, widget);
 }
 //绘制列表视图文本
 void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const

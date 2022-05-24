@@ -642,10 +642,10 @@ void HeaderBarStyle::drawComplexControl(QStyle::ComplexControl control, const QS
                 button.features |= QStyleOptionToolButton::MenuButtonPopup;
                 button.subControls |= QStyle::SC_ToolButtonMenu;
             }
-            return QProxyStyle::drawComplexControl(control, &button, painter, widget);
+            return qApp->style()->drawComplexControl(control, &button, painter, widget);
         }
     }
-    return QProxyStyle::drawComplexControl(control, option, painter, widget);
+    return qApp->style()->drawComplexControl(control, option, painter, widget);
 }
 
 void HeaderBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -653,7 +653,7 @@ void HeaderBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyl
     if (element == PE_IndicatorToolBarSeparator) {
         return;
     }
-    return QProxyStyle::drawPrimitive(element, option, painter, widget);
+    return qApp->style()->drawPrimitive(element, option, painter, widget);
 }
 
 HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)

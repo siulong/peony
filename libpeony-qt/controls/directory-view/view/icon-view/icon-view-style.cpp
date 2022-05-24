@@ -57,7 +57,7 @@ void IconViewStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
     if (element == PE_Frame) {
         return;
     }
-    return QProxyStyle::drawPrimitive(element, option, painter, widget);
+    return qApp->style()->drawPrimitive(element, option, painter, widget);
 }
 
 void IconViewStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -71,20 +71,20 @@ void IconViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
             } else {
                 opt.rect = QRect();
             }
-            return QProxyStyle::drawControl(element, &opt, painter, widget);
+            return qApp->style()->drawControl(element, &opt, painter, widget);
         }
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 void IconViewStyle::drawItemPixmap(QPainter *painter, const QRect &rect, int alignment, const QPixmap &pixmap) const
 {
     //qDebug()<<"drawItemPixmap";
-    QProxyStyle::drawItemPixmap(painter, rect, alignment, pixmap);
+    qApp->style()->drawItemPixmap(painter, rect, alignment, pixmap);
 }
 
 void IconViewStyle::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
     //qDebug()<<"drawItemText";
-    QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
+    qApp->style()->drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }

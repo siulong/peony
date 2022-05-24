@@ -34,6 +34,8 @@
 #include <openssl/aes.h>
 #include <glib.h>
 
+#include <QApplication>
+
 using namespace Peony;
 static const QString ftpTypeStr="ftp";
 static const QString sftpTypeStr="sftp";
@@ -73,7 +75,7 @@ void ButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int ButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
