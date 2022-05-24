@@ -67,6 +67,8 @@
 
 #include <QStyleOptionViewItem>
 
+#include <QApplication>
+
 #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
 
 using namespace Peony;
@@ -617,7 +619,7 @@ void NavigationSideBarStyle::drawPrimitive(QStyle::PrimitiveElement element, con
                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
             }
         }
-        QProxyStyle::drawPrimitive(element, &opt, painter, widget);
+        qApp->style()->drawPrimitive(element, &opt, painter, widget);
         painter->restore();
         return;
     }
@@ -633,7 +635,7 @@ void NavigationSideBarStyle::drawPrimitive(QStyle::PrimitiveElement element, con
         break;
     }
 
-    QProxyStyle::drawPrimitive(element, option, painter, widget);
+    qApp->style()->drawPrimitive(element, option, painter, widget);
     painter->restore();
 }
 
@@ -650,6 +652,6 @@ void NavigationSideBarStyle::drawControl(QStyle::ControlElement element, const Q
                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
             }
         }
-        return QProxyStyle::drawControl(element, &opt, painter, widget);
+        return qApp->style()->drawControl(element, &opt, painter, widget);
     }
 }

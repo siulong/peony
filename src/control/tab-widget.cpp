@@ -96,7 +96,7 @@ void PushButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOp
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int PushButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
