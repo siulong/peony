@@ -212,7 +212,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_btn_conn->setAutoDefault(true);
     m_btn_add->setAutoDefault(false);
     m_btn_del->setAutoDefault(false);
-    m_btn_conn->setStyle(ButtonStyle::getStyle());
+    //m_btn_conn->setStyle(ButtonStyle::getStyle());
     m_main_layout->addLayout(m_btn_layout);
 
     setLayout(m_main_layout);
