@@ -56,6 +56,9 @@ public:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
     bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const;
 
+    void invalidateModel();
+    void setId(int id);
+
 Q_SIGNALS:
     void showHiddenFile();
 
@@ -65,6 +68,7 @@ private:
 
     BWListInfo    *m_bwListInfo;
     PeonyJsonOperation *m_jsonOp;
+    int m_id = 0;
 };
 
 }

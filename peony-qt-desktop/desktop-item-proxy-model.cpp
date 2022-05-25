@@ -106,7 +106,14 @@ bool DesktopItemProxyModel::filterAcceptsRow(int source_row, const QModelIndex &
     if (! m_show_hidden && info->displayName().startsWith(".")) {
         return false;
     }
-
+    //task#74174 通过id筛选出需要在该view中显示项
+    auto metaInfo = FileMetaInfo::fromUri(uri);
+    if (metaInfo) {
+        int id = metaInfo->getMetaInfoInt("peony-qt-desktop-id");
+        if (id != m_id) {
+            return false;
+        }
+    }
     //fix desktop show Desktop folder issue, bug#20293
     if (QUrl(uri).path() == QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/Desktop"
         || QUrl(uri).path() == QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/Desktop" + "/Desktop")
@@ -253,4 +260,14 @@ int DesktopItemProxyModel::updateBlackAndWriteLists()
     //重新过滤显示
     invalidateFilter();
     return 0;
+}
+
+void DesktopItemProxyModel::invalidateModel()
+{
+   invalidateFilter();
+}
+
+void DesktopItemProxyModel::setId(int id)
+{
+   m_id = id;
 }
