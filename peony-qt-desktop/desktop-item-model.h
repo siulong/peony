@@ -28,6 +28,7 @@
 #include <QPoint>
 #include <memory>
 #include "user-dir-manager.h"
+#include "desktop-icon-view.h"
 
 namespace Peony {
 
@@ -78,6 +79,7 @@ public:
 
     bool acceptDropAction() const;
     void setAcceptDropAction(bool acceptDropAction);
+    Peony::DesktopIconView *getIconView(const QString &uri);
 
 Q_SIGNALS:
     void requestLayoutNewItem(const QString &uri);
@@ -85,7 +87,7 @@ Q_SIGNALS:
     void requestUpdateItemPositions(const QString &uri = nullptr);
     void refreshed();
 
-    void fileCreated(const QString &uri);
+   // void fileCreated(const QString &uri);
 
 public Q_SLOTS:
     void refresh();
@@ -93,7 +95,6 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void onEnumerateFinished();
     void clearFloatItems();
-    void relayoutAddedItems();
 
 private:
     FileEnumerator *m_enumerator;

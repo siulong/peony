@@ -1,7 +1,6 @@
 #include "desktopbackgroundwindow.h"
 #include "desktop-background-manager.h"
 #include "peony-desktop-application.h"
-#include "desktop-icon-view.h"
 #include "desktop-menu.h"
 #include <QScreen>
 #include <QPainter>
@@ -24,12 +23,14 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
     setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_screen = screen;
+    m_desktopIconView = new Peony::DesktopIconView(this);
+    m_desktopIconView->setId(desktop_window_id);
     m_id = desktop_window_id;
     desktop_window_id++;
     move(screen->geometry().topLeft());
     setFixedSize(screen->geometry().size());
     setContentsMargins(0, 0, 0, 0);
-    connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::setWindowGeometry));
+    connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
     auto manager = DesktopBackgroundManager::globalInstance();
     connect(manager, &DesktopBackgroundManager::screensUpdated, this, QOverload<>::of(&DesktopBackgroundWindow::update));
@@ -53,8 +54,12 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 //        }
 
         QTimer::singleShot(1, [=]() {
-            DesktopMenu menu(PeonyDesktopApplication::getIconView());
-            if (PeonyDesktopApplication::getIconView()->getSelections().isEmpty()) {
+           //task#74174  扩展屏设置菜单
+            DesktopMenu menu(m_desktopIconView);
+            connect(&menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
+            connect(&menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
+
+            if (m_desktopIconView->getSelections().isEmpty()) {
                 auto action = menu.addAction(QObject::tr("set background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
@@ -77,11 +82,16 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
             if (urisToEdit.count() == 1) {
                 QTimer::singleShot(
                             100, this, [=]() {
-                    PeonyDesktopApplication::getIconView()->editUri(urisToEdit.first());
+                    m_desktopIconView->editUri(urisToEdit.first());
                 });
             }
         });
     });
+}
+
+DesktopBackgroundWindow::~DesktopBackgroundWindow()
+{
+   --desktop_window_id;
 }
 
 void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
@@ -251,10 +261,10 @@ void DesktopBackgroundWindow::updateWindowGeometry()
     if (centralWidget()) {
         if (screen() == qApp->primaryScreen()) {
             qInfo()<<"has center widget, raise window";
+            KWindowSystem::raiseWindow(this->winId());
         } else {
             qCritical()<<"raise a window which not in primary screen, but has central widget";
         }
-        KWindowSystem::raiseWindow(this->winId());
     }
     update();
 }
@@ -262,6 +272,12 @@ void DesktopBackgroundWindow::updateWindowGeometry()
 int DesktopBackgroundWindow::id() const
 {
     return m_id;
+}
+
+void DesktopBackgroundWindow::setId(int id)
+{
+    m_id = id;
+    m_desktopIconView->setId(id);
 }
 
 //获取iconview中图标的相对位置
@@ -417,4 +433,9 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
     offsetPoint += QPoint(offsetX, offsetY);
 
     return QRect(offsetPoint, sourceSize);
+}
+
+Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
+{
+    return m_desktopIconView;
 }
