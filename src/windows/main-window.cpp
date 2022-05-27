@@ -72,6 +72,7 @@
 #include "float-pane-widget.h"
 
 #include "file-meta-info.h"
+#include "sound-effect.h"
 
 #include <QSplitter>
 
@@ -1592,6 +1593,7 @@ void MainWindow::cleanTrash()
                                                "restored again."));
         if (result == QMessageBox::Yes) {
             Peony::FileOperationUtils::remove(uris);
+            Peony::SoundEffect::getInstance()->recycleBinClearMusic();
         }
     }
     else

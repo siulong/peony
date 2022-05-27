@@ -201,7 +201,7 @@ OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *pa
     auto trash = new QToolButton(this);
     m_trash = trash;
     trash->setFixedSize(QSize(40, 40));
-    trash->setIcon(QIcon::fromTheme("ukui-user-trash"));
+    trash->setIcon(QIcon::fromTheme("edit-delete-symbolic"));
     trash->setIconSize(QSize(16, 16));
     trash->setAutoRaise(false);
     trash->setToolTip(tr("trash"));

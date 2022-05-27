@@ -4,6 +4,7 @@
 #include <QThread>
 #include<QMessageBox>
 #include<QProcess>
+#include <QInputDialog>
 #include"sync-thread.h"
 #include "file-utils.h"
 
@@ -12,6 +13,28 @@
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
+
+static void askPasswdCallback(GMountOperation  *op,
+                              gchar            *message,
+                              gchar            *default_user,
+                              gchar            *default_domain,
+                              GAskPasswordFlags flags,
+                              gpointer          user_data) {
+    //Q_UNUSED (message)
+    Q_UNUSED (default_user)
+    Q_UNUSED (default_domain)
+    if (flags & G_ASK_PASSWORD_NEED_PASSWORD) {
+        if (g_mount_operation_get_password(op)) {
+            g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
+            return;
+        } else {
+            auto object = G_OBJECT (user_data);
+            g_object_set_data_full(object, "message", gpointer(g_strdup(message)), g_free);
+            g_object_set_data(object, "need-password", gpointer(true));
+        }
+    }
+    g_mount_operation_reply(op, G_MOUNT_OPERATION_UNHANDLED);
+}
 
 QString getDeviceUUID(const char *device) {
     struct stat statbuf;
@@ -173,6 +196,7 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
         return;
     QString device,name;
     char *gdevice,*gname;
+
     QHash<QString,Volume*>::iterator findItem,end;
     //情景：使用其他工具修改卷标后，卷标需要更新
     gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
@@ -182,11 +206,20 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
     g_free(gdevice);
     g_free(gname);
 
-    findItem = pThis->m_volumeList->find(device);
-    end = pThis->m_volumeList->end();
-    if(findItem != end && name != findItem.value()->name()){
-        findItem.value()->setLabel(name);
-        Q_EMIT pThis->volumeUpdate(Volume(*findItem.value()),"name");//更新name属性
+//    findItem = pThis->m_volumeList->find(device);
+//    end = pThis->m_volumeList->end();
+//    if(findItem != end && name != findItem.value()->name()){
+//        findItem.value()->setLabel(name);
+//        Q_EMIT pThis->volumeUpdate(Volume(*findItem.value()),"name");//更新name属性
+//    }
+    // note: volume device file might be changed while mounting/unmounting an encrypted volume.
+    // use gvolume for quering volume item is more reliable for now.
+    for (auto volumeItem : pThis->m_volumeList->values()) {
+        if (volumeItem->getGVolume() == gvolume) {
+            volumeItem->setLabel(name);
+            volumeItem->setDevice(device);
+            Q_EMIT pThis->volumeUpdate(Volume(*volumeItem),"name");
+        }
     }
 }
 
@@ -206,6 +239,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         QString device = addItem->device();
         pThis->m_volumeList->remove(device);
         Q_EMIT pThis->volumeRemove(device);
+        pThis->m_volumeList->remove(device);
         pThis->m_volumeList->insert(device, addItem);
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
         //情景1、关闭gparted时，所有具有卸载属性的设备均会触发volume-added信号
@@ -226,6 +260,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         //情景1、未打开gparted时插入新设备
         //情景2、已打开gparted->插入新设备不拔出->关闭gparted后触发volume-added信号
         //情景3、默认用数据线连接的手机("仅充电")
+        pThis->m_volumeList->remove(addItem->device());
         pThis->m_volumeList->insert(addItem->device(),addItem);
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
     }
@@ -235,6 +270,16 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
     if(!pThis->m_volumeList)
         return;
+
+    // note: volume device file might be changed while mounting/unmounting an encrypted volume.
+    // use gvolume for quering volume item is more reliable for now.
+    for (auto volumeItem : pThis->m_volumeList->values()) {
+        if (volumeItem->getGVolume() == gvolume) {
+            pThis->m_volumeList->remove(volumeItem->originalDevice());
+            Q_EMIT pThis->volumeRemove(volumeItem->originalDevice());
+            delete volumeItem;
+        }
+    }
 
     GDrive *gdrive = g_volume_get_drive(gvolume);
     if (gdrive) {
@@ -371,6 +416,16 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
     GMount* mount = (GMount*)g_object_ref(gmount);
     Mount* mountItem = new Mount(mount);
     QString device = mountItem->device();
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    if (gvolume) {
+        for (auto volume : pThis->m_volumeList->values()) {
+            if (volume->getGVolume() == gvolume) {
+                // 加密U盘的device name可能改变，列表需要按之前的调整
+                device = volume->originalDevice();
+                break;
+            }
+        }
+    }
     g_signal_connect(gmount, "changed", G_CALLBACK(mountChangedCallback),pThis);/* 监听mount的changed信号，获取mountPoint */
     //qDebug()<<__func__<<__LINE__<<device<<mountItem->name()<<endl;
     if(device.isEmpty()){
@@ -383,6 +438,7 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
 
     Volume* volume = new Volume(nullptr);
     volume->setFromMount(*mountItem);
+    volume->setDevice(device);
 
     if(pThis->m_volumeList->contains(device)){
         //情景1、2、3在volumeAddCallback()情景2中已添加至链表，更新挂载点信息即可
@@ -410,6 +466,16 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     Mount* mountItem = new Mount(mount);
 
     QString device = mountItem->device();
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    if (gvolume) {
+        for (auto volume : pThis->m_volumeList->values()) {
+            if (volume->getGVolume() == gvolume) {
+                // 加密U盘的device name可能改变，列表需要按之前的调整
+                device = volume->originalDevice();
+                break;
+            }
+        }
+    }
     if( pThis->m_volumeList->contains(device) && pThis->m_volumeList->value(device)->getMountPoint().isEmpty()){
         pThis->m_volumeList->value(device)->setMountPoint(mountPoint);/* 更新m_volumeList中volume的mounpoint */
         Q_EMIT pThis->mountAdd(*(pThis->m_volumeList->value(device)));/* 发出更新item的moun属性的信号，手机挂载 */
@@ -459,6 +525,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         }
 
         if(volume->canEject()){
+            pThis->m_volumeList->remove(device);
             pThis->m_volumeList->insert(device, volume);
             Q_EMIT pThis->volumeAdd(Volume(*volume));
         }
@@ -559,6 +626,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     //根文件系统
     Volume* rootVolume = new Volume(nullptr);
     rootVolume->initRootVolume();
+    m_volumeList->remove(rootVolume->device());
     m_volumeList->insert(rootVolume->device(),rootVolume);
 
     //vaildVolumeList = std::make_shared<QList<Volume*>>();
@@ -566,6 +634,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         Volume* volumeItem = new Volume(nullptr);
         volumeItem->setFromMount(*mounts.at(i));//从Mount对象构造Volume对象数据
         //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+        m_volumeList->remove(volumeItem->device());
         m_volumeList->insert(volumeItem->device(),volumeItem);
     }
 
@@ -577,6 +646,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
             if(m_volumeList->contains(volumeItem->device()))
                 continue;
             //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(),volumeItem);
         }
     }
@@ -588,19 +658,26 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     {
         Volume* volumeItem = new Volume(nullptr);
         volumeItem->setFromDrive(*entry);
+
         // 如果有volume，应该被隐藏
+        bool bHasVolume = false;
         GList *volumes = g_drive_get_volumes(entry->getGDrive());
         if (volumes) {
             volumeItem->setHidden(true);
+            bHasVolume = true;
             g_list_free_full(volumes, g_object_unref);
         }
+
         QString device = volumeItem->device();
-        if(m_volumeList->contains(volumeItem->device()))
+        if(m_volumeList->contains(device))
             continue;
+
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
         }
-        if(volumeItem->canEject()&&device.contains("/dev/sd")){/* 异常U盘设备 */
+        if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
+            m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
 
             // try fix #90641, a docking station should be hidden.
@@ -618,7 +695,11 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     }
                 }
             }
+            if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
+                volumeItem->setHidden(true);
+            }
         }
+
     }
 
 
@@ -724,6 +805,7 @@ Volume::Volume(GVolume* gvolume):m_volume(gvolume){
 
 Volume::Volume(const Volume& other){
     m_name = other.m_name;
+    m_originalDevice = other.m_originalDevice;
     m_device = other.m_device;
     m_uuid = other.m_uuid;
     m_icon = other.m_icon;
@@ -796,47 +878,28 @@ void Volume::initVolumeInfo()
 
     m_name = gname;
     m_uuid = guuid;
+    m_originalDevice = gdevice;
     m_device = gdevice;
     GIcon* gicon = g_volume_get_icon(m_volume);
-    const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
-    if(icon_names) {
-        m_icon= *icon_names;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
+    m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
+    // fix #81852, refer to #57660, #70014, #96652, task #25343
+    if (QString(m_icon) == "drive-harddisk-usb") {
+        double size = 0.0;
+        if(!tmpDevice.isEmpty()){
+            size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
+        }else{
+            size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
         }
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
 
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
+        if (size < 128) {
+            m_icon = "drive-removable-media-usb";
         }
     }
 
     if(m_volume)
         m_canMount = g_volume_can_mount(m_volume);
 
+    g_object_unref(gicon);
     g_free(gname);
     g_free(guuid);
     g_free(gdevice);
@@ -846,11 +909,11 @@ void Volume::initVolumeInfo()
 
 //利用设备路径(也可用uuid)判断设备是否相同
 bool Volume::operator==(const Volume& other) const{
-    return m_device == other.m_device;
+    return m_originalDevice == other.m_originalDevice;
 }
 
 bool Volume::operator==(const Volume* other) const{
-    return m_device == other->m_device;
+    return m_originalDevice == other->m_originalDevice;
 }
 
 //bool Volume::operator==(const QString& device) const{
@@ -904,7 +967,25 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
     GError *err = nullptr;
     bool successed = g_volume_mount_finish(volume, res, &err);
     if (err) {
-        //QMessageBox::critical(0, 0, err->message);
+        if (g_error_matches(err, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
+            bool need_password = bool (g_object_get_data(G_OBJECT (volume), "need-password"));
+            if (need_password) {
+                QInputDialog d;
+                d.setTextEchoMode(QLineEdit::Password);
+                d.setLabelText(QString(static_cast<char *>(g_object_get_data(G_OBJECT (volume), "message"))));
+                if (d.exec()) {
+                    auto password = d.textValue();
+                    auto mount_op = g_mount_operation_new();
+                    gulong signal = g_signal_connect(mount_op, "ask-password", G_CALLBACK (askPasswdCallback), volume);
+                    g_object_set_data(G_OBJECT (volume), "signal", gpointer(signal));
+                    g_mount_operation_set_password(mount_op, password.toUtf8().constData());
+                    g_volume_mount(volume, G_MOUNT_MOUNT_NONE, mount_op, nullptr, GAsyncReadyCallback (mount_async_callback), p_this);
+                    g_object_unref(mount_op);
+                }
+            }
+        }
+
+        //QMessageBox::critical(0, 0, QString("%1 %2 %3").arg(g_quark_to_string(err->domain)).arg(err->code).arg(err->message));
         g_error_free(err);
     }
 
@@ -916,13 +997,20 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
 }
 void Volume::mount()
 {
-    if(m_volume)
+    if(m_volume) {
+        auto mount_op = g_mount_operation_new();
+        gulong signal = g_signal_connect(mount_op, "ask-password", G_CALLBACK (askPasswdCallback), m_volume);
+        g_object_set_data(G_OBJECT (m_volume), "signal", gpointer(signal));
+
         g_volume_mount(m_volume,
                        G_MOUNT_MOUNT_NONE,
-                       nullptr,
+                       mount_op,
                        nullptr,
                        GAsyncReadyCallback(mount_async_callback),
                        this);
+
+        g_object_unref(mount_op);
+    }
 }
 
 bool Volume::getHidden() const
@@ -940,6 +1028,7 @@ void Volume::setFromMount(const Mount& mount){
     m_name = mount.name();
     m_uuid = mount.uuid();
     m_icon = mount.icon();
+    m_originalDevice = mount.device();
     m_device = mount.device();
     m_canEject = mount.canEject();
     m_canStop = mount.canStop();
@@ -955,6 +1044,7 @@ void Volume::setFromDrive(const Drive &drive)
     m_canEject = drive.canEject();
     m_canStop = drive.canStop();
     m_icon = drive.icon();
+    m_originalDevice = drive.device();
     m_device = drive.device();
     m_gdrive = (GDrive*)g_object_ref(drive.getGDrive());
 }
@@ -971,6 +1061,11 @@ QString Volume::getMountPoint()
 
 void Volume::setLabel(const QString &label){
     m_name = label;
+}
+
+void Volume::setDevice(const QString &device)
+{
+    m_device = device;
 }
 
 //根分区信息
@@ -990,6 +1085,7 @@ Volume* Volume::initRootVolume(){
 
     const char* device = g_unix_mount_get_device_path(entry);
     m_device = device;
+    m_originalDevice = device;
     g_unix_mount_free(entry);
 
     return this;
@@ -1015,29 +1111,16 @@ void Drive::initDriveInfo(){
     m_canStop = g_drive_can_stop(m_drive);
     m_name=g_drive_get_name(m_drive);
     GIcon* gicon = g_drive_get_icon(m_drive);
-    const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
-    if(icon_names) {
-        m_icon= *icon_names;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
-        }
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(icon_name) == "drive-harddisk-usb") {
-            double size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
+    m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, m_device);
+    // fix #81852, refer to #57660, #70014, #96652, task #25343
+    if (QString(m_icon) == "drive-harddisk-usb") {
+        double size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
+        if (size < 128) {
+            m_icon = "drive-removable-media-usb";
         }
     }
+
+    g_object_unref(gicon);
 }
 
 QString Drive::name() const
@@ -1230,42 +1313,22 @@ void Mount::initMountInfo(){
     m_canUnmount = g_mount_can_unmount(m_mount);
     /* 获取图标 */
     GIcon* gicon = g_mount_get_icon(m_mount);
-    const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
-    if(icon_names) {
-        m_icon= *icon_names;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
+    m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
+    // fix #81852, refer to #57660, #70014, #96652, task #25343
+    if (QString(m_icon) == "drive-harddisk-usb") {
+        double size = 0.0;
+        if(!tmpDevice.isEmpty()){
+            size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
+        }else{
+            size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
         }
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(gicon);
-        m_icon = icon_name;
-
-        // fix #81852, refer to #57660, #70014, #96652, task #25343
-        if (QString(m_icon) == "drive-harddisk-usb") {
-            double size = 0.0;
-            if(!tmpDevice.isEmpty()){
-                size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
-            }else{
-                size = Peony::FileUtils::getDeviceSize(m_device.toUtf8().constData());
-            }
-            if (size < 128) {
-                m_icon = "drive-removable-media-usb";
-            }
+        if (size < 128) {
+            m_icon = "drive-removable-media-usb";
         }
     }
+
+    g_object_unref (gicon);
 }
-
-
 
 void Mount::queryDeviceByMountpoint(){
     const char* device;
@@ -1306,6 +1369,11 @@ QString Volume::icon() const{
 
 QString Volume::device() const{
     return m_device;
+}
+
+QString Volume::originalDevice() const
+{
+    return m_originalDevice;
 }
 
 QString Volume::mountPoint() const{

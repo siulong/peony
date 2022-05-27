@@ -30,7 +30,7 @@
 #include "file-utils.h"
 
 #include "file-operation-manager.h"
-
+#include "sound-effect.h"
 #include "clipboard-utils.h"
 #include <QProcess>
 #include <QDebug>
@@ -79,6 +79,7 @@ FileCopyOperation::~FileCopyOperation()
 ExceptionResponse FileCopyOperation::prehandle(GError *err)
 {
     setHasError(true);
+    SoundEffect::getInstance()->copyOrMoveFailedMusic();
 
     switch (err->code) {
         case G_IO_ERROR_BUSY:
@@ -657,7 +658,6 @@ void FileCopyOperation::run()
     m_info->m_dest_uris = m_info->m_node_map.values();
 
     nodes.clear();
-
     Q_EMIT operationFinished();
 
     sendSrcAndDestUrisOfCopyDspsFiles();

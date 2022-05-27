@@ -199,6 +199,9 @@ QModelIndex FileItemModel::parent(const QModelIndex &child) const
 int FileItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+    if (m_root_uri == "trash:///") {
+        return FileSize + 2;
+    }
     return FileSize+1;
 }
 
@@ -312,6 +315,17 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     }
+    case TrashOriginPath: {
+        switch (role) {
+        case Qt::DisplayRole:
+        case Qt::ToolTipRole: {
+            return item->m_info->property("orig-path");
+            break;
+        }
+        default:
+            break;
+        }
+    }
     default:
         return QVariant();
     }
@@ -335,6 +349,8 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Type");
         case FileSize:
             return tr("File Size");
+        case TrashOriginPath:
+            return tr("Original Path");
         default:
             return QVariant();
         }
@@ -579,6 +595,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
+    //qDebug()<<"dropMimeData:" <<action;
     //can not move StandardPath to any dir
     if (action == Qt::MoveAction && FileUtils::containsStandardPath(srcUris)) {
         return false;
@@ -594,8 +611,9 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         }
     }
     //drag from trash to another place, return false
-    if (b_trash_item && destDirUri != "trash:///")
-        return false;
+    //comment to fix can not drag to copy trash file,link to bug#117741
+//    if (b_trash_item && destDirUri != "trash:///")
+//        return false;
 
     //fix drag file to trash issue, #42328
     if (destDirUri.startsWith("trash:///"))
@@ -606,6 +624,12 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
             FileOperationUtils::trash(srcUris, true);
         }
         return true;
+    }
+
+    //fix drag trash file to other path is copy issue,link to bug#117741
+    if (srcUris.first().startsWith("trash:///") && action == Qt::MoveAction){
+        //not copy move, do target move to delete file in trash
+        action = Qt::TargetMoveAction;
     }
 
     qDebug() << "dropMimeData:" <<action<<destDirUri;

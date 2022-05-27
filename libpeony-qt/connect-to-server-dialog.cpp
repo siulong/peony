@@ -34,6 +34,8 @@
 #include <openssl/aes.h>
 #include <glib.h>
 
+#include <QApplication>
+
 using namespace Peony;
 static const QString ftpTypeStr="ftp";
 static const QString sftpTypeStr="sftp";
@@ -73,7 +75,7 @@ void ButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int ButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
@@ -210,7 +212,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_btn_conn->setAutoDefault(true);
     m_btn_add->setAutoDefault(false);
     m_btn_del->setAutoDefault(false);
-    m_btn_conn->setStyle(ButtonStyle::getStyle());
+    //m_btn_conn->setStyle(ButtonStyle::getStyle());
     m_main_layout->addLayout(m_btn_layout);
 
     setLayout(m_main_layout);

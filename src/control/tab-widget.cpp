@@ -96,7 +96,7 @@ void PushButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOp
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int PushButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
@@ -175,7 +175,16 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(id);
             setPreviewPage(plugin->createPreviewPage());
         } else {
-            setPreviewPage(nullptr);
+            bool isSetPreviewPageNull = true;
+            for(auto action : m_preview_action_group->actions()){
+                if(action->isChecked() && action->isVisible()){
+                    isSetPreviewPageNull = false;
+                    break;
+                }
+            }
+            if(isSetPreviewPageNull){
+                setPreviewPage(nullptr);
+            }
         }
     });
 
@@ -259,6 +268,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
         });
     }
     previewButtons->addActions(group->actions());
+    m_preview_action_group = group;
     for (auto action : group->actions()) {
         auto button = qobject_cast<QToolButton *>(previewButtons->widgetForAction(action));
         button->setFixedSize(26, 26);
@@ -792,19 +802,23 @@ void TabWidget::updatePreviewPageVisible()
 {
     auto currentUri = getCurrentUri();
     if(currentUri.startsWith("computer://")){
-        m_preview_action->setVisible(false);
+        m_preview_action_group->setVisible(false);
     }else{
-        m_preview_action->setVisible(true);
+        m_preview_action_group->setVisible(true);
     }
 
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
     for (auto name : pluginNames) {
         auto factory = manager->getPlugin(name);
-        if(m_preview_action->isChecked() && m_preview_action->isVisible()){
-            Q_EMIT m_buttons->previewPageButtonTrigger(true, factory->name());
-        }else{
-            Q_EMIT m_buttons->previewPageButtonTrigger(false, factory->name());
+        for (auto action : m_preview_action_group->actions()){
+            if(!action->text().compare(name)){
+                if(action->isChecked() && action->isVisible()){
+                    Q_EMIT m_buttons->previewPageButtonTrigger(true, factory->name());
+                }else{
+                    Q_EMIT m_buttons->previewPageButtonTrigger(false, factory->name());
+                }
+            }
         }
     }
 }
@@ -1144,6 +1158,9 @@ int TabWidget::getSortType()
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
     auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
+    if (getCurrentUri() != "trash:///" && sortType == 4) {
+        sortType = 0;
+    }
 
     return sortType;
 
@@ -1213,7 +1230,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
         QString rootDir = info.get()->uri();
-        if (!info.get()->isDir()) {
+        if (info.get()->uri().startsWith("file:///") && !info.get()->isDir()) {
             rootDir = Peony::FileUtils::getParentUri(rootDir);
         }
 

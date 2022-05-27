@@ -28,6 +28,8 @@
 
 #include <QGraphicsDropShadowEffect>
 
+#include <QApplication>
+
 using namespace Peony;
 
 IconContainer::IconContainer(QWidget *parent) : QPushButton(parent)
@@ -81,5 +83,5 @@ void IconContainerStyle::drawControl(QStyle::ControlElement element, const QStyl
             return;
         }
     }
-    return QProxyStyle::drawControl(element, option, painter, widget);
+    return qApp->style()->drawControl(element, option, painter, widget);
 }

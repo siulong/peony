@@ -35,6 +35,7 @@
 #include "directory-view-container.h"
 #include "global-settings.h"
 #include "audio-play-manager.h"
+#include "sound-effect.h"
 
 #include <QAction>
 #include <QComboBox>
@@ -218,6 +219,7 @@ void ToolBar::init()
                                             "Once you start a deletion, the files deleting will never be "
                                             "restored again."));
         if (result == QMessageBox::Yes) {
+            SoundEffect::getInstance()->recycleBinDeleteMusic();
             auto uris = m_top_window->getCurrentAllFileUris();
             qDebug()<<uris;
             FileOperationUtils::remove(uris);

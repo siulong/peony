@@ -229,18 +229,18 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 int posY = marginTop;
                 for (auto item : needRelayoutItems) {
                     QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
-                    while (notEmptyRegion.contains(itemRect.center())) {
+                    while (notEmptyRegion.intersects(itemRect)) {
                         if (posY + 2*gridHeight > this->viewport()->height()) {
                             posY = marginTop;
                             posX += gridWidth;
                         } else {
                             posY += gridHeight;
                         }
-                        if (this->viewport()->geometry().contains(itemRect.topLeft())) {
-                            itemRect.moveTo(posX, posY);
-                        } else {
-                            itemRect.moveTo(0, 0);
-                        }
+                    }
+                    if (this->viewport()->geometry().contains(itemRect)) {
+                        itemRect.moveTo(posX, posY);
+                    } else {
+                        itemRect.moveTo(0, 0);
                     }
                     notEmptyRegion += itemRect;
                     m_item_rect_hash.insert(item, itemRect);
@@ -838,7 +838,7 @@ void DesktopIconView::resolutionChange()
             int posY = marginTop;
 
             for (int i = 0; i < needChanged.count(); i++) {
-                while (notEmptyRegion.contains(QPoint(posX + iconWidth/2, posY + iconHeigth/2))) {
+                while (notEmptyRegion.intersects(QRect(posX, posY, iconWidth, iconHeigth))) {
                     if (posY + 2 * iconHeigth > screenSize.height()) {
                         posY = marginTop;
                         posX += iconWidth;
@@ -1002,7 +1002,9 @@ void DesktopIconView::openFileByUri(QString uri)
             p.startDetached("peony", QStringList()<<strq<<"%U&");
 #endif
         } else {
-            FileLaunchManager::openAsync(uri, false, false);
+            if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
+                FileLaunchManager::openAsync(uri, false, false);
+            }
         }
         this->clearSelection();
     });
@@ -1481,8 +1483,7 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
         }
 
         auto itemRect = QRect(m_item_rect_hash.value(uri).topLeft(), itemRectSize);
-        auto itemCenter = itemRect.center();
-        if (notEmptyRegion.contains(itemCenter)) {
+        if (notEmptyRegion.intersects(itemRect)) {
             // handle overlapped
             qWarning()<<"unexpected overrlapped happend";
             qDebug()<<"check item rect hash"<<m_item_rect_hash;
@@ -1599,7 +1600,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
         if (!allFileUris.contains(uri))
             continue;
         auto indexRect = QRect(QPoint(marginLeft, marginTop), m_item_rect_hash.values().first().size());
-        if (notEmptyRegion.contains(indexRect.center())) {
+        if (notEmptyRegion.intersects(indexRect)) {
 
             // move index to closest empty grid.
             auto next = indexRect;
@@ -1617,7 +1618,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     //put item to next column first row
                     next.moveTo(next.x() + grid.width(), top);
                 }
-                if (notEmptyRegion.contains(next.center()))
+                if (notEmptyRegion.intersects(next))
                     continue;
 
                 isEmptyPos = true;
@@ -2007,7 +2008,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             for (auto index : unoverlappedIndexes) {
                 QRect visualRect = QListView::visualRect(index);
-                if (dirtyRegion.contains(visualRect.center())) {
+                if (dirtyRegion.intersects(visualRect)) {
                     unoverlappedIndexes.removeOne(index);
                     overlappedIndexes.append(index);
                 }
@@ -2030,7 +2031,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             for (auto dragedIndex : overlappedIndexes) {
                 auto indexRect = QListView::visualRect(dragedIndex);
-                if (notEmptyRegion.contains(indexRect.center())) {
+                if (notEmptyRegion.intersects(indexRect)) {
                     // move index to closest empty grid.
                     auto next = indexRect;
                     bool isEmptyPos = false;
@@ -2047,7 +2048,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                             //put item to next column first column
                             next.moveTo(next.x() + grid.width(), top);
                         }
-                        if (notEmptyRegion.contains(next.center())) {
+                        if (notEmptyRegion.intersects(next)) {
                             continue;
                         }
 
@@ -2087,7 +2088,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                     next.translate(0, -grid.height());
                 }
 
-                while (notEmptyRegion.contains(next.center())) {
+                while (notEmptyRegion.intersects(next)) {
                     next.translate(0, grid.height());
                     if (next.bottom() > viewRect.bottom()) {
                         int top = next.y();
@@ -2337,6 +2338,71 @@ void DesktopIconView::clearAllRestoreInfo()
         }
     }
     m_resolution_item_rect.clear();
+}
+
+bool DesktopIconView::execSharedFileLink(const QString uri)
+{
+    auto info = FileInfo::fromUri(uri);
+    if (info->isEmptyInfo()) {
+        FileInfoJob j(info);
+        j.querySync();
+    }
+    if (uri.endsWith(".desktop")) {
+        GKeyFile* key_file = g_key_file_new();
+        QUrl url = uri;
+        QString desktopfp = url.path();
+        g_key_file_load_from_file(key_file, desktopfp.toUtf8().constData(), G_KEY_FILE_KEEP_COMMENTS, nullptr);
+        GError* error = NULL;
+        if (g_key_file_has_key(key_file, G_KEY_FILE_DESKTOP_GROUP, "X-Peony-CMD", nullptr)) {
+            if (g_key_file_has_key(key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, nullptr)) {
+                g_autofree char* val = g_key_file_get_value(key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, &error);
+                if (error) {
+                    qWarning() << "get desktop file:" << uri << " name error:" << error->code << " -- " << error->message;
+                    g_error_free(error);
+                    error = nullptr;
+                } else {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+                    QProcess p;
+                    p.setProgram("peony");
+                    QString str = val;
+                    str = str.replace("peony ","");
+                    p.setArguments(QStringList() << str);
+                    qint64 pid;
+                    p.startDetached(&pid);
+
+                    // send startinfo to kwindowsystem
+                    quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+                    KStartupInfoId startInfoId;
+                    startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+                    startInfoId.setupStartupEnv();
+                    KStartupInfoData data;
+                    data.setHostname();
+                    data.addPid(pid);
+                    QRect rect = info.get()->property("iconGeometry").toRect();
+                    if (rect.isValid()) {
+                        data.setIconGeometry(rect);
+                    }
+                    data.setLaunchedBy(getpid());
+                    KStartupInfo::sendStartup(startInfoId, data);
+#else
+                    QProcess p;
+                    QString strq;
+                    for (int i = 0;i < uri.length();++i) {
+                        if(uri[i] == ' '){
+                            strq += "%20";
+                        }else{
+                            strq += uri[i];
+                        }
+                    }
+                    p.startDetached("peony", QStringList()<<strq<<"%U&");
+#endif
+                    return true;
+                }
+
+            }
+        }
+    }
+    return false;
 }
 
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)

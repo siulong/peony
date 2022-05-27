@@ -410,13 +410,15 @@ void HeaderBar::addMenuButtons()
     connect(sortTypeMenu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
     connect(sortTypeMenu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
         if (order == Qt::AscendingOrder) {
-            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
-        } else {
             sortType->setIcon(QIcon::fromTheme("view-sort-descending-symbolic"));
+        } else {
+            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
         }
         m_window->setCurrentSortOrder(order);
     });
     connect(sortTypeMenu, &QMenu::aboutToShow, sortTypeMenu, [=]() {
+        bool originPathVisible = m_window->getCurrentUri() == "trash:///";
+        sortTypeMenu->setOriginPathVisible(originPathVisible);
         sortTypeMenu->setSortType(m_window->getCurrentSortColumn());
         sortTypeMenu->setSortOrder(m_window->getCurrentSortOrder());
     });
@@ -640,10 +642,10 @@ void HeaderBarStyle::drawComplexControl(QStyle::ComplexControl control, const QS
                 button.features |= QStyleOptionToolButton::MenuButtonPopup;
                 button.subControls |= QStyle::SC_ToolButtonMenu;
             }
-            return QProxyStyle::drawComplexControl(control, &button, painter, widget);
+            return qApp->style()->drawComplexControl(control, &button, painter, widget);
         }
     }
-    return QProxyStyle::drawComplexControl(control, option, painter, widget);
+    return qApp->style()->drawComplexControl(control, option, painter, widget);
 }
 
 void HeaderBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -651,7 +653,7 @@ void HeaderBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyl
     if (element == PE_IndicatorToolBarSeparator) {
         return;
     }
-    return QProxyStyle::drawPrimitive(element, option, painter, widget);
+    return qApp->style()->drawPrimitive(element, option, painter, widget);
 }
 
 HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)

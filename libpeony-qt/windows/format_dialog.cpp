@@ -36,11 +36,18 @@
 #include <QCloseEvent>
 #include <QGridLayout>
 
+#include <QInputDialog>
+#include <QValidator>
+
 using namespace  Peony;
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
 static double m_before_progress = 0;
+
+QCheckBox *findPasswdCheckBox(Format_Dialog *dlg) {
+    return dlg->findChild<QCheckBox *>("cryptCheckBox");
+}
 
 Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,QWidget *parent) /*:
     QDialog (parent),
@@ -80,6 +87,30 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mNameEdit = new QLineEdit;
     mainLayout->addWidget(uNameLabel, 3, 1, 1, 2);
     mainLayout->addWidget(mNameEdit, 3, 3, 1, 6);
+    //fix can give name more than 11 characters,link to bug#113257
+    //FIXME 设置最大长度为11，但是汉字也可以输入11个，Qt控件提供方法存在的问题
+    connect(mFSCombox, &QComboBox::currentTextChanged, [=]()
+    {
+        auto fsIndex = mFSCombox->currentIndex();
+        qDebug() <<"index:"<<fsIndex<<"text:"<<mFSCombox->currentText();
+        //set default as 11, match with case 0
+        quint8 maxLength = 11;
+        switch (fsIndex) {
+        case 1:
+            maxLength = 15;
+            break;
+        case 2:
+            maxLength = 20;
+            break;
+        case 3:
+            maxLength = 16;
+            break;
+        default:
+            break;
+        }
+
+        mNameEdit->setMaxLength(maxLength);
+    });
 
     mEraseCkbox = new QCheckBox;
     mEraseCkbox->setText (tr("Completely erase(Time is longer, please confirm!)"));
@@ -90,6 +121,21 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mProgress->setValue (0);
     mProgress->setMaximum(100);
     mainLayout->addWidget(mProgress, 5, 1, 1, 8);
+
+    auto cryptCheckBox = new QCheckBox(this);
+    cryptCheckBox->setText(tr("Set password"));
+    cryptCheckBox->setToolTip(tr("Set password for volume based on LUKS (only ext4)"));
+    cryptCheckBox->setObjectName("cryptCheckBox");
+    mainLayout->addWidget(cryptCheckBox, 6, 1, 1, 4, Qt::AlignLeft);
+
+    connect(mFSCombox, &QComboBox::currentTextChanged, this, [=]{
+        if (mFSCombox->currentText() == "ext4") {
+            cryptCheckBox->setEnabled(true);
+        } else {
+            cryptCheckBox->setChecked(false);
+            cryptCheckBox->setDisabled(true);
+        }
+    });
 
     mCancelBtn = new QPushButton(tr("Cancel"));
     mFormatBtn = new QPushButton(tr("OK"));
@@ -266,6 +312,9 @@ void Format_Dialog::slot_format(bool enable)
     mNameEdit->setReadOnly(true);
     mEraseCkbox->setDisabled(TRUE);
 
+    auto cryptCheckBox = findPasswdCheckBox(this);
+    cryptCheckBox->setDisabled(true);
+
     //init the value
     char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
 
@@ -301,6 +350,8 @@ void Format_Dialog::slot_format(bool enable)
 
 static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
 {
+    qDebug()<<"unmount finished";
+
     int flags = 0;
     GError *err = nullptr;
     Format_Dialog *pthis = (Format_Dialog *)udata;
@@ -350,6 +401,39 @@ static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
 
 void Format_Dialog::acceptFormat(bool)
 {
+    bool setPassword = false;
+    QString password = nullptr;
+    auto cryptCheckBox = findPasswdCheckBox(this);
+inputpasswd:
+    if (cryptCheckBox->isChecked()) {
+        setPassword = true;
+        QInputDialog dlg;
+        dlg.setLabelText(tr("Enter Password:"));
+        dlg.setTextEchoMode(QLineEdit::Password);
+        auto lineEdit = dlg.findChild<QLineEdit *>();
+        lineEdit->setMaxLength(16);
+        if (lineEdit) {
+            QRegExp rx("^[\\S]*$");
+            auto validator = new QRegExpValidator(rx, lineEdit);
+            lineEdit->setValidator(validator);
+        }
+        if (dlg.exec()) {
+            password = dlg.textValue();
+        } else {
+            this->close();
+            return;
+        }
+
+        if (password.length() < 6) {
+            QMessageBox::warning(0, 0, tr("Password too short, please retype a password more than 6 characters"));
+            goto inputpasswd;
+        }
+    }
+
+    this->setProperty("password", password);
+
+    cryptCheckBox->setDisabled(true);
+
     mFormatBtn->setDisabled(true);
     mCancelBtn->setDisabled(true);
 
@@ -404,10 +488,12 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
     UDisksObject *object ;
     UDisksClient *client =udisks_client_new_sync (NULL,NULL);
     object = get_object_from_block_device(client,device_name);
-    GList *jobs;
-    jobs = udisks_client_get_jobs_for_object(client,object);
-    g_clear_object(&client);
-    g_object_unref(object);
+    GList *jobs = NULL;
+    if (object) {
+        jobs = udisks_client_get_jobs_for_object(client,object);
+        g_clear_object(&client);
+        g_object_unref(object);
+    }
     if(jobs!=NULL)
     {
         UDisksJob *job =(UDisksJob *)jobs->data;
@@ -421,7 +507,7 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
                 return res;
         }
 
-    g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
+        g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
         g_list_free (jobs);
     }
 
@@ -512,8 +598,7 @@ void Format_Dialog::volume_disconnect(GVolumeMonitor *vm, GDrive *v, gpointer da
 }
 
 void Format_Dialog::cancel_format(const gchar* device_name){
-
-      this->close();
+    this->close();
 
 //    UDisksObject *object ;
 //    UDisksBlock *block;
@@ -601,8 +686,13 @@ void Format_Dialog::ensure_unused_cb(CreateformatData *data)
 
 static void createformatfree(CreateformatData *data)
 {
-    g_object_unref(data->object);
-    g_object_unref(data->block);
+    g_variant_builder_clear(data->builder);
+    if (data->object) {
+        g_object_unref(data->object);
+    }
+    if (data->block) {
+        g_object_unref(data->block);
+    }
     if(data->drive_object!=NULL)
     {
         g_object_unref(data->drive_object);
@@ -646,6 +736,7 @@ UDisksObject* getObjectFromBlockDevice(UDisksClient* client, const gchar* bdevic
 // format
 void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpointer user_data)
 {
+    qDebug()<<"format cb start";
     static int end_flag = -1;
 
     CreateformatData *data = (CreateformatData *)user_data;
@@ -685,7 +776,9 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
         }
 
         // rename fail
-        if (data->dl->mNameEdit->text ().trimmed () != curName) {
+        // fixme: deal with crypt volume.
+        // fixme: send to device is enabled for crypt volume
+        if (data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
             data->dl->renameOK = false;
         }
 
@@ -706,10 +799,14 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
 
     b_canClose = true;
 
+    data->dl->setProperty("password", QVariant());
     data->dl->mTimer->stop();
     data->dl->close();
 
     createformatfree(data);
+    qDebug()<<"format cb end";
+
+    data->dl->deleteLater();
 };
 
 
@@ -722,6 +819,11 @@ void Format_Dialog::format_ok_dialog()
     }
 
     mCancelBtn->setEnabled(true);
+
+    auto cryptCheckBox = findPasswdCheckBox(this);
+    if (mFSCombox->currentText() == "ext4") {
+        cryptCheckBox->setEnabled(true);
+    }
 }
 
 
@@ -729,6 +831,11 @@ void Format_Dialog::format_err_dialog()
 {
     QMessageBox::warning(this,QObject::tr("qmesg_notify"),QObject::tr("Sorry, the format operation is failed!"));
     mCancelBtn->setEnabled(true);
+
+    auto cryptCheckBox = findPasswdCheckBox(this);
+    if (mFSCombox->currentText() == "ext4") {
+        cryptCheckBox->setEnabled(true);
+    }
 }
 
 bool Format_Dialog::format_makesure_dialog(){
@@ -770,41 +877,46 @@ bool Format_Dialog::format_makesure_dialog(){
  */
 void Format_Dialog::ensure_format_cb (CreateformatData *data){
 
+    qDebug()<<"ensure format cb start";
+    GVariantBuilder *options_builder = data->builder;
 
-    GVariantBuilder options_builder;
-
-    g_variant_builder_init(&options_builder,G_VARIANT_TYPE_VARDICT);
+    g_variant_builder_init(options_builder, G_VARIANT_TYPE ("a{sv}"));
 
     if (g_strcmp0 (data->format_type, "empty") != 0){
-        g_variant_builder_add (&options_builder, "{sv}", "label",
+        g_variant_builder_add (options_builder, "{sv}", "label",
                                g_variant_new_string (data->filesystem_name));
     };
-
-
 
     if (g_strcmp0 (data->format_type, "vfat") != 0 &&
             g_strcmp0 (data->format_type, "ntfs") != 0 &&
             g_strcmp0 (data->format_type, "exfat") != 0) {
-        g_variant_builder_add (&options_builder, "{sv}", "take-ownership",
+        g_variant_builder_add (options_builder, "{sv}", "take-ownership",
                                g_variant_new_boolean (TRUE));
     }
 
+    QString password = data->dl->property("password").toString();
+    if (!password.isEmpty()) {
+        const gchar *passphrase = password.toUtf8().constData();
+        g_variant_builder_add (options_builder, "{sv}", "encrypt.passphrase",
+                               g_variant_new_string(passphrase));
+    }
+
     if (data->erase_type != NULL){
-        g_variant_builder_add (&options_builder, "{sv}", "erase",
+        g_variant_builder_add (options_builder, "{sv}", "erase",
                                g_variant_new_string (data->erase_type));
     }
 
-    g_variant_builder_add (&options_builder, "{sv}", "update-partition-type",
+    g_variant_builder_add (options_builder, "{sv}", "update-partition-type",
                            g_variant_new_boolean (TRUE));
 
     udisks_block_call_format (data->block,
                               data->format_type,
-                              g_variant_builder_end (&options_builder),
+                              g_variant_builder_end (options_builder),
                               NULL,
                               format_cb,
                               data);
 
-
+    qDebug()<<"ensure format cb end";
 };
 
 
@@ -825,12 +937,12 @@ void Format_Dialog::ensure_format_disk(CreateformatData *data){
         g_return_if_fail (data->drive_block);
 
 
-        GVariantBuilder options_builder;
-        g_variant_builder_init(&options_builder,G_VARIANT_TYPE_VARDICT);
+        GVariantBuilder *options_builder = data->builder;
+        g_variant_builder_init(options_builder,G_VARIANT_TYPE_VARDICT);
 
 
         if (g_strcmp0 (data->format_type, "empty") != 0){
-            g_variant_builder_add (&options_builder, "{sv}", "label",
+            g_variant_builder_add (options_builder, "{sv}", "label",
                                    g_variant_new_string (data->filesystem_name));
         };
 
@@ -838,22 +950,22 @@ void Format_Dialog::ensure_format_disk(CreateformatData *data){
         if (g_strcmp0 (data->format_type, "vfat") != 0 &&
                 g_strcmp0 (data->format_type, "ntfs") != 0 &&
                 g_strcmp0 (data->format_type, "exfat") != 0) {
-            g_variant_builder_add (&options_builder, "{sv}", "take-ownership",
+            g_variant_builder_add (options_builder, "{sv}", "take-ownership",
                                    g_variant_new_boolean (TRUE));
         }
 
-
         if (data->erase_type != NULL){
-            g_variant_builder_add (&options_builder, "{sv}", "erase",
+            g_variant_builder_add (options_builder, "{sv}", "erase",
                                    g_variant_new_string (data->erase_type));
         }
 
-        g_variant_builder_add (&options_builder, "{sv}", "update-partition-type",
+        g_variant_builder_add (options_builder, "{sv}", "update-partition-type",
                                g_variant_new_boolean (TRUE));
+
 
         udisks_block_call_format(data->drive_block,
                         data->format_type,
-                        g_variant_builder_end(&options_builder),
+                        g_variant_builder_end(options_builder),
                         NULL,
                         format_cb,
                         data);
@@ -906,6 +1018,7 @@ UDisksObject *Format_Dialog::get_object_from_block_device (UDisksClient *client,
 void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_type,const gchar * erase_type,
                                 const gchar * filesystem_name,int *format_finish){
 
+    qDebug()<<"do format";
     CreateformatData *data;
     data = g_new(CreateformatData,1);
 
@@ -916,6 +1029,10 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
     data->filesystem_name = filesystem_name;
     data->format_finish = format_finish;
 
+    data->builder = g_variant_builder_new(G_VARIANT_TYPE_ARRAY);
+
+    data->object = NULL;
+    data->block = NULL;
     data->drive_object = NULL;
     data->drive_block = NULL;
     data->dl = this;
@@ -928,15 +1045,21 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
 
         ensure_unused_cb(data);
     } else {
+        // 也许是加密分区卸载后device name变更导致，需要先做处理
+
         // fix #103344
         QMessageBox::critical(0, tr("Error"), tr("Block not existed!"));
-        this->close();
+        mTimer->stop();
+        this->cancel_format(data->device_name);
+        createformatfree(data);
+        this->deleteLater();
     }
 }
 
 
 Format_Dialog::~Format_Dialog()
 {
+    g_signal_handlers_disconnect_by_data(mVolumeMonitor, this);
 //    delete ui;
     if (mTimer)             mTimer->deleteLater();
     if (mNameEdit)          mNameEdit->deleteLater();
@@ -953,6 +1076,11 @@ Format_Dialog::~Format_Dialog()
 
 void Format_Dialog::setBtnStatus(bool enable)
 {
+    auto cryptCheckBox = findPasswdCheckBox(this);
+    if (mFSCombox->currentText() == "ext4") {
+        cryptCheckBox->setEnabled(true);
+    }
+
     mFormatBtn->setEnabled(enable);
     mCancelBtn->setEnabled(enable);
 }

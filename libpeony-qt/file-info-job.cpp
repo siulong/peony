@@ -328,7 +328,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         info->m_unix_device_file = g_file_info_get_attribute_string(new_info,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
 
     GIcon *g_icon = g_file_info_get_icon (new_info);
-    if (G_IS_ICON(g_icon)) {
+    if (G_IS_THEMED_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
         if (icon_names) {
             auto p = icon_names;
@@ -347,7 +347,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     //qDebug()<<m_display_name<<m_icon_name;
     GIcon *g_symbolic_icon = g_file_info_get_symbolic_icon (new_info);
-    if (G_IS_ICON(g_symbolic_icon)) {
+    if (G_IS_THEMED_ICON(g_symbolic_icon)) {
         const gchar* const* symbolic_icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_symbolic_icon));
         if (symbolic_icon_names)
             info->m_symbolic_icon_name = QString (*symbolic_icon_names);
@@ -417,6 +417,10 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
        QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
 
        info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+    }
+    if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
+        auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+        info->setProperty("orig-path", origPath);
     }
 
     m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);

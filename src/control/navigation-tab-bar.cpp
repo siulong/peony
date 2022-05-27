@@ -372,10 +372,10 @@ void TabBarStyle::drawComplexControl(QStyle::ComplexControl control, const QStyl
         QPainterPath path;
         path.addEllipse(widget->rect().adjusted(2, 2, -2, -2));
         painter->setClipPath(path);
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        qApp->style()->drawComplexControl(control, option, painter, widget);
         painter->restore();
     } else {
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        qApp->style()->drawComplexControl(control, option, painter, widget);
     }
 }
 
@@ -384,7 +384,7 @@ void TabBarStyle::drawControl(QStyle::ControlElement element, const QStyleOption
     if (widget && widget->objectName() == "previewButtons") {
         return;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -394,9 +394,9 @@ void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOp
     case PE_IndicatorArrowRight: {
         QStyleOption tmp = *option;
         tmp.palette.setColor(QPalette::HighlightedText, qApp->palette().buttonText().color());
-        return QProxyStyle::drawPrimitive(element, &tmp, painter, widget);
+        return qApp->style()->drawPrimitive(element, &tmp, painter, widget);
     }
     default:
-        return QProxyStyle::drawPrimitive(element, option, painter, widget);
+        return qApp->style()->drawPrimitive(element, option, painter, widget);
     }
 }

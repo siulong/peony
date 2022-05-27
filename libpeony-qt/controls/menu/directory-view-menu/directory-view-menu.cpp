@@ -56,7 +56,7 @@
 #include "gerror-wrapper.h"
 
 #include "global-settings.h"
-
+#include "sound-effect.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -507,10 +507,13 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
                     while (l) {
                         auto app_info = static_cast<GAppInfo*>(l->data);
                         if (!isOnlyUnref) {
-                            GThemedIcon *icon = G_THEMED_ICON(g_app_info_get_icon(app_info));
-                            const char * const * icon_names = g_themed_icon_get_names(icon);
-                            if (icon_names)
-                                tmpIcon = QIcon::fromTheme(*icon_names);
+                            GIcon *icon = g_app_info_get_icon(app_info);
+                            QString iconName = FileUtils::getIconStringFromGIcon(icon);
+                            if (iconName.startsWith("/")) {
+                                tmpIcon.addFile(iconName);
+                            } else {
+                                tmpIcon = QIcon::fromTheme(iconName);
+                            }
                             if(!tmpIcon.isNull())
                                 isOnlyUnref = true;
                         }
@@ -611,6 +614,11 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         tmp<<sortTypeMenu->addAction(tr("Modified Date"));
         tmp<<sortTypeMenu->addAction(tr("File Type"));
         tmp<<sortTypeMenu->addAction(tr("File Size"));
+        tmp<<sortTypeMenu->addAction(tr("Orignal Path"));
+
+        if (m_top_window->getCurrentUri() != "trash:///") {
+            tmp.last()->setVisible(false);
+        }
         int sortType = m_view->getSortType();
         if (sortType >= 0) {
             tmp.at(sortType)->setCheckable(true);
@@ -1001,6 +1009,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                                                                           "Once you start a deletion, the files deleting will never be "
                                                                                           "restored again."));
                 if (result == QMessageBox::Yes) {
+                    SoundEffect::getInstance()->recycleBinClearMusic();
                     auto uris = m_top_window->getCurrentAllFileUris();
                     FileOperationUtils::remove(uris);
                 }
@@ -1021,6 +1030,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                                                                           "Once you start a deletion, the files deleting will never be "
                                                                                           "restored again."));
                 if (result == QMessageBox::Yes) {
+                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
                 }
             });

@@ -47,6 +47,11 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     fileSize->setCheckable(true);
     sortTypeGroup->addAction(fileSize);
 
+    auto originalPath = addAction(tr("Original Path"));
+    m_origin_path = originalPath;
+    originalPath->setCheckable(true);
+    sortTypeGroup->addAction(originalPath);
+
     connect(sortTypeGroup, &QActionGroup::triggered, this, [=](QAction *action) {
         int index = sortTypeGroup->actions().indexOf(action);
         switchSortTypeRequest(index);
@@ -82,6 +87,11 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     });
 
     addAction(useGlobalSortAction);
+}
+
+void SortTypeMenu::setOriginPathVisible(bool visible)
+{
+    m_origin_path->setVisible(visible);
 }
 
 void SortTypeMenu::setSortType(int type)

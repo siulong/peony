@@ -87,6 +87,7 @@ Q_SIGNALS:
     void mountRemove(const QString& device);
     void signal_unmountFinished(const QString &uri);/* 卸载完成信号 */
     void signal_mountFinished();/* 挂载完成信号，目前用于侧边栏设备挂载后路径跳转 */
+    void signal_encryptedVolumeMountFinished(const QString &uri);
 };
 
 class Q_DECL_EXPORT Drive{
@@ -155,10 +156,12 @@ public:
     QString icon() const;
     QString uuid() const;
     QString device() const;
+    QString originalDevice() const;
     QString mountPoint() const;
     GVolume* getGVolume() const;
     //property-to-set
     void setLabel(const QString& label);
+    void setDevice(const QString &device);
     void setFromMount(const Mount& mount);//通过Mount求Volume
     void setFromDrive(const Drive& drive);//通过Drive获取Volume
     void setMountPoint(QString point);
@@ -193,6 +196,7 @@ private:
     QString  m_name;
     QString  m_uuid;
     QString  m_icon;
+    QString  m_originalDevice;
     QString  m_device;
     QString  m_mountPoint;
 

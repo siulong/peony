@@ -54,6 +54,8 @@
 #include <gio/gdesktopappinfo.h>
 #include <pwd.h>
 
+#include <QApplication>
+
 #include "file-info-job.h"
 
 using namespace Peony;
@@ -697,7 +699,7 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
         }
     }
     if (element == CE_TabBarTabLabel) {
-        QProxyStyle::drawControl(element, option, painter, widget);
+        qApp->style()->drawControl(element, option, painter, widget);
     }
 }
 

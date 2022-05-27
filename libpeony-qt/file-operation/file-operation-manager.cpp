@@ -45,6 +45,7 @@
 #include "audio-play-manager.h"
 
 #include "properties-window.h"
+#include "sound-effect.h"
 
 #include <QVector4D>
 
@@ -207,7 +208,9 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         questionBox.addButton(tr("No, go to settings"), QMessageBox::ActionRole);
         questionBox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
         auto result = questionBox.exec();
-
+        if(result == QMessageBox::Yes){
+            SoundEffect::getInstance()->recycleBinDeleteMusic();
+        }
         if (result != QMessageBox::Yes) {
             if (result != QMessageBox::No) {
                 // settings

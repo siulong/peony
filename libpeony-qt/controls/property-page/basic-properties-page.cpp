@@ -63,6 +63,8 @@
 #include "file-operation-manager.h"
 #include "open-with-properties-page.h"
 
+#include <QApplication>
+
 using namespace Peony;
 
 static PushButtonStyle *global_instance = nullptr;
@@ -94,7 +96,7 @@ void PushButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOp
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int PushButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
@@ -647,7 +649,7 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
 
     connect(m_countOp, &FileOperation::operationPreparedOne, this, &BasicPropertiesPage::onFileCountOne, Qt::BlockingQueuedConnection);
 
-    connect(m_countOp, &FileCountOperation::countDone, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+    connect(m_countOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
         m_countOp = nullptr;
         m_folderContainFiles = file_count - m_folderContainFolders;
         m_fileSizeCount = total_size;

@@ -32,6 +32,7 @@
 #include <QList>
 #include <QLineEdit>
 #include <QSignalMapper>
+#include <QActionGroup>
 #include "navigation-tab-bar.h"
 #include "file-info.h"
 #include "tab-status-bar.h"
@@ -225,6 +226,7 @@ private:
 
     QAction *m_current_preview_action = nullptr;
     QAction *m_preview_action = nullptr;
+    QActionGroup *m_preview_action_group = nullptr;
 
     QToolBar *m_trash_bar;
     QToolBar *m_search_bar;
