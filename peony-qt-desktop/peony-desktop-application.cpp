@@ -659,10 +659,10 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         if (!isPrimaryScreen(screen)) {
             //task#74174 销毁时保存扩展屏元素的坐标点
             getIconView(screen)->saveExtendItemInfo();
-            getIconView(qApp->primaryScreen())->updateView();
         }
         m_bg_windows.removeOne(window);
         window->deleteLater();
+        relocateIconView();
     });
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
