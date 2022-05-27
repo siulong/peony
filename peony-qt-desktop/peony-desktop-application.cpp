@@ -659,10 +659,10 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         if (!isPrimaryScreen(screen)) {
             //task#74174 销毁时保存扩展屏元素的坐标点
             getIconView(screen)->saveExtendItemInfo();
+            getIconView(qApp->primaryScreen())->updateView();
         }
         m_bg_windows.removeOne(window);
         window->deleteLater();
-        relocateIconView();
     });
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
@@ -689,7 +689,13 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
             }
             getIconView(qApp->primaryScreen())->updateView();
         } else if (2 == mode) {
-            window->getIconView()->resetExtendItemInfo();
+            for (auto bgWindow : m_bg_windows) {
+                if (!isPrimaryScreen(bgWindow->screen())) {
+                    bgWindow->getIconView()->resetExtendItemInfo();
+                    break;
+                }
+            }
+
             for (auto bgWindow : m_bg_windows) {
                 Q_EMIT bgWindow->getIconView()->updateView();
             }
@@ -700,17 +706,18 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     int mode = checkScreenMode(screen->geometry());
     if (2 == mode) {
         window->getIconView()->resetExtendItemInfo();
-    } else if (1 == mode){
+    }
+
+    relocateIconView();
+
+    if (1 == mode){
         for (auto bgWindow : m_bg_windows) {
             if (isPrimaryScreen(bgWindow->screen())) {
                 bgWindow->setCentralWidget(bgWindow->getIconView());
                 KWindowSystem::raiseWindow(bgWindow->winId());
             }
         }
-        return;
     }
-
-    relocateIconView();
 }
 
 void PeonyDesktopApplication::setupDesktop()

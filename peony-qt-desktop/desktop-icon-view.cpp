@@ -2553,7 +2553,7 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
                 QPoint relativePos = QPoint(rect.topLeft().x() - startPos.x(),rect.topLeft().y() - startPos.y());
                 QPoint currentPos = e->pos() + relativePos;
                 int x = currentPos.x()/grid.width()*grid.width()+viewRect.topLeft().x();
-                int y = currentPos.y()/grid.height()*grid.height()+viewRect.topLeft().y();
+                int y = currentPos.y()/grid.height()*grid.height()+7;
                 rect.moveTo(QPoint(x,y));
                 dragItem.insert(index.data(Qt::UserRole).toString(),rect);
             }
