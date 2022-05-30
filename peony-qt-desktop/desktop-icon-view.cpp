@@ -2336,10 +2336,30 @@ QRect DesktopIconView::visualRect(const QModelIndex &index) const
         break;
     }
     rect.moveTo(rect.topLeft() + p);
-
     auto size = itemDelegate()->sizeHint(QStyleOptionViewItem(), index);
     rect.setSize(size);
 
+    return rect;
+}
+QRect DesktopIconView::getViewRect()
+{
+    QRect rect = viewport()->rect();
+    QPoint p(10, 5);
+
+    switch (zoomLevel()) {
+    case Small:
+        p *= 0.8;
+        break;
+    case Large:
+        p *= 1.2;
+        break;
+    case Huge:
+        p *= 1.4;
+        break;
+    default:
+        break;
+    }
+    rect.moveTo(rect.topLeft() + p);
     return rect;
 }
 
@@ -2546,14 +2566,14 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
                 notEmptyRegion += QListView::visualRect(tmp);
             }
             auto grid = this->gridSize();
-            auto viewRect = this->viewport()->rect();
+            QRect viewRect = getViewRect();
             QPoint startPos = view->visualRect(m_drag_indexes[0]).topLeft();
             for (QModelIndex index : m_drag_indexes) {
                 QRect rect = view->visualRect(index);
                 QPoint relativePos = QPoint(rect.topLeft().x() - startPos.x(),rect.topLeft().y() - startPos.y());
                 QPoint currentPos = e->pos() + relativePos;
-                int x = currentPos.x()/grid.width()*grid.width()+viewRect.topLeft().x();
-                int y = currentPos.y()/grid.height()*grid.height()+7;
+                int x = currentPos.x()/grid.width()*grid.width();
+                int y = currentPos.y()/grid.height()*grid.height()+viewRect.topLeft().y();
                 rect.moveTo(QPoint(x,y));
                 dragItem.insert(index.data(Qt::UserRole).toString(),rect);
             }
