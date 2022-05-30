@@ -98,6 +98,7 @@ public:
     int getSortOrder();
 
     QRect visualRect(const QModelIndex &index) const;
+    QRect getViewRect();
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
 
