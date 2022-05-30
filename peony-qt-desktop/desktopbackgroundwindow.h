@@ -3,16 +3,25 @@
 
 #include <QMainWindow>
 #include <QGSettings>
+#include "desktop-icon-view.h"
 
 class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit DesktopBackgroundWindow(QScreen *screen, QWidget *parent = nullptr);
+    ~DesktopBackgroundWindow() override;
 
     int id() const;
 
     QScreen *screen() const;
+    Peony::DesktopIconView *getIconView();
+    void setId(int id);
+
+Q_SIGNALS:
+    void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
+    void setSortType(int sortType);
+    void updateWindow(const QRect &geometry);
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
@@ -37,6 +46,7 @@ private:
     int m_id = -1;
     QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
+    Peony::DesktopIconView *m_desktopIconView = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H

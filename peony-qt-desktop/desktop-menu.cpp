@@ -34,8 +34,6 @@
 #include "file-operation-utils.h"
 #include "file-enumerator.h"
 
-#include "desktop-icon-view.h"
-
 #include "desktop-menu-plugin-manager.h"
 
 #include "global-settings.h"
@@ -355,24 +353,16 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         auto zoomLevel = desktopView->zoomLevel();
 
         auto smallAction = viewTypeSubMenu->addAction(tr("Small"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Small)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Small);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Small);
         });
         auto normalAction = viewTypeSubMenu->addAction(tr("Normal"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Normal)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Normal);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Normal);
         });
         auto largeAction = viewTypeSubMenu->addAction(tr("Large"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Large)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Large);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Large);
         });
         auto hugeAction = viewTypeSubMenu->addAction(tr("Huge"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Huge)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Huge);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Huge);
         });
 
         switch (zoomLevel) {
@@ -421,7 +411,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         for (int i = 0; i < tmp.count(); i++) {
             connect(tmp.at(i), &QAction::triggered, [=]() {
                 qDebug() << "setSortType in menu:" <<i;
-                m_view->setSortType(i);
+                Q_EMIT setSortType(i);
                 GlobalSettings::getInstance()->setValue(LAST_DESKTOP_SORT_ORDER, i);
             });
         }

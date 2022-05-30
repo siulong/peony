@@ -86,6 +86,8 @@ public:
         return "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
 
+    void setId(int id) ;
+
     //selections
     const QStringList getSelections();
 
@@ -96,6 +98,7 @@ public:
     int getSortOrder();
 
     QRect visualRect(const QModelIndex &index) const;
+    QRect getViewRect();
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
 
@@ -104,12 +107,19 @@ public:
     void getAllRestoreInfo();
     void clearAllRestoreInfo();
 
+    DesktopItemProxyModel *getProxyModel();
+
+    void saveExtendItemInfo();
+    void resetExtendItemInfo();
+    void clearItemRect();
+
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);
 
 Q_SIGNALS:
     void zoomLevelChanged(ZoomLevel level);
+    void updateView();
 
 public Q_SLOTS:
     //location
@@ -199,6 +209,8 @@ public Q_SLOTS:
     void setEditFlag(bool edit);
     bool getEditFlag();
 
+    void fileCreated(const QString &uri);
+
 protected:
     int verticalOffset() const override;
     int horizontalOffset() const override;
@@ -233,6 +245,8 @@ protected:
     const QRect getBoundingRect();
 
     void relayoutExsitingItems(const QStringList &uris);
+    void relayoutExsitingItems();
+    void dragToOtherScreen(QDropEvent *e);
 
 private:
     ZoomLevel m_zoom_level = Invalid;
@@ -246,7 +260,7 @@ private:
 
     QStringList m_new_files_to_be_selected;
 
-    bool m_is_refreshing = false;
+   // bool m_is_refreshing = false;
 
     bool m_real_do_edit = false;
 
@@ -260,6 +274,8 @@ private:
 
     bool m_is_edit = false;
 
+    bool m_initialized = false;
+
     QTimer m_refresh_timer;
 
     QModelIndexList m_drag_indexes;
@@ -272,6 +288,8 @@ private:
     QMap<QString, QRect> m_resolution_item_rect;
 
     QPoint m_press_pos;
+
+    int m_id = 0;
 };
 
 }
