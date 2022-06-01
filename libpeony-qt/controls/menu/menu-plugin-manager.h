@@ -64,7 +64,7 @@ public:
         return tr("Create Link Menu Extension.");
     }
     const QIcon icon() override {
-        return QIcon::fromTheme("emblem-symbolic-link");
+        return QIcon::fromTheme("emblem-link-symbolic");
     }
     void setEnable(bool enable) override {
         m_enable = enable;
@@ -98,7 +98,7 @@ public:
         return tr("Tag a File with Menu.");
     }
     const QIcon icon() override {
-        return QIcon::fromTheme("emblem-symbolic-link");
+        return QIcon::fromTheme("emblem-link-symbolic");
     }
     void setEnable(bool enable) override {
         m_enable = enable;
@@ -132,7 +132,7 @@ public:
         return tr("Tag  with Menu.");
     }
     const QIcon icon() override {
-        return QIcon::fromTheme("emblem-symbolic-link");
+        return QIcon::fromTheme("emblem-link-symbolic");
     }
     void setEnable(bool enable) override {
         m_enable = enable;
