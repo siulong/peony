@@ -306,7 +306,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         topLeft.setX(opt.rect.topLeft().x() + 10);
         topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
         auto linkRect = QRect(topLeft, symbolicIconSize);
-        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-symbolic-link");
+        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
         symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
     }
 

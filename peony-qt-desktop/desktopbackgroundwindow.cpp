@@ -7,18 +7,25 @@
 #include <QVariantAnimation>
 #include <QTimeLine>
 #include <KWindowSystem>
+#include <QPlatformSurfaceEvent>
+#include "plasma-shell-manager.h"
 
 static int desktop_window_id = 0;
 static QTimeLine *gTimeLine = nullptr;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
 {
+    connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
+
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);
     }
     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
     setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
+    KWindowSystem::setType(this->winId(), NET::Desktop);
+    KWindowSystem::setState(this->winId(), NET::SkipTaskbar|NET::SkipPager|NET::SkipSwitcher);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -98,6 +105,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
 {
     auto manager = DesktopBackgroundManager::globalInstance();
     if (!manager->getPaintBackground())
+        return;
+
+    if (!m_screen)
         return;
 
     QPainter p(this);
@@ -239,6 +249,43 @@ QScreen *DesktopBackgroundWindow::screen() const
     return m_screen;
 }
 
+void DesktopBackgroundWindow::invaidScreen()
+{
+    m_screen = nullptr;
+}
+
+bool DesktopBackgroundWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::PlatformSurface) {
+        auto e = static_cast<QPlatformSurfaceEvent *>(event);
+        switch (e->surfaceEventType()) {
+        case QPlatformSurfaceEvent::SurfaceCreated: {
+            m_shellSurface = PlasmaShellManager::getInstance()->createSurface(this->windowHandle());
+            if (m_shellSurface) {
+                m_shellSurface->setRole(KWayland::Client::PlasmaShellSurface::Role::Desktop);
+                m_shellSurface->setSkipSwitcher(true);
+                m_shellSurface->setSkipTaskbar(true);
+                // wayland中构造函数的move只能在这里生效
+                if (m_screen) {
+                    m_shellSurface->setPosition(m_screen->geometry().topLeft());
+                }
+            }
+            break;
+        }
+        case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed: {
+            if (m_shellSurface) {
+                m_shellSurface->deleteLater();
+                m_shellSurface = nullptr;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return QMainWindow::event(event);
+}
+
 void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 {
     qInfo()<<"bg window geometry changed"<<screen()->name()<<geometry<<screen()->geometry();
@@ -251,8 +298,14 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 
 void DesktopBackgroundWindow::updateWindowGeometry()
 {
+    if (!m_screen) {
+        return;
+    }
     auto geometry = m_screen->geometry();
     move(geometry.topLeft());
+    if (m_shellSurface) {
+        m_shellSurface->setPosition(geometry.topLeft());
+    }
     setFixedSize(geometry.size());
 
     qInfo()<<"bg window geometry changed slot"<<screen()->name()<<geometry;
@@ -283,6 +336,9 @@ void DesktopBackgroundWindow::setId(int id)
 //获取iconview中图标的相对位置
 QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
 {
+    if (!m_screen) {
+        return pos;
+    }
     QPoint relativePos = pos;
     if (m_screen == QApplication::primaryScreen()) {
         if (m_panelSetting) {
@@ -367,7 +423,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
 
 QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
 {
-    QRect virtualGeometry = m_screen->virtualGeometry();
+    QRect virtualGeometry;
+    if (m_screen) {
+        virtualGeometry = m_screen->virtualGeometry();
+    } else {
+        virtualGeometry = screenGeometry;
+    }
     qreal pixWidth = pixmap.width();
     qreal pixHeight = pixmap.height();
 
@@ -427,6 +488,9 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
         offsetX = (this->rect().width() - realPixmapWidth) / 2;
         sourceSize.setWidth(realPixmapWidth);
     }
+
+    // 规避xcb下闪线的问题
+    sourceSize = sourceSize - QSize(1, 1);
 
     qDebug() << "=========getDestRect sourceSize:" << sourceSize;
     QPoint offsetPoint = this->rect().topLeft();

@@ -153,7 +153,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         //paint symbolic link emblems
         if (isSymbolicLink) {
             emblemPoses.removeOne(3);
-            QIcon icon = QIcon::fromTheme("emblem-symbolic-link");
+            QIcon icon = QIcon::fromTheme("emblem-link-symbolic");
             //qDebug()<<info->symbolicIconName();
             //icon.paint(painter, loc_x, loc_y, size, size);
             //Adjust link emblem to topLeft.link story#8354
