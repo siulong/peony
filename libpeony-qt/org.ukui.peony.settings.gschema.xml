@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.ukui.peony.settings" path="/org/ukui/peony/settings/">
+    <!--General-->
+    <key type="b" name="display-standard-icons">
+      <default>true</default>
+      <summary>display standard icons</summary>
+      <description>Control the display of desktop standard icons</description>
+    </key>
+
+    <key type="b" name="show-trash-dialog">
+      <default>true</default>
+      <summary>show trash dialog</summary>
+      <description>Displays the delete to recycle bin dialog box</description>
+    </key>
+
+    <key type="b" name="show-hidden-file">
+      <default>false</default>
+      <summary>show hide file</summary>
+      <description>show hide files in peony and peony-desktop</description>
+    </key>
+
+    <key type="b" name="use-global-default-sorting">
+      <default>true</default>
+      <summary>default sort policy for peony</summary>
+      <description>true for global, false for directory itself</description>
+    </key>
+
+    <key type="b" name="show-file-extension">
+      <default>true</default>
+      <summary>show file extension</summary>
+      <description>show file extension in peony </description>
+    </key>
+
+    <key type="b" name="send-uris-of-copy-dsps">
+      <default>false</default>
+      <summary>send uris of copy dsps</summary>
+      <description>send src and dest uris of copy dsps files to wps</description>
+    </key>
+
+    <key type="b" name="doc-is-occupied-by-wps">
+      <default>false</default>
+      <summary>doc is occupied by wps</summary>
+      <description>Whether to enable the wps occupied file monitoring function</description>
+    </key>
+
+    <!--directory-view-->
+
+    <!--remote-server-->
+
+  </schema>
+</schemalist>
