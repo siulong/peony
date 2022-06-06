@@ -1,0 +1,312 @@
+From: cibot <chenyue@kylinos.cn>
+Date: Mon, 6 Jun 2022 03:19:24 +0000
+Subject: Merge branch 'yhkylin/v101-wayland' into 'yhkylin/v101'
+
+---
+ .../directory-view/delegate/icon-view-delegate.cpp |  2 +-
+ .../delegate/icon-view-index-widget.cpp            |  2 +-
+ .../directory-view/delegate/list-view-delegate.cpp |  2 +-
+ libpeony-qt/controls/menu/menu-plugin-manager.h    |  6 +-
+ peony-qt-desktop/desktop-icon-view-delegate.cpp    |  2 +-
+ peony-qt-desktop/desktopbackgroundwindow.cpp       | 66 +++++++++++++++++++++-
+ peony-qt-desktop/desktopbackgroundwindow.h         | 11 ++++
+ peony-qt-desktop/plasma-shell-manager.cpp          | 13 +++++
+ peony-qt-desktop/plasma-shell-manager.h            |  2 +
+ 9 files changed, 98 insertions(+), 8 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+index 5eb0768..e6e8699 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+@@ -302,7 +302,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+     //paint symbolic link emblems
+     if (info->isSymbolLink()) {
+         emblemPoses.removeOne(3);
+-        QIcon icon = QIcon::fromTheme("emblem-symbolic-link");
++        QIcon icon = QIcon::fromTheme("emblem-link-symbolic");
+         //qDebug()<<info->symbolicIconName();
+         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+         //Adjust link emblem to topLeft.link story#8354
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+index f9b14ef..0314fb0 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+@@ -298,7 +298,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+     //paint symbolic link emblems
+     if (info->isSymbolLink()) {
+         emblemPoses.removeOne(3);
+-        QIcon icon = QIcon::fromTheme("emblem-symbolic-link");
++        QIcon icon = QIcon::fromTheme("emblem-link-symbolic");
+         //qDebug()<< "symbolic:" << info->symbolicIconName();
+         //icon.paint(&p, this->width() - 30, 10, 20, 20, Qt::AlignCenter);
+         //Adjust link emblem to topLeft.link story#8354
+diff --git a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+index 5318c86..4900cef 100644
+--- a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+@@ -153,7 +153,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+         //paint symbolic link emblems
+         if (isSymbolicLink) {
+             emblemPoses.removeOne(3);
+-            QIcon icon = QIcon::fromTheme("emblem-symbolic-link");
++            QIcon icon = QIcon::fromTheme("emblem-link-symbolic");
+             //qDebug()<<info->symbolicIconName();
+             //icon.paint(painter, loc_x, loc_y, size, size);
+             //Adjust link emblem to topLeft.link story#8354
+diff --git a/libpeony-qt/controls/menu/menu-plugin-manager.h b/libpeony-qt/controls/menu/menu-plugin-manager.h
+index 68d2b19..37a37de 100644
+--- a/libpeony-qt/controls/menu/menu-plugin-manager.h
++++ b/libpeony-qt/controls/menu/menu-plugin-manager.h
+@@ -64,7 +64,7 @@ public:
+         return tr("Create Link Menu Extension.");
+     }
+     const QIcon icon() override {
+-        return QIcon::fromTheme("emblem-symbolic-link");
++        return QIcon::fromTheme("emblem-link-symbolic");
+     }
+     void setEnable(bool enable) override {
+         m_enable = enable;
+@@ -98,7 +98,7 @@ public:
+         return tr("Tag a File with Menu.");
+     }
+     const QIcon icon() override {
+-        return QIcon::fromTheme("emblem-symbolic-link");
++        return QIcon::fromTheme("emblem-link-symbolic");
+     }
+     void setEnable(bool enable) override {
+         m_enable = enable;
+@@ -132,7 +132,7 @@ public:
+         return tr("Tag  with Menu.");
+     }
+     const QIcon icon() override {
+-        return QIcon::fromTheme("emblem-symbolic-link");
++        return QIcon::fromTheme("emblem-link-symbolic");
+     }
+     void setEnable(bool enable) override {
+         m_enable = enable;
+diff --git a/peony-qt-desktop/desktop-icon-view-delegate.cpp b/peony-qt-desktop/desktop-icon-view-delegate.cpp
+index c235142..4563492 100644
+--- a/peony-qt-desktop/desktop-icon-view-delegate.cpp
++++ b/peony-qt-desktop/desktop-icon-view-delegate.cpp
+@@ -306,7 +306,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
+         topLeft.setX(opt.rect.topLeft().x() + 10);
+         topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
+         auto linkRect = QRect(topLeft, symbolicIconSize);
+-        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-symbolic-link");
++        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
+         symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+     }
+ 
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index 81afa18..bdaf1b0 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -7,18 +7,25 @@
+ #include <QVariantAnimation>
+ #include <QTimeLine>
+ #include <KWindowSystem>
++#include <QPlatformSurfaceEvent>
++#include "plasma-shell-manager.h"
+ 
+ static int desktop_window_id = 0;
+ static QTimeLine *gTimeLine = nullptr;
+ 
+ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
+ {
++    connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
++
+     if (!gTimeLine) {
+         gTimeLine = new QTimeLine(100);
+     }
+     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
+     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
+     setAttribute(Qt::WA_TranslucentBackground);
++    setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
++    KWindowSystem::setType(this->winId(), NET::Desktop);
++    KWindowSystem::setState(this->winId(), NET::SkipTaskbar|NET::SkipPager|NET::SkipSwitcher);
+ 
+     setContextMenuPolicy(Qt::CustomContextMenu);
+ 
+@@ -100,6 +107,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+     if (!manager->getPaintBackground())
+         return;
+ 
++    if (!m_screen)
++        return;
++
+     QPainter p(this);
+     if (manager->getUsePureColor()) {
+         p.fillRect(this->rect(), manager->getColor());
+@@ -239,6 +249,43 @@ QScreen *DesktopBackgroundWindow::screen() const
+     return m_screen;
+ }
+ 
++void DesktopBackgroundWindow::invaidScreen()
++{
++    m_screen = nullptr;
++}
++
++bool DesktopBackgroundWindow::event(QEvent *event)
++{
++    if (event->type() == QEvent::PlatformSurface) {
++        auto e = static_cast<QPlatformSurfaceEvent *>(event);
++        switch (e->surfaceEventType()) {
++        case QPlatformSurfaceEvent::SurfaceCreated: {
++            m_shellSurface = PlasmaShellManager::getInstance()->createSurface(this->windowHandle());
++            if (m_shellSurface) {
++                m_shellSurface->setRole(KWayland::Client::PlasmaShellSurface::Role::Desktop);
++                m_shellSurface->setSkipSwitcher(true);
++                m_shellSurface->setSkipTaskbar(true);
++                // wayland中构造函数的move只能在这里生效
++                if (m_screen) {
++                    m_shellSurface->setPosition(m_screen->geometry().topLeft());
++                }
++            }
++            break;
++        }
++        case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed: {
++            if (m_shellSurface) {
++                m_shellSurface->deleteLater();
++                m_shellSurface = nullptr;
++            }
++            break;
++        }
++        default:
++            break;
++        }
++    }
++    return QMainWindow::event(event);
++}
++
+ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
+ {
+     qInfo()<<"bg window geometry changed"<<screen()->name()<<geometry<<screen()->geometry();
+@@ -251,8 +298,14 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
+ 
+ void DesktopBackgroundWindow::updateWindowGeometry()
+ {
++    if (!m_screen) {
++        return;
++    }
+     auto geometry = m_screen->geometry();
+     move(geometry.topLeft());
++    if (m_shellSurface) {
++        m_shellSurface->setPosition(geometry.topLeft());
++    }
+     setFixedSize(geometry.size());
+ 
+     qInfo()<<"bg window geometry changed slot"<<screen()->name()<<geometry;
+@@ -283,6 +336,9 @@ void DesktopBackgroundWindow::setId(int id)
+ //获取iconview中图标的相对位置
+ QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
+ {
++    if (!m_screen) {
++        return pos;
++    }
+     QPoint relativePos = pos;
+     if (m_screen == QApplication::primaryScreen()) {
+         if (m_panelSetting) {
+@@ -367,7 +423,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
+ 
+ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
+ {
+-    QRect virtualGeometry = m_screen->virtualGeometry();
++    QRect virtualGeometry;
++    if (m_screen) {
++        virtualGeometry = m_screen->virtualGeometry();
++    } else {
++        virtualGeometry = screenGeometry;
++    }
+     qreal pixWidth = pixmap.width();
+     qreal pixHeight = pixmap.height();
+ 
+@@ -428,6 +489,9 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
+         sourceSize.setWidth(realPixmapWidth);
+     }
+ 
++    // 规避xcb下闪线的问题
++    sourceSize = sourceSize - QSize(1, 1);
++
+     qDebug() << "=========getDestRect sourceSize:" << sourceSize;
+     QPoint offsetPoint = this->rect().topLeft();
+     offsetPoint += QPoint(offsetX, offsetY);
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.h b/peony-qt-desktop/desktopbackgroundwindow.h
+index 80b5e2e..a86de7b 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.h
++++ b/peony-qt-desktop/desktopbackgroundwindow.h
+@@ -5,6 +5,12 @@
+ #include <QGSettings>
+ #include "desktop-icon-view.h"
+ 
++namespace KWayland {
++namespace Client {
++class PlasmaShellSurface;
++}
++}
++
+ class DesktopBackgroundWindow : public QMainWindow
+ {
+     Q_OBJECT
+@@ -18,6 +24,8 @@ public:
+     Peony::DesktopIconView *getIconView();
+     void setId(int id);
+ 
++    bool event(QEvent *event) override;
++
+ Q_SIGNALS:
+     void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
+     void setSortType(int sortType);
+@@ -25,6 +33,7 @@ Q_SIGNALS:
+ 
+ public Q_SLOTS:
+     void setWindowGeometry(const QRect &geometry);
++    void invaidScreen();
+ 
+ protected Q_SLOTS:
+     void updateWindowGeometry();
+@@ -47,6 +56,8 @@ private:
+     QScreen *m_screen = nullptr;
+     QGSettings *m_panelSetting = nullptr;
+     Peony::DesktopIconView *m_desktopIconView = nullptr;
++
++    KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
+ };
+ 
+ #endif // DESKTOPBACKGROUNDWINDOW_H
+diff --git a/peony-qt-desktop/plasma-shell-manager.cpp b/peony-qt-desktop/plasma-shell-manager.cpp
+index 61fd279..ef5e361 100644
+--- a/peony-qt-desktop/plasma-shell-manager.cpp
++++ b/peony-qt-desktop/plasma-shell-manager.cpp
+@@ -79,6 +79,19 @@ bool PlasmaShellManager::supportPlasmaShell()
+     return m_shell;
+ }
+ 
++KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow *window)
++{
++    if (!supportPlasmaShell())
++        return nullptr;
++
++    auto surface = KWayland::Client::Surface::fromWindow(window);
++    if (!surface)
++        return nullptr;
++
++    auto plasmaShellSurface = m_shell->createSurface(surface, window);
++    return plasmaShellSurface;
++}
++
+ PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
+ {
+     if (QX11Info::isPlatformX11() || QString(qgetenv("QT_QPA_PLATFORM")) != "wayland" || !QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland"))
+diff --git a/peony-qt-desktop/plasma-shell-manager.h b/peony-qt-desktop/plasma-shell-manager.h
+index 01bc364..7597310 100644
+--- a/peony-qt-desktop/plasma-shell-manager.h
++++ b/peony-qt-desktop/plasma-shell-manager.h
+@@ -37,6 +37,8 @@ public:
+     bool setPos(QWindow *window, const QPoint &pos);
+     bool supportPlasmaShell();
+ 
++    KWayland::Client::PlasmaShellSurface *createSurface(QWindow *window);
++
+ private:
+     explicit PlasmaShellManager(QObject *parent = nullptr);
+ 

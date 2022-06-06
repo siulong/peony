@@ -1,0 +1,57 @@
+From: cibot <chenyue@kylinos.cn>
+Date: Mon, 6 Jun 2022 06:28:10 +0000
+Subject: =?utf-8?b?5Y676Zmka2Y155qE6aKd5aSW5pS55Yqo6LCD55So?=
+
+---
+ libpeony-qt/file-launcher/file-launch-action.cpp | 6 +++---
+ peony-qt-desktop/desktop-icon-view.cpp           | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/libpeony-qt/file-launcher/file-launch-action.cpp b/libpeony-qt/file-launcher/file-launch-action.cpp
+index 05d66f4..8b181c9 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.cpp
++++ b/libpeony-qt/file-launcher/file-launch-action.cpp
+@@ -207,7 +207,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
+ 
+     KStartupInfoData data;
+     data.addPid(pid);
+-    data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
++    //data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
+ 
+     KStartupInfo::sendChange(*startInfoId, data);
+     KStartupInfo::resetStartupEnv();
+@@ -335,8 +335,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
+     float scale = qApp->devicePixelRatio();
+     QRect rect = fileInfo.get()->property("iconGeometry").toRect();
+     rect.moveTo(rect.x() * scale, rect.y() * scale);
+-    if (rect.isValid())
+-        data.setIconGeometry(rect);
++//    if (rect.isValid())
++//        data.setIconGeometry(rect);
+     data.setLaunchedBy(getpid());
+ 
+     KStartupInfo::sendStartup(*startInfoId, data);
+diff --git a/peony-qt-desktop/desktop-icon-view.cpp b/peony-qt-desktop/desktop-icon-view.cpp
+index 85d2546..eea0ef2 100644
+--- a/peony-qt-desktop/desktop-icon-view.cpp
++++ b/peony-qt-desktop/desktop-icon-view.cpp
+@@ -992,8 +992,8 @@ void DesktopIconView::openFileByUri(QString uri)
+             data.setHostname();
+             data.addPid(pid);
+             QRect rect = info.get()->property("iconGeometry").toRect();
+-            if (rect.isValid())
+-                data.setIconGeometry(rect);
++//            if (rect.isValid())
++//                data.setIconGeometry(rect);
+             data.setLaunchedBy(getpid());
+             KStartupInfo::sendStartup(startInfoId, data);
+ #else
+@@ -2480,7 +2480,7 @@ bool DesktopIconView::execSharedFileLink(const QString uri)
+                     data.addPid(pid);
+                     QRect rect = info.get()->property("iconGeometry").toRect();
+                     if (rect.isValid()) {
+-                        data.setIconGeometry(rect);
++//                        data.setIconGeometry(rect);
+                     }
+                     data.setLaunchedBy(getpid());
+                     KStartupInfo::sendStartup(startInfoId, data);
