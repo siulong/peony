@@ -177,6 +177,9 @@ void LocationBar::setRootUri(const QString &uri)
         if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
             m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
         }
+        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
+            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
+        }
         tmpUri = FileUtils::getParentUri(tmpUri);
     }
 
