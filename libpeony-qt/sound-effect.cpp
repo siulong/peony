@@ -67,7 +67,7 @@ QList<char *> SoundEffect::listExistsPath()
 
 void SoundEffect::playAlertSound(QString gsettingStr)
 {
-    gint retval;
+    gint retval = -1;
     const gchar *desc = "Alert Sound";
     QString filenameStr;
     QList<char *> existsPath = this->listExistsPath();
