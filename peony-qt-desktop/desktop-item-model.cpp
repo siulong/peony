@@ -161,7 +161,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             auto metaInfoPos = view->getFileMetaInfoPos(uri);
             if (metaInfoPos.x() >= 0) {
                 // check if overlapped, it might happend whild drag out and in desktop view.
-                auto indexRect = QRect(metaInfoPos, itemRectHash.values().first().size());
+                auto indexRect = QRect(metaInfoPos, itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
                 if (notEmptyRegion.intersects(indexRect)) {
 
                     // move index to closest empty grid.
