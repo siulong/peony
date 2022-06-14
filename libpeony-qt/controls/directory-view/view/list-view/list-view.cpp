@@ -649,7 +649,8 @@ void ListView::slotRename()
     if (getDirectoryUri().startsWith("trash://")
         || getDirectoryUri().startsWith("recent://")
         || getDirectoryUri().startsWith("favorite://")
-        || getDirectoryUri().startsWith("search://"))
+        || getDirectoryUri().startsWith("search://")
+        || getDirectoryUri().startsWith("network://"))
         return;
 
     //standardPaths not allow rename
