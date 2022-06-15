@@ -1988,6 +1988,8 @@ void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
 
 void DesktopIconView::dropEvent(QDropEvent *e)
 {
+    // fix #122768, dirty region issues.
+    this->viewport()->update();
     m_model->clearFloatItems();
     m_real_do_edit = false;
     //qDebug()<<"drop event";
