@@ -366,6 +366,11 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
 
     QTreeView::mouseMoveEvent(e);
 
+    // fix #115124, drag selection can not trigger auto scroll in view.
+    if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
+        doAutoScroll();
+    }
+
     if (e->buttons() & Qt::LeftButton) {
         auto pos = e->pos();
         auto offset = QPoint(horizontalOffset(), verticalOffset());

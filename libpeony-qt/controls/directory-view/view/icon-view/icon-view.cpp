@@ -335,6 +335,11 @@ void IconView::mouseMoveEvent(QMouseEvent *e)
         return;
     }
     QListView::mouseMoveEvent(e);
+
+    // fix #115124, drag selection can not trigger auto scroll in view.
+    if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
+        doAutoScroll();
+    }
 }
 
 void IconView::mousePressEvent(QMouseEvent *e)
