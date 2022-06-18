@@ -1,3 +1,9 @@
+peony (3.14.4.5-ok3) yangtze; urgency=medium
+
+  * 修复错误的编译依赖
+
+ -- Yue Lan <lanyue@kylinos.cn>  Sat, 18 Jun 2022 14:52:38 +0800
+
 peony (3.14.4.5-ok2) yangtze; urgency=medium
 
   * 增加平板桌面切换功能
