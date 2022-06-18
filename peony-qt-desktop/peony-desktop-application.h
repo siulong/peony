@@ -82,6 +82,8 @@ public Q_SLOTS:
     void addBgWindow(QScreen *screen);
     void relocateIconView();
 
+    void onTabletModeChanged(bool mode);
+
 private:
     void setupDesktop();
     void setupBgAndDesktop();

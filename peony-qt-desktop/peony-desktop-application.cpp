@@ -61,6 +61,7 @@
 #include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QDBusReply>
+#include <QDBusInterface>
 #include <QDesktopServices>
 
 #include <QScreen>
@@ -74,11 +75,14 @@
 
 #define DESKTOP_MEDIA_HANDLE "org.gnome.desktop.media-handling"
 
+#define DBUS_STATUS_MANAGER_IF "com.kylin.statusmanager.interface"
+
 static bool has_desktop = false;
 static bool has_daemon = false;
 static bool has_background = false;
 static QRect max_size = QRect(0, 0, 0, 0);
 static Peony::DesktopItemModel *desktop_model = nullptr;
+static QDBusInterface *g_statusManagerDBus = nullptr;
 
 /*!
  * \brief virtualDesktopWindow
@@ -441,10 +445,16 @@ void PeonyDesktopApplication::relocateIconView()
 
     for (auto window : m_bg_windows) {
         Q_EMIT window->getIconView()->updateView();
-        window->setCentralWidget(window->getIconView());
+        window->setCentralWidget1();
         KWindowSystem::raiseWindow(window->winId());
     }
 
+}
+
+void PeonyDesktopApplication::onTabletModeChanged(bool mode)
+{
+    qApp->setProperty("isTabletMode", mode);
+    relocateIconView();
 }
 
 void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
@@ -713,7 +723,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     if (1 == mode){
         for (auto bgWindow : m_bg_windows) {
             if (isPrimaryScreen(bgWindow->screen())) {
-                bgWindow->setCentralWidget(bgWindow->getIconView());
+                bgWindow->setCentralWidget1();
                 KWindowSystem::raiseWindow(bgWindow->winId());
             }
         }
@@ -722,6 +732,21 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
 
 void PeonyDesktopApplication::setupDesktop()
 {
+    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.statusmanager.interface")).isConnected())
+    {
+        if (!g_statusManagerDBus) {
+            g_statusManagerDBus = new QDBusInterface(DBUS_STATUS_MANAGER_IF, "/" ,DBUS_STATUS_MANAGER_IF,QDBusConnection::sessionBus(),this);
+        }
+        bool isTabletMode = false;
+        QDBusReply<bool> message_a = g_statusManagerDBus->call("get_current_tabletmode");
+        if (message_a.isValid()) {
+            isTabletMode = message_a.value();
+        }
+        setProperty("isTabletMode", isTabletMode);
+
+        connect(g_statusManagerDBus, SIGNAL(mode_change_signal(bool)), this, SLOT(onTabletModeChanged(bool)));
+    }
+
     DesktopBackgroundManager::globalInstance();
     for (auto screen : qApp->screens()) {
         addBgWindow(screen);

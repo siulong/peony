@@ -63,6 +63,10 @@ public:
         m_filter_box->setCurrentIndex(0);
     }
 
+    void setSearchBoxHeight(qint32 height) {
+        m_search_box->setFixedHeight(height);
+    }
+
 Q_SIGNALS:
     void returnPressed();
     void filterUpdate(const int &index);

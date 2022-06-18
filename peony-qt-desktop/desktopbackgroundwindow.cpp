@@ -1,3 +1,25 @@
+/*
+ * Peony-Qt
+ *
+ * Copyright (C) 2022, KylinSoft Co., Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yue Lan <lanyue@kylinos.cn>
+ *
+ */
+
 #include "desktopbackgroundwindow.h"
 #include "desktop-background-manager.h"
 #include "peony-desktop-application.h"
@@ -10,8 +32,30 @@
 #include <QPlatformSurfaceEvent>
 #include "plasma-shell-manager.h"
 
+#include "tablet-desktop/tabletdesktop.h"
+
 static int desktop_window_id = 0;
 static QTimeLine *gTimeLine = nullptr;
+
+static TabletDesktop *gSpecialWidget = nullptr;
+
+QWidget *getSpecialWidget() {
+    if (!gSpecialWidget) {
+        gSpecialWidget = new TabletDesktop;
+        //auto view = new QQuickView(QUrl("/usr/share/ukui/tablet/contents/ui/main.qml"));
+        //gSpecialWidget->setAttribute(Qt::WA_TranslucentBackground);
+        gSpecialWidget->connect(qApp, &QApplication::primaryScreenChanged, gSpecialWidget, []{
+            auto rect = qApp->primaryScreen()->geometry();
+            rect.moveTo(0, 0);
+            gSpecialWidget->setGeometry(rect);
+        });
+        auto rect = qApp->primaryScreen()->geometry();
+        rect.moveTo(0, 0);
+        gSpecialWidget->setGeometry(rect);
+        gSpecialWidget->showTabletDesktop();
+    }
+    return gSpecialWidget;
+}
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
 {
@@ -47,6 +91,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
     }
 
     connect(this, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos){
+        if (centralWidget() != m_desktopIconView)
+            return;
         QPoint relativePos = getRelativePos(pos);
         qInfo()<<pos;
         // fix #115384, context menu key issue
@@ -99,6 +145,9 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 DesktopBackgroundWindow::~DesktopBackgroundWindow()
 {
    --desktop_window_id;
+    if (!m_desktopIconView->parent()) {
+        m_desktopIconView->deleteLater();
+    }
 }
 
 void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
@@ -252,6 +301,24 @@ QScreen *DesktopBackgroundWindow::screen() const
 void DesktopBackgroundWindow::invaidScreen()
 {
     m_screen = nullptr;
+}
+
+void DesktopBackgroundWindow::setCentralWidget1()
+{
+    if (centralWidget()) {
+        takeCentralWidget();
+    }
+
+    if (qApp->property("isTabletMode").toBool()) {
+        if (m_screen != qApp->primaryScreen()) {
+            setCentralWidget(nullptr);
+        } else {
+            setCentralWidget(getSpecialWidget());
+        }
+    } else {
+        setCentralWidget(m_desktopIconView);
+        m_desktopIconView->resolutionChange();
+    }
 }
 
 bool DesktopBackgroundWindow::event(QEvent *event)
