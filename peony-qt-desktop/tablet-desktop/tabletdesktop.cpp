@@ -1,11 +1,24 @@
 #include "tabletdesktop.h"
 #include <QQuickItem>
 
+#include <QApplication>
+#include <QScreen>
+
 TabletDesktop::TabletDesktop(QWidget *parent)
     : QQuickWidget(parent)
 {
     setProperty("useWindowManagerStyle", false);
     setSource(QUrl(kQmlUrl));
+
+    this->connect(qApp, &QApplication::primaryScreenChanged, this, [=]{
+        auto rect = qApp->primaryScreen()->geometry();
+        rect.moveTo(0, 0);
+        this->setGeometry(rect);
+    });
+    auto rect = qApp->primaryScreen()->geometry();
+    rect.moveTo(0, 0);
+    this->setGeometry(rect);
+    this->showTabletDesktop();
 }
 
 void TabletDesktop::setGeometry(const QRect &rect)

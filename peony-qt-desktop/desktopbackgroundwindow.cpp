@@ -313,7 +313,7 @@ void DesktopBackgroundWindow::setCentralWidget1()
         if (m_screen != qApp->primaryScreen()) {
             setCentralWidget(nullptr);
         } else {
-            setCentralWidget(getSpecialWidget());
+            setCentralWidget(new TabletDesktop);
         }
     } else {
         setCentralWidget(m_desktopIconView);
