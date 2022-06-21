@@ -24,9 +24,14 @@
 #include "metadata-emblem-provider.h"
 
 #include "file-info.h"
+#include "emblem-job.h"
 
 #include <QTimer>
 #include <QtConcurrent>
+#include <QThreadPool>
+#include <QRunnable>
+
+#define QUERY_BATCH 500
 
 using namespace Peony;
 
@@ -100,11 +105,18 @@ void EmblemProviderManager::queryAsync(const QString &uri)
 {
     m_mutex.lock();
     m_queryQueue.append(uri);
+    int currentCount = m_queryQueue.count();
     m_mutex.unlock();
-    if (!m_timer->isActive()) {
-        m_timer->start();
+    // 避免出现queue过长的情况
+    if (currentCount >= QUERY_BATCH) {
+        m_timer->stop();
+        queryInternal();
     } else {
-        // waiting for next queue.
+        if (!m_timer->isActive()) {
+            m_timer->start();
+        } else {
+            // waiting for next queue.
+        }
     }
 }
 
@@ -130,26 +142,15 @@ EmblemProviderManager::EmblemProviderManager(QObject *parent)
 void EmblemProviderManager::queryInternal()
 {
     m_mutex.lock();
-    QStringList tmp = m_queryQueue;
+    bool isEmpty = m_queryQueue.isEmpty();
     m_mutex.unlock();
-    if (tmp.isEmpty()) {
+    if (isEmpty) {
         return;
     }
 
-    QtConcurrent::run([=]{
-        QStringList tmp2 = tmp;
-        tmp2.removeDuplicates();
-        for (auto uri : tmp2) {
-            m_mutex.lock();
-            bool notCancelled = m_queryQueue.contains(uri);
-            // avoid query again
-            m_queryQueue.removeAll(uri);
-            m_mutex.unlock();
-            if (notCancelled) {
-                querySync(uri);
-            }
-        }
-
-        queueQueryFinished();
-    });
+    m_mutex.lock();
+    // 由于构造job时使用了swap，需要把此操作互斥
+    auto job = new EmblemJob(m_queryQueue, this);
+    m_mutex.unlock();
+    QThreadPool::globalInstance()->start(job);
 }
