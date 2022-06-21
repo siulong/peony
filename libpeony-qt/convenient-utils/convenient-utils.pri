@@ -1,4 +1,7 @@
 INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/disc
+
+include(disc/disc.pri)
 
 HEADERS += \
     $$PWD/audio-play-manager.h \
