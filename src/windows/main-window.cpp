@@ -1553,9 +1553,9 @@ void MainWindow::initUI(const QString &uri)
         this->m_uris_to_edit.clear();
     });
 
-    connect(m_tab, &TabWidget::menuRequest, this, [=]() {
-        Peony::DirectoryViewMenu menu(this);
-        menu.exec(QCursor::pos());
+    connect(m_tab, &TabWidget::menuRequest, this, [=](const QPoint &pos) {
+        Peony::DirectoryViewMenu menu(this, this);
+        menu.exec(pos);
         m_uris_to_edit = menu.urisToEdit();
     });
 

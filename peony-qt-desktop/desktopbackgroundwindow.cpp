@@ -108,7 +108,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
         QTimer::singleShot(1, [=]() {
            //task#74174  扩展屏设置菜单
-            DesktopMenu menu(m_desktopIconView);
+            DesktopMenu menu(m_desktopIconView, this);
             connect(&menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
             connect(&menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
 
@@ -130,7 +130,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
                 if (screen->geometry().contains(relativePos));
                 //menu.windowHandle()->setScreen(screen);
             }
-            menu.exec(QCursor::pos());
+            menu.exec(mapToGlobal(pos));
             auto urisToEdit = menu.urisToEdit();
             if (urisToEdit.count() == 1) {
                 QTimer::singleShot(

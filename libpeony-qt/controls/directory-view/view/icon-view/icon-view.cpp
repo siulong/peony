@@ -854,7 +854,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         //selection if menu request at blank pos.
         QTimer::singleShot(isDragSelecting? 300: 1, this, [=]() {
             m_view->setIgnore_mouse_move_event(false);
-            Q_EMIT this->menuRequest(QCursor::pos());
+            Q_EMIT this->menuRequest(mapToGlobal(pos));
         });
     });
 
