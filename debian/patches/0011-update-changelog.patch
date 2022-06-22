@@ -1,0 +1,76 @@
+From: cckylin-cibot <cckylin-cibot@kylinos.cn>
+Date: Wed, 22 Jun 2022 05:42:35 +0000
+Subject: update changelog.
+
+---
+ libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp | 2 +-
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 2 +-
+ peony-qt-desktop/desktopbackgroundwindow.cpp                     | 4 ++--
+ src/windows/main-window.cpp                                      | 6 +++---
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+index a21217f..9f00cd9 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+@@ -854,7 +854,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+         //selection if menu request at blank pos.
+         QTimer::singleShot(isDragSelecting? 300: 1, this, [=]() {
+             m_view->setIgnore_mouse_move_event(false);
+-            Q_EMIT this->menuRequest(QCursor::pos());
++            Q_EMIT this->menuRequest(mapToGlobal(pos));
+         });
+     });
+ 
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 78f23ce..6acb3f7 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -992,7 +992,7 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+         //NOTE: we have to ensure that we have cleared the
+         //selection if menu request at blank pos.
+         QTimer::singleShot(1, [=]() {
+-            Q_EMIT this->menuRequest(QCursor::pos());
++            Q_EMIT this->menuRequest(mapToGlobal(pos));
+         });
+     });
+ 
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index 8b25556..d7ee14c 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -108,7 +108,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
+ 
+         QTimer::singleShot(1, [=]() {
+            //task#74174  扩展屏设置菜单
+-            DesktopMenu menu(m_desktopIconView);
++            DesktopMenu menu(m_desktopIconView, this);
+             connect(&menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
+             connect(&menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
+ 
+@@ -130,7 +130,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
+                 if (screen->geometry().contains(relativePos));
+                 //menu.windowHandle()->setScreen(screen);
+             }
+-            menu.exec(QCursor::pos());
++            menu.exec(mapToGlobal(pos));
+             auto urisToEdit = menu.urisToEdit();
+             if (urisToEdit.count() == 1) {
+                 QTimer::singleShot(
+diff --git a/src/windows/main-window.cpp b/src/windows/main-window.cpp
+index 07a4538..cf6c5fc 100644
+--- a/src/windows/main-window.cpp
++++ b/src/windows/main-window.cpp
+@@ -1553,9 +1553,9 @@ void MainWindow::initUI(const QString &uri)
+         this->m_uris_to_edit.clear();
+     });
+ 
+-    connect(m_tab, &TabWidget::menuRequest, this, [=]() {
+-        Peony::DirectoryViewMenu menu(this);
+-        menu.exec(QCursor::pos());
++    connect(m_tab, &TabWidget::menuRequest, this, [=](const QPoint &pos) {
++        Peony::DirectoryViewMenu menu(this, this);
++        menu.exec(pos);
+         m_uris_to_edit = menu.urisToEdit();
+     });
+ 
