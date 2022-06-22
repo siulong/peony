@@ -1,3 +1,9 @@
+peony (3.14.4.5-ok5) yangtze; urgency=medium
+
+  * 修复弹出菜单有概率带标题栏的问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
+
 peony (3.14.4.5-ok4) yangtze; urgency=medium
 
   * 规避第二次切换平板桌面时无法使用和黑屏的问题
