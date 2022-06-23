@@ -488,6 +488,7 @@ QMimeData *FileItemModel::mimeData(const QModelIndexList &indexes) const
     //set urls data URLs correspond to the MIME type text/uri-list.
     QList<QUrl> urls;
     QStringList uris;
+    QStringList encodedUris;
     for (auto index : indexes) {
         auto item = itemFromIndex(index);
         auto uri = item->m_info->uri();
@@ -497,11 +498,14 @@ QMimeData *FileItemModel::mimeData(const QModelIndexList &indexes) const
 
             urls << url;
             uris << uri;
+            auto encodeUri = Peony::FileUtils::urlEncode(uri);
+            encodedUris<<encodeUri;
         }
     }
     data->setUrls(urls);
     auto string = uris.join(" ");
-    data->setData("peony-qt/encoded-uris", string.toUtf8());
+    auto encodedString = encodedUris.join(" ");
+    data->setData("peony-qt/encoded-uris", encodedString.toUtf8());
     data->setText(string);
     return data;
 }
@@ -569,7 +573,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     QStringList srcUris;
     if (data->hasFormat("peony-qt/encoded-uris")) {
-        srcUris = data->text().split(" ");
+        srcUris = QString(data->data("peony-qt/encoded-uris")).split(" ");
         for (QString uri : srcUris) {
             if (uri.startsWith("recent://"))
                 srcUris.removeOne(uri);

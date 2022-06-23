@@ -813,7 +813,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     QStringList srcUris;
     if (data->hasFormat("peony-qt/encoded-uris")) {
-        srcUris = data->text().split(" ");
+        srcUris = QString(data->data("peony-qt/encoded-uris")).split(" ");
         for (QString uri : srcUris) {
             if (uri.startsWith("recent://"))
                 srcUris.removeOne(uri);
