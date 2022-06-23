@@ -27,19 +27,23 @@
 #include "file-info-job.h"
 #include "file-operation-utils.h"
 #include "audio-play-manager.h"
+#include "global-settings.h"
 
 #include <QMessageBox>
 #include <QPushButton>
 #include <QDir>
 #include <QUrl>
 #include <QProcess>
+#include <QtDBus/QtDBus>
 #include <recent-vfs-manager.h>
 #include <QApplication>
 
 #include <QDebug>
 #include <QtX11Extras/QX11Info>
 #include <kstartupinfo.h>
-
+//#ifdef KYLIN_COMMON
+#include <ukuisdk/kylin-com4cxx.h>
+//#endif
 using namespace Peony;
 
 #define USE_STARTUP_INFO true
@@ -117,6 +121,13 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     if (fileInfo->isEmptyInfo()) {
         FileInfoJob j(fileInfo);
         j.querySync();
+    }
+
+    if (isDesktopFileAction()) {
+        if (launchAppWithDBus()) {
+            qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus, name:" << fileInfo->displayName();
+            return;
+        }
     }
 
     bool executable = fileInfo->canExecute();
@@ -222,6 +233,11 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
     if (fileInfo->isEmptyInfo()) {
         FileInfoJob j(fileInfo);
         j.querySync();
+    }
+
+    if (launchAppWithDBus()) {
+        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus, name:" << fileInfo->displayName();
+        return;
     }
 
     bool executable = fileInfo->canExecute();
@@ -418,6 +434,11 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
         j.querySync();
     }
 
+    if (launchAppWithDBus()) {
+        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus, name:" << fileInfo->displayName();
+        return;
+    }
+
     bool executable = fileInfo->canExecute();
     bool isAppImage = fileInfo->type() == "application/vnd.appimage";
     bool isExecutable = isExcuteableFile(fileInfo->type());
@@ -595,4 +616,150 @@ void FileLaunchAction::execFileInterm()
     QDir::setCurrent(QDir::homePath());
     g_object_unref(app_info);
     g_free(quote);
+}
+
+bool FileLaunchAction::launchAppWithDBus()
+{
+    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
+
+    if (isDesktopFileAction()) {
+        bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
+        //mavis不通过session而通过AppMgr
+        if (intel && mavis) {
+            return launchAppWithAppMgr();
+        } else if (intel) {
+            return launchAppWithSession();
+        }
+
+        //TODO 以下判断方式不能覆盖全部情况，后期还需要根据ukui3.1项目的os-release进行调整
+        //see peony-qt-desktop/settings/desktop-global-settings.cpp -> getProductFeatures();
+        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
+        if (features == 2 || features == 3 ) {
+            return launchAppWithAppMgr();
+        }
+
+        qDebug() << "[FileLaunchAction::launchAppWithDBus] can't launch app with DBus, features:" << features << ", is intel:" << intel;
+    } else {
+        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
+        if (features == 2 || features == 3 || mavis) {
+            return launchDefaultAppWithUrl();
+        }
+    }
+
+    return false;
+}
+
+bool FileLaunchAction::launchAppWithAppMgr()
+{
+    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
+        QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
+        if (session.isValid()) {
+            auto fileInfo = FileInfo::fromUri(m_uri);
+            if (fileInfo->isEmptyInfo()) {
+                FileInfoJob j(fileInfo);
+                j.querySync();
+            }
+
+            auto desktopFile = fileInfo->filePath();
+
+            QDBusReply<bool> result = session.call("LaunchApp", desktopFile);
+
+            if (result.isValid()) {
+                return true;
+            }
+            qDebug() << "[FileLaunchAction::launchAppWithAppMgr] failed, desktopFile:" << desktopFile;
+        }
+    }
+    return false;
+}
+
+bool FileLaunchAction::launchDefaultAppWithUrl()
+{
+    QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
+    if (session.isValid()) {
+        auto fileInfo = FileInfo::fromUri(m_uri);
+        if (fileInfo->isEmptyInfo()) {
+            FileInfoJob j(fileInfo);
+            j.querySync();
+        }
+
+        QString uri = fileInfo->uri();
+
+        QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", uri);
+        qDebug() << "[FileLaunchAction::launchAppWithUrlbyAppMgr]  uri:" << uri;
+
+        if (result.isValid()) {
+            return true;
+        }
+        qDebug() << "[FileLaunchAction::launchAppWithUrlbyAppMgr] failed, uri:" << uri;
+    }
+
+    return false;
+}
+
+
+bool FileLaunchAction::launchAppWithSession()
+{
+    auto fileInfo = FileInfo::fromUri(m_uri);
+    if (fileInfo->isEmptyInfo()) {
+        FileInfoJob j(fileInfo);
+        j.querySync();
+    }
+
+    //intel应用禁用
+    if (fileInfo->isExecDisable()) {
+        return false;
+    }
+
+    QDBusInterface session("org.gnome.SessionManager", "/com/ukui/app", "com.ukui.app");
+
+    if (session.isValid()) {
+        //! \note Sometimes garbled characters appear when QSettings reads Chinese,
+        //! even though QSettings::setIniCodec("UTF8") is used
+        GKeyFileFlags flags = G_KEY_FILE_NONE;
+        GKeyFile *keyfile = g_key_file_new();
+        QByteArray fpbyte = fileInfo->filePath().toLocal8Bit();
+        const char *filepath = fpbyte.constData();
+        g_key_file_load_from_file(keyfile, filepath, flags, nullptr);
+        char *name = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Exec", nullptr, nullptr);
+        QString exe = QString::fromLocal8Bit(name);
+        g_key_file_free(keyfile);
+        g_free(name);
+
+        if (exe.isEmpty()) {
+            qDebug() << "Get desktop file Exec value error";
+            return false;
+        }
+
+        QStringList parameters;
+        // 首先把exec整个截取成 path+parameter形式
+        if (exe.contains(" ")) {
+            //排除参数之间多个空格分隔的情况
+            parameters = exe.split(QRegExp("\\s+"));
+            exe = parameters[0];
+            parameters.removeAt(0);
+        }
+
+        // 优先判断path里有没有带%U等，如果存在的话，删除%和后面紧跟的字符
+        if (exe.contains("%")) {
+            exe = exe.left(exe.indexOf("%"));
+        }
+
+        for (auto begin = parameters.begin(); begin != parameters.end(); ++begin) {
+            if (begin->contains("%")) {
+                // 命令行最多可包含一个％f，％u，％F或％U字段代码
+                if (begin->count() == 2)
+                    parameters.removeOne(*begin);
+                else {
+                    begin->remove(begin->indexOf("%"), 2);
+                }
+                break;
+            }
+        }
+
+        session.call("app_open", exe, parameters);
+        return true;
+    }
+    qDebug() << "[FileLaunchAction::launchAppWithSession] failed, session isValid:" << session.isValid() << "\nuri:" << m_uri;
+    return false;
 }

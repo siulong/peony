@@ -185,6 +185,17 @@ bool FileInfo::isVideoFile()
     }
 }
 
+bool FileInfo::isExecDisable()
+{
+    if (m_meta_info) {
+        int nRet = m_meta_info->getMetaInfoInt("exec_disable");
+        if(1 == nRet) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 bool FileInfo::isOfficeFile()
 {

@@ -44,6 +44,7 @@
 #include "file-item-model.h"
 #include "file-info-job.h"
 #include "file-launch-manager.h"
+
 #include <QProcess>
 
 #include <QDesktopServices>
@@ -82,6 +83,7 @@
 
 #include <QtX11Extras/QX11Info>
 #include <kstartupinfo.h>
+#include <ukuisdk/kylin-com4cxx.h>
 
 using namespace Peony;
 
@@ -90,7 +92,7 @@ using namespace Peony;
 #define UKUI_STYLE_SETTINGS "org.ukui.style"
 #define RESTORE_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-item-position"
 #define RESTORE_EXTEND_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-extend-item-position"
-
+#define PEONY_DESKTOP_PATH "/usr/share/applications/peony.desktop"
 static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect, QString> &p2);
 
 static bool refreshing = false;
@@ -975,40 +977,47 @@ void DesktopIconView::openFileByUri(QString uri)
                 return;
             }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-            QProcess p;
             QUrl url = uri;
-            p.setProgram("peony");
-            p.setArguments(QStringList() << url.toEncoded() <<"%U&");
-            qint64 pid;
-            p.startDetached(&pid);
+            QString desktopFile = PEONY_DESKTOP_PATH;
+            QStringList args;
+            args << url.toEncoded() <<"%U&";
+            if (!launchAppWithArguments(desktopFile, args)) {
+                qDebug() << "[DesktopIconView::openFileByUri] peony open, desktopFile:" << desktopFile <<  "args:" <<args;
 
-            // send startinfo to kwindowsystem
-            quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
-            KStartupInfoId startInfoId;
-            startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
-            startInfoId.setupStartupEnv();
-            KStartupInfoData data;
-            data.setHostname();
-            data.addPid(pid);
-            QRect rect = info.get()->property("iconGeometry").toRect();
-//            if (rect.isValid())
-//                data.setIconGeometry(rect);
-            data.setLaunchedBy(getpid());
-            KStartupInfo::sendStartup(startInfoId, data);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+                QProcess p;
+                p.setProgram("peony");
+                p.setArguments(QStringList() << url.toEncoded() <<"%U&");
+                qint64 pid;
+                p.startDetached(&pid);
+
+                // send startinfo to kwindowsystem
+                quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+                KStartupInfoId startInfoId;
+                startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+                startInfoId.setupStartupEnv();
+                KStartupInfoData data;
+                data.setHostname();
+                data.addPid(pid);
+                QRect rect = info.get()->property("iconGeometry").toRect();
+//              if (rect.isValid())
+//                 data.setIconGeometry(rect);
+                data.setLaunchedBy(getpid());
+                KStartupInfo::sendStartup(startInfoId, data);
 #else
-            QProcess p;
-            QString strq;
-            for (int i = 0;i < uri.length();++i) {
-                if(uri[i] == ' '){
-                    strq += "%20";
-                }else{
-                    strq += uri[i];
+                QProcess p;
+                QString strq;
+                for (int i = 0;i < uri.length();++i) {
+                    if(uri[i] == ' '){
+                        strq += "%20";
+                    }else{
+                        strq += uri[i];
+                    }
                 }
-            }
 
-            p.startDetached("peony", QStringList()<<strq<<"%U&");
+                p.startDetached("peony", QStringList()<<strq<<"%U&");
 #endif
+            }
         } else {
             if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
                 FileLaunchManager::openAsync(uri, false, false);
@@ -2423,6 +2432,27 @@ void DesktopIconView::getAllRestoreInfo()
             }
         }
     }
+}
+
+bool DesktopIconView::launchAppWithArguments(QString desktopFile, QStringList args)
+{
+    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
+    int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
+    if (features == 2 || features == 3 || mavis) {
+        if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
+            QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
+            if (session.isValid()) {
+                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
+                qDebug() << "[DesktopIconView::LaunchAppWithArguments]  desktopFile:" << desktopFile << "args:" <<args;
+
+                if (result.isValid()) {
+                    return true;
+                }
+                qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
+            }
+        }
+    }
+    return false;
 }
 
 void DesktopIconView::clearAllRestoreInfo()
