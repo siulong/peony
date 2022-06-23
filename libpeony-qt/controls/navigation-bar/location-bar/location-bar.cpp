@@ -298,9 +298,8 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
 
-    auto displayName = FileUtils::getFileDisplayName(uri);
-    //comment to fix UI improve bug, link to bug#125255
-    //button->setToolTip(displayName);
+    auto completeName = FileUtils::getFileDisplayName(uri);
+    QString displayName = completeName;
     m_buttons.insert(QUrl(uri).toEncoded(), button);
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(m_current_uri);
@@ -351,6 +350,13 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
     button->setText(displayName);
+
+    //comment to fix UI improve bug, link to bug#125255
+    //缩略显示的情况下的文件夹，需要提供tips看全文件名，其他情况不显示
+    if (completeName != displayName)
+    {
+       button->setToolTip(completeName);
+    }
 
     connect(button, &QToolButton::clicked, [=]() {
         Q_EMIT this->groupChangedRequest(uri);
