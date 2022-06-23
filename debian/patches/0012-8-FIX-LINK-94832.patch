@@ -1,0 +1,445 @@
+From: cckylin-cibot <cckylin-cibot@kylinos.cn>
+Date: Thu, 23 Jun 2022 11:23:04 +0000
+Subject: =?utf-8?b?ITggIFtGSVhdIOmAgumFjeW6lOeUqOeuoeeQhuaOpeWPoyAgW0xJTktd?=
+ =?utf-8?b?OTQ4MzI=?=
+
+---
+ common.pri                                       |   8 ++
+ libpeony-qt/file-info.cpp                        |  11 ++
+ libpeony-qt/file-info.h                          |   2 +
+ libpeony-qt/file-launcher/file-launch-action.cpp | 169 ++++++++++++++++++++++-
+ libpeony-qt/file-launcher/file-launch-action.h   |   6 +
+ peony-qt-desktop/desktop-icon-view.cpp           |  90 ++++++++----
+ peony-qt-desktop/desktop-icon-view.h             |   1 +
+ 7 files changed, 256 insertions(+), 31 deletions(-)
+
+diff --git a/common.pri b/common.pri
+index dd2d321..21d877c 100644
+--- a/common.pri
++++ b/common.pri
+@@ -1,2 +1,10 @@
+ VERSION = 3.2.2
+ DEFINES += VERSION='\\"$${VERSION}\\"'
++DEFINES += V10_SP1='\\"V10SP1\\"'
++DEFINES += V10_SP1_EDU='\\"V10SP1-edu\\"'
++
++exists(/usr/include/ukuisdk/kylin-com4cxx.h) {
++    message("kylin common for cxx find.")
++    DEFINES += KYLIN_COMMON=true
++    LIBS += -lukui-com4cxx
++}
+diff --git a/libpeony-qt/file-info.cpp b/libpeony-qt/file-info.cpp
+index 6f1201a..867d6a8 100644
+--- a/libpeony-qt/file-info.cpp
++++ b/libpeony-qt/file-info.cpp
+@@ -185,6 +185,17 @@ bool FileInfo::isVideoFile()
+     }
+ }
+ 
++bool FileInfo::isExecDisable()
++{
++    if (m_meta_info) {
++        int nRet = m_meta_info->getMetaInfoInt("exec_disable");
++        if(1 == nRet) {
++            return true;
++        }
++    }
++
++    return false;
++}
+ 
+ bool FileInfo::isOfficeFile()
+ {
+diff --git a/libpeony-qt/file-info.h b/libpeony-qt/file-info.h
+index bbd101b..19f1006 100644
+--- a/libpeony-qt/file-info.h
++++ b/libpeony-qt/file-info.h
+@@ -284,6 +284,8 @@ public:
+     bool isEmptyInfo() {
+         return m_display_name == nullptr || m_display_name == "";
+     }
++    // 是否禁止执行程序
++    bool isExecDisable();
+ 
+     AccessFlags accesses() {
+         auto flags = AccessFlags();
+diff --git a/libpeony-qt/file-launcher/file-launch-action.cpp b/libpeony-qt/file-launcher/file-launch-action.cpp
+index 8b181c9..3b80f64 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.cpp
++++ b/libpeony-qt/file-launcher/file-launch-action.cpp
+@@ -27,19 +27,23 @@
+ #include "file-info-job.h"
+ #include "file-operation-utils.h"
+ #include "audio-play-manager.h"
++#include "global-settings.h"
+ 
+ #include <QMessageBox>
+ #include <QPushButton>
+ #include <QDir>
+ #include <QUrl>
+ #include <QProcess>
++#include <QtDBus/QtDBus>
+ #include <recent-vfs-manager.h>
+ #include <QApplication>
+ 
+ #include <QDebug>
+ #include <QtX11Extras/QX11Info>
+ #include <kstartupinfo.h>
+-
++//#ifdef KYLIN_COMMON
++#include <ukuisdk/kylin-com4cxx.h>
++//#endif
+ using namespace Peony;
+ 
+ #define USE_STARTUP_INFO true
+@@ -119,6 +123,13 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
+         j.querySync();
+     }
+ 
++    if (isDesktopFileAction()) {
++        if (launchAppWithDBus()) {
++            qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus, name:" << fileInfo->displayName();
++            return;
++        }
++    }
++
+     bool executable = fileInfo->canExecute();
+     bool isAppImage = fileInfo->type() == "application/vnd.appimage";
+     bool isExecutable = isExcuteableFile(fileInfo->type());
+@@ -224,6 +235,11 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
+         j.querySync();
+     }
+ 
++    if (launchAppWithDBus()) {
++        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus, name:" << fileInfo->displayName();
++        return;
++    }
++
+     bool executable = fileInfo->canExecute();
+     bool isAppImage = fileInfo->type() == "application/vnd.appimage";
+     bool isExecutable = isExcuteableFile(fileInfo->type());
+@@ -418,6 +434,11 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
+         j.querySync();
+     }
+ 
++    if (launchAppWithDBus()) {
++        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus, name:" << fileInfo->displayName();
++        return;
++    }
++
+     bool executable = fileInfo->canExecute();
+     bool isAppImage = fileInfo->type() == "application/vnd.appimage";
+     bool isExecutable = isExcuteableFile(fileInfo->type());
+@@ -596,3 +617,149 @@ void FileLaunchAction::execFileInterm()
+     g_object_unref(app_info);
+     g_free(quote);
+ }
++
++bool FileLaunchAction::launchAppWithDBus()
++{
++    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
++
++    if (isDesktopFileAction()) {
++        bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
++        //mavis不通过session而通过AppMgr
++        if (intel && mavis) {
++            return launchAppWithAppMgr();
++        } else if (intel) {
++            return launchAppWithSession();
++        }
++
++        //TODO 以下判断方式不能覆盖全部情况，后期还需要根据ukui3.1项目的os-release进行调整
++        //see peony-qt-desktop/settings/desktop-global-settings.cpp -> getProductFeatures();
++        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
++        if (features == 2 || features == 3 ) {
++            return launchAppWithAppMgr();
++        }
++
++        qDebug() << "[FileLaunchAction::launchAppWithDBus] can't launch app with DBus, features:" << features << ", is intel:" << intel;
++    } else {
++        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
++        if (features == 2 || features == 3 || mavis) {
++            return launchDefaultAppWithUrl();
++        }
++    }
++
++    return false;
++}
++
++bool FileLaunchAction::launchAppWithAppMgr()
++{
++    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
++        QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
++        if (session.isValid()) {
++            auto fileInfo = FileInfo::fromUri(m_uri);
++            if (fileInfo->isEmptyInfo()) {
++                FileInfoJob j(fileInfo);
++                j.querySync();
++            }
++
++            auto desktopFile = fileInfo->filePath();
++
++            QDBusReply<bool> result = session.call("LaunchApp", desktopFile);
++
++            if (result.isValid()) {
++                return true;
++            }
++            qDebug() << "[FileLaunchAction::launchAppWithAppMgr] failed, desktopFile:" << desktopFile;
++        }
++    }
++    return false;
++}
++
++bool FileLaunchAction::launchDefaultAppWithUrl()
++{
++    QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
++    if (session.isValid()) {
++        auto fileInfo = FileInfo::fromUri(m_uri);
++        if (fileInfo->isEmptyInfo()) {
++            FileInfoJob j(fileInfo);
++            j.querySync();
++        }
++
++        QString uri = fileInfo->uri();
++
++        QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", uri);
++        qDebug() << "[FileLaunchAction::launchAppWithUrlbyAppMgr]  uri:" << uri;
++
++        if (result.isValid()) {
++            return true;
++        }
++        qDebug() << "[FileLaunchAction::launchAppWithUrlbyAppMgr] failed, uri:" << uri;
++    }
++
++    return false;
++}
++
++
++bool FileLaunchAction::launchAppWithSession()
++{
++    auto fileInfo = FileInfo::fromUri(m_uri);
++    if (fileInfo->isEmptyInfo()) {
++        FileInfoJob j(fileInfo);
++        j.querySync();
++    }
++
++    //intel应用禁用
++    if (fileInfo->isExecDisable()) {
++        return false;
++    }
++
++    QDBusInterface session("org.gnome.SessionManager", "/com/ukui/app", "com.ukui.app");
++
++    if (session.isValid()) {
++        //! \note Sometimes garbled characters appear when QSettings reads Chinese,
++        //! even though QSettings::setIniCodec("UTF8") is used
++        GKeyFileFlags flags = G_KEY_FILE_NONE;
++        GKeyFile *keyfile = g_key_file_new();
++        QByteArray fpbyte = fileInfo->filePath().toLocal8Bit();
++        const char *filepath = fpbyte.constData();
++        g_key_file_load_from_file(keyfile, filepath, flags, nullptr);
++        char *name = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Exec", nullptr, nullptr);
++        QString exe = QString::fromLocal8Bit(name);
++        g_key_file_free(keyfile);
++        g_free(name);
++
++        if (exe.isEmpty()) {
++            qDebug() << "Get desktop file Exec value error";
++            return false;
++        }
++
++        QStringList parameters;
++        // 首先把exec整个截取成 path+parameter形式
++        if (exe.contains(" ")) {
++            //排除参数之间多个空格分隔的情况
++            parameters = exe.split(QRegExp("\\s+"));
++            exe = parameters[0];
++            parameters.removeAt(0);
++        }
++
++        // 优先判断path里有没有带%U等，如果存在的话，删除%和后面紧跟的字符
++        if (exe.contains("%")) {
++            exe = exe.left(exe.indexOf("%"));
++        }
++
++        for (auto begin = parameters.begin(); begin != parameters.end(); ++begin) {
++            if (begin->contains("%")) {
++                // 命令行最多可包含一个％f，％u，％F或％U字段代码
++                if (begin->count() == 2)
++                    parameters.removeOne(*begin);
++                else {
++                    begin->remove(begin->indexOf("%"), 2);
++                }
++                break;
++            }
++        }
++
++        session.call("app_open", exe, parameters);
++        return true;
++    }
++    qDebug() << "[FileLaunchAction::launchAppWithSession] failed, session isValid:" << session.isValid() << "\nuri:" << m_uri;
++    return false;
++}
+diff --git a/libpeony-qt/file-launcher/file-launch-action.h b/libpeony-qt/file-launcher/file-launch-action.h
+index 7a06a78..63911ac 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.h
++++ b/libpeony-qt/file-launcher/file-launch-action.h
+@@ -67,6 +67,12 @@ public Q_SLOTS:
+ 
+     bool isExcuteableFile(QString fileType);
+ 
++private:
++    bool launchAppWithDBus();
++    bool launchAppWithAppMgr();
++    bool launchDefaultAppWithUrl();
++    bool launchAppWithSession();
++
+ private:
+     QString m_uri;
+     bool m_is_desktop_file;
+diff --git a/peony-qt-desktop/desktop-icon-view.cpp b/peony-qt-desktop/desktop-icon-view.cpp
+index eea0ef2..1dac272 100644
+--- a/peony-qt-desktop/desktop-icon-view.cpp
++++ b/peony-qt-desktop/desktop-icon-view.cpp
+@@ -44,6 +44,7 @@
+ #include "file-item-model.h"
+ #include "file-info-job.h"
+ #include "file-launch-manager.h"
++
+ #include <QProcess>
+ 
+ #include <QDesktopServices>
+@@ -82,6 +83,7 @@
+ 
+ #include <QtX11Extras/QX11Info>
+ #include <kstartupinfo.h>
++#include <ukuisdk/kylin-com4cxx.h>
+ 
+ using namespace Peony;
+ 
+@@ -90,7 +92,7 @@ using namespace Peony;
+ #define UKUI_STYLE_SETTINGS "org.ukui.style"
+ #define RESTORE_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-item-position"
+ #define RESTORE_EXTEND_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-extend-item-position"
+-
++#define PEONY_DESKTOP_PATH "/usr/share/applications/peony.desktop"
+ static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect, QString> &p2);
+ 
+ static bool refreshing = false;
+@@ -975,40 +977,47 @@ void DesktopIconView::openFileByUri(QString uri)
+                 return;
+             }
+ 
+-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+-            QProcess p;
+             QUrl url = uri;
+-            p.setProgram("peony");
+-            p.setArguments(QStringList() << url.toEncoded() <<"%U&");
+-            qint64 pid;
+-            p.startDetached(&pid);
+-
+-            // send startinfo to kwindowsystem
+-            quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+-            KStartupInfoId startInfoId;
+-            startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+-            startInfoId.setupStartupEnv();
+-            KStartupInfoData data;
+-            data.setHostname();
+-            data.addPid(pid);
+-            QRect rect = info.get()->property("iconGeometry").toRect();
+-//            if (rect.isValid())
+-//                data.setIconGeometry(rect);
+-            data.setLaunchedBy(getpid());
+-            KStartupInfo::sendStartup(startInfoId, data);
++            QString desktopFile = PEONY_DESKTOP_PATH;
++            QStringList args;
++            args << url.toEncoded() <<"%U&";
++            if (!launchAppWithArguments(desktopFile, args)) {
++                qDebug() << "[DesktopIconView::openFileByUri] peony open, desktopFile:" << desktopFile <<  "args:" <<args;
++
++#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
++                QProcess p;
++                p.setProgram("peony");
++                p.setArguments(QStringList() << url.toEncoded() <<"%U&");
++                qint64 pid;
++                p.startDetached(&pid);
++
++                // send startinfo to kwindowsystem
++                quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
++                KStartupInfoId startInfoId;
++                startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
++                startInfoId.setupStartupEnv();
++                KStartupInfoData data;
++                data.setHostname();
++                data.addPid(pid);
++                QRect rect = info.get()->property("iconGeometry").toRect();
++//              if (rect.isValid())
++//                 data.setIconGeometry(rect);
++                data.setLaunchedBy(getpid());
++                KStartupInfo::sendStartup(startInfoId, data);
+ #else
+-            QProcess p;
+-            QString strq;
+-            for (int i = 0;i < uri.length();++i) {
+-                if(uri[i] == ' '){
+-                    strq += "%20";
+-                }else{
+-                    strq += uri[i];
++                QProcess p;
++                QString strq;
++                for (int i = 0;i < uri.length();++i) {
++                    if(uri[i] == ' '){
++                        strq += "%20";
++                    }else{
++                        strq += uri[i];
++                    }
+                 }
+-            }
+ 
+-            p.startDetached("peony", QStringList()<<strq<<"%U&");
++                p.startDetached("peony", QStringList()<<strq<<"%U&");
+ #endif
++            }
+         } else {
+             if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
+                 FileLaunchManager::openAsync(uri, false, false);
+@@ -2425,6 +2434,27 @@ void DesktopIconView::getAllRestoreInfo()
+     }
+ }
+ 
++bool DesktopIconView::launchAppWithArguments(QString desktopFile, QStringList args)
++{
++    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
++    int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
++    if (features == 2 || features == 3 || mavis) {
++        if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
++            QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
++            if (session.isValid()) {
++                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
++                qDebug() << "[DesktopIconView::LaunchAppWithArguments]  desktopFile:" << desktopFile << "args:" <<args;
++
++                if (result.isValid()) {
++                    return true;
++                }
++                qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
++            }
++        }
++    }
++    return false;
++}
++
+ void DesktopIconView::clearAllRestoreInfo()
+ {
+     //bug#108126 超出屏幕的元素记录清空
+diff --git a/peony-qt-desktop/desktop-icon-view.h b/peony-qt-desktop/desktop-icon-view.h
+index 65b9fb2..908807d 100644
+--- a/peony-qt-desktop/desktop-icon-view.h
++++ b/peony-qt-desktop/desktop-icon-view.h
+@@ -116,6 +116,7 @@ public:
+ private:
+     QRect getScreenArea(QScreen* screen);
+     bool execSharedFileLink(const QString uri);
++    bool launchAppWithArguments(QString desktopFile, QStringList args);
+ 
+ Q_SIGNALS:
+     void zoomLevelChanged(ZoomLevel level);
