@@ -308,15 +308,16 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     //paint access emblems
     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
     if (!info->uri().startsWith("file:")) {
-        emblemPoses.removeOne(1);
         return;
     }
 
     auto rect = this->rect();
     if (!info->canRead()) {
+        emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
     } else if (!info->canWrite() && !info->canExecute()) {
+        emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-readonly");
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
     }

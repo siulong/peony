@@ -312,11 +312,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     //paint access emblems
     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
     if (info->uri().startsWith("file:")) {
-        emblemPoses.removeOne(1);
         if (!info->canRead()) {
+            emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-unreadable");
             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
         } else if (!info->canWrite() && !info->canExecute()) {
+            emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-readonly");
             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
         }
