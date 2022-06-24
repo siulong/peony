@@ -1,6 +1,7 @@
-peony (3.14.4.5-ok6~0623.1) yangtze; urgency=medium
+peony (3.14.4.5-ok6~0624) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
   * 适配appmanager接口
+  * 修复适配appmanager导致的其它打开方式不可用问题
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
