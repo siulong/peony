@@ -86,6 +86,7 @@ FileLaunchAction *FileLaunchManager::getDefaultAction(const QString &uri)
         g_key_file_free (keyfile);
 
         FileLaunchAction *action = new FileLaunchAction(uri, info);
+        action->setProperty("isDefault", true);
         g_object_unref(info);
 
         return action;

@@ -123,13 +123,6 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
         j.querySync();
     }
 
-    if (isDesktopFileAction()) {
-        if (launchAppWithDBus()) {
-            qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus, name:" << fileInfo->displayName();
-            return;
-        }
-    }
-
     bool executable = fileInfo->canExecute();
     bool isAppImage = fileInfo->type() == "application/vnd.appimage";
     bool isExecutable = isExcuteableFile(fileInfo->type());
@@ -175,6 +168,11 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     if (!isValid()) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
         QMessageBox::critical(nullptr, tr("Open Failed"), tr("Can not open %1, file not exist, is it deleted?").arg(m_uri));
+        return;
+    }
+
+    if (launchAppWithDBus()) {
+        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus, name:" << fileInfo->displayName();
         return;
     }
 
@@ -233,11 +231,6 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
     if (fileInfo->isEmptyInfo()) {
         FileInfoJob j(fileInfo);
         j.querySync();
-    }
-
-    if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus, name:" << fileInfo->displayName();
-        return;
     }
 
     bool executable = fileInfo->canExecute();
@@ -336,6 +329,11 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
                 g_object_unref(text_info);
             }
         }
+        return;
+    }
+
+    if (launchAppWithDBus()) {
+        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus, name:" << fileInfo->displayName();
         return;
     }
 
@@ -620,6 +618,9 @@ void FileLaunchAction::execFileInterm()
 
 bool FileLaunchAction::launchAppWithDBus()
 {
+    if (!property("isDefault").toBool())
+        return false;
+
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
 
     if (isDesktopFileAction()) {
@@ -669,14 +670,15 @@ bool FileLaunchAction::launchAppWithAppMgr()
             }
             qDebug() << "[FileLaunchAction::launchAppWithAppMgr] failed, desktopFile:" << desktopFile;
         }
+        return true;
     }
     return false;
 }
 
 bool FileLaunchAction::launchDefaultAppWithUrl()
 {
-    QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
-    if (session.isValid()) {
+    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
+        QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
         auto fileInfo = FileInfo::fromUri(m_uri);
         if (fileInfo->isEmptyInfo()) {
             FileInfoJob j(fileInfo);
@@ -692,6 +694,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
             return true;
         }
         qDebug() << "[FileLaunchAction::launchAppWithUrlbyAppMgr] failed, uri:" << uri;
+        return true;
     }
 
     return false;
