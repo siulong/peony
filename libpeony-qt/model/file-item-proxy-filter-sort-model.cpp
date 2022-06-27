@@ -392,6 +392,9 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         if (!nameFilters.isEmpty()) {
             bool contains = false;
             for (auto nameFilter : nameFilters) {
+                if (fileInfo->isDir()) {
+                    continue;
+                }
                 QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
                 QRegularExpressionMatch match = rx.match(fileInfo->displayName());
                 if (match.hasMatch()) {
