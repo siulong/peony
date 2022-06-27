@@ -29,6 +29,7 @@
 #include <QStack>
 #include <QGSettings>
 #include <QTimer>
+#include <QDir>
 
 #include "file-item-model.h"
 
@@ -137,6 +138,8 @@ public Q_SLOTS:
     void updateFilter();
 
     void onViewDoubleClicked(const QString &uri);
+
+    void addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity);
 
 protected:
     /*!
