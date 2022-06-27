@@ -41,6 +41,8 @@
 #include <QLocale>
 #include <QCollator>
 
+#include <QRegularExpression>
+
 using namespace Peony;
 
 QLocale locale = QLocale(QLocale::system().name());
@@ -378,8 +380,44 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             if (! find)
                 return false;
         }
+
+        QStringList mimeTypesFilter = property("mimeTypeFilters").toStringList();
+        if (!mimeTypesFilter.isEmpty()) {
+            if (!mimeTypesFilter.contains(fileInfo->fileType())) {
+                return false;
+            }
+        }
+
+        QStringList nameFilters = property("nameFilters").toStringList();
+        if (!nameFilters.isEmpty()) {
+            bool contains = false;
+            for (auto nameFilter : nameFilters) {
+                QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
+                QRegularExpressionMatch match = rx.match(fileInfo->displayName());
+                if (match.hasMatch()) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) {
+                return false;
+            }
+        }
+
+        bool ok = false;
+        QDir::Filters dirFilters = QDir::Filters(property("dirFilters").toInt(&ok));
+        if (ok) {
+            bool showFiles = dirFilters & QDir::Files;
+            bool showDirs = dirFilters & QDir::Dirs;
+            if (!showFiles && !fileInfo->isDir()) {
+                return false;
+            }
+            if (!showDirs && fileInfo->isDir()) {
+                return false;
+            }
+        }
     }
-    return true;
+    return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 
 bool FileItemProxyFilterSortModel::checkFileNameFilter(const QString &displayName) const
@@ -764,6 +802,10 @@ void FileItemProxyFilterSortModel::clearConditions()
     m_file_type_list.clear();
     m_file_size_list.clear();
     m_modify_time_list.clear();
+
+    setProperty("mimeTypeFilters", QVariant());
+    setProperty("nameFilters", QVariant());
+    setProperty("dirFilters", QVariant());
 }
 
 void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyTime, int fileSize)
@@ -771,6 +813,15 @@ void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyT
     m_show_file_type = fileType;
     m_show_file_size = fileSize;
     m_show_modify_time = modifyTime;
+    invalidateFilter();
+}
+
+void FileItemProxyFilterSortModel::setFilterConditions(const QStringList &mimeTypeFilters, const QStringList &nameFilters,  QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
+{
+    setProperty("mimeTypeFilters", mimeTypeFilters);
+    setProperty("nameFilters", nameFilters);
+    setProperty("dirFilters", int(dirFilters));
+    setFilterCaseSensitivity(caseSensitivity);
     invalidateFilter();
 }
 

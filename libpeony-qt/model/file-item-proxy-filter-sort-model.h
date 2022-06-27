@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QSortFilterProxyModel>
 #include <QColor>
+#include <QDir>
 
 #include "peony-core_global.h"
 
@@ -86,6 +87,7 @@ public:
     void setUseDefaultNameSortOrder(bool use);
     void setFolderFirst(bool folderFirst);
     void setFilterConditions(int fileType=0, int modifyTime=0, int fileSize=0);
+    void setFilterConditions(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity);
 
     //multiple filter conditions for new advance search
     void addFileNameFilter(QString key, bool updateNow = false);
