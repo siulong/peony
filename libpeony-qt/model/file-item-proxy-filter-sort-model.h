@@ -28,6 +28,7 @@
 #include <QSortFilterProxyModel>
 #include <QColor>
 #include <QDir>
+#include <QAbstractItemView>
 
 #include "peony-core_global.h"
 
@@ -110,10 +111,17 @@ public:
     QStringList getAllFileUris();
     QModelIndexList getAllFileIndexes();
 
+    QAbstractItemView::SelectionMode getSelectionModeHint();
+
 public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);
     void checkSortSettings();
+
+    void setSelectionModeHint(QAbstractItemView::SelectionMode mode);
+
+Q_SIGNALS:
+    void setSelectionModeChanged();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
