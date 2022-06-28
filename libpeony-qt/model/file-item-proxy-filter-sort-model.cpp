@@ -390,20 +390,20 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
 
         QStringList nameFilters = property("nameFilters").toStringList();
         if (!nameFilters.isEmpty()) {
-            bool contains = false;
-            for (auto nameFilter : nameFilters) {
-                if (fileInfo->isDir()) {
-                    continue;
+            if (!fileInfo->isDir()) {
+                bool contains = false;
+                for (auto nameFilter : nameFilters) {
+
+                    QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
+                    QRegularExpressionMatch match = rx.match(fileInfo->displayName());
+                    if (match.hasMatch()) {
+                        contains = true;
+                        break;
+                    }
                 }
-                QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
-                QRegularExpressionMatch match = rx.match(fileInfo->displayName());
-                if (match.hasMatch()) {
-                    contains = true;
-                    break;
+                if (!contains) {
+                    return false;
                 }
-            }
-            if (!contains) {
-                return false;
             }
         }
 
