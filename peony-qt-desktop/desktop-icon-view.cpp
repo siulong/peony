@@ -494,12 +494,19 @@ bool DesktopIconView::eventFilter(QObject *obj, QEvent *e)
     //comment to fix change night style refresh desktop issue
     if (e->type() == QEvent::StyleChange || e->type() == QEvent::ApplicationFontChange || e->type() == QEvent::FontChange) {
         auto type = e->type();
-        if (m_model) {
+        if (m_proxy_model) {
             for (auto uri : getAllFileUris()) {
                 auto pos = getFileMetaInfoPos(uri);
                 if (pos.x() >= 0)
                     updateItemPosByUri(uri, pos);
             }
+            QTimer::singleShot(0, this, [=]{
+                for (auto uri : getAllFileUris()) {
+                    auto pos = getFileMetaInfoPos(uri);
+                    if (pos.x() >= 0)
+                        updateItemPosByUri(uri, pos);
+                }
+            });
         }
     }
     return false;
