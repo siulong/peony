@@ -176,6 +176,19 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         return;
     m_model = sourceModel;
     m_proxy_model = proxyModel;
+
+    auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+    if (proxyModelSelectionModelHint != NoSelection) {
+        setSelectionMode(proxyModelSelectionModelHint);
+    }
+
+    connect(proxyModel, &FileItemProxyFilterSortModel::setSelectionModeChanged, this, [=]{
+        auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+        if (proxyModelSelectionModelHint != NoSelection) {
+            setSelectionMode(proxyModelSelectionModelHint);
+        }
+    });
+
     m_proxy_model->setSourceModel(m_model);
     setModel(proxyModel);
     //adjust columns layout.

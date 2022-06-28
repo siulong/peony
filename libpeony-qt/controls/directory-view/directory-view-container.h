@@ -30,6 +30,7 @@
 #include <QGSettings>
 #include <QTimer>
 #include <QDir>
+#include <QAbstractItemView>
 
 #include "file-item-model.h"
 
@@ -140,6 +141,7 @@ public Q_SLOTS:
     void onViewDoubleClicked(const QString &uri);
 
     void addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity);
+    void setSelectionMode(QAbstractItemView::SelectionMode mode);
 
 protected:
     /*!

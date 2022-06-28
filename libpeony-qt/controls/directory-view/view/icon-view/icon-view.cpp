@@ -558,6 +558,18 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
     m_model = sourceModel;
     m_sort_filter_proxy_model = proxyModel;
 
+    auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+    if (proxyModelSelectionModelHint != NoSelection) {
+        setSelectionMode(proxyModelSelectionModelHint);
+    }
+
+    connect(proxyModel, &FileItemProxyFilterSortModel::setSelectionModeChanged, this, [=]{
+        auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+        if (proxyModelSelectionModelHint != NoSelection) {
+            setSelectionMode(proxyModelSelectionModelHint);
+        }
+    });
+
     setModel(m_sort_filter_proxy_model);
 
     //edit trigger

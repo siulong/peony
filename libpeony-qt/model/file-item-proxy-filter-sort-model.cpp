@@ -461,6 +461,12 @@ void FileItemProxyFilterSortModel::checkSortSettings()
     }
 }
 
+void FileItemProxyFilterSortModel::setSelectionModeHint(QAbstractItemView::SelectionMode mode)
+{
+    setProperty("selectionMode", int(mode));
+    Q_EMIT this->setSelectionModeChanged();
+}
+
 QVariant FileItemProxyFilterSortModel::getDirectorySettings(const QString &key)
 {
     auto metaInfo = FileMetaInfo::fromUri(getModelDirectoryUri(this));
@@ -891,6 +897,14 @@ QModelIndexList FileItemProxyFilterSortModel::getAllFileIndexes()
         i++;
     }
     return l;
+}
+
+QAbstractItemView::SelectionMode FileItemProxyFilterSortModel::getSelectionModeHint()
+{
+    if (property("selectionMode").isValid()) {
+        return QAbstractItemView::SelectionMode(property("selectionMode").toInt());
+    }
+    return QAbstractItemView::NoSelection;
 }
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()

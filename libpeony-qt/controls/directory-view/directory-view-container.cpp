@@ -533,6 +533,11 @@ void DirectoryViewContainer::onViewDoubleClicked(const QString& uri)
 
 }
 
+void DirectoryViewContainer::setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+    m_proxy_model->setSelectionModeHint(mode);
+}
+
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
 {
     if (m_proxy_model) {
