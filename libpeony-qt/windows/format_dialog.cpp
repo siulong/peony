@@ -45,6 +45,8 @@ static bool b_failed = false;
 static bool b_canClose = true;
 static double m_before_progress = 0;
 
+static QHash<Format_Dialog *, GVolume *> dialogVolumes;
+
 static ButtonStyle *global_instance = nullptr;
 
 ButtonStyle *ButtonStyle::getStyle()
@@ -320,6 +322,8 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     }
 
     auto mount = VolumeManager::getMountFromUri(targetUri);
+    auto gvolume = g_mount_get_volume(mount->getGMount());
+    dialogVolumes.insert(this, gvolume);
     //fix name not show complete in bottom issue, bug#36887
     if (mount.get()) {
         if(m_uris == "file:///data" || targetUri == "file:///data"){
@@ -371,62 +375,71 @@ void Format_Dialog::slot_format(bool enable)
     if(!enable)
         return;
 
-    int full_clean = 0;
-    full_clean = mEraseCkbox->isChecked();
-    //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
-    if(full_clean){
-        //完全擦除方式格式化，预估为半小时，1秒更新一次
-        mTimer->setInterval(1000);
-        m_total_predict = 1800;
-    }else{
-        //快速格式化，预估时间为75S,0.5秒更新一次
-        mTimer->setInterval(500);
-        m_total_predict = 150;
-    }
+    /*!
+      try fix #125189, format encrypted volume failed sometimes.
 
-    mTimer->start();
+      note that device name might not be updated during unmount callback.
+      to make sure volume changed signal was handled, we need to delay a
+      few times.
+      */
+    QTimer::singleShot(100, this, [=]{
+        int full_clean = 0;
+        full_clean = mEraseCkbox->isChecked();
+        //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
+        if(full_clean){
+            //完全擦除方式格式化，预估为半小时，1秒更新一次
+            mTimer->setInterval(1000);
+            m_total_predict = 1800;
+        }else{
+            //快速格式化，预估时间为75S,0.5秒更新一次
+            mTimer->setInterval(500);
+            m_total_predict = 150;
+        }
 
-    // set ui button disable
-    mFormatBtn->setDisabled(TRUE);
-    mCancelBtn->setDisabled(TRUE);
-    //ui->lineEdit_device_name->setDisabled(TRUE);
-    //use set readonly property, fix exit issue link to task#33686
-    mNameEdit->setReadOnly(true);
-    mEraseCkbox->setDisabled(TRUE);
+        mTimer->start();
 
-    auto cryptCheckBox = findPasswdCheckBox(this);
-    cryptCheckBox->setDisabled(true);
+        // set ui button disable
+        mFormatBtn->setDisabled(TRUE);
+        mCancelBtn->setDisabled(TRUE);
+        //ui->lineEdit_device_name->setDisabled(TRUE);
+        //use set readonly property, fix exit issue link to task#33686
+        mNameEdit->setReadOnly(true);
+        mEraseCkbox->setDisabled(TRUE);
 
-    //init the value
-    char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
+        auto cryptCheckBox = findPasswdCheckBox(this);
+        cryptCheckBox->setDisabled(true);
+
+        //init the value
+        char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
 
 
-    QString romType = mFSCombox->currentText();
-    if (QString("vfat/fat32") == romType) {
-        romType = "vfat";
-    }
+        QString romType = mFSCombox->currentText();
+        if (QString("vfat/fat32") == romType) {
+            romType = "vfat";
+        }
 
-    //get values from ui
-    strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
-    strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
-    strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
+        //get values from ui
+        strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
+        strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
+        strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
 
-    //disable name and rom size list
-    //ui->comboBox_rom_size->setDisabled(true);
-    this->mFSCombox->setDisabled(true);
+        //disable name and rom size list
+        //ui->comboBox_rom_size->setDisabled(true);
+        this->mFSCombox->setDisabled(true);
 
-    QString volname, devName, voldisplayname ,devtype;
-    //get device name
-    //FIXME: replace BLOCKING api in ui thread.
-    FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
+        QString volname, devName, voldisplayname ,devtype;
+        //get device name
+        //FIXME: replace BLOCKING api in ui thread.
+        FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
 
-    strncpy(dev_name,devName.toUtf8().constData(), sizeof (dev_name) - 1);
-    devtype = rom_type;
+        strncpy(dev_name,devName.toUtf8().constData(), sizeof (dev_name) - 1);
+        devtype = rom_type;
 
-    int format_value = 0;
-    //do format
-    kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
-                 full_clean?"zero":NULL, rom_name,&format_value);
+        int format_value = 0;
+        //do format
+        kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
+                     full_clean?"zero":NULL, rom_name,&format_value);
+    });
 }
 
 
@@ -1133,6 +1146,22 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
         ensure_unused_cb(data);
     } else {
         // 也许是加密分区卸载后device name变更导致，需要先做处理
+        auto gvolume = dialogVolumes.value(this);
+        qInfo()<<"try to get latest device name from gvolume";
+        if (gvolume) {
+            g_autofree gchar* unixDevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+            data->object = get_object_from_block_device(data->client, unixDevice);
+            if (data->object) {
+                qInfo()<<"use latest device name:"<<unixDevice;
+                data->block = udisks_object_get_block(data->object);
+                ensure_unused_cb(data);
+                return;
+            } else {
+                qInfo()<<"failed to get latest valid device name from gvolume, latest device name:"<<unixDevice;
+            }
+        } else {
+            qWarning()<<"can not find gvolume for current dialog, unexpected error!";
+        }
 
         // fix #103344
         QMessageBox::critical(0, tr("Error"), tr("Block not existed!"));
@@ -1157,6 +1186,8 @@ Format_Dialog::~Format_Dialog()
     if (mEraseCkbox)        mEraseCkbox->deleteLater();
     if (mRomSizeCombox)     mRomSizeCombox->deleteLater();
     if (mVolumeMonitor)     g_object_unref (mVolumeMonitor);
+
+    g_object_unref(dialogVolumes.take(this));
 
     b_canClose = true;
 }
