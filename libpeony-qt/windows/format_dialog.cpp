@@ -322,10 +322,11 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     }
 
     auto mount = VolumeManager::getMountFromUri(targetUri);
-    auto gvolume = g_mount_get_volume(mount->getGMount());
-    dialogVolumes.insert(this, gvolume);
     //fix name not show complete in bottom issue, bug#36887
     if (mount.get()) {
+        auto gvolume = g_mount_get_volume(mount->getGMount());
+        dialogVolumes.insert(this, gvolume);
+
         if(m_uris == "file:///data" || targetUri == "file:///data"){
             mNameEdit->setText(tr("Data"));
         }else{
@@ -1187,7 +1188,10 @@ Format_Dialog::~Format_Dialog()
     if (mRomSizeCombox)     mRomSizeCombox->deleteLater();
     if (mVolumeMonitor)     g_object_unref (mVolumeMonitor);
 
-    g_object_unref(dialogVolumes.take(this));
+    auto gvolume = dialogVolumes.take(this);
+    if (gvolume) {
+        g_object_unref(gvolume);
+    }
 
     b_canClose = true;
 }
