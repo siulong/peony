@@ -139,6 +139,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             // locate new item =====
             //task#74174 扩展模式下支持拖拽图标放置到扩展屏, 创建文件获取当前view
             auto view = ((PeonyDesktopApplication*)qApp)->getIconView(QCursor::pos());
+            //校验图标是否已经满了，如果满了寻找没有满的view
+            if (view && view->isFull()) {
+                Peony::DesktopIconView *notFullView = ((PeonyDesktopApplication*)qApp)->getNotFullView();
+                if (notFullView) {
+                    view = notFullView;
+                }
+            }
+
             auto itemRectHash = view->getCurrentItemRects();
             auto grid = view->gridSize();
             auto viewRect = view->viewport()->rect();

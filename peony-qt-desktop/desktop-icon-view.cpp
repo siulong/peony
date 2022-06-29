@@ -1586,7 +1586,7 @@ const QRect DesktopIconView::getBoundingRect()
 
 void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
 {
-    if (uris.isEmpty()) {
+    if (uris.isEmpty() || m_item_rect_hash.isEmpty()) {
         return;
     }
     auto allFileUris = getAllFileUris();
@@ -2521,7 +2521,7 @@ DesktopItemProxyModel *DesktopIconView::getProxyModel()
 
 void DesktopIconView::fileCreated(const QString &uri)
 {
-    qDebug()<<"DesktopItemModel::fileCreated,view:" << this;
+    qDebug()<<"DesktopIconView::fileCreated,view:" << this;
     if (m_new_files_to_be_selected.isEmpty()) {
         m_new_files_to_be_selected<<uri;
 
@@ -2651,6 +2651,17 @@ void DesktopIconView::saveExtendItemInfo()
             metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, tmp);
         }
     }
+}
+
+bool DesktopIconView::isFull()
+{
+    //bug#123045 主屏桌面空间不足，新建的文件未放置到扩展屏桌面上
+    int colNum = viewport()->width()/gridSize().width();
+    int rowNum = viewport()->height()/gridSize().height();
+    if (colNum * rowNum <= m_proxy_model->rowCount()) {
+        return true;
+    }
+    return false;
 }
 
 void DesktopIconView::resetExtendItemInfo()
