@@ -1438,6 +1438,7 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Shift:
     case Qt::Key_Control:
         m_ctrl_or_shift_pressed = true;
+        m_ctrl_key_pressed = true;
         break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
@@ -1458,6 +1459,8 @@ void DesktopIconView::keyReleaseEvent(QKeyEvent *e)
 {
     QListView::keyReleaseEvent(e);
     m_ctrl_or_shift_pressed = false;
+    m_ctrl_key_pressed = false;
+
 }
 
 void DesktopIconView::focusOutEvent(QFocusEvent *e)
