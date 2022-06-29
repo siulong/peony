@@ -15,7 +15,7 @@ static QTimeLine *gTimeLine = nullptr;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
 {
-    connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
+    connect(this,  &DesktopBackgroundWindow::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
 
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);

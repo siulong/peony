@@ -661,6 +661,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
             getIconView(screen)->saveExtendItemInfo();
             getIconView(qApp->primaryScreen())->updateView();
         }
+        Q_EMIT window->destroyed();
         m_bg_windows.removeOne(window);
         window->deleteLater();
     });
@@ -859,6 +860,17 @@ int PeonyDesktopApplication::checkScreenMode(const QRect &geometry)
         }
     }
     return mode;
+}
+
+Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
+{
+    for (auto window : m_bg_windows) {
+        Peony::DesktopIconView *view = window->getIconView();
+        if (view && !view->isFull()) {
+            return view;
+        }
+    }
+    return nullptr;
 }
 
 static void volume_mount_cb (GObject* source, GAsyncResult* res, gpointer udata)

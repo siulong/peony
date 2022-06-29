@@ -59,6 +59,7 @@ public:
     Peony::DesktopIconView *getIconView(int id);
     Peony::DesktopIconView *getIconView(QScreen *screen);
     int checkScreenMode(const QRect &geometry);
+    Peony::DesktopIconView *getNotFullView();
 
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
