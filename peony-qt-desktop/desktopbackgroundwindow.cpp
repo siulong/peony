@@ -72,7 +72,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
                 });
-                auto action1 = menu.addAction(QObject::tr("set resolution"));
+                auto action1 = menu.addAction(QObject::tr("display settings"));
                 connect(action1, &QAction::triggered, [=]() {
                     //go to control center set resolution ratio
                     PeonyDesktopApplication::gotoSetResolution();
