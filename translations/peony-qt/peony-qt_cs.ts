@@ -167,42 +167,42 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="668"/>
+        <location filename="../../src/windows/main-window.cpp" line="672"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="668"/>
+        <location filename="../../src/windows/main-window.cpp" line="672"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="732"/>
+        <location filename="../../src/windows/main-window.cpp" line="736"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="734"/>
+        <location filename="../../src/windows/main-window.cpp" line="738"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1590"/>
+        <location filename="../../src/windows/main-window.cpp" line="1594"/>
         <source>Delete Permanently</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1591"/>
+        <location filename="../../src/windows/main-window.cpp" line="1595"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1601"/>
+        <location filename="../../src/windows/main-window.cpp" line="1605"/>
         <source>Tips info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1602"/>
+        <location filename="../../src/windows/main-window.cpp" line="1606"/>
         <source>Trash has no file need to be cleaned.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -211,7 +211,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="747"/>
+        <location filename="../../src/windows/main-window.cpp" line="751"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -223,44 +223,44 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Tüm etiketler...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="356"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="358"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="356"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="358"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="394"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="407"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="396"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="409"/>
         <source>Tips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="394"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="396"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="407"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="409"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="214"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="216"/>
         <source>Open In New Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="230"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="264"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="232"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
         <source>Can not open %1, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="248"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="250"/>
         <source>Open In New Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -268,7 +268,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="551"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="553"/>
         <source>All tags...</source>
         <translation type="unfinished">Tüm etiketler...</translation>
     </message>
@@ -593,12 +593,12 @@ Telif (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</translatio
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1574"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1575"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1575"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1576"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
