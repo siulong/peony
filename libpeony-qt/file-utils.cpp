@@ -121,7 +121,7 @@ QString FileUtils::urlEncode(const QString& url)
 
 QString FileUtils::urlDecode(const QString &url)
 {
-    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8(), ":/");
+    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8().constData(), ":/");
     if (!decodeUrl) {
 //        qDebug() << "decode url from:'" << url <<"' to '" << url << "'";
         return url;
