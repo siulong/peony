@@ -219,7 +219,7 @@
         <translation type="unfinished">རྒྱབ་ལྗོངས་འདེམ་པ།</translation>
     </message>
     <message>
-        <source>set resolution</source>
+        <source>display settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
