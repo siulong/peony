@@ -7,6 +7,8 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
+#include "peony-core_global.h"
+
 const QString DiscBusName = "org.freedesktop.UDisks2";
 const QString DiscBusBlock = "org.freedesktop.UDisks2.Block";
 const QString DiscBusDrive = "org.freedesktop.UDisks2.Drive";
@@ -21,7 +23,7 @@ const QString DiscBusObjectPathPrefix = "/org/freedesktop/UDisks2/block_devices/
  * Fourth，检测是否可追加
  * Fifth,  根据是否可追加具体化光盘类型(如不可追加的DVD-R盘的实际类型为DVD-ROM)
  */
-class DiscControl:public QObject
+class PEONYCORESHARED_EXPORT DiscControl:public QObject
 {
     Q_OBJECT
 public:
@@ -67,6 +69,7 @@ Q_SIGNALS:
     void workFinished(DiscControl* pThis);
     void burnFinished(QString);                               //参数为空表明刻录成功
     void unmountFinished(QString);                            //参数为空表明卸载成功
+	void formatUdfFinished(bool, QString);					  //bool为false时，QString表示失败原因
 private Q_SLOTS:
     void burnSlot(QString);
     void unmountSlot(QDBusPendingCallWatcher*);
