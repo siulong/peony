@@ -64,7 +64,7 @@ unix {
 
     # fixme:// format_dialog.h
     header.path = /usr/include/peony-qt
-    header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h \
+    header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h windows/FMWindowIface.h \
                     libpeony-qt/usershare-manager.h windows/udfFormatDialog.h
 #    header.depends = header2
     header.files += development-files/header-files/*
