@@ -3,10 +3,13 @@
 
 #include <QObject>
 #include <QProcess>
+
+#include <peony-core_global.h>
+
 #ifdef signals
 #undef signals
 #endif
-class DiscCommand : public QObject
+class PEONYCORESHARED_EXPORT DiscCommand : public QObject
 {
     Q_OBJECT
 public:

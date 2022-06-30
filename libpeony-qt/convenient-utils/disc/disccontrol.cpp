@@ -529,15 +529,20 @@ bool DiscControl::discEjectSync(){
 */
 bool DiscControl::formatUdfSync(QString discLabel){
     bool formatRet;
+	QString errInfo;
 
     //1.目前仅仅支持CD-RW DVD-RW DVD+RW盘的udf格式化操作
     if(!supportUdf()){
         qDebug()<<"["<<mDevice<<"] does not support udf for"<<mMediaType;
+		errInfo = mMediaType + tr(" not support udf at present.");
+		formatUdfFinished(false, errInfo);
         return false;
     }
     //2. 保证光盘处于卸载状态，卸载失败返回false
     if(!discUnmountSync()){
-        qDebug()<<"["<<mDevice<<"] mkudffs failed because unmount error.";
+        qDebug()<<"["<<mDevice<<"] newfs_udf failed because unmount error.";
+		errInfo = tr("unmount disc failed before udf format.");
+		formatUdfFinished(false, errInfo);
         return false;
     }
 
@@ -555,6 +560,7 @@ bool DiscControl::formatUdfSync(QString discLabel){
     if(formatRet)                               //成功则立即弹出，失败后的行为由调用者自己决定
         discEjectSync();                        //如：失败后可重新尝试？或者弹出？
 
+	formatUdfFinished(true, errInfo);			//udf格式化成功
     return formatRet;
 }
 
@@ -563,6 +569,7 @@ bool DiscControl::formatUdfSync(QString discLabel){
 */
 bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1){
     QString output1;
+	QString errInfo;
     QStringList arg1;
     QProcess formatUdf1;
 
@@ -573,8 +580,11 @@ bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1){
     output1 = formatUdf1.readAll();
     formatUdf1.close();
 
-    if(output1.contains("Disc is not properly formatted"))
+    if(output1.contains("Disc is not properly formatted")){
+		errInfo = mMediaType + tr("is not properly formatted.");
+		formatUdfFinished(false, errInfo);
         return false;
+	}
 
     return true;
 }
@@ -602,6 +612,8 @@ bool DiscControl::formatUdfDvdRw(const QString& dvdRwLabel){
 
     if(output2.contains("Disc is not properly formatted")){     //newfs_udf命令无法对空盘进行格式化
         qDebug()<<"["<<mDevice<<"] preparation failed before DVD-RW udf format.";
+        QString errInfo = tr("preparation failed before DVD-RW udf format.");
+        formatUdfFinished(false, errInfo);
         return false;
     }
 
