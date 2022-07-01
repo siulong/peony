@@ -74,7 +74,7 @@ void IconViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
             return qApp->style()->drawControl(element, &opt, painter, widget);
         }
     }
-    qApp->style()->drawControl(element, option, painter, widget);
+    QProxyStyle::drawControl(element, option, painter, widget);
 }
 
 void IconViewStyle::drawItemPixmap(QPainter *painter, const QRect &rect, int alignment, const QPixmap &pixmap) const

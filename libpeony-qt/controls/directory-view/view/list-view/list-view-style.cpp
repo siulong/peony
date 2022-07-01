@@ -281,7 +281,7 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
     default:
         break;
     }
-    return qApp->style()->drawControl(element, option, painter, widget);
+    return QProxyStyle::drawControl(element, option, painter, widget);
 }
 //绘制列表视图文本
 void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const

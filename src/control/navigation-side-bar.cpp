@@ -652,6 +652,8 @@ void NavigationSideBarStyle::drawControl(QStyle::ControlElement element, const Q
                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
             }
         }
-        return qApp->style()->drawControl(element, &opt, painter, widget);
+        return QProxyStyle::drawControl(element, &opt, painter, widget);
+    } else {
+        return QProxyStyle::drawControl(element, option, painter, widget);
     }
 }
