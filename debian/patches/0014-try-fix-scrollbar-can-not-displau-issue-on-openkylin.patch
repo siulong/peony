@@ -1,0 +1,50 @@
+From: cckylin-cibot <cckylin-cibot@kylinos.cn>
+Date: Sat, 2 Jul 2022 13:28:28 +0000
+Subject: try fix scrollbar can not displau issue on openkylin.
+
+---
+ .../controls/directory-view/view/icon-view/icon-view-style.cpp        | 2 +-
+ .../controls/directory-view/view/list-view/list-view-style.cpp        | 2 +-
+ src/control/navigation-side-bar.cpp                                   | 4 +++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
+index 3648ee9..365fbae 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
+@@ -74,7 +74,7 @@ void IconViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
+             return qApp->style()->drawControl(element, &opt, painter, widget);
+         }
+     }
+-    qApp->style()->drawControl(element, option, painter, widget);
++    QProxyStyle::drawControl(element, option, painter, widget);
+ }
+ 
+ void IconViewStyle::drawItemPixmap(QPainter *painter, const QRect &rect, int alignment, const QPixmap &pixmap) const
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
+index a4ad00b..46298d1 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
+@@ -281,7 +281,7 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
+     default:
+         break;
+     }
+-    return qApp->style()->drawControl(element, option, painter, widget);
++    return QProxyStyle::drawControl(element, option, painter, widget);
+ }
+ //绘制列表视图文本
+ void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index e1067b4..71b78d5 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -652,6 +652,8 @@ void NavigationSideBarStyle::drawControl(QStyle::ControlElement element, const Q
+                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
+             }
+         }
+-        return qApp->style()->drawControl(element, &opt, painter, widget);
++        return QProxyStyle::drawControl(element, &opt, painter, widget);
++    } else {
++        return QProxyStyle::drawControl(element, option, painter, widget);
+     }
+ }
