@@ -2451,6 +2451,7 @@ bool DesktopIconView::launchAppWithArguments(QString desktopFile, QStringList ar
                 qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
             }
         }
+        return true;
     }
     return false;
 }
