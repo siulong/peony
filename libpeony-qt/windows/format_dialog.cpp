@@ -45,6 +45,86 @@ static bool b_failed = false;
 static bool b_canClose = true;
 static double m_before_progress = 0;
 
+static ButtonStyle *global_instance = nullptr;
+
+ButtonStyle *ButtonStyle::getStyle()
+{
+    if (!global_instance) {
+        global_instance = new ButtonStyle;
+    }
+    return global_instance;
+}
+
+void ButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    switch (element) {
+    case CE_PushButton:
+    {
+        if (const QStyleOptionButton *button = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            proxy()->drawControl(CE_PushButtonBevel, option, painter, widget);
+            QStyleOptionButton subopt = *button;
+            subopt.rect = proxy()->subElementRect(SE_PushButtonContents, option, widget);
+            proxy()->drawControl(CE_PushButtonLabel, &subopt, painter, widget);
+            return;
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+    qApp->style()->drawControl(element, option, painter, widget);
+}
+
+int ButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
+{
+    switch (metric) {
+    case PM_ButtonMargin:
+    {
+        return 0;
+    }
+
+    default:
+        return QProxyStyle::pixelMetric(metric, option, widget);
+    }
+}
+
+QRect ButtonStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
+{
+    switch (element) {
+    case SE_PushButtonContents:
+    {
+        if (const QStyleOptionButton *button = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            const bool icon = !button->icon.isNull();
+            const bool text = !button->text.isEmpty();
+            QRect rect = option->rect;
+            int Margin_Height = 2;
+            int ToolButton_MarginWidth = 10;
+            int Button_MarginWidth = proxy()->pixelMetric(PM_ButtonMargin, option, widget);
+            if (text && !icon && !(button->features & QStyleOptionButton::HasMenu)) {
+                rect.adjust(Button_MarginWidth, 0, -Button_MarginWidth, 0);
+            } else if (!text && icon && !(button->features & QStyleOptionButton::HasMenu)) {
+
+            } else {
+                rect.adjust(ToolButton_MarginWidth, Margin_Height, -ToolButton_MarginWidth, -Margin_Height);
+            }
+            if (button->features & (QStyleOptionButton::AutoDefaultButton | QStyleOptionButton::DefaultButton)) {
+                int dbw = proxy()->pixelMetric(PM_ButtonDefaultIndicator, option, widget);
+                rect.adjust(dbw, dbw, -dbw, -dbw);
+            }
+            return rect;
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return QProxyStyle::subElementRect(element, option, widget);
+}
+
+
 QCheckBox *findPasswdCheckBox(Format_Dialog *dlg) {
     return dlg->findChild<QCheckBox *>("cryptCheckBox");
 }
@@ -69,8 +149,8 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     QLabel* romSizeLabel = new QLabel;
     romSizeLabel->setText(tr("Rom size:"));
     mRomSizeCombox = new QComboBox;
-    mainLayout->addWidget(romSizeLabel, 1, 1, 1, 2);
-    mainLayout->addWidget(mRomSizeCombox, 1, 3, 1, 6);
+    mainLayout->addWidget(romSizeLabel, 1, 1, 1, 4);
+    mainLayout->addWidget(mRomSizeCombox, 1, 5, 1, 8);
 
     QLabel* fsLabel = new QLabel;
     fsLabel->setText(tr("Filesystem:"));
@@ -79,14 +159,14 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mFSCombox->addItem("exfat");
     mFSCombox->addItem("ntfs");
     mFSCombox->addItem("ext4");
-    mainLayout->addWidget(fsLabel, 2, 1, 1, 2);
-    mainLayout->addWidget(mFSCombox, 2, 3, 1, 6);
+    mainLayout->addWidget(fsLabel, 2, 1, 1, 4);
+    mainLayout->addWidget(mFSCombox, 2, 5, 1, 8);
 
     QLabel* uNameLabel = new QLabel;
     uNameLabel->setText(tr("Disk name:"));
     mNameEdit = new QLineEdit;
-    mainLayout->addWidget(uNameLabel, 3, 1, 1, 2);
-    mainLayout->addWidget(mNameEdit, 3, 3, 1, 6);
+    mainLayout->addWidget(uNameLabel, 3, 1, 1, 4);
+    mainLayout->addWidget(mNameEdit, 3, 5, 1, 8);
     //fix can give name more than 11 characters,link to bug#113257
     //FIXME 设置最大长度为11，但是汉字也可以输入11个，Qt控件提供方法存在的问题
     connect(mFSCombox, &QComboBox::currentTextChanged, [=]()
@@ -114,19 +194,20 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     mEraseCkbox = new QCheckBox;
     mEraseCkbox->setText (tr("Completely erase(Time is longer, please confirm!)"));
-    mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 8, Qt::AlignLeft);
+    mEraseCkbox->setToolTip(mEraseCkbox->text());
+    mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 12, Qt::AlignLeft);
 
     mProgress = new QProgressBar;
     mProgress->setMinimum(0);
     mProgress->setValue (0);
     mProgress->setMaximum(100);
-    mainLayout->addWidget(mProgress, 5, 1, 1, 8);
+    mainLayout->addWidget(mProgress, 5, 1, 1, 12);
 
     auto cryptCheckBox = new QCheckBox(this);
     cryptCheckBox->setText(tr("Set password"));
     cryptCheckBox->setToolTip(tr("Set password for volume based on LUKS (only ext4)"));
     cryptCheckBox->setObjectName("cryptCheckBox");
-    mainLayout->addWidget(cryptCheckBox, 6, 1, 1, 4, Qt::AlignLeft);
+    mainLayout->addWidget(cryptCheckBox, 6, 1, 1, 6, Qt::AlignLeft);
 
     connect(mFSCombox, &QComboBox::currentTextChanged, this, [=]{
         if (mFSCombox->currentText() == "ext4") {
@@ -139,9 +220,10 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     mCancelBtn = new QPushButton(tr("Cancel"));
     mFormatBtn = new QPushButton(tr("OK"));
+    mCancelBtn->setStyle(new ButtonStyle());
 
-    mainLayout->addWidget(mCancelBtn, 6, 5, 1, 2, Qt::AlignRight);
-    mainLayout->addWidget(mFormatBtn, 6, 7, 1, 2, Qt::AlignRight);
+    mainLayout->addWidget(mCancelBtn, 6, 7, 1, 3, Qt::AlignRight);
+    mainLayout->addWidget(mFormatBtn, 6, 10, 1, 3, Qt::AlignRight);
 
     mTimer = new QTimer(this);
     mTimer->setInterval(1000);
@@ -1094,4 +1176,15 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+}
+
+void Format_Dialog::resizeEvent(QResizeEvent *event)
+{
+    int width = mEraseCkbox->width() - 25;
+
+    if (mEraseCkbox->fontMetrics().width(mEraseCkbox->text()) > width) {
+        mEraseCkbox->setText(mEraseCkbox->fontMetrics().elidedText(mEraseCkbox->text(), Qt::ElideRight, width));
+    }
+
+    QWidget::resizeEvent(event);
 }
