@@ -718,7 +718,9 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         window->getIconView()->resetExtendItemInfo();
     }
 
-    relocateIconView();
+    if (!qApp->property("isTabletMode").toBool()) {
+        relocateIconView();
+    }
 
     if (1 == mode){
         for (auto bgWindow : m_bg_windows) {
