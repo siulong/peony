@@ -83,7 +83,7 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     useGlobalSortAction->setCheckable(true);
     useGlobalSortAction->setChecked(Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool());
     connect(useGlobalSortAction, &QAction::triggered, this, [=](bool checked){
-        Peony::GlobalSettings::getInstance()->setValue(USE_GLOBAL_DEFAULT_SORTING, checked);
+        Peony::GlobalSettings::getInstance()->setGSettingValue(USE_GLOBAL_DEFAULT_SORTING, checked);
     });
 
     addAction(useGlobalSortAction);
