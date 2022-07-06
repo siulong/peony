@@ -304,9 +304,9 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
     if (!factory)
         return;
 
-    auto settings = GlobalSettings::getInstance();
-    auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
-    auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
+//    auto settings = GlobalSettings::getInstance();
+//    auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
+//    auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
 
     auto oldView = m_view;
     QStringList selection;
@@ -329,8 +329,8 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
     //fix go to root path issue after refresh
     view->setDirectoryUri(getCurrentUri());
 
-    view->setSortType(sortType);
-    view->setSortOrder(sortOrder);
+//    view->setSortType(sortType);
+//    view->setSortOrder(sortOrder);
 
     connect(m_view, &DirectoryViewWidget::menuRequest, this, &DirectoryViewContainer::menuRequest);
     connect(m_view, &DirectoryViewWidget::viewDirectoryChanged, this, [=](){

@@ -1158,12 +1158,23 @@ int TabWidget::getSortType()
 {
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
-    auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
-    if (getCurrentUri() != "trash:///" && sortType == 4) {
-        sortType = 0;
+    if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+        auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
+        if (getCurrentUri() != "trash:///" && sortType == 4) {
+            sortType = 0;
+        }
+        return sortType;
+    } else {
+        auto metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
+        if (!metaInfo) {
+            qWarning()<<"no meta info"<<getCurrentUri();
+            Peony::FileInfoJob j(getCurrentUri());
+            j.querySync();
+            metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
+        }
+        auto sortType = metaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? metaInfo->getMetaInfoInt(SORT_COLUMN): 0;
+        return sortType;
     }
-
-    return sortType;
 
 //    if (!currentPage())
 //        return 0;
@@ -1174,9 +1185,21 @@ Qt::SortOrder TabWidget::getSortOrder()
 {
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
-    auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
+    if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+        auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
 
-    return Qt::SortOrder(sortOrder);
+        return Qt::SortOrder(sortOrder);
+    } else {
+        auto metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
+        if (!metaInfo) {
+            qWarning()<<"no meta info"<<getCurrentUri();
+            Peony::FileInfoJob j(getCurrentUri());
+            j.querySync();
+            metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
+        }
+        auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+        return Qt::SortOrder(sortOrder);
+    }
 
 //    if (!currentPage())
 //        return Qt::AscendingOrder;

@@ -140,8 +140,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     connect(header(), &QHeaderView::sortIndicatorChanged, this, [=](int logicalIndex, Qt::SortOrder order)
     {
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
-        Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
-        Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
+        if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
+            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
+        } else {
+            auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
+            if (!metaInfo) {
+                qWarning()<<"no meta info"<<m_current_uri;
+            } else {
+                metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
+                metaInfo->setMetaInfoInt(SORT_ORDER, order);
+            }
+        }
     });
 }
 
