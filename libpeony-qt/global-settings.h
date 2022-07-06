@@ -46,7 +46,7 @@
 #define SEND_URIS_OF_COPY_DSPS      "sendUrisOfCopyDsps"  /* send src and dest uris of copy dsps files to wps,默认值为false */
 #define DOC_IS_OCCUPIED_BY_WPS      "docIsOccupiedByWps" /* 是否开启wps占用文件监控功能 */
 
-#define USE_GLOBAL_DEFAULT_SORTING "use-global-default-sorting"
+#define USE_GLOBAL_DEFAULT_SORTING "useGlobalDefaultSorting"
 
 #define DEFAULT_VIEW_ID             "directory-view/default-view-id"
 #define DEFAULT_VIEW_ZOOM_LEVEL     "directory-view/default-view-zoom-level"
