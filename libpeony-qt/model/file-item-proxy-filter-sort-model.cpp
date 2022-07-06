@@ -168,8 +168,8 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
             goto default_sort;
         }
         case FileItemModel::FileSize: {
-            qDebug() << "FileSize:" <<leftItem->m_info->displayName()<<leftItem->m_info->size()
-                     <<rightItem->m_info->displayName()<<rightItem->m_info->size();
+//            qDebug() << "FileSize:" <<leftItem->m_info->displayName()<<leftItem->m_info->size()
+//                     <<rightItem->m_info->displayName()<<rightItem->m_info->size();
             //fix refresh sort order change issue, use file name to compare, link to bug#92525
             if (leftItem->m_info->size() == rightItem->m_info->size())
             {
