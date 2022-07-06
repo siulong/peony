@@ -36,6 +36,7 @@ public:
 Q_SIGNALS:
     void switchSortTypeRequest(int type);
     void switchSortOrderRequest(Qt::SortOrder order);
+    void globalSortingPolicyChanged();
 
 public Q_SLOTS:
     void setSortType(int type);

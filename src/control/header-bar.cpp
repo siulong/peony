@@ -422,6 +422,14 @@ void HeaderBar::addMenuButtons()
         sortTypeMenu->setSortType(m_window->getCurrentSortColumn());
         sortTypeMenu->setSortOrder(m_window->getCurrentSortOrder());
     });
+    connect(sortTypeMenu, &SortTypeMenu::globalSortingPolicyChanged, this, [=]{
+        auto sortType = m_window->getCurrentSortColumn();
+        auto sortOrder = m_window->getCurrentSortOrder();
+        sortTypeMenu->setSortType(sortType);
+        sortTypeMenu->setSortOrder(sortOrder);
+        m_window->setCurrentSortColumn(sortType);
+        m_window->setCurrentSortOrder(sortOrder);
+    });
 
     action = addAction(QIcon::fromTheme("open-menu-symbolic"), tr("Option"));
     QToolButton *popMenu = qobject_cast<QToolButton *>(widgetForAction(action));
