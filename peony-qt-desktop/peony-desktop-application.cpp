@@ -740,10 +740,10 @@ void PeonyDesktopApplication::setupDesktop()
             g_statusManagerDBus = new QDBusInterface(DBUS_STATUS_MANAGER_IF, "/" ,DBUS_STATUS_MANAGER_IF,QDBusConnection::sessionBus(),this);
         }
         bool isTabletMode = false;
-        QDBusReply<bool> message_a = g_statusManagerDBus->call("get_current_tabletmode");
-        if (message_a.isValid()) {
-            isTabletMode = message_a.value();
-        }
+//        QDBusReply<bool> message_a = g_statusManagerDBus->call("get_current_tabletmode");
+//        if (message_a.isValid()) {
+//            isTabletMode = message_a.value();
+//        }
         setProperty("isTabletMode", isTabletMode);
 
         connect(g_statusManagerDBus, SIGNAL(mode_change_signal(bool)), this, SLOT(onTabletModeChanged(bool)));
