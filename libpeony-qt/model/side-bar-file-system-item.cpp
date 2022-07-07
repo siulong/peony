@@ -211,8 +211,7 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
             m_uri = "computer:///" + volumeItem.name() + ".volume";/* 手机(mtp、gphoto2) */
             m_mounted = true;
         }
-        else if(m_device.contains("/dev/sr") &&
-                (m_displayName.contains("DVD") ||m_displayName.contains("CD")))//更好的方法区分是否是空光盘?
+        else if(m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(m_device))//更好的方法区分是否是空光盘?
         {
             m_mounted=true;
             m_unmountable = m_mountable=false;
@@ -319,8 +318,7 @@ void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Vol
             /* 更新uri,为了枚举操作 */
             if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                 item->m_uri = "computer:///" + volume.name() + ".volume";
-            else if(item->m_device.contains("/dev/sr") &&
-                    (item->m_displayName.contains("DVD") ||item->m_displayName.contains("CD")))/* 空光盘 */
+            else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
             {
                 item->m_uri="burn:///";
             }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
@@ -395,8 +393,7 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
                 /* 更新uri,为了枚举操作 */
                 if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                     item->m_uri = "computer:///" + updateDevice.name() + ".volume";
-                else if(item->m_device.contains("/dev/sr") &&
-                        (item->m_displayName.contains("DVD") ||item->m_displayName.contains("CD")))/* 空光盘 */
+                else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
                 {
                     item->m_uri="burn:///";
                 }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */

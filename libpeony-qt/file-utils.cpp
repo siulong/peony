@@ -36,6 +36,8 @@
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusReply>
+
 
 using namespace Peony;
 
@@ -1047,6 +1049,47 @@ bool FileUtils::isRemoteServerUri(const QString &uri)
         return true;
 
     return false;
+}
+
+bool FileUtils::isEmptyDisc(const QString &unixDevice)
+{
+    if (unixDevice.isEmpty()) //没有设备时不做后续处理
+        return false;
+
+    if (!QDBusConnection::systemBus().isConnected())
+        return false;
+
+    /* 通过Properties获取Drive的path */
+    QString  dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
+    QDBusInterface PropertiesIf("org.freedesktop.UDisks2",
+                                  dbusPath,
+                                  "org.freedesktop.DBus.Properties",
+                                  QDBusConnection::systemBus());
+    if(!PropertiesIf.isValid())
+        return false;
+
+    QDBusReply<QDBusVariant> reply = PropertiesIf.call("Get", "org.freedesktop.UDisks2.Block", "Drive");
+    if(!reply.isValid())
+        return false;
+
+    QDBusObjectPath* busObjectPath = (QDBusObjectPath*)(reply.value().variant().data());
+    if(!busObjectPath)
+        return false;
+
+    QString drivePath = busObjectPath->path();//end
+
+    /* 获取Drive的"OpticalBlank"属性，判断是否是空光盘 */
+    QDBusInterface driveInterface("org.freedesktop.UDisks2",
+                                  drivePath,
+                                  "org.freedesktop.UDisks2.Drive",
+                                  QDBusConnection::systemBus());
+
+    bool isBlank = false;
+    if(driveInterface.isValid()){
+        isBlank = driveInterface.property("OpticalBlank").toBool(); /* 获取"OpticalBlank"属性值 */
+    }
+
+    return isBlank;
 }
 
 QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
