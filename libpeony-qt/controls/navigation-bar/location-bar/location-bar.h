@@ -49,6 +49,7 @@ public:
 Q_SIGNALS:
     void groupChangedRequest(const QString &uri);
     void blankClicked();
+    void aboutToSetRootUri();
 
 public Q_SLOTS:
     void setRootUri(const QString &uri);

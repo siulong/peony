@@ -155,6 +155,8 @@ LocationBar::~LocationBar()
 
 void LocationBar::setRootUri(const QString &uri)
 {
+    Q_EMIT aboutToSetRootUri();
+
     //when is the same uri and has buttons return
     if (m_current_uri == uri && m_buttons.count() >0)
         return;
@@ -174,12 +176,12 @@ void LocationBar::setRootUri(const QString &uri)
     auto tmpUri = uri;
     while (!tmpUri.isEmpty() && tmpUri != "") {
         m_buttons_info.prepend(FileInfo::fromUri(tmpUri));
-        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
-            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
-        }
-        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
-            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
-        }
+//        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
+//        }
+//        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
+//        }
         tmpUri = FileUtils::getParentUri(tmpUri);
     }
 
@@ -188,18 +190,35 @@ void LocationBar::setRootUri(const QString &uri)
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
         infoJob->setAutoDelete();
-        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+        connect(this, &LocationBar::aboutToSetRootUri, infoJob, &FileInfoJob::cancel);
+        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+            if (!successed) {
+                qWarning()<<"can not query file:"<<info->uri();
+                m_querying_buttons_info.removeOne(info);
+                m_buttons_info.removeOne(info);
+                return;
+            }
             // enumerate buttons info directory
             auto enumerator = new FileEnumerator;
             enumerator->setEnumerateDirectory(info.get()->uri());
             //comment to fix kydroid path show abnormal issue
             //enumerator->setEnumerateWithInfoJob();
 
+            connect(this, &LocationBar::aboutToSetRootUri, enumerator, &FileEnumerator::cancel);
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
+                    if (m_querying_buttons_info.isEmpty()) {
+                        // add buttons
+                        clearButtons();
+                        for (auto info : m_buttons_info) {
+                            addButton(info.get()->uri().toLocal8Bit(), true, true);
+                        }
+                        doLayout();
+                    }
+                } else {
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -262,10 +281,19 @@ void LocationBar::updateButtons()
             enumerator->setEnumerateWithInfoJob();
 
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
+                    if (m_querying_buttons_info.isEmpty()) {
+                        // add buttons
+                        clearButtons();
+                        for (auto info : m_buttons_info) {
+                            addButton(info.get()->uri(), true, true);
+                        }
+                        doLayout();
+                    }
+                } else {
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
