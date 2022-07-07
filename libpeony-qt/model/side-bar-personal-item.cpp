@@ -56,6 +56,12 @@ SideBarPersonalItem::SideBarPersonalItem(QString uri,
                 m_model);
         m_children->append(pictureItem);
 
+        QString musicUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+        SideBarPersonalItem *musicItem = new SideBarPersonalItem(musicUri,
+                this,
+                m_model);
+        m_children->append(musicItem);
+
         QString mediaUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
         SideBarPersonalItem *mediaItem = new SideBarPersonalItem(mediaUri,
                 this,
@@ -67,12 +73,6 @@ SideBarPersonalItem::SideBarPersonalItem(QString uri,
                 this,
                 m_model);
         m_children->append(downloadItem);
-
-        QString musicUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-        SideBarPersonalItem *musicItem = new SideBarPersonalItem(musicUri,
-                this,
-                m_model);
-        m_children->append(musicItem);
 
         m_model->insertRows(0, 5, firstColumnIndex());
         return;
