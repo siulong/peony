@@ -264,7 +264,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
                 for (auto t : templates) {
                     QFileInfo qinfo(templateDir, t);
                     qWarning()<<"template entry is"<<qinfo.filePath();
-                    GFile *gtk_file = g_file_new_for_path(qinfo.filePath().toUtf8().data());
+                    GFile *gtk_file = g_file_new_for_path(qinfo.filePath().toUtf8().constData());
                     char *uri_str = g_file_get_uri(gtk_file);
                     //FIXME: replace BLOCKING api in ui thread.
                     std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri_str);

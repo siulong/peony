@@ -52,7 +52,7 @@ FileInfo::FileInfo(const QString &uri, QObject *parent) : QObject (parent)
      * bug in PathBarModel enumeration.
      */
     m_uri = uri;
-    m_file = g_file_new_for_uri(uri.toUtf8().data());
+    m_file = g_file_new_for_uri(uri.toUtf8().constData());
     m_parent = g_file_get_parent(m_file);
     m_is_remote = !g_file_is_native(m_file);
     m_is_dir = false;
@@ -107,7 +107,7 @@ std::shared_ptr<FileInfo> FileInfo::fromUri(QString uri)
         std::shared_ptr<FileInfo> newly_info = std::make_shared<FileInfo>();
 
         newly_info->m_uri = uri;
-        newly_info->m_file = g_file_new_for_uri(uri.toUtf8().data());
+        newly_info->m_file = g_file_new_for_uri(uri.toUtf8().constData());
 
         newly_info->m_parent = g_file_get_parent(newly_info->m_file);
         newly_info->m_is_remote = ! g_file_is_native(newly_info->m_file);
