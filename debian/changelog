@@ -1,4 +1,4 @@
-peony (3.14.4.5-ok6~0706) yangtze; urgency=medium
+peony (3.14.4.5-ok6~0707) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
   * 适配appmanager接口
@@ -6,5 +6,6 @@ peony (3.14.4.5-ok6~0706) yangtze; urgency=medium
   * 修复scrollbar不可见的问题
   * close-cd #126846 修复桌面双击打开两个相同窗口问题
   * close-cd #127731 平板模式下重启后桌面带标题栏问题
+  * close-cd #125560 在平板模式重启重新登录进入桌面后，桌面显示错误（平板模式重启后应进入PC模式）
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
