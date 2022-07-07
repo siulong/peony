@@ -43,7 +43,7 @@
 
 using namespace Peony;
 
-static const int FAVORITE_CAN_NOT_DELETE_URI_COUNT=8;
+static const int FAVORITE_CAN_NOT_DELETE_URI_COUNT=3;
 
 SideBarMenu::SideBarMenu(SideBarAbstractItem *item, SideBar *sideBar, QWidget *parent) : QMenu (parent)
 {
