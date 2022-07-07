@@ -112,7 +112,7 @@ void FileMetaInfo::setMetaInfoVariant(const QString &key, const QVariant &value,
         GFile *file = g_file_new_for_uri(m_uri.toUtf8().constData());
         GError *err = nullptr;
         g_file_set_attribute(file, realKey.toLatin1().data(), G_FILE_ATTRIBUTE_TYPE_STRING,
-                             (gpointer)value.toString().toUtf8().data(),
+                             (gpointer)value.toString().toUtf8().constData(),
                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &err);
 
         if (err) {

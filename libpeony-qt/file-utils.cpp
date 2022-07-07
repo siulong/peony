@@ -909,7 +909,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
         return nullptr;
 
     cancel = g_cancellable_new();
-    file = g_file_new_for_uri(uri.toUtf8().data());
+    file = g_file_new_for_uri(uri.toUtf8().constData());
     if(!file ||!cancel)
         return nullptr;
 
@@ -930,7 +930,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
     if(targetUri.isEmpty())
         return nullptr;
 
-    mountPoint = g_filename_from_uri(targetUri.toUtf8().data(),NULL,NULL);
+    mountPoint = g_filename_from_uri(targetUri.toUtf8().constData(),NULL,NULL);
     if(mountPoint)
         tmpPath = Peony::VolumeManager::getUnixDeviceFileFromMountPoint(mountPoint);
     devicePath = tmpPath;

@@ -1363,7 +1363,7 @@ void Mount::queryDeviceByMountpoint(){
         m_mountPoint = mountPoint;
         g_free(mountPoint);
     }
-    //mountPoint = m_mountPoint.toUtf8().data();
+    //mountPoint = m_mountPoint.toUtf8().constData();
     //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
     m_entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
     if(!m_entry)
