@@ -277,6 +277,9 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
+    if (!metaInfo) {
+        return;
+    }
     QStringList labelIds;
     if (metaInfo && !metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
         labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
