@@ -86,7 +86,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
 
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
-    //header()->setStretchLastSection(true);
+    header()->setStretchLastSection(false);
 
     connect(header(), &QHeaderView::sectionClicked, this, [=](){
         //update sort policy
@@ -647,7 +647,7 @@ void ListView::startDrag(Qt::DropActions flags)
             opt.rect.moveTo(0, 0);
             opt.state |= QStyle::State_Selected;
             painter.setOpacity(0.8);
-            QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter);
+            QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
             painter.restore();
         }
 
