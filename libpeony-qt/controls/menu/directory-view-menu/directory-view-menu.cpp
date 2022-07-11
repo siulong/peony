@@ -96,6 +96,15 @@ DirectoryViewMenu::DirectoryViewMenu(FMWindowIface *window, QWidget *parent) : Q
     fillActions();
 }
 
+void DirectoryViewMenu::setHiddenActionsByObjectName(const QStringList &actionNames)
+{
+    for (auto action : actions()) {
+        if (actionNames.contains(action->objectName())) {
+            action->setVisible(false);
+        }
+    }
+}
+
 void DirectoryViewMenu::fillActions()
 {
     if (m_directory == "computer:///") {
@@ -189,7 +198,7 @@ void DirectoryViewMenu::fillActions()
     auto openActions = constructOpenOpActions();
     if (!openActions.isEmpty()) {
         l<<addSeparator();
-        l.last()->setObjectName("open-actions-separator");
+        l.last()->setObjectName(OPEN_ACTIONS_SEPARATOR);
     }
 
     //netwotk items not show operation menu
@@ -201,14 +210,14 @@ void DirectoryViewMenu::fillActions()
         auto templateActions = constructCreateTemplateActions();
         if (!templateActions.isEmpty()) {
             l<<addSeparator();
-            l.last()->setObjectName("create-actions-separator");
+            l.last()->setObjectName(CREATE_ACTIONS_SEPARATOR);
         }
 
         //add view actions
         auto viewActions = constructViewOpActions();
         if (!viewActions.isEmpty()) {
             l<<addSeparator();
-            l.last()->setObjectName("view-actions-separator");
+            l.last()->setObjectName(VIEW_ACTIONS_SEPARATOR);
         }
     }
 
@@ -216,7 +225,7 @@ void DirectoryViewMenu::fillActions()
     auto fileOpActions = constructFileOpActions();
     if (!fileOpActions.isEmpty()) {
         l<<addSeparator();
-        l.last()->setObjectName("file-operation-actions-separator");
+        l.last()->setObjectName(FILE_OPERATION_ACTIONS_SEPARATOR);
     }
 
     if (! m_is_kydroid){
@@ -224,7 +233,7 @@ void DirectoryViewMenu::fillActions()
         auto pluginActions = constructMenuPluginActions();
         if (!pluginActions.isEmpty()) {
             l<<addSeparator();
-            l.last()->setObjectName("plugin-actions-separator");
+            l.last()->setObjectName(PLUGIN_ACTIONS_SEPARATOR);
         }
     }
 
@@ -232,7 +241,7 @@ void DirectoryViewMenu::fillActions()
     auto propertiesAction = constructFilePropertiesActions();
     if (!propertiesAction.isEmpty()) {
         l<<addSeparator();
-        l.last()->setObjectName("properties-actions-separator");
+        l.last()->setObjectName(PROPERTIES_ACTIONS_SEPARATOR);
     }
 
     if (! m_is_kydroid){
@@ -240,14 +249,14 @@ void DirectoryViewMenu::fillActions()
         auto computerActions = constructComputerActions();
         if (!computerActions.isEmpty()) {
             l<<addSeparator();
-            l.last()->setObjectName("computer-actions-separator");
+            l.last()->setObjectName(COMPUTER_ACTIONS_SEPARATOR);
         }
 
         //add actions in trash:///
         auto trashActions = constructTrashActions();
         if (!trashActions.isEmpty()) {
             l<<addSeparator();
-            l.last()->setObjectName("trash-actions-separator");
+            l.last()->setObjectName(TRASH_ACTIONS_SEPARATOR);
         }
 
         //add actions in search:///
@@ -264,7 +273,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
     bool isBackgroundMenu = m_selections.isEmpty();
     if (isBackgroundMenu) {
         l<<addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open in New Window"));
-        l.last()->setObjectName("open-in-new-window-action");
+        l.last()->setObjectName(OPEN_IN_NEW_WINDOW_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             auto windowIface = m_top_window->create(m_directory);
             auto newWindow = dynamic_cast<QWidget *>(windowIface);
@@ -273,7 +282,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             newWindow->show();
         });
         l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-        l.last()->setObjectName("open-in-new-tab-action");
+        l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             if (!m_top_window)
                 return;
@@ -300,7 +309,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 if (!info->isVirtual() &&  !info->uri().startsWith("smb://") && !m_is_kydroid && !m_is_filesafe && !m_is_filebox_file)
                 {
                     l<<addAction(QIcon::fromTheme("bookmark-add-symbolic"), tr("Add to bookmark"));
-                    l.last()->setObjectName("add-to-bookmark-action");
+                    l.last()->setObjectName(ADD_TO_BOOKMARK_ACTION);
 
                     if(BookMarkManager::getInstance()->existsInBookMarks(info->uri()))
                     {
@@ -320,7 +329,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 }
 
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
-                l.last()->setObjectName("open-action");
+                l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     if (!m_top_window)
                         return;
@@ -331,7 +340,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 if (recommendActions.count() >1)
                 {
                     auto openWithAction = addAction(tr("Open with..."));
-                    openWithAction->setObjectName("open-with-action");
+                    openWithAction->setObjectName(OPEN_WITH_ACTION);
                     QMenu *openWithMenu = new QMenu(this);
                     // do not highlight application icons.
                     openWithMenu->setProperty("skipHighlightIconEffect", true);
@@ -353,7 +362,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 }
 
                 l<<addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open in New Window"));
-                l.last()->setObjectName("open-in-new-window-action");
+                l.last()->setObjectName(OPEN_IN_NEW_WINDOW_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto windowIface = m_top_window->create(m_selections.first());
                     auto newWindow = dynamic_cast<QWidget *>(windowIface);
@@ -362,7 +371,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     newWindow->show();
                 });
                 l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-                l.last()->setObjectName("open-in-new-tab-action");
+                l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     if (!m_top_window)
                         return;
@@ -370,7 +379,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 });
             } else if (!info->isVolume()) {
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
-                l.last()->setObjectName("open-action");
+                l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto uri = m_selections.first();
                     if (m_is_network)
@@ -382,7 +391,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 if (m_is_network)
                     return l;
                 auto openWithAction = addAction(tr("Open with..."));
-                openWithAction->setObjectName("open-with-action");
+                openWithAction->setObjectName(OPEN_WITH_ACTION);
                 QMenu *openWithMenu = new QMenu(this);
                 // do not highlight application icons.
                 openWithMenu->setProperty("skipHighlightIconEffect", true);
@@ -424,7 +433,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 openWithAction->setMenu(openWithMenu);
             } else {
                 l<<addAction(tr("Open"));
-                l.last()->setObjectName("open-action");
+                l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto uri = m_selections.first();
                     //FIXME:
@@ -433,7 +442,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             }
         } else {
             l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open %1 selected files").arg(m_selections.count()));
-            l.last()->setObjectName("open-selected-files-action");
+            l.last()->setObjectName(OPEN_SELECTED_FILES_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 qDebug()<<"triggered";
                 QStringList dirs;
@@ -481,7 +490,7 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
     QList<QAction *> l;
     if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash) {
         auto createAction = new QAction(tr("New..."), this);
-        createAction->setObjectName("create-action");
+        createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
             createAction->setEnabled(false);
         }
@@ -617,7 +626,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         if (!viewNames.isEmpty()) {
             //view type;
             auto viewTypeAction = addAction(tr("View Type..."));
-            viewTypeAction->setObjectName("view-type-action");
+            viewTypeAction->setObjectName(VIEW_TYPE_ACTION);
             l<<viewTypeAction;
             QMenu *viewTypeSubMenu = new QMenu(this);
             for (auto viewId : viewNames) {
@@ -637,7 +646,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         //sort type
         auto sortTypeAction = addAction(tr("Sort By..."));
-        sortTypeAction->setObjectName("sort-type-action");
+        sortTypeAction->setObjectName(SORT_TYPE_ACTION);
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
 
@@ -672,7 +681,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         //sort order
         auto sortOrderAction = addAction(tr("Sort Order..."));
-        sortOrderAction->setObjectName("sort-order-action");
+        sortOrderAction->setObjectName(SORT_ORDER_ACTION);
         l<<sortOrderAction;
         QMenu *sortOrderMenu = new QMenu(this);
         tmp.clear();
@@ -693,7 +702,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         sortOrderAction->setMenu(sortOrderMenu);
 
         auto sortPreferencesAction = addAction(tr("Sort Preferences..."));
-        sortPreferencesAction->setObjectName("sort-preferences-action");
+        sortPreferencesAction->setObjectName(SORT_PREFERENCES_ACTION);
         l<<sortPreferencesAction;
 
         auto sortPreferencesMenu = new QMenu(this);
@@ -751,7 +760,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                     }
                     if (!hasDir) {
                         l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
-                        l.last()->setObjectName("copy-action");
+                        l.last()->setObjectName(COPY_ACTION);
                         connect(l.last(), &QAction::triggered, [=]() {
                             ClipboardUtils::setClipboardFiles(m_selections, false);
                         });
@@ -759,7 +768,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 }
                 else {
                     l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
-                    l.last()->setObjectName("copy-action");
+                    l.last()->setObjectName(COPY_ACTION);
                     connect(l.last(), &QAction::triggered, [=]() {
                         ClipboardUtils::setClipboardFiles(m_selections, false);
                     });
@@ -773,7 +782,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe)
             {
                 l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
-                l.last()->setObjectName("cut-action");
+                l.last()->setObjectName(CUT_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     ClipboardUtils::setClipboardFiles(m_selections, true);
                     m_view->repaintView();
@@ -797,7 +806,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 if (canTrash && ! m_is_filebox_file && !m_is_mobile_file)
                 {
                     l<<addAction(QIcon::fromTheme("edit-delete-symbolic"), tr("Delete to trash"));
-                    l.last()->setObjectName("trash-action");
+                    l.last()->setObjectName(TRASH_ACTION);
                     connect(l.last(), &QAction::triggered, [=]() {
                         FileOperationUtils::trash(m_selections, true);
                     });
@@ -809,10 +818,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                     //fix the bug 77131;
                     if(m_is_filebox_file){
                         l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
-                        l.last()->setObjectName("delete-action");
+                        l.last()->setObjectName(DELETE_ACTION);
                     }else if(!m_is_filebox_file || m_is_mobile_file){
                         l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
-                        l.last()->setObjectName("delete-action");
+                        l.last()->setObjectName(DELETE_ACTION);
                     }
 
                     connect(l.last(), &QAction::triggered, [=]() {
@@ -823,7 +832,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (m_is_favorite && m_can_delete && !m_is_filesafe && !hasDeleteForever) {
                 l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
-                l.last()->setObjectName("delete-action");
+                l.last()->setObjectName(DELETE_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     FileOperationUtils::executeRemoveActionWithDialog(m_selections);
                 });
@@ -831,7 +840,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (m_is_smb_file && m_can_delete && !hasDeleteForever) {
                 l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
-                l.last()->setObjectName("delete-action");
+                l.last()->setObjectName(DELETE_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     FileOperationUtils::executeRemoveActionWithDialog(m_selections);
                 });
@@ -839,7 +848,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (m_selections.count() == 1 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
-                l.last()->setObjectName("rename-action");
+                l.last()->setObjectName(RENAME_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     m_view->editUri(m_selections.first());
                 });
@@ -849,7 +858,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             {
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
-                l.last()->setObjectName("paste-action");
+                l.last()->setObjectName(PASTE_ACTION);
                 pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto op = ClipboardUtils::pasteClipboardFiles(m_directory);
@@ -872,13 +881,13 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             {
                 //fix recent files can not be deleted issue
                 l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
-                l.last()->setObjectName("delete-action");
+                l.last()->setObjectName(DELETE_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     FileOperationUtils::remove(m_selections);
                 });
 
                 l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
-                l.last()->setObjectName("copy-action");
+                l.last()->setObjectName(COPY_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
                     QStringList selections;
                     for(auto uri:m_selections)
@@ -891,7 +900,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             }
 
             l<<addAction(QIcon::fromTheme("view-refresh-symbolic"), tr("Refresh"));
-            l.last()->setObjectName("refresh-action");
+            l.last()->setObjectName(REFRESH_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 m_top_window->refresh();
             });
@@ -902,7 +911,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
     if (m_selections.isEmpty())
     {
         l<<addAction(tr("Select All"));
-        l.last()->setObjectName("select-all-action");
+        l.last()->setObjectName(SELECT_ALL_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             //qDebug() << "select all";
             m_view->invertSelections();
@@ -911,7 +920,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
     else if(! m_is_kydroid)
     {
         l<<addAction(tr("Reverse Select"));
-        l.last()->setObjectName("reverse-select-action");
+        l.last()->setObjectName(REVERSE_SELECT_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             //qDebug() << "Reverse select";
             m_view->invertSelections();
@@ -920,7 +929,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
         if (m_is_search && m_selections.count() >0)
         {
             l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
-            l.last()->setObjectName("copy-action");
+            l.last()->setObjectName(COPY_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 ClipboardUtils::setClipboardFiles(m_selections, false);
             });
@@ -955,7 +964,7 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
         }
 
         l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"));
-        l.last()->setObjectName("properties-action");
+        l.last()->setObjectName(PROPERTIES_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             //FIXME:
             if (m_selections.isEmpty()) {
@@ -992,7 +1001,7 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
         });
     } else if (m_selections.count() == 1) {
         l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"));
-        l.last()->setObjectName("properties-action");
+        l.last()->setObjectName(PROPERTIES_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             PropertiesWindow *p = new PropertiesWindow(m_selections);
             p->setAttribute(Qt::WA_DeleteOnClose);
@@ -1034,7 +1043,7 @@ const QList<QAction *> DirectoryViewMenu::constructComputerActions()
                     Format_Dialog* fd  = new Format_Dialog(info->uri(), nullptr, m_view);
                     fd->show();
                 });
-                l.last()->setObjectName("format-action");
+                l.last()->setObjectName(FORMAT_ACTION);
 
                 if (!mount) {
                     l.last()->setEnabled(false);
@@ -1055,7 +1064,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
 
         if (m_selections.isEmpty()) {
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("&Clean the Trash"));
-            l.last()->setObjectName("clean-the-trash-action");
+            l.last()->setObjectName(CLEAN_THE_TRASH_ACTION);
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
                 AudioPlayManager::getInstance()->playWarningAudio();
@@ -1070,7 +1079,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             });
         } else {
             l<<addAction(tr("Restore"));
-            l.last()->setObjectName("restore-action");
+            l.last()->setObjectName(RESTORE_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 if (m_selections.count() == 1) {
                     FileOperationUtils::restore(m_selections.first());
@@ -1079,7 +1088,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 }
             });
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
-            l.last()->setObjectName("delete-action");
+            l.last()->setObjectName(DELETE_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 AudioPlayManager::getInstance()->playWarningAudio();
                 auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
@@ -1091,12 +1100,12 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 }
             });
             l<<addAction(QIcon::fromTheme("edit-copy-symbolic"),tr("Copy"));
-            l.last()->setObjectName("copy-action");
+            l.last()->setObjectName(COPY_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 ClipboardUtils::setClipboardFiles(m_selections, false);
             });
             l<<addAction(QIcon::fromTheme("edit-cut-symbolic"),tr("Cut"));
-            l.last()->setObjectName("cut-action");
+            l.last()->setObjectName(CUT_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 ClipboardUtils::setClipboardFiles(m_selections, true);
                 m_view->repaintView();
@@ -1104,7 +1113,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
         }
     } else if (m_is_recent && m_selections.isEmpty()) {
         l<<addAction(tr("Clean All"));
-        l.last()->setObjectName("clean-the-recent-action");
+        l.last()->setObjectName(CLEAN_THE_RECENT_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             RecentVFSManager::getInstance()->clearAll();
         });
@@ -1121,7 +1130,7 @@ const QList<QAction *> DirectoryViewMenu::constructSearchActions()
             return l;
 
         l<<addAction(QIcon::fromTheme("new-window-symbolc"), tr("Open Parent Folder in New Window"));
-        l.last()->setObjectName("open-in-new-window-action");
+        l.last()->setObjectName(OPEN_IN_NEW_WINDOW_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
             for (auto uri : m_selections) {
                 if (m_is_recent)
