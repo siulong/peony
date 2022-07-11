@@ -198,6 +198,7 @@ private:
     //
     FileCountOperation *m_countOp = nullptr;
 
+    QTimer *m_timer = nullptr;
 };
 
 class PushButtonStyle : public QProxyStyle

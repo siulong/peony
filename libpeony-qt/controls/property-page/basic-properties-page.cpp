@@ -149,6 +149,11 @@ QRect PushButtonStyle::subElementRect(SubElement element, const QStyleOption *op
 BasicPropertiesPage::BasicPropertiesPage(const QStringList &uris, QWidget *parent) : PropertiesWindowTabIface(parent)
 {
     m_uris = uris;
+    m_timer = new QTimer(this);
+    m_timer->setInterval(750);
+    connect(m_timer, &QTimer::timeout, this, [=]{
+        updateCountInfo(true);
+    });
     //getFIleInfo
     this->getFIleInfo(m_uris.first());
     this->init();
@@ -618,6 +623,8 @@ void BasicPropertiesPage::onSingleFileChanged(const QString &oldUri, const QStri
 
 void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
 {
+    m_timer->start();
+
     //old op will delete later
     if (m_countOp) {
         m_countOp->disconnect();
@@ -650,6 +657,8 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
     connect(m_countOp, &FileOperation::operationPreparedOne, this, &BasicPropertiesPage::onFileCountOne, Qt::BlockingQueuedConnection);
 
     connect(m_countOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+        m_timer->stop();
+
         m_countOp = nullptr;
         m_folderContainFiles = file_count - m_folderContainFolders;
         m_fileSizeCount = total_size;
@@ -731,6 +740,7 @@ void BasicPropertiesPage::onFileCountOne(const QString &uri, quint64 size)
 
 void BasicPropertiesPage::cancelCount()
 {
+    m_timer->stop();
     if (m_countOp)
         m_countOp->cancel();
 }
