@@ -70,6 +70,7 @@
 #include <QApplication>
 
 #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
+#define MINIMUM_COLUMN_SIZE 2
 
 using namespace Peony;
 
@@ -102,12 +103,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                   "border: 0px solid transparent"
                   "}");
 
-    setStyle(global_style);
+    //setStyle(global_style);
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
-    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    header()->setStretchLastSection(false);
+    header()->setSectionResizeMode(QHeaderView::Fixed);
+    header()->setStretchLastSection(true);
+    header()->setMinimumSectionSize(MINIMUM_COLUMN_SIZE);
     header()->hide();
 
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -311,7 +313,7 @@ bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
 
 void NavigationSideBar::updateGeometries()
 {
-    setViewportMargins(4, 0, 4, 0);
+    setViewportMargins(8, 0, 4, 0);
     QTreeView::updateGeometries();
     if(m_notAllowHorizontalMove){
         horizontalScrollBar()->setValue(0);/* hotfix bug#93557 */
@@ -338,8 +340,8 @@ void NavigationSideBar::resizeEvent(QResizeEvent *e)
 {
     QTreeView::resizeEvent(e);
     if (header()->count() > 0) {
-        this->setColumnWidth(1, 20);
-        header()->resizeSection(0, this->viewport()->width() - this->columnWidth(1));
+        setColumnWidth(0, this->viewport()->width() - MINIMUM_COLUMN_SIZE - viewportMargins().left() - viewportMargins().right() - verticalScrollBar()->width());
+        setColumnWidth(1, MINIMUM_COLUMN_SIZE);
     }
 }
 
@@ -477,10 +479,10 @@ void NavigationSideBar::wheelEvent(QWheelEvent *event)
 int NavigationSideBar::sizeHintForColumn(int column) const
 {
     if (column == 1)
-        return 22;
+        return MINIMUM_COLUMN_SIZE;
 
     if (column == 0)
-        return viewport()->width() - 22;
+        return viewport()->width() - MINIMUM_COLUMN_SIZE - viewportMargins().left() - viewportMargins().right() - verticalScrollBar()->width();
 
     return QTreeView::sizeHintForColumn(column);
 }
@@ -511,18 +513,18 @@ QSize NavigationSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option
 void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
-    if (index.column() == 1) {
-        QPainterPath rightRoundedRegion;
-        rightRoundedRegion.setFillRule(Qt::WindingFill);
-        auto rect = option.rect;
-        auto view = qobject_cast<const QAbstractItemView *>(option.widget);
-        if (view) {
-            rect.setRight(view->viewport()->rect().right());
-        }
-        rightRoundedRegion.addRoundedRect(rect, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS);
-        rightRoundedRegion.addRect(rect.adjusted(0, 0, -NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, 0));
-        painter->setClipPath(rightRoundedRegion);
-    }
+//    if (index.column() == 1) {
+//        QPainterPath rightRoundedRegion;
+//        rightRoundedRegion.setFillRule(Qt::WindingFill);
+//        auto rect = option.rect;
+//        auto view = qobject_cast<const QAbstractItemView *>(option.widget);
+//        if (view) {
+//            rect.setRight(view->viewport()->rect().right());
+//        }
+//        rightRoundedRegion.addRoundedRect(rect, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS);
+//        rightRoundedRegion.addRect(rect.adjusted(0, 0, -NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, 0));
+//        //painter->setClipPath(rightRoundedRegion);
+//    }
 
     painter->setRenderHint(QPainter::Antialiasing);
     QStyledItemDelegate::paint(painter, option, index);
