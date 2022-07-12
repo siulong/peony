@@ -136,7 +136,7 @@ p, li { white-space: pre-wrap; }
         <translation>排序类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="426"/>
+        <location filename="../../src/control/header-bar.cpp" line="434"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
@@ -151,12 +151,12 @@ p, li { white-space: pre-wrap; }
         <translation>没有找到任何终端插件，请确认您至少安装了一个！</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="584"/>
+        <location filename="../../src/control/header-bar.cpp" line="592"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="587"/>
+        <location filename="../../src/control/header-bar.cpp" line="595"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="744"/>
+        <location filename="../../src/control/header-bar.cpp" line="752"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -189,7 +189,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="769"/>
+        <location filename="../../src/control/header-bar.cpp" line="777"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -687,12 +687,12 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1575"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1598"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1576"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1599"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
