@@ -110,10 +110,14 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<std::map<QString,QIcon> >("std::map<QString,QIcon>&");
     m_occupiedAppsInfoThread = new GetOccupiedAppsInfoThread();
     connect(m_occupiedAppsInfoThread, &GetOccupiedAppsInfoThread::signal_occupiedAppInfo, this, [=](std::map<QString,QIcon>& occupiedAppMap, const QString& message){
-        MessageDialog* dlg = new MessageDialog();
-        dlg->init(occupiedAppMap, message);
-        dlg->setAttribute(Qt::WA_DeleteOnClose);
-        dlg->exec();
+        if(!occupiedAppMap.size()){
+            QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
+        }else{
+            MessageDialog* dlg = new MessageDialog();
+            dlg->init(occupiedAppMap, message);
+            dlg->setAttribute(Qt::WA_DeleteOnClose);
+            dlg->exec();
+        }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
 
@@ -1212,7 +1216,7 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
         if((NULL != error) && (G_IO_ERROR_FAILED_HANDLED != error->code)){
             // @note 这里不要拼接字符串，多次弹出会崩溃
 //            QString errorMsg = QObject::tr("Unable to eject").arg(pThis->name());
-            if(G_IO_ERROR_BUSY != error->code){/* 卷被占用时，防止二次弹出信息提示框 */
+            if(G_IO_ERROR_BUSY == error->code){/* 卷被占用时，防止二次弹出信息提示框 */
                 return;
             }
             if(! strcmp(error->message,"Not authorized to perform operation")){/* gmountOperation会弹出授权框，防止二次弹框 */
