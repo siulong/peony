@@ -109,6 +109,7 @@ void MarkPropertiesPage::initTableData()
         QWidget *widget = new QWidget(m_tableWidget);
         QHBoxLayout *boxLayout = new QHBoxLayout(m_tableWidget);
         boxLayout->setAlignment(Qt::AlignLeft);
+        boxLayout->setContentsMargins(8,0,8,0);
         widget->setLayout(boxLayout);
         //fix last single box can input letters issue, bug#38757
         if (i >= allLabels.count())
