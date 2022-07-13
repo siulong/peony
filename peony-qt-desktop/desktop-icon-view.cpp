@@ -183,7 +183,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
             }
         }
         if (isItemsOverlapped()) {
-            relayoutExsitingItems();
+            relayoutExsitingItems(m_model->m_items_need_relayout);
         }
     });
 
@@ -1641,6 +1641,15 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     }
                     //put item to next column first row
                     next.moveTo(next.x() + grid.width(), top);
+                    //如果满了，就放到（0，0） 位置
+                    if (next.right() > viewRect.right()) {
+                        next.moveTo(0, 0);
+                        isEmptyPos = true;
+                        m_item_rect_hash.insert(uri, next);
+                        setFileMetaInfoPos(uri, next.topLeft());
+                        qDebug() << "满屏 " << uri << " point:" <<next.topLeft();
+                        break;
+                    }
                 }
                 if (notEmptyRegion.intersects(next))
                     continue;
@@ -1703,6 +1712,7 @@ void DesktopIconView::relayoutExsitingItems()
                 itemRect.moveTo(posX, posY);
             } else {
                 itemRect.moveTo(0, 0);
+                break;
             }
         }
         notEmptyRegion += itemRect;
@@ -2644,7 +2654,8 @@ void DesktopIconView::saveExtendItemInfo()
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
-        auto metaInfo = FileMetaInfo::fromUri(index.data(Qt::UserRole).toString());
+        QString uri = index.data(Qt::UserRole).toString();
+        auto metaInfo = FileMetaInfo::fromUri(uri);
         if (metaInfo) {
             qDebug() << "DesktopIconView::saveExtendItemInfo:"<<str<<" "<<topLeft;
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, topLeft);
@@ -2652,6 +2663,7 @@ void DesktopIconView::saveExtendItemInfo()
             QStringList tmp;
             tmp<<"-1"<<"-1";
             metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, tmp);
+            m_model->m_items_need_relayout.append(uri);
         }
     }
 }
@@ -2676,7 +2688,8 @@ void DesktopIconView::resetExtendItemInfo()
     int aa = m_model->rowCount();
     for (int i = 0; i < m_model->rowCount(); i++) {
         auto index = m_model->index(i, 0);
-        auto metaInfo = FileMetaInfo::fromUri(index.data(Qt::UserRole).toString());
+        QString uri = index.data(Qt::UserRole).toString();
+        auto metaInfo = FileMetaInfo::fromUri(uri);
         auto str = index.data(Qt::UserRole).toString();
         if (metaInfo) {
             auto list = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
@@ -2687,6 +2700,7 @@ void DesktopIconView::resetExtendItemInfo()
                 QStringList tmp;
                 tmp<<"";
                 metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, tmp);
+                m_model->m_items_need_relayout.removeOne(uri);
             }
         }
     }
