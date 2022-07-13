@@ -374,6 +374,9 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
     auto gvolume = updateDevice.getGVolume();
     device = updateDevice.device();
     for(auto& item:*m_children){
+        if("file:///" == item->uri())/* hotfix bug#128689、125095 打开文件管理器后，插入U盘，侧边栏中文件系统消失 */
+            return;
+
         auto fs_item = qobject_cast<SideBarFileSystemItem *>(item);
         auto item_gvolume = fs_item->getVolume().getGVolume();
         if(item_gvolume == gvolume){
