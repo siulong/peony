@@ -483,7 +483,7 @@ static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
 
 void Format_Dialog::acceptFormat(bool)
 {
-    if (mNameEdit->text().at(0) == '.') {
+    if (!mNameEdit->text().isEmpty() && mNameEdit->text().at(0) == '.') {
         QMessageBox::warning(nullptr, tr("Warning"), tr("Device name cannot start with a decimal point, Please re-enter!"), QMessageBox::Ok);
         return;
     }
