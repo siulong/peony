@@ -209,7 +209,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         auto item = m_proxy_model->itemFromIndex(index);
         if (item) {
             if (item->type() != Peony::SideBarAbstractItem::SeparatorItem) {
-                Peony::SideBarMenu menu(item, nullptr);
+                Peony::SideBarMenu menu(item, nullptr, this);
                 QList<QAction *> actionList;
                 MainWindow *window = dynamic_cast<MainWindow *>(this->topLevelWidget());
 
@@ -291,7 +291,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                     }
                 }
 
-                menu.exec(QCursor::pos());
+                menu.exec(mapToGlobal(pos));
             }
         }
     });
