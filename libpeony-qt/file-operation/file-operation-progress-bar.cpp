@@ -458,6 +458,17 @@ void MainProgressBar::setFileName(QString name)
     m_file_name = name;
 }
 
+QString MainProgressBar::elideText(const QFont &font, const int &width, const QString &strInfo)
+{
+    QFontMetrics fontMetrics(font);
+    QString display_name = strInfo;
+    if(fontMetrics.width(strInfo) > 2*width) {
+        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width);
+    }
+    return display_name;
+
+}
+
 void MainProgressBar::paintEvent(QPaintEvent *event)
 {
     QPainter painter (this);
@@ -608,7 +619,10 @@ void MainProgressBar::paintContent(QPainter &painter)
             painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
             painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
         } else {
-            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, m_file_name);
+            this->setToolTip(m_file_name);
+            QString display_name;
+            display_name = elideText(this->font(),400,m_file_name);
+            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
             if (m_pause) {
                 painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-start-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
             } else {
@@ -792,6 +806,16 @@ void ProgressBar::setResume()
     update();
 }
 
+QString ProgressBar::elideText(const QFont &font, const int &width, const QString &strInfo)
+{
+    QFontMetrics fontMetrics(font);
+    QString display_name = strInfo;
+    if(fontMetrics.width(strInfo) > width) {
+        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, width);
+    }
+    return display_name;
+}
+
 ProgressBar::~ProgressBar()
 {
 
@@ -826,7 +850,10 @@ void ProgressBar::paintEvent(QPaintEvent *event)
         painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
         painter.drawPixmap(m_pause_x, m_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_btn_size, m_btn_size)));
     } else {
-        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, m_dest_uri);
+        this->setToolTip(m_dest_uri);
+        QString display_name;
+        display_name = elideText(this->font(),335,m_dest_uri);
+        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, display_name);
     }
 
     // paint progress
