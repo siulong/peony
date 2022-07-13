@@ -119,6 +119,7 @@ public:
     bool isPause();
     void setPause();
     void setResume();
+    QString elideText (const QFont &font, const int &width, const QString &strInfo);
 
 private:
     ~ProgressBar();
@@ -217,7 +218,7 @@ public:
     void setIsSync(bool);
     void setProgress(float);
     void setFileName(QString);
-
+    QString elideText(const QFont &font, const int &width, const QString &strInfo);
 protected:
     void paintEvent(QPaintEvent *event) override;
 //    void mouseMoveEvent(QMouseEvent *event) override;
