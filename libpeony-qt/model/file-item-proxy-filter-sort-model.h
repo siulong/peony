@@ -156,6 +156,11 @@ private:
     QStringList m_file_name_list;
     QStringList m_show_label_names;
     QList<QColor> m_show_label_colors;
+
+    //filters for file dialog
+    QStringList m_mimeTypeFilters;
+    QStringList m_nameFilters;
+    int m_dirFilters = -1;
 };
 
 }
