@@ -381,18 +381,16 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
                 return false;
         }
 
-        QStringList mimeTypesFilter = property("mimeTypeFilters").toStringList();
-        if (!mimeTypesFilter.isEmpty()) {
-            if (!mimeTypesFilter.contains(fileInfo->fileType())) {
+        if (!m_mimeTypeFilters.isEmpty()) {
+            if (!m_mimeTypeFilters.contains(fileInfo->fileType())) {
                 return false;
             }
         }
 
-        QStringList nameFilters = property("nameFilters").toStringList();
-        if (!nameFilters.isEmpty()) {
+        if (!m_nameFilters.isEmpty()) {
             if (!fileInfo->isDir()) {
                 bool contains = false;
-                for (auto nameFilter : nameFilters) {
+                for (auto nameFilter : m_nameFilters) {
 
                     QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
                     QRegularExpressionMatch match = rx.match(fileInfo->displayName());
@@ -407,9 +405,8 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             }
         }
 
-        bool ok = false;
-        QDir::Filters dirFilters = QDir::Filters(property("dirFilters").toInt(&ok));
-        if (ok) {
+        QDir::Filters dirFilters = QDir::Filters(m_dirFilters);
+        if (m_dirFilters != -1) {
             bool showFiles = dirFilters & QDir::Files;
             bool showDirs = dirFilters & QDir::Dirs;
             if (!showFiles && !fileInfo->isDir()) {
@@ -420,7 +417,7 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             }
         }
     }
-    return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+    return true;
 }
 
 bool FileItemProxyFilterSortModel::checkFileNameFilter(const QString &displayName) const
@@ -812,9 +809,9 @@ void FileItemProxyFilterSortModel::clearConditions()
     m_file_size_list.clear();
     m_modify_time_list.clear();
 
-    setProperty("mimeTypeFilters", QVariant());
-    setProperty("nameFilters", QVariant());
-    setProperty("dirFilters", QVariant());
+    m_mimeTypeFilters.clear();
+    m_nameFilters.clear();
+    m_dirFilters = -1;
 }
 
 void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyTime, int fileSize)
@@ -827,9 +824,9 @@ void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyT
 
 void FileItemProxyFilterSortModel::setFilterConditions(const QStringList &mimeTypeFilters, const QStringList &nameFilters,  QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
 {
-    setProperty("mimeTypeFilters", mimeTypeFilters);
-    setProperty("nameFilters", nameFilters);
-    setProperty("dirFilters", int(dirFilters));
+    m_mimeTypeFilters = mimeTypeFilters;
+    m_nameFilters = nameFilters;
+    m_dirFilters = dirFilters;
     setFilterCaseSensitivity(caseSensitivity);
     invalidateFilter();
 }
