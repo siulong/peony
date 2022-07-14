@@ -1,4 +1,4 @@
-peony (3.14.4.5-ok6~0712) yangtze; urgency=medium
+peony (3.14.4.5-ok6~0714) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
   * 适配appmanager接口
@@ -9,5 +9,7 @@ peony (3.14.4.5-ok6~0712) yangtze; urgency=medium
   * close-cd #125560 在平板模式重启重新登录进入桌面后，桌面显示错误（平板模式重启后应进入PC模式）
   * close-cd #128746、#128734 修复文件标记属性页面的显示不全的问题
   * close-cd #129037 【wayland】【文件管理器】从U盘中无法拖动复制文件到系统
+  * close-cd #128689 打开文管，插拔一次U盘后，再次插入U盘，文管侧边栏计算机下方的“文件系统”消失
+  * close-cd #128704 【文件管理器】菜单重命名为英文
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
