@@ -345,6 +345,9 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     auto fileInfo = FileInfo::fromUri(uri);
     if (uri == "file:///data")
         return QObject::tr("data");
+    //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
+    if (uri == "file:///")
+        return QObject::tr("File System");
     return fileInfo.get()->displayName();
 }
 

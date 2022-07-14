@@ -352,26 +352,10 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     QUrl url = FileUtils::urlEncode(uri);
     if (!url.fileName().isEmpty())
     {
-        button->setText(displayName);
         m_current_uri = uri.left(uri.lastIndexOf("/")+1) + displayName;
-    } else {
-        if (uri == "file:///") {
-//            auto text = FileUtils::getFileDisplayName("computer:///root.link");
-//            if (text.isNull()) {
-//                text = tr("File System");
-//            }
-            //fix bug#47597, show as root.link issue
-            QString text = tr("File System");
-            button->setText(text);
-            //comment to fix button text show incomplete issue, link to bug#72080
-            //button->setStyleSheet("QToolButton{padding-left: 15px; padding-right: 15px}");
-        } else {
-            button->setText(displayName);
-        }
     }
 
     //if button text is too long, elide it
-    displayName = button->text();
     if (displayName.length() > ELIDE_TEXT_LENGTH)
     {
         int  charWidth = fontMetrics().averageCharWidth();
