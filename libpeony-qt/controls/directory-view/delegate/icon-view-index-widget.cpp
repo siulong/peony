@@ -358,6 +358,15 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
 void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
 {
+
+    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
+    if (singleClicked) {
+        IconView *view = m_delegate->getView();
+        if (!view->m_touch_active_timer->isActive()) {
+            view->m_touch_active_timer->start(1100);
+        }
+    }
+
     if (e->button() == Qt::LeftButton) {
         IconView *view = m_delegate->getView();
 
@@ -371,7 +380,13 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
         if (view->m_renameTimer->isActive()) {
             if (view->m_renameTimer->remainingTime() < 3000 - qApp->styleHints()->mouseDoubleClickInterval() && view->m_renameTimer->remainingTime() > 0) {
                 view->slotRename();
-            } else {
+            } else if(view->m_renameTimer->remainingTime() >= 3000 - qApp->styleHints()->mouseDoubleClickInterval()){
+                //优化文件点击策略，提升用户体验，关联bug#125368
+                //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
+                //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
+                mouseDoubleClickEvent(e);
+            }
+            else {
                 view->m_editValid = false;
                 view->m_renameTimer->stop();
             }
@@ -406,7 +421,10 @@ void IconViewIndexWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    m_delegate->getView()->activated(m_index);
+    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
+    if (!singleClicked) {
+        m_delegate->getView()->activated(m_index);
+    }
     return;
 }
 
