@@ -167,6 +167,8 @@ private:
     QSize m_last_size;
 
     const int BOTTOM_STATUS_MARGIN = 200;
+
+    QTimer *m_touch_active_timer = nullptr;
 };
 
 //ListView2
