@@ -306,7 +306,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         //qDebug()<<info->symbolicIconName();
         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
-        icon.paint(painter, rect.x() + 10, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
+        icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
     }
 
     //paint access emblems
@@ -343,11 +343,11 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             break;
         }
         case 3: {
-            icon.paint(painter, rect.x() + 10, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
+            icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
             break;
         }
         case 4: {
-            icon.paint(painter, rect.right() - 30, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
+            icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
             break;
         }
         default:
