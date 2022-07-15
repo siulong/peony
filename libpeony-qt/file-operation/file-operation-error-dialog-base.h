@@ -44,6 +44,8 @@ public:
     QPushButton* addButton (QString name);
     QCheckBox* addCheckBoxLeft (QString name);
 
+    bool event(QEvent *event) override;
+
 Q_SIGNALS:
     void cancel();
 

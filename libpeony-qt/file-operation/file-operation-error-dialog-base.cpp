@@ -31,6 +31,7 @@
 #include <QScrollArea>
 #include <QProxyStyle>
 #include <QPushButton>
+#include <QApplication>
 
 Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *parent) : QDialog(parent)
 {
@@ -45,7 +46,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
 
     QVBoxLayout* mainLayout = new QVBoxLayout (this);
-    mainLayout->setContentsMargins (16, 3, 3, 16);
+    mainLayout->setContentsMargins (16, 3, 8, 16);
 
     QHBoxLayout* headerLayout = new QHBoxLayout;
 
@@ -59,7 +60,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
 //    minilize->setIcon (QIcon::fromTheme ("window-minimize-symbolic"));
 
     closebtn->setFlat (true);
-    closebtn->setFixedSize (36, 36);
+    closebtn->setFixedSize (32, 32);
     closebtn->setProperty ("isWindowButton", 0x02);
     closebtn->setIconSize (QSize(16, 16));
     closebtn->setIcon (QIcon::fromTheme("window-close-symbolic"));
@@ -72,24 +73,26 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     mainLayout->addLayout (headerLayout);
 
     QHBoxLayout* contentLayout = new QHBoxLayout;
-    contentLayout->setContentsMargins (6, 10, 13, 10);
+    contentLayout->setContentsMargins (6, 0, 0, 0);
     contentLayout->setAlignment (Qt::AlignTop | Qt::AlignLeft);
 
     m_tipimage = new QLabel(this);
     m_tipimage->setMargin (0);
-    m_tipimage->setFixedSize (48, 80);
-    m_tipimage->setAlignment (Qt::AlignCenter);
-    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (48, 48));
+    m_tipimage->setFixedWidth(64);
+    m_tipimage->setAlignment (Qt::AlignTop);
+    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (64, 64));
     contentLayout->addWidget (m_tipimage);
 
     m_tipcontent = new QLabel(this);
     m_tipcontent->setWordWrap (true);
-    m_tipcontent->setMinimumSize (438, 80);
-    m_tipcontent->setAlignment (Qt::AlignLeft | Qt::AlignVCenter);
+    m_tipcontent->setFixedWidth(420);
+    m_tipcontent->setAlignment (Qt::AlignLeft | Qt::AlignTop);
+    int topMargin = qMax(32 - qApp->fontMetrics().height(), 0);
+    m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
 
     QScrollArea* scroll = new QScrollArea(this);
 
-    scroll->setFixedSize (440, 80);
+    scroll->setFixedWidth(440);
     scroll->setWidgetResizable (true);
     scroll->setFrameShape(QFrame::NoFrame);
 
@@ -106,7 +109,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_buttonRight = new QHBoxLayout;
     m_buttonRight->setDirection (QHBoxLayout::RightToLeft);
     QHBoxLayout* buttonLayout = new QHBoxLayout;
-    buttonLayout->setContentsMargins (0, 0, 13, 0);
+    buttonLayout->setContentsMargins (0, 0, 13, 3);
 
     buttonLayout->addLayout (m_buttonLeft);
     buttonLayout->addStretch ();
@@ -142,7 +145,7 @@ void Peony::FileOperationErrorDialogBase::setText(QString text)
 void Peony::FileOperationErrorDialogBase::setIcon(QString iconName)
 {
     if (!iconName.isNull () && !iconName.isEmpty ()) {
-        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (48, 48));
+        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (64, 64));
     }
 }
 
@@ -166,4 +169,13 @@ QCheckBox *Peony::FileOperationErrorDialogBase::addCheckBoxLeft(QString name)
     }
 
     return nullptr;
+}
+
+bool Peony::FileOperationErrorDialogBase::event(QEvent *event)
+{
+    if (event->type() == QEvent::FontChange || event->type() == QEvent::ApplicationFontChange) {
+        int topMargin = qMax(32 - qApp->fontMetrics().height(), 0);
+        m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
+    }
+    return QDialog::event(event);
 }
