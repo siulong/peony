@@ -158,7 +158,7 @@ void LocationBar::setRootUri(const QString &uri)
     Q_EMIT aboutToSetRootUri();
 
     //when is the same uri and has buttons return
-    if (m_current_uri == uri && m_buttons.count() >0)
+    if (FileUtils::isSamePath(m_current_uri, uri) && m_buttons.count() >0)
         return;
 
     m_current_uri = uri;
@@ -190,12 +190,19 @@ void LocationBar::setRootUri(const QString &uri)
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
         infoJob->setAutoDelete();
-        connect(this, &LocationBar::aboutToSetRootUri, infoJob, &FileInfoJob::cancel);
+        connect(this, &LocationBar::aboutToSetRootUri, infoJob, [=]{
+            infoJob->setProperty("isCancelled", true);
+            infoJob->cancel();
+        });
         connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
             if (!successed) {
                 qWarning()<<"can not query file:"<<info->uri();
-                m_querying_buttons_info.removeOne(info);
-                m_buttons_info.removeOne(info);
+                // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                if (!infoJob->property("isCancelled").toBool()) {
+                    m_querying_buttons_info.removeOne(info);
+                    m_buttons_info.removeOne(info);
+                }
                 return;
             }
             // enumerate buttons info directory
@@ -204,7 +211,10 @@ void LocationBar::setRootUri(const QString &uri)
             //comment to fix kydroid path show abnormal issue
             //enumerator->setEnumerateWithInfoJob();
 
-            connect(this, &LocationBar::aboutToSetRootUri, enumerator, &FileEnumerator::cancel);
+            connect(this, &LocationBar::aboutToSetRootUri, enumerator, [=]{
+                enumerator->setProperty("isCancelled", true);
+                enumerator->cancel();
+            });
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
                 m_querying_buttons_info.removeOne(info);
                 if (successed) {
@@ -219,13 +229,17 @@ void LocationBar::setRootUri(const QString &uri)
                         doLayout();
                     }
                 } else {
-                    if (m_querying_buttons_info.isEmpty()) {
-                        // add buttons
-                        clearButtons();
-                        for (auto info : m_buttons_info) {
-                            addButton(info.get()->uri().toLocal8Bit(), true, true);
+                    // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                    // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                    if (!enumerator->property("isCancelled").toBool()) {
+                        if (m_querying_buttons_info.isEmpty()) {
+                            // add buttons
+                            clearButtons();
+                            for (auto info : m_buttons_info) {
+                                addButton(info.get()->uri().toLocal8Bit(), true, true);
+                            }
+                            doLayout();
                         }
-                        doLayout();
                     }
                 }
 
