@@ -175,6 +175,8 @@ private:
     bool  m_ctrl_key_pressed;
     QTimer* m_renameTimer;
 
+    QTimer *m_touch_active_timer = nullptr;
+
     QModelIndex m_last_index;
 
     DirectoryViewProxyIface *m_proxy = nullptr;

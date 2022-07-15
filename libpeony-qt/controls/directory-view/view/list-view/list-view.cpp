@@ -66,7 +66,11 @@ using namespace Peony;
 using namespace Peony::DirectoryView;
 
 ListView::ListView(QWidget *parent) : QTreeView(parent)
-{
+{ 
+    m_touch_active_timer = new QTimer(this);
+    m_touch_active_timer->setInterval(2000);
+    m_touch_active_timer->setSingleShot(true);
+
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
@@ -290,7 +294,14 @@ void ListView::keyReleaseEvent(QKeyEvent *e)
 }
 
 void ListView::mousePressEvent(QMouseEvent *e)
-{
+{ 
+    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
+    if (singleClicked) {
+        if (!m_touch_active_timer->isActive()) {
+            m_touch_active_timer->start(1100);
+        }
+    }
+
     if (e->button() == Qt::RightButton) {
         if (this->state() == QTreeView::EditingState) {
             if (indexWidget(indexAt(e->pos())))
@@ -356,7 +367,10 @@ void ListView::mousePressEvent(QMouseEvent *e)
             }
         }
         //qDebug()<<m_renameTimer->remainingTime()<<m_editValid<<all_index_in_same_row<<qApp->styleHints()->mouseDoubleClickInterval();
-        if(m_renameTimer->remainingTime()>=0 && m_renameTimer->remainingTime() <= 3000 - qApp->styleHints()->mouseDoubleClickInterval()
+        //优化文件点击策略，提升用户体验，关联bug#125368
+        //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
+        //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
+        if(m_renameTimer->remainingTime()> 0 && m_renameTimer->remainingTime() < 3000 - qApp->styleHints()->mouseDoubleClickInterval()
                 && indexAt(e->pos()) == m_last_index && m_last_index.isValid() && m_editValid == true && all_index_in_same_row)
         {
             slotRename();
@@ -982,12 +996,22 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &DirectoryViewWidget::viewSelectionChanged);
 
-    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {
+    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {    
+        if (m_view->m_touch_active_timer->isActive()) {
+            auto costTime = m_view->m_touch_active_timer->interval() - m_view->m_touch_active_timer->remainingTime();
+            if (costTime > qApp->doubleClickInterval()) {
+                m_view->m_touch_active_timer->stop();
+                return;
+            }
+        }
+
         //when selections is more than 1, let mainwindow to process
         if (getSelections().count() != 1)
             return;
         auto uri = getSelections().first();
         Q_EMIT this->viewDoubleClicked(uri);
+
+        m_view->m_touch_active_timer->stop();
     });
 
     //FIXME: how about multi-selection?
@@ -1019,7 +1043,8 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
 
         //NOTE: we have to ensure that we have cleared the
         //selection if menu request at blank pos.
-        QTimer::singleShot(1, [=]() {
+        QTimer::singleShot(1, this, [=]() {
+            m_view->m_touch_active_timer->stop();
             Q_EMIT this->menuRequest(QCursor::pos());
         });
     });
