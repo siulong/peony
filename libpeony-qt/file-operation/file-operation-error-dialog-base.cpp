@@ -46,7 +46,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
 
     QVBoxLayout* mainLayout = new QVBoxLayout (this);
-    mainLayout->setContentsMargins (16, 3, 8, 16);
+    mainLayout->setContentsMargins (16, 4, 8, 16);
 
     QHBoxLayout* headerLayout = new QHBoxLayout;
 
