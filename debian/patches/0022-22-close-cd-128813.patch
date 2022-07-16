@@ -1,0 +1,91 @@
+From: xiangwenjie <1906465380@qq.com>
+Date: Sat, 16 Jul 2022 02:20:59 +0000
+Subject: =?utf-8?b?ITIyIGNsb3NlLWNkIyAxMjg4MTMg5Zu+54mH5LiO6KeG6aKR5Zyo6Z2e?=
+ =?utf-8?b?5qGM6Z2i55uu5b2V5Yib5bu65b+r5o235pa55byP5ZCO77yM5b+r5o235pa55byP?=
+ =?utf-8?b?5qCH6K+G5pi+56S65L2N572u5byC5bi4?=
+
+---
+ .../controls/directory-view/delegate/icon-view-delegate.cpp      | 9 +++++----
+ .../controls/directory-view/delegate/icon-view-index-widget.cpp  | 3 ++-
+ .../controls/directory-view/delegate/list-view-delegate.cpp      | 3 ++-
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+index e6e8699..c2cb638 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+@@ -306,17 +306,18 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+         //qDebug()<<info->symbolicIconName();
+         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+         //Adjust link emblem to topLeft.link story#8354
+-        icon.paint(painter, rect.x() + 10, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
++        icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+     }
+ 
+     //paint access emblems
+     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
+     if (info->uri().startsWith("file:")) {
+-        emblemPoses.removeOne(1);
+         if (!info->canRead()) {
++            emblemPoses.removeOne(1);
+             QIcon icon = QIcon::fromTheme("emblem-unreadable");
+             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+         } else if (!info->canWrite() && !info->canExecute()) {
++            emblemPoses.removeOne(1);
+             QIcon icon = QIcon::fromTheme("emblem-readonly");
+             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+         }
+@@ -342,11 +343,11 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+             break;
+         }
+         case 3: {
+-            icon.paint(painter, rect.x() + 10, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
++            icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+             break;
+         }
+         case 4: {
+-            icon.paint(painter, rect.right() - 30, iconRect.bottom() - 15, 20, 20, Qt::AlignCenter);
++            icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+             break;
+         }
+         default:
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+index 0314fb0..3285cc7 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+@@ -308,15 +308,16 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+     //paint access emblems
+     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
+     if (!info->uri().startsWith("file:")) {
+-        emblemPoses.removeOne(1);
+         return;
+     }
+ 
+     auto rect = this->rect();
+     if (!info->canRead()) {
++        emblemPoses.removeOne(1);
+         QIcon icon = QIcon::fromTheme("emblem-unreadable");
+         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+     } else if (!info->canWrite() && !info->canExecute()) {
++        emblemPoses.removeOne(1);
+         QIcon icon = QIcon::fromTheme("emblem-readonly");
+         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+     }
+diff --git a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+index 4900cef..08bcd44 100644
+--- a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+@@ -170,11 +170,12 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+         //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
+         loc_x = rect.x();
+         if (info->uri().startsWith("file:")) {
+-            emblemPoses.removeOne(1);
+             if (!info->canRead()) {
++                emblemPoses.removeOne(1);
+                 QIcon icon = QIcon::fromTheme("emblem-unreadable");
+                 icon.paint(painter, loc_x, loc_y, size, size);
+             } else if (!info->canWrite() && !info->canExecute()) {
++                emblemPoses.removeOne(1);
+                 QIcon icon = QIcon::fromTheme("emblem-readonly");
+                 icon.paint(painter, loc_x, loc_y, size, size);
+             }
