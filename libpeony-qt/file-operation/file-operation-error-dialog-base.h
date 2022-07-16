@@ -39,6 +39,8 @@ public:
     explicit FileOperationErrorDialogBase(QDialog *parent);
     ~FileOperationErrorDialogBase() override;
 
+    void adjustTextContent();
+
     void setText (QString text);
     void setIcon (QString iconName);
     QPushButton* addButton (QString name);
