@@ -87,8 +87,6 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_tipcontent->setWordWrap (true);
     m_tipcontent->setFixedWidth(420);
     m_tipcontent->setAlignment (Qt::AlignLeft | Qt::AlignTop);
-    int topMargin = qMax(32 - qApp->fontMetrics().height(), 0);
-    m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
 
     QScrollArea* scroll = new QScrollArea(this);
 
@@ -135,10 +133,30 @@ Peony::FileOperationErrorDialogBase::~FileOperationErrorDialogBase()
 
 }
 
+void Peony::FileOperationErrorDialogBase::adjustTextContent()
+{
+    auto text = m_tipcontent->text();
+    if (text.startsWith("<p>") && text.endsWith("</p>")) {
+        text.remove(text.length() - 4, 4);
+        text.remove(0, 3);
+    }
+    auto rect = fontMetrics().boundingRect(text);
+    bool oneline = rect.width() < m_tipcontent->width();
+    int topMargin = 0;
+    if (!oneline) {
+        topMargin = qMax(32 - fontMetrics().height(), 0);
+    } else {
+        topMargin = qMax(48 - fontMetrics().height(), 0);
+    }
+
+    m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
+}
+
 void Peony::FileOperationErrorDialogBase::setText(QString text)
 {
     if (!text.isNull () && !text.isEmpty ()) {
         m_tipcontent->setText (text);
+        adjustTextContent();
     }
 }
 
@@ -174,8 +192,7 @@ QCheckBox *Peony::FileOperationErrorDialogBase::addCheckBoxLeft(QString name)
 bool Peony::FileOperationErrorDialogBase::event(QEvent *event)
 {
     if (event->type() == QEvent::FontChange || event->type() == QEvent::ApplicationFontChange) {
-        int topMargin = qMax(32 - qApp->fontMetrics().height(), 0);
-        m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
+        adjustTextContent();
     }
     return QDialog::event(event);
 }
