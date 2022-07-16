@@ -11,5 +11,6 @@ peony (3.14.4.5-ok6~0714) yangtze; urgency=medium
   * close-cd #129037 【wayland】【文件管理器】从U盘中无法拖动复制文件到系统
   * close-cd #128689 打开文管，插拔一次U盘后，再次插入U盘，文管侧边栏计算机下方的“文件系统”消失
   * close-cd #128704 【文件管理器】菜单重命名为英文
+  * close-cd #128813 图片与视频在非桌面目录创建快捷方式后，快捷方式标识显示位置异常
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
