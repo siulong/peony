@@ -6,6 +6,7 @@ PKGCONFIG += gio-unix-2.0
 
 HEADERS += \
     $$PWD/file-node.h                           \
+    $$PWD/file-operation-internal-dialog.h \
     $$PWD/shared-file-link-operation.h \
     $$PWD/xatom-helper.h                        \
     $$PWD/file-operation.h                      \
@@ -29,6 +30,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/file-node.cpp                         \
+    $$PWD/file-operation-internal-dialog.cpp \
     $$PWD/shared-file-link-operation.cpp \
     $$PWD/xatom-helper.cpp                      \
     $$PWD/file-operation.cpp                    \
