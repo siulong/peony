@@ -3687,29 +3687,39 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation>查看和修改文件的权限。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="177"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="180"/>
         <source>Can not trash</source>
         <translation>不能回收</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="171"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="174"/>
         <source>Can not trash these files. You can delete them permanently. Are you sure doing that?</source>
         <translation>这些文件不能完全放入回收站，可以选择永久删除这些文件，确定这样做吗？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="175"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="178"/>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
         <translation>无法回收大于10G的文件，是否需要永久删除？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="295"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="297"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="265"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="273"/>
+        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
+        <translation>是否永久清空回收站内的文件？删除后将无法恢复。</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="328"/>
         <source>Delete Permanently</source>
         <translation>永久删除</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="295"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="297"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="328"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
         <translation>您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
     </message>
@@ -3864,8 +3874,9 @@ Do you want to unmount forcely?</source>
 是否强制卸载?</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="269"/>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>Eject Anyway</source>
