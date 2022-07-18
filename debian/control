@@ -27,7 +27,8 @@ Build-Depends: debhelper-compat (=12),
                qtchooser,
                qttools5-dev-tools,
                qtdeclarative5-dev,
-               libukui-common-dev
+               libukui-common-dev,
+               libkysdk-waylandhelper-dev
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Homepage: https://www.ukui.org/

@@ -31,6 +31,8 @@
 #include <QPainterPath>
 #include <QtMath>
 
+#include <ukuistylehelper/ukuistylehelper.h>
+
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
@@ -50,12 +52,7 @@ void AboutDialog::initUI()
     setBackgroundRole(QPalette::Base);
     setFixedWidth(420);
 
-    //bug#101149 使用窗管
-    MotifWmHints hints;
-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    hints.functions = MWM_FUNC_ALL;
-    hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
+    kdk::UkuiStyleHelper::self()->removeHeader(this);
 
     ui->logoLabel->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
 

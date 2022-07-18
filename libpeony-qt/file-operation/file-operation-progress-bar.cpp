@@ -35,6 +35,8 @@
 
 #include <QVector4D>
 
+#include <ukuistylehelper/ukuistylehelper.h>
+
 QPushButton* btn;
 
 static QPixmap drawSymbolicColoredPixmap (const QPixmap&);
@@ -161,11 +163,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
     setAutoFillBackground (true);
     setBackgroundRole (QPalette::Base);
 
-    MotifWmHints hints;
-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    hints.functions = MWM_FUNC_ALL;
-    hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
+    kdk::UkuiStyleHelper::self()->removeHeader(this);
 
     setWindowOpacity(0.9999);
 
