@@ -1,0 +1,36 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Mon, 18 Jul 2022 15:35:59 +0800
+Subject: update debian/changelog.
+
+---
+ peony-qt-desktop/plasma-shell-manager.cpp | 2 +-
+ src/control/operation-menu.cpp            | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/peony-qt-desktop/plasma-shell-manager.cpp b/peony-qt-desktop/plasma-shell-manager.cpp
+index 0745006..c01d24e 100644
+--- a/peony-qt-desktop/plasma-shell-manager.cpp
++++ b/peony-qt-desktop/plasma-shell-manager.cpp
+@@ -94,7 +94,7 @@ KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow
+ 
+ PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
+ {
+-    if (QApplication::platformName().contains("wayland", Qt::CaseInsensitive));
++    if (QApplication::platformName().toLower().contains("wayland"));
+         return;
+     auto connection = KWayland::Client::ConnectionThread::fromApplication(qApp);
+     auto registry = new KWayland::Client::Registry(this);
+diff --git a/src/control/operation-menu.cpp b/src/control/operation-menu.cpp
+index 6a0ee16..8d0ef0e 100644
+--- a/src/control/operation-menu.cpp
++++ b/src/control/operation-menu.cpp
+@@ -74,6 +74,9 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
+             KWindowSystem::clearState(m_window->winId(), KWindowSystem::KeepAbove);
+     });
+     keepAllow->setCheckable(true);
++    if (QApplication::platformName().toLower().contains("wayland")) {
++        keepAllow->setVisible(false);
++    }
+ 
+     auto showHidden = addAction(tr("Show Hidden"), this, [=](bool checked) {
+         //window set show hidden
