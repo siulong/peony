@@ -1,4 +1,4 @@
-peony (3.14.4.5-ok6~0718.2) yangtze; urgency=medium
+peony (3.14.4.5-ok6~0718.3) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
   * 适配appmanager接口
@@ -14,5 +14,10 @@ peony (3.14.4.5-ok6~0718.2) yangtze; urgency=medium
   * close-cd #128813 图片与视频在非桌面目录创建快捷方式后，快捷方式标识显示位置异常
   * 修复openkylin上多屏场景桌面背景位置异常的问题
   * close-cd #127644 【计算器】置顶功能不生效
+  * 修复dialog的双标题栏问题
+  * 适配wayland下工具栏和tab页的空白区域拖拽
+  * 优化触控逻辑，优化鼠标点击逻辑
+  * 优化左侧边栏和列表视图item列布局
+  * 处理编译依赖相关问题
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
