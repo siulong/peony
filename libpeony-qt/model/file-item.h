@@ -152,7 +152,7 @@ private:
     FileItem *m_parent = nullptr;
     std::shared_ptr<Peony::FileInfo> m_info;
     QVector<FileItem*> *m_children = nullptr;
-
+    QHash<QString, FileItem*> m_uri_item_hash; /* <key:uri,value:fileItem> 必须与m_children同增减！！！ */
     FileItemModel *m_model = nullptr;
 
     bool m_expanded = false;

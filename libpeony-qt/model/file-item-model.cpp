@@ -174,8 +174,9 @@ QModelIndex FileItemModel::lastColumnIndex(FileItem *item)
 const QModelIndex FileItemModel::indexFromUri(const QString &uri)
 {
     //FIXME: support recursively finding?
-    for (auto child : *m_root_item->m_children) {
-        GFile *left = g_file_new_for_uri(child->uri().toUtf8().constData());
+    if(m_root_item->m_uri_item_hash.contains(uri)) {
+        auto child = m_root_item->m_uri_item_hash[uri];
+        GFile *left = g_file_new_for_uri(child ->uri().toUtf8().constData());
         GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
         bool equal = g_file_equal(left, right);
         g_object_unref(left);
@@ -183,6 +184,7 @@ const QModelIndex FileItemModel::indexFromUri(const QString &uri)
         if (equal) {
             return child->firstColumnIndex();
         }
+
     }
     return QModelIndex();
 }

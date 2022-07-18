@@ -65,6 +65,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
     m_parent = parentItem;
     m_info = info;
     m_children = new QVector<FileItem*>();
+    m_uri_item_hash.clear();
 
     m_model = model;
 
@@ -112,6 +113,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_model->beginRemoveRows(this->firstColumnIndex(), row, row);
                         m_uris_to_be_removed.removeOne(uri);
                         m_children->remove(row);
+                        m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
                         delete child;
                         break;
@@ -166,6 +168,7 @@ FileItem::~FileItem()
     m_children->clear();
 
     delete m_children;
+    m_uri_item_hash.clear();
 }
 
 bool FileItem::operator==(const FileItem &item)
@@ -191,6 +194,7 @@ QVector<FileItem*> *FileItem::findChildrenSync()
     for (auto info : infos) {
         FileItem *child = new FileItem(info, this, m_model);
         m_children->append(child);
+        m_uri_item_hash.insert(child->uri(), child);
         FileInfoJob *job = new FileInfoJob(info);
         job->setAutoDelete();
         job->querySync();
@@ -319,6 +323,7 @@ void FileItem::findChildrenAsync()
                 for (auto info : infos) {
                     FileItem *child = new FileItem(info, this, m_model);
                     m_children->prepend(child);
+                    m_uri_item_hash.insert(child->uri(), child);
                     FileInfoJob *job = new FileInfoJob(info);
                     job->setAutoDelete();
                     /*
@@ -429,6 +434,7 @@ void FileItem::findChildrenAsync()
                     auto item = new FileItem(info, this, m_model);
                     m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
                     m_children->append(item);
+                    m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
                     //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                     //Q_EMIT m_model->updated();
@@ -575,6 +581,7 @@ void FileItem::onChildAdded(const QString &uri)
             item = new FileItem(info, this, m_model);
             m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
             m_children->append(item);
+            m_uri_item_hash.insert(item->uri(), item);
             m_model->endInsertRows();
             qDebug() <<"successfully added child:" <<uri;
 
@@ -584,7 +591,6 @@ void FileItem::onChildAdded(const QString &uri)
             QTimer::singleShot(1000, this, [=](){
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             });
-
         } else {
             qInfo()<<"file"<<uri<<"has arealy in file item model";
         }
@@ -625,11 +631,13 @@ void FileItem::onDeleted(const QString &thisUri)
         if (m_parent->m_info->uri() == thisUri) {
             m_model->removeRow(m_parent->m_children->indexOf(this), m_parent->firstColumnIndex());
             m_parent->m_children->removeOne(this);
+            m_parent->m_uri_item_hash.remove(this->uri());
         } else {
             //if just clear children, there will be a small problem.
             clearChildren();
             m_model->removeRow(m_parent->m_children->indexOf(this), m_parent->firstColumnIndex());
             m_parent->m_children->removeOne(this);
+            m_parent->m_uri_item_hash.remove(this->uri());
             m_parent->onChildAdded(m_info->uri());
         }
         this->deleteLater();
@@ -684,6 +692,7 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
         } else {
             m_model->beginRemoveRows(this->firstColumnIndex(), m_children->indexOf(child), m_children->indexOf(child));
             m_children->removeOne(child);
+            m_uri_item_hash.remove(this->uri());
             child->deleteLater();
             m_model->endRemoveRows();
         }
@@ -831,6 +840,7 @@ void FileItem::clearChildren()
         delete child;
     }
     m_children->clear();
+    m_uri_item_hash.clear();
     m_expanded = false;
     m_watcher.reset();
     m_watcher = nullptr;
