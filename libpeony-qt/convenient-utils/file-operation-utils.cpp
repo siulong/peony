@@ -271,13 +271,16 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
         questionbox.reject();
     });
     questionbox.setText(QObject::tr("Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them."));
-    questionbox.setIcon("user-trash");
+    questionbox.setIcon("user-trash-full");
     if (questionbox.exec()) {
         FileOperation *operation = nullptr;
         if (!list.isEmpty()) {
             operation = FileOperationUtils::remove(list);
         } else {
             auto uris = FileUtils::getChildrenUris("trash:///");
+            if (uris.isEmpty()) {
+                return nullptr;
+            }
             operation = FileOperationUtils::remove(uris);
         }
         SoundEffect::getInstance()->recycleBinDeleteMusic();
