@@ -80,6 +80,8 @@ public:
      * \return
      */
     static FileOperation *moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action = Qt::MoveAction);
+
+    static FileOperation *clearRecycleBinWithDialog(const QStringList &list);
 private:
     FileOperationUtils();
 };
