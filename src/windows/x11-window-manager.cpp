@@ -31,6 +31,7 @@
 #include <QStyleOptionTabBarBase>
 
 #include <QApplication>
+#include <QWindow>
 
 #include <QDebug>
 
@@ -152,12 +153,18 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
 
                 return true;
             } else {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+                auto widget = qobject_cast<QWidget *>(watched);
+                auto topLevel = widget->topLevelWidget();
+                topLevel->windowHandle()->startSystemMove();
+#else
                 //auto me = static_cast<QMouseEvent *>(event);
                 auto widget = qobject_cast<QWidget *>(watched);
                 auto topLevel = widget->topLevelWidget();
                 auto globalPos = QCursor::pos();
                 //auto offset = globalPos - m_press_pos;
                 topLevel->move(globalPos - m_toplevel_offset);
+#endif
             }
         }
         break;
