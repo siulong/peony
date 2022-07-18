@@ -22,3 +22,4 @@
 0022-22-close-cd-128813.patch
 0023-openkylin.patch
 0024-update-debian-changelog.patch
+0025-adapt-wayland-sdk-for-dialogs-which-using-custom-hea.patch

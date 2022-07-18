@@ -1,0 +1,789 @@
+From: lanyue <lanyue@kylinos.cn>
+Date: Mon, 18 Jul 2022 20:01:05 +0800
+Subject: adapt wayland sdk for dialogs which using custom header bar.
+
+---
+ .../delegate/icon-view-index-widget.cpp            |  22 ++++-
+ .../directory-view/delegate/list-view-delegate.cpp |   2 +-
+ .../view/icon-view/icon-view-style.cpp             |  16 +++
+ .../view/icon-view/icon-view-style.h               |   2 +
+ .../directory-view/view/icon-view/icon-view.cpp    |  35 ++++++-
+ .../directory-view/view/icon-view/icon-view.h      |   2 +
+ .../view/list-view/list-view-style.cpp             |  16 +++
+ .../view/list-view/list-view-style.h               |   3 +
+ .../directory-view/view/list-view/list-view.cpp    |  56 +++++++++--
+ .../directory-view/view/list-view/list-view.h      |   2 +
+ .../file-operation-error-dialog-base.cpp           |   8 +-
+ .../file-operation/file-operation-progress-bar.cpp |   8 +-
+ libpeony-qt/libpeony-qt.pro                        |   2 +-
+ peony-qt-desktop/desktop-index-widget.cpp          |   9 +-
+ src/control/navigation-side-bar.cpp                |  42 ++++----
+ src/control/tab-widget.cpp                         |   2 +
+ src/src.pro                                        |   2 +-
+ src/windows/about-dialog.cpp                       |   9 +-
+ src/windows/main-window.cpp                        | 107 +++++++++++----------
+ src/windows/x11-window-manager.cpp                 |   7 ++
+ 20 files changed, 246 insertions(+), 106 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+index 3285cc7..fa1c127 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+@@ -358,6 +358,15 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+ 
+ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
+ {
++
++    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
++    if (singleClicked) {
++        IconView *view = m_delegate->getView();
++        if (!view->m_touch_active_timer->isActive()) {
++            view->m_touch_active_timer->start(1100);
++        }
++    }
++
+     if (e->button() == Qt::LeftButton) {
+         IconView *view = m_delegate->getView();
+ 
+@@ -371,7 +380,13 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
+         if (view->m_renameTimer->isActive()) {
+             if (view->m_renameTimer->remainingTime() < 3000 - qApp->styleHints()->mouseDoubleClickInterval() && view->m_renameTimer->remainingTime() > 0) {
+                 view->slotRename();
+-            } else {
++            } else if(view->m_renameTimer->remainingTime() >= 3000 - qApp->styleHints()->mouseDoubleClickInterval()){
++                //优化文件点击策略，提升用户体验，关联bug#125368
++                //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
++                //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
++                mouseDoubleClickEvent(e);
++            }
++            else {
+                 view->m_editValid = false;
+                 view->m_renameTimer->stop();
+             }
+@@ -406,7 +421,10 @@ void IconViewIndexWidget::mouseReleaseEvent(QMouseEvent *e)
+ 
+ void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
+ {
+-    m_delegate->getView()->activated(m_index);
++    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
++    if (!singleClicked) {
++        m_delegate->getView()->activated(m_index);
++    }
+     return;
+ }
+ 
+diff --git a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+index 08bcd44..77429c8 100644
+--- a/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/list-view-delegate.cpp
+@@ -137,7 +137,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+             opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
+         }
+     }
+-    opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
++    opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, view);
+ 
+     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+ 
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
+index 365fbae..55c0f89 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.cpp
+@@ -88,3 +88,19 @@ void IconViewStyle::drawItemText(QPainter *painter, const QRect &rect, int flags
+     //qDebug()<<"drawItemText";
+     qApp->style()->drawItemText(painter, rect, flags, pal, enabled, text, textRole);
+ }
++
++int IconViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
++{
++    switch (hint) {
++    case SH_ItemView_ActivateItemOnSingleClick: {
++        bool singleClick = qApp->style()->styleHint(hint, option, widget, returnData);
++        if (widget->topLevelWidget()->property("isPreviewMode").isValid() && singleClick) {
++            return !widget->topLevelWidget()->property("isPreviewMode").toBool();
++        } else {
++            return singleClick;
++        }
++    }
++    default:
++        return qApp->style()->styleHint(hint, option, widget, returnData);
++    }
++}
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.h b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.h
+index 532075b..4baa8df 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.h
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view-style.h
+@@ -67,6 +67,8 @@ public:
+                       const QString &text,
+                       QPalette::ColorRole textRole = QPalette::NoRole) const override;
+ 
++    int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override;
++
+ private:
+     explicit IconViewStyle(QStyle *style = nullptr);
+     ~IconViewStyle() override {}
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+index 9f00cd9..d6208cc 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+@@ -69,7 +69,10 @@ using namespace Peony;
+ using namespace Peony::DirectoryView;
+ 
+ IconView::IconView(QWidget *parent) : QListView(parent)
+-{
++{   
++    m_touch_active_timer = new QTimer(this);
++    m_touch_active_timer->setSingleShot(true);
++
+     setAttribute(Qt::WA_TranslucentBackground);
+     viewport()->setAttribute(Qt::WA_TranslucentBackground);
+ 
+@@ -335,10 +338,22 @@ void IconView::mouseMoveEvent(QMouseEvent *e)
+         return;
+     }
+     QListView::mouseMoveEvent(e);
++
++    // fix #115124, drag selection can not trigger auto scroll in view.
++    if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
++        doAutoScroll();
++    }
+ }
+ 
+ void IconView::mousePressEvent(QMouseEvent *e)
+ {
++    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
++     if (singleClicked) {
++         if (!m_touch_active_timer->isActive()) {
++             m_touch_active_timer->start(1100);
++         }
++     }
++
+     m_allow_set_index_widget = true;
+ 
+     qDebug()<<"moursePressEvent";
+@@ -357,8 +372,10 @@ void IconView::mousePressEvent(QMouseEvent *e)
+     }
+     else
+     {
+-        //if remain time is between[0.75, 3000],then trigger rename event;
+-        if(m_renameTimer->remainingTime()>=0 && m_renameTimer->remainingTime() <= 3000 - qApp->styleHints()->mouseDoubleClickInterval()
++        //优化文件点击策略，提升用户体验，关联bug#125368
++        //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
++        //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
++        if(m_renameTimer->remainingTime() >0 && m_renameTimer->remainingTime() < 3000 - qApp->styleHints()->mouseDoubleClickInterval()
+                 && indexAt(e->pos()) == m_last_index && m_last_index.isValid() && m_editValid == true)
+         {
+             slotRename();
+@@ -827,11 +844,22 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+             this, &DirectoryViewWidget::viewSelectionChanged);
+ 
+     connect(m_view, &IconView::activated, this, [=](const QModelIndex &index) {
++        //平板模式下，长按打开文件处理
++        if (m_view->m_touch_active_timer->isActive()) {
++            auto costTime = m_view->m_touch_active_timer->interval() - m_view->m_touch_active_timer->remainingTime();
++            if (costTime > qApp->doubleClickInterval()) {
++                m_view->m_touch_active_timer->stop();
++                return;
++            }
++        }
++
+         //when selections is more than 1, let mainwindow to process
+         if (getSelections().count() != 1)
+             return;
+         auto uri = getSelections().first();
+         Q_EMIT this->viewDoubleClicked(uri);
++
++        m_view->m_touch_active_timer->stop();
+     });
+ 
+     connect(m_view, &IconView::customContextMenuRequested, this, [=](const QPoint &pos) {
+@@ -854,6 +882,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+         //selection if menu request at blank pos.
+         QTimer::singleShot(isDragSelecting? 300: 1, this, [=]() {
+             m_view->setIgnore_mouse_move_event(false);
++            m_view->m_touch_active_timer->stop();
+             Q_EMIT this->menuRequest(mapToGlobal(pos));
+         });
+     });
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.h b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.h
+index 2a06469..8d1f55f 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.h
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.h
+@@ -175,6 +175,8 @@ private:
+     bool  m_ctrl_key_pressed;
+     QTimer* m_renameTimer;
+ 
++    QTimer *m_touch_active_timer = nullptr;
++
+     QModelIndex m_last_index;
+ 
+     DirectoryViewProxyIface *m_proxy = nullptr;
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
+index 46298d1..a8fdd40 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.cpp
+@@ -283,6 +283,22 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
+     }
+     return QProxyStyle::drawControl(element, option, painter, widget);
+ }
++
++int ListViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
++{
++    switch (hint) {
++    case SH_ItemView_ActivateItemOnSingleClick: {
++        bool singleClick = qApp->style()->styleHint(hint, option, widget, returnData);
++        if (widget->topLevelWidget()->property("isPreviewMode").isValid() && singleClick) {
++            return !widget->topLevelWidget()->property("isPreviewMode").toBool();
++        } else {
++            return singleClick;
++        }
++    }
++    default:
++        return qApp->style()->styleHint(hint, option, widget, returnData);
++    }
++}
+ //绘制列表视图文本
+ void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const
+ {
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.h b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.h
+index bfa615f..b534d25 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view-style.h
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view-style.h
+@@ -42,6 +42,9 @@ public:
+                        const QWidget *widget = nullptr) const override;
+     void drawControl(ControlElement ce, const QStyleOption *option, QPainter *painter,
+                      const QWidget *widget) const override;
++
++    int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override;
++
+     //绘制列表视图文本
+     void viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const;
+ 
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 6acb3f7..c3a7d4d 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -66,7 +66,11 @@ using namespace Peony;
+ using namespace Peony::DirectoryView;
+ 
+ ListView::ListView(QWidget *parent) : QTreeView(parent)
+-{
++{ 
++    m_touch_active_timer = new QTimer(this);
++    m_touch_active_timer->setInterval(2000);
++    m_touch_active_timer->setSingleShot(true);
++
+     // use scroll per pixel mode for calculate vertical scroll bar range.
+     // see reUpdateScrollBar()
+     setVerticalScrollMode(ScrollPerPixel);
+@@ -86,7 +90,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
+ 
+     header()->setSectionResizeMode(QHeaderView::Interactive);
+     header()->setSectionsMovable(true);
+-    //header()->setStretchLastSection(true);
++    header()->setStretchLastSection(false);
+ 
+     connect(header(), &QHeaderView::sectionClicked, this, [=](){
+         //update sort policy
+@@ -140,8 +144,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
+     connect(header(), &QHeaderView::sortIndicatorChanged, this, [=](int logicalIndex, Qt::SortOrder order)
+     {
+         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
+-        Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
+-        Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
++        if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
++            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
++            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
++        } else {
++            auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
++            if (!metaInfo) {
++                qWarning()<<"no meta info"<<m_current_uri;
++            } else {
++                metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
++                metaInfo->setMetaInfoInt(SORT_ORDER, order);
++            }
++        }
+     });
+ }
+ 
+@@ -268,6 +282,13 @@ void ListView::keyReleaseEvent(QKeyEvent *e)
+ 
+ void ListView::mousePressEvent(QMouseEvent *e)
+ {
++    bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
++    if (singleClicked) {
++        if (!m_touch_active_timer->isActive()) {
++            m_touch_active_timer->start(1100);
++        }
++    }
++
+     if (e->button() == Qt::RightButton) {
+         if (this->state() == QTreeView::EditingState) {
+             if (indexWidget(indexAt(e->pos())))
+@@ -333,7 +354,10 @@ void ListView::mousePressEvent(QMouseEvent *e)
+             }
+         }
+         //qDebug()<<m_renameTimer->remainingTime()<<m_editValid<<all_index_in_same_row<<qApp->styleHints()->mouseDoubleClickInterval();
+-        if(m_renameTimer->remainingTime()>=0 && m_renameTimer->remainingTime() <= 3000 - qApp->styleHints()->mouseDoubleClickInterval()
++        //优化文件点击策略，提升用户体验，关联bug#125368
++        //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
++        //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
++        if(m_renameTimer->remainingTime()> 0 && m_renameTimer->remainingTime() < 3000 - qApp->styleHints()->mouseDoubleClickInterval()
+                 && indexAt(e->pos()) == m_last_index && m_last_index.isValid() && m_editValid == true && all_index_in_same_row)
+         {
+             slotRename();
+@@ -366,6 +390,11 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
+ 
+     QTreeView::mouseMoveEvent(e);
+ 
++    // fix #115124, drag selection can not trigger auto scroll in view.
++    if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
++        doAutoScroll();
++    }
++
+     if (e->buttons() & Qt::LeftButton) {
+         auto pos = e->pos();
+         auto offset = QPoint(horizontalOffset(), verticalOffset());
+@@ -632,7 +661,7 @@ void ListView::startDrag(Qt::DropActions flags)
+             opt.rect.moveTo(0, 0);
+             opt.state |= QStyle::State_Selected;
+             painter.setOpacity(0.8);
+-            QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter);
++            QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
+             painter.restore();
+         }
+ 
+@@ -954,12 +983,22 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged,
+             this, &DirectoryViewWidget::viewSelectionChanged);
+ 
+-    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {
++    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {    
++        if (m_view->m_touch_active_timer->isActive()) {
++            auto costTime = m_view->m_touch_active_timer->interval() - m_view->m_touch_active_timer->remainingTime();
++            if (costTime > qApp->doubleClickInterval()) {
++                m_view->m_touch_active_timer->stop();
++                return;
++            }
++        }
++
+         //when selections is more than 1, let mainwindow to process
+         if (getSelections().count() != 1)
+             return;
+         auto uri = getSelections().first();
+         Q_EMIT this->viewDoubleClicked(uri);
++
++        m_view->m_touch_active_timer->stop();
+     });
+ 
+     //FIXME: how about multi-selection?
+@@ -991,7 +1030,8 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+ 
+         //NOTE: we have to ensure that we have cleared the
+         //selection if menu request at blank pos.
+-        QTimer::singleShot(1, [=]() {
++        QTimer::singleShot(1, this, [=]() {
++            m_view->m_touch_active_timer->stop();
+             Q_EMIT this->menuRequest(mapToGlobal(pos));
+         });
+     });
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.h b/libpeony-qt/controls/directory-view/view/list-view/list-view.h
+index c02ca7d..3945f09 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.h
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.h
+@@ -167,6 +167,8 @@ private:
+     QSize m_last_size;
+ 
+     const int BOTTOM_STATUS_MARGIN = 200;
++
++    QTimer *m_touch_active_timer = nullptr;
+ };
+ 
+ //ListView2
+diff --git a/libpeony-qt/file-operation/file-operation-error-dialog-base.cpp b/libpeony-qt/file-operation/file-operation-error-dialog-base.cpp
+index ec85020..8c3f169 100644
+--- a/libpeony-qt/file-operation/file-operation-error-dialog-base.cpp
++++ b/libpeony-qt/file-operation/file-operation-error-dialog-base.cpp
+@@ -32,17 +32,15 @@
+ #include <QProxyStyle>
+ #include <QPushButton>
+ 
++#include <ukuistylehelper/ukuistylehelper.h>
++
+ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *parent) : QDialog(parent)
+ {
+     setFixedSize (536, 192);
+     setAutoFillBackground (true);
+     setBackgroundRole (QPalette::Base);
+ 
+-    MotifWmHints hints;
+-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+-    hints.functions = MWM_FUNC_ALL;
+-    hints.decorations = MWM_DECOR_BORDER;
+-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
++    kdk::UkuiStyleHelper::self()->removeHeader(this);
+ 
+     QVBoxLayout* mainLayout = new QVBoxLayout (this);
+     mainLayout->setContentsMargins (16, 3, 3, 16);
+diff --git a/libpeony-qt/file-operation/file-operation-progress-bar.cpp b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+index acae9c7..765f896 100644
+--- a/libpeony-qt/file-operation/file-operation-progress-bar.cpp
++++ b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+@@ -35,6 +35,8 @@
+ 
+ #include <QVector4D>
+ 
++#include <ukuistylehelper/ukuistylehelper.h>
++
+ QPushButton* btn;
+ 
+ static QPixmap drawSymbolicColoredPixmap (const QPixmap&);
+@@ -161,11 +163,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
+     setAutoFillBackground (true);
+     setBackgroundRole (QPalette::Base);
+ 
+-    MotifWmHints hints;
+-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+-    hints.functions = MWM_FUNC_ALL;
+-    hints.decorations = MWM_DECOR_BORDER;
+-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
++    kdk::UkuiStyleHelper::self()->removeHeader(this);
+ 
+     setWindowOpacity(0.9999);
+ 
+diff --git a/libpeony-qt/libpeony-qt.pro b/libpeony-qt/libpeony-qt.pro
+index c2bd2f3..eb0f8a5 100644
+--- a/libpeony-qt/libpeony-qt.pro
++++ b/libpeony-qt/libpeony-qt.pro
+@@ -15,7 +15,7 @@ TEMPLATE = lib
+ CONFIG += create_pc create_prl no_install_prl
+ QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitialized -Werror=unused-label
+ CONFIG += link_pkgconfig no_keywords c++11 lrelease hide_symbols
+-PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libnotify libcanberra openssl x11-xcb dconf
++PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libnotify libcanberra openssl x11-xcb dconf kysdk-waylandhelper
+ 
+ DEFINES += PEONYCORE_LIBRARY
+ 
+diff --git a/peony-qt-desktop/desktop-index-widget.cpp b/peony-qt-desktop/desktop-index-widget.cpp
+index b406c47..76970b4 100644
+--- a/peony-qt-desktop/desktop-index-widget.cpp
++++ b/peony-qt-desktop/desktop-index-widget.cpp
+@@ -220,7 +220,14 @@ void DesktopIndexWidget::mousePressEvent(QMouseEvent *event)
+                         view->edit(m_index);
+                     }
+                 });
+-            } else {
++            } else if(view->m_edit_trigger_timer.remainingTime() >= 3000 - qApp->styleHints()->mouseDoubleClickInterval())
++            {
++                //优化文件点击策略，提升用户体验，关联bug#125368
++                //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
++                //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
++                mouseDoubleClickEvent(event);
++            }
++            else {
+                 view->m_real_do_edit = false;
+                 view->m_edit_trigger_timer.stop();
+             }
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 808e1a6..47e0ef7 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -70,6 +70,7 @@
+ #include <QApplication>
+ 
+ #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
++#define MINIMUM_COLUMN_SIZE 2
+ 
+ using namespace Peony;
+ 
+@@ -102,12 +103,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+                   "border: 0px solid transparent"
+                   "}");
+ 
+-    setStyle(global_style);
++    //setStyle(global_style);
+ 
+     setAttribute(Qt::WA_TranslucentBackground);
+     viewport()->setAttribute(Qt::WA_TranslucentBackground);
+-    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+-    header()->setStretchLastSection(false);
++    header()->setSectionResizeMode(QHeaderView::Fixed);
++    header()->setStretchLastSection(true);
++    header()->setMinimumSectionSize(MINIMUM_COLUMN_SIZE);
+     header()->hide();
+ 
+     setContextMenuPolicy(Qt::CustomContextMenu);
+@@ -311,7 +313,7 @@ bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
+ 
+ void NavigationSideBar::updateGeometries()
+ {
+-    setViewportMargins(4, 0, 4, 0);
++    setViewportMargins(8, 0, 4, 0);
+     QTreeView::updateGeometries();
+     if(m_notAllowHorizontalMove){
+         horizontalScrollBar()->setValue(0);/* hotfix bug#93557 */
+@@ -338,8 +340,8 @@ void NavigationSideBar::resizeEvent(QResizeEvent *e)
+ {
+     QTreeView::resizeEvent(e);
+     if (header()->count() > 0) {
+-        this->setColumnWidth(1, 20);
+-        header()->resizeSection(0, this->viewport()->width() - this->columnWidth(1));
++        setColumnWidth(0, this->viewport()->width() - MINIMUM_COLUMN_SIZE - viewportMargins().left() - viewportMargins().right() - verticalScrollBar()->width());
++        setColumnWidth(1, MINIMUM_COLUMN_SIZE);
+     }
+ }
+ 
+@@ -477,10 +479,10 @@ void NavigationSideBar::wheelEvent(QWheelEvent *event)
+ int NavigationSideBar::sizeHintForColumn(int column) const
+ {
+     if (column == 1)
+-        return 22;
++        return MINIMUM_COLUMN_SIZE;
+ 
+     if (column == 0)
+-        return viewport()->width() - 22;
++        return viewport()->width() - MINIMUM_COLUMN_SIZE - viewportMargins().left() - viewportMargins().right() - verticalScrollBar()->width();
+ 
+     return QTreeView::sizeHintForColumn(column);
+ }
+@@ -511,18 +513,18 @@ QSize NavigationSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option
+ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+ {
+     painter->save();
+-    if (index.column() == 1) {
+-        QPainterPath rightRoundedRegion;
+-        rightRoundedRegion.setFillRule(Qt::WindingFill);
+-        auto rect = option.rect;
+-        auto view = qobject_cast<const QAbstractItemView *>(option.widget);
+-        if (view) {
+-            rect.setRight(view->viewport()->rect().right());
+-        }
+-        rightRoundedRegion.addRoundedRect(rect, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS);
+-        rightRoundedRegion.addRect(rect.adjusted(0, 0, -NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, 0));
+-        painter->setClipPath(rightRoundedRegion);
+-    }
++//    if (index.column() == 1) {
++//        QPainterPath rightRoundedRegion;
++//        rightRoundedRegion.setFillRule(Qt::WindingFill);
++//        auto rect = option.rect;
++//        auto view = qobject_cast<const QAbstractItemView *>(option.widget);
++//        if (view) {
++//            rect.setRight(view->viewport()->rect().right());
++//        }
++//        rightRoundedRegion.addRoundedRect(rect, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS);
++//        rightRoundedRegion.addRect(rect.adjusted(0, 0, -NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS, 0));
++//        //painter->setClipPath(rightRoundedRegion);
++//    }
+ 
+     painter->setRenderHint(QPainter::Antialiasing);
+     QStyledItemDelegate::paint(painter, option, index);
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index bcef1d9..1313790 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -1210,6 +1210,8 @@ void TabWidget::setPreviewPage(Peony::PreviewPageIface *previewPage)
+ 
+     m_preview_page = previewPage;
+ 
++    this->topLevelWidget()->setProperty("isPreviewMode", visible);
++
+     if (m_preview_page) {
+         previewPageWidget->setParent(m_preview_page_container);
+         m_preview_page_container->addWidget(previewPageWidget);
+diff --git a/src/src.pro b/src/src.pro
+index d34b798..0481997 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -21,7 +21,7 @@ include(control/control.pri)
+ #include(view/view.pri)
+ DEFINES += QAPPLICATION_CLASS=QApplication
+ 
+-PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra openssl dconf
++PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra openssl dconf kysdk-waylandhelper
+ LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
+ CONFIG += c++11 link_pkgconfig no_keywords lrelease
+ 
+diff --git a/src/windows/about-dialog.cpp b/src/windows/about-dialog.cpp
+index 962b83c..bec4e9f 100644
+--- a/src/windows/about-dialog.cpp
++++ b/src/windows/about-dialog.cpp
+@@ -31,6 +31,8 @@
+ #include <QPainterPath>
+ #include <QtMath>
+ 
++#include <ukuistylehelper/ukuistylehelper.h>
++
+ AboutDialog::AboutDialog(QWidget *parent) :
+     QDialog(parent),
+     ui(new Ui::AboutDialog)
+@@ -50,12 +52,7 @@ void AboutDialog::initUI()
+     setBackgroundRole(QPalette::Base);
+     setFixedWidth(420);
+ 
+-    //bug#101149 使用窗管
+-    MotifWmHints hints;
+-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+-    hints.functions = MWM_FUNC_ALL;
+-    hints.decorations = MWM_DECOR_BORDER;
+-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
++    kdk::UkuiStyleHelper::self()->removeHeader(this);
+ 
+     ui->logoLabel->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
+ 
+diff --git a/src/windows/main-window.cpp b/src/windows/main-window.cpp
+index cf6c5fc..19c0551 100644
+--- a/src/windows/main-window.cpp
++++ b/src/windows/main-window.cpp
+@@ -1273,60 +1273,60 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e)
+     //get the release event correctly.
+     //qDebug()<<"mouse move";
+     QMainWindow::mouseMoveEvent(e);
+-    if (!m_is_draging)
+-        return;
+-
+-    qreal  dpiRatio = qApp->devicePixelRatio();
+-    if (QX11Info::isPlatformX11()) {
+-        Display *display = QX11Info::display();
+-        Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
+-        XEvent xEvent;
+-        const auto pos = QCursor::pos();
+-
+-        memset(&xEvent, 0, sizeof(XEvent));
+-        xEvent.xclient.type = ClientMessage;
+-        xEvent.xclient.message_type = netMoveResize;
+-        xEvent.xclient.display = display;
+-        xEvent.xclient.window = this->winId();
+-        xEvent.xclient.format = 32;
+-        xEvent.xclient.data.l[0] = pos.x() * dpiRatio;
+-        xEvent.xclient.data.l[1] = pos.y() * dpiRatio;
+-        xEvent.xclient.data.l[2] = 8;
+-        xEvent.xclient.data.l[3] = Button1;
+-        xEvent.xclient.data.l[4] = 0;
+-
+-        XUngrabPointer(display, CurrentTime);
+-        XSendEvent(display, QX11Info::appRootWindow(QX11Info::appScreen()),
+-                   False, SubstructureNotifyMask | SubstructureRedirectMask,
+-                   &xEvent);
+-        //XFlush(display);
+-
+-        XEvent xevent;
+-        memset(&xevent, 0, sizeof(XEvent));
+-
+-        xevent.type = ButtonRelease;
+-        xevent.xbutton.button = Button1;
+-        xevent.xbutton.window = this->winId();
+-        xevent.xbutton.x = e->pos().x() * dpiRatio;
+-        xevent.xbutton.y = e->pos().y() * dpiRatio;
+-        xevent.xbutton.x_root = pos.x() * dpiRatio;
+-        xevent.xbutton.y_root = pos.y() * dpiRatio;
+-        xevent.xbutton.display = display;
+-
+-        XSendEvent(display, this->effectiveWinId(), False, ButtonReleaseMask, &xevent);
+-        XFlush(display);
+-
+-        if (e->source() == Qt::MouseEventSynthesizedByQt) {
+-            if (!this->mouseGrabber()) {
+-                this->grabMouse();
+-                this->releaseMouse();
+-            }
+-        }
++//    if (!m_is_draging)
++//        return;
+ 
+-        m_is_draging = false;
+-    } else {
+-        this->move((QCursor::pos() - m_offset) * dpiRatio);
+-    }
++//    qreal  dpiRatio = qApp->devicePixelRatio();
++//    if (QX11Info::isPlatformX11()) {
++//        Display *display = QX11Info::display();
++//        Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
++//        XEvent xEvent;
++//        const auto pos = QCursor::pos();
++
++//        memset(&xEvent, 0, sizeof(XEvent));
++//        xEvent.xclient.type = ClientMessage;
++//        xEvent.xclient.message_type = netMoveResize;
++//        xEvent.xclient.display = display;
++//        xEvent.xclient.window = this->winId();
++//        xEvent.xclient.format = 32;
++//        xEvent.xclient.data.l[0] = pos.x() * dpiRatio;
++//        xEvent.xclient.data.l[1] = pos.y() * dpiRatio;
++//        xEvent.xclient.data.l[2] = 8;
++//        xEvent.xclient.data.l[3] = Button1;
++//        xEvent.xclient.data.l[4] = 0;
++
++//        XUngrabPointer(display, CurrentTime);
++//        XSendEvent(display, QX11Info::appRootWindow(QX11Info::appScreen()),
++//                   False, SubstructureNotifyMask | SubstructureRedirectMask,
++//                   &xEvent);
++//        //XFlush(display);
++
++//        XEvent xevent;
++//        memset(&xevent, 0, sizeof(XEvent));
++
++//        xevent.type = ButtonRelease;
++//        xevent.xbutton.button = Button1;
++//        xevent.xbutton.window = this->winId();
++//        xevent.xbutton.x = e->pos().x() * dpiRatio;
++//        xevent.xbutton.y = e->pos().y() * dpiRatio;
++//        xevent.xbutton.x_root = pos.x() * dpiRatio;
++//        xevent.xbutton.y_root = pos.y() * dpiRatio;
++//        xevent.xbutton.display = display;
++
++//        XSendEvent(display, this->effectiveWinId(), False, ButtonReleaseMask, &xevent);
++//        XFlush(display);
++
++//        if (e->source() == Qt::MouseEventSynthesizedByQt) {
++//            if (!this->mouseGrabber()) {
++//                this->grabMouse();
++//                this->releaseMouse();
++//            }
++//        }
++
++//        m_is_draging = false;
++//    } else {
++//        this->move((QCursor::pos() - m_offset) * dpiRatio);
++//    }
+ }
+ 
+ void MainWindow::mouseReleaseEvent(QMouseEvent *e)
+@@ -1504,6 +1504,7 @@ void MainWindow::initUI(const QString &uri)
+ 
+     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
+     tabBarHandler->registerWidget(views->tabBar());
++    tabBarHandler->registerWidget(m_header_bar);
+ 
+     auto paneAndViews = new FloatPaneWidget(views, labelDialog, this);
+     connect(sidebar, &NavigationSideBar::labelButtonClicked, this, [=](bool checked)
+diff --git a/src/windows/x11-window-manager.cpp b/src/windows/x11-window-manager.cpp
+index df0c16e..7f56259 100644
+--- a/src/windows/x11-window-manager.cpp
++++ b/src/windows/x11-window-manager.cpp
+@@ -31,6 +31,7 @@
+ #include <QStyleOptionTabBarBase>
+ 
+ #include <QApplication>
++#include <QWindow>
+ 
+ #include <QDebug>
+ 
+@@ -152,12 +153,18 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
+ 
+                 return true;
+             } else {
++#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
++                auto widget = qobject_cast<QWidget *>(watched);
++                auto topLevel = widget->topLevelWidget();
++                topLevel->windowHandle()->startSystemMove();
++#else
+                 //auto me = static_cast<QMouseEvent *>(event);
+                 auto widget = qobject_cast<QWidget *>(watched);
+                 auto topLevel = widget->topLevelWidget();
+                 auto globalPos = QCursor::pos();
+                 //auto offset = globalPos - m_press_pos;
+                 topLevel->move(globalPos - m_toplevel_offset);
++#endif
+             }
+         }
+         break;
