@@ -2674,6 +2674,18 @@ Do you want to unmount forcely?</source>
         <source> is busy!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UdfFormatDialog</name>
