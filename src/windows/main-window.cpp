@@ -1592,14 +1592,7 @@ void MainWindow::cleanTrash()
     Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (uris.count() >0)
     {
-        auto result = QMessageBox::question(nullptr, tr("Delete Permanently"),
-                                            tr("Are you sure that you want to delete these files? "
-                                               "Once you start a deletion, the files deleting will never be "
-                                               "restored again."));
-        if (result == QMessageBox::Yes) {
-            Peony::FileOperationUtils::remove(uris);
-            Peony::SoundEffect::getInstance()->recycleBinClearMusic();
-        }
+        Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
     }
     else
     {
