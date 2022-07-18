@@ -74,6 +74,9 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
             KWindowSystem::clearState(m_window->winId(), KWindowSystem::KeepAbove);
     });
     keepAllow->setCheckable(true);
+    if (QApplication::platformName().toLower().contains("wayland")) {
+        keepAllow->setVisible(false);
+    }
 
     auto showHidden = addAction(tr("Show Hidden"), this, [=](bool checked) {
         //window set show hidden
