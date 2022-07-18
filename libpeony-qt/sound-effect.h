@@ -56,7 +56,7 @@ public:
 
 private:
     ca_context *caContext;
-    GSettings *m_pSoundSettings;
+    GSettings *m_pSoundSettings = nullptr;
 
 
 

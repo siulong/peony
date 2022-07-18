@@ -67,6 +67,9 @@ QList<char *> SoundEffect::listExistsPath()
 
 void SoundEffect::playAlertSound(QString gsettingStr)
 {
+    if (! m_pSoundSettings)
+        return;
+
     gint retval;
     const gchar *desc = "Alert Sound";
     QString filenameStr;
@@ -89,7 +92,7 @@ void SoundEffect::playAlertSound(QString gsettingStr)
     const QByteArray text = filenameStr.toLocal8Bit();
     const char *id = text.data();
     const char *eventId =id;
-    if(desc){
+    if(desc && filenameStr.length() >0){
         bool status = g_settings_get_boolean(m_pSoundSettings, EVENT_SOUNDS_KEY);
         if (status)
             retval = ca_context_play (this->caContext, 0,
