@@ -271,7 +271,7 @@
     <name>Peony::AdvanceSearchBar</name>
     <message>
         <source>all</source>
-        <translation type="vanished">ཚང་མ།</translation>
+        <translation>ཚང་མ།</translation>
     </message>
     <message>
         <source>start search</source>
@@ -279,27 +279,27 @@
     </message>
     <message>
         <source>this year</source>
-        <translation type="vanished">ད་ལོ།</translation>
+        <translation>ད་ལོ།</translation>
     </message>
     <message>
         <source>this week</source>
-        <translation type="vanished">གཟའ་འདི།</translation>
+        <translation>གཟའ་འདི།</translation>
     </message>
     <message>
         <source>audio</source>
-        <translation type="vanished">སྒྲ་ཟློས།</translation>
+        <translation>སྒྲ་ཟློས།</translation>
     </message>
     <message>
         <source>image</source>
-        <translation type="vanished">པར་རིས།།</translation>
+        <translation>པར་རིས།།</translation>
     </message>
     <message>
         <source>today</source>
-        <translation type="vanished">དེ་རིང་།</translation>
+        <translation>དེ་རིང་།</translation>
     </message>
     <message>
         <source>video</source>
-        <translation type="vanished">བརྙན་ལམ།</translation>
+        <translation>བརྙན་ལམ།</translation>
     </message>
     <message>
         <source>File Size</source>
@@ -335,15 +335,15 @@
     </message>
     <message>
         <source>medium(1M-100M)</source>
-        <translation type="vanished">འབྲིང(1M-100M)</translation>
+        <translation>འབྲིང(1M-100M)</translation>
     </message>
     <message>
         <source>this month</source>
-        <translation type="vanished">ཟླ་འདི།</translation>
+        <translation>ཟླ་འདི།</translation>
     </message>
     <message>
         <source>big(100M-1G)</source>
-        <translation type="vanished">ཅུང་ཆེ(100M-1G)</translation>
+        <translation>ཅུང་ཆེ(100M-1G)</translation>
     </message>
     <message>
         <source>browse</source>
@@ -351,7 +351,7 @@
     </message>
     <message>
         <source>file folder</source>
-        <translation type="vanished">ཡིག་ཁུག</translation>
+        <translation>ཡིག་ཁུག</translation>
     </message>
     <message>
         <source>hidden advance search page</source>
@@ -359,11 +359,11 @@
     </message>
     <message>
         <source>wps file</source>
-        <translation type="vanished">WPSཡིག་ཆ།</translation>
+        <translation>WPSཡིག་ཆ།</translation>
     </message>
     <message>
         <source>others</source>
-        <translation type="vanished">གཞན་དག</translation>
+        <translation>གཞན་དག</translation>
     </message>
     <message>
         <source>search</source>
@@ -387,11 +387,11 @@
     </message>
     <message>
         <source>tiny(0-16K)</source>
-        <translation type="vanished">ཆེས་ཆུང(0-16K)</translation>
+        <translation>ཆེས་ཆུང(0-16K)</translation>
     </message>
     <message>
         <source>year ago</source>
-        <translation type="vanished">ལོ་གཅིག་གི་སྔོན།</translation>
+        <translation>ལོ་གཅིག་གི་སྔོན།</translation>
     </message>
     <message>
         <source>Search Location</source>
@@ -399,7 +399,7 @@
     </message>
     <message>
         <source>large(&gt;1G)</source>
-        <translation type="vanished">ཆེས་ཆེ(&gt;1G)</translation>
+        <translation>ཆེས་ཆེ(&gt;1G)</translation>
     </message>
     <message>
         <source>Modify Time</source>
@@ -415,7 +415,7 @@
     </message>
     <message>
         <source>small(16k-1M)</source>
-        <translation type="vanished">ཆུང་ཆུང་(16k-1M</translation>
+        <translation>ཆུང་ཆུང་(16k-1M</translation>
     </message>
     <message>
         <source>Operate Tips</source>
@@ -427,7 +427,7 @@
     </message>
     <message>
         <source>text file</source>
-        <translation type="vanished">ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
     </message>
 </context>
 <context>
@@ -740,11 +740,11 @@
     </message>
     <message>
         <source>Create Link Menu Extension.</source>
-        <translation type="vanished">སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
+        <translation>སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
     </message>
     <message>
         <source>Peony-Qt Create Link Extension</source>
-        <translation type="vanished">སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
+        <translation>སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
     </message>
 </context>
 <context>
@@ -752,6 +752,14 @@
     <message>
         <source>Create Link to Desktop</source>
         <translation type="unfinished">སྒྲོག་ངོས་ཀྱི་མྱུར་ལམ་རི་མོར་བསྐུར་བ།</translation>
+    </message>
+    <message>
+        <source>Peony-Qt Share File menu Extension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tag  with Menu.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -892,7 +900,7 @@
     <name>Peony::DirectoryView::IconView</name>
     <message>
         <source>Icon View</source>
-        <translation type="vanished">རིས་རྟགས་མཐོང་རིས།</translation>
+        <translation>རིས་རྟགས་མཐོང་རིས།</translation>
     </message>
     <message>
         <source>warn</source>
@@ -907,7 +915,7 @@
     <name>Peony::DirectoryView::ListView</name>
     <message>
         <source>List View</source>
-        <translation type="vanished">རེའུ་མིག་གི་མཐོང་རིས།</translation>
+        <translation>རེའུ་མིག་གི་མཐོང་རིས།</translation>
     </message>
     <message>
         <source>warn</source>
@@ -1310,7 +1318,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <name>Peony::FileLabelInternalMenuPlugin</name>
     <message>
         <source>Tag a File with Menu.</source>
-        <translation type="vanished">འདེམ་བྱང་ཁྲོད་ནུས་པའི་མཚོན་རྟགས་སྣོན་པ།</translation>
+        <translation>འདེམ་བྱང་ཁྲོད་ནུས་པའི་མཚོན་རྟགས་སྣོན་པ།</translation>
     </message>
     <message>
         <source>Delete All Label</source>
@@ -1322,7 +1330,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Peony File Labels Menu Extension</source>
-        <translation type="vanished">ཡིག་ཆའི་མཚོན་རྟགས།</translation>
+        <translation>ཡིག་ཆའི་མཚོན་རྟགས།</translation>
     </message>
 </context>
 <context>
@@ -1596,7 +1604,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>No, go to settings</source>
-        <translation>མིན། ཇུས་བཀོད་དུ་འཕར་མཆོང་བྱེད།</translation>
+        <translation type="vanished">མིན། ཇུས་བཀོད་དུ་འཕར་མཆོང་བྱེད།</translation>
     </message>
     <message>
         <source>You can&apos;t delete a file whenthe file is doing another operation</source>
@@ -1616,6 +1624,18 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>&apos;%1&apos; is occupied，you cannot operate!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>Do not show again</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1843,7 +1863,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File System</source>
-        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
+        <translation type="vanished">ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
         <source>Open In New Tab</source>
@@ -2519,7 +2539,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Default search vfs of peony</source>
-        <translation type="vanished">སོར་བཞག་ཡིག་ཆ་འཚོལ་བཤེར།</translation>
+        <translation>སོར་བཞག་ཡིག་ཆ་འཚོལ་བཤེར།</translation>
     </message>
     <message>
         <source>Details</source>
