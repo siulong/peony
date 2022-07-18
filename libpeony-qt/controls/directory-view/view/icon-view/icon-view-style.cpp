@@ -88,3 +88,19 @@ void IconViewStyle::drawItemText(QPainter *painter, const QRect &rect, int flags
     //qDebug()<<"drawItemText";
     qApp->style()->drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }
+
+int IconViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
+{
+    switch (hint) {
+    case SH_ItemView_ActivateItemOnSingleClick: {
+        bool singleClick = qApp->style()->styleHint(hint, option, widget, returnData);
+        if (widget->topLevelWidget()->property("isPreviewMode").isValid() && singleClick) {
+            return !widget->topLevelWidget()->property("isPreviewMode").toBool();
+        } else {
+            return singleClick;
+        }
+    }
+    default:
+        return qApp->style()->styleHint(hint, option, widget, returnData);
+    }
+}

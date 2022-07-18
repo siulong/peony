@@ -1210,6 +1210,8 @@ void TabWidget::setPreviewPage(Peony::PreviewPageIface *previewPage)
 
     m_preview_page = previewPage;
 
+    this->topLevelWidget()->setProperty("isPreviewMode", visible);
+
     if (m_preview_page) {
         previewPageWidget->setParent(m_preview_page_container);
         m_preview_page_container->addWidget(previewPageWidget);

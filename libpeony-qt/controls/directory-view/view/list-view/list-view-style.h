@@ -42,6 +42,9 @@ public:
                        const QWidget *widget = nullptr) const override;
     void drawControl(ControlElement ce, const QStyleOption *option, QPainter *painter,
                      const QWidget *widget) const override;
+
+    int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override;
+
     //绘制列表视图文本
     void viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const;
 

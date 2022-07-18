@@ -283,6 +283,22 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
     }
     return QProxyStyle::drawControl(element, option, painter, widget);
 }
+
+int ListViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
+{
+    switch (hint) {
+    case SH_ItemView_ActivateItemOnSingleClick: {
+        bool singleClick = qApp->style()->styleHint(hint, option, widget, returnData);
+        if (widget->topLevelWidget()->property("isPreviewMode").isValid() && singleClick) {
+            return !widget->topLevelWidget()->property("isPreviewMode").toBool();
+        } else {
+            return singleClick;
+        }
+    }
+    default:
+        return qApp->style()->styleHint(hint, option, widget, returnData);
+    }
+}
 //绘制列表视图文本
 void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const
 {
