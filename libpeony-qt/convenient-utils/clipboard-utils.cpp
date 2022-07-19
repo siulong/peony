@@ -188,7 +188,12 @@ QStringList ClipboardUtils::getClipboardFilesUris()
         auto urls = mimeData->urls();
         for (auto url : urls) {
             g_autofree gchar* uri = g_uri_unescape_string(url.toString().toUtf8().constData(), nullptr);
-            l<<QString(uri);
+            if (uri) {
+               l<<QString(uri);
+            } else {
+                qWarning()<<"can not unescape uri:"<<url.toString().toUtf8().constData();
+                l<<url.toString().toUtf8().constData();
+            }
         }
     }
 
