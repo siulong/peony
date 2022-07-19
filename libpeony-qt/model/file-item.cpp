@@ -471,7 +471,7 @@ void FileItem::findChildrenAsync()
                 //tell the model update
                 this->onChildAdded(uri);
                 Q_EMIT this->childAdded(uri);
-                qDebug() << "positive onChildAdded:" <<uri;
+                //qDebug() << "positive onChildAdded:" <<uri;
                 //file changed, force create thubnail, link tobug#83108
                 ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
             });
@@ -554,7 +554,7 @@ void FileItem::onChildAdded(const QString &uri)
     if(m_uris_to_be_removed.contains(uri))
         m_uris_to_be_removed.removeOne(uri);
 
-    qDebug()<<"add child:" << uri;
+    //qDebug()<<"add child:" << uri;
     FileItem *child = getChildFromUri(uri);
     if (child) {
         qDebug()<<"has added, return";
