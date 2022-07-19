@@ -29,6 +29,8 @@
 #include <QColor>
 #include <QDir>
 #include <QAbstractItemView>
+#include <QTimer>
+
 
 #include "peony-core_global.h"
 
@@ -113,6 +115,8 @@ public:
 
     QAbstractItemView::SelectionMode getSelectionModeHint();
 
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+
 public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);
@@ -161,6 +165,10 @@ private:
     QStringList m_mimeTypeFilters;
     QStringList m_nameFilters;
     int m_dirFilters = -1;
+
+    QTimer *m_sortTimer = nullptr;
+    int m_sortType = 0;
+    Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
 };
 
 }

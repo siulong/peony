@@ -80,6 +80,14 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
     comparer.setNumericMode(true);
     auto settings = GlobalSettings::getInstance();
     m_settings = settings;
+
+    m_sortTimer = new QTimer(this);
+    m_sortTimer->setSingleShot(true);
+    connect(m_sortTimer, &QTimer::timeout, this, [=]{
+        checkSortSettings();
+        qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
+        return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
+    });
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -902,6 +910,15 @@ QAbstractItemView::SelectionMode FileItemProxyFilterSortModel::getSelectionModeH
         return QAbstractItemView::SelectionMode(property("selectionMode").toInt());
     }
     return QAbstractItemView::NoSelection;
+}
+
+void FileItemProxyFilterSortModel::sort(int column, Qt::SortOrder order)
+{
+    m_sortType = column;
+    m_sortOrder = order;
+    if(!m_sortTimer->isActive()){
+        m_sortTimer->start(50);
+    }
 }
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()
