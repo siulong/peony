@@ -428,6 +428,7 @@ void FileItem::findChildrenAsync()
                 m_ending_uris.clear();
                 m_ending_uris = uris;
             }
+            uris.toSet().toList();/* 去重 */
             for (auto uri : uris) {
                 auto info = FileInfo::fromUri(uri);
                 auto infoJob = new FileInfoJob(info);
