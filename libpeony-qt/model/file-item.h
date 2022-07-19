@@ -195,10 +195,10 @@ public:
     BatchProcessItems();
     ~BatchProcessItems();
 
-    void setBatchRemoveParam(QStringList uris_to_be_removed, QHash<QString, FileItem*> uri_item_hash, QVector<FileItem*> *children);
+    void setBatchRemoveParam(const QStringList& uris_to_be_removed, const QHash<QString, FileItem*>& uri_item_hash, QVector<FileItem*> *children);
 
 Q_SIGNALS:
-    void removeItemsFinished(QVector<FileItem*> *children);
+    void removeItemsFinished(QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash);
 
 
 public Q_SLOTS:

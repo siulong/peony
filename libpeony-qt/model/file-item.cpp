@@ -62,6 +62,7 @@ QString uri2FavoriteUri(const QString &sourceUri)
 FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, FileItemModel *model, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QVector<FileItem*>* >("QVector<FileItem*>*");
+    qRegisterMetaType<QHash<QString, FileItem*>>("QHash<QString, FileItem*>");
     m_parent = parentItem;
     m_info = info;
     m_children = new QVector<FileItem*>();
@@ -92,6 +93,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 */
             });
             infoJob->queryAsync();
+            m_waiting_update_queue.removeOne(uri);
         }
         if (m_uris_to_be_removed.isEmpty())
             return;
@@ -798,19 +800,15 @@ void FileItem::batchRemoveItems()
             m_uris_to_be_removed.clear();
         }
 
-        QHash<QString, FileItem*> uri_item_hash;
-        for(auto entry: *m_children){
-            uri_item_hash.insert(entry->uri(), entry);
-        }
-
         m_batchProcessItems = new BatchProcessItems();
-        m_batchProcessItems->setBatchRemoveParam(list, uri_item_hash, m_children);
+        m_batchProcessItems->setBatchRemoveParam(list, m_uri_item_hash, m_children);
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
-        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children){
+        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
             m_children = children;
+            m_uri_item_hash = uri_item_hash;
             m_model->updated();/* 更新状态栏 */
-            qDebug()<<"remove items finished,children count:"<<m_children->size();
+            qDebug()<<"remove items finished,children count,uri_item_hash count:"<<m_children->size()<<m_uri_item_hash.size();
 
             if(m_uris_to_be_removed.size() <= maxNumberOfDeletesByOne){
                 m_model->beginResetModel();
@@ -888,7 +886,7 @@ BatchProcessItems::~BatchProcessItems()
 
 }
 
-void BatchProcessItems::setBatchRemoveParam(QStringList uris_to_be_removed, QHash<QString, FileItem*> uri_item_hash, QVector<FileItem*> *children)
+void BatchProcessItems::setBatchRemoveParam(const QStringList& uris_to_be_removed, const QHash<QString, FileItem*>& uri_item_hash, QVector<FileItem*> *children)
 {
     m_uris_to_be_removed = uris_to_be_removed;
     m_uri_item_hash = uri_item_hash;
@@ -916,7 +914,7 @@ void BatchProcessItems::slot_removeItems()
         }
     }
     BookMarkManager::getInstance()->removeBookMark(favoriteUris);
-    Q_EMIT removeItemsFinished(m_children);
+    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash);
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
     qDebug()<<"excute deletion finished, cost"<<time1 - time0<<"uris to be removed remaining count:"<<m_uris_to_be_removed.size()<<"children remaining count:"<<m_children->size();
 }
