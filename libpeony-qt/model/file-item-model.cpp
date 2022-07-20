@@ -562,6 +562,11 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
+    //if drag file to empty CD or DVD, is invalid operation, link to bug#129347
+    //如果是拖拽文件到空光盘，操作无效，光盘只能刻录，不能直接写入文件
+    if (destDirUri.startsWith("burn:///"))
+        return false;
+
     auto info = Peony::FileInfo::fromUri(destDirUri);
     //qDebug() << "FileItemModel::dropMimeData:" <<info->isDir() <<info->type();
     //if (!FileUtils::getFileIsFolder(destDirUri))
