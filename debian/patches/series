@@ -25,3 +25,4 @@
 0025-adapt-wayland-sdk-for-dialogs-which-using-custom-hea.patch
 0026-update-debian-changelog.patch
 0027-update-debian-changelog.patch
+0028-close-cd-130787-wayland-PC.patch
