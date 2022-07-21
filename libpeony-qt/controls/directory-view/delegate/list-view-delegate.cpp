@@ -174,7 +174,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-unreadable");
                 icon.paint(painter, loc_x, loc_y, size, size);
-            } else if (!info->canWrite() && !info->canExecute()) {
+            } else if (!info->canWrite()/* && !info->canExecute()*/) {
+                //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-readonly");
                 icon.paint(painter, loc_x, loc_y, size, size);
