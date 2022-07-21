@@ -57,7 +57,7 @@ QWidget *getSpecialWidget() {
     return gSpecialWidget;
 }
 
-DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
+DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : m_screen(screen), QMainWindow(parent)
 {
     connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
 
@@ -73,7 +73,6 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    m_screen = screen;
     m_desktopIconView = new Peony::DesktopIconView(this);
     m_desktopIconView->setId(desktop_window_id);
     m_id = desktop_window_id;
