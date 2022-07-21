@@ -316,7 +316,8 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
-    } else if (!info->canWrite() && !info->canExecute()) {
+    } else if (!info->canWrite()/* && !info->canExecute()*/) {
+        //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-readonly");
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);

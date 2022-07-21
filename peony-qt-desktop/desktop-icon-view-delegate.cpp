@@ -263,8 +263,9 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
         }
-        else if(! file->canWrite() && ! file->canExecute())
+        else if(! file->canWrite()/* && ! file->canExecute()*/)
         {
+            //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-readonly");
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
         }
