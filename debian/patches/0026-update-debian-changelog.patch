@@ -1,0 +1,140 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Thu, 21 Jul 2022 12:17:04 +0800
+Subject: update debian/changelog.
+
+---
+ common.pri                                |  3 +++
+ peony-qt-desktop/plasma-shell-manager.cpp |  2 +-
+ src/src.pro                               |  2 +-
+ src/windows/about-dialog.cpp              | 32 +++++++++++++++----------------
+ src/windows/about-dialog.h                |  6 ++----
+ 5 files changed, 22 insertions(+), 23 deletions(-)
+
+diff --git a/common.pri b/common.pri
+index 21d877c..05f46e0 100644
+--- a/common.pri
++++ b/common.pri
+@@ -3,6 +3,9 @@ DEFINES += VERSION='\\"$${VERSION}\\"'
+ DEFINES += V10_SP1='\\"V10SP1\\"'
+ DEFINES += V10_SP1_EDU='\\"V10SP1-edu\\"'
+ 
++DEB_VERSION = 3.14.5.7
++DEFINES += DEB_VERSION='\\"$${DEB_VERSION}\\"'
++
+ exists(/usr/include/ukuisdk/kylin-com4cxx.h) {
+     message("kylin common for cxx find.")
+     DEFINES += KYLIN_COMMON=true
+diff --git a/peony-qt-desktop/plasma-shell-manager.cpp b/peony-qt-desktop/plasma-shell-manager.cpp
+index c01d24e..15ade73 100644
+--- a/peony-qt-desktop/plasma-shell-manager.cpp
++++ b/peony-qt-desktop/plasma-shell-manager.cpp
+@@ -94,7 +94,7 @@ KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow
+ 
+ PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
+ {
+-    if (QApplication::platformName().toLower().contains("wayland"));
++    if (!QApplication::platformName().toLower().contains("wayland"))
+         return;
+     auto connection = KWayland::Client::ConnectionThread::fromApplication(qApp);
+     auto registry = new KWayland::Client::Registry(this);
+diff --git a/src/src.pro b/src/src.pro
+index 0481997..005778d 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -21,7 +21,7 @@ include(control/control.pri)
+ #include(view/view.pri)
+ DEFINES += QAPPLICATION_CLASS=QApplication
+ 
+-PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra openssl dconf kysdk-waylandhelper
++PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra openssl dconf kysdk-waylandhelper kysdk-qtwidgets
+ LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
+ CONFIG += c++11 link_pkgconfig no_keywords lrelease
+ 
+diff --git a/src/windows/about-dialog.cpp b/src/windows/about-dialog.cpp
+index bec4e9f..5f9259e 100644
+--- a/src/windows/about-dialog.cpp
++++ b/src/windows/about-dialog.cpp
+@@ -34,16 +34,25 @@
+ #include <ukuistylehelper/ukuistylehelper.h>
+ 
+ AboutDialog::AboutDialog(QWidget *parent) :
+-    QDialog(parent),
+-    ui(new Ui::AboutDialog)
++    kdk::KAboutDialog(parent)
+ {
+-    ui->setupUi(this);
+-    initUI();
++    setAppIcon(QIcon::fromTheme("system-file-manager"));
++    setAppName(tr("Peony"));
++    setAppSupport(tr("Service & Support: ") + "<a href=\"mailto://support@kylinos.cn\" style=\"color:"
++                  + convertRGB16HexStr(palette().color(QPalette::ButtonText))
++                  + ";\">support@kylinos.cn</a><br/>");
++    setAppVersion(QString(tr("Version number: %1")).arg(getCurrentVersion()));
++    setBodyText(tr("Peony is a graphical software to help users manage system files. "
++                   "It provides common file operation functions for users, such as file viewing, "
++                   "file copy, paste, cut, delete, rename, file selection, application opening, "
++                   "file search, file sorting, file preview, etc. it is convenient for users to "
++                   "manage system files intuitively on the interface."));
++    setBodyTextVisiable(true);
+ }
+ 
+ AboutDialog::~AboutDialog()
+ {
+-    delete ui;
++
+ }
+ 
+ void AboutDialog::initUI()
+@@ -146,7 +155,7 @@ QString AboutDialog::convertRGB16HexStr(const QColor &color)
+ QString AboutDialog::getCurrentVersion()
+ {
+     //use self define main version
+-    return VERSION;
++    return DEB_VERSION;
+ 
+     FILE *pp = NULL;
+     char *line = NULL;
+@@ -202,14 +211,3 @@ void AboutDialog::resetSize()
+     ui->verticalLayout_3->update();
+ 
+ }
+-
+-void AboutDialog::resizeEvent(QResizeEvent *e)
+-{
+-    QDialog::resizeEvent(e);
+-    if(!m_isFirstLoad)
+-    {
+-        //bug#101112 第一次加载获取控件实际大小
+-        resetSize();
+-        m_isFirstLoad = true;
+-    }
+-}
+diff --git a/src/windows/about-dialog.h b/src/windows/about-dialog.h
+index b003629..13ed3b7 100644
+--- a/src/windows/about-dialog.h
++++ b/src/windows/about-dialog.h
+@@ -28,12 +28,13 @@
+ #include <QPoint>
+ #include <QMouseEvent>
+ #include <QGSettings>
++#include <kaboutdialog.h>
+ 
+ namespace Ui {
+ class AboutDialog;
+ }
+ 
+-class AboutDialog : public QDialog
++class AboutDialog : public kdk::KAboutDialog
+ {
+     Q_OBJECT
+ 
+@@ -46,9 +47,6 @@ private:
+    void  initUI();
+     QString getCurrentVersion();
+ 
+-protected:
+-    void resizeEvent(QResizeEvent *e);
+-
+ private Q_SLOTS:
+     void on_closeBtn_clicked();
+ 

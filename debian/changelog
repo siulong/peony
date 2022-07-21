@@ -1,4 +1,4 @@
-peony (3.14.4.5-ok6~0718.3) yangtze; urgency=medium
+peony (3.14.4.5-ok6~0721) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
   * 适配appmanager接口
@@ -19,5 +19,6 @@ peony (3.14.4.5-ok6~0718.3) yangtze; urgency=medium
   * 优化触控逻辑，优化鼠标点击逻辑
   * 优化左侧边栏和列表视图item列布局
   * 处理编译依赖相关问题
+  * close-cd #130583 关于界面调用sdk
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
