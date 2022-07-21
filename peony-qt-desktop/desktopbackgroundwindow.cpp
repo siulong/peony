@@ -375,7 +375,12 @@ void DesktopBackgroundWindow::updateWindowGeometry()
     setFixedSize(geometry.size());
 
     qInfo()<<"bg window geometry changed slot"<<screen()->name()<<geometry;
-
+    if (qApp->property("isTabletMode").toBool()) {
+        TabletDesktop *tablet = static_cast<TabletDesktop*>(centralWidget());
+        if (tablet) {
+            tablet->setGeometry(QRect(0, 0, geometry.width(), geometry.height()));
+        }
+    }
     // raise primary window to make sure icon view is visible.
     if (centralWidget()) {
         if (screen() == qApp->primaryScreen()) {
