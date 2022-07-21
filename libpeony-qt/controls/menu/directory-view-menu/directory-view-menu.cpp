@@ -398,7 +398,8 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
 
                 QString uri = m_selections.first();
                 //fix bug#101386, can not open file in filesafe path
-                if (uri.startsWith("filesafe:///"))
+                //fix bug#125679, can not open file in recent
+                if (uri.startsWith("filesafe:///") || uri.startsWith("recent:///"))
                 {
                    auto targetUri = FileUtils::getTargetUri(uri);
                    uri = targetUri.isEmpty() ? uri : targetUri;
