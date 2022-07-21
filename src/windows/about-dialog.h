@@ -28,12 +28,13 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QGSettings>
+#include <kaboutdialog.h>
 
 namespace Ui {
 class AboutDialog;
 }
 
-class AboutDialog : public QDialog
+class AboutDialog : public kdk::KAboutDialog
 {
     Q_OBJECT
 
@@ -45,9 +46,6 @@ public:
 private:
    void  initUI();
     QString getCurrentVersion();
-
-protected:
-    void resizeEvent(QResizeEvent *e);
 
 private Q_SLOTS:
     void on_closeBtn_clicked();

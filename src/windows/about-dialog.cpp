@@ -34,16 +34,25 @@
 #include <ukuistylehelper/ukuistylehelper.h>
 
 AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
+    kdk::KAboutDialog(parent)
 {
-    ui->setupUi(this);
-    initUI();
+    setAppIcon(QIcon::fromTheme("system-file-manager"));
+    setAppName(tr("Peony"));
+    setAppSupport(tr("Service & Support: ") + "<a href=\"mailto://support@kylinos.cn\" style=\"color:"
+                  + convertRGB16HexStr(palette().color(QPalette::ButtonText))
+                  + ";\">support@kylinos.cn</a><br/>");
+    setAppVersion(QString(tr("Version number: %1")).arg(getCurrentVersion()));
+    setBodyText(tr("Peony is a graphical software to help users manage system files. "
+                   "It provides common file operation functions for users, such as file viewing, "
+                   "file copy, paste, cut, delete, rename, file selection, application opening, "
+                   "file search, file sorting, file preview, etc. it is convenient for users to "
+                   "manage system files intuitively on the interface."));
+    setBodyTextVisiable(true);
 }
 
 AboutDialog::~AboutDialog()
 {
-    delete ui;
+
 }
 
 void AboutDialog::initUI()
@@ -146,7 +155,7 @@ QString AboutDialog::convertRGB16HexStr(const QColor &color)
 QString AboutDialog::getCurrentVersion()
 {
     //use self define main version
-    return VERSION;
+    return DEB_VERSION;
 
     FILE *pp = NULL;
     char *line = NULL;
@@ -201,15 +210,4 @@ void AboutDialog::resetSize()
     this->setFixedHeight(finalHeight);
     ui->verticalLayout_3->update();
 
-}
-
-void AboutDialog::resizeEvent(QResizeEvent *e)
-{
-    QDialog::resizeEvent(e);
-    if(!m_isFirstLoad)
-    {
-        //bug#101112 第一次加载获取控件实际大小
-        resetSize();
-        m_isFirstLoad = true;
-    }
 }
