@@ -490,6 +490,9 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
             if (volume->getGVolume() == gvolume) {
                 // 加密U盘的device name可能改变，列表需要按之前的调整
                 device = volume->originalDevice();
+                /* 此处更新volume的icon，优先使用gmount的icon；解决先打开文件管理器在插入启动光盘，先打开的文件管理器启动光盘图标未正确显示问题 */
+                volume->setIconName(mountItem->icon());
+                Q_EMIT pThis->volumeUpdate(Volume(*volume),"name");//end
                 break;
             }
         }
@@ -1084,6 +1087,11 @@ void Volume::setLabel(const QString &label){
 void Volume::setDevice(const QString &device)
 {
     m_device = device;
+}
+
+void Volume::setIconName(const QString &iconName)
+{
+    m_icon = iconName;
 }
 
 //根分区信息

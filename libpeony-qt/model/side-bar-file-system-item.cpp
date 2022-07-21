@@ -372,8 +372,8 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
     auto gvolume = updateDevice.getGVolume();
     device = updateDevice.device();
     for(auto& item:*m_children){
-        if("file:///" == item->uri())/* hotfix bug#125095 打开文件管理器后，插入U盘，侧边栏中文件系统消失 */
-            return;
+        if("file:///" == item->uri() || "computer:///ukui-data-volume" == item->uri())/* hotfix bug#125095 打开文件管理器后，插入U盘，侧边栏中文件系统消失 */
+            continue;
 
         auto fs_item = qobject_cast<SideBarFileSystemItem *>(item);
         auto item_gvolume = fs_item->getVolume().getGVolume();
@@ -390,6 +390,7 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
                 item->m_mountable = updateDevice.canMount();
                 item->m_unmountable = true;
                 item->m_iconName = updateDevice.icon();
+
                 /* 更新uri,为了枚举操作 */
                 if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                     item->m_uri = "computer:///" + updateDevice.name() + ".volume";
