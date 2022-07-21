@@ -94,7 +94,7 @@ KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow 
 
 PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
 {
-    if (QApplication::platformName().toLower().contains("wayland"));
+    if (!QApplication::platformName().toLower().contains("wayland"))
         return;
     auto connection = KWayland::Client::ConnectionThread::fromApplication(qApp);
     auto registry = new KWayland::Client::Registry(this);
