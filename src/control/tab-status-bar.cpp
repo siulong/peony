@@ -69,6 +69,9 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
     m_slider->setValue(defaultZoomLevel);
 
     connect(m_slider, &QSlider::valueChanged, this, &TabStatusBar::zoomLevelChangedRequest);
+    connect(qApp, &QApplication::paletteChanged, this, [=]() {
+        this->update();
+    });
 }
 
 TabStatusBar::~TabStatusBar()
