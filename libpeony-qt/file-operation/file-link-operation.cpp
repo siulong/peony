@@ -24,6 +24,7 @@
 #include "file-operation-manager.h"
 
 #include "gerror-wrapper.h"
+#include "sound-effect.h"
 
 #include <QUrl>
 #include <QProcess>
@@ -92,6 +93,9 @@ retry:
             goto end;
         }
     }
+    else{
+        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+    }
 
     g_file_set_display_name(destFile.get()->get(), QUrl::fromPercentEncoding(m_dest_uri.split("/").last().toUtf8()).toUtf8().constData(), nullptr, nullptr);
 
@@ -137,7 +141,6 @@ end:
 //            g_free(path);
 //        }
 //    }
-
     operationFinished();
     //notifyFileWatcherOperationFinished();
 }

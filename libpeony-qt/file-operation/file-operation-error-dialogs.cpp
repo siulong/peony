@@ -30,6 +30,7 @@
 #include <file-info-job.h>
 #include <file-utils.h>
 #include <QStyleOptionViewItem>
+#include "sound-effect.h"
 
 static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
@@ -203,7 +204,7 @@ Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
 void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &error)
 {
     m_error = &error;
-
+    SoundEffect::getInstance()->copyOrMoveFailedMusic();
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         QString htmlString = QString("<p>%1</p>")

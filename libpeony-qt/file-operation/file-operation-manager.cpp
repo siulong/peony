@@ -216,7 +216,7 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         questionbox.setIcon("user-trash");
         auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
         if (questionbox.exec()) {
-            SoundEffect::getInstance()->recycleBinDeleteMusic();
+//            SoundEffect::getInstance()->recycleBinDeleteMusic();
             if (checkbox->isChecked()) {
                 GlobalSettings::getInstance()->setGSettingValue(SHOW_TRASH_DIALOG, false);
             }

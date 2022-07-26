@@ -79,7 +79,7 @@ FileCopyOperation::~FileCopyOperation()
 ExceptionResponse FileCopyOperation::prehandle(GError *err)
 {
     setHasError(true);
-    SoundEffect::getInstance()->copyOrMoveFailedMusic();
+//    SoundEffect::getInstance()->copyOrMoveFailedMusic();
 
     switch (err->code) {
         case G_IO_ERROR_BUSY:
@@ -659,7 +659,6 @@ void FileCopyOperation::run()
 
     nodes.clear();
     Q_EMIT operationFinished();
-
     sendSrcAndDestUrisOfCopyDspsFiles();
 }
 
