@@ -1594,6 +1594,7 @@ void MainWindow::cleanTrash()
     if (uris.count() >0)
     {
         Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
+        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
     }
     else
     {
