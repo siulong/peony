@@ -131,6 +131,7 @@ public Q_SLOTS:
     void resort();
     void reportViewDirectoryChanged();
     void clearIndexWidget();
+    void setSearchKey(const QString &key);
 
 protected:
     /*!

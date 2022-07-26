@@ -116,6 +116,7 @@ public Q_SLOTS:
     void adjustColumnsSize();
 
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+    void setSearchKey(const QString &key);
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;

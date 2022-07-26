@@ -34,7 +34,7 @@
 #include "global-settings.h"
 
 #include "file-meta-info.h"
-
+#include "search-vfs-uri-parser.h"
 #include <QHeaderView>
 
 #include <QVBoxLayout>
@@ -785,6 +785,13 @@ const QString ListView::getDirectoryUri()
 void ListView::setDirectoryUri(const QString &uri)
 {
     m_current_uri = uri;
+    if (m_current_uri.startsWith("search://")) {
+        QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        setSearchKey(nameRegexp);
+    } else {
+        setSearchKey("");
+    }
+
 }
 
 const QStringList ListView::getSelections()
@@ -950,6 +957,12 @@ void ListView::keyboardSearch(const QString &key)
         }
         verticalScrollBar()->setValue(qMin(verticalScrollBar()->value() + iconSize().height(), verticalScrollBar()->maximum()));
     }
+}
+
+void ListView::setSearchKey(const QString &key)
+{
+    auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
+    viewItemDelegate->setSearchKeyword(key);
 }
 
 //List View 2

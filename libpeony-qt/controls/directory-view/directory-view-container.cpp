@@ -275,7 +275,6 @@ update:
     if (m_view) {
         m_view->setDirectoryUri(m_current_uri);
         m_view->beginLocationChange();
-        //m_active_view_prxoy->setDirectoryUri(uri);
     }
 
     updatePreviewPageRequest();
