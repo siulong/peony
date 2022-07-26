@@ -137,7 +137,67 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
         }
     }
-    opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, view);
+
+    if (index.column() == 0 && !m_regFindKeyWords.isEmpty()) {
+        QString text1 = opt.text;
+        opt.text = QString();
+        opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget); //绘制非文本区域内容
+        opt.text = text1;
+        painter->save();
+
+        QString text = opt.text;
+        QFont font = opt.font;
+        QFontMetrics fontMetrics = opt.fontMetrics;
+        int lineSpacing = fontMetrics.lineSpacing();
+        //计算text的长度
+        QRect textRect = opt.widget->style()->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+        QString elidedText = fontMetrics.elidedText(opt.text, Qt::ElideRight, textRect.width());
+        painter->translate(textRect.topLeft());
+        int yoffset = (textRect.height() - lineSpacing)/2;
+        painter->translate(0, yoffset);
+        textRect.moveTo(0,0);
+
+        painter->setPen(opt.palette.highlightedText().color());
+        QTextOption textOpt;
+        textOpt.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+        textOpt.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+
+        QTextDocument document;
+        document.setDefaultTextOption(textOpt);
+        document.setTextWidth(textRect.width());
+        document.setDefaultFont(font);
+        document.setIndentWidth(0);
+        document.setDocumentMargin(0);
+        //此处应该设置elidled text
+        document.setPlainText(elidedText);
+
+        QTextCursor highlightCursor(&document);
+        QTextCursor cursor(&document);
+        cursor.beginEditBlock();
+        QTextCharFormat plainFormat(highlightCursor.charFormat());
+        QTextCharFormat colorFormat = plainFormat;
+        colorFormat.setBackground(QBrush(QColor(95,208,101)));
+        if (opt.state.testFlag(QStyle::State_Selected)) {
+            QTextCharFormat selectColorFormat(cursor.charFormat());
+            selectColorFormat.setForeground(Qt::white);
+            cursor.select(QTextCursor::Document);
+            cursor.mergeCharFormat(selectColorFormat);
+        }
+
+        qDebug() << "regFindKeyWords" << m_regFindKeyWords;
+        while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
+            highlightCursor = document.find(m_regFindKeyWords, highlightCursor);
+            if (!highlightCursor.isNull()) {
+                highlightCursor.mergeCharFormat(colorFormat);
+            }
+        }
+
+        cursor.endEditBlock();
+        document.drawContents(painter, textRect);
+        painter->restore();
+    } else {
+        opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
+    }
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
@@ -353,6 +413,12 @@ void ListViewDelegate::slot_finishEdit()
         delete edit;
         edit = nullptr;
     }
+}
+
+void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
+{
+    m_regFindKeyWords = regFindKeyWords;
+    qDebug() << "ListViewDelegate::setSearchKeyword" << m_regFindKeyWords;
 }
 
 //TextEdit

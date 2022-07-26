@@ -31,7 +31,7 @@
 #include "file-utils.h"
 
 #include "global-settings.h"
-
+#include "search-vfs-uri-parser.h"
 #include <QMouseEvent>
 
 #include <QDragEnterEvent>
@@ -185,6 +185,12 @@ void IconView::setCutFiles(const QStringList &uris)
 void IconView::setDirectoryUri(const QString &uri)
 {
     m_current_uri = uri;
+    if (m_current_uri.startsWith("search://")) {
+        QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        setSearchKey(nameRegexp);
+    } else {
+        setSearchKey("");
+    }
 }
 
 const QString IconView::getDirectoryUri()
@@ -809,6 +815,12 @@ void IconView::startDrag(Qt::DropActions flags)
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
     }
+}
+
+void IconView::setSearchKey(const QString &key)
+{
+    auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
+    viewItemDelegate->setSearchKeyword(key);
 }
 
 //Icon View 2

@@ -220,7 +220,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         auto matchInfo = FileInfo::fromUri(FileUtils::getEncodedUri(FileUtils::getTargetUri(info->uri())));
         colors = matchInfo->getColors();
     }
-
+    int xoffset = 0;
     if(0 < colors.count())
     {
         const int MAX_LABEL_NUM = 3;
@@ -244,7 +244,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         int width = opt.rect.width() - (num+1)*6 - 2*2 - 4;
         line.setLineWidth(width);
 
-        int xoffset = (width - line.naturalTextWidth())/2 ;
+        xoffset = (width - line.naturalTextWidth())/2 ;
         if(xoffset < 0)
         {
             xoffset = 2;
@@ -266,32 +266,20 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         }
 
         yoffset = 0;
-        p.save();
-        p.translate(xoffset+10, m_delegate->getView()->iconSize().height() + 5);
-        p.setPen(opt.palette.highlightedText().color());
-
-        line.draw(&p, QPoint(0, yoffset));
-        yoffset += lineSpacing;
-        opt.text = text.mid(line.textLength());
-        textLayout.endLayout();
-        int heigth = opt.rect.height();
-        auto textSize = IconViewTextHelper::getTextSizeForIndex(opt, m_index, 2, 3);
-        int textHeigth = heigth - yoffset - m_delegate->getView()->iconSize().height() - 5;
-        if(textHeigth < textSize.height())
-        {
-           setFixedHeight(heigth+lineSpacing);
-        }
-        p.restore();
-        iLine++;
+        xoffset += 10;
     }
-    if(!opt.text.isEmpty())
-    {
-        p.save();
-        p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
-        p.setPen(opt.palette.highlightedText().color());
-        IconViewTextHelper::paintText(&p, opt, m_index, 9999, 2, 4-iLine);
-        p.restore();
-    }
+    QString regFindKeyWords = m_delegate->getRegFindKeyWords();
+    p.save();
+    p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
+    p.setPen(opt.palette.highlightedText().color());
+    IconViewTextHelper::paintText(&p,
+                                  opt,
+                                  9999,
+                                  xoffset,
+                                  regFindKeyWords,
+                                  2,
+                                  4);
+    p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
