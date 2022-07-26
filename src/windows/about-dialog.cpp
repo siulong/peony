@@ -149,15 +149,16 @@ QString AboutDialog::convertRGB16HexStr(const QColor &color)
 QString AboutDialog::getCurrentVersion()
 {
     //use self define main version
-    return VERSION;
+    //return VERSION;
 
     FILE *pp = NULL;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
     char *q = NULL;
-    QString version = tr("none");
+    QString version = VERSION;
 
+    //fix bug#125289, use dpkg query version instead of self define version
     pp = popen("dpkg -l peony", "r");
     if(NULL == pp)
         return version;
