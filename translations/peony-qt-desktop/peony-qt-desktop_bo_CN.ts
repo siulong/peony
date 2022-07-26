@@ -220,7 +220,7 @@
     </message>
     <message>
         <source>display settings</source>
-        <translation type="unfinished"></translation>
+        <translation>བཀོད་སྒྲིག་བྱས་ཚུལ་གསལ་པོར་མངོན་པ།</translation>
     </message>
 </context>
 </TS>
