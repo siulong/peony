@@ -44,6 +44,8 @@
 #include <QThreadPool>
 #include <QSemaphore>
 
+#include <QGuiApplication>
+
 #include <gio/gdesktopappinfo.h>
 
 using namespace Peony;
@@ -72,6 +74,11 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
     m_semaphore = new QSemaphore(1);
 
     findAtril();
+
+    connect(qApp, &QGuiApplication::lastWindowClosed, this, [=]{
+        m_thumbnail_thread_pool->clear();
+        m_thumbnail_thread_pool->waitForDone(500);
+    });
 }
 
 ThumbnailManager::~ThumbnailManager()
