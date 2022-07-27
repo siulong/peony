@@ -276,17 +276,9 @@ static QPixmap drawSymbolicColoredPixmap (const QPixmap& source)
 
 Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupported(Peony::FileOperationErrorDialogBase *parent) : FileOperationErrorDialogBase(parent)
 {
-    setIcon ("dialog-infomation");
+    setIcon ("dialog-warning");
 
-    QPushButton* b = addButton (tr("Yes"));
-    b->setBackgroundRole(QPalette::Button);
-    connect(b, &QPushButton::pressed, this, [=] () {
-        m_ok = true;
-        m_cancel = false;
-        done(QDialog::Accepted);
-    });
-
-    b = addButton (tr("Cancel"));
+    QPushButton* b = addButton (tr("No"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = false;
@@ -294,17 +286,25 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         done(QDialog::Rejected);
     });
 
-    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
-    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
-        switch (chose) {
-        case Qt::Checked:
-            m_do_same = true;
-            break;
-        case Qt::Unchecked:
-        default:
-            m_do_same = false;
-        }
+    b = addButton (tr("Yes"));
+    b->setBackgroundRole(QPalette::Button);
+    connect(b, &QPushButton::pressed, this, [=] () {
+        m_ok = true;
+        m_cancel = false;
+        done(QDialog::Accepted);
     });
+
+//    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
+//    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
+//        switch (chose) {
+//        case Qt::Checked:
+//            m_do_same = true;
+//            break;
+//        case Qt::Unchecked:
+//        default:
+//            m_do_same = false;
+//        }
+//    });
 }
 
 Peony::FileOperationErrorDialogNotSupported::~FileOperationErrorDialogNotSupported()
