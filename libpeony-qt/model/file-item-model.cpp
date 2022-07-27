@@ -176,15 +176,15 @@ const QModelIndex FileItemModel::indexFromUri(const QString &uri)
     //FIXME: support recursively finding?
     if(m_root_item->m_uri_item_hash.contains(uri)) {
         auto child = m_root_item->m_uri_item_hash[uri];
-        GFile *left = g_file_new_for_uri(child ->uri().toUtf8().constData());
-        GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
-        bool equal = g_file_equal(left, right);
-        g_object_unref(left);
-        g_object_unref(right);
-        if (equal) {
-            return child->firstColumnIndex();
+        return indexFromItemAndUri(child, uri);
+    }else if(m_root_item->m_uri_item_hash.contains(FileUtils::getEncodedUri(uri))){/* 中文编码问题 */
+        QString encodedUri = FileUtils::getEncodedUri(uri);
+        auto child = m_root_item->m_uri_item_hash[encodedUri];
+        return indexFromItemAndUri(child, encodedUri);
+    }else{
+        for (auto child : *m_root_item->m_children) {
+            return indexFromItemAndUri(child, uri);
         }
-
     }
     return QModelIndex();
 }
@@ -686,4 +686,20 @@ void FileItemModel::setShowFileExtensions(bool show)
 {
     m_showFileExtension = show;
     GlobalSettings::getInstance()->setGSettingValue(SHOW_FILE_EXTENSION, show);
+}
+
+const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QString &uri)
+{
+    if(!item)
+        return QModelIndex();
+
+    GFile *left = g_file_new_for_uri(item->uri().toUtf8().constData());
+    GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
+    bool equal = g_file_equal(left, right);
+    g_object_unref(left);
+    g_object_unref(right);
+    if (equal) {
+        return item->firstColumnIndex();
+    }
+    return QModelIndex();
 }

@@ -212,6 +212,9 @@ public:
 
     void setShowFileExtensions(bool show);
 
+private:
+    const QModelIndex indexFromItemAndUri(FileItem *item, const QString &uri);
+
 Q_SIGNALS:
     /*!
      * \brief findChildrenStarted
