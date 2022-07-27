@@ -1559,15 +1559,19 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation type="vanished">མེད་པར་བཟོ་བ</translation>
     </message>
     <message>
         <source>Do the same</source>
-        <translation>ཉེར་སྤྱོད་ཆ་ཚང་།</translation>
+        <translation type="vanished">ཉེར་སྤྱོད་ཆ་ཚང་།</translation>
     </message>
     <message>
         <source>Make sure the disk is not full or write protected and that the file is not protected</source>
         <translation>སྡུད་སྡེར་ཁ་མ་གང་བའམ་སྲུང་སྐྱོབ་མ་བྱས་པར་ཡིག་ཆ་བེད་སྤྱོད་མ་བཏང་བ་ཨེ་ཡིན་ལྟོས།</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
