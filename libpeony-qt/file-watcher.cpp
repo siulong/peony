@@ -53,6 +53,18 @@ FileWatcher::FileWatcher(QString uri, QObject *parent, bool isWatchMovesFlag)
     creatorMonitor();
 
     FileOperationManager::getInstance()->registerFileWatcher(this);
+
+    // fix 97517, could not monitor filesafe box directory changement after unmounted and mount again.
+    connect(this, &FileWatcher::directoryUnmounted, this, [=](const QString &uri){
+        if (FileUtils::isSamePath(m_uri, uri)) {
+            if (m_monitor) {
+                g_file_monitor_cancel(m_monitor);
+            }
+            if (m_dir_monitor) {
+                g_file_monitor_cancel(m_dir_monitor);
+            }
+        }
+    });
 }
 
 FileWatcher::~FileWatcher()
