@@ -135,7 +135,7 @@ const QVariant FileMetaInfo::getMetaInfoVariant(const QString &key)
     QString realKey = key;
     if (!key.startsWith("metadata::"))
         realKey = "metadata::" + key;
-    if (m_meta_hash.value(realKey).isValid())
+    if (m_meta_hash.contains(realKey) && m_meta_hash.value(realKey).isValid())
         return m_meta_hash.value(realKey);
     //FIXME: should i use gio query meta here?
     return QVariant();
