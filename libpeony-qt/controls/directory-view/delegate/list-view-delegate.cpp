@@ -196,7 +196,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         document.drawContents(painter, textRect);
         painter->restore();
     } else {
-        opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
+        opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
     }
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
