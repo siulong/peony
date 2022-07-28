@@ -510,7 +510,6 @@ const QBrush IconViewDelegate::selectedBrush() const
 void IconViewDelegate::setSearchKeyword(QString regFindKeyWords)
 {
     m_regFindKeyWords = regFindKeyWords;
-    qDebug() << "m_regFindKeyWords: " << m_regFindKeyWords;
 }
 
 const QString IconViewDelegate::getRegFindKeyWords() const
@@ -542,7 +541,6 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     document.setIndentWidth(0);
     document.setDocumentMargin(0);
 
-    qDebug() << "xoffset:" <<xOffset;
     //计算text的长度
     while (true) {
         QTextLine line = textLayout.createLine();
@@ -591,7 +589,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         cursor.select(QTextCursor::Document);
         cursor.mergeCharFormat(selectColorFormat);
     }
-    qDebug() << "IconViewTextHelper::regFindKeyWords: " << regFindKeyWords;
+
     while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
         highlightCursor = document.find(regFindKeyWords, highlightCursor);
         if (!highlightCursor.isNull()) {
