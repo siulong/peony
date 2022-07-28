@@ -184,7 +184,6 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             cursor.mergeCharFormat(selectColorFormat);
         }
 
-        qDebug() << "regFindKeyWords" << m_regFindKeyWords;
         while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
             highlightCursor = document.find(m_regFindKeyWords, highlightCursor);
             if (!highlightCursor.isNull()) {
@@ -418,7 +417,6 @@ void ListViewDelegate::slot_finishEdit()
 void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 {
     m_regFindKeyWords = regFindKeyWords;
-    qDebug() << "ListViewDelegate::setSearchKeyword" << m_regFindKeyWords;
 }
 
 //TextEdit
