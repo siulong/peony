@@ -702,7 +702,7 @@ static UDisksObject *get_object_from_block_device (UDisksClient *client,const gc
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
     g_object_unref (block);
 
-    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     crypto_backing_object = udisks_client_get_object (client, crypto_backing_device);
     if (crypto_backing_object != NULL)
     {
