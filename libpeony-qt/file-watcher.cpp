@@ -58,10 +58,14 @@ FileWatcher::FileWatcher(QString uri, QObject *parent, bool isWatchMovesFlag)
     connect(this, &FileWatcher::directoryUnmounted, this, [=](const QString &uri){
         if (FileUtils::isSamePath(m_uri, uri)) {
             if (m_monitor) {
-                g_file_monitor_cancel(m_monitor);
+                //g_file_monitor_cancel(m_monitor);
+                g_object_unref(m_monitor);
+                m_monitor = nullptr;
             }
             if (m_dir_monitor) {
-                g_file_monitor_cancel(m_dir_monitor);
+                //g_file_monitor_cancel(m_dir_monitor);
+                g_object_unref(m_dir_monitor);
+                m_dir_monitor = nullptr;
             }
         }
     });
