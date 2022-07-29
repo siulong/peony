@@ -87,6 +87,7 @@ private:
     void setupDesktop();
     void setupBgAndDesktop();
     void clearIcons(const QStringList &args);
+    int getDesktopWindowId();
 
     bool m_first_parse = true;
 

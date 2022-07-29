@@ -79,6 +79,7 @@ static bool has_daemon = false;
 static bool has_background = false;
 static QRect max_size = QRect(0, 0, 0, 0);
 static Peony::DesktopItemModel *desktop_model = nullptr;
+static int desktop_window_id = 0;
 
 /*!
  * \brief virtualDesktopWindow
@@ -440,10 +441,14 @@ void PeonyDesktopApplication::relocateIconView()
     }
 
     for (auto window : m_bg_windows) {
+        qDebug() << "screen name :" << window->screen()->name() << " id:" << window->id() ;
         Q_EMIT window->getIconView()->updateView();
         window->setCentralWidget(window->getIconView());
-        KWindowSystem::raiseWindow(window->winId());
+        if (window->screen() != qApp->primaryScreen()) {
+            KWindowSystem::raiseWindow(window->winId());
+        }
     }
+    KWindowSystem::raiseWindow(primaryWindow->winId());
 
 }
 
@@ -645,15 +650,18 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
 
 void PeonyDesktopApplication::addBgWindow(QScreen *screen)
 {
-    auto window = new DesktopBackgroundWindow(screen);
+    int desktopWindowId = getDesktopWindowId();
+    auto window = new DesktopBackgroundWindow(screen, desktopWindowId );
+
     if (screen == qApp->primaryScreen()) {
         window->getIconView()->refresh();
     }
-    m_bg_windows.append(window);
 
+    m_bg_windows.append(window);
+    desktop_window_id = m_bg_windows.count();
     // recheck primary screen info. new screen might become
     // primary screen.
-
+    qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
     window->show();
     connect(screen, &QScreen::destroyed, this, [=](){
         if (!isPrimaryScreen(screen)) {
@@ -686,6 +694,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
             for (auto bgWindow : m_bg_windows) {
                 if (!isPrimaryScreen(bgWindow->screen())) {
                     bgWindow->getIconView()->saveExtendItemInfo();
+                   // Q_EMIT bgWindow->getIconView()->updateView();
                 }
             }
             getIconView(qApp->primaryScreen())->updateView();
@@ -693,7 +702,6 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
             for (auto bgWindow : m_bg_windows) {
                 if (!isPrimaryScreen(bgWindow->screen())) {
                     bgWindow->getIconView()->resetExtendItemInfo();
-                    break;
                 }
             }
 
@@ -710,15 +718,6 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     }
 
     relocateIconView();
-
-    if (1 == mode){
-        for (auto bgWindow : m_bg_windows) {
-            if (isPrimaryScreen(bgWindow->screen())) {
-                bgWindow->setCentralWidget(bgWindow->getIconView());
-                KWindowSystem::raiseWindow(bgWindow->winId());
-            }
-        }
-    }
 }
 
 void PeonyDesktopApplication::setupDesktop()
@@ -727,7 +726,7 @@ void PeonyDesktopApplication::setupDesktop()
     for (auto screen : qApp->screens()) {
         addBgWindow(screen);
     }
-    relocateIconView();
+    //relocateIconView();
     connect(qApp, &QApplication::screenAdded, this, &PeonyDesktopApplication::addBgWindow);
     connect(this, &PeonyDesktopApplication::primaryScreenChanged, this, &PeonyDesktopApplication::relocateIconView);
 }
@@ -738,6 +737,24 @@ void PeonyDesktopApplication::setupBgAndDesktop()
         setupDesktop();
     }
     has_background = true;
+}
+
+int PeonyDesktopApplication::getDesktopWindowId()
+{
+    int desktopWindowId = 0;
+    for (; desktopWindowId <= desktop_window_id; desktopWindowId++) {
+        bool find = false;
+        for (auto bgWindow : m_bg_windows) {
+            if (bgWindow->id() == desktopWindowId) {
+                find = true;
+                break;
+            }
+        }
+        if (!find) {
+            break;
+        }
+    }
+    return desktopWindowId;
 }
 
 void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)

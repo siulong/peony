@@ -10,10 +10,9 @@
 #include <QPlatformSurfaceEvent>
 #include "plasma-shell-manager.h"
 
-static int desktop_window_id = 0;
 static QTimeLine *gTimeLine = nullptr;
 
-DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
+DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent) : QMainWindow(parent)
 {
     connect(this,  &DesktopBackgroundWindow::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
 
@@ -31,9 +30,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
     m_screen = screen;
     m_desktopIconView = new Peony::DesktopIconView(this);
-    m_desktopIconView->setId(desktop_window_id);
-    m_id = desktop_window_id;
-    desktop_window_id++;
+    m_desktopIconView->setId(desktopWindowId);
+    m_id = desktopWindowId;
     move(screen->geometry().topLeft());
     setFixedSize(screen->geometry().size());
     setContentsMargins(0, 0, 0, 0);
@@ -98,7 +96,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
 DesktopBackgroundWindow::~DesktopBackgroundWindow()
 {
-   --desktop_window_id;
+
 }
 
 void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
