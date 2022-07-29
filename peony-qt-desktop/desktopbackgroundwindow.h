@@ -15,7 +15,7 @@ class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit DesktopBackgroundWindow(QScreen *screen, QWidget *parent = nullptr);
+    explicit DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent = nullptr);
     ~DesktopBackgroundWindow() override;
 
     int id() const;

@@ -1536,7 +1536,7 @@ void DesktopIconView::rowsAboutToBeRemoved(const QModelIndex &parent, int start,
         QPoint itemPos(-1, -1);
         setRestoreInfo(uri, itemPos);
     }
-
+    qDebug() << "[DesktopIconView::rowsAboutToBeRemove] need relayout:" << m_model->m_items_need_relayout;
     relayoutExsitingItems(m_model->m_items_need_relayout);
     QListView::rowsAboutToBeRemoved(parent, start, end);
 //    QTimer::singleShot(1, this, [=](){
@@ -2654,10 +2654,11 @@ void DesktopIconView::saveExtendItemInfo()
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
+        topLeft<<QString::number(m_id);
         QString uri = index.data(Qt::UserRole).toString();
         auto metaInfo = FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            qDebug() << "DesktopIconView::saveExtendItemInfo:"<<str<<" "<<topLeft;
+            qDebug() << "[DesktopIconView::saveExtendItemInfo] uri:"<<str<<" topLeft:"<<topLeft;
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, topLeft);
             metaInfo->setMetaInfoInt("peony-qt-desktop-id", 0);
             QStringList tmp;
@@ -2692,15 +2693,21 @@ void DesktopIconView::resetExtendItemInfo()
         auto metaInfo = FileMetaInfo::fromUri(uri);
         auto str = index.data(Qt::UserRole).toString();
         if (metaInfo) {
-            auto list = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
-            if (list.count() == 2) {
-                qDebug() << "DesktopIconView::resetExtendItemInfo:"<<str<<" :"<<list<<"id:"<<m_id;
+            QStringList list = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
+            if (list.count() == 3) {
+                QString id = list.takeLast();
+                qDebug() << "[DesktopIconView::resetExtendItemInfo] uri:"<<str<<" peony-qt-desktop-restore-extend-item-position:"<<list<<" id:"<<m_id;
+                if (id.toInt() != m_id) {
+                    continue;
+                }
                 metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, list);
                 metaInfo->setMetaInfoInt("peony-qt-desktop-id", m_id);
                 QStringList tmp;
                 tmp<<"";
                 metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, tmp);
                 m_model->m_items_need_relayout.removeOne(uri);
+                qDebug() << "[DesktopIconView::resetExtendItemInfo] need relayout:"<<m_model->m_items_need_relayout;
+
             }
         }
     }
