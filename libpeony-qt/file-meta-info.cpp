@@ -41,6 +41,20 @@ std::shared_ptr<FileMetaInfo> FileMetaInfo::fromUri(const QString &uri)
     return nullptr;
 }
 
+std::shared_ptr<FileMetaInfo> FileMetaInfo::dupFromUri(const QString &uri)
+{
+    auto mgr = FileInfoManager::getInstance();
+    auto info = mgr->findFileInfoByUri(uri);
+    if (info) {
+        auto metaInfo = mgr->findFileInfoByUri(uri)->m_meta_info;
+        if (metaInfo) {
+            auto dupInfo = std::make_shared<FileMetaInfo>(metaInfo.get());
+            return dupInfo;
+        }
+    }
+    return nullptr;
+}
+
 FileMetaInfo::FileMetaInfo(const QString &uri, GFileInfo *g_info)
 {
     m_uri = uri;
@@ -80,6 +94,18 @@ FileMetaInfo::FileMetaInfo(const QString &uri, GFileInfo *g_info)
             g_strfreev(metainfo_attributes);
         }
     }
+}
+
+FileMetaInfo::FileMetaInfo(const FileMetaInfo &other)
+{
+    m_uri = other.m_uri;
+    m_meta_hash = other.m_meta_hash;
+}
+
+FileMetaInfo::FileMetaInfo(FileMetaInfo *other)
+{
+    m_uri = other->m_uri;
+    m_meta_hash = other->m_meta_hash;
 }
 
 void FileMetaInfo::setMetaInfoInt(const QString &key, int value)
