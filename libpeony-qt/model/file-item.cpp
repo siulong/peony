@@ -435,7 +435,7 @@ void FileItem::findChildrenAsync()
                 infoJob->setAutoDelete();
                 infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
                     auto item = new FileItem(info, this, m_model);
-                    m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
+                    m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                     m_children->append(item);
                     m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
@@ -582,7 +582,7 @@ void FileItem::onChildAdded(const QString &uri)
         // add exsited checkment. link to: #66999
         if (!item) {
             item = new FileItem(info, this, m_model);
-            m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
+            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
             m_children->append(item);
             m_uri_item_hash.insert(item->uri(), item);
             m_model->endInsertRows();
