@@ -100,7 +100,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 
         QStringList favoriteUris;
 
-        if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne) {
+        if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne && !m_batchProcessThread->isRunning()) {
             // do normal remove
             for (auto uri : m_uris_to_be_removed) {
                 for (int row = 0; row < m_children->count(); row++) {
@@ -792,13 +792,11 @@ void FileItem::batchRemoveItems()
         QStringList list;
         if(m_uris_to_be_removed.size() >= maxNumberOfDeletesPerBatch){/* 每次批量最多删除数量 */
             for(int i = 0; i < maxNumberOfDeletesPerBatch; i++){
-                QString uri = m_uris_to_be_removed.at(0);
+                QString uri = m_uris_to_be_removed.takeFirst();
                 list.append(uri);
-                m_uris_to_be_removed.removeOne(uri);
             }
         }else{
-            list = m_uris_to_be_removed;
-            m_uris_to_be_removed.clear();
+            list.swap(m_uris_to_be_removed);
         }
 
         m_batchProcessItems = new BatchProcessItems();
@@ -806,15 +804,15 @@ void FileItem::batchRemoveItems()
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
         connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
-            m_children = children;
-            m_uri_item_hash = uri_item_hash;
-            m_model->updated();/* 更新状态栏 */
             qDebug()<<"remove items finished,children count,uri_item_hash count:"<<m_children->size()<<m_uri_item_hash.size();
 
-            if(m_uris_to_be_removed.size() <= maxNumberOfDeletesByOne){
-                m_model->beginResetModel();
-                m_model->endResetModel();
-            }
+            m_model->beginResetModel();
+            auto old = m_children;
+            m_children = children;
+            delete old;
+            m_uri_item_hash = uri_item_hash;
+            m_model->endResetModel();
+            m_model->updated();/* 更新状态栏 */
 
             m_batchProcessThread->quit();
             if(m_batchProcessItems){
@@ -826,8 +824,12 @@ void FileItem::batchRemoveItems()
                 m_idle->start();
             }
 
-        });
+        }, Qt::BlockingQueuedConnection);
         m_batchProcessThread->start();
+    } else {
+        if (m_uris_to_be_removed.size()>0 && !m_idle->isActive()) {
+            m_idle->start();
+        }
     }
 }
 
@@ -891,7 +893,7 @@ void BatchProcessItems::setBatchRemoveParam(const QStringList& uris_to_be_remove
 {
     m_uris_to_be_removed = uris_to_be_removed;
     m_uri_item_hash = uri_item_hash;
-    m_children = children;
+    m_children = new QVector<FileItem *>(*children);
 }
 
 void BatchProcessItems::slot_removeItems()
@@ -899,6 +901,7 @@ void BatchProcessItems::slot_removeItems()
     // do reset model
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
+    QList<FileItem *> itemsToBeDeleted;
     qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<"uri item hash count:"<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
         if(m_uri_item_hash.contains(uri)){
@@ -911,11 +914,14 @@ void BatchProcessItems::slot_removeItems()
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
-            delete child;
+            itemsToBeDeleted.append(child);
         }
     }
     BookMarkManager::getInstance()->removeBookMark(favoriteUris);
     Q_EMIT removeItemsFinished(m_children, m_uri_item_hash);
+    for (auto child : itemsToBeDeleted) {
+        delete child;
+    }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
-    qDebug()<<"excute deletion finished, cost"<<time1 - time0<<"uris to be removed remaining count:"<<m_uris_to_be_removed.size()<<"children remaining count:"<<m_children->size();
+    qDebug()<<"excute deletion finished, cost"<<time1 - time0;
 }
