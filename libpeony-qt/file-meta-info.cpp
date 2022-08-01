@@ -48,6 +48,7 @@ std::shared_ptr<FileMetaInfo> FileMetaInfo::dupFromUri(const QString &uri)
     if (info) {
         auto metaInfo = mgr->findFileInfoByUri(uri)->m_meta_info;
         if (metaInfo) {
+            QMutexLocker l(&(metaInfo->m_mutex));
             auto dupInfo = std::make_shared<FileMetaInfo>(metaInfo.get());
             return dupInfo;
         }
@@ -145,13 +146,17 @@ void FileMetaInfo::setMetaInfoVariant(const QString &key, const QVariant &value,
             qDebug()<<err->message;
             g_error_free(err);
         } else {
+            m_mutex.lock();
             m_meta_hash.remove(realKey);
             m_meta_hash.insert(realKey, value);
+            m_mutex.unlock();
         }
         g_object_unref(file);
     } else {
+        m_mutex.lock();
         m_meta_hash.remove(realKey);
         m_meta_hash.insert(realKey, value);
+        m_mutex.unlock();
     }
 //    m_mutex.unlock();
 }
@@ -186,8 +191,10 @@ void FileMetaInfo::setMetaInfoStringListV1(const QString &key, const QStringList
         qWarning() << err->message;
         g_error_free(err);
     } else {
+        m_mutex.lock();
         m_meta_hash.remove(realKey);
         m_meta_hash.insert(realKey, value);
+        m_mutex.unlock();
     }
 }
 
@@ -220,8 +227,10 @@ void FileMetaInfo::removeMetaInfo(const QString &key)
     QString realKey = key;
     if (!key.startsWith("metadata::"))
         realKey = "metadata::" + key;
+    m_mutex.lock();
     m_meta_hash.remove(realKey);
     GFile *file = g_file_new_for_uri(m_uri.toUtf8().constData());
+    m_mutex.unlock();
     g_file_set_attribute(file,
                          realKey.toUtf8().constData(),
                          G_FILE_ATTRIBUTE_TYPE_INVALID,
