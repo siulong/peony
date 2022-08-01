@@ -21,5 +21,6 @@ peony (3.14.4.5-ok6~0725) yangtze; urgency=medium
   * 处理编译依赖相关问题
   * close-cd #130583 关于界面调用sdk
   * close-cd #130787 【wayland】【桌面】【旋转】从PC模式切换到平板模式后设置屏幕旋转，平板模式桌面没有适配
+  * close-cd #131066 取消全局排序后选择不同排序方式不成功
 
  -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
