@@ -61,6 +61,7 @@ public:
     FileMetaInfo(const QString &uri, GFileInfo *g_info);
     FileMetaInfo(const FileMetaInfo &other);
     FileMetaInfo(FileMetaInfo *other);
+    ~FileMetaInfo();
 
     void setMetaInfoString(const QString &key, const QString &value);
     const QString getMetaInfoString(const QString &key);
