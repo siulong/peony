@@ -183,9 +183,20 @@ const QModelIndex FileItemModel::indexFromUri(const QString &uri)
         return indexFromItemAndUri(child, encodedUri);
     }else{
         for (auto child : *m_root_item->m_children) {
-            return indexFromItemAndUri(child, uri);
+            if(!child)
+                continue;
+            GFile *left = g_file_new_for_uri(child->uri().toUtf8().constData());
+            GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
+            bool equal = g_file_equal(left, right);
+            g_object_unref(left);
+            g_object_unref(right);
+            if (equal) {
+                return child->firstColumnIndex();
+            }
         }
+        return QModelIndex();
     }
+
     return QModelIndex();
 }
 
