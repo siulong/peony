@@ -195,7 +195,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 
     if (m_cache.value(SORT_ORDER).isNull()){
-        setValue(SORT_ORDER, Qt::AscendingOrder);
+        setValue(SORT_ORDER, Qt::DescendingOrder);
     }
 
     if (m_cache.value(SORT_COLUMN).isNull()){

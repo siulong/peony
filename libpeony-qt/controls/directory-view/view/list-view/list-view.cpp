@@ -143,6 +143,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     //fix head indication sort type and order not change in preference file issue, releated to bug#92525,
     connect(header(), &QHeaderView::sortIndicatorChanged, this, [=](int logicalIndex, Qt::SortOrder order)
     {
+        m_proxy_model->manualUpdateExpectedSortInfo(logicalIndex, order);
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
         if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
             Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
@@ -888,7 +889,7 @@ bool ListView::getDelegateEditFlag()
 
 int ListView::getSortType()
 {
-    int type = m_proxy_model->sortColumn();
+    int type = m_proxy_model->expectedSortType();
     return type<0? 0: type;
 }
 
@@ -901,7 +902,7 @@ void ListView::setSortType(int sortType)
 
 int ListView::getSortOrder()
 {
-    return m_proxy_model->sortOrder();
+    return m_proxy_model->expectedSortOrder();
 }
 
 void ListView::setSortOrder(int sortOrder)
