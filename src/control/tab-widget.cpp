@@ -390,7 +390,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
                 qCritical()<<"can not get meta info"<<uri;
             } else {
                 auto sortType = metaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? metaInfo->getMetaInfoInt(SORT_COLUMN): 0;
-                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
                 currentPage()->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 currentPage()->setSortOrder(Qt::SortOrder(sortOrder));
             }
@@ -1187,7 +1187,7 @@ Qt::SortOrder TabWidget::getSortOrder()
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
     if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-        auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
+        auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 1;
 
         return Qt::SortOrder(sortOrder);
     } else {
@@ -1198,7 +1198,7 @@ Qt::SortOrder TabWidget::getSortOrder()
             j.querySync();
             metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
         }
-        auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+        auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
         return Qt::SortOrder(sortOrder);
     }
 
@@ -1344,13 +1344,13 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             auto settings = Peony::GlobalSettings::getInstance();
             if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
                 auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt(): 0;
-                auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt(): 0;
+                auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt(): 1;
                 viewContainer->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 viewContainer->setSortOrder(Qt::SortOrder(sortOrder));
             } else {
                 auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
                 auto sortType = metaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? metaInfo->getMetaInfoInt(SORT_COLUMN): 0;
-                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
                 viewContainer->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 viewContainer->setSortOrder(Qt::SortOrder(sortOrder));
             }

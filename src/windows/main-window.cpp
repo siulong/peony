@@ -846,7 +846,7 @@ bool MainWindow::getWindowShowHidden()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool());
+            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool();
@@ -863,7 +863,7 @@ bool MainWindow::getWindowUseDefaultNameSortOrder()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): (settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true;
@@ -880,7 +880,7 @@ bool MainWindow::getWindowSortFolderFirst()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): (settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true;

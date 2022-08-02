@@ -700,7 +700,7 @@ bool IconView::getDelegateEditFlag()
 
 int IconView::getSortType()
 {
-    int type = m_sort_filter_proxy_model->sortColumn();
+    int type = m_sort_filter_proxy_model->expectedSortType();
     return type<0? 0: type;
 }
 
@@ -711,7 +711,7 @@ void IconView::setSortType(int sortType)
 
 int IconView::getSortOrder()
 {
-    return m_sort_filter_proxy_model->sortOrder();
+    return m_sort_filter_proxy_model->expectedSortOrder();
 }
 
 void IconView::setSortOrder(int sortOrder)

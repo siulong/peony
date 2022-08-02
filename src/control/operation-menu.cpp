@@ -137,7 +137,7 @@ void OperationMenu::updateMenu()
         auto uri = m_window->getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            bool checked = metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (Peony::GlobalSettings::getInstance()->isExist(SHOW_HIDDEN_PREFERENCE)? Peony::GlobalSettings::getInstance()->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false);
+            bool checked = metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
             m_show_hidden->setChecked(checked);
         } else {
             m_show_hidden->setChecked(false);

@@ -117,6 +117,11 @@ public:
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
+    int expectedSortType();
+    Qt::SortOrder expectedSortOrder();
+
+    void manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order);
+
 public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);

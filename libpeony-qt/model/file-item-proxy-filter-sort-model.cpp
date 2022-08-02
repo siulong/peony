@@ -454,14 +454,14 @@ void FileItemProxyFilterSortModel::checkSortSettings()
         auto info = FileInfo::fromUri(getModelDirectoryUri(this));
         auto fileMetaInfo = FileMetaInfo::fromUri(getModelDirectoryUri(this));
         if (fileMetaInfo && !info->isEmptyInfo()) {
-            m_show_hidden = fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (m_settings->isExist(SHOW_HIDDEN_PREFERENCE)? m_settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false);
-            m_use_default_name_sort_order = fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): (m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false);
-            m_folder_first = fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): (m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false);
+            m_show_hidden = fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
+            m_use_default_name_sort_order = fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): true;
+            m_folder_first = fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): true;
         } else {
             qCritical()<<"could not get metainfo"<<getModelDirectoryUri(this);
-            m_show_hidden = m_settings->isExist(SHOW_HIDDEN_PREFERENCE)? m_settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
-            m_use_default_name_sort_order = m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false;
-            m_folder_first = m_settings->isExist(SORT_FOLDER_FIRST)? m_settings->getValue(SORT_FOLDER_FIRST).toBool(): true;
+            m_show_hidden = false;
+            m_use_default_name_sort_order = true;
+            m_folder_first = true;
         }
     }
 }
@@ -919,6 +919,22 @@ void FileItemProxyFilterSortModel::sort(int column, Qt::SortOrder order)
     if(!m_sortTimer->isActive()){
         m_sortTimer->start(50);
     }
+}
+
+int FileItemProxyFilterSortModel::expectedSortType()
+{
+    return m_sortType;
+}
+
+Qt::SortOrder FileItemProxyFilterSortModel::expectedSortOrder()
+{
+    return m_sortOrder;
+}
+
+void FileItemProxyFilterSortModel::manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order)
+{
+    m_sortType = sortType;
+    m_sortOrder = order;
 }
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()
