@@ -50,8 +50,8 @@
 
 using namespace Peony;
 
-static const int maxNumberOfDeletesByOne = 30;      /* 按个删除最大数量 */
-static const int maxNumberOfDeletesPerBatch = 1000; /* 每次批量最多删除数量 */
+static const int maxNumberOfDeletesByOne = 50;      /* 按个删除最大数量 */
+static const int maxNumberOfDeletesPerBatch = 3000; /* 每次批量最多删除数量 */
 
 QString uri2FavoriteUri(const QString &sourceUri)
 {
@@ -804,8 +804,6 @@ void FileItem::batchRemoveItems()
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
         connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
-            qDebug()<<"remove items finished,children count,uri_item_hash count:"<<m_children->size()<<m_uri_item_hash.size();
-
             m_model->beginResetModel();
             auto old = m_children;
             m_children = children;
@@ -813,6 +811,7 @@ void FileItem::batchRemoveItems()
             m_uri_item_hash = uri_item_hash;
             m_model->endResetModel();
             m_model->updated();/* 更新状态栏 */
+            qDebug()<<"remove items finished, children count,uri_item_hash count:"<<m_children->size()<<m_uri_item_hash.size();
 
             m_batchProcessThread->quit();
             if(m_batchProcessItems){
@@ -902,7 +901,7 @@ void BatchProcessItems::slot_removeItems()
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
     QList<FileItem *> itemsToBeDeleted;
-    qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<"uri item hash count:"<<m_uri_item_hash.size();
+    qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<",children count,uri item hash count:"<<m_children->size()<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
         if(m_uri_item_hash.contains(uri)){
             auto child = m_uri_item_hash[uri];
