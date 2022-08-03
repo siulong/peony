@@ -85,6 +85,7 @@ Q_SIGNALS:
     void windowSelectionChanged();
     void locationChanged(const QString &uri);
     void viewLoaded(bool successed = true);
+    void trashcleaned();
 
     /*!
      * \brief locationChangeStart

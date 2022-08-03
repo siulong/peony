@@ -53,7 +53,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void setRootUri(const QString &uri);
-
+    void updateTrashIcon();
 protected:
     void clearButtons();
     void addButton(const QString &uri, bool setIcon = false, bool setMenu = true);

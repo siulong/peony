@@ -77,7 +77,7 @@ Q_SIGNALS:
     void viewTypeChangeRequest(const QString &viewId);
     void updateZoomLevelHintRequest(int zoomLevelHint);
     void updateSearchRequest(bool showSearch);
-
+    void clearTrash();
 protected:
     void addSpacing(int pixel);
     void mouseMoveEvent(QMouseEvent *e);

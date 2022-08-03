@@ -191,7 +191,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     });
 
     connect(m_location_bar, &Peony::AdvancedLocationBar::updateWindowLocationRequest, this, &HeaderBar::updateLocationRequest);
-
+    connect(this, &HeaderBar::clearTrash, m_location_bar, &Peony::AdvancedLocationBar::clearTrash);
     addSpacing(ADDRESS_BAR_RIGHT_WIDTH);
 //    auto a = addAction(QIcon::fromTheme("edit-find-symbolic"), tr("Search"));
 //    connect(a, &QAction::triggered, this, &HeaderBar::searchButtonClicked);
