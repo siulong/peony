@@ -592,7 +592,7 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
 
     //edit trigger
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
-        qDebug()<<"selection changed";
+        //qDebug()<<"selection changed";
         auto currentSelections = selection.indexes();
 
         for (auto index : deselection.indexes()) {
@@ -618,7 +618,7 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         }
 
 
-        qDebug()<<"selection changed2"<<m_editValid;
+        //qDebug()<<"selection changed2"<<m_editValid;
     });
 }
 
