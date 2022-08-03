@@ -50,7 +50,7 @@
 
 using namespace Peony;
 
-static const int maxNumberOfDeletesByOne = 50;      /* 按个删除最大数量 */
+static const int maxNumberOfDeletesByOne = 30;      /* 按个删除最大数量 */
 static const int maxNumberOfDeletesPerBatch = 3000; /* 每次批量最多删除数量 */
 
 QString uri2FavoriteUri(const QString &sourceUri)
