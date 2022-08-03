@@ -60,7 +60,7 @@
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "global-settings.h"
-
+#include "location-bar.h"
 #include <QApplication>
 #include <QStandardPaths>
 

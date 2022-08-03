@@ -254,6 +254,11 @@ void LocationBar::setRootUri(const QString &uri)
     return;
 }
 
+void LocationBar::updateTrashIcon()
+{
+    updateButtons();
+}
+
 void LocationBar::clearButtons()
 {
     for (auto button : m_buttons) {
@@ -352,7 +357,6 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         button->setFixedWidth(button->sizeHint().width());
         return;
     }
-
     if (setIcon) {
         QIcon icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri), QIcon::fromTheme("folder"));
         button->setIcon(icon);

@@ -58,6 +58,7 @@
 #include "file-operation-error-dialog.h"
 #include "clipboard-utils.h"
 #include "search-vfs-uri-parser.h"
+#include "file-delete-operation.h"
 
 #include "directory-view-menu.h"
 #include "directory-view-widget.h"
@@ -73,7 +74,7 @@
 
 #include "file-meta-info.h"
 #include "sound-effect.h"
-
+#include "location-bar.h"
 #include <QSplitter>
 
 #include <QPainter>
@@ -1535,6 +1536,10 @@ void MainWindow::initUI(const QString &uri)
     connect(m_tab, &TabWidget::searchRecursiveChanged, headerBar, &HeaderBar::updateSearchRecursive);
     connect(m_tab, &TabWidget::closeSearch, headerBar, &HeaderBar::closeSearch);
     connect(m_tab, &TabWidget::clearTrash, this, &MainWindow::cleanTrash);
+    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
+        m_tab->updateTabPageTitle();
+    });
+    connect(this, &MainWindow::trashcleaned, headerBar, &HeaderBar::clearTrash);
     connect(m_tab, &TabWidget::recoverFromTrash, this, &MainWindow::recoverFromTrash);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_tab, &TabWidget::updateSearch, this, &MainWindow::updateSearch);
@@ -1593,8 +1598,13 @@ void MainWindow::cleanTrash()
     Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (uris.count() >0)
     {
-        Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
-        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+        auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
+        if(removeop){
+            connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
+                     Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                     Q_EMIT trashcleaned();
+            });
+        }
     }
     else
     {

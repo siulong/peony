@@ -56,6 +56,7 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         }
     });
 
+    connect(this,&AdvancedLocationBar::clearTrash,m_bar,&LocationBar::updateTrashIcon);
     m_edit->connect(m_edit, &Peony::PathEdit::uriChangeRequest, [=](const QString uri) {
         //qDebug() << "uriChangeRequest:" <<uri;
         QString targetUri = uri;
