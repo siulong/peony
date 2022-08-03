@@ -113,7 +113,7 @@ void FileDeleteOperation::deleteRecursively(FileNode *node)
         }
     }
     g_object_unref(file);
-    qDebug()<<"deleted";
+    //qDebug()<<"deleted";
     //operationAfterProgressedOne(node->uri());
     m_current_offset += node->size();
 

@@ -175,7 +175,7 @@ void DirectoryViewMenu::fillActions()
     QString downloadUri = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
 
     for (auto uriIndex = 0; uriIndex < m_selections.count(); ++uriIndex) {
-        qDebug() << desktop;
+        //qDebug() << desktop;
         if (m_selections.at(uriIndex) == "favorite:///?schema=trash"
                 || m_selections.at(uriIndex) == "favorite:///?schema=kmre"
                 || m_selections.at(uriIndex) == "favorite:///?schema=recent"

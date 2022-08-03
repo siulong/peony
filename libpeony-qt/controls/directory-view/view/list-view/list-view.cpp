@@ -224,7 +224,7 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
 
     //edit trigger
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
-        qDebug()<<"list view selection changed"<<m_delegate_editing;
+        //qDebug()<<"list view selection changed"<<m_delegate_editing;
         //continue to fix bug#89540，98951
         if (m_delegate_editing)
             return;
