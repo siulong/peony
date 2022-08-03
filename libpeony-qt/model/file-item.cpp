@@ -614,9 +614,7 @@ void FileItem::onChildRemoved(const QString &uri)
     // fix #62925
     m_waiting_add_queue.removeOne(uri);
     m_uris_to_be_removed.append(uri);
-    if (!m_idle->isActive()) {
-        m_idle->start();
-    }
+    m_idle->start();
     return;
 }
 
