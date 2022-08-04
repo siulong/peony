@@ -1180,7 +1180,7 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
             auto plugin = MenuPluginManager::getInstance()->getPlugin(id);
 
             if(m_is_filesafe||m_is_filebox_file) {
-                if(plugin->name() == tr("Peony-Qt filesafe menu Extension")) {
+                if(plugin->name() == tr("Peony-Qt filesafe menu Extension") || plugin->name() == tr("Peony File Labels Menu Extension")) {
                     auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
                     l<<actions;
                     for (auto action : actions) {
