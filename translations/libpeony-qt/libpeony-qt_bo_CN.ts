@@ -1109,6 +1109,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Peony File Labels Menu Extension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Orignal Path</source>
         <translation type="unfinished"></translation>
     </message>

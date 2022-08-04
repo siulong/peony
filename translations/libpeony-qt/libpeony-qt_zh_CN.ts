@@ -1497,6 +1497,11 @@
         <translation>文件保护箱扩展</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1183"/>
+        <source>Peony File Labels Menu Extension</source>
+        <translation>文件标记</translation>
+    </message>
+    <message>
         <source>&amp;Copy</source>
         <translation type="vanished">复制(&amp;C)</translation>
     </message>
