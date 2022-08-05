@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <source>none</source>
-        <translation>མེད།</translation>
+        <translation type="vanished">མེད།</translation>
     </message>
     <message>
         <source>Peony</source>
@@ -141,7 +141,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།(_D)</translation>
+        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -153,7 +153,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>warn</source>
