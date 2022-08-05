@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QProcess>
+#include <QMessageBox>
 
 #include <glib.h>
 
@@ -71,14 +72,22 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
 //    args.prepend("pkexec");
     proc.waitForStarted();
     QString cmd = args.join(" ");
+    QString err;
     proc.write(cmd.toUtf8() + "\n");
     proc.waitForFinished(500);
+    err = proc.readAllStandardError();
     if (retb) {
-        if (proc.readAllStandardError().isEmpty()) {
+        if (err.isEmpty()) {
             *retb = true;
         } else {
             *retb = false;
         }
+    }
+
+    if (!err.isEmpty() && args.contains("add")) {
+        proc.close();
+        QMessageBox::warning(nullptr, tr("Warning"), err, QMessageBox::Ok);
+        return err;
     }
 
     QString all = proc.readAllStandardOutput();
