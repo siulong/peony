@@ -282,7 +282,7 @@
         <translation type="vanished">Masaüstünü kapatın ve çıkın</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="180"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="181"/>
         <source>peony-qt-desktop</source>
         <translation>Masaüstü</translation>
     </message>
@@ -295,27 +295,27 @@
         <translation type="vanished">Masaüstü</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="454"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="459"/>
         <source>Close the peony desktop window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="457"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="462"/>
         <source>Take over the dbus service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="460"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="465"/>
         <source>Take over the desktop displaying</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="463"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="468"/>
         <source>Setup backgrounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="466"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="471"/>
         <source>Clear standard icons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -323,12 +323,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="70"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="68"/>
         <source>set background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="75"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="73"/>
         <source>display settings</source>
         <translation type="unfinished"></translation>
     </message>
