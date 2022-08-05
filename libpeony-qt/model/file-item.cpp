@@ -689,7 +689,10 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
         if (!newChild) {
             int index = m_children->indexOf(child);
             m_children->at(index)->m_info= FileInfo::fromUri(newUri);
+            m_uri_item_hash.remove(oldUri);
             child->updateInfoAsync();
+            m_uri_item_hash.insert(child->uri(), child);
+
         } else {
             m_model->beginRemoveRows(this->firstColumnIndex(), m_children->indexOf(child), m_children->indexOf(child));
             m_children->removeOne(child);
