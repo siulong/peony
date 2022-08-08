@@ -377,7 +377,7 @@ void SharedDirectoryInfoThread::run()
 
     QHash<QString,QString> sharedFolderInfoMap;/* key:shareName,value: sharePath */
 
-    for (QString shareName : shareNames.split(QRegExp("\\s+"))) {
+    for (QString shareName : shareNames.split(QRegExp("\n"))) {
         if (!shareName.isEmpty()) {
             /**
              * \brief 根据共享名称获取详细信息

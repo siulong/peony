@@ -81,11 +81,12 @@ static void parseShareInfo (ShareInfo& shareInfo, QString& content)
 
 QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* out */, QString sharedPath)
 {
+    Q_UNUSED(sharedPath);
     QProcess proc;
     proc.open();
 
     // Check whether sambashare exists and contains the current user
-    QProcess::execute ("bash pkexec /usr/bin/peony-share.sh", QStringList() << g_get_user_name () << sharedPath);
+    //QProcess::execute ("bash pkexec /usr/bin/peony-share.sh", QStringList() << g_get_user_name () << sharedPath);
 
     // Shared folder
     args.prepend ("net");
@@ -105,7 +106,7 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
         }
     }
 
-    if (!err.isEmpty() && args.contains("add")) {
+    if (!err.isEmpty() && args.contains("usershare add")) {
         proc.close();
         QMessageBox::warning(nullptr, tr("Warning"), err, QMessageBox::Ok);
         return err;
@@ -148,8 +149,8 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
     m_mutex.unlock();
 
     args << "usershare" << "add";
-    args << sharedInfo->name;
-    args << sharedInfo->originalPath;
+    args << QString("\"%1\"").arg(sharedInfo->name);
+    args << QString("\"%1\"").arg(sharedInfo->originalPath);
     args << (sharedInfo->comment.isNull() ? "Peony-Qt-Share-Extension" : sharedInfo->comment);
     args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
     args << (sharedInfo->allowGuest ? "guest_ok=y" : "guest_ok=n");
@@ -170,7 +171,7 @@ const ShareInfo* UserShareInfoManager::getShareInfo(QString &name)
     if (!m_bInit) {
         bool            ret;
         QStringList     args;
-        args << "usershare" << "info" << name;
+        args << "usershare" << "info" << QString("\"%1\"").arg(name);
         QString result = exectueCommand (args, &ret);
         if (!ret && result.isEmpty()) {
             return nullptr;
@@ -232,7 +233,7 @@ void UserShareInfoManager::removeShareInfo(QString &name)
     m_mutex.unlock();
 
     QStringList args;
-    args << "usershare" << "delete" << name;
+    args << "usershare" << "delete" << QString("\"%1\"").arg(name);
 
     bool ret = false;
     exectueCommand (args, &ret);
