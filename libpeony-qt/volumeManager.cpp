@@ -1004,6 +1004,14 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
                     g_object_unref(mount_op);
                 }
             }
+        } else {
+            bool need_password = bool (g_object_get_data(G_OBJECT (volume), "need-password"));
+            if (need_password) {
+                QString errMsg = err->message;
+                if (errMsg.contains("Incorrect passphrase")) {
+                    QMessageBox::critical(0, 0, QObject::tr("Failed to activate device: Incorrect passphrase"));
+                }
+            }
         }
 
         //QMessageBox::critical(0, 0, QString("%1 %2 %3").arg(g_quark_to_string(err->domain)).arg(err->code).arg(err->message));
