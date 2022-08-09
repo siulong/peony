@@ -272,6 +272,7 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
     });
     questionbox.setText(QObject::tr("Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them."));
     questionbox.setIcon("user-trash-full");
+    Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (questionbox.exec()) {
         FileOperation *operation = nullptr;
         if (!list.isEmpty()) {

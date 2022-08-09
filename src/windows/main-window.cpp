@@ -1595,7 +1595,6 @@ void MainWindow::initUI(const QString &uri)
 void MainWindow::cleanTrash()
 {
     auto uris = getCurrentAllFileUris();
-    Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (uris.count() >0)
     {
         auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);

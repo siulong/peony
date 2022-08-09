@@ -214,16 +214,8 @@ void ToolBar::init()
 
     //trash
     m_clean_trash_action = addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean Trash"), [=]() {
-        Peony::AudioPlayManager::getInstance()->playWarningAudio();
-        auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
-                                            "Once you start a deletion, the files deleting will never be "
-                                            "restored again."));
-        if (result == QMessageBox::Yes) {
-            SoundEffect::getInstance()->recycleBinDeleteMusic();
-            auto uris = m_top_window->getCurrentAllFileUris();
-            qDebug()<<uris;
-            FileOperationUtils::remove(uris);
-        }
+        auto uris = m_top_window->getCurrentAllFileUris();
+        FileOperationUtils::clearRecycleBinWithDialog(uris);
     });
 
     m_restore_action = addAction(QIcon::fromTheme("view-refresh-symbolic"), tr("Restore"), [=]() {

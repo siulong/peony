@@ -1068,15 +1068,18 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setObjectName(CLEAN_THE_TRASH_ACTION);
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
-                AudioPlayManager::getInstance()->playWarningAudio();
-                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
-                                                                                          "Once you start a deletion, the files deleting will never be "
-                                                                                          "restored again."));
-                if (result == QMessageBox::Yes) {
-//                    SoundEffect::getInstance()->recycleBinClearMusic();
-                    auto uris = m_top_window->getCurrentAllFileUris();
-                    FileOperationUtils::remove(uris);
-                }
+                auto uris = m_top_window->getCurrentAllFileUris();
+                Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
+
+//                AudioPlayManager::getInstance()->playWarningAudio();
+//                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
+//                                                                                          "Once you start a deletion, the files deleting will never be "
+//                                                                                          "restored again."));
+//                if (result == QMessageBox::Yes) {
+////                    SoundEffect::getInstance()->recycleBinClearMusic();
+//                    auto uris = m_top_window->getCurrentAllFileUris();
+//                    FileOperationUtils::remove(uris);
+//                }
             });
         } else {
             l<<addAction(tr("Restore"));
