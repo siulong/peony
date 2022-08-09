@@ -85,7 +85,7 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
         }
     }
 
-    if (!err.isEmpty() && args.contains("usershare add")) {
+    if (!err.isEmpty() && cmd.contains("usershare add")) {
         proc.close();
         QMessageBox::warning(nullptr, tr("Warning"), err, QMessageBox::Ok);
         return err;
