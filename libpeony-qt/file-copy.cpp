@@ -140,6 +140,9 @@ void FileCopy::run ()
     srcFile = g_file_new_for_uri(FileUtils::urlEncode(mSrcUri).toUtf8());
     destFile = g_file_new_for_uri(FileUtils::urlEncode(mDestUri).toUtf8());
 
+    bool notSupportInputStream = false;
+    bool notSupportOutputStream = false;
+
     // it's impossible
     if (nullptr == srcFile || nullptr == destFile) {
         error = g_error_new (1, G_IO_ERROR_INVALID_ARGUMENT,"%s", tr("Error in source or destination file path!").toUtf8().constData());
@@ -229,8 +232,14 @@ void FileCopy::run ()
     // read io stream
     readIO = g_file_read(srcFile, mCancel ? mCancel : nullptr, &error);
     if (nullptr != error) {
-        detailError(&error);
-        goto out;
+        if (g_error_matches(error, g_io_error_quark(), G_IO_ERROR_NOT_SUPPORTED)) {
+            notSupportInputStream = true;
+            g_error_free(error);
+            error = nullptr;
+        } else {
+            detailError(&error);
+            goto out;
+        }
     }
 
     // write io stream
@@ -241,24 +250,25 @@ void FileCopy::run ()
             qWarning() << "g_file_copy " << error->code << " -- " << error->message;
             g_error_free(error);
             error = nullptr;
-            g_file_copy(srcFile, destFile, mCopyFlags, mCancel, mProgress, mProgressData, &error);
-            if (error) {
-                qWarning() << "g_file_copy error:" << error->code << " -- " << error->message;
-                detailError(&error);
-                mStatus = ERROR;
-            } else {
-                mStatus = FINISHED;
-            }
+            notSupportOutputStream = true;
         } else {
             detailError(&error);
             qDebug() << "create dest file error!" << mDestUri << " == " << g_file_get_uri(destFile);
+            goto out;
         }
-        goto out;
     }
 
-    if (!readIO || !writeIO) {
-        error = g_error_new (1, G_IO_ERROR_FAILED,"%s", tr("Error opening source or destination file!").toUtf8().constData());
-        detailError(&error);
+    if (notSupportInputStream || notSupportOutputStream) {
+        qInfo()<<"stream io not supported, use g_file_copy instead";
+        g_file_copy(srcFile, destFile, mCopyFlags, mCancel, mProgress, mProgressData, &error);
+        sync(destFile);
+        if (error) {
+            qWarning() << "g_file_copy error:" << error->code << " -- " << error->message;
+            mStatus = ERROR;
+            detailError(&error);
+        } else {
+            mStatus = FINISHED;
+        }
         goto out;
     }
 
