@@ -255,6 +255,11 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
         m_displayName = QObject::tr("Data");
         m_iconName = "drive-harddisk";
     }
+
+    // kydrive特殊处理
+    if (m_device.startsWith("kydrive:")) {
+        m_unmountable = false;
+    }
 }
 
 void SideBarFileSystemItem::clearChildren()
@@ -316,6 +321,9 @@ void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Vol
             item->m_mountPoint = mountPoint;     /* 设置挂载点，属性页会用到 */
             item->m_mountable =volume.canMount();
             item->m_unmountable = true;
+            if (device.startsWith("kydrive:")) {
+                item->m_unmountable = false;
+            }
             item->m_iconName = volume.icon();
             /* 更新uri,为了枚举操作 */
             if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
@@ -651,6 +659,9 @@ bool SideBarFileSystemItem::isMounted()
 
 void SideBarFileSystemItem::unmount()
 {
+    if (m_device.startsWith("kydrive:")) {
+        return;
+    }
     SyncThread *syncThread = new SyncThread(m_uri);
     QThread* currentThread = new QThread();
     syncThread->moveToThread(currentThread);
