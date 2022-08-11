@@ -696,7 +696,7 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
         } else {
             m_model->beginRemoveRows(this->firstColumnIndex(), m_children->indexOf(child), m_children->indexOf(child));
             m_children->removeOne(child);
-            m_uri_item_hash.remove(this->uri());
+            m_uri_item_hash.remove(child->uri());
             child->deleteLater();
             m_model->endRemoveRows();
         }
