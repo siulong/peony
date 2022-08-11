@@ -35,13 +35,15 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">服务与技术支持: </translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="132"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="41"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="138"/>
         <source>Service &amp; Support: </source>
         <translation>服务与支持团队: </translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="62"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="78"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="40"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="68"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="84"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>
@@ -50,7 +52,8 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="93"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="45"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="99"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
         <translation>文件管理器是一款帮助用户管理系统文件的图形化的软件，为用户提供常用的文件操作功能，比如文件查看，文件复制、粘贴、剪切、删除、重命名，文件打开方式选择，文件搜索，文件排序，文件预览等，方便用户在界面上直观地管理系统文件。</translation>
     </message>
@@ -63,7 +66,8 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="81"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="44"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="87"/>
         <source>Version number: %1</source>
         <translation>版本号: %1</translation>
     </message>
@@ -72,7 +76,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器是一款帮助用户管理系统文件的图形化的软件，为用户提供常用的文件操作功能，比如文件查看，文件复制、粘贴、剪切、删除、重命名，文件打开方式选择，文件搜索，文件排序，文件预览等，方便用户在界面上直观地管理系统文件。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="159"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="165"/>
         <source>none</source>
         <translation>无</translation>
     </message>
@@ -136,7 +140,7 @@ p, li { white-space: pre-wrap; }
         <translation>排序类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="426"/>
+        <location filename="../../src/control/header-bar.cpp" line="434"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
@@ -151,12 +155,12 @@ p, li { white-space: pre-wrap; }
         <translation>没有找到任何终端插件，请确认您至少安装了一个！</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="584"/>
+        <location filename="../../src/control/header-bar.cpp" line="592"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="587"/>
+        <location filename="../../src/control/header-bar.cpp" line="595"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
@@ -172,7 +176,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="744"/>
+        <location filename="../../src/control/header-bar.cpp" line="752"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -189,7 +193,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="769"/>
+        <location filename="../../src/control/header-bar.cpp" line="777"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -227,12 +231,12 @@ p, li { white-space: pre-wrap; }
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1601"/>
+        <location filename="../../src/windows/main-window.cpp" line="1602"/>
         <source>Tips info</source>
         <translation>温馨提示</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1602"/>
+        <location filename="../../src/windows/main-window.cpp" line="1603"/>
         <source>Trash has no file need to be cleaned.</source>
         <translation>回收站没有文件需要被清空！</translation>
     </message>
@@ -241,12 +245,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1590"/>
+        <location filename="../../src/windows/main-window.cpp" line="1591"/>
         <source>Delete Permanently</source>
         <translation>永久删除</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1591"/>
+        <location filename="../../src/windows/main-window.cpp" line="1592"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
         <translation>您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
     </message>
@@ -271,44 +275,44 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="356"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="360"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="356"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="360"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="394"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="407"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="398"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="394"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="398"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="407"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="214"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="218"/>
         <source>Open In New Window</source>
         <translation>在新窗口中打开</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="230"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="264"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="234"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="268"/>
         <source>Can not open %1, %2</source>
         <translation>无法打开%1, %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="248"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="252"/>
         <source>Open In New Tab</source>
         <translation>在新标签页中打开</translation>
     </message>
@@ -320,7 +324,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="551"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="555"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -349,37 +353,37 @@ p, li { white-space: pre-wrap; }
         <translation>置顶窗口</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="78"/>
+        <location filename="../../src/control/operation-menu.cpp" line="81"/>
         <source>Show Hidden</source>
         <translation>显示隐藏文件</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="86"/>
+        <location filename="../../src/control/operation-menu.cpp" line="89"/>
         <source>Show File Extension</source>
         <translation>显示文件扩展名</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="91"/>
+        <location filename="../../src/control/operation-menu.cpp" line="94"/>
         <source>Forbid thumbnailing</source>
         <translation>禁用缩略图</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="100"/>
+        <location filename="../../src/control/operation-menu.cpp" line="103"/>
         <source>Resident in Backend</source>
         <translation>常驻后台</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="109"/>
+        <location filename="../../src/control/operation-menu.cpp" line="112"/>
         <source>Parallel Operations</source>
         <translation>允许操作并行</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="118"/>
+        <location filename="../../src/control/operation-menu.cpp" line="121"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="122"/>
+        <location filename="../../src/control/operation-menu.cpp" line="125"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -387,27 +391,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="169"/>
+        <location filename="../../src/control/operation-menu.cpp" line="172"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="183"/>
         <source>copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="189"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="198"/>
+        <location filename="../../src/control/operation-menu.cpp" line="201"/>
         <source>cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="207"/>
+        <location filename="../../src/control/operation-menu.cpp" line="210"/>
         <source>trash</source>
         <translation>删除</translation>
     </message>
@@ -419,27 +423,27 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="144"/>
+        <location filename="../../src/peony-application.cpp" line="147"/>
         <source>peony-qt</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="151"/>
+        <location filename="../../src/peony-application.cpp" line="154"/>
         <source>Files or directories to open</source>
         <translation>需要打开的文件或文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="151"/>
+        <location filename="../../src/peony-application.cpp" line="154"/>
         <source>[FILE1, FILE2,...]</source>
         <translation>[文件1，文件2...]</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="191"/>
+        <location filename="../../src/peony-application.cpp" line="194"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="191"/>
+        <location filename="../../src/peony-application.cpp" line="194"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
@@ -452,12 +456,12 @@ p, li { white-space: pre-wrap; }
 2.你使用的系统主题不是qt默认支持的主题，并且你没有安装相关的平台插件。如果你正在使用Gtk主题作为系统主题，尝试安装qt5-gtk2-platformtheme以解决此问题。</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="450"/>
+        <location filename="../../src/peony-application.cpp" line="453"/>
         <source>Peony Qt</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="451"/>
+        <location filename="../../src/peony-application.cpp" line="454"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -687,12 +691,12 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1574"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1599"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1575"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1600"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
