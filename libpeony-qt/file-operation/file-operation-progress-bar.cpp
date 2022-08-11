@@ -748,6 +748,7 @@ ProgressBar::ProgressBar(QWidget *parent) : QWidget(parent)
     setMouseTracking(true);
     m_is_stopping = false;
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_update_count = 0;
     m_dest_uri = tr("starting ...");
     connect(this, &ProgressBar::cancelled, this, &ProgressBar::onCancelled);
     connect(this, &ProgressBar::destroyed, this, [=] () {m_has_finished = true;});
@@ -980,8 +981,8 @@ void ProgressBar::onFileOperationProgressedOne(const QString &uri, const QString
 
 void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, const QString& fIcon, const quint64& current, const quint64& total)
 {
-    if (current >= m_total_size) {
-        qDebug() << "progress bar value error!";
+    if ((current > m_total_size && m_total_size>0) || m_update_count > m_total_count) {
+        qDebug() << "progress bar value error!:"<<current<<m_total_size;
         return;
     }
 
@@ -995,8 +996,13 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     }
 
     double currentPercent = current * 1.0 / total;
+    //fix bug#133624,133380, delete all empty files, not update progress bar
+    if (m_total_size <= 0){
+        m_update_count++;
+        currentPercent = m_update_count * 1.0 /m_total_count;
+    }
 
-//    qDebug() << "progress bar: " << currentPercent;
+    qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
 
     updateValue(currentPercent);
 

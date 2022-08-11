@@ -197,6 +197,7 @@ private:
     QString m_dest_uri;
     int m_total_count = 0;
     int m_current_count = 1;
+    int m_update_count = 0;
     quint64 m_total_size = 0;
     qint32 m_current_size = 0;
 
