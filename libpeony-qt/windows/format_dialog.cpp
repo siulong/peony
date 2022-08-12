@@ -752,7 +752,13 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
                 if (diskBlock) {
                     curName = udisks_block_get_id_label (diskBlock);
                     qDebug () << data->dl->mVolumeName << "  --  " << data->filesystem_name << "  --  " << curName;
+                } else {
+                    // might be crypted volume
+                    curName = data->dl->mNameEdit->text().trimmed();
                 }
+            } else {
+                // might be crypted volume
+                curName = data->dl->mNameEdit->text().trimmed();
             }
         }
 
