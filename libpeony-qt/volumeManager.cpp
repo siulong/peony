@@ -99,6 +99,15 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     return Peony::FileUtils::urlDecode(uri);
 }
 
+bool VolumeManager::isEmptyDrive(const Volume &volume)
+{
+    g_autoptr (GDrive) gdrive = volume.getGDrive();
+    if (gdrive && !g_drive_has_media(gdrive)) {/* 空光驱 */
+        return  true;
+    }
+    return false;
+}
+
 VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
 {
     initManagerInfo();
@@ -1422,6 +1431,11 @@ QString Volume::mountPoint() const{
 
 GVolume* Volume::getGVolume() const{
     return m_volume;
+}
+
+GDrive *Volume::getGDrive() const
+{
+    return m_gdrive;
 }
 
 bool Volume::canEject() const{

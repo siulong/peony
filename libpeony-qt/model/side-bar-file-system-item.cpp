@@ -211,7 +211,9 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
             m_uri = "computer:///" + volumeItem.name() + ".volume";/* 手机(mtp、gphoto2) */
             m_mounted = true;
         }
-        else if(m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(m_device))//更好的方法区分是否是空光盘?
+        else if(m_device.contains("/dev/sr") &&
+                (FileUtils::isEmptyDisc(m_device) /* 空光盘linkto bug#127947 */
+                 || Experimental_Peony::VolumeManager::getInstance()->isEmptyDrive(volumeItem)))/* 空光驱,linkto bug#133362 */
         {
             m_mounted=true;
             m_unmountable = m_mountable=false;
