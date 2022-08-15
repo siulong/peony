@@ -714,6 +714,9 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                             volumeItem->setHidden(false);
                         }
                     }
+                }else if(uuid.isEmpty()){
+                    //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
+                    volumeItem->setHidden(true);
                 }
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
