@@ -107,7 +107,8 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
 
     Q_UNUSED(e)
     QPainter p(this);
-    auto bgColor = m_option.palette.highlight().color();
+//    auto bgColor = m_option.palette.highlight().color();
+    auto bgColor = QApplication::palette().highlight().color();
     p.save();
     p.setPen(Qt::transparent);
     bgColor.setAlpha(255*0.7);
