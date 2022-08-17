@@ -39,6 +39,7 @@
 #include "file-operation-utils.h"
 #include "file-operation-manager.h" //FileOpInfo
 #include "audio-play-manager.h"
+#include "file-untrash-operation.h"
 
 #include "file-utils.h"
 #include "bookmark-manager.h"
@@ -1086,9 +1087,19 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setObjectName(RESTORE_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 if (m_selections.count() == 1) {
-                    FileOperationUtils::restore(m_selections.first());
+                    auto untrashop = FileOperationUtils::restore(m_selections.first());
+                    if(untrashop){
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        });
+                    }
                 } else {
-                    FileOperationUtils::restore(m_selections);
+                    auto untrashop = FileOperationUtils::restore(m_selections);
+                    if(untrashop){
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        });
+                    }
                 }
             });
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
