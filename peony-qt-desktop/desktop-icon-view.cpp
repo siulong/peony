@@ -1127,7 +1127,7 @@ void DesktopIconView::setFileMetaInfoPos(const QString &uri, const QPoint &pos)
     m_item_rect_hash.remove(uri);
     m_item_rect_hash.insert(uri, QRect(pos, iconSize));
 
-    QRect rect(mapToGlobal(pos), rect.size());
+    QRect rect(mapToGlobal(pos), iconSize);
     FileInfo::fromUri(uri).get()->setProperty("iconGeometry", rect);
 
     auto metaInfo = FileMetaInfo::fromUri(uri);
