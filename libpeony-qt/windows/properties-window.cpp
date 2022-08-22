@@ -227,6 +227,13 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
     } else {
         m_destroyThis = true;
     }
+
+    connect(qApp, &QApplication::fontChanged, [=](){
+        QFont font = qApp->font();
+        for (auto widget : qApp->allWidgets()) {
+            widget->setFont(font);
+        }
+    });
 }
 
 void PropertiesWindow::init()
