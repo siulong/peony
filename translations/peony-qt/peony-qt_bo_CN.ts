@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <source>none</source>
-        <translation type="vanished">མེད།</translation>
+        <translation>མེད།</translation>
     </message>
     <message>
         <source>Peony</source>
@@ -37,7 +37,11 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt; &lt;head&gt; &lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt; &lt;style type=&quot;text/css&quot;&gt;
+p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚུད་ནས་ཐུམ་སྒྲིལ།}
+&lt;/style&gt; &lt;/head&gt; &lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt; &lt;br /&gt; &lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -95,11 +99,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>སླར་གསོ་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>ཚད་གཞི་མཐོ་ཤོས་ཀྱི་སྒོ་ནས</translation>
     </message>
 </context>
 <context>
@@ -141,7 +145,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
+        <translation>བརྟན་འདོར།(_D)</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -153,15 +157,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>warn</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
@@ -180,23 +184,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>གསལ་འདེབས་བྱེད་ཐབས།</translation>
     </message>
     <message>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation type="unfinished"></translation>
+        <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Udiskཡིན་པས་ཞིག་གསོ་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>འདི་ནི་སྟོང་བའི་སྒུལ་ཤུགས་ཤིག་རེད། ཁྱེད་ཀྱིས་འོད་སྡེར་ཞིག་འཇོག་རོགས།</translation>
     </message>
     <message>
         <source>warn</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
@@ -245,7 +249,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show File Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བའི</translation>
     </message>
 </context>
 <context>
@@ -356,11 +360,11 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
     </message>
     <message>
         <source>Use global sorting</source>
-        <translation type="unfinished"></translation>
+        <translation>གོ་ལ་ཧྲིལ་པོའི་རིགས་འབྱེད་</translation>
     </message>
     <message>
         <source>Original Path</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
     </message>
 </context>
 <context>
@@ -522,15 +526,15 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
     </message>
     <message>
         <source>Select Path</source>
-        <translation type="unfinished"></translation>
+        <translation>ལམ་ཕྲན་བདམས་པ།</translation>
     </message>
     <message>
         <source>Open failed</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒོ་ཕྱེ་ནས་ཕམ་ཉེས་བྱུང་བ།</translation>
     </message>
     <message>
         <source>Open directory failed, you have no permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁ་ཕྱེ་བའི་དཀར་ཆག་ལ་ཕམ་ཉེས་བྱུང་ན་ཁྱེད་ལ་ཆོག་མཆན་མ་ཐོབ།</translation>
     </message>
 </context>
 </TS>
