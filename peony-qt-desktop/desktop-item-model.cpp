@@ -342,16 +342,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "m_system_app_watcher:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661, desktop file may be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
@@ -372,17 +381,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "andriod_app_path:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    //auto remove, link to task#10131
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661,android desktop file be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
