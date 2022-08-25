@@ -1,3 +1,10 @@
+peony (3.14.4.5-ok6) yangtze; urgency=medium
+
+  * close-cd #133469 同时选择多个文本，右键打开选中文本只能打开第一个
+  * 修复共享文件夹带空格文件夹不能共享问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 25 Aug 2022 10:21:54 +0800
+
 peony (3.14.4.5-ok6~0803) yangtze; urgency=medium
 
   * 修复弹出菜单有概率带标题栏的问题
