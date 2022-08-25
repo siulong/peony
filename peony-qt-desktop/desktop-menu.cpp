@@ -225,8 +225,26 @@ const QList<QAction *> DesktopMenu::constructOpenOpActions()
                 if (!dirs.isEmpty())
                     this->openWindow(dirs);
                 if (!files.isEmpty()) {
+                    QMap<QString, QStringList> fileMap;
                     for (auto uri : files) {
-                        FileLaunchManager::openAsync(uri);
+                        QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
+                        QStringList list;
+                        if (fileMap.contains(defaultAppName)) {
+                            list = fileMap[defaultAppName];
+                            list << uri;
+                            fileMap.insert(defaultAppName, list);
+                        } else {
+                            list << uri;
+                            fileMap.insert(defaultAppName, list);
+                        }
+                    }
+                    if(!fileMap.empty()) {
+                        QMap<QString, QStringList>::iterator iter = fileMap.begin();
+                        while (iter != fileMap.end())
+                        {
+                            Peony::FileLaunchManager::openAsync(iter.value());
+                            iter++;
+                        }
                     }
                 }
             });
@@ -613,6 +631,11 @@ void DesktopMenu::openWindow(const QStringList &uris)
         QUrl url = arg;
         args<<QString(url.toEncoded());
     }
+
+    auto launchAction = FileLaunchManager::getDefaultAction(args.first());
+    launchAction->lauchFilesAsync(args);
+    return;
+
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     p.setProgram("peony");

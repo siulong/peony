@@ -73,7 +73,8 @@
 
 #include "file-meta-info.h"
 #include "sound-effect.h"
-
+#include "file-launch-action.h"
+#include "file-launch-manager.h"
 #include <QSplitter>
 
 #include <QPainter>
@@ -798,8 +799,27 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             for (auto uri : dirs) {
                 m_tab->addPage(uri);
             }
+
+            QMap<QString, QStringList> fileMap;
             for (auto uri : files) {
-                Q_EMIT m_tab->currentPage()->viewDoubleClicked(uri);
+                QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
+                QStringList list;
+                if (fileMap.contains(defaultAppName)) {
+                    list = fileMap[defaultAppName];
+                    list << uri;
+                    fileMap.insert(defaultAppName, list);
+                } else {
+                    list << uri;
+                    fileMap.insert(defaultAppName, list);
+                }
+            }
+            if(!fileMap.empty()) {
+                QMap<QString, QStringList>::iterator iter = fileMap.begin();
+                while (iter != fileMap.end())
+                {
+                    Peony::FileLaunchManager::openAsync(iter.value());
+                    iter++;
+                }
             }
         }
     }

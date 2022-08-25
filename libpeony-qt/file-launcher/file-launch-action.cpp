@@ -48,6 +48,8 @@ using namespace Peony;
 
 #define USE_STARTUP_INFO true
 
+bool launchAppWithArguments(QString desktopFile, QStringList args);
+
 FileLaunchAction::FileLaunchAction(const QString &uri, GAppInfo *app_info, bool forceWithArg, QObject *parent) : QAction(parent)
 {
     m_uri = uri;
@@ -425,6 +427,14 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     if(files.isEmpty())
         return;
 
+    if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
+        auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
+        auto path = g_desktop_app_info_get_filename(desktop_app_info);
+        if (launchAppWithArguments(path, files)) {
+            return;
+        }
+    }
+
     //FIXME: replace BLOCKING api in ui thread.
     auto fileInfo = FileInfo::fromUri(m_uri);
     if (fileInfo->isEmptyInfo()) {
@@ -764,5 +774,27 @@ bool FileLaunchAction::launchAppWithSession()
         return true;
     }
     qDebug() << "[FileLaunchAction::launchAppWithSession] failed, session isValid:" << session.isValid() << "\nuri:" << m_uri;
+    return false;
+}
+
+bool launchAppWithArguments(QString desktopFile, QStringList args)
+{
+    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
+    int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
+    if (features == 2 || features == 3 || mavis) {
+        if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
+            QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
+            if (session.isValid()) {
+                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
+                qDebug() << "[DesktopIconView::LaunchAppWithArguments]  desktopFile:" << desktopFile << "args:" <<args;
+
+                if (result.isValid()) {
+                    return true;
+                }
+                qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
+            }
+        }
+        return true;
+    }
     return false;
 }
