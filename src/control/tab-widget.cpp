@@ -530,6 +530,7 @@ void TabWidget::browsePath()
     f.setAcceptMode(QFileDialog::AcceptOpen);
     f.setOption(QFileDialog::ShowDirsOnly);
     f.setFileMode(QFileDialog::DirectoryOnly);
+    f.setFilter(QDir::System|QDir::AllDirs|QDir::Files|QDir::NoDotAndDotDot);
 
     auto result = f.exec();
     if (result != QDialog::Accepted) {
