@@ -314,8 +314,13 @@ Peony::DesktopItemModel *PeonyDesktopApplication::getModel()
 
 Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
 {
-    //获取当前屏幕的view
-    Peony::DesktopIconView *desktopIconView = m_bg_windows[0]->getIconView();
+    //获取当前屏幕的view,如果是镜像直接返回主屏
+    Peony::DesktopIconView *desktopIconView = getIconView(qApp->primaryScreen());
+    QRegion screenRegion(qApp->primaryScreen()->geometry());
+    if (screenRegion.contains(pos)) {
+        return desktopIconView;
+    };
+
     for (auto window : m_bg_windows) {
         QRegion screenRegion(window->screen()->geometry());
         if (screenRegion.contains(pos)) {
