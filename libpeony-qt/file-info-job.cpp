@@ -411,12 +411,12 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     if (g_file_info_has_attribute(new_info, "trash::deletion-date"))
     {
-       QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
-       info->m_deletion_date = deletionDate.replace("T", " ");
-
-       QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
-
-       info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+        QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
+        info->m_deletion_date = deletionDate.replace("T", " ");
+        QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
+        info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+        date = QDateTime::fromMSecsSinceEpoch(info->m_deletion_date_uint64);
+        info->m_deletion_date = date.toString(systemTimeFormat);
     }
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
         auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
