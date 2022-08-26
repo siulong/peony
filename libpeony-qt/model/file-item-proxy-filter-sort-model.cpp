@@ -416,7 +416,7 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         QDir::Filters dirFilters = QDir::Filters(m_dirFilters);
         if (m_dirFilters != -1) {
             bool showFiles = dirFilters & QDir::Files;
-            bool showDirs = dirFilters & QDir::Dirs;
+            bool showDirs = dirFilters & QDir::Dirs || dirFilters & QDir::AllDirs;
             if (!showFiles && !fileInfo->isDir()) {
                 return false;
             }
