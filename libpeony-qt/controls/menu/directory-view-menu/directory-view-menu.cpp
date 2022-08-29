@@ -800,7 +800,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                     if (! info->canTrash())
                         canTrash = false;
 
-                    if (! info->canDelete())
+                    if (! info->canDelete() && (!uri.startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
                         canDelete = false;
                 }
 
