@@ -171,7 +171,7 @@ void DesktopBackgroundManager::switchBackground()
 
     auto path = m_backgroundSettings->get("pictureFilename").toString();
     QString localPath = path;
-    if (! QFile::exists(path))
+    if (! QFile::exists(path) && !localPath.isEmpty())
         path = getAccountBackground();
 
     // try fix #124971
