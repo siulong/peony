@@ -867,6 +867,21 @@ void BasicPropertiesPage::saveAllChange()
         }
     }
 
+    //FIX:修复桌面快捷方式文件的缩略图改变后需要手动刷新才更新的问题
+    //fix the problem that the thumbnails of desktop shortcut files need to be manually refreshed before they are updated after being changed.
+    QString desktopPath = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
+    if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
+        QProcess p;
+        p.setProgram("touch");
+        p.setArguments(QStringList()<<"-h"<<m_info->filePath());
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+        p.startDetached();
+    #else
+        p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
+    #endif
+        p.waitForFinished(-1);
+    }
 }
 
 void BasicPropertiesPage::chooseFileIcon()
