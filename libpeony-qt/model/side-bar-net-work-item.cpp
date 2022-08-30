@@ -379,7 +379,25 @@ void SideBarNetWorkItem::slot_updateRemoteServer(const QString& server,bool add)
        addItemForUri(server, "network-workgroup-symbolic", server, this, m_model, true);
 
    }else{
-       removeItemForUri(server);
+       //删除时如果已挂载则先卸载后删除
+       for (auto item : *m_children){
+           if(item->uri()!= server)
+               continue;
+           QUrl serverUrl = QUrl(server);
+           if(!item->isMounted() ||"smb"==serverUrl.scheme().toLower() && serverUrl.path().isEmpty()){/* 例如：smb://127.0.0.1:445 */
+               removeItemForUri(server);
+           }else{/* sftp、ftp */
+               item->unmount();
+               m_canDeleteServer = true;
+               connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, [=](const QString& server){
+                   if(m_canDeleteServer){
+                       removeItemForUri(server);
+                       m_canDeleteServer = false;
+                   }
+               });
+           }
+           break;
+       }
    }
 }
 

@@ -134,6 +134,7 @@ private:
     SideBarNetWorkItem *m_parentItem  = nullptr;
     std::shared_ptr<FileWatcher> m_watcher = nullptr;
     FileEnumerator* m_enumerator = nullptr;
+    bool m_canDeleteServer = false; /* 用于区分删除和只卸载 */
 };
 
 class SharedDirectoryInfoThread : public QThread {
