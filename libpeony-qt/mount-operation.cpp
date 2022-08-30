@@ -82,7 +82,7 @@ void MountOperation::start()
             g_mount_operation_set_domain(m_op, dlg->domain().toUtf8().constData());
             g_mount_operation_set_anonymous(m_op, dlg->anonymous());
             //TODO: when FileEnumerator::prepare(), trying mount volume without password dialog first.
-            g_mount_operation_set_password_save(m_op, dlg->savePassword()? G_PASSWORD_SAVE_FOR_SESSION: G_PASSWORD_SAVE_NEVER);
+            g_mount_operation_set_password_save(m_op,/* dlg->savePassword()? G_PASSWORD_SAVE_FOR_SESSION:*/ G_PASSWORD_SAVE_NEVER);
         }
         if (code == QDialog::Rejected) {
             cancel();
@@ -176,7 +176,7 @@ void MountOperation::ask_password_cb(GMountOperation *op,
         // try get password and login once, if not successed, show message and
         // require input password again.
         if (!p_this->m_dlg->password().isEmpty()) {
-            p_this->m_dlg->m_reg_usr_passwd_editor->setText(nullptr);
+            //p_this->m_dlg->m_reg_usr_passwd_editor->setText(nullptr);/* 去掉，因为记住密码时需要保存用户名密码 */
             g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
             return;
         } else {
@@ -188,7 +188,7 @@ void MountOperation::ask_password_cb(GMountOperation *op,
                 g_mount_operation_set_password(op, dlg->password().toUtf8().constData());
                 g_mount_operation_set_domain(op, dlg->domain().toUtf8().constData());
                 g_mount_operation_set_anonymous(op, dlg->anonymous());
-                g_mount_operation_set_password_save(op, dlg->savePassword()? G_PASSWORD_SAVE_FOR_SESSION: G_PASSWORD_SAVE_NEVER);
+                g_mount_operation_set_password_save(op, /*dlg->savePassword()? G_PASSWORD_SAVE_FOR_SESSION: */G_PASSWORD_SAVE_NEVER);
                 g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
                 return;
             }

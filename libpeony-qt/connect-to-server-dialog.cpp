@@ -223,6 +223,9 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
         for (auto uri = uriList.constBegin(); uri != uriList.constEnd(); ++uri) {
             QUrl url(uri.key ());
             if ("" != uri.key ()) {
+                if("smb"==url.scheme().toLower() && !url.path().isEmpty()){/* samba的子项不添加到个人收藏服务器中 */
+                    continue;
+                }
                 QString urit = uri.key () == url.toDisplayString() ? uri.key() : url.toDisplayString();
                 QListWidgetItem* item = new QListWidgetItem;
                 item->setText(urit);
@@ -272,7 +275,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
         if ("" != uri()) {
             accept();
         }
-
+        /* 连接smb时，最外层连接时不会弹出登录框，如需添加到个人收藏服务器和侧边栏则需如下代码 */
+        QUrl url(uri());
+        if("smb"==url.scheme().toLower() && url.path().isEmpty()){/* smb最外层uri，无挂载卸载能力，例如：smb://127.0.0.1:445 */
+            addUri(uri());
+        }
         Q_UNUSED(checked);
     });
 }
@@ -575,29 +582,26 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
             }
         }
 
-        if("smb"==type.toLower() && !url.path().isEmpty()){/* samba的子项挂载登录成功 */
-            GlobalSettings::getInstance()->slot_updateRemoteServer(url.toString(), true);
-            return;
-        }
-
         QString remoteUri= type.append("://").append(url.host()).append(":").append(portStr);
         QMap<QString, QVariant> userInfo;
         if (!uriList.contains (remoteUri)) {
-            if (savePassword () && !m_reg_usr_passwd_editor->text().isEmpty ()) {
-                userInfo.insert (m_reg_usr_name_editor->currentText (), passwdEncode (m_reg_usr_passwd_editor->text().toUtf8 ()));
+            if (savePassword () && !password().isEmpty ()) {
+                userInfo.insert (user(), passwdEncode (password().toUtf8 ()));
             }
-
             uriList.insert (remoteUri, userInfo);
             GlobalSettings::getInstance()->slot_updateRemoteServer(remoteUri, true);
         } else {
             userInfo = uriList[remoteUri].toMap ();
-            if (savePassword ()  && !m_reg_usr_passwd_editor->text().isEmpty ()) {
-                userInfo[m_reg_usr_name_editor->currentText ()] = passwdEncode (m_reg_usr_passwd_editor->text().toUtf8 ());
-            } /*else {
-                if (userInfo.contains (m_reg_usr_name_editor->currentText ())) {
-                    userInfo.remove (m_reg_usr_name_editor->currentText ());
+            if (savePassword()){
+                if (!password().isEmpty ()) {
+                    userInfo[user()] = passwdEncode (password().toUtf8 ());
                 }
-            }*/
+            }else {
+                if (userInfo.contains(m_reg_usr_name_editor->currentText ())) {
+                    userInfo.remove(m_reg_usr_name_editor->currentText ());
+                }
+            }
+
             uriList[remoteUri] = userInfo;
         }
 
