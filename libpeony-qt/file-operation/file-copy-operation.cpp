@@ -165,6 +165,7 @@ fallback_retry:
             auto errWrapperPtr = GErrorWrapper::wrapFrom(err);
             int handle_type = prehandle(err);
             except.errorType = ET_GIO;
+            except.errorStr = tr("Create folder %1 failed: %2").arg(node->destBaseName()).arg(err->message);
             except.srcUri = m_current_src_uri;
             except.destDirUri = m_current_dest_dir_uri;
             except.op = FileOpCopy;
@@ -181,6 +182,9 @@ fallback_retry:
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
+                    if (handle_type != Cancel) {
+                        return;
+                    }
                 }
             }
             //handle.
