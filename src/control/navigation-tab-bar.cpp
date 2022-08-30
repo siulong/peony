@@ -127,12 +127,12 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         }
 
         //elide text if it is too long
-        if (displayName.length() > ELIDE_TEXT_LENGTH)
-        {
-            int  charWidth = fontMetrics().averageCharWidth();
-            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
-        }
-
+//        if (displayName.length() > ELIDE_TEXT_LENGTH)
+//        {
+//            int  charWidth = fontMetrics().averageCharWidth();
+//            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+//        }
+        setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabIcon(index, QIcon::fromTheme(iconName));
         setTabData(index, uri);
