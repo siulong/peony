@@ -817,6 +817,14 @@ fallback_retry:
             except.title = tr("Create file error");
             except.srcUri = m_current_src_uri;
             except.destDirUri = m_current_dest_dir_uri;
+
+            //fix bug#121093, paste deleted file issue
+            if (err->code == G_IO_ERROR_PERMISSION_DENIED) {
+                except.errorStr = tr("Cannot opening file, permission denied!");
+            }else if (err->code == G_IO_ERROR_NOT_FOUND) {
+                except.errorStr = tr("File:%1 was not found.").arg(except.srcUri);
+            }
+
             if (handle_type == Other) {
                 auto typeData = Invalid;
                 if (G_IO_ERROR_EXISTS == err->code) {

@@ -369,9 +369,11 @@ fallback_retry:
             except.errorStr = err->message;
             except.destDirUri = m_current_dest_dir_uri;
 
-            //
+            //fix bug#121093, paste deleted file issue
             if (err->code == G_IO_ERROR_PERMISSION_DENIED) {
                 except.errorStr = tr("Cannot opening file, permission denied!");
+            }else if (err->code == G_IO_ERROR_NOT_FOUND) {
+                except.errorStr = tr("File:%1 was not found.").arg(except.srcUri);
             }
 
             if (handle_type == Other) {
