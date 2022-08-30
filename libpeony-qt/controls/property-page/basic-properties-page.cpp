@@ -805,18 +805,42 @@ void BasicPropertiesPage::saveAllChange()
 
     if (m_readOnly) {
         mode_t mod = 0;
+        quint32 mode = 0;
         if(m_readOnly->isChecked()) {
             mod |= S_IRUSR;
             mod |= S_IRGRP;
             mod |= S_IROTH;
-        } else {
-            mod |= S_IRUSR;
-            mod |= S_IRGRP;
-            mod |= S_IROTH;
 
-            mod |= S_IWUSR;
-//            mod |= S_IWGRP;
-//            mod |= S_IWOTH;
+            g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
+            if (file) {
+                g_autoptr(GError) error = NULL;
+                g_autoptr(GFileInfo) info = g_file_query_info(file,
+                                                              "unix::mode",
+                                                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                                              nullptr,
+                                                              &error);
+                bool has_unix_mode = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                if (has_unix_mode) {
+                    mode = g_file_info_get_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                    auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
+                    if (metaInfo) {
+                        metaInfo->setMetaInfoInt(TEMP_PERMISSIONS, mode);
+                    }
+                }
+            }
+        } else {
+            auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
+            if (metaInfo && metaInfo->getMetaInfoInt(TEMP_PERMISSIONS)) {
+                mod = metaInfo->getMetaInfoInt(TEMP_PERMISSIONS);
+            } else {
+                mod |= S_IRUSR;
+                mod |= S_IRGRP;
+                mod |= S_IROTH;
+
+                mod |= S_IWUSR;
+//                mod |= S_IWGRP;
+//                mod |= S_IWOTH;
+            }
         }
         //FIX:如果该文件之前就是可执行，那么应该保留可执行权限
         if (m_info->canExecute())

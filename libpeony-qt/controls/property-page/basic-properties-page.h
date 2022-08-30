@@ -43,6 +43,8 @@
 #define CELL1M 1048576
 #define CELL1G 1073741824
 
+#define TEMP_PERMISSIONS    "temp-permissions"
+
 class QVBoxLayout;
 class QFormLayout;
 class QPushButton;
