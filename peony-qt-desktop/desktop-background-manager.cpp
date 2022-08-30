@@ -54,6 +54,10 @@ void DesktopBackgroundManager::initGSettings()
     setBackground();
     if (m_backgroundSettings) {
         connect(m_backgroundSettings, &QGSettings::changed, this, [=](const QString &key){
+           if (key == "pictureFilename") {
+                m_current_bg_path = m_backgroundSettings->get("pictureFilename").toString();
+                setAccountBackground();
+            }
             if (key == "pictureFilename" || key == "primaryColor" || key == "pictureOptions") {
                 switchBackground();
             }
@@ -171,7 +175,7 @@ void DesktopBackgroundManager::switchBackground()
 
     auto path = m_backgroundSettings->get("pictureFilename").toString();
     QString localPath = path;
-    if (! QFile::exists(path) && !localPath.isEmpty())
+    if (! QFile::exists(path))
         path = getAccountBackground();
 
     // try fix #124971
