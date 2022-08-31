@@ -590,7 +590,32 @@ void TabWidget::addNewConditionBar()
     QComboBox *classifyCombox = new QComboBox(optionBar);
     m_classify_list.append(classifyCombox);
     classifyCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
-    classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        double fontSize = fontSetting->get("systemFontSize").toDouble();
+        if(fontSize < 12){
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+        }else{
+            //最大字体最长字符串所需宽度
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+        }
+    }
+    else{
+        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+    }
+    //监听字体大小改变
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+            double fontSize = fontSetting->get("systemFontSize").toDouble();
+            if(fontSize < 12){
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+            }else{
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+            }
+        });
+    }
+
     auto classifyModel = new QStringListModel(optionBar);
     auto list = getCurrentClassify(index);
     classifyModel->setStringList(list);
