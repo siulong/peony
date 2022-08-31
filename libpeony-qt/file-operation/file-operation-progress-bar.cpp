@@ -463,7 +463,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
     QFontMetrics fontMetrics(font);
     QString display_name = strInfo;
     if(fontMetrics.width(strInfo) > 2*width) {
-        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width);
+        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
     }
     return display_name;
 
