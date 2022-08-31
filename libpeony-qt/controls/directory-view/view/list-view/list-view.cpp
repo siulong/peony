@@ -62,6 +62,8 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 
+#define LISTVIEW_ITEM_BORDER_RADIUS 6
+
 using namespace Peony;
 using namespace Peony::DirectoryView;
 
@@ -663,10 +665,12 @@ void ListView::startDrag(Qt::DropActions flags)
         pixmap.fill(Qt::transparent);
         pixmap.setDevicePixelRatio(scale);
         QPainter painter(&pixmap);
+        quint64 count = 0;
         for (auto index : indexes) {
             painter.save();
             painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
             //painter.translate(-rect.boundingRect().topLeft());
+            painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             QStyleOptionViewItem opt = viewOptions();
             auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
             viewItemDelegate->initIndexOption(&opt, index);
@@ -675,6 +679,23 @@ void ListView::startDrag(Qt::DropActions flags)
             opt.rect.moveTo(0, 0);
             opt.state |= QStyle::State_Selected;
             painter.setOpacity(0.8);
+
+            count++;
+            if(count == 1){
+                QPainterPath leftRoundedRegion;
+                leftRoundedRegion.setFillRule(Qt::WindingFill);
+                leftRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                leftRoundedRegion.addRect(opt.rect.adjusted(LISTVIEW_ITEM_BORDER_RADIUS, 0, 0, 0));
+                painter.setClipPath(leftRoundedRegion);
+            }else if(count == 4){
+                QPainterPath rightRoundedRegion;
+                rightRoundedRegion.setFillRule(Qt::WindingFill);
+                rightRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                rightRoundedRegion.addRect(opt.rect.adjusted(0, 0, -LISTVIEW_ITEM_BORDER_RADIUS, 0));
+                painter.setClipPath(rightRoundedRegion);
+                count = 0;
+            }
+
             QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
             painter.restore();
         }
