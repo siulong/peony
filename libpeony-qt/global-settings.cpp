@@ -92,12 +92,20 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        QString timeValue = m_control_center_plugin->get("hoursystem").toString();
-        QString dateValue = m_control_center_plugin->get("date").toString();
-        m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME, timeValue);
-        m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE, dateValue);
-        setTimeFormat(timeValue);
-        setDateFormat(dateValue);
+        if (m_control_center_plugin->keys().contains("hoursystem")) {
+            QString timeValue = m_control_center_plugin->get("hoursystem").toString();
+            m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME, timeValue);
+            setTimeFormat(timeValue);
+        } else {
+            setTimeFormat("24");
+        }
+        if (m_control_center_plugin->keys().contains("date")) {
+            QString dateValue = m_control_center_plugin->get("date").toString();
+            m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE, dateValue);
+            setDateFormat(dateValue);
+        } else {
+            setDateFormat("cn");
+        }
     }
 
     m_cache.insert(SHOW_TRASH_DIALOG, true);
@@ -169,10 +177,12 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        if (m_gsettings->get(PERSONAL_EFFECT_ENABLE).toBool()) {
-            qreal opacity = m_gsettings->get(PERSONAL_EFFECT_TRANSPARENCY).toReal() * 100;
-            m_cache.remove(SIDEBAR_BG_OPACITY);
-            m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+        if (m_gsettings->keys().contains(PERSONAL_EFFECT_ENABLE)) {
+            if (m_gsettings->get(PERSONAL_EFFECT_ENABLE).toBool()) {
+                qreal opacity = m_gsettings->get(PERSONAL_EFFECT_TRANSPARENCY).toReal() * 100;
+                m_cache.remove(SIDEBAR_BG_OPACITY);
+                m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+            }
         }
     }
 
