@@ -393,6 +393,10 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
 //            return;
 //        }
     }
+    if(e->button() == Qt::RightButton){
+        e->accept();
+        return;
+    }
     QWidget::mousePressEvent(e);
 }
 

@@ -245,6 +245,10 @@ void DesktopIndexWidget::mousePressEvent(QMouseEvent *event)
 //            return;
 //        }
     }
+    if(event->button() == Qt::RightButton){
+        event->accept();
+        return;
+    }
     QWidget::mousePressEvent(event);
 }
 
