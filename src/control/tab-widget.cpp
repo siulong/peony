@@ -1344,7 +1344,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             auto realUri = uri;
             if (info->isSymbolLink() && info->symlinkTarget().length() >0 && uri.startsWith("file://")) {
                 realUri = "file://" + info->symlinkTarget();
-            } else if (!info->isDir()) {
+            } else if (!info->isDir() && !realUri.startsWith("smb://") ) {
                 realUri = Peony::FileUtils::getParentUri(uri);
             }
 
