@@ -72,6 +72,11 @@
         <translation>格式不正确。</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="593"/>
+        <source>Can not found newfs_udf tool.</source>
+        <translation>未找到newfs_udf工具。</translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="615"/>
         <source>preparation failed before DVD-RW udf format.</source>
         <translation>DVD-RW udf 格式之前的准备失败。</translation>

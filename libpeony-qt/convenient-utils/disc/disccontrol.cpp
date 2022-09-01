@@ -557,10 +557,11 @@ bool DiscControl::formatUdfSync(QString discLabel){
     qDebug()<<"["<<mDevice<<"] udf format"<<(formatRet?"successed.":"failed.");
 
     //4. 弹出光盘
-    if(formatRet)                               //成功则立即弹出，失败后的行为由调用者自己决定
+    if(formatRet){                               //成功则立即弹出，失败后的行为由调用者自己决定
         discEjectSync();                        //如：失败后可重新尝试？或者弹出？
+        formatUdfFinished(true, errInfo);		//udf格式化成功
+    }
 
-	formatUdfFinished(true, errInfo);			//udf格式化成功
     return formatRet;
 }
 
@@ -569,15 +570,17 @@ bool DiscControl::formatUdfSync(QString discLabel){
 */
 bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1){
     QString output1;
-	QString errInfo;
+    QString errInfo;
     QStringList arg1;
     QProcess formatUdf1;
+    QProcess::ProcessError formatErr;
 
     arg1<<"-P"<<udfLabel1<<"-L"<<udfLabel1<<mDevice;
     formatUdf1.setProcessChannelMode(QProcess::MergedChannels);
     formatUdf1.start("newfs_udf", arg1);
     formatUdf1.waitForFinished(-1);
     output1 = formatUdf1.readAll();
+    formatErr = formatUdf1.error();
     formatUdf1.close();
 
     if(output1.contains("Disc is not properly formatted")){
@@ -585,6 +588,11 @@ bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1){
 		formatUdfFinished(false, errInfo);
         return false;
 	}
+    if(QProcess::FailedToStart == formatErr){
+        errInfo = tr("Can not found newfs_udf tool.");
+        formatUdfFinished(false, errInfo);
+        return false;
+    }
 
     return true;
 }
