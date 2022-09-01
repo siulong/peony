@@ -82,6 +82,9 @@ public:
     static FileOperation *moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action = Qt::MoveAction);
 
     static FileOperation *clearRecycleBinWithDialog(const QStringList &list);
+
+    static FileOperation *clearRecycleBinWithDialog(const QStringList &list, QWidget *parent);/* 增加一个重装接口,可设置父窗口，link to bug#22692 */
+
 private:
     FileOperationUtils();
 };

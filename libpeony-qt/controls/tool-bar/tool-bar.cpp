@@ -215,7 +215,7 @@ void ToolBar::init()
     //trash
     m_clean_trash_action = addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean Trash"), [=]() {
         auto uris = m_top_window->getCurrentAllFileUris();
-        FileOperationUtils::clearRecycleBinWithDialog(uris);
+        FileOperationUtils::clearRecycleBinWithDialog(uris, m_top_window);
     });
 
     m_restore_action = addAction(QIcon::fromTheme("view-refresh-symbolic"), tr("Restore"), [=]() {

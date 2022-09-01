@@ -1618,7 +1618,7 @@ void MainWindow::cleanTrash()
     auto uris = getCurrentAllFileUris();
     if (uris.count() >0)
     {
-        auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
+        auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
         if(removeop){
             connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
                      Peony::SoundEffect::getInstance()->recycleBinClearMusic();
@@ -1627,9 +1627,10 @@ void MainWindow::cleanTrash()
         }
     }
     else
-    {
-        QMessageBox::information(nullptr, tr("Tips info"),
-                                 tr("Trash has no file need to be cleaned."));
+    {     /* 由于QMessageBox的setParent还不支持，暂先注释处理，link to bug#22692 【回收站】清空时，其他工作区的文件管理器会转到当前工作区 */
+//        QMessageBox::information(nullptr, tr("Tips info"),
+//                                 tr("Trash has no file need to be cleaned."));
+
     }
 }
 

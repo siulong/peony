@@ -1070,7 +1070,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
                 auto uris = m_top_window->getCurrentAllFileUris();
-                Peony::FileOperationUtils::clearRecycleBinWithDialog(uris);
+                Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
 
 //                AudioPlayManager::getInstance()->playWarningAudio();
 //                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
