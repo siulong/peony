@@ -739,8 +739,12 @@ gboolean Format_Dialog::is_iso(const gchar *device_path){
     UDisksBlock *block;
     client = udisks_client_new_sync(NULL,NULL);
     object = get_object_from_block_device(client,device_path);
-    block = udisks_object_get_block(object);
 
+    //fix format U disk crash issue
+    if (! object)
+        return FALSE;
+
+    block = udisks_object_get_block(object);
 
     if(g_strcmp0(udisks_block_get_id_type(block),"iso9660")==0)
     {
@@ -750,7 +754,6 @@ gboolean Format_Dialog::is_iso(const gchar *device_path){
         g_clear_object(&client);
         return TRUE;
     }
-
 
     g_object_unref(object);
     g_object_unref(block);
