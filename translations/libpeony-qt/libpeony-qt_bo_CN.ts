@@ -62,6 +62,10 @@
         <source>preparation failed before DVD-RW udf format.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Can not found newfs_udf tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileLabelModel</name>
