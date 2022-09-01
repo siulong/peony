@@ -232,6 +232,9 @@ QList<QAction *> CreateSharedFileLinkMenuPlugin::menuActions(MenuPluginInterface
             {
                 QAction* createLinkToDesktop = new QAction(QIcon::fromTheme("emblem-link-symbolic"), tr("Create Link to Desktop"), nullptr);
                 auto info = FileInfo::fromUri(selectionUris.first());
+                if (!info->isDir()) {
+                    return l;
+                }
                 QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
                 QString originPath = QUrl(selectionUris.first()).path();
                 //special type mountable, or isVirtual then return
