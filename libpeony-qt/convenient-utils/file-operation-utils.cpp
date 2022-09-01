@@ -259,9 +259,14 @@ FileOperation *FileOperationUtils::moveWithAction(const QStringList &srcUris, co
     return op;
 }
 
-FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list = QStringList())
+FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list)
 {
-    FileOperationInternalDialog questionbox(nullptr);
+    return clearRecycleBinWithDialog(list, nullptr);
+}
+
+FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list, QWidget *parent)
+{
+    FileOperationInternalDialog questionbox((QDialog*)parent);
     auto okButton = questionbox.addButton(QObject::tr("OK"));
     questionbox.connect(okButton, &QPushButton::clicked, &questionbox, [&]{
         questionbox.accept();
