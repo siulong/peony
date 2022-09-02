@@ -1011,19 +1011,19 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
         }
     }
 
+    //if in search mode and key is not null, need quit search mode, bug#93528
+    //清空搜索关键字时，不应该退出搜索状态，其他情况下，跳转非搜索路径，需要退出搜索
+    if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
+    {
+        m_is_search = false;
+        m_header_bar->searchButtonClicked();
+    }
+
     if (getCurrentUri() == realUri) {
         if (!force) {
             refresh();
             return;
         }
-    }
-
-    //if in search mode and key is not null, need quit search mode
-    if (m_is_search && m_last_key != "" && !uri.startsWith("search://"))
-    {
-        m_tab->updateSearchBar(false);
-        m_is_search = false;
-        m_header_bar->startEdit(false);
     }
 
     locationChangeStart();
@@ -1057,8 +1057,11 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
     {
         //qDebug() << "updateSearch needUpdate:" <<m_last_key<<m_last_search_path;
         forceStopLoading();
-        if (m_last_key == "")
+        if (m_last_key == ""){
+            m_is_clear_serach = true;
             goToUri(m_last_search_path, true);
+            m_is_clear_serach = false;
+        }
         else
         {
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
@@ -1522,11 +1525,7 @@ void MainWindow::initUI(const QString &uri)
             maximizeOrRestore();
     });
     connect(views, &TabWidget::closeWindowRequest, this, &QWidget::close);
-    connect(m_header_bar, &HeaderBar::updateSearchRequest, this, [=](bool showSearch)
-    {
-        m_tab->updateSearchBar(showSearch);
-        m_is_search = showSearch;
-    });
+    //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
     connect(m_header_bar, &HeaderBar::updateSearch, this, &MainWindow::updateSearch);
 
     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
@@ -1611,6 +1610,13 @@ void MainWindow::initUI(const QString &uri)
             setTabOrder(widget, m_focus_list.first());
         }
     }
+}
+
+void MainWindow::updateSearchStatus(bool showSearch)
+{
+    m_tab->updateSearchBar(showSearch);
+    m_header_bar->setSearchMode(showSearch);
+    m_is_search = showSearch;
 }
 
 void MainWindow::cleanTrash()
