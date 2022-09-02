@@ -899,7 +899,12 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             m_view->viewport()->repaint();
         }
 
-        if (!m_view->indexAt(pos).isValid() && !m_view->indexWidget(m_view->currentIndex())->geometry().contains(pos))
+        bool indexWidgetContainsPos = false;
+        auto indexWidget = m_view->indexWidget(m_view->currentIndex());
+        if (indexWidget) {
+            indexWidgetContainsPos = indexWidget->geometry().contains(pos);
+        }
+        if (!m_view->indexAt(pos).isValid() && !indexWidgetContainsPos)
             m_view->clearSelection();
 
         //NOTE: we have to ensure that we have cleared the
