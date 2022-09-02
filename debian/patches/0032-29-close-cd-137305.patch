@@ -1,0 +1,544 @@
+From: zhaikangning <857458455@qq.com>
+Date: Fri, 2 Sep 2022 08:23:26 +0000
+Subject: =?utf-8?b?ITI5IGNsb3NlLWNkIzEzNzMwNSDjgJDmlofku7bnrqHnkIblmajjgJE=?=
+ =?utf-8?b?5YWx5Lqr5paH5Lu26L+e5o6l5oiQ5Yqf5ZCO5peg5by55Ye65qCH6K+GIE1lcmdl?=
+ =?utf-8?b?IHB1bGwgcmVxdWVzdCAhMjkgZnJvbSB4aWFuZ3dlbmppZS9maXgtc21iLXNlcnZp?=
+ =?utf-8?b?Y2UtaXNzdWU=?=
+
+---
+ libpeony-qt/connect-to-server-dialog.cpp     |   9 +-
+ libpeony-qt/file-utils.cpp                   |   8 ++
+ libpeony-qt/file-utils.h                     |   1 +
+ libpeony-qt/model/side-bar-net-work-item.cpp | 207 ++++++++++++++++++---------
+ libpeony-qt/model/side-bar-net-work-item.h   |  20 ++-
+ libpeony-qt/volumeManager.cpp                |  23 ++-
+ src/control/tab-widget.cpp                   |   7 +-
+ src/control/tab-widget.h                     |   2 +-
+ 8 files changed, 195 insertions(+), 82 deletions(-)
+
+diff --git a/libpeony-qt/connect-to-server-dialog.cpp b/libpeony-qt/connect-to-server-dialog.cpp
+index 3adabe9..1b08f3e 100644
+--- a/libpeony-qt/connect-to-server-dialog.cpp
++++ b/libpeony-qt/connect-to-server-dialog.cpp
+@@ -522,8 +522,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
+ 
+     connect(m_btn_ok, &QPushButton::clicked, [=] () {
+         accept();
+-        QUrl url(m_remoteIP);
+-        syncRemoteServer(url);
++        //QUrl url(m_remoteIP);
++        //syncRemoteServer(url);
+     });
+ }
+ 
+@@ -575,6 +575,11 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
+             }
+         }
+ 
++        if("smb"==type.toLower() && !url.path().isEmpty()){/* samba的子项挂载登录成功 */
++            GlobalSettings::getInstance()->slot_updateRemoteServer(url.toString(), true);
++            return;
++        }
++
+         QString remoteUri= type.append("://").append(url.host()).append(":").append(portStr);
+         QMap<QString, QVariant> userInfo;
+         if (!uriList.contains (remoteUri)) {
+diff --git a/libpeony-qt/file-utils.cpp b/libpeony-qt/file-utils.cpp
+index e25332c..023d69e 100644
+--- a/libpeony-qt/file-utils.cpp
++++ b/libpeony-qt/file-utils.cpp
+@@ -1041,6 +1041,14 @@ QString FileUtils::getFileSystemType(QString uri)
+     return fsType;
+ }
+ 
++bool FileUtils::isRemoteServerUri(const QString &uri)
++{
++    if(uri.startsWith("smb://") || uri.startsWith("ftp://") || uri.startsWith("sftp://"))
++        return true;
++
++    return false;
++}
++
+ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
+ {
+     QString iconName;
+diff --git a/libpeony-qt/file-utils.h b/libpeony-qt/file-utils.h
+index 715b08a..03cb1e9 100644
+--- a/libpeony-qt/file-utils.h
++++ b/libpeony-qt/file-utils.h
+@@ -104,6 +104,7 @@ public:
+     static QString getUnixDevice(const QString &uri);
+     static quint64 getFileSystemSize(QString uri);
+     static QString getFileSystemType(QString uri);
++    static bool isRemoteServerUri(const QString &uri);
+ 
+     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
+ private:
+diff --git a/libpeony-qt/model/side-bar-net-work-item.cpp b/libpeony-qt/model/side-bar-net-work-item.cpp
+index ec6e864..8047dda 100644
+--- a/libpeony-qt/model/side-bar-net-work-item.cpp
++++ b/libpeony-qt/model/side-bar-net-work-item.cpp
+@@ -27,18 +27,19 @@
+ #include "file-info-job.h"
+ #include "connect-to-server-dialog.h"
+ #include "sync-thread.h"
+-#include "volume-manager.h"
+-//#include "volumeManager.h"
++#include "volumeManager.h"
+ #include "gobject-template.h"
+ #include "file-utils.h"
+ #include "libnotify/notification.h"
+ #include <sys/stat.h>
+ #include <libnotify/notify.h>
+ #include "file-watcher.h"
++#include "file-enumerator.h"
+ 
+ #include <QMessageBox>
+ #include <QDebug>
+ #include <QProcess>
++#include <QUrl>
+ 
+ using namespace Peony;
+ 
+@@ -47,7 +48,7 @@ void notifyUser(QString notifyContent);
+ SideBarNetWorkItem::SideBarNetWorkItem(const QString &uri,
+                                        const QString &iconName,
+                                        const QString &displayName,
+-                                       SideBarAbstractItem *parentItem,
++                                       SideBarNetWorkItem *parentItem,
+                                        SideBarModel *model,
+                                        QObject *parent) :
+         SideBarAbstractItem(model, parent),
+@@ -57,13 +58,19 @@ SideBarNetWorkItem::SideBarNetWorkItem(const QString &uri,
+     m_iconName = iconName;
+     m_displayName = displayName;
+ 
+-    auto userShareManager = UserShareInfoManager::getInstance();
+-    connect(userShareManager, &UserShareInfoManager::signal_addSharedFolder, this, &SideBarNetWorkItem::slot_addSharedFolder);
+-    connect(userShareManager, &UserShareInfoManager::signal_deleteSharedFolder, this, &SideBarNetWorkItem::slot_deleteSharedFolder);
+-    connect(GlobalSettings::getInstance(), &GlobalSettings::signal_updateRemoteServer,this,&SideBarNetWorkItem::slot_updateRemoteServer);
+     qRegisterMetaType<QHash<QString,QString> >("QHash<QString,QString>");
+ }
+ 
++SideBarNetWorkItem::~SideBarNetWorkItem()
++{
++    if(m_enumerator)
++    {
++        m_enumerator->cancel();
++        delete m_enumerator;
++        m_enumerator = nullptr;
++    }
++}
++
+ QString SideBarNetWorkItem::uri()
+ {
+     return m_uri;
+@@ -131,7 +138,7 @@ static void unmount_finished(GMount *mount, GAsyncResult *result, QString *mount
+ 
+     } else {
+         /* 卸载完成信息提示 */
+-        Q_EMIT Peony::VolumeManager::getInstance()->fileUnmounted(*mountPath);
++        Q_EMIT Experimental_Peony::VolumeManager::getInstance()->signal_unmountFinished(*mountPath);
+         QString unmountNotify = QObject::tr("Data synchronization is complete,the device has been unmount successfully!");
+         SyncThread::notifyUser(unmountNotify);
+     }
+@@ -146,6 +153,15 @@ void SideBarNetWorkItem::realUnmount()
+     GFile *gFile= g_file_new_for_uri(this->uri().toUtf8().constData());
+     auto mountPath = new QString;
+     *mountPath = m_uri;
++
++    /* 远程服务进入内部目录后卸载,link to bug#98623 */
++    QUrl url(m_uri);
++    if(url.port() > 0)
++        *mountPath = m_uri.section(":",0,-2);
++    if(!url.path().isEmpty() && m_uri.endsWith("/"))
++        *mountPath = m_uri.section("/",0,-2);
++    //end
++
+     GMount *gMount = g_file_find_enclosing_mount(gFile, nullptr, nullptr);
+     g_mount_unmount_with_operation(gMount,
+                     G_MOUNT_UNMOUNT_NONE,
+@@ -199,6 +215,19 @@ void SideBarNetWorkItem::findChildren()
+         querySharedFolders();
+     }
+ 
++    /* 设备动态增减处理 */
++    if("network:///" == m_uri && m_parentItem == nullptr){
++        auto userShareManager = UserShareInfoManager::getInstance();
++        connect(userShareManager, &UserShareInfoManager::signal_addSharedFolder, this, &SideBarNetWorkItem::slot_addSharedFolder);
++        connect(userShareManager, &UserShareInfoManager::signal_deleteSharedFolder, this, &SideBarNetWorkItem::slot_deleteSharedFolder);
++        connect(GlobalSettings::getInstance(), &GlobalSettings::signal_updateRemoteServer,this,&SideBarNetWorkItem::slot_updateRemoteServer, Qt::UniqueConnection);
++
++        /* samba的子项 */
++        auto volumeManager = Experimental_Peony::VolumeManager::getInstance();
++        connect(volumeManager, &Experimental_Peony::VolumeManager::mountAdd, this, &SideBarNetWorkItem::slot_serverMount, Qt::UniqueConnection);
++        connect(volumeManager, &Experimental_Peony::VolumeManager::mountRemove, this, &SideBarNetWorkItem::slot_unmountedRemoteServerCallBack, Qt::UniqueConnection);
++    }
++
+     /* 计算机视图卸载时，侧边栏item状态也要响应 */
+     this->initWatcher();
+     this->m_watcher->setMonitorChildrenChange();
+@@ -212,24 +241,53 @@ void SideBarNetWorkItem::findChildren()
+     this->startWatcher();
+ }
+ 
++void SideBarNetWorkItem::getMountedServers()
++{
++    /* 枚举操作 */
++    if(!m_enumerator)
++        m_enumerator= new FileEnumerator();
++    else {
++        m_enumerator->cancel();
++        m_enumerator->deleteLater();
++        m_enumerator = new FileEnumerator();
++    }
++    m_enumerator->setEnumerateDirectory("computer:///");
++    connect(m_enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed){
++        if(!successed)
++            return;
++
++        auto infos = m_enumerator->getChildren();
++        if (infos.isEmpty()) {
++            return;
++        }
++
++        for (auto info: infos)
++        {
++            /* 更新fileinfo */
++            FileInfoJob job(info);
++            job.querySync();
++
++            auto targetUri = FileUtils::getTargetUri(info->uri());
++            //smb server
++            if(targetUri.startsWith("smb://")){
++                addItemForUri(targetUri, "network-workgroup-symbolic", info->displayName(), this, m_model, true);
++            }
++        }
++    });
++    m_enumerator->enumerateAsync();
++}
++
+ void SideBarNetWorkItem::findRemoteServers()
+ {
+     if (m_parentItem == nullptr) {
++        /* 获取已经挂载的远程服务 */
++        getMountedServers();
++
+         //获取连接过的服务器
+         QMap <QString, QVariant> remoteServer = GlobalSettings::getInstance()->getValue(REMOTE_SERVER_REMOTE_IP).toMap ();
+-
+-        for (const QString& remoteServer : remoteServer.keys ()) {
++        for (const QString& remoteServer : remoteServer.keys()) {
+             if (!remoteServer.isEmpty()) {
+-
+-                SideBarNetWorkItem *item = new SideBarNetWorkItem(remoteServer,
+-                                                                  "network-workgroup-symbolic",
+-                                                                  remoteServer,
+-                                                                  this,
+-                                                                  m_model, this);
+-                item->m_isVolume = true;
+-                m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
+-                m_children->append(item);
+-                m_model->endInsertRows();
++                addItemForUri(remoteServer, "network-workgroup-symbolic", remoteServer, this, m_model, true);
+             }
+         }
+     }
+@@ -251,11 +309,7 @@ void SideBarNetWorkItem::querySharedFolders()
+             QString sharePath=iter.value();
+             QString shareName=iter.key();
+             if (!sharePath.isEmpty()) {
+-                SideBarNetWorkItem *item = new SideBarNetWorkItem("file://" + sharePath,"folder",
+-                                                                  shareName,this,m_model);
+-                m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
+-                m_children->append(item);
+-                m_model->endInsertRows();
++                addItemForUri("file://" + sharePath,"folder", shareName, this, m_model);
+             }
+         }
+     });
+@@ -263,73 +317,86 @@ void SideBarNetWorkItem::querySharedFolders()
+     thread->start();
+ }
+ 
+-void SideBarNetWorkItem::slot_addSharedFolder(const ShareInfo &shareInfo, bool successed)
++void SideBarNetWorkItem::addItemForUri(const QString &uri, const QString &iconName, const QString &displayName, SideBarNetWorkItem *parentItem,
++                                      SideBarModel *model, bool isVolume, QObject *parent)
+ {
+-    if (!successed)
+-        return;
+-
+-    if (!shareInfo.originalPath.isEmpty()) {
+-        SideBarNetWorkItem *item = new SideBarNetWorkItem("file://" + shareInfo.originalPath,
+-                                                          "folder",
+-                                                          shareInfo.name,
+-                                                          this,
+-                                                          m_model, this);
+-        m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
+-        m_children->append(item);
+-        m_model->endInsertRows();
++    /* 防止一个远程服务器多次添加 */
++    for (auto& item : *m_children) {
++        if (FileUtils::urlDecode(item->uri()) == FileUtils::urlDecode(uri)) {
++            return;
++        }
+     }
+-    return;
++
++    SideBarNetWorkItem *item = new SideBarNetWorkItem(uri, iconName, displayName, parentItem, model, parent);
++    item->m_isVolume = isVolume;
++    m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
++    m_children->append(item);
++    m_model->endInsertRows();
++    qDebug()<<"add item for uri "<<FileUtils::urlDecode(uri);
++
+ }
+ 
+-void SideBarNetWorkItem::slot_deleteSharedFolder(const QString& originalPath, bool successed)
++void SideBarNetWorkItem::removeItemForUri(const QString uri)
+ {
+-    if(!successed)
+-        return;
+     for (auto item : *m_children){
+-        if(item->uri()!="file://" + originalPath)
++        if(FileUtils::urlDecode(item->uri()) != FileUtils::urlDecode(uri))
+             continue;
+         int index = m_children->indexOf(item);
+         m_model->beginRemoveRows(firstColumnIndex(), index, index);
+         m_children->removeOne(item);
+         m_model->endRemoveRows();
+         item->deleteLater();
++        qDebug()<<"remove item for uri:"<<FileUtils::urlDecode(uri);
+         break;
+     }
++}
++
++
++void SideBarNetWorkItem::slot_addSharedFolder(const ShareInfo &shareInfo, bool successed)
++{
++    if (!successed)
++        return;
++
++    if (!shareInfo.originalPath.isEmpty()) {
++        addItemForUri("file://" + shareInfo.originalPath, "folder", shareInfo.name, this, m_model);
++    }
++    return;
++}
++
++void SideBarNetWorkItem::slot_deleteSharedFolder(const QString& originalPath, bool successed)
++{
++    if(!successed)
++        return;
++
++    removeItemForUri("file://" + originalPath);
+     return;
+ }
+ 
+ void SideBarNetWorkItem::slot_updateRemoteServer(const QString& server,bool add)
+ {
++
+    if(add){
+-       /* 防止一个远程服务器多次添加 */
+-       for (auto item : *m_children) {
+-           if (item->uri() == server) {
+-               return;
+-           }
+-       }
+-       SideBarNetWorkItem *item = new SideBarNetWorkItem(server,
+-                                                         "network-workgroup-symbolic",
+-                                                         server,
+-                                                         this,
+-                                                         m_model, this);
+-       item->m_isVolume = true;
+-       m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
+-       m_children->append(item);
+-       m_model->endInsertRows();
+-    }
+-   else{
+-       for (auto item : *m_children){
+-           if(item->uri()!= server)
+-               continue;
+-           int index = m_children->indexOf(item);
+-           m_model->beginRemoveRows(firstColumnIndex(), index, index);
+-           m_children->removeOne(item);
+-           m_model->endRemoveRows();
+-           item->deleteLater();
+-           break;
++       addItemForUri(server, "network-workgroup-symbolic", server, this, m_model, true);
+ 
++   }else{
++       removeItemForUri(server);
+    }
+-   }
++}
++
++void SideBarNetWorkItem::slot_unmountedRemoteServerCallBack(const QString &server)
++{
++    QUrl serverUrl = QUrl(server);
++    if("smb"==serverUrl.scheme().toLower() && !serverUrl.path().isEmpty()){/* samba的子项卸载成功后需从侧边栏上移除 */
++        removeItemForUri(server);
++    }
++}
++
++void SideBarNetWorkItem::slot_serverMount(const Experimental_Peony::Volume &volume)
++{
++    QUrl serverUrl = QUrl(volume.mountPoint());
++    if("smb"==serverUrl.scheme().toLower() && !serverUrl.path().isEmpty()){/* samba的子项挂载成功后需添加到侧边栏 */
++        addItemForUri(volume.mountPoint(), "network-workgroup-symbolic", volume.name(), this, m_model, true);
++    }
+ }
+ 
+ void SideBarNetWorkItem::initWatcher()
+diff --git a/libpeony-qt/model/side-bar-net-work-item.h b/libpeony-qt/model/side-bar-net-work-item.h
+index aed025c..7301858 100644
+--- a/libpeony-qt/model/side-bar-net-work-item.h
++++ b/libpeony-qt/model/side-bar-net-work-item.h
+@@ -26,6 +26,7 @@
+ #include "peony-core_global.h"
+ #include "side-bar-abstract-item.h"
+ #include "usershare-manager.h"
++#include "volumeManager.h"
+ 
+ #include <QModelIndex>
+ #include <QThread>
+@@ -36,6 +37,7 @@ namespace Peony {
+ class SideBarModel;
+ class SharedDirectorInfoThread;
+ class FileWatcher;
++class FileEnumerator;
+ 
+ class PEONYCORESHARED_EXPORT SideBarNetWorkItem : public SideBarAbstractItem
+ {
+@@ -45,10 +47,12 @@ public:
+     explicit SideBarNetWorkItem(const QString &uri,
+                                 const QString &iconName,
+                                 const QString &displayName,
+-                                SideBarAbstractItem *parentItem,
++                                SideBarNetWorkItem *parentItem,
+                                 SideBarModel *model,
+                                 QObject *parent = nullptr);
+ 
++    virtual ~SideBarNetWorkItem();
++
+     Type type() override
+     {
+         return SideBarAbstractItem::NetWorkItem;
+@@ -104,13 +108,22 @@ public:
+ 
+     void clearChildren() override;
+ 
++    void getMountedServers();
+     void findRemoteServers();
+     void querySharedFolders();
+ 
+-public Q_SLOTS:
++private:
++    void addItemForUri(const QString &uri, const QString &iconName, const QString &displayName, SideBarNetWorkItem *parentItem,
++                      SideBarModel *model, bool isVolume = false, QObject *parent = nullptr);
++    void removeItemForUri(const QString uri);
++
++
++private Q_SLOTS:
+     void slot_addSharedFolder(const ShareInfo& shareInfo, bool successed);
+     void slot_deleteSharedFolder(const QString& originalPath, bool successed);
+     void slot_updateRemoteServer(const QString& server, bool add);
++    void slot_unmountedRemoteServerCallBack(const QString& server);
++    void slot_serverMount(const Experimental_Peony::Volume &volume);
+ 
+ protected:
+     void initWatcher();
+@@ -118,8 +131,9 @@ protected:
+     void stopWatcher();
+ 
+ private:
+-    SideBarAbstractItem *m_parentItem  = nullptr;
++    SideBarNetWorkItem *m_parentItem  = nullptr;
+     std::shared_ptr<FileWatcher> m_watcher = nullptr;
++    FileEnumerator* m_enumerator = nullptr;
+ };
+ 
+ class SharedDirectoryInfoThread : public QThread {
+diff --git a/libpeony-qt/volumeManager.cpp b/libpeony-qt/volumeManager.cpp
+index f266e8c..b311158 100644
+--- a/libpeony-qt/volumeManager.cpp
++++ b/libpeony-qt/volumeManager.cpp
+@@ -375,6 +375,14 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
+     Volume* volumeItem;
+     Mount* mountItem = new Mount((GMount*)g_object_ref(gmount));
+     QString mountPoint = mountItem->mountPoint();
++
++    if(mountItem->mountPoint().startsWith("smb://")){/* 远程服务器特殊处理 */
++        Q_EMIT pThis->mountRemove(mountPoint);
++        delete mountItem;
++        mountItem = nullptr;
++        return;
++    }
++
+     QHash<QString,Volume*>::iterator item = pThis->m_volumeList->begin();
+     QHash<QString,Volume*>::iterator end = pThis->m_volumeList->end();
+     //qDebug()<<__func__<<__LINE__<<mountPoint<<endl;
+@@ -432,6 +440,12 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
+         //情景5、数据线连接的手机状态改变："仅充电"->"mtp"或"gphoto" 时会挂载一个没有dev设备的GMount*
+         //情景6、数据线连接的手机状态改变：mtp"和"gphoto" 相互转换时会挂载一个没有dev设备的GMount*
+         //上述情景5、6 ,该设备不应该保存
++        if(mountItem->mountPoint().startsWith("smb://")){/* 远程服务器的device is empty */
++            Volume* volume = new Volume(nullptr);
++            volume->setFromMount(*mountItem);
++            Q_EMIT pThis->mountAdd(Volume(*volume));
++        }
++
+         delete mountItem;
+         return;
+     }
+@@ -1267,10 +1281,13 @@ void Mount::initMountInfo(){
+         gmountPoint = g_file_get_uri(rootFile);
+         m_mountPoint = gmountPoint;
+         g_free(gmountPoint);
+-        gmountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
+-        m_mountPoint = gmountPoint;
+-        g_free(gmountPoint);
++        if(!(m_mountPoint.startsWith("smb://"))){
++            gmountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
++            m_mountPoint = gmountPoint;
++            g_free(gmountPoint);
++        }
+         g_object_unref(rootFile);
++
+     }
+ 
+     //2、unix-device dev设备路径 、uuid
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index 367323e..5f90d3e 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -917,13 +917,14 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
+         QString uri = qobject_cast<Peony::DirectoryViewContainer *>(m_stack->widget(index))->getCurrentUri();
+         uri = Peony::FileUtils::urlDecode(uri);
+         qDebug()<<"decodedSrcUri:"<<decodedSrcUri<<" uri:"<<uri<<" total count: "<<m_stack->count()<<" index:"<<index<<" currentIndex:"<<currentIndex;
+-        /* 不属于该设备的tab页不处理；属于该设备：执行动作的文件管理器的当前标签页跳转到计算机页，其余标签页均关闭 */
+-        if(decodedSrcUri.contains(uri) && uri != "file:///" && uri!= "filesafe:///")
++        /* 不属于该设备的tab页不处理；属于该设备：文件管理器的当前标签页跳转到计算机页，其余标签页均关闭 */
++        if(uri.contains(decodedSrcUri) && uri != "file:///" && uri!= "filesafe:///")
+         {
+             //all window accessed mount path should goto self top path，related to bug#104551
+             if((Peony::GlobalSettings::getInstance()->getValue("LAST_FOCUS_PEONY_WINID") == dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()
+                 ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()))
+-                    && index == currentIndex && decodedSrcUri == uri){
++                    && index == currentIndex
++                    && (decodedSrcUri == uri || Peony::FileUtils::isRemoteServerUri(decodedSrcUri))){/* 远程服务进入内部目录后卸载,link to bug#98623 */
+                 qDebug()<<"sourceUri:"<<sourceUri<<"change to self top path"<<" index:"<<currentIndex;
+                 if (uri.startsWith("filesafe:///"))
+                     this->goToUri("filesafe:///", true, true);  /* 跳转到文件保护箱路径 */
+diff --git a/src/control/tab-widget.h b/src/control/tab-widget.h
+index 8fd8a4b..15eb283 100644
+--- a/src/control/tab-widget.h
++++ b/src/control/tab-widget.h
+@@ -187,7 +187,7 @@ public Q_SLOTS:
+     void handleZoomLevel(int zoomLevel);
+     void enableSearchBar(bool enable);
+     /* 当设备(U盘、硬盘、光盘、文件保护箱等)在一个或多个文件管理器中打开一个或多个tab页时，设备卸载/弹出/文件保护箱锁定后，
+-     * 属于该设备：执行动作的文件管理器的当前标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭；不属于该设备的tab页不处理 */
++     * 属于该设备：文件管理器的当前标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭；不属于该设备的tab页不处理 */
+     void slot_responseUnmounted(const QString &destUri, const QString &sourceUri);
+ 
+ protected:
