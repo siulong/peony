@@ -111,6 +111,7 @@ public Q_SLOTS:
     void syncControlsLocation(const QString &uri);
     void updateHeaderBar();
     void updateWindowIcon();
+    void updateSearchStatus(bool showSearch);
     void updateSearch(const QString &uri, const QString &key="", bool updateKey=false);
     void createFolderOperation();
     void goToUri(const QString &uri, bool addHistory = false, bool force = false);
@@ -179,6 +180,7 @@ private:
 
     bool m_is_draging = false;
     bool m_is_search = false;
+    bool m_is_clear_serach = false;
     bool m_filter_working = false;
 
     bool m_should_save_side_bar_width = false;
