@@ -104,6 +104,7 @@ public:
     static QString getUnixDevice(const QString &uri);
     static quint64 getFileSystemSize(QString uri);
     static QString getFileSystemType(QString uri);
+    static bool isRemoteServerUri(const QString &uri);
 
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
 private:

@@ -1,3 +1,9 @@
+peony (3.14.4.5-ok7) yangtze; urgency=medium
+
+  * close-cd #137305 【文件管理器】共享文件连接成功后无弹出标识 
+
+ -- xiangwenjie <xiangwenjie.kylinos.cn>  Wed, 31 Aug 2022 14:48:38 +0800
+
 peony (3.14.4.5-ok6) yangtze; urgency=medium
 
   * close-cd #133469 同时选择多个文本，右键打开选中文本只能打开第一个

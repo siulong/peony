@@ -1041,6 +1041,14 @@ QString FileUtils::getFileSystemType(QString uri)
     return fsType;
 }
 
+bool FileUtils::isRemoteServerUri(const QString &uri)
+{
+    if(uri.startsWith("smb://") || uri.startsWith("ftp://") || uri.startsWith("sftp://"))
+        return true;
+
+    return false;
+}
+
 QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
 {
     QString iconName;
