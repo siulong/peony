@@ -599,7 +599,7 @@
     </message>
     <message>
         <source>User Name: </source>
-        <translation>སྤྱོད་མཁན་གྱི་མིང་། (_U)：</translation>
+        <translation>སྤྱོད་མཁན་གྱི་མིང་། ：</translation>
     </message>
     <message>
         <source>Name: </source>
@@ -1030,7 +1030,7 @@
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།(_D)</translation>
+        <translation>བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Sort Preferences...</source>
@@ -1082,7 +1082,7 @@
     </message>
     <message>
         <source>Empty File</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཚགས།།(_E)</translation>
+        <translation>ཡིག་རྐྱང་ཡིག་ཚགས།།</translation>
     </message>
     <message>
         <source>&amp;Clean the Trash</source>
@@ -1481,7 +1481,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Source File:</source>
-        <translation>ཁུངས་ཡིག་ཆ། (_F)：</translation>
+        <translation>ཁུངས་ཡིག་ཆ།：</translation>
     </message>
     <message>
         <source>Backup</source>
@@ -1978,7 +1978,7 @@ Do you want to delete the link file?</source>
     <name>Peony::PathEdit</name>
     <message>
         <source>Go To</source>
-        <translation>བསྒྱུར་བ།(_G)</translation>
+        <translation>བསྒྱུར་བ།</translation>
     </message>
 </context>
 <context>
@@ -2319,7 +2319,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།(_D)</translation>
+        <translation>བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Resident in Backend</source>
@@ -2501,7 +2501,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།(_D)</translation>
+        <translation>བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Icon View</source>
@@ -2530,7 +2530,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>duplicate</source>
-        <translation>འདྲ་ཕབ།(_D)</translation>
+        <translation>འདྲ་ཕབ།</translation>
     </message>
     <message>
         <source>File Manager</source>
