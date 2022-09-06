@@ -512,7 +512,11 @@ void BasicPropertiesPage::initFloorFour()
         m_hidden->setCheckState(Qt::Checked);
 
     m_readOnly->setDisabled(!m_info->canRename());
-    m_hidden->setDisabled(!m_info->canRename());
+
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
+    //fix bug#113890,hiden Desktop folder change desktop show
+    m_hidden->setDisabled(!m_info->canRename() || isDesktop);
 
     layout4->addRow(this->createFixedLabel(m_labelWidth,32,tr("Property:"),floor4),hBoxLayout);
 
