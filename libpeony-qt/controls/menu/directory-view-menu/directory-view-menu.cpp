@@ -40,6 +40,8 @@
 #include "file-operation-manager.h" //FileOpInfo
 #include "audio-play-manager.h"
 #include "file-untrash-operation.h"
+#include "file-delete-operation.h"
+#include "sound-effect.h"
 
 #include "file-utils.h"
 #include "bookmark-manager.h"
@@ -1070,7 +1072,12 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
                 auto uris = m_top_window->getCurrentAllFileUris();
-                Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+                    if(removeop){
+                        connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+                             Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                        });
+                    }
 
 //                AudioPlayManager::getInstance()->playWarningAudio();
 //                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
