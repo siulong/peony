@@ -22,6 +22,8 @@
 
 #include "desktop-menu.h"
 
+#include "file-delete-operation.h"
+#include "sound-effect.h"
 #include "directory-view-plugin-iface.h"
 #include "file-info-job.h"
 #include "file-info.h"
@@ -470,7 +472,12 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
 //            });
 //            l.last()->setEnabled(!trashChildren.isEmpty());
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean the trash"), [=]() {
-                Peony::FileOperationUtils::clearRecycleBinWithDialog(trashChildren);
+                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(trashChildren);
+                if(removeop){
+                    connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+                        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                    });
+                }
 //                Peony::AudioPlayManager::getInstance()->playWarningAudio();
 //                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
 //                                                    "Once you start a deletion, the files deleting will never be "
