@@ -194,7 +194,7 @@
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
     </message>
     <message>
         <source>Error</source>
@@ -647,7 +647,7 @@
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
     </message>
 </context>
 <context>
@@ -2080,7 +2080,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
     </message>
 </context>
 <context>
@@ -2190,7 +2190,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
     </message>
 </context>
 <context>
@@ -2675,7 +2675,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
     </message>
     <message>
         <source>File is not existed.</source>
