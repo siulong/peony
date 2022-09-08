@@ -811,9 +811,9 @@ void BasicPropertiesPage::saveAllChange()
         mode_t mod = 0;
         quint32 mode = 0;
         if(m_readOnly->isChecked()) {
-            mod |= S_IRUSR;
-            mod |= S_IRGRP;
-            mod |= S_IROTH;
+//            mod |= S_IRUSR;
+//            mod |= S_IRGRP;
+//            mod |= S_IROTH;
 
             g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
             if (file) {
@@ -832,6 +832,11 @@ void BasicPropertiesPage::saveAllChange()
                     }
                 }
             }
+            //去除写权限
+            mode &= ~S_IWUSR;
+            mode &= ~S_IWGRP;
+            mode &= ~S_IWOTH;
+            mod = mode;
         } else {
             auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
             if (metaInfo && metaInfo->getMetaInfoInt(TEMP_PERMISSIONS)) {
