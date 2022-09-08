@@ -203,7 +203,9 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         }
 
         // check dialog
-        FileOperationInternalDialog questionbox(nullptr);
+        QWidget *widget = QApplication::topLevelAt(QCursor::pos());
+        qDebug()<<"top level widget:"<<widget<<",current QPoint:"<<QCursor::pos();
+        FileOperationInternalDialog questionbox((QDialog*)widget);
         auto okButton = questionbox.addButton(tr("OK"));
         connect(okButton, &QPushButton::clicked, &questionbox, [&]{
             questionbox.accept();
