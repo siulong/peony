@@ -188,38 +188,36 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             && (!unixDevice.isNull())
             && !unixDevice.startsWith("/dev/bus/usb")
             && (m_item->isVolume()) && !m_item->uri().isEmpty();
-    if(showFormatDialog)
-    {
-        if (!isWayland && isData) {
-            // skip
-        } else {
-            if(unixDevice.contains("/dev/sr")){/*  光盘格式化(udf格式化) */
-                QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
-                action->setEnabled(false);
-                l.append(action);
-                DiscControl *discControl = new DiscControl(unixDevice);
-                if(discControl->work()){
-                   connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
-                       connect(action, &QAction::triggered, [=](){
-                           UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
-                           udfFormatDlg->show();
-                       });
-                       qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
-                       l.last()->setEnabled(discCtrl->supportUdf());
-                   });
-                }
 
-            }else{/* 其它格式化 */
-                l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
-                    auto info = FileInfo::fromUri(uri);
-                    if (info->targetUri ().isEmpty ()) {
-                        FileInfoJob job (uri, this);
-                        job.querySync ();
-                    }
-                    Format_Dialog *fd  = new Format_Dialog(uri, m_item);
-                    fd->show();
-                });
+    //fix bug133116, not allow format data disk
+    if(showFormatDialog && ! isData)
+    {
+        if(unixDevice.contains("/dev/sr")){/*  光盘格式化(udf格式化) */
+            QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
+            action->setEnabled(false);
+            l.append(action);
+            DiscControl *discControl = new DiscControl(unixDevice);
+            if(discControl->work()){
+               connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+                   connect(action, &QAction::triggered, [=](){
+                       UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                       udfFormatDlg->show();
+                   });
+                   qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
+                   l.last()->setEnabled(discCtrl->supportUdf());
+               });
             }
+
+        }else{/* 其它格式化 */
+            l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
+                auto info = FileInfo::fromUri(uri);
+                if (info->targetUri ().isEmpty ()) {
+                    FileInfoJob job (uri, this);
+                    job.querySync ();
+                }
+                Format_Dialog *fd  = new Format_Dialog(uri, m_item);
+                fd->show();
+            });
         }
     }
     /* 插件 */
