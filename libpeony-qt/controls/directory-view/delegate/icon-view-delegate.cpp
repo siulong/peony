@@ -99,7 +99,6 @@ QSize IconViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     //FIXME: how to deal with word wrap correctly?
-    painter->save();
 
     bool isDragging = false;
     auto view = qobject_cast<IconView*>(this->parent());
@@ -269,7 +268,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             xoffset += 10;
 
             textLayout.endLayout();
-            painter->restore();
         }
     }
 
@@ -519,6 +517,7 @@ const QString IconViewDelegate::getRegFindKeyWords() const
 
 void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
 {
+    painter->save();
     QFont font = option.font;
     QTextLayout textLayout(option.text, font);
     QTextOption textOpt;
