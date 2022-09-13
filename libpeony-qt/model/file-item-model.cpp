@@ -37,6 +37,7 @@
 #include "file-operation-utils.h"
 
 #include "emblem-provider.h"
+#include "sound-effect.h"
 
 #include <QIcon>
 #include <QMimeData>
@@ -650,6 +651,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
     connect(op, &FileOperation::operationFinished, this, [=](){
+        Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         auto opInfo = op->getOperationInfo();
         auto targetUris = opInfo.get()->dests();
         Q_EMIT this->selectRequest(targetUris);
