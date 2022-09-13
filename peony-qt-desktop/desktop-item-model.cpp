@@ -40,6 +40,7 @@
 #include "peony-desktop-application.h"
 #include "desktop-icon-view.h"
 #include "global-settings.h"
+#include "sound-effect.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -925,7 +926,10 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
             action = Qt::TargetMoveAction;
         }
 
-        FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        connect(op, &FileOperation::operationFinished, this, [=](){
+            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        });
     }
 
     //NOTE:
