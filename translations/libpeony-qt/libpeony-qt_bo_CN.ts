@@ -230,6 +230,73 @@
     </message>
 </context>
 <context>
+    <name>KyFileDialogRename</name>
+    <message>
+        <source>Renaming &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming failed, the reason is: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename too long</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copying &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copying failed, the reason is: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moving &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moving failed, the reason is: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File operation error:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The reason is: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="unfinished">མིང་བསྐྱར་འདོགས།</translation>
+    </message>
+    <message>
+        <source>Please enter a new name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+</context>
+<context>
     <name>MainProgressBar</name>
     <message>
         <source>OK</source>
@@ -1178,7 +1245,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Error opening source or destination file!</source>
-        <translation>ཁུངས་ཡིག་ཆའམ་དམིགས་བཟུང་ཡིག་ཆ་ཁ་ཕྱེ་བ་ནོར་བ།</translation>
+        <translation type="vanished">ཁུངས་ཡིག་ཆའམ་དམིགས་བཟུང་ཡིག་ཆ་ཁ་ཕྱེ་བ་ནོར་བ།</translation>
     </message>
     <message>
         <source>Reading and Writing files are inconsistent!</source>
@@ -1214,6 +1281,14 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <source>File copy error</source>
         <translation>ཡིག་ཆ་པར་སློག་ནིར་འཁྲུལ།</translation>
+    </message>
+    <message>
+        <source>Create folder %1 failed: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File:%1 was not found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1456,6 +1531,14 @@ Do you want to delete the link file?</source>
     <message>
         <source>Invalid Operation</source>
         <translation>ནུས་མེད་ཀྱི་བཀོལ་སྤྱོད།</translation>
+    </message>
+    <message>
+        <source>Cannot opening file, permission denied!</source>
+        <translation type="unfinished">ཡིག་ཆ་ཁ་ཕྱེ་ཐབས་བྲལ། དབང་ཚད་མི་འདང་།</translation>
+    </message>
+    <message>
+        <source>File:%1 was not found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2319,7 +2402,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།</translation>
+        <translation type="vanished">བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Resident in Backend</source>
@@ -2363,7 +2446,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Author:
