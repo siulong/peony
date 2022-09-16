@@ -199,13 +199,11 @@ void FileCopy::run ()
     srcFileInfo = g_file_query_info(srcFile, "standard::*", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, mCancel ? mCancel : nullptr, &error);
     if (nullptr != error) {
         mTotalSize = 0;
-        qDebug() << "srcFile: " << mSrcUri << " querry info error: " << error->message << "  code:" << error->code;
+        qInfo() << "srcFile: " << mSrcUri << " querry info error: " << error->message << "  code:" << error->code;
         detailError(&error);
     } else {
         mTotalSize = g_file_info_get_size(srcFileInfo);
     }
-
-    qDebug() << "copy - src: " << mSrcUri << "  to: " << mDestUri;
 
     // check dest filesystem
     destDir = g_file_get_parent (destFile);
@@ -253,7 +251,7 @@ void FileCopy::run ()
             notSupportOutputStream = true;
         } else {
             detailError(&error);
-            qDebug() << "create dest file error!" << mDestUri << " == " << g_file_get_uri(destFile);
+            qInfo() << "create dest file error!" << mDestUri << " == " << g_file_get_uri(destFile);
             goto out;
         }
     }
@@ -303,7 +301,7 @@ void FileCopy::run ()
             // write data
             writeSize = g_output_stream_write(G_OUTPUT_STREAM(writeIO), buf, readSize, mCancel ? mCancel : nullptr, &error);
             if (nullptr != error) {
-                qDebug() << "write destfile: " << mDestUri << " error: " << error->message;
+                qInfo() << "write destfile: " << mDestUri << " error: " << error->message;
                 detailError(&error);
                 mStatus = ERROR;
                 continue;
@@ -311,7 +309,7 @@ void FileCopy::run ()
 
             if (readSize != writeSize) {
                 // it's impossible
-                qDebug() << "read file: " << mSrcUri << "  --- write file: " << mDestUri << " size not inconsistent";
+                qCritical() << "read file: " << mSrcUri << "  --- write file: " << mDestUri << " size not inconsistent";
 
                 // check files existed again for ensure error message, related to #120721, #120973
                 bool existed = g_file_query_exists(srcFile, nullptr) && g_file_query_exists(destFile, nullptr);
@@ -341,7 +339,6 @@ void FileCopy::run ()
             g_file_delete (destFile, nullptr, nullptr);
             break;
         } else if (FINISHED == mStatus) {
-            qDebug() << "copy file finish!";
             break;
         } else if (PAUSE == mStatus) {
             if (mPause.tryLock(3000)) {
@@ -423,7 +420,7 @@ static gchar* get_fs_type (char* path)
 
     f = setmntent ("/etc/mtab", "r");
     if (!f) {
-        qDebug() << "get filesystem type error";
+        qWarning() << "get filesystem type error";
     }
 
     while ((m = getmntent(f))) {

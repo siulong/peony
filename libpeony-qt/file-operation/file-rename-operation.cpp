@@ -201,6 +201,7 @@ retry:
         g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
 
         if (err) {
+            except.dlgType = g_error_matches(err, g_io_error_quark(), G_IO_ERROR_FILENAME_TOO_LONG)? ED_RENAME: ED_WARNING;
             except.errorCode = err->code;
             except.errorStr = err->message;
             qDebug() << err->message;
@@ -219,16 +220,22 @@ retry:
                 case BackupOne:{
                     while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
                         QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
-                        newFile = FileUtils::resolveRelativePath(parent, FileUtils::getUriBaseName(fileUri));
+                        m_new_name = FileUtils::getUriBaseName(fileUri);
+                        newFile = FileUtils::resolveRelativePath(parent, m_new_name);
                         getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
                     }
                     goto retry;
                 }
                 case OverWriteAll:
                     setAutoOverwrite();
-                case OverWriteOne:
+                case OverWriteOne: {
+                    // 避免重名替换
+                    if (FileUtils::isSamePath(m_src_uris.first(), except.destDirUri)) {
+                        break;
+                    }
                     g_file_delete(newFile.get()->get(), nullptr, nullptr);
                     goto retry;
+                }
                 case IgnoreAll:
                     setAutoIgnore();
                 case IgnoreOne:
@@ -236,6 +243,13 @@ retry:
                 case Cancel:
                     cancel();
                     goto cancel;
+                case RenameOne: {
+                    m_new_name = except.respValue.value("newName").toString();
+                    newFile = FileUtils::resolveRelativePath(parent, m_new_name);
+                    getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+                    setHasError(false);
+                    goto retry;
+                }
                 default:
                     break;
                 }
@@ -247,6 +261,13 @@ retry:
                 case Cancel:
                     cancel();
                     break;
+                case RenameOne: {
+                    m_new_name = except.respValue.value("newName").toString();
+                    newFile = FileUtils::resolveRelativePath(parent, m_new_name);
+                    getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+                    setHasError(false);
+                    goto retry;
+                }
                 default:
                     break;
                 }

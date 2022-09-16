@@ -103,7 +103,6 @@ void FileDeleteOperation::deleteRecursively(FileNode *node)
             except.errorStr = err->message;
             Q_EMIT errored(except);
             auto response = except.respCode;
-            qDebug()<<response;
             auto responseType = response;
             if (responseType == Cancel) {
                 cancel();
