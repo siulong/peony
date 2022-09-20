@@ -36,11 +36,11 @@
     <name>Peony::DesktopItemModel</name>
     <message>
         <source>Computer</source>
-        <translation type="unfinished"></translation>
+        <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ཚུར་བསྡུའི་ས་ཚིགས་</translation>
     </message>
 </context>
 <context>
@@ -205,18 +205,18 @@
     </message>
     <message>
         <source>Setup backgrounds</source>
-        <translation type="unfinished"></translation>
+        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
     </message>
     <message>
         <source>Clear standard icons</source>
-        <translation type="unfinished"></translation>
+        <translation>དྭངས་གཙང་ཚད་གཞི་རིས་རྟགས་</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>set background</source>
-        <translation type="unfinished">རྒྱབ་ལྗོངས་འདེམ་པ།</translation>
+        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
     </message>
     <message>
         <source>display settings</source>
