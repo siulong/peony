@@ -1314,6 +1314,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 return;
             }
             auto viewContainer = new Peony::DirectoryViewContainer(m_stack);
+            viewContainer->setProperty("statusBarHeight", qApp->fontMetrics().height() + 10);
             bool hasCurrentPage = currentPage();
             bool hasView = false;
             if (hasCurrentPage)
