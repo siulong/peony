@@ -145,23 +145,56 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        m_cache.remove(SHOW_TRASH_DIALOG);
-        m_cache.insert(SHOW_TRASH_DIALOG, m_peony_gsettings->get(SHOW_TRASH_DIALOG).toBool());
+        // fix #135482
+        auto keys = m_peony_gsettings->keys();
 
-        m_cache.remove(SHOW_HIDDEN_PREFERENCE);
-        m_cache.insert(SHOW_HIDDEN_PREFERENCE, m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool());
+        if (keys.contains(SHOW_TRASH_DIALOG)) {
+            m_cache.remove(SHOW_TRASH_DIALOG);
+            m_cache.insert(SHOW_TRASH_DIALOG, m_peony_gsettings->get(SHOW_TRASH_DIALOG).toBool());
+        } else {
+            m_cache.remove(SHOW_TRASH_DIALOG);
+            m_cache.insert(SHOW_TRASH_DIALOG, true);
+        }
 
-        m_cache.remove(SHOW_FILE_EXTENSION);
-        m_cache.insert(SHOW_FILE_EXTENSION, m_peony_gsettings->get(SHOW_FILE_EXTENSION).toBool());
+        if (keys.contains(SHOW_HIDDEN_PREFERENCE)) {
+            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
+            m_cache.insert(SHOW_HIDDEN_PREFERENCE, m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool());
+        } else {
+            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
+            m_cache.insert(SHOW_HIDDEN_PREFERENCE, false);
+        }
 
-        m_cache.remove(SEND_URIS_OF_COPY_DSPS);
-        m_cache.insert(SEND_URIS_OF_COPY_DSPS, m_peony_gsettings->get(SEND_URIS_OF_COPY_DSPS).toBool());
+        if (keys.contains(SHOW_FILE_EXTENSION)) {
+            m_cache.remove(SHOW_FILE_EXTENSION);
+            m_cache.insert(SHOW_FILE_EXTENSION, m_peony_gsettings->get(SHOW_FILE_EXTENSION).toBool());
+        } else {
+            m_cache.remove(SHOW_FILE_EXTENSION);
+            m_cache.insert(SHOW_FILE_EXTENSION, true);
+        }
 
-        m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
-        m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, m_peony_gsettings->get(DOC_IS_OCCUPIED_BY_WPS).toBool());
+        if (keys.contains(SEND_URIS_OF_COPY_DSPS)) {
+            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
+            m_cache.insert(SEND_URIS_OF_COPY_DSPS, m_peony_gsettings->get(SEND_URIS_OF_COPY_DSPS).toBool());
+        } else {
+            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
+            m_cache.insert(SEND_URIS_OF_COPY_DSPS, false);
+        }
 
-        m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
-        m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, m_peony_gsettings->get(USE_GLOBAL_DEFAULT_SORTING).toBool());
+        if (keys.contains(DOC_IS_OCCUPIED_BY_WPS)) {
+            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
+            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, m_peony_gsettings->get(DOC_IS_OCCUPIED_BY_WPS).toBool());
+        } else {
+            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
+            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
+        }
+
+        if (keys.contains(USE_GLOBAL_DEFAULT_SORTING)) {
+            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
+            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, m_peony_gsettings->get(USE_GLOBAL_DEFAULT_SORTING).toBool());
+        } else {
+            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
+            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
+        }
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);
