@@ -535,18 +535,24 @@ bool FileUtils::isStandardPath(const QString &uri)
     return false;
 }
 
-/* @func: 判断文件是否属于移动设备上的文件，是的话，提示为永久删除
- * FIXME 目前根据挂载路径进行判断的，可能不准确，目前暂未找到好的判断方法
- * 其他系统分区文件可能也会判断为移动设备文件
- * 目前的定位为，判断是否非本系统文件更为合适
+/* @func: 使用设备是否可卸载的方式判断是否为移动设备
+ * 可移动设备是可以卸载的，可卸载的不一定是移动设备
+ * 排除掉网络地址，如ftp,sftp,smb挂载
 */
 bool FileUtils::isMobileDeviceFile(const QString &uri)
 {
-    auto targetUri = getTargetUri(uri);
-    if (uri.startsWith("file:///media") || targetUri.startsWith("file:///media"))
-        return true;
+    if (uri.isEmpty() || uri.startsWith("ftp:///") || uri.startsWith("sftp:///") || uri.startsWith("smb:///"))
+        return false;
 
-    return false;
+    bool isMobile = false;
+    GFile *dest_dir_file = g_file_new_for_path(uri.toUtf8().constData());
+    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+    if (dest_dir_mount) {
+        isMobile = g_mount_can_unmount(dest_dir_mount);
+        g_object_unref(dest_dir_mount);
+    }
+    g_object_unref(dest_dir_file);
+    return isMobile;
 }
 
 bool FileUtils::isSamePath(const QString &uri, const QString &targetUri)
