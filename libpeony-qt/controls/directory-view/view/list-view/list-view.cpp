@@ -81,8 +81,16 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
+    auto cornerWidget = new QWidget;
+    cornerWidget->setObjectName("_listview_corner");
+    cornerWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
+    cornerWidget->setBackgroundRole(QPalette::Base);
+    cornerWidget->setAutoFillBackground(true);
+    setCornerWidget(cornerWidget);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    installEventFilter(horizontalScrollBar());
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     setSelectionBehavior(QTreeView::SelectRows);
 
@@ -993,6 +1001,9 @@ ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
     auto layout = new QVBoxLayout(this);
     layout->setMargin(0);
     layout->setSpacing(0);
+    layout->setObjectName("_listview2_layout");
+    setBackgroundRole(QPalette::Base);
+    setAutoFillBackground(true);
     m_view = new ListView(this);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
@@ -1012,6 +1023,15 @@ ListView2::~ListView2()
 
 void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *proxyModel)
 {
+    auto layout = findChild<QVBoxLayout *>("_listview2_layout");
+    bool ok = false;
+    if (parentWidget()) {
+        int statusBarHeight = parentWidget()->property("statusBarHeight").toInt(&ok);
+        if (ok) {
+            layout->setContentsMargins(0, 0, 0, statusBarHeight);
+        }
+    }
+
     disconnect(m_model);
     disconnect(m_proxy_model);
     m_model = model;
