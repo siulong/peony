@@ -25,6 +25,7 @@
 #include "file-node.h"
 #include "file-node-reporter.h"
 #include <QStandardPaths>
+#include <QProcess>
 
 using namespace Peony;
 
@@ -154,6 +155,7 @@ void FileDeleteOperation::run()
     Q_EMIT operationRequestShowWizard();
 
     goffset *total_size = new goffset(0);
+    bool isMobileDevice = FileUtils::isMobileDeviceFile(m_src_uris.first());
 
     QList<FileNode*> nodes;
     for (auto uri : m_src_uris) {
@@ -177,6 +179,17 @@ void FileDeleteOperation::run()
 
     for (auto node : nodes) {
         delete node;
+    }
+
+    //fix delete file not sync issue,link to bug#113826
+    if (isMobileDevice) {
+        auto path = FileUtils::getParentUri(m_src_uris.first());
+        if (! path.isEmpty()) {
+            operationStartSnyc();
+            QProcess p;
+            p.start(QString("sync -f '%1'").arg(path));
+            p.waitForFinished(-1);
+        }
     }
 
     Q_EMIT operationFinished();
