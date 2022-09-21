@@ -320,27 +320,29 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             break;
         }
 
-        QIcon icon = QIcon::fromTheme(extensionsEmblem, QIcon(extensionsEmblem));
-        int pos = emblemPoses.takeFirst();
-        switch (pos) {
-        case 1: {
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 2: {
-            icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 3: {
-            icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 4: {
-            icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        default:
-            break;
+        QIcon icon = QIcon::fromTheme(extensionsEmblem);
+        if (!icon.isNull()) {
+            int pos = emblemPoses.takeFirst();
+            switch (pos) {
+            case 1: {
+                icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 2: {
+                icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 3: {
+                icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 4: {
+                icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
 

@@ -254,27 +254,29 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                break;
             }
 
-            QIcon icon = QIcon::fromTheme(extensionsEmblem, QIcon(extensionsEmblem));
-            int pos = emblemPoses.takeFirst();
-            switch (pos) {
-            case 1: {
-               icon.paint(painter, loc_x, loc_y, size, size, Qt::AlignCenter);
-               break;
-            }
-            case 2: {
-               icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y, size, size, Qt::AlignCenter);
-               break;
-            }
-            case 3: {
-               icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-               break;
-            }
-            case 4: {
-               icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-               break;
-            }
-            default:
-               break;
+            QIcon icon = QIcon::fromTheme(extensionsEmblem);
+            if (!icon.isNull()) {
+                int pos = emblemPoses.takeFirst();
+                switch (pos) {
+                case 1: {
+                   icon.paint(painter, loc_x, loc_y, size, size, Qt::AlignCenter);
+                   break;
+                }
+                case 2: {
+                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y, size, size, Qt::AlignCenter);
+                   break;
+                }
+                case 3: {
+                   icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
+                   break;
+                }
+                case 4: {
+                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
+                   break;
+                }
+                default:
+                   break;
+                }
             }
         }
     }
