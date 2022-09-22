@@ -44,6 +44,7 @@ public:
     void setText (QString text);
     void setIcon (QString iconName);
     QPushButton* addButton (QString name);
+    void setButtonSpacing(int spacing);
     QCheckBox* addCheckBoxLeft (QString name);
 
     bool event(QEvent *event) override;
