@@ -106,6 +106,8 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_buttonLeft = new QHBoxLayout;
     m_buttonRight = new QHBoxLayout;
     m_buttonRight->setDirection (QHBoxLayout::RightToLeft);
+    m_buttonRight->setSpacing(16); /* 按设计稿设置button的space,link to bug#139766 */
+
     QHBoxLayout* buttonLayout = new QHBoxLayout;
     buttonLayout->setContentsMargins (0, 0, 13, 3);
     buttonLayout->addLayout (m_buttonLeft);
