@@ -267,7 +267,6 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
 FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list, QWidget *parent)
 {
     FileOperationInternalDialog questionbox((QDialog*)parent);
-    questionbox.setButtonSpacing(16); /* 按设计稿设置button的space,link to bug#139766 */
     auto okButton = questionbox.addButton(QObject::tr("OK"));
     questionbox.connect(okButton, &QPushButton::clicked, &questionbox, [&]{
         questionbox.accept();
