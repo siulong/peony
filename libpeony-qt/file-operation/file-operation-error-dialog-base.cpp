@@ -110,7 +110,6 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
 
     QHBoxLayout* buttonLayout = new QHBoxLayout;
     buttonLayout->setContentsMargins (0, 0, 13, 3);
-
     buttonLayout->addLayout (m_buttonLeft);
     buttonLayout->addStretch ();
     buttonLayout->addLayout (m_buttonRight);
@@ -189,6 +188,11 @@ QCheckBox *Peony::FileOperationErrorDialogBase::addCheckBoxLeft(QString name)
     }
 
     return nullptr;
+}
+
+void Peony::FileOperationErrorDialogBase::setButtonSpacing(int spacing)
+{
+    m_buttonRight->setSpacing(spacing);
 }
 
 bool Peony::FileOperationErrorDialogBase::event(QEvent *event)
