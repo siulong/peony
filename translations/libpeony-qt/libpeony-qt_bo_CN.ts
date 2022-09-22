@@ -2793,6 +2793,14 @@ Do you want to unmount forcely?</source>
         <source>Failed to activate device: Incorrect passphrase</source>
         <translation>སྒྲིག་ཆས་ཁ་ཕྱེ་ནས་ཕམ་སྟེ་།ནོར་འཁྲུལ་གྱི་གསང་ཨང་།</translation>
     </message>
+    <message>
+        <source>Trash</source>
+        <translation>སྙིགས་སྒམ།</translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation>ཉེ་ཆར།</translation>
+    </message>
 </context>
 <context>
     <name>UdfFormatDialog</name>
