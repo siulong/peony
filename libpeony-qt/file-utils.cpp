@@ -348,6 +348,17 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
     if (uri == "file:///")
         return QObject::tr("File System");
+    //fix bug#139600，替换windows共享名称, “172.17.123.173上的Windows共享” 显示为 "172.17.123.173上的共享"
+    bool isSmbPath = uri.startsWith("smb://");
+    QString showName = fileInfo.get()->displayName();
+    //设置尽量苛刻的条件减少错误的替换
+    if (isSmbPath && showName.length()>=18 && showName.contains("Windows") && showName.split(".").length() ==4){
+        showName = showName.replace("Windows", "");
+        //only replaced one "Windows" to specific match
+        if (fileInfo.get()->displayName().length() - showName.length() == 7){
+            return showName;
+        }
+    }
     return fileInfo.get()->displayName();
 }
 
