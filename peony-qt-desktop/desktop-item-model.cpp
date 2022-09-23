@@ -287,9 +287,13 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
-        auto view = getIconView(uri);
-        view->removeItemRect(uri);
-
+        auto info = FileInfo::fromUri(uri);
+        Peony::DesktopIconView *view = nullptr;
+        if (info.get()->isEmptyInfo()) {
+            view = ((PeonyDesktopApplication*)qApp)->removeUri(uri);
+        } else {
+            view = getIconView(uri);
+        }
         auto itemRectHash = view->getCurrentItemRects();
 
         for (auto info : m_files) {

@@ -351,6 +351,17 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QScreen *screen)
     return m_bg_windows[0]->getIconView();
 }
 
+Peony::DesktopIconView *PeonyDesktopApplication::removeUri(const QString& uri)
+{
+    for (auto window : m_bg_windows) {
+        auto view = window->getIconView();
+        if (view->removeItemRect(uri) == 1) {
+            return view;
+        }
+    }
+    return m_bg_windows[0]->getIconView();
+}
+
 bool PeonyDesktopApplication::userGuideDaemonRunning()
 {
     QDBusConnection conn = QDBusConnection::sessionBus();

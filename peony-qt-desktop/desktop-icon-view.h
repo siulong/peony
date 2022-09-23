@@ -196,7 +196,7 @@ public Q_SLOTS:
      * model, we should know current items layout.
      */
     QMap<QString, QRect> getCurrentItemRects();
-    void removeItemRect(const QString &uri);
+    int removeItemRect(const QString &uri);
 
     void updateItemPosByUri(const QString &uri, const QPoint &pos);
     void ensureItemPosByUri(const QString &uri);

@@ -58,6 +58,7 @@ public:
     Peony::DesktopIconView *getIconView(QPoint pos);
     Peony::DesktopIconView *getIconView(int id);
     Peony::DesktopIconView *getIconView(QScreen *screen);
+    Peony::DesktopIconView * removeUri(const QString& uri);
     int checkScreenMode(const QRect &geometry);
     Peony::DesktopIconView *getNotFullView();
 

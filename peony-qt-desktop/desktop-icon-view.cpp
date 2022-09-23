@@ -1145,9 +1145,9 @@ QMap<QString, QRect> DesktopIconView::getCurrentItemRects()
     return m_item_rect_hash;
 }
 
-void DesktopIconView::removeItemRect(const QString &uri)
+int DesktopIconView::removeItemRect(const QString &uri)
 {
-    m_item_rect_hash.remove(uri);
+    return m_item_rect_hash.remove(uri);
 }
 
 void DesktopIconView::updateItemPosByUri(const QString &uri, const QPoint &pos)
