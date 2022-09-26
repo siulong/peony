@@ -87,9 +87,9 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     gridLayout1->addWidget(content, 0, 1, Qt::AlignTop);
     auto buttonBox = new QDialogButtonBox;
     buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
-    auto cancel = buttonBox->addButton(tr("Cancel"), QDialogButtonBox::ActionRole);
     auto skip = buttonBox->addButton(tr("Skip"), QDialogButtonBox::ActionRole);
     auto skipAll = buttonBox->addButton(tr("Skip All"), QDialogButtonBox::ActionRole);
+    auto cancel = buttonBox->addButton(tr("Cancel"), QDialogButtonBox::ActionRole);
     auto rename = buttonBox->addButton(tr("Rename"), QDialogButtonBox::ActionRole);
     rename->setProperty("isImportant", true);
     rename->setDefault(true);
