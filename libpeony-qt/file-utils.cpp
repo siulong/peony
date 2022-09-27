@@ -556,13 +556,23 @@ bool FileUtils::isMobileDeviceFile(const QString &uri)
         return false;
 
     bool isMobile = false;
-    GFile *dest_dir_file = g_file_new_for_path(uri.toUtf8().constData());
-    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
-    if (dest_dir_mount) {
-        isMobile = g_mount_can_unmount(dest_dir_mount);
-        g_object_unref(dest_dir_mount);
+    //多次测试发现不准确，使用canEject和canStop属性来做判断
+//    GFile *dest_dir_file = g_file_new_for_path(uri.toUtf8().constData());
+//    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+//    if (dest_dir_mount) {
+//        isMobile = g_mount_can_unmount(dest_dir_mount);
+//        g_object_unref(dest_dir_mount);
+//    }
+//    g_object_unref(dest_dir_file);
+    auto dev = VolumeManager::getDriveFromUri(getParentUri(uri));
+    if(dev != nullptr){
+        bool canEject = g_drive_can_eject(dev.get()->getGDrive());
+        bool canStop = g_drive_can_stop(dev.get()->getGDrive());
+        if(canEject || canStop){
+            isMobile = true;
+        }
+        qDebug() << "isMobile :" << isMobile;
     }
-    g_object_unref(dest_dir_file);
     return isMobile;
 }
 
