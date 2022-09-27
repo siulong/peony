@@ -531,6 +531,7 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
         accept();
         //QUrl url(m_remoteIP);
         //syncRemoteServer(url);
+        m_reg_usr_passwd_editor->setProperty("password", m_reg_usr_passwd_editor->text());
     });
 }
 
@@ -585,16 +586,16 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
         QString remoteUri= type.append("://").append(url.host()).append(":").append(portStr);
         QMap<QString, QVariant> userInfo;
         if (!uriList.contains (remoteUri)) {
-            if (savePassword () && !password().isEmpty ()) {
-                userInfo.insert (user(), passwdEncode (password().toUtf8 ()));
+            if (savePassword () && !getPassWordProperty().isEmpty ()) {
+                userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
             }
             uriList.insert (remoteUri, userInfo);
             GlobalSettings::getInstance()->slot_updateRemoteServer(remoteUri, true);
         } else {
             userInfo = uriList[remoteUri].toMap ();
             if (savePassword()){
-                if (!password().isEmpty ()) {
-                    userInfo[user()] = passwdEncode (password().toUtf8 ());
+                if (!getPassWordProperty().isEmpty ()) {
+                    userInfo[user()] = passwdEncode (getPassWordProperty().toUtf8 ());
                 }
             }else {
                 if (userInfo.contains(m_reg_usr_name_editor->currentText ())) {
@@ -608,6 +609,11 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
         GlobalSettings::getInstance()->setValue(REMOTE_SERVER_REMOTE_IP,uriList);
         GlobalSettings::getInstance()->forceSync(REMOTE_SERVER_REMOTE_IP);
     }
+}
+
+QString ConnectServerLogin::getPassWordProperty()
+{
+    return m_reg_usr_passwd_editor->property("password").toString();
 }
 
 

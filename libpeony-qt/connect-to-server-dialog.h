@@ -102,6 +102,7 @@ public:
     bool savePassword();
 
     void syncRemoteServer(const QUrl& url);
+    QString getPassWordProperty();
 
 private:
     float           m_widget_margin         = 24;
