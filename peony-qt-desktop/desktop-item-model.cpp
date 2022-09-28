@@ -931,7 +931,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         }
 
         auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
-        connect(op, &FileOperation::operationFinished, this, [=](){
+        op->connect(op, &FileOperation::operationFinished, this, [=](){
             Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         });
     }

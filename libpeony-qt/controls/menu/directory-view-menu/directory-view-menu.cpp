@@ -1074,8 +1074,8 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 auto uris = m_top_window->getCurrentAllFileUris();
                 auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
                     if(removeop){
-                        connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
-                             Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                        removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+                            Peony::SoundEffect::getInstance()->recycleBinClearMusic();
                         });
                     }
 
@@ -1096,15 +1096,15 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 if (m_selections.count() == 1) {
                     auto untrashop = FileOperationUtils::restore(m_selections.first());
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 } else {
                     auto untrashop = FileOperationUtils::restore(m_selections);
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 }

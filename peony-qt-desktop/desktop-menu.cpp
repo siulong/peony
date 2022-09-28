@@ -474,7 +474,7 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean the trash"), [=]() {
                 auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(trashChildren);
                 if(removeop){
-                    connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+                    removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
                         Peony::SoundEffect::getInstance()->recycleBinClearMusic();
                     });
                 }
