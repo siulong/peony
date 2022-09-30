@@ -473,11 +473,12 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
 //            l.last()->setEnabled(!trashChildren.isEmpty());
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean the trash"), [=]() {
                 auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(trashChildren);
-                if(removeop){
-                    removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
-                        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
-                    });
-                }
+                qApp->setProperty("clearTrash",true);
+//                if(removeop){
+//                    removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+//                        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+//                    });
+//                }
 //                Peony::AudioPlayManager::getInstance()->playWarningAudio();
 //                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
 //                                                    "Once you start a deletion, the files deleting will never be "

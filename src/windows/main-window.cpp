@@ -1625,9 +1625,10 @@ void MainWindow::cleanTrash()
     if (uris.count() >0)
     {
         auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
+        qApp->setProperty("clearTrash",true);
         if(removeop){
             removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
-                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+//                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
                 Q_EMIT trashcleaned();
             });
         }
