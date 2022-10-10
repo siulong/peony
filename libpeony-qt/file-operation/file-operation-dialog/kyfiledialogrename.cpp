@@ -4,6 +4,7 @@
 
 #include <QStackedWidget>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -27,7 +28,10 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
 
     auto stack = new QStackedWidget(this);
     stack->setContentsMargins(20, 0, 20, 20);
-    mainLayout()->addWidget(stack);
+    auto layout = new QHBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(stack);
+    mainWidget()->setLayout(layout);
 
     // todo:
     // 根据错误码和文件操作码拼接文件信息
