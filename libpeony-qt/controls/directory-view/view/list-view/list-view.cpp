@@ -62,6 +62,8 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 
+#include <QPainterPath>
+
 #define LISTVIEW_ITEM_BORDER_RADIUS 6
 
 using namespace Peony;
