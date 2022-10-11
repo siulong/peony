@@ -206,14 +206,3 @@ void AboutDialog::resetSize()
     ui->verticalLayout_3->update();
 
 }
-
-void AboutDialog::resizeEvent(QResizeEvent *e)
-{
-    QDialog::resizeEvent(e);
-    if(!m_isFirstLoad)
-    {
-        //bug#101112 第一次加载获取控件实际大小
-        resetSize();
-        m_isFirstLoad = true;
-    }
-}
