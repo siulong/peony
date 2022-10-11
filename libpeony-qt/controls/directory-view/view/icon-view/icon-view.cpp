@@ -73,6 +73,8 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     m_touch_active_timer = new QTimer(this);
     m_touch_active_timer->setSingleShot(true);
 
+    setFrameShape(QFrame::NoFrame);
+
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
 
