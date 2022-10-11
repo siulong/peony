@@ -117,7 +117,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
     //check all settings and init
     checkSettings();
 
-    setStyle(PeonyMainWindowStyle::getStyle());
+    //setStyle(PeonyMainWindowStyle::getStyle());
 
     m_effect = new BorderShadowEffect(this);
     m_effect->setPadding(0);
