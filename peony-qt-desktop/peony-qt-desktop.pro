@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient
+QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient KScreen
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

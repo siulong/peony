@@ -27,7 +27,9 @@
 #include "singleapplication.h"
 #include "qtsingleapplication.h"
 #include "volume-manager.h"
-
+#include <KF5/KScreen/kscreen/output.h>
+#include <KF5/KScreen/kscreen/configmonitor.h>
+#include <KF5/KScreen/kscreen/getconfigoperation.h>
 #include <QScreen>
 #include <QWindow>
 
@@ -57,7 +59,8 @@ public:
     static Peony::DesktopItemModel* getModel();
     Peony::DesktopIconView *getIconView(QPoint pos);
     Peony::DesktopIconView *getIconView(int id);
-    Peony::DesktopIconView *getIconView(QScreen *screen);
+    Peony::DesktopIconView *getIconView(const KScreen::OutputPtr &output);
+    DesktopBackgroundWindow *getWindow(int id);
     Peony::DesktopIconView * removeUri(const QString& uri);
     int checkScreenMode(const QRect &geometry);
     Peony::DesktopIconView *getNotFullView();
@@ -81,12 +84,16 @@ public Q_SLOTS:
     void checkWindowProcess();
     void updateVirtualDesktopGeometryByWindows();
 
-    void addBgWindow(QScreen *screen);
+    //void addBgWindow(QScreen *screen);
     void relocateIconView();
+
+    void outputAdded(const KScreen::OutputPtr &output);
+    void outputRemoved(int outputId);
 
 private:
     void setupDesktop();
     void setupBgAndDesktop();
+    void setConfig(const KScreen::ConfigPtr &config);
     void clearIcons(const QStringList &args);
     int getDesktopWindowId();
 
@@ -95,6 +102,8 @@ private:
     QList<DesktopBackgroundWindow *> m_bg_windows;
 
     QTimeLine *m_primaryScreenSettingsTimeLine = nullptr;
+
+    KScreen::ConfigPtr m_config     = nullptr;
 };
 
 #endif // PEONYDESKTOPAPPLICATION_H
