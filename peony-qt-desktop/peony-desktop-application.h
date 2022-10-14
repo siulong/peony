@@ -84,7 +84,7 @@ public Q_SLOTS:
     void checkWindowProcess();
     void updateVirtualDesktopGeometryByWindows();
 
-    //void addBgWindow(QScreen *screen);
+    void addBgWindow(const KScreen::OutputPtr &output);
     void relocateIconView();
 
     void outputAdded(const KScreen::OutputPtr &output);
