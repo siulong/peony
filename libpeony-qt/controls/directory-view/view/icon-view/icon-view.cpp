@@ -829,6 +829,7 @@ void IconView::setSearchKey(const QString &key)
 IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
 {
     auto layout = new QVBoxLayout(this);
+    layout->setObjectName("_iconview2_layout");
     layout->setMargin(0);
     layout->setSpacing(0);
     m_view = new IconView(this);
@@ -851,6 +852,15 @@ IconView2::~IconView2()
 
 void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *proxyModel)
 {
+    auto layout = findChild<QVBoxLayout *>("_iconview2_layout");
+    bool ok = false;
+    if (parentWidget()) {
+        int statusBarHeight = parentWidget()->property("statusBarHeight").toInt(&ok);
+        if (ok) {
+            layout->setContentsMargins(0, 0, 0, statusBarHeight);
+        }
+    }
+
     disconnect(m_model);
     disconnect(m_proxy_model);
     m_model = model;
