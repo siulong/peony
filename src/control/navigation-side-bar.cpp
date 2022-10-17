@@ -533,6 +533,7 @@ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionV
 
 NavigationSideBarContainer::NavigationSideBarContainer(QWidget *parent)
 {
+    setMinimumWidth(144);  /* 设计要求侧边栏最小宽度为144px */
     setAttribute(Qt::WA_TranslucentBackground);
 
     m_layout = new QVBoxLayout;
