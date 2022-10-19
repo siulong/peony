@@ -693,6 +693,7 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
 
     connect(output.data(), &KScreen::Output::posChanged,
             window, [=](){
+        qDebug() << "output posChanged:" << output.data()->name()<< output->id() << output->geometry();
         int mode = checkScreenMode(output->geometry());
         if (1 == mode) {
             for (auto bgWindow : m_bg_windows) {
@@ -712,6 +713,24 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
                 Q_EMIT bgWindow->getIconView()->updateView();
             }
         }
+        window->setWindowGeometry(window->getLogicalGeometryFromScreen());
+    });
+
+    connect(output.data(), &KScreen::Output::currentModeIdChanged,
+            window, [=](){
+        qDebug() << "output currentModeIdChanged:" << output.data()->name()<< output->id() << output->geometry();
+        window->setWindowGeometry(window->getLogicalGeometryFromScreen());
+    });
+
+    connect(output.data(), &KScreen::Output::rotationChanged,
+            window, [=](){
+        qDebug() << "output rotationChanged:" << output.data()->name()<< output->id() << output->geometry();
+        window->setWindowGeometry(window->getLogicalGeometryFromScreen());
+    });
+
+    connect(output.data(), &KScreen::Output::sizeChanged,
+            window, [=](){
+        qDebug() << "output sizeChanged:" << output.data()->name()<< output->id() << output->geometry();
         window->setWindowGeometry(window->getLogicalGeometryFromScreen());
     });
 
