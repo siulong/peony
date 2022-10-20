@@ -457,6 +457,8 @@ void PeonyDesktopApplication::relocateIconView()
     if (0 < id) {
         for (auto window : m_bg_windows) {
             if (0 == window->id()) {
+                primaryWindow->getIconView()->refreshResolutionChange();
+                window->getIconView()->refreshResolutionChange();
                 window->setId(id);
                 primaryWindow->setId(0);
                 window->getIconView()->clearItemRect();
@@ -471,6 +473,9 @@ void PeonyDesktopApplication::relocateIconView()
         window->setCentralWidget(window->getIconView());
         if (!window->screen()->isPrimary()) {
             KWindowSystem::raiseWindow(window->winId());
+        }
+        if (0 < id) {
+            window->getIconView()->resolutionChange();
         }
     }
     if (primaryWindow) {

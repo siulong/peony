@@ -475,7 +475,8 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
     }
 }
 
-void DesktopIconView::setId(int id) {
+void DesktopIconView::setId(int id)
+{
     m_proxy_model->setId(id);
     m_id = id ;
 }
@@ -872,7 +873,7 @@ void DesktopIconView::resolutionChange()
             qInfo()<<"没有元素超过屏幕范围";
             QStringList itemNeedBeRelayout;
 
-            qInfo()<<"尝试恢复超过屏幕范围的元素";
+            qInfo()<<"尝试恢复超过屏幕范围的元素" <<m_resolution_item_rect;
             for (auto uri : m_resolution_item_rect.keys()) {
                 auto originalRect = m_resolution_item_rect.value(uri);
                 if (screenRect.contains(originalRect)) {
@@ -2525,6 +2526,12 @@ bool DesktopIconView::execSharedFileLink(const QString uri)
         }
     }
     return false;
+}
+
+void DesktopIconView::refreshResolutionChange()
+{
+    setAllRestoreInfo();
+    getAllRestoreInfo();
 }
 
 DesktopItemProxyModel *DesktopIconView::getProxyModel()

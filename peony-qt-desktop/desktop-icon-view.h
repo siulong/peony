@@ -106,6 +106,7 @@ public:
     void setAllRestoreInfo();
     void getAllRestoreInfo();
     void clearAllRestoreInfo();
+    void refreshResolutionChange();
 
     DesktopItemProxyModel *getProxyModel();
 
