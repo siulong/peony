@@ -45,6 +45,88 @@ static bool b_failed = false;
 static bool b_canClose = true;
 static double m_before_progress = 0;
 
+static QHash<Format_Dialog *, GVolume *> dialogVolumes;
+
+static ButtonStyle *global_instance = nullptr;
+
+ButtonStyle *ButtonStyle::getStyle()
+{
+    if (!global_instance) {
+        global_instance = new ButtonStyle;
+    }
+    return global_instance;
+}
+
+void ButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    switch (element) {
+    case CE_PushButton:
+    {
+        if (const QStyleOptionButton *button = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            proxy()->drawControl(CE_PushButtonBevel, option, painter, widget);
+            QStyleOptionButton subopt = *button;
+            subopt.rect = proxy()->subElementRect(SE_PushButtonContents, option, widget);
+            proxy()->drawControl(CE_PushButtonLabel, &subopt, painter, widget);
+            return;
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+    qApp->style()->drawControl(element, option, painter, widget);
+}
+
+int ButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
+{
+    switch (metric) {
+    case PM_ButtonMargin:
+    {
+        return 0;
+    }
+
+    default:
+        return QProxyStyle::pixelMetric(metric, option, widget);
+    }
+}
+
+QRect ButtonStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
+{
+    switch (element) {
+    case SE_PushButtonContents:
+    {
+        if (const QStyleOptionButton *button = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            const bool icon = !button->icon.isNull();
+            const bool text = !button->text.isEmpty();
+            QRect rect = option->rect;
+            int Margin_Height = 2;
+            int ToolButton_MarginWidth = 10;
+            int Button_MarginWidth = proxy()->pixelMetric(PM_ButtonMargin, option, widget);
+            if (text && !icon && !(button->features & QStyleOptionButton::HasMenu)) {
+                rect.adjust(Button_MarginWidth, 0, -Button_MarginWidth, 0);
+            } else if (!text && icon && !(button->features & QStyleOptionButton::HasMenu)) {
+
+            } else {
+                rect.adjust(ToolButton_MarginWidth, Margin_Height, -ToolButton_MarginWidth, -Margin_Height);
+            }
+            if (button->features & (QStyleOptionButton::AutoDefaultButton | QStyleOptionButton::DefaultButton)) {
+                int dbw = proxy()->pixelMetric(PM_ButtonDefaultIndicator, option, widget);
+                rect.adjust(dbw, dbw, -dbw, -dbw);
+            }
+            return rect;
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return QProxyStyle::subElementRect(element, option, widget);
+}
+
+
 QCheckBox *findPasswdCheckBox(Format_Dialog *dlg) {
     return dlg->findChild<QCheckBox *>("cryptCheckBox");
 }
@@ -69,8 +151,8 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     QLabel* romSizeLabel = new QLabel;
     romSizeLabel->setText(tr("Rom size:"));
     mRomSizeCombox = new QComboBox;
-    mainLayout->addWidget(romSizeLabel, 1, 1, 1, 2);
-    mainLayout->addWidget(mRomSizeCombox, 1, 3, 1, 6);
+    mainLayout->addWidget(romSizeLabel, 1, 1, 1, 4);
+    mainLayout->addWidget(mRomSizeCombox, 1, 5, 1, 8);
 
     QLabel* fsLabel = new QLabel;
     fsLabel->setText(tr("Filesystem:"));
@@ -79,14 +161,14 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mFSCombox->addItem("exfat");
     mFSCombox->addItem("ntfs");
     mFSCombox->addItem("ext4");
-    mainLayout->addWidget(fsLabel, 2, 1, 1, 2);
-    mainLayout->addWidget(mFSCombox, 2, 3, 1, 6);
+    mainLayout->addWidget(fsLabel, 2, 1, 1, 4);
+    mainLayout->addWidget(mFSCombox, 2, 5, 1, 8);
 
     QLabel* uNameLabel = new QLabel;
     uNameLabel->setText(tr("Disk name:"));
     mNameEdit = new QLineEdit;
-    mainLayout->addWidget(uNameLabel, 3, 1, 1, 2);
-    mainLayout->addWidget(mNameEdit, 3, 3, 1, 6);
+    mainLayout->addWidget(uNameLabel, 3, 1, 1, 4);
+    mainLayout->addWidget(mNameEdit, 3, 5, 1, 8);
     //fix can give name more than 11 characters,link to bug#113257
     //FIXME 设置最大长度为11，但是汉字也可以输入11个，Qt控件提供方法存在的问题
     connect(mFSCombox, &QComboBox::currentTextChanged, [=]()
@@ -114,19 +196,20 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     mEraseCkbox = new QCheckBox;
     mEraseCkbox->setText (tr("Completely erase(Time is longer, please confirm!)"));
-    mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 8, Qt::AlignLeft);
+    mEraseCkbox->setToolTip(mEraseCkbox->text());
+    mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 12, Qt::AlignLeft);
 
     mProgress = new QProgressBar;
     mProgress->setMinimum(0);
     mProgress->setValue (0);
     mProgress->setMaximum(100);
-    mainLayout->addWidget(mProgress, 5, 1, 1, 8);
+    mainLayout->addWidget(mProgress, 5, 1, 1, 12);
 
     auto cryptCheckBox = new QCheckBox(this);
     cryptCheckBox->setText(tr("Set password"));
     cryptCheckBox->setToolTip(tr("Set password for volume based on LUKS (only ext4)"));
     cryptCheckBox->setObjectName("cryptCheckBox");
-    mainLayout->addWidget(cryptCheckBox, 6, 1, 1, 4, Qt::AlignLeft);
+    mainLayout->addWidget(cryptCheckBox, 6, 1, 1, 6, Qt::AlignLeft);
 
     connect(mFSCombox, &QComboBox::currentTextChanged, this, [=]{
         if (mFSCombox->currentText() == "ext4") {
@@ -139,9 +222,10 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     mCancelBtn = new QPushButton(tr("Cancel"));
     mFormatBtn = new QPushButton(tr("OK"));
+    mCancelBtn->setStyle(new ButtonStyle());
 
-    mainLayout->addWidget(mCancelBtn, 6, 5, 1, 2, Qt::AlignRight);
-    mainLayout->addWidget(mFormatBtn, 6, 7, 1, 2, Qt::AlignRight);
+    mainLayout->addWidget(mCancelBtn, 6, 7, 1, 3, Qt::AlignRight);
+    mainLayout->addWidget(mFormatBtn, 6, 10, 1, 3, Qt::AlignRight);
 
     mTimer = new QTimer(this);
     mTimer->setInterval(1000);
@@ -240,6 +324,9 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     auto mount = VolumeManager::getMountFromUri(targetUri);
     //fix name not show complete in bottom issue, bug#36887
     if (mount.get()) {
+        auto gvolume = g_mount_get_volume(mount->getGMount());
+        dialogVolumes.insert(this, gvolume);
+
         if(m_uris == "file:///data" || targetUri == "file:///data"){
             mNameEdit->setText(tr("Data"));
         }else{
@@ -289,62 +376,71 @@ void Format_Dialog::slot_format(bool enable)
     if(!enable)
         return;
 
-    int full_clean = 0;
-    full_clean = mEraseCkbox->isChecked();
-    //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
-    if(full_clean){
-        //完全擦除方式格式化，预估为半小时，1秒更新一次
-        mTimer->setInterval(1000);
-        m_total_predict = 1800;
-    }else{
-        //快速格式化，预估时间为75S,0.5秒更新一次
-        mTimer->setInterval(500);
-        m_total_predict = 150;
-    }
+    /*!
+      try fix #125189, format encrypted volume failed sometimes.
 
-    mTimer->start();
+      note that device name might not be updated during unmount callback.
+      to make sure volume changed signal was handled, we need to delay a
+      few times.
+      */
+    QTimer::singleShot(100, this, [=]{
+        int full_clean = 0;
+        full_clean = mEraseCkbox->isChecked();
+        //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
+        if(full_clean){
+            //完全擦除方式格式化，预估为半小时，1秒更新一次
+            mTimer->setInterval(1000);
+            m_total_predict = 1800;
+        }else{
+            //快速格式化，预估时间为75S,0.5秒更新一次
+            mTimer->setInterval(500);
+            m_total_predict = 150;
+        }
 
-    // set ui button disable
-    mFormatBtn->setDisabled(TRUE);
-    mCancelBtn->setDisabled(TRUE);
-    //ui->lineEdit_device_name->setDisabled(TRUE);
-    //use set readonly property, fix exit issue link to task#33686
-    mNameEdit->setReadOnly(true);
-    mEraseCkbox->setDisabled(TRUE);
+        mTimer->start();
 
-    auto cryptCheckBox = findPasswdCheckBox(this);
-    cryptCheckBox->setDisabled(true);
+        // set ui button disable
+        mFormatBtn->setDisabled(TRUE);
+        mCancelBtn->setDisabled(TRUE);
+        //ui->lineEdit_device_name->setDisabled(TRUE);
+        //use set readonly property, fix exit issue link to task#33686
+        mNameEdit->setReadOnly(true);
+        mEraseCkbox->setDisabled(TRUE);
 
-    //init the value
-    char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
+        auto cryptCheckBox = findPasswdCheckBox(this);
+        cryptCheckBox->setDisabled(true);
+
+        //init the value
+        char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
 
 
-    QString romType = mFSCombox->currentText();
-    if (QString("vfat/fat32") == romType) {
-        romType = "vfat";
-    }
+        QString romType = mFSCombox->currentText();
+        if (QString("vfat/fat32") == romType) {
+            romType = "vfat";
+        }
 
-    //get values from ui
-    strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
-    strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
-    strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
+        //get values from ui
+        strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
+        strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
+        strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
 
-    //disable name and rom size list
-    //ui->comboBox_rom_size->setDisabled(true);
-    this->mFSCombox->setDisabled(true);
+        //disable name and rom size list
+        //ui->comboBox_rom_size->setDisabled(true);
+        this->mFSCombox->setDisabled(true);
 
-    QString volname, devName, voldisplayname ,devtype;
-    //get device name
-    //FIXME: replace BLOCKING api in ui thread.
-    FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
+        QString volname, devName, voldisplayname ,devtype;
+        //get device name
+        //FIXME: replace BLOCKING api in ui thread.
+        FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
 
-    strncpy(dev_name,devName.toUtf8().constData(), sizeof (dev_name) - 1);
-    devtype = rom_type;
+        strncpy(dev_name,devName.toUtf8().constData(), sizeof (dev_name) - 1);
+        devtype = rom_type;
 
-    int format_value = 0;
-    //do format
-    kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
-                 full_clean?"zero":NULL, rom_name,&format_value);
+        int format_value = 0;
+        //do format
+        kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
+                     full_clean?"zero":NULL, rom_name,&format_value);
+    });
 }
 
 
@@ -401,6 +497,11 @@ static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
 
 void Format_Dialog::acceptFormat(bool)
 {
+    if (!mNameEdit->text().isEmpty() && mNameEdit->text().at(0) == '.') {
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Device name cannot start with a decimal point, Please re-enter!"), QMessageBox::Ok);
+        return;
+    }
+
     bool setPassword = false;
     QString password = nullptr;
     auto cryptCheckBox = findPasswdCheckBox(this);
@@ -638,8 +739,12 @@ gboolean Format_Dialog::is_iso(const gchar *device_path){
     UDisksBlock *block;
     client = udisks_client_new_sync(NULL,NULL);
     object = get_object_from_block_device(client,device_path);
-    block = udisks_object_get_block(object);
 
+    //fix format U disk crash issue
+    if (! object)
+        return FALSE;
+
+    block = udisks_object_get_block(object);
 
     if(g_strcmp0(udisks_block_get_id_type(block),"iso9660")==0)
     {
@@ -649,7 +754,6 @@ gboolean Format_Dialog::is_iso(const gchar *device_path){
         g_clear_object(&client);
         return TRUE;
     }
-
 
     g_object_unref(object);
     g_object_unref(block);
@@ -721,7 +825,7 @@ UDisksObject* getObjectFromBlockDevice(UDisksClient* client, const gchar* bdevic
 
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
 
-    cryptoBackingDevice = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    cryptoBackingDevice = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     cryptoBackingObject = udisks_client_get_object (client, cryptoBackingDevice);
     if (cryptoBackingObject != NULL) {
         g_object_unref (object);
@@ -771,7 +875,13 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
                 if (diskBlock) {
                     curName = udisks_block_get_id_label (diskBlock);
                     qDebug () << data->dl->mVolumeName << "  --  " << data->filesystem_name << "  --  " << curName;
+                } else {
+                    // might be crypted volume
+                    curName = data->dl->mNameEdit->text().trimmed();
                 }
+            } else {
+                // might be crypted volume
+                curName = data->dl->mNameEdit->text().trimmed();
             }
         }
 
@@ -995,7 +1105,7 @@ UDisksObject *Format_Dialog::get_object_from_block_device (UDisksClient *client,
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
     g_object_unref (block);
 
-    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     crypto_backing_object = udisks_client_get_object (client, crypto_backing_device);
     if (crypto_backing_object != NULL)
     {
@@ -1046,6 +1156,22 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
         ensure_unused_cb(data);
     } else {
         // 也许是加密分区卸载后device name变更导致，需要先做处理
+        auto gvolume = dialogVolumes.value(this);
+        qInfo()<<"try to get latest device name from gvolume";
+        if (gvolume) {
+            g_autofree gchar* unixDevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+            data->object = get_object_from_block_device(data->client, unixDevice);
+            if (data->object) {
+                qInfo()<<"use latest device name:"<<unixDevice;
+                data->block = udisks_object_get_block(data->object);
+                ensure_unused_cb(data);
+                return;
+            } else {
+                qInfo()<<"failed to get latest valid device name from gvolume, latest device name:"<<unixDevice;
+            }
+        } else {
+            qWarning()<<"can not find gvolume for current dialog, unexpected error!";
+        }
 
         // fix #103344
         QMessageBox::critical(0, tr("Error"), tr("Block not existed!"));
@@ -1071,6 +1197,11 @@ Format_Dialog::~Format_Dialog()
     if (mRomSizeCombox)     mRomSizeCombox->deleteLater();
     if (mVolumeMonitor)     g_object_unref (mVolumeMonitor);
 
+    auto gvolume = dialogVolumes.take(this);
+    if (gvolume) {
+        g_object_unref(gvolume);
+    }
+
     b_canClose = true;
 }
 
@@ -1094,4 +1225,15 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+}
+
+void Format_Dialog::resizeEvent(QResizeEvent *event)
+{
+    int width = mEraseCkbox->width() - 25;
+
+    if (mEraseCkbox->fontMetrics().width(mEraseCkbox->text()) > width) {
+        mEraseCkbox->setText(mEraseCkbox->fontMetrics().elidedText(mEraseCkbox->text(), Qt::ElideRight, width));
+    }
+
+    QWidget::resizeEvent(event);
 }

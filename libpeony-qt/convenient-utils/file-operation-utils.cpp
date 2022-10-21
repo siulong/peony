@@ -38,6 +38,9 @@
 #include "file-enumerator.h"
 #include "audio-play-manager.h"
 
+#include "file-operation-internal-dialog.h"
+#include "sound-effect.h"
+
 #include <QUrl>
 #include <QFileInfo>
 #include <gio/gio.h>
@@ -254,6 +257,44 @@ FileOperation *FileOperationUtils::moveWithAction(const QStringList &srcUris, co
         op = FileOperationUtils::trash(srcUris, true);
     }
     return op;
+}
+
+FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list)
+{
+    return clearRecycleBinWithDialog(list, nullptr);
+}
+
+FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list, QWidget *parent)
+{
+    FileOperationInternalDialog questionbox((QDialog*)parent);
+    auto okButton = questionbox.addButton(QObject::tr("OK"));
+    questionbox.connect(okButton, &QPushButton::clicked, &questionbox, [&]{
+        questionbox.accept();
+    });
+    auto cancelButton = questionbox.addButton(QObject::tr("Cancel"));
+    questionbox.connect(cancelButton, &QPushButton::clicked, &questionbox, [&]{
+        questionbox.reject();
+    });
+    okButton->setFocus();
+    questionbox.setText(QObject::tr("Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them."));
+    questionbox.setIcon("user-trash-full");
+    Peony::AudioPlayManager::getInstance()->playWarningAudio();
+    if (questionbox.exec()) {
+        FileOperation *operation = nullptr;
+        if (!list.isEmpty()) {
+            operation = FileOperationUtils::remove(list);
+        } else {
+            auto uris = FileUtils::getChildrenUris("trash:///");
+            if (uris.isEmpty()) {
+                return nullptr;
+            }
+            operation = FileOperationUtils::remove(uris);
+        }
+//        SoundEffect::getInstance()->recycleBinDeleteMusic();
+        return operation;
+    } else {
+        return nullptr;
+    }
 }
 
 FileOperation *FileOperationUtils::restore(const QString &uriInTrash)

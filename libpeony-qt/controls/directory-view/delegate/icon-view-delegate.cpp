@@ -57,6 +57,8 @@
 #include <QFileInfo>
 
 #include <QStyleOptionViewItem>
+#include <QAbstractTextDocumentLayout>
+#include <QTextBlock>
 
 using namespace Peony;
 using namespace Peony::DirectoryView;
@@ -97,7 +99,6 @@ QSize IconViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     //FIXME: how to deal with word wrap correctly?
-    painter->save();
 
     bool isDragging = false;
     auto view = qobject_cast<IconView*>(this->parent());
@@ -209,9 +210,10 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }
     auto info = item->info();
     // draw color symbols
-    int iLine = 0;
     int yoffset = 0;
     auto colors = info->getColors();
+
+    int xoffset = 0;
 
     if (!isDragging || !view->selectedIndexes().contains(index)) {
         //快速访问目录，颜色标记设置后更新不及时问题单独处理,修复bug#118015
@@ -225,7 +227,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             const int MAX_LABEL_NUM = 3;
             int startIndex = (colors.count() > MAX_LABEL_NUM ? colors.count() - MAX_LABEL_NUM : 0);
             int num =  colors.count() - startIndex;
-            int xoffset = 0;
+
             auto lineSpacing = option.fontMetrics.lineSpacing();
 
             QString text = opt.text;
@@ -263,38 +265,24 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
 
             yoffset = 0;
-            painter->save();
-            painter->translate(opt.rect.topLeft());
-            painter->translate(xoffset+10, iconRect.size().height() + 5);
-            if (opt.state.testFlag(QStyle::State_Selected))
-                painter->setPen(opt.palette.highlightedText().color());
-            else
-                painter->setPen(opt.palette.text().color());
-            line.draw(painter, QPoint(0, yoffset));
-            yoffset += lineSpacing;
-            opt.text = text.mid(line.textLength());
+            xoffset += 10;
 
             textLayout.endLayout();
-            painter->restore();
-            iLine++;
         }
     }
 
-    if(!opt.text.isEmpty())
-    {
-        painter->save();
-        painter->translate(opt.rect.topLeft());
-        painter->translate(0, iconRect.size().height() + 5 + yoffset);
+    painter->save();
+    painter->translate(opt.rect.topLeft());
+    painter->translate(0, iconRect.size().height() + 5);
+    IconViewTextHelper::paintText(painter,
+                                  opt,
+                                  9999,
+                                  xoffset,
+                                  m_regFindKeyWords,
+                                  2,
+                                  2);
 
-        IconViewTextHelper::paintText(painter,
-                                      opt,
-                                      index,
-                                      9999,
-                                      2,
-                                      2-iLine);
-
-        painter->restore();
-    }
+    painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
@@ -316,7 +304,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-unreadable");
             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
-        } else if (!info->canWrite() && !info->canExecute()) {
+        } else if (!info->canWrite()/* && !info->canExecute()*/) {
+            //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-readonly");
             icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
@@ -331,31 +320,32 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             break;
         }
 
-        QIcon icon = QIcon::fromTheme(extensionsEmblem, QIcon(extensionsEmblem));
-        int pos = emblemPoses.takeFirst();
-        switch (pos) {
-        case 1: {
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 2: {
-            icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 3: {
-            icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        case 4: {
-            icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
-            break;
-        }
-        default:
-            break;
+        QIcon icon = QIcon::fromTheme(extensionsEmblem);
+        if (!icon.isNull()) {
+            int pos = emblemPoses.takeFirst();
+            switch (pos) {
+            case 1: {
+                icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 2: {
+                icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 3: {
+                icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            case 4: {
+                icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
 
-    painter->restore();
 
     //single selection, we have to repaint the emblems.
 
@@ -515,6 +505,104 @@ IconView *IconViewDelegate::getView() const
 const QBrush IconViewDelegate::selectedBrush() const
 {
     return m_styled_button->palette().highlight();
+}
+
+void IconViewDelegate::setSearchKeyword(QString regFindKeyWords)
+{
+    m_regFindKeyWords = regFindKeyWords;
+}
+
+const QString IconViewDelegate::getRegFindKeyWords() const
+{
+    return m_regFindKeyWords;
+}
+
+void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
+{
+    painter->save();
+    QFont font = option.font;
+    QTextLayout textLayout(option.text, font);
+    QTextOption textOpt;
+    textOpt.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    textLayout.setTextOption(textOpt);
+    textLayout.beginLayout();
+
+    auto fontMetrics = option.fontMetrics;
+    auto lineSpacing = fontMetrics.lineSpacing();
+    int width = option.rect.width() - 2*horizalMargin;
+    int y = 0;
+    int lineCount = 0;
+    QString elidedText = option.text;
+
+    QTextDocument document;
+    textOpt.setAlignment(Qt::AlignHCenter);
+    document.setDefaultTextOption(textOpt);
+    document.setTextWidth(width);
+    document.setDefaultFont(option.font);
+    document.setIndentWidth(0);
+    document.setDocumentMargin(0);
+
+    //计算text的长度
+    while (true) {
+        QTextLine line = textLayout.createLine();
+        if (!line.isValid())
+            break;
+
+        int nextLineY = y + lineSpacing;
+        lineCount++;
+
+        if (textMaxHeight >= nextLineY + lineSpacing && lineCount != maxLineCount) {
+            line.setLineWidth(width-xOffset);
+            y = nextLineY;
+        } else {
+            line.setLineWidth(width);
+            QString lastLine = option.text.mid(line.textStart());
+            QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            elidedText = option.text.left(line.textStart()) + elidedLastLine;
+            textOpt.setWrapMode(QTextOption::NoWrap);
+            line = textLayout.createLine();
+            break;
+        }
+    }
+    document.setPlainText(elidedText);
+
+    //painter->translate(option.rect.topLeft());
+    painter->translate(horizalMargin, 0);
+   // painter->translate(0, iconRect.size().height() + 5);
+
+
+    //设置关键字高亮
+    QTextCursor highlightCursor(&document);
+    QTextCursor cursor(&document);
+
+    cursor.beginEditBlock();
+
+    QTextBlock textStyleBlock = cursor.block();
+    QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setTextIndent(xOffset);
+    cursor.setBlockFormat(textStyleFormat);
+    QTextCharFormat plainFormat(highlightCursor.charFormat());
+    QTextCharFormat colorFormat = plainFormat;
+    colorFormat.setBackground(Qt::green);
+    if (option.state.testFlag(QStyle::State_Selected)) {
+        QTextCharFormat selectColorFormat(cursor.charFormat());
+        selectColorFormat.setForeground(Qt::white);
+        cursor.select(QTextCursor::Document);
+        cursor.mergeCharFormat(selectColorFormat);
+    }
+
+    while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
+        highlightCursor = document.find(regFindKeyWords, highlightCursor);
+        if (!highlightCursor.isNull()) {
+            highlightCursor.mergeCharFormat(colorFormat);
+        }
+
+    }
+    cursor.endEditBlock();
+    document.drawContents(painter/*, rect*/);
+
+    textLayout.endLayout();
+    painter->restore();
 }
 
 QSize IconViewTextHelper::getTextSizeForIndex(const QStyleOptionViewItem &option, const QModelIndex &index, int horizalMargin, int maxLineCount)

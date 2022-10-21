@@ -37,6 +37,7 @@
 #include "file-operation-utils.h"
 
 #include "emblem-provider.h"
+#include "sound-effect.h"
 
 #include <QIcon>
 #include <QMimeData>
@@ -174,16 +175,19 @@ QModelIndex FileItemModel::lastColumnIndex(FileItem *item)
 const QModelIndex FileItemModel::indexFromUri(const QString &uri)
 {
     //FIXME: support recursively finding?
-    for (auto child : *m_root_item->m_children) {
-        GFile *left = g_file_new_for_uri(child->uri().toUtf8().constData());
-        GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
-        bool equal = g_file_equal(left, right);
-        g_object_unref(left);
-        g_object_unref(right);
-        if (equal) {
-            return child->firstColumnIndex();
-        }
+    if(m_root_item->m_uri_item_hash.contains(uri)) {
+        auto child = m_root_item->m_uri_item_hash[uri];
+        return indexFromItemAndUri(child, uri);
+    }else if(m_root_item->m_uri_item_hash.contains(FileUtils::getEncodedUri(uri))){/* 中文编码问题 */
+        QString encodedUri = FileUtils::getEncodedUri(uri);
+        auto child = m_root_item->m_uri_item_hash[encodedUri];
+        return indexFromItemAndUri(child, encodedUri);
+    }else if(m_root_item->m_uri_item_hash.contains(FileUtils::urlDecode(uri))){/* 中文编码问题 */
+            QString decodedUri = FileUtils::urlDecode(uri);
+            auto child = m_root_item->m_uri_item_hash[decodedUri];
+            return indexFromItemAndUri(child, decodedUri);
     }
+
     return QModelIndex();
 }
 
@@ -560,6 +564,11 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
+    //if drag file to empty CD or DVD, is invalid operation, link to bug#129347
+    //如果是拖拽文件到空光盘，操作无效，光盘只能刻录，不能直接写入文件
+    if (destDirUri.startsWith("burn:///"))
+        return false;
+
     auto info = Peony::FileInfo::fromUri(destDirUri);
     //qDebug() << "FileItemModel::dropMimeData:" <<info->isDir() <<info->type();
     //if (!FileUtils::getFileIsFolder(destDirUri))
@@ -650,6 +659,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
     connect(op, &FileOperation::operationFinished, this, [=](){
+        Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         auto opInfo = op->getOperationInfo();
         auto targetUris = opInfo.get()->dests();
         Q_EMIT this->selectRequest(targetUris);
@@ -679,4 +689,20 @@ void FileItemModel::setShowFileExtensions(bool show)
 {
     m_showFileExtension = show;
     GlobalSettings::getInstance()->setGSettingValue(SHOW_FILE_EXTENSION, show);
+}
+
+const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QString &uri)
+{
+    if(!item)
+        return QModelIndex();
+
+    GFile *left = g_file_new_for_uri(item->uri().toUtf8().constData());
+    GFile *right = g_file_new_for_uri(uri.toUtf8().constData());
+    bool equal = g_file_equal(left, right);
+    g_object_unref(left);
+    g_object_unref(right);
+    if (equal) {
+        return item->firstColumnIndex();
+    }
+    return QModelIndex();
 }

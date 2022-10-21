@@ -58,6 +58,7 @@
 #include "file-operation-error-dialog.h"
 #include "clipboard-utils.h"
 #include "search-vfs-uri-parser.h"
+#include "file-delete-operation.h"
 
 #include "directory-view-menu.h"
 #include "directory-view-widget.h"
@@ -73,6 +74,7 @@
 
 #include "file-meta-info.h"
 #include "sound-effect.h"
+#include "location-bar.h"
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
 #include <QSplitter>
@@ -614,8 +616,12 @@ void MainWindow::setShortCuts()
         connect(selectAllAction, &QAction::triggered, this, [=]() {
             if (this->getCurrentPage()->getView())
             {
-                auto allFiles = this->getCurrentPage()->getView()->getAllFileUris();
-                this->getCurrentPage()->getView()->setSelections(allFiles);
+                /// note: 通过getAllFileUris设置的全选效率过低，如果增加接口则会导致二进制兼容性问题
+                /// 所以这里使用现有的反选接口实现高效的全选，这个方法在mainwindow中也有用到
+                //auto allFiles = this->getCurrentPage()->getView()->getAllFileUris();
+                //this->getCurrentPage()->getView()->setSelections(allFiles);
+                this->getCurrentPage()->getView()->setSelections(QStringList());
+                this->getCurrentPage()->getView()->invertSelections();
             }
         });
         addAction(selectAllAction);
@@ -663,7 +669,8 @@ void MainWindow::setShortCuts()
             auto currentUri = getCurrentUri();
             if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
                 || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
-                || currentUri.startsWith("search://") || currentUri == "filesafe:///")
+                || currentUri.startsWith("search://") || currentUri == "filesafe:///"
+                || currentUri.startsWith("burn://"))
             {
                 /* Add hint information,link to bug#107640. */
                 QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
@@ -861,7 +868,7 @@ bool MainWindow::getWindowShowHidden()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool());
+            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool();
@@ -878,7 +885,7 @@ bool MainWindow::getWindowUseDefaultNameSortOrder()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): (settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true;
@@ -895,7 +902,7 @@ bool MainWindow::getWindowSortFolderFirst()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): (settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true;
@@ -1004,19 +1011,19 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
         }
     }
 
+    //if in search mode and key is not null, need quit search mode, bug#93528
+    //清空搜索关键字时，不应该退出搜索状态，其他情况下，跳转非搜索路径，需要退出搜索
+    if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
+    {
+        m_is_search = false;
+        m_header_bar->searchButtonClicked();
+    }
+
     if (getCurrentUri() == realUri) {
         if (!force) {
             refresh();
             return;
         }
-    }
-
-    //if in search mode and key is not null, need quit search mode
-    if (m_is_search && m_last_key != "" && !uri.startsWith("search://"))
-    {
-        m_tab->updateSearchBar(false);
-        m_is_search = false;
-        m_header_bar->startEdit(false);
     }
 
     locationChangeStart();
@@ -1050,8 +1057,11 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
     {
         //qDebug() << "updateSearch needUpdate:" <<m_last_key<<m_last_search_path;
         forceStopLoading();
-        if (m_last_key == "")
+        if (m_last_key == ""){
+            m_is_clear_serach = true;
             goToUri(m_last_search_path, true);
+            m_is_clear_serach = false;
+        }
         else
         {
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
@@ -1515,11 +1525,7 @@ void MainWindow::initUI(const QString &uri)
             maximizeOrRestore();
     });
     connect(views, &TabWidget::closeWindowRequest, this, &QWidget::close);
-    connect(m_header_bar, &HeaderBar::updateSearchRequest, this, [=](bool showSearch)
-    {
-        m_tab->updateSearchBar(showSearch);
-        m_is_search = showSearch;
-    });
+    //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
     connect(m_header_bar, &HeaderBar::updateSearch, this, &MainWindow::updateSearch);
 
     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
@@ -1550,6 +1556,10 @@ void MainWindow::initUI(const QString &uri)
     connect(m_tab, &TabWidget::searchRecursiveChanged, headerBar, &HeaderBar::updateSearchRecursive);
     connect(m_tab, &TabWidget::closeSearch, headerBar, &HeaderBar::closeSearch);
     connect(m_tab, &TabWidget::clearTrash, this, &MainWindow::cleanTrash);
+    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
+        m_tab->updateTabPageTitle();
+    });
+    connect(this, &MainWindow::trashcleaned, headerBar, &HeaderBar::clearTrash);
     connect(m_tab, &TabWidget::recoverFromTrash, this, &MainWindow::recoverFromTrash);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_tab, &TabWidget::updateSearch, this, &MainWindow::updateSearch);
@@ -1602,25 +1612,32 @@ void MainWindow::initUI(const QString &uri)
     }
 }
 
+void MainWindow::updateSearchStatus(bool showSearch)
+{
+    m_tab->updateSearchBar(showSearch);
+    m_header_bar->setSearchMode(showSearch);
+    m_is_search = showSearch;
+}
+
 void MainWindow::cleanTrash()
 {
     auto uris = getCurrentAllFileUris();
-    Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (uris.count() >0)
     {
-        auto result = QMessageBox::question(nullptr, tr("Delete Permanently"),
-                                            tr("Are you sure that you want to delete these files? "
-                                               "Once you start a deletion, the files deleting will never be "
-                                               "restored again."));
-        if (result == QMessageBox::Yes) {
-            Peony::FileOperationUtils::remove(uris);
-            Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+        auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
+        qApp->setProperty("clearTrash",true);
+        if(removeop){
+            removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
+//                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                Q_EMIT trashcleaned();
+            });
         }
     }
     else
-    {
-        QMessageBox::information(nullptr, tr("Tips info"),
-                                 tr("Trash has no file need to be cleaned."));
+    {     /* 由于QMessageBox的setParent还不支持，暂先注释处理，link to bug#22692 【回收站】清空时，其他工作区的文件管理器会转到当前工作区 */
+//        QMessageBox::information(nullptr, tr("Tips info"),
+//                                 tr("Trash has no file need to be cleaned."));
+
     }
 }
 

@@ -21,6 +21,7 @@
  */
 
 #include "sound-effect.h"
+#include <QFile>
 
 using namespace Peony;
 
@@ -67,6 +68,15 @@ QList<char *> SoundEffect::listExistsPath()
 
 void SoundEffect::playAlertSound(QString gsettingStr)
 {
+    if (! m_pSoundSettings)
+        return;
+
+    QFile file("/usr/share/sounds/xunguang.xml");
+    if(!file.exists()){
+        qDebug() << "THE SOUND EFFECT FILE IS NOT EXIST";
+        return;
+    }
+
     gint retval = -1;
     const gchar *desc = "Alert Sound";
     QString filenameStr;
@@ -84,12 +94,15 @@ void SoundEffect::playAlertSound(QString gsettingStr)
             if (nameStr == gsettingStr){
                 break;
             }
+            else{
+                filenameStr = "";//新增处理，如果未找到对应组件的音效文件，则不予播放，不做此处理，会存在播放screen音效
+            }
         }
     }
     const QByteArray text = filenameStr.toLocal8Bit();
     const char *id = text.data();
     const char *eventId =id;
-    if(desc){
+    if(desc && filenameStr.length() >0){
         bool status = g_settings_get_boolean(m_pSoundSettings, EVENT_SOUNDS_KEY);
         if (status)
             retval = ca_context_play (this->caContext, 0,
@@ -117,5 +130,5 @@ void SoundEffect::copyOrMoveSucceedMusic()
 
 void SoundEffect::copyOrMoveFailedMusic()
 {
-    playAlertSound("copyormove-failed");
+    playAlertSound("operation-notsupported");
 }

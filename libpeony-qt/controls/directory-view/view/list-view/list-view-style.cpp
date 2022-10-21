@@ -281,7 +281,7 @@ void ListViewStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
     default:
         break;
     }
-    return QProxyStyle::drawControl(element, option, painter, widget);
+    return qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int ListViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const

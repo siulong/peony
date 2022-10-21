@@ -456,6 +456,17 @@ void MainProgressBar::setFileName(QString name)
     m_file_name = name;
 }
 
+QString MainProgressBar::elideText(const QFont &font, const int &width, const QString &strInfo)
+{
+    QFontMetrics fontMetrics(font);
+    QString display_name = strInfo;
+    if(fontMetrics.width(strInfo) > 2*width) {
+        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
+    }
+    return display_name;
+
+}
+
 void MainProgressBar::paintEvent(QPaintEvent *event)
 {
     QPainter painter (this);
@@ -606,7 +617,10 @@ void MainProgressBar::paintContent(QPainter &painter)
             painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
             painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
         } else {
-            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, m_file_name);
+            this->setToolTip(m_file_name);
+            QString display_name;
+            display_name = elideText(this->font(),400,m_file_name);
+            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
             if (m_pause) {
                 painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-start-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
             } else {
@@ -732,6 +746,7 @@ ProgressBar::ProgressBar(QWidget *parent) : QWidget(parent)
     setMouseTracking(true);
     m_is_stopping = false;
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_update_count = 0;
     m_dest_uri = tr("starting ...");
     connect(this, &ProgressBar::cancelled, this, &ProgressBar::onCancelled);
     connect(this, &ProgressBar::destroyed, this, [=] () {m_has_finished = true;});
@@ -790,6 +805,16 @@ void ProgressBar::setResume()
     update();
 }
 
+QString ProgressBar::elideText(const QFont &font, const int &width, const QString &strInfo)
+{
+    QFontMetrics fontMetrics(font);
+    QString display_name = strInfo;
+    if(fontMetrics.width(strInfo) > width) {
+        display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, width);
+    }
+    return display_name;
+}
+
 ProgressBar::~ProgressBar()
 {
 
@@ -824,7 +849,10 @@ void ProgressBar::paintEvent(QPaintEvent *event)
         painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
         painter.drawPixmap(m_pause_x, m_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_btn_size, m_btn_size)));
     } else {
-        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, m_dest_uri);
+        this->setToolTip(m_dest_uri);
+        QString display_name;
+        display_name = elideText(this->font(),335,m_dest_uri);
+        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, display_name);
     }
 
     // paint progress
@@ -951,8 +979,8 @@ void ProgressBar::onFileOperationProgressedOne(const QString &uri, const QString
 
 void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, const QString& fIcon, const quint64& current, const quint64& total)
 {
-    if (current >= m_total_size) {
-        qDebug() << "progress bar value error!";
+    if ((current > m_total_size && m_total_size>0) || m_update_count > m_total_count) {
+        qDebug() << "progress bar value error!:"<<current<<m_total_size;
         return;
     }
 
@@ -966,8 +994,13 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     }
 
     double currentPercent = current * 1.0 / total;
+    //fix bug#133624,133380, delete all empty files, not update progress bar
+    if (m_total_size <= 0){
+        m_update_count++;
+        currentPercent = m_update_count * 1.0 /m_total_count;
+    }
 
-//    qDebug() << "progress bar: " << currentPercent;
+    qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
 
     updateValue(currentPercent);
 

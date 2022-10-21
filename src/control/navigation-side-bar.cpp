@@ -533,6 +533,7 @@ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionV
 
 NavigationSideBarContainer::NavigationSideBarContainer(QWidget *parent)
 {
+    setMinimumWidth(144);  /* 设计要求侧边栏最小宽度为144px */
     setAttribute(Qt::WA_TranslucentBackground);
 
     m_layout = new QVBoxLayout;
@@ -654,8 +655,6 @@ void NavigationSideBarStyle::drawControl(QStyle::ControlElement element, const Q
                 opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
             }
         }
-        return QProxyStyle::drawControl(element, &opt, painter, widget);
-    } else {
-        return QProxyStyle::drawControl(element, option, painter, widget);
+        return qApp->style()->drawControl(element, &opt, painter, widget);
     }
 }

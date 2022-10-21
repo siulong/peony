@@ -15,9 +15,10 @@ TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitialized -Werror=unused-label
 CONFIG += link_pkgconfig no_keywords c++11 lrelease hide_symbols
-PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libnotify libcanberra openssl x11-xcb dconf kysdk-waylandhelper
+PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libnotify libcanberra openssl x11-xcb dconf kysdk-qtwidgets kysdk-waylandhelper
 
 DEFINES += PEONYCORE_LIBRARY
+DEFINES += KY_FILE_DIALOG
 
 schemes.files += org.ukui.peony.settings.gschema.xml
 schemes.path = /usr/share/glib-2.0/schemas/
@@ -64,8 +65,8 @@ unix {
 
     # fixme:// format_dialog.h
     header.path = /usr/include/peony-qt
-    header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h windows/format_dialog.h \
-                    libpeony-qt/usershare-manager.h
+    header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h windows/FMWindowIface.h \
+                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h
 #    header.depends = header2
     header.files += development-files/header-files/*
     INSTALLS += header

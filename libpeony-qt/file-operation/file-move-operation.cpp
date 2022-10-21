@@ -673,14 +673,26 @@ fallback_retry:
             except.isCritical = false;
             if (handle_type == Other) {
                 auto typeData = Invalid;
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     typeData = except.respCode;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.destDirUri = realDestUri;
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    typeData = except.respCode;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     typeData = except.respCode;
+                    break;
+                }
                 }
                 // ignore multiple bounces
                 if (except.errorCode == G_IO_ERROR_NOT_SUPPORTED) {
@@ -750,6 +762,12 @@ fallback_retry:
             case Retry: {
                 goto fallback_retry;
             }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                // fixme: 目前无法undo，原文件名不能保留
+                //setHasError(true);
+                goto fallback_retry;
+            }
             case Cancel: {
                 node->setState(FileNode::Unhandled);
                 cancel();
@@ -804,6 +822,8 @@ fallback_retry:
                 }
                 break;
             }
+            default:
+                break;
             }
 
             FileOperationError except;
@@ -817,16 +837,36 @@ fallback_retry:
             except.title = tr("Create file error");
             except.srcUri = m_current_src_uri;
             except.destDirUri = m_current_dest_dir_uri;
+
+            //fix bug#121093, paste deleted file issue
+            if (err->code == G_IO_ERROR_PERMISSION_DENIED) {
+                except.errorStr = tr("Cannot opening file, permission denied!");
+            }else if (err->code == G_IO_ERROR_NOT_FOUND) {
+                except.errorStr = tr("File:%1 was not found.").arg(except.srcUri);
+            }
+
             if (handle_type == Other) {
                 auto typeData = Invalid;
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     typeData = except.respCode;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.destDirUri = realDestUri;
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    typeData = except.respCode;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     typeData = except.respCode;
+                    break;
+                }
                 }
                 handle_type = typeData;
             }
@@ -925,6 +965,12 @@ fallback_retry:
             case Retry: {
                 goto fallback_retry;
             }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                // fixme: 目前无法undo，原文件名不能保留
+                //setHasError(true);
+                goto fallback_retry;
+            }
             case Cancel: {
                 node->setErrorResponse(Cancel);
                 cancel();
@@ -951,7 +997,7 @@ fallback_retry:
 
 void FileMoveOperation::deleteRecursively(FileNode *node)
 {
-    if (isCancelled())
+    if (isCancelled() || hasError())
         return;
 
     g_autoptr(GFile) file = g_file_new_for_uri(node->uri().toUtf8().constData());
@@ -1018,7 +1064,6 @@ void FileMoveOperation::moveForceUseFallback()
         Q_EMIT operationStartRollbacked();
 
     for (auto file : nodes) {
-        qDebug()<<file->uri();
         if (isCancelled()) {
             rollbackNodeRecursively(file);
         }
@@ -1128,8 +1173,6 @@ start:
 //        move();
 //    }
 
-
-    qDebug()<<"finished";
 end:
     Q_EMIT operationFinished();
 

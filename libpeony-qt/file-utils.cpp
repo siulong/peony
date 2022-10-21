@@ -36,6 +36,8 @@
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusReply>
+
 
 using namespace Peony;
 
@@ -119,7 +121,7 @@ QString FileUtils::urlEncode(const QString& url)
 
 QString FileUtils::urlDecode(const QString &url)
 {
-    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8(), ":/");
+    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8().constData(), ":/");
     if (!decodeUrl) {
 //        qDebug() << "decode url from:'" << url <<"' to '" << url << "'";
         return url;
@@ -343,6 +345,20 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     auto fileInfo = FileInfo::fromUri(uri);
     if (uri == "file:///data")
         return QObject::tr("data");
+    //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
+    if (uri == "file:///")
+        return QObject::tr("File System");
+    //fix bug#139600，替换windows共享名称, “172.17.123.173上的Windows共享” 显示为 "172.17.123.173上的共享"
+    bool isSmbPath = uri.startsWith("smb://");
+    QString showName = fileInfo.get()->displayName();
+    //设置尽量苛刻的条件减少错误的替换
+    if (isSmbPath && showName.length()>=18 && showName.contains("Windows") && showName.split(".").length() ==4){
+        showName = showName.replace("Windows", "");
+        //only replaced one "Windows" to specific match
+        if (fileInfo.get()->displayName().length() - showName.length() == 7){
+            return showName;
+        }
+    }
     return fileInfo.get()->displayName();
 }
 
@@ -530,18 +546,34 @@ bool FileUtils::isStandardPath(const QString &uri)
     return false;
 }
 
-/* @func: 判断文件是否属于移动设备上的文件，是的话，提示为永久删除
- * FIXME 目前根据挂载路径进行判断的，可能不准确，目前暂未找到好的判断方法
- * 其他系统分区文件可能也会判断为移动设备文件
- * 目前的定位为，判断是否非本系统文件更为合适
+/* @func: 使用设备是否可卸载的方式判断是否为移动设备
+ * 可移动设备是可以卸载的，可卸载的不一定是移动设备
+ * 排除掉网络地址，如ftp,sftp,smb挂载
 */
 bool FileUtils::isMobileDeviceFile(const QString &uri)
 {
-    auto targetUri = getTargetUri(uri);
-    if (uri.startsWith("file:///media") || targetUri.startsWith("file:///media"))
-        return true;
+    if (uri.isEmpty() || uri.startsWith("ftp:///") || uri.startsWith("sftp:///") || uri.startsWith("smb:///"))
+        return false;
 
-    return false;
+    bool isMobile = false;
+    //多次测试发现不准确，使用canEject和canStop属性来做判断
+//    GFile *dest_dir_file = g_file_new_for_path(uri.toUtf8().constData());
+//    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+//    if (dest_dir_mount) {
+//        isMobile = g_mount_can_unmount(dest_dir_mount);
+//        g_object_unref(dest_dir_mount);
+//    }
+//    g_object_unref(dest_dir_file);
+    auto dev = VolumeManager::getDriveFromUri(getParentUri(uri));
+    if(dev != nullptr){
+        bool canEject = g_drive_can_eject(dev.get()->getGDrive());
+        bool canStop = g_drive_can_stop(dev.get()->getGDrive());
+        if(canEject || canStop){
+            isMobile = true;
+        }
+        qDebug() << "isMobile :" << isMobile;
+    }
+    return isMobile;
 }
 
 bool FileUtils::isSamePath(const QString &uri, const QString &targetUri)
@@ -907,7 +939,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
         return nullptr;
 
     cancel = g_cancellable_new();
-    file = g_file_new_for_uri(uri.toUtf8().data());
+    file = g_file_new_for_uri(uri.toUtf8().constData());
     if(!file ||!cancel)
         return nullptr;
 
@@ -928,7 +960,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
     if(targetUri.isEmpty())
         return nullptr;
 
-    mountPoint = g_filename_from_uri(targetUri.toUtf8().data(),NULL,NULL);
+    mountPoint = g_filename_from_uri(targetUri.toUtf8().constData(),NULL,NULL);
     if(mountPoint)
         tmpPath = Peony::VolumeManager::getUnixDeviceFileFromMountPoint(mountPoint);
     devicePath = tmpPath;
@@ -965,7 +997,7 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
     g_object_unref (block);
 
-    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     crypto_backing_object = udisks_client_get_object (client, crypto_backing_device);
     if (crypto_backing_object != NULL)
     {
@@ -1047,6 +1079,47 @@ bool FileUtils::isRemoteServerUri(const QString &uri)
         return true;
 
     return false;
+}
+
+bool FileUtils::isEmptyDisc(const QString &unixDevice)
+{
+    if (unixDevice.isEmpty()) //没有设备时不做后续处理
+        return false;
+
+    if (!QDBusConnection::systemBus().isConnected())
+        return false;
+
+    /* 通过Properties获取Drive的path */
+    QString  dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
+    QDBusInterface PropertiesIf("org.freedesktop.UDisks2",
+                                  dbusPath,
+                                  "org.freedesktop.DBus.Properties",
+                                  QDBusConnection::systemBus());
+    if(!PropertiesIf.isValid())
+        return false;
+
+    QDBusReply<QDBusVariant> reply = PropertiesIf.call("Get", "org.freedesktop.UDisks2.Block", "Drive");
+    if(!reply.isValid())
+        return false;
+
+    QDBusObjectPath* busObjectPath = (QDBusObjectPath*)(reply.value().variant().data());
+    if(!busObjectPath)
+        return false;
+
+    QString drivePath = busObjectPath->path();//end
+
+    /* 获取Drive的"OpticalBlank"属性，判断是否是空光盘 */
+    QDBusInterface driveInterface("org.freedesktop.UDisks2",
+                                  drivePath,
+                                  "org.freedesktop.UDisks2.Drive",
+                                  QDBusConnection::systemBus());
+
+    bool isBlank = false;
+    if(driveInterface.isValid()){
+        isBlank = driveInterface.property("OpticalBlank").toBool(); /* 获取"OpticalBlank"属性值 */
+    }
+
+    return isBlank;
 }
 
 QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)

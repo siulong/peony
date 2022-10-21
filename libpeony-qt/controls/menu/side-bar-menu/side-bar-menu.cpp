@@ -35,14 +35,15 @@
 
 #include <QAction>
 #include <QModelIndex>
-#include <format_dialog.h>
-
+#include "format_dialog.h"
+#include "disccontrol.h"
+#include "udfFormatDialog.h"
 #include <QDebug>
 #include <volume-manager.h>
 
 using namespace Peony;
 
-static const int FAVORITE_CAN_NOT_DELETE_URI_COUNT=8;
+static const int FAVORITE_CAN_NOT_DELETE_URI_COUNT=3;
 
 SideBarMenu::SideBarMenu(SideBarAbstractItem *item, SideBar *sideBar, QWidget *parent) : QMenu (parent)
 {
@@ -180,30 +181,45 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             || (m_uri.startsWith("file:///media") && m_uri.endsWith("/data"))
             || (targetUri.startsWith("file:///media") && targetUri.endsWith("/data"));
 
-    /* 光盘暂时没有格式化功能以及文件系统、手机要求不能格式化 */
+    /* 文件系统、手机要求不能格式化 */
     /* 没有uri的item不能格式化，FormatDialog需要uri走流程，否则会导致崩溃问题 */
     //fix bug#92380, file system has format option issue
     bool showFormatDialog = m_uri!="file:///" && m_uri != "computer:///root.link"
-            && (!unixDevice.isNull() && ! unixDevice.contains("/dev/sr"))
-            &&!unixDevice.startsWith("/dev/bus/usb")
+            && (!unixDevice.isNull())
+            && !unixDevice.startsWith("/dev/bus/usb")
             && (m_item->isVolume()) && !m_item->uri().isEmpty();
-    if(showFormatDialog)
+
+    //fix bug133116, not allow format data disk
+    if(showFormatDialog && ! isData)
     {
-        if (!isWayland && isData) {
-            // skip
-        } else {
+        if(unixDevice.contains("/dev/sr")){/*  光盘格式化(udf格式化) */
+            QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
+            action->setEnabled(false);
+            l.append(action);
+            DiscControl *discControl = new DiscControl(unixDevice);
+            if(discControl->work()){
+               connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+                   connect(action, &QAction::triggered, [=](){
+                       UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                       udfFormatDlg->show();
+                   });
+                   qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
+                   l.last()->setEnabled(discCtrl->supportUdf());
+               });
+            }
+
+        }else{/* 其它格式化 */
             l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
                 auto info = FileInfo::fromUri(uri);
                 if (info->targetUri ().isEmpty ()) {
                     FileInfoJob job (uri, this);
                     job.querySync ();
                 }
-                Format_Dialog *fd  = new Format_Dialog(uri,m_item);
+                Format_Dialog *fd  = new Format_Dialog(uri, m_item);
                 fd->show();
             });
         }
     }
-
     /* 插件 */
     if (!isWayland && isData) {
         //skip

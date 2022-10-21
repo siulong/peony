@@ -30,6 +30,9 @@
 #include <file-info-job.h>
 #include <file-utils.h>
 #include <QStyleOptionViewItem>
+#include "sound-effect.h"
+
+#include "file-operation-dialog/kyfiledialogrename.h"
 
 static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
@@ -157,7 +160,7 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
 
 Peony::FileOperationErrorHandler *Peony::FileOperationErrorDialogFactory::getDialog(Peony::FileOperationError &errInfo)
 {
-    FileOperationErrorDialogBase* dlg = nullptr;
+    FileOperationErrorHandler* dlg = nullptr;
 
     switch (errInfo.dlgType) {
     case ED_CONFLICT:
@@ -170,6 +173,15 @@ Peony::FileOperationErrorHandler *Peony::FileOperationErrorDialogFactory::getDia
         dlg = new FileOperationErrorDialogNotSupported();
         break;
     }
+#ifdef KY_FILE_DIALOG
+    case ED_RENAME: {
+        dlg = new KyFileDialogRename();
+        break;
+    }
+#endif
+    default:
+        dlg = new FileOperationErrorDialogWarning();
+        break;
     }
 
     return dlg;
@@ -203,7 +215,7 @@ Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
 void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &error)
 {
     m_error = &error;
-
+    SoundEffect::getInstance()->copyOrMoveFailedMusic();
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         QString htmlString = QString("<p>%1</p>")
@@ -275,17 +287,9 @@ static QPixmap drawSymbolicColoredPixmap (const QPixmap& source)
 
 Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupported(Peony::FileOperationErrorDialogBase *parent) : FileOperationErrorDialogBase(parent)
 {
-    setIcon ("dialog-infomation");
+    setIcon ("dialog-warning");
 
-    QPushButton* b = addButton (tr("Yes"));
-    b->setBackgroundRole(QPalette::Button);
-    connect(b, &QPushButton::pressed, this, [=] () {
-        m_ok = true;
-        m_cancel = false;
-        done(QDialog::Accepted);
-    });
-
-    b = addButton (tr("Cancel"));
+    QPushButton* b = addButton (tr("No"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = false;
@@ -293,17 +297,25 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         done(QDialog::Rejected);
     });
 
-    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
-    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
-        switch (chose) {
-        case Qt::Checked:
-            m_do_same = true;
-            break;
-        case Qt::Unchecked:
-        default:
-            m_do_same = false;
-        }
+    b = addButton (tr("Yes"));
+    b->setBackgroundRole(QPalette::Button);
+    connect(b, &QPushButton::pressed, this, [=] () {
+        m_ok = true;
+        m_cancel = false;
+        done(QDialog::Accepted);
     });
+
+//    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
+//    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
+//        switch (chose) {
+//        case Qt::Checked:
+//            m_do_same = true;
+//            break;
+//        case Qt::Unchecked:
+//        default:
+//            m_do_same = false;
+//        }
+//    });
 }
 
 Peony::FileOperationErrorDialogNotSupported::~FileOperationErrorDialogNotSupported()

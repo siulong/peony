@@ -34,7 +34,7 @@
 #include "global-settings.h"
 
 #include "file-meta-info.h"
-
+#include "search-vfs-uri-parser.h"
 #include <QHeaderView>
 
 #include <QVBoxLayout>
@@ -62,6 +62,8 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 
+#define LISTVIEW_ITEM_BORDER_RADIUS 6
+
 using namespace Peony;
 using namespace Peony::DirectoryView;
 
@@ -74,13 +76,21 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
-    setAttribute(Qt::WA_TranslucentBackground);
+    //setAttribute(Qt::WA_TranslucentBackground);
     setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
+    auto cornerWidget = new QWidget;
+    cornerWidget->setObjectName("_listview_corner");
+    cornerWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
+    cornerWidget->setBackgroundRole(QPalette::Base);
+    cornerWidget->setAutoFillBackground(true);
+    setCornerWidget(cornerWidget);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    installEventFilter(horizontalScrollBar());
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     setSelectionBehavior(QTreeView::SelectRows);
 
@@ -143,6 +153,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     //fix head indication sort type and order not change in preference file issue, releated to bug#92525,
     connect(header(), &QHeaderView::sortIndicatorChanged, this, [=](int logicalIndex, Qt::SortOrder order)
     {
+        m_proxy_model->manualUpdateExpectedSortInfo(logicalIndex, order);
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
         if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
             Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
@@ -180,6 +191,19 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         return;
     m_model = sourceModel;
     m_proxy_model = proxyModel;
+
+    auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+    if (proxyModelSelectionModelHint != NoSelection) {
+        setSelectionMode(proxyModelSelectionModelHint);
+    }
+
+    connect(proxyModel, &FileItemProxyFilterSortModel::setSelectionModeChanged, this, [=]{
+        auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+        if (proxyModelSelectionModelHint != NoSelection) {
+            setSelectionMode(proxyModelSelectionModelHint);
+        }
+    });
+
     m_proxy_model->setSourceModel(m_model);
     setModel(proxyModel);
     //adjust columns layout.
@@ -210,7 +234,7 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
 
     //edit trigger
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
-        qDebug()<<"list view selection changed"<<m_delegate_editing;
+        //qDebug()<<"list view selection changed"<<m_delegate_editing;
         //continue to fix bug#89540，98951
         if (m_delegate_editing)
             return;
@@ -649,10 +673,12 @@ void ListView::startDrag(Qt::DropActions flags)
         pixmap.fill(Qt::transparent);
         pixmap.setDevicePixelRatio(scale);
         QPainter painter(&pixmap);
+        quint64 count = 0;
         for (auto index : indexes) {
             painter.save();
             painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
             //painter.translate(-rect.boundingRect().topLeft());
+            painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             QStyleOptionViewItem opt = viewOptions();
             auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
             viewItemDelegate->initIndexOption(&opt, index);
@@ -661,6 +687,23 @@ void ListView::startDrag(Qt::DropActions flags)
             opt.rect.moveTo(0, 0);
             opt.state |= QStyle::State_Selected;
             painter.setOpacity(0.8);
+
+            count++;
+            if(count == 1){
+                QPainterPath leftRoundedRegion;
+                leftRoundedRegion.setFillRule(Qt::WindingFill);
+                leftRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                leftRoundedRegion.addRect(opt.rect.adjusted(LISTVIEW_ITEM_BORDER_RADIUS, 0, 0, 0));
+                painter.setClipPath(leftRoundedRegion);
+            }else if(count == 4){
+                QPainterPath rightRoundedRegion;
+                rightRoundedRegion.setFillRule(Qt::WindingFill);
+                rightRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                rightRoundedRegion.addRect(opt.rect.adjusted(0, 0, -LISTVIEW_ITEM_BORDER_RADIUS, 0));
+                painter.setClipPath(rightRoundedRegion);
+                count = 0;
+            }
+
             QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
             painter.restore();
         }
@@ -772,6 +815,13 @@ const QString ListView::getDirectoryUri()
 void ListView::setDirectoryUri(const QString &uri)
 {
     m_current_uri = uri;
+    if (m_current_uri.startsWith("search://")) {
+        QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        setSearchKey(nameRegexp);
+    } else {
+        setSearchKey("");
+    }
+
 }
 
 const QStringList ListView::getSelections()
@@ -868,7 +918,7 @@ bool ListView::getDelegateEditFlag()
 
 int ListView::getSortType()
 {
-    int type = m_proxy_model->sortColumn();
+    int type = m_proxy_model->expectedSortType();
     return type<0? 0: type;
 }
 
@@ -881,7 +931,7 @@ void ListView::setSortType(int sortType)
 
 int ListView::getSortOrder()
 {
-    return m_proxy_model->sortOrder();
+    return m_proxy_model->expectedSortOrder();
 }
 
 void ListView::setSortOrder(int sortOrder)
@@ -939,12 +989,21 @@ void ListView::keyboardSearch(const QString &key)
     }
 }
 
+void ListView::setSearchKey(const QString &key)
+{
+    auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
+    viewItemDelegate->setSearchKeyword(key);
+}
+
 //List View 2
 ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
 {
     auto layout = new QVBoxLayout(this);
     layout->setMargin(0);
     layout->setSpacing(0);
+    layout->setObjectName("_listview2_layout");
+    setBackgroundRole(QPalette::Base);
+    setAutoFillBackground(true);
     m_view = new ListView(this);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
@@ -964,6 +1023,15 @@ ListView2::~ListView2()
 
 void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *proxyModel)
 {
+    auto layout = findChild<QVBoxLayout *>("_listview2_layout");
+    bool ok = false;
+    if (parentWidget()) {
+        int statusBarHeight = parentWidget()->property("statusBarHeight").toInt(&ok);
+        if (ok) {
+            layout->setContentsMargins(0, 0, 0, statusBarHeight);
+        }
+    }
+
     disconnect(m_model);
     disconnect(m_proxy_model);
     m_model = model;

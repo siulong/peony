@@ -152,7 +152,7 @@ private:
     FileItem *m_parent = nullptr;
     std::shared_ptr<Peony::FileInfo> m_info;
     QVector<FileItem*> *m_children = nullptr;
-
+    QHash<QString, FileItem*> m_uri_item_hash; /* <key:uri,value:fileItem> 必须与m_children同增减！！！ */
     FileItemModel *m_model = nullptr;
 
     bool m_expanded = false;
@@ -195,10 +195,10 @@ public:
     BatchProcessItems();
     ~BatchProcessItems();
 
-    void setBatchRemoveParam(QStringList uris_to_be_removed, QHash<QString, FileItem*> uri_item_hash, QVector<FileItem*> *children);
+    void setBatchRemoveParam(const QStringList& uris_to_be_removed, const QHash<QString, FileItem*>& uri_item_hash, QVector<FileItem*> *children);
 
 Q_SIGNALS:
-    void removeItemsFinished(QVector<FileItem*> *children);
+    void removeItemsFinished(QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash);
 
 
 public Q_SLOTS:

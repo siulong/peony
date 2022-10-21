@@ -55,6 +55,8 @@ public:
         return m_uris_to_edit;
     }
 
+    void setHiddenActionsByObjectName(const QStringList &actionNames);
+
 protected:
     void fillActions();
     const QList<QAction *> constructOpenOpActions();

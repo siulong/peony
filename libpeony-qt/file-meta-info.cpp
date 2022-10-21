@@ -41,6 +41,21 @@ std::shared_ptr<FileMetaInfo> FileMetaInfo::fromUri(const QString &uri)
     return nullptr;
 }
 
+std::shared_ptr<FileMetaInfo> FileMetaInfo::dupFromUri(const QString &uri)
+{
+    auto mgr = FileInfoManager::getInstance();
+    auto info = mgr->findFileInfoByUri(uri);
+    if (info) {
+        auto metaInfo = mgr->findFileInfoByUri(uri)->m_meta_info;
+        if (metaInfo) {
+            QMutexLocker l(&(metaInfo->m_mutex));
+            auto dupInfo = std::make_shared<FileMetaInfo>(metaInfo.get());
+            return dupInfo;
+        }
+    }
+    return nullptr;
+}
+
 FileMetaInfo::FileMetaInfo(const QString &uri, GFileInfo *g_info)
 {
     m_uri = uri;
@@ -82,6 +97,23 @@ FileMetaInfo::FileMetaInfo(const QString &uri, GFileInfo *g_info)
     }
 }
 
+FileMetaInfo::FileMetaInfo(const FileMetaInfo &other)
+{
+    m_uri = other.m_uri;
+    m_meta_hash = other.m_meta_hash;
+}
+
+FileMetaInfo::FileMetaInfo(FileMetaInfo *other)
+{
+    m_uri = other->m_uri;
+    m_meta_hash = other->m_meta_hash;
+}
+
+FileMetaInfo::~FileMetaInfo()
+{
+    QMutexLocker l(&m_mutex);
+}
+
 void FileMetaInfo::setMetaInfoInt(const QString &key, int value)
 {
     setMetaInfoVariant(key, QString::number(value));
@@ -112,20 +144,24 @@ void FileMetaInfo::setMetaInfoVariant(const QString &key, const QVariant &value,
         GFile *file = g_file_new_for_uri(m_uri.toUtf8().constData());
         GError *err = nullptr;
         g_file_set_attribute(file, realKey.toLatin1().data(), G_FILE_ATTRIBUTE_TYPE_STRING,
-                             (gpointer)value.toString().toUtf8().data(),
+                             (gpointer)value.toString().toUtf8().constData(),
                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &err);
 
         if (err) {
             qDebug()<<err->message;
             g_error_free(err);
         } else {
+            m_mutex.lock();
             m_meta_hash.remove(realKey);
             m_meta_hash.insert(realKey, value);
+            m_mutex.unlock();
         }
         g_object_unref(file);
     } else {
+        m_mutex.lock();
         m_meta_hash.remove(realKey);
         m_meta_hash.insert(realKey, value);
+        m_mutex.unlock();
     }
 //    m_mutex.unlock();
 }
@@ -135,7 +171,8 @@ const QVariant FileMetaInfo::getMetaInfoVariant(const QString &key)
     QString realKey = key;
     if (!key.startsWith("metadata::"))
         realKey = "metadata::" + key;
-    if (m_meta_hash.value(realKey).isValid())
+    QMutexLocker l(&m_mutex);
+    if (m_meta_hash.contains(realKey) && m_meta_hash.value(realKey).isValid())
         return m_meta_hash.value(realKey);
     //FIXME: should i use gio query meta here?
     return QVariant();
@@ -160,8 +197,10 @@ void FileMetaInfo::setMetaInfoStringListV1(const QString &key, const QStringList
         qWarning() << err->message;
         g_error_free(err);
     } else {
+        m_mutex.lock();
         m_meta_hash.remove(realKey);
         m_meta_hash.insert(realKey, value);
+        m_mutex.unlock();
     }
 }
 
@@ -194,8 +233,10 @@ void FileMetaInfo::removeMetaInfo(const QString &key)
     QString realKey = key;
     if (!key.startsWith("metadata::"))
         realKey = "metadata::" + key;
+    m_mutex.lock();
     m_meta_hash.remove(realKey);
     GFile *file = g_file_new_for_uri(m_uri.toUtf8().constData());
+    m_mutex.unlock();
     g_file_set_attribute(file,
                          realKey.toUtf8().constData(),
                          G_FILE_ATTRIBUTE_TYPE_INVALID,

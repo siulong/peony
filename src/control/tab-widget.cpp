@@ -60,7 +60,7 @@
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "global-settings.h"
-
+#include "location-bar.h"
 #include <QApplication>
 #include <QStandardPaths>
 
@@ -390,7 +390,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
                 qCritical()<<"can not get meta info"<<uri;
             } else {
                 auto sortType = metaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? metaInfo->getMetaInfoInt(SORT_COLUMN): 0;
-                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
                 currentPage()->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 currentPage()->setSortOrder(Qt::SortOrder(sortOrder));
             }
@@ -530,6 +530,7 @@ void TabWidget::browsePath()
     f.setAcceptMode(QFileDialog::AcceptOpen);
     f.setOption(QFileDialog::ShowDirsOnly);
     f.setFileMode(QFileDialog::DirectoryOnly);
+    f.setFilter(QDir::System|QDir::AllDirs|QDir::Files|QDir::NoDotAndDotDot);
 
     auto result = f.exec();
     if (result != QDialog::Accepted) {
@@ -589,7 +590,32 @@ void TabWidget::addNewConditionBar()
     QComboBox *classifyCombox = new QComboBox(optionBar);
     m_classify_list.append(classifyCombox);
     classifyCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
-    classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        double fontSize = fontSetting->get("systemFontSize").toDouble();
+        if(fontSize < 12){
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+        }else{
+            //最大字体最长字符串所需宽度
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+        }
+    }
+    else{
+        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+    }
+    //监听字体大小改变
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+            double fontSize = fontSetting->get("systemFontSize").toDouble();
+            if(fontSize < 12){
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+            }else{
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+            }
+        });
+    }
+
     auto classifyModel = new QStringListModel(optionBar);
     auto list = getCurrentClassify(index);
     classifyModel->setStringList(list);
@@ -918,7 +944,8 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
         uri = Peony::FileUtils::urlDecode(uri);
         qDebug()<<"decodedSrcUri:"<<decodedSrcUri<<" uri:"<<uri<<" total count: "<<m_stack->count()<<" index:"<<index<<" currentIndex:"<<currentIndex;
         /* 不属于该设备的tab页不处理；属于该设备：文件管理器的当前标签页跳转到计算机页，其余标签页均关闭 */
-        if(uri.contains(decodedSrcUri) && uri != "file:///" && uri!= "filesafe:///")
+        bool bRemoteServerHandleCond = (Peony::FileUtils::isRemoteServerUri(decodedSrcUri) && uri.contains(decodedSrcUri));/* smb服务进入内部目录后卸载,link to bug#98623 */
+        if((decodedSrcUri.contains(uri) || bRemoteServerHandleCond) && uri != "file:///" && uri!= "filesafe:///")
         {
             //all window accessed mount path should goto self top path，related to bug#104551
             if((Peony::GlobalSettings::getInstance()->getValue("LAST_FOCUS_PEONY_WINID") == dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()
@@ -1186,7 +1213,7 @@ Qt::SortOrder TabWidget::getSortOrder()
     //fix switch to computer view and back change to default sort issue, link to bug#92261
     auto settings = Peony::GlobalSettings::getInstance();
     if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-        auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
+        auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 1;
 
         return Qt::SortOrder(sortOrder);
     } else {
@@ -1197,7 +1224,7 @@ Qt::SortOrder TabWidget::getSortOrder()
             j.querySync();
             metaInfo = Peony::FileMetaInfo::fromUri(getCurrentUri());
         }
-        auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+        auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
         return Qt::SortOrder(sortOrder);
     }
 
@@ -1289,6 +1316,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 return;
             }
             auto viewContainer = new Peony::DirectoryViewContainer(m_stack);
+            viewContainer->setProperty("statusBarHeight", qApp->fontMetrics().height() + 10);
             bool hasCurrentPage = currentPage();
             bool hasView = false;
             if (hasCurrentPage)
@@ -1319,7 +1347,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             auto realUri = uri;
             if (info->isSymbolLink() && info->symlinkTarget().length() >0 && uri.startsWith("file://")) {
                 realUri = "file://" + info->symlinkTarget();
-            } else if (!info->isDir()) {
+            } else if (!info->isDir() && !realUri.startsWith("smb://") ) {
                 realUri = Peony::FileUtils::getParentUri(uri);
             }
 
@@ -1345,13 +1373,13 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             auto settings = Peony::GlobalSettings::getInstance();
             if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
                 auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt(): 0;
-                auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt(): 0;
+                auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt(): 1;
                 viewContainer->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 viewContainer->setSortOrder(Qt::SortOrder(sortOrder));
             } else {
                 auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
                 auto sortType = metaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? metaInfo->getMetaInfoInt(SORT_COLUMN): 0;
-                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 0;
+                auto sortOrder = metaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? metaInfo->getMetaInfoInt(SORT_ORDER): 1;
                 viewContainer->setSortType(Peony::FileItemModel::ColumnType(sortType));
                 viewContainer->setSortOrder(Qt::SortOrder(sortOrder));
             }
@@ -1570,6 +1598,10 @@ void TabWidget::updateAdvanceConditions()
 
 void TabWidget::setCurrentSelections(const QStringList &uris)
 {
+    if (!currentPage() || !currentPage()->getView()) {
+        qWarning()<<"can not set current selection, current page is invalid. maybe not ready?";
+        return;
+    }
     currentPage()->getView()->setSelections(uris);
     if (uris.count() >0)
         currentPage()->getView()->scrollToSelection(uris.first());

@@ -47,7 +47,8 @@ enum ExceptionType
 enum ExceptionDialogType {
     ED_WARNING,
     ED_CONFLICT,
-    ED_NOT_SUPPORTED
+    ED_NOT_SUPPORTED,
+    ED_RENAME           // usually used for long name handling, etc...
 };
 
 /*!
@@ -67,6 +68,8 @@ enum ExceptionResponse {
     OverWriteAll,
     Force,          // Force operation
     ForceAll,       //
+    RenameOne,      // usually used for long name handling, etc...
+    RenameAll       // not used yet
 };
 
 typedef enum{

@@ -191,7 +191,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     });
 
     connect(m_location_bar, &Peony::AdvancedLocationBar::updateWindowLocationRequest, this, &HeaderBar::updateLocationRequest);
-
+    connect(this, &HeaderBar::clearTrash, m_location_bar, &Peony::AdvancedLocationBar::clearTrash);
     addSpacing(ADDRESS_BAR_RIGHT_WIDTH);
 //    auto a = addAction(QIcon::fromTheme("edit-find-symbolic"), tr("Search"));
 //    connect(a, &QAction::triggered, this, &HeaderBar::searchButtonClicked);
@@ -317,8 +317,7 @@ void HeaderBar::searchButtonClicked()
 {
     m_search_mode = ! m_search_mode;
     qDebug() << "searchButtonClicked" <<m_search_mode;
-    Q_EMIT this->updateSearchRequest(m_search_mode);
-    setSearchMode(m_search_mode);
+    m_window->updateSearchStatus(m_search_mode);
 }
 
 void HeaderBar::setSearchMode(bool mode)
@@ -326,6 +325,10 @@ void HeaderBar::setSearchMode(bool mode)
     m_search_button->setCheckable(mode);
     m_search_button->setChecked(mode);
     m_search_button->setDown(mode);
+    if (! mode)
+        m_search_button->setFocusPolicy(Qt::NoFocus);
+    else
+        m_search_button->setFocusPolicy(Qt::ClickFocus);
     m_location_bar->switchEditMode(mode);
 }
 

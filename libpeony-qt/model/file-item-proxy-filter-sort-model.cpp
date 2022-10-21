@@ -41,6 +41,8 @@
 #include <QLocale>
 #include <QCollator>
 
+#include <QRegularExpression>
+
 using namespace Peony;
 
 QLocale locale = QLocale(QLocale::system().name());
@@ -78,6 +80,14 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
     comparer.setNumericMode(true);
     auto settings = GlobalSettings::getInstance();
     m_settings = settings;
+
+    m_sortTimer = new QTimer(this);
+    m_sortTimer->setSingleShot(true);
+    connect(m_sortTimer, &QTimer::timeout, this, [=]{
+        checkSortSettings();
+        qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
+        return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
+    });
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -378,6 +388,42 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             if (! find)
                 return false;
         }
+
+        if (!m_mimeTypeFilters.isEmpty()) {
+            if (!m_mimeTypeFilters.contains(fileInfo->fileType())) {
+                return false;
+            }
+        }
+
+        if (!m_nameFilters.isEmpty()) {
+            if (!fileInfo->isDir()) {
+                bool contains = false;
+                for (auto nameFilter : m_nameFilters) {
+
+                    QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(nameFilter), this->filterCaseSensitivity()? QRegularExpression::NoPatternOption: QRegularExpression::CaseInsensitiveOption);
+                    QRegularExpressionMatch match = rx.match(fileInfo->displayName());
+                    if (match.hasMatch()) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains) {
+                    return false;
+                }
+            }
+        }
+
+        QDir::Filters dirFilters = QDir::Filters(m_dirFilters);
+        if (m_dirFilters != -1) {
+            bool showFiles = dirFilters & QDir::Files;
+            bool showDirs = dirFilters & QDir::Dirs || dirFilters & QDir::AllDirs;
+            if (!showFiles && !fileInfo->isDir()) {
+                return false;
+            }
+            if (!showDirs && fileInfo->isDir()) {
+                return false;
+            }
+        }
     }
     return true;
 }
@@ -408,16 +454,22 @@ void FileItemProxyFilterSortModel::checkSortSettings()
         auto info = FileInfo::fromUri(getModelDirectoryUri(this));
         auto fileMetaInfo = FileMetaInfo::fromUri(getModelDirectoryUri(this));
         if (fileMetaInfo && !info->isEmptyInfo()) {
-            m_show_hidden = fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (m_settings->isExist(SHOW_HIDDEN_PREFERENCE)? m_settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false);
-            m_use_default_name_sort_order = fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): (m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false);
-            m_folder_first = fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): (m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false);
+            m_show_hidden = fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? fileMetaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
+            m_use_default_name_sort_order = fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): true;
+            m_folder_first = fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? fileMetaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): true;
         } else {
             qCritical()<<"could not get metainfo"<<getModelDirectoryUri(this);
-            m_show_hidden = m_settings->isExist(SHOW_HIDDEN_PREFERENCE)? m_settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
-            m_use_default_name_sort_order = m_settings->isExist(SORT_CHINESE_FIRST)? m_settings->getValue(SORT_CHINESE_FIRST).toBool(): false;
-            m_folder_first = m_settings->isExist(SORT_FOLDER_FIRST)? m_settings->getValue(SORT_FOLDER_FIRST).toBool(): true;
+            m_show_hidden = false;
+            m_use_default_name_sort_order = true;
+            m_folder_first = true;
         }
     }
+}
+
+void FileItemProxyFilterSortModel::setSelectionModeHint(QAbstractItemView::SelectionMode mode)
+{
+    setProperty("selectionMode", int(mode));
+    Q_EMIT this->setSelectionModeChanged();
 }
 
 QVariant FileItemProxyFilterSortModel::getDirectorySettings(const QString &key)
@@ -764,6 +816,10 @@ void FileItemProxyFilterSortModel::clearConditions()
     m_file_type_list.clear();
     m_file_size_list.clear();
     m_modify_time_list.clear();
+
+    m_mimeTypeFilters.clear();
+    m_nameFilters.clear();
+    m_dirFilters = -1;
 }
 
 void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyTime, int fileSize)
@@ -771,6 +827,15 @@ void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyT
     m_show_file_type = fileType;
     m_show_file_size = fileSize;
     m_show_modify_time = modifyTime;
+    invalidateFilter();
+}
+
+void FileItemProxyFilterSortModel::setFilterConditions(const QStringList &mimeTypeFilters, const QStringList &nameFilters,  QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
+{
+    m_mimeTypeFilters = mimeTypeFilters;
+    m_nameFilters = nameFilters;
+    m_dirFilters = dirFilters;
+    setFilterCaseSensitivity(caseSensitivity);
     invalidateFilter();
 }
 
@@ -837,6 +902,39 @@ QModelIndexList FileItemProxyFilterSortModel::getAllFileIndexes()
         i++;
     }
     return l;
+}
+
+QAbstractItemView::SelectionMode FileItemProxyFilterSortModel::getSelectionModeHint()
+{
+    if (property("selectionMode").isValid()) {
+        return QAbstractItemView::SelectionMode(property("selectionMode").toInt());
+    }
+    return QAbstractItemView::NoSelection;
+}
+
+void FileItemProxyFilterSortModel::sort(int column, Qt::SortOrder order)
+{
+    m_sortType = column;
+    m_sortOrder = order;
+    if(!m_sortTimer->isActive()){
+        m_sortTimer->start(50);
+    }
+}
+
+int FileItemProxyFilterSortModel::expectedSortType()
+{
+    return m_sortType;
+}
+
+Qt::SortOrder FileItemProxyFilterSortModel::expectedSortOrder()
+{
+    return m_sortOrder;
+}
+
+void FileItemProxyFilterSortModel::manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order)
+{
+    m_sortType = sortType;
+    m_sortOrder = order;
 }
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()

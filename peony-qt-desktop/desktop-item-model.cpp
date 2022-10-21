@@ -40,6 +40,7 @@
 #include "peony-desktop-application.h"
 #include "desktop-icon-view.h"
 #include "global-settings.h"
+#include "sound-effect.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -139,6 +140,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             // locate new item =====
             //task#74174 扩展模式下支持拖拽图标放置到扩展屏, 创建文件获取当前view
             auto view = ((PeonyDesktopApplication*)qApp)->getIconView(QCursor::pos());
+            //校验图标是否已经满了，如果满了寻找没有满的view
+            if (view && view->isFull()) {
+                Peony::DesktopIconView *notFullView = ((PeonyDesktopApplication*)qApp)->getNotFullView();
+                if (notFullView) {
+                    view = notFullView;
+                }
+            }
+
             auto itemRectHash = view->getCurrentItemRects();
             auto grid = view->gridSize();
             auto viewRect = view->viewport()->rect();
@@ -278,9 +287,13 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
-        auto view = getIconView(uri);
-        view->removeItemRect(uri);
-
+        auto info = FileInfo::fromUri(uri);
+        Peony::DesktopIconView *view = nullptr;
+        if (info.get()->isEmptyInfo()) {
+            view = ((PeonyDesktopApplication*)qApp)->removeUri(uri);
+        } else {
+            view = getIconView(uri);
+        }
         auto itemRectHash = view->getCurrentItemRects();
 
         for (auto info : m_files) {
@@ -334,16 +347,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "m_system_app_watcher:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661, desktop file may be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
@@ -364,17 +386,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "andriod_app_path:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    //auto remove, link to task#10131
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661,android desktop file be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
@@ -900,7 +930,10 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
             action = Qt::TargetMoveAction;
         }
 
-        FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        op->connect(op, &FileOperation::operationFinished, this, [=](){
+            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        });
     }
 
     //NOTE:

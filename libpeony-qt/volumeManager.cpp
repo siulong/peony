@@ -99,6 +99,15 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     return Peony::FileUtils::urlDecode(uri);
 }
 
+bool VolumeManager::isEmptyDrive(const Volume &volume)
+{
+    g_autoptr (GDrive) gdrive = volume.getGDrive();
+    if (gdrive && !g_drive_has_media(gdrive)) {/* 空光驱 */
+        return  true;
+    }
+    return false;
+}
+
 VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
 {
     initManagerInfo();
@@ -110,10 +119,14 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<std::map<QString,QIcon> >("std::map<QString,QIcon>&");
     m_occupiedAppsInfoThread = new GetOccupiedAppsInfoThread();
     connect(m_occupiedAppsInfoThread, &GetOccupiedAppsInfoThread::signal_occupiedAppInfo, this, [=](std::map<QString,QIcon>& occupiedAppMap, const QString& message){
-        MessageDialog* dlg = new MessageDialog();
-        dlg->init(occupiedAppMap, message);
-        dlg->setAttribute(Qt::WA_DeleteOnClose);
-        dlg->exec();
+        if(!occupiedAppMap.size()){
+            QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
+        }else{
+            MessageDialog* dlg = new MessageDialog();
+            dlg->init(occupiedAppMap, message);
+            dlg->setAttribute(Qt::WA_DeleteOnClose);
+            dlg->exec();
+        }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
 
@@ -486,6 +499,9 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
             if (volume->getGVolume() == gvolume) {
                 // 加密U盘的device name可能改变，列表需要按之前的调整
                 device = volume->originalDevice();
+                /* 此处更新volume的icon，优先使用gmount的icon；解决先打开文件管理器在插入启动光盘，先打开的文件管理器启动光盘图标未正确显示问题 */
+                volume->setIconName(mountItem->icon());
+                Q_EMIT pThis->volumeUpdate(Volume(*volume),"name");//end
                 break;
             }
         }
@@ -707,6 +723,9 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                             volumeItem->setHidden(false);
                         }
                     }
+                }else if(uuid.isEmpty()){
+                    //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
+                    volumeItem->setHidden(true);
                 }
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
@@ -997,6 +1016,14 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
                     g_object_unref(mount_op);
                 }
             }
+        } else {
+            bool need_password = bool (g_object_get_data(G_OBJECT (volume), "need-password"));
+            if (need_password) {
+                QString errMsg = err->message;
+                if (errMsg.contains("Incorrect passphrase")) {
+                    QMessageBox::critical(0, 0, QObject::tr("Failed to activate device: Incorrect passphrase"));
+                }
+            }
         }
 
         //QMessageBox::critical(0, 0, QString("%1 %2 %3").arg(g_quark_to_string(err->domain)).arg(err->code).arg(err->message));
@@ -1080,6 +1107,11 @@ void Volume::setLabel(const QString &label){
 void Volume::setDevice(const QString &device)
 {
     m_device = device;
+}
+
+void Volume::setIconName(const QString &iconName)
+{
+    m_icon = iconName;
 }
 
 //根分区信息
@@ -1212,7 +1244,7 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
         if((NULL != error) && (G_IO_ERROR_FAILED_HANDLED != error->code)){
             // @note 这里不要拼接字符串，多次弹出会崩溃
 //            QString errorMsg = QObject::tr("Unable to eject").arg(pThis->name());
-            if(G_IO_ERROR_BUSY != error->code){/* 卷被占用时，防止二次弹出信息提示框 */
+            if(G_IO_ERROR_BUSY == error->code){/* 卷被占用时，防止二次弹出信息提示框 */
                 return;
             }
             if(! strcmp(error->message,"Not authorized to perform operation")){/* gmountOperation会弹出授权框，防止二次弹框 */
@@ -1359,7 +1391,7 @@ void Mount::queryDeviceByMountpoint(){
         m_mountPoint = mountPoint;
         g_free(mountPoint);
     }
-    //mountPoint = m_mountPoint.toUtf8().data();
+    //mountPoint = m_mountPoint.toUtf8().constData();
     //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
     m_entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
     if(!m_entry)
@@ -1399,6 +1431,11 @@ QString Volume::mountPoint() const{
 
 GVolume* Volume::getGVolume() const{
     return m_volume;
+}
+
+GDrive *Volume::getGDrive() const
+{
+    return m_gdrive;
 }
 
 bool Volume::canEject() const{

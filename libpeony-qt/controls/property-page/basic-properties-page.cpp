@@ -512,7 +512,11 @@ void BasicPropertiesPage::initFloorFour()
         m_hidden->setCheckState(Qt::Checked);
 
     m_readOnly->setDisabled(!m_info->canRename());
-    m_hidden->setDisabled(!m_info->canRename());
+
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
+    //fix bug#113890,hiden Desktop folder change desktop show
+    m_hidden->setDisabled(!m_info->canRename() || isDesktop);
 
     layout4->addRow(this->createFixedLabel(m_labelWidth,32,tr("Property:"),floor4),hBoxLayout);
 
@@ -671,12 +675,19 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
         //使用du -s 命令查看文件实际占用的磁盘空间。
         for (QString uri : m_uris) {
             QUrl url(uri);
+            bool isLocalFile = url.isLocalFile();
             //某些带空格的文件名称会导致命令错误，加上引号解决此问题。
             QString path;
             if(uri == "filesafe:///") {
                 path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
             } else {
-                path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
+                g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+                g_autofree gchar *gpath = g_file_get_path(gfile);
+                if (gpath) {
+                    path = gpath;
+                } else {
+                    path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
+                }
             }
 
             QProcess process;
@@ -798,18 +809,47 @@ void BasicPropertiesPage::saveAllChange()
 
     if (m_readOnly) {
         mode_t mod = 0;
+        quint32 mode = 0;
         if(m_readOnly->isChecked()) {
-            mod |= S_IRUSR;
-            mod |= S_IRGRP;
-            mod |= S_IROTH;
-        } else {
-            mod |= S_IRUSR;
-            mod |= S_IRGRP;
-            mod |= S_IROTH;
+//            mod |= S_IRUSR;
+//            mod |= S_IRGRP;
+//            mod |= S_IROTH;
 
-            mod |= S_IWUSR;
-//            mod |= S_IWGRP;
-//            mod |= S_IWOTH;
+            g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
+            if (file) {
+                g_autoptr(GError) error = NULL;
+                g_autoptr(GFileInfo) info = g_file_query_info(file,
+                                                              "unix::mode",
+                                                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                                              nullptr,
+                                                              &error);
+                bool has_unix_mode = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                if (has_unix_mode) {
+                    mode = g_file_info_get_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                    auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
+                    if (metaInfo) {
+                        metaInfo->setMetaInfoInt(TEMP_PERMISSIONS, mode);
+                    }
+                }
+            }
+            //去除写权限
+            mode &= ~S_IWUSR;
+            mode &= ~S_IWGRP;
+            mode &= ~S_IWOTH;
+            mod = mode;
+        } else {
+            auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
+            if (metaInfo && metaInfo->getMetaInfoInt(TEMP_PERMISSIONS)) {
+                mod = metaInfo->getMetaInfoInt(TEMP_PERMISSIONS);
+            } else {
+                mod |= S_IRUSR;
+                mod |= S_IRGRP;
+                mod |= S_IROTH;
+
+                mod |= S_IWUSR;
+//                mod |= S_IWGRP;
+//                mod |= S_IWOTH;
+            }
         }
         //FIX:如果该文件之前就是可执行，那么应该保留可执行权限
         if (m_info->canExecute())
@@ -860,6 +900,21 @@ void BasicPropertiesPage::saveAllChange()
         }
     }
 
+    //FIX:修复桌面快捷方式文件的缩略图改变后需要手动刷新才更新的问题
+    //fix the problem that the thumbnails of desktop shortcut files need to be manually refreshed before they are updated after being changed.
+    QString desktopPath = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
+    if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
+        QProcess p;
+        p.setProgram("touch");
+        p.setArguments(QStringList()<<"-h"<<m_info->filePath());
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+        p.startDetached();
+    #else
+        p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
+    #endif
+        p.waitForFinished(-1);
+    }
 }
 
 void BasicPropertiesPage::chooseFileIcon()

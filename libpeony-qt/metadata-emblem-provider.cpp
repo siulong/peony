@@ -41,11 +41,9 @@ const QString MetadataEmblemProvider::emblemKey()
 
 QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 {
-    auto metaInfo = FileMetaInfo::fromUri(uri);
-    auto data = metaInfo->getMetaInfoStringListV1("emblems");
-    if (!data.isEmpty()) {
-        QStringList tmp = data;
-    }
+    auto metaInfo = FileMetaInfo::dupFromUri(uri);
+    if(!metaInfo || !metaInfo.get())
+        return QStringList();
     return metaInfo->getMetaInfoStringListV1("emblems");
 }
 

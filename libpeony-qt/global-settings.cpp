@@ -92,12 +92,20 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        QString timeValue = m_control_center_plugin->get("hoursystem").toString();
-        QString dateValue = m_control_center_plugin->get("date").toString();
-        m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME, timeValue);
-        m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE, dateValue);
-        setTimeFormat(timeValue);
-        setDateFormat(dateValue);
+        if (m_control_center_plugin->keys().contains("hoursystem")) {
+            QString timeValue = m_control_center_plugin->get("hoursystem").toString();
+            m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME, timeValue);
+            setTimeFormat(timeValue);
+        } else {
+            setTimeFormat("24");
+        }
+        if (m_control_center_plugin->keys().contains("date")) {
+            QString dateValue = m_control_center_plugin->get("date").toString();
+            m_cache.insert(UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE, dateValue);
+            setDateFormat(dateValue);
+        } else {
+            setDateFormat("cn");
+        }
     }
 
     m_cache.insert(SHOW_TRASH_DIALOG, true);
@@ -137,23 +145,56 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        m_cache.remove(SHOW_TRASH_DIALOG);
-        m_cache.insert(SHOW_TRASH_DIALOG, m_peony_gsettings->get(SHOW_TRASH_DIALOG).toBool());
+        // fix #135482
+        auto keys = m_peony_gsettings->keys();
 
-        m_cache.remove(SHOW_HIDDEN_PREFERENCE);
-        m_cache.insert(SHOW_HIDDEN_PREFERENCE, m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool());
+        if (keys.contains(SHOW_TRASH_DIALOG)) {
+            m_cache.remove(SHOW_TRASH_DIALOG);
+            m_cache.insert(SHOW_TRASH_DIALOG, m_peony_gsettings->get(SHOW_TRASH_DIALOG).toBool());
+        } else {
+            m_cache.remove(SHOW_TRASH_DIALOG);
+            m_cache.insert(SHOW_TRASH_DIALOG, true);
+        }
 
-        m_cache.remove(SHOW_FILE_EXTENSION);
-        m_cache.insert(SHOW_FILE_EXTENSION, m_peony_gsettings->get(SHOW_FILE_EXTENSION).toBool());
+        if (keys.contains(SHOW_HIDDEN_PREFERENCE)) {
+            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
+            m_cache.insert(SHOW_HIDDEN_PREFERENCE, m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool());
+        } else {
+            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
+            m_cache.insert(SHOW_HIDDEN_PREFERENCE, false);
+        }
 
-        m_cache.remove(SEND_URIS_OF_COPY_DSPS);
-        m_cache.insert(SEND_URIS_OF_COPY_DSPS, m_peony_gsettings->get(SEND_URIS_OF_COPY_DSPS).toBool());
+        if (keys.contains(SHOW_FILE_EXTENSION)) {
+            m_cache.remove(SHOW_FILE_EXTENSION);
+            m_cache.insert(SHOW_FILE_EXTENSION, m_peony_gsettings->get(SHOW_FILE_EXTENSION).toBool());
+        } else {
+            m_cache.remove(SHOW_FILE_EXTENSION);
+            m_cache.insert(SHOW_FILE_EXTENSION, true);
+        }
 
-        m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
-        m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, m_peony_gsettings->get(DOC_IS_OCCUPIED_BY_WPS).toBool());
+        if (keys.contains(SEND_URIS_OF_COPY_DSPS)) {
+            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
+            m_cache.insert(SEND_URIS_OF_COPY_DSPS, m_peony_gsettings->get(SEND_URIS_OF_COPY_DSPS).toBool());
+        } else {
+            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
+            m_cache.insert(SEND_URIS_OF_COPY_DSPS, false);
+        }
 
-        m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
-        m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, m_peony_gsettings->get(USE_GLOBAL_DEFAULT_SORTING).toBool());
+        if (keys.contains(DOC_IS_OCCUPIED_BY_WPS)) {
+            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
+            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, m_peony_gsettings->get(DOC_IS_OCCUPIED_BY_WPS).toBool());
+        } else {
+            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
+            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
+        }
+
+        if (keys.contains(USE_GLOBAL_DEFAULT_SORTING)) {
+            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
+            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, m_peony_gsettings->get(USE_GLOBAL_DEFAULT_SORTING).toBool());
+        } else {
+            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
+            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
+        }
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);
@@ -169,10 +210,12 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             }
         });
 
-        if (m_gsettings->get(PERSONAL_EFFECT_ENABLE).toBool()) {
-            qreal opacity = m_gsettings->get(PERSONAL_EFFECT_TRANSPARENCY).toReal() * 100;
-            m_cache.remove(SIDEBAR_BG_OPACITY);
-            m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+        if (m_gsettings->keys().contains(PERSONAL_EFFECT_ENABLE)) {
+            if (m_gsettings->get(PERSONAL_EFFECT_ENABLE).toBool()) {
+                qreal opacity = m_gsettings->get(PERSONAL_EFFECT_TRANSPARENCY).toReal() * 100;
+                m_cache.remove(SIDEBAR_BG_OPACITY);
+                m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+            }
         }
     }
 
@@ -195,7 +238,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 
     if (m_cache.value(SORT_ORDER).isNull()){
-        setValue(SORT_ORDER, Qt::AscendingOrder);
+        setValue(SORT_ORDER, Qt::DescendingOrder);
     }
 
     if (m_cache.value(SORT_COLUMN).isNull()){

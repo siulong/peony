@@ -33,33 +33,11 @@
 #include "plasma-shell-manager.h"
 
 #include "tablet-desktop/tabletdesktop.h"
-
-static int desktop_window_id = 0;
 static QTimeLine *gTimeLine = nullptr;
 
-static TabletDesktop *gSpecialWidget = nullptr;
-
-QWidget *getSpecialWidget() {
-    if (!gSpecialWidget) {
-        gSpecialWidget = new TabletDesktop;
-        //auto view = new QQuickView(QUrl("/usr/share/ukui/tablet/contents/ui/main.qml"));
-        //gSpecialWidget->setAttribute(Qt::WA_TranslucentBackground);
-        gSpecialWidget->connect(qApp, &QApplication::primaryScreenChanged, gSpecialWidget, []{
-            auto rect = qApp->primaryScreen()->geometry();
-            rect.moveTo(0, 0);
-            gSpecialWidget->setGeometry(rect);
-        });
-        auto rect = qApp->primaryScreen()->geometry();
-        rect.moveTo(0, 0);
-        gSpecialWidget->setGeometry(rect);
-        gSpecialWidget->showTabletDesktop();
-    }
-    return gSpecialWidget;
-}
-
-DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : m_screen(screen), QMainWindow(parent)
+DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &output, int desktopWindowId, QWidget *parent) : m_output(output), QMainWindow(parent)
 {
-    connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
+   // connect(this, DesktopBackgroundWindow::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
 
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);
@@ -73,14 +51,14 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
+    //m_screen = screen;
     m_desktopIconView = new Peony::DesktopIconView(this);
-    m_desktopIconView->setId(desktop_window_id);
-    m_id = desktop_window_id;
-    desktop_window_id++;
-    move(screen->geometry().topLeft());
-    setFixedSize(screen->geometry().size());
+    m_desktopIconView->setId(desktopWindowId);
+    m_id = desktopWindowId;
+    move(getLogicalGeometryFromScreen().topLeft());
+    setFixedSize(getLogicalGeometryFromScreen().size());
     setContentsMargins(0, 0, 0, 0);
-    connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
+    //connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
     auto manager = DesktopBackgroundManager::globalInstance();
     connect(manager, &DesktopBackgroundManager::screensUpdated, this, QOverload<>::of(&DesktopBackgroundWindow::update));
@@ -117,7 +95,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
                 });
-                auto action1 = menu.addAction(QObject::tr("set resolution"));
+                auto action1 = menu.addAction(QObject::tr("display settings"));
                 connect(action1, &QAction::triggered, [=]() {
                     //go to control center set resolution ratio
                     PeonyDesktopApplication::gotoSetResolution();
@@ -125,10 +103,6 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
             }
 
-            for (auto screen : qApp->screens()) {
-                if (screen->geometry().contains(relativePos));
-                //menu.windowHandle()->setScreen(screen);
-            }
             menu.exec(mapToGlobal(pos));
             auto urisToEdit = menu.urisToEdit();
             if (urisToEdit.count() == 1) {
@@ -143,10 +117,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
 
 DesktopBackgroundWindow::~DesktopBackgroundWindow()
 {
-   --desktop_window_id;
-    if (!m_desktopIconView->parent()) {
-        m_desktopIconView->deleteLater();
-    }
+
 }
 
 void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
@@ -155,7 +126,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
     if (!manager->getPaintBackground())
         return;
 
-    if (!m_screen)
+    if (m_output.isNull())
         return;
 
     QPainter p(this);
@@ -167,19 +138,19 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
         p.setRenderHint(QPainter::SmoothPixmapTransform);
         auto animation = manager->getAnimation();
         QPixmap frontPixmap = manager->getFrontPixmap();
-
+        QSize screenSize = getLogicalGeometryFromScreen().size();
         if (animation->state() == QVariantAnimation::Running) {
             auto opacity = animation->currentValue().toReal();
             QPixmap backPixmap = manager->getBackPixmap();
 
             if (manager->getBackgroundOption() == "centered") {
                 //居中
-                p.drawPixmap((m_screen->size().width() - backPixmap.rect().width()) / 2,
-                             (m_screen->size().height() - backPixmap.rect().height()) / 2,
+                p.drawPixmap((screenSize.width() - backPixmap.rect().width()) / 2,
+                             (screenSize.height() - backPixmap.rect().height()) / 2,
                              backPixmap);
                 p.setOpacity(opacity);
-                p.drawPixmap((m_screen->size().width() - frontPixmap.rect().width()) / 2,
-                             (m_screen->size().height() - frontPixmap.rect().height()) / 2,
+                p.drawPixmap((screenSize.width() - frontPixmap.rect().width()) / 2,
+                             (screenSize.height() - frontPixmap.rect().height()) / 2,
                              frontPixmap);
             } else if (manager->getBackgroundOption() == "stretched") {
                 //拉伸
@@ -200,12 +171,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                     while (1) {
                         p.drawPixmap(drawedWidth, drawedHeight, backPixmap);
                         drawedWidth += backPixmap.width();
-                        if (drawedWidth >= m_screen->size().width()) {
+                        if (drawedWidth >= screenSize.width()) {
                             break;
                         }
                     }
                     drawedHeight += backPixmap.height();
-                    if (drawedHeight >= m_screen->size().height()) {
+                    if (drawedHeight >= screenSize.height()) {
                         break;
                     }
                 }
@@ -217,12 +188,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                     while (1) {
                         p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                         drawedWidth += frontPixmap.width();
-                        if (drawedWidth >= m_screen->size().width()) {
+                        if (drawedWidth >= screenSize.width()) {
                             break;
                         }
                     }
                     drawedHeight += frontPixmap.height();
-                    if (drawedHeight >= m_screen->size().height()) {
+                    if (drawedHeight >= screenSize.height()) {
                         break;
                     }
                 }
@@ -233,14 +204,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
                 //跨区
-                for(auto screen : qApp->screens()){
-                    if (m_screen->name() == screen->name()) {
-                        p.drawPixmap(this->rect(), backPixmap, getSourceRect(backPixmap, screen->geometry()));
-                        p.setOpacity(opacity);
-                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, screen->geometry()));
-                        break;
-                    }
-                }
+                auto geometry = getLogicalGeometryFromScreen();
+                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
                 p.setOpacity(opacity);
@@ -249,8 +214,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
 
         } else {
             if (manager->getBackgroundOption() == "centered") {
-                p.drawPixmap((m_screen->size().width() - frontPixmap.rect().width()) / 2,
-                             (m_screen->size().height() - frontPixmap.rect().height()) / 2,
+                p.drawPixmap((screenSize.width() - frontPixmap.rect().width()) / 2,
+                             (screenSize.height() - frontPixmap.rect().height()) / 2,
                              frontPixmap);
             } else if (manager->getBackgroundOption() == "stretched") {
                 p.drawPixmap(this->rect(), frontPixmap, frontPixmap.rect());
@@ -266,24 +231,20 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                     while (1) {
                         p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                         drawedWidth += frontPixmap.width();
-                        if (drawedWidth >= m_screen->size().width()) {
+                        if (drawedWidth >= screenSize.width()) {
                             break;
                         }
                     }
                     drawedHeight += frontPixmap.height();
-                    if (drawedHeight >= m_screen->size().height()) {
+                    if (drawedHeight >= screenSize.height()) {
                         break;
                     }
                 }
             } else if (manager->getBackgroundOption() == "zoom") {
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
-                for(auto screen : qApp->screens()){
-                    if (m_screen->name() == screen->name()) {
-                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, screen->geometry()));
-                        break;
-                    }
-                }
+                auto geometry = getLogicalGeometryFromScreen();
+                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
             }
@@ -292,32 +253,24 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
     }
 }
 
-QScreen *DesktopBackgroundWindow::screen() const
+KScreen::OutputPtr DesktopBackgroundWindow::screen() const
 {
-    return m_screen;
+    return m_output;
+}
+
+QRect DesktopBackgroundWindow::getLogicalGeometryFromScreen()
+{
+    if (!m_output.isNull() && m_output->isEnabled()) {
+        QRect rect = QRect(m_output->geometry().topLeft()/this->windowHandle()->devicePixelRatio(), m_output->geometry().size()/this->windowHandle()->devicePixelRatio());
+        return rect;
+    } else {
+        return this->geometry();
+    }
 }
 
 void DesktopBackgroundWindow::invaidScreen()
 {
-    m_screen = nullptr;
-}
-
-void DesktopBackgroundWindow::setCentralWidget1()
-{
-    if (centralWidget()) {
-        takeCentralWidget();
-    }
-
-    if (qApp->property("isTabletMode").toBool()) {
-        if (m_screen != qApp->primaryScreen()) {
-            setCentralWidget(nullptr);
-        } else {
-            setCentralWidget(new TabletDesktop);
-        }
-    } else {
-        setCentralWidget(m_desktopIconView);
-        m_desktopIconView->resolutionChange();
-    }
+    m_output = nullptr;
 }
 
 bool DesktopBackgroundWindow::event(QEvent *event)
@@ -332,8 +285,8 @@ bool DesktopBackgroundWindow::event(QEvent *event)
                 m_shellSurface->setSkipSwitcher(true);
                 m_shellSurface->setSkipTaskbar(true);
                 // wayland中构造函数的move只能在这里生效
-                if (m_screen) {
-                    m_shellSurface->setPosition(m_screen->geometry().topLeft());
+                if (!m_output.isNull()) {
+                    m_shellSurface->setPosition(getLogicalGeometryFromScreen().topLeft());
                 }
             }
             break;
@@ -354,7 +307,6 @@ bool DesktopBackgroundWindow::event(QEvent *event)
 
 void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 {
-    qInfo()<<"bg window geometry changed"<<screen()->name()<<geometry<<screen()->geometry();
     if (gTimeLine->state() != QTimeLine::Running) {
         gTimeLine->start();
     } else {
@@ -364,26 +316,21 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
 
 void DesktopBackgroundWindow::updateWindowGeometry()
 {
-    if (!m_screen) {
+    if (m_output.isNull()) {
         return;
     }
-    auto geometry = m_screen->geometry();
+    auto geometry = getLogicalGeometryFromScreen();
     move(geometry.topLeft());
     if (m_shellSurface) {
         m_shellSurface->setPosition(geometry.topLeft());
     }
     setFixedSize(geometry.size());
 
-    qInfo()<<"bg window geometry changed slot"<<screen()->name()<<geometry;
-    if (qApp->property("isTabletMode").toBool()) {
-        TabletDesktop *tablet = static_cast<TabletDesktop*>(centralWidget());
-        if (tablet) {
-            tablet->setGeometry(QRect(0, 0, geometry.width(), geometry.height()));
-        }
-    }
+    qInfo()<<"bg window geometry changed slot"<<screen().data()->name()<<geometry;
+
     // raise primary window to make sure icon view is visible.
     if (centralWidget()) {
-        if (screen() == qApp->primaryScreen()) {
+        if (screen()->isPrimary()) {
             qInfo()<<"has center widget, raise window";
             KWindowSystem::raiseWindow(this->winId());
         } else {
@@ -407,11 +354,11 @@ void DesktopBackgroundWindow::setId(int id)
 //获取iconview中图标的相对位置
 QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
 {
-    if (!m_screen) {
+    if (m_output.isNull()) {
         return pos;
     }
     QPoint relativePos = pos;
-    if (m_screen == QApplication::primaryScreen()) {
+    if (m_output->isPrimary()) {
         if (m_panelSetting) {
             int position = m_panelSetting->get("panelposition").toInt();
             int offset = m_panelSetting->get("panelsize").toInt();
@@ -494,27 +441,27 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
 
 QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
 {
-    QRect virtualGeometry;
-    if (m_screen) {
-        virtualGeometry = m_screen->virtualGeometry();
-    } else {
-        virtualGeometry = screenGeometry;
+    QRegion virtualScreensRegion;
+    for (auto qscreen : qApp->screens()) {
+        virtualScreensRegion += qscreen->geometry();
     }
+    QRect virtualGeometry = virtualScreensRegion.boundingRect().translated(0, 0);
+
     qreal pixWidth = pixmap.width();
     qreal pixHeight = pixmap.height();
 
     QSize sourceSize = pixmap.size();
-    sourceSize.setWidth(screenGeometry.width() / virtualGeometry.width() * pixWidth);
-    sourceSize.setHeight(screenGeometry.height() / virtualGeometry.height() * pixHeight);
+    sourceSize.setWidth(screenGeometry.width() * 1.0 / virtualGeometry.width() * pixWidth);
+    sourceSize.setHeight(screenGeometry.height() * 1.0 / virtualGeometry.height() * pixHeight);
 
     qint32 offsetX = 0;
     qint32 offsetY = 0;
     if (screenGeometry.x() > 0) {
-        offsetX = (screenGeometry.x() / virtualGeometry.width() * pixWidth);
+        offsetX = (screenGeometry.x() * 1.0 / virtualGeometry.width() * pixWidth);
     }
 
     if (screenGeometry.y() > 0) {
-        offsetY = (screenGeometry.y() / virtualGeometry.height() * pixHeight);
+        offsetY = (screenGeometry.y() * 1.0 / virtualGeometry.height() * pixHeight);
     }
 
     QPoint offsetPoint = pixmap.rect().topLeft();
@@ -573,4 +520,22 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
 Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
 {
     return m_desktopIconView;
+}
+
+void DesktopBackgroundWindow::setCentralWidget1()
+{
+    if (centralWidget()) {
+        takeCentralWidget();
+    }
+
+    if (qApp->property("isTabletMode").toBool()) {
+        if (!m_output->isPrimary()) {
+            setCentralWidget(nullptr);
+        } else {
+            setCentralWidget(new TabletDesktop);
+        }
+    } else {
+        setCentralWidget(m_desktopIconView);
+        m_desktopIconView->resolutionChange();
+    }
 }

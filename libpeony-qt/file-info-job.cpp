@@ -411,12 +411,16 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     if (g_file_info_has_attribute(new_info, "trash::deletion-date"))
     {
-       QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
-       info->m_deletion_date = deletionDate.replace("T", " ");
-
-       QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
-
-       info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+        QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
+        info->m_deletion_date = deletionDate.replace("T", " ");
+        QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
+        info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+        date = QDateTime::fromMSecsSinceEpoch(info->m_deletion_date_uint64);
+        info->m_deletion_date = date.toString(systemTimeFormat);
+    }
+    if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
+        auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+        info->setProperty("orig-path", origPath);
     }
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
         auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
@@ -439,7 +443,9 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     // fix #81862
     auto uri = m_info.get()->uri();
-    if (uri.startsWith("trash:///") && uri != "trash:///") {
+    QUrl targetUrl = info->m_target_uri;
+    //fix bug#126974, related to trash link files, use this code when target exists
+    if (uri.startsWith("trash:///") && uri != "trash:///" && QFile::exists(targetUrl.path())) {
         auto targetInfo = FileInfo::fromUri(info->m_target_uri);
         FileInfoJob j(targetInfo);
         j.querySync();

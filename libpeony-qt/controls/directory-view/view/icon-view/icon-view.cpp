@@ -31,7 +31,7 @@
 #include "file-utils.h"
 
 #include "global-settings.h"
-
+#include "search-vfs-uri-parser.h"
 #include <QMouseEvent>
 
 #include <QDragEnterEvent>
@@ -185,6 +185,12 @@ void IconView::setCutFiles(const QStringList &uris)
 void IconView::setDirectoryUri(const QString &uri)
 {
     m_current_uri = uri;
+    if (m_current_uri.startsWith("search://")) {
+        QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        setSearchKey(nameRegexp);
+    } else {
+        setSearchKey("");
+    }
 }
 
 const QString IconView::getDirectoryUri()
@@ -326,7 +332,7 @@ void IconView::dropEvent(QDropEvent *e)
 }
 
 void IconView::mouseMoveEvent(QMouseEvent *e)
-{
+{  
     QModelIndex itemIndex = indexAt(e->pos());
     if (!itemIndex.isValid()) {
         if (QToolTip::isVisible()) {
@@ -356,7 +362,7 @@ void IconView::mousePressEvent(QMouseEvent *e)
 
     m_allow_set_index_widget = true;
 
-    qDebug()<<"moursePressEvent";
+    //qDebug()<<"moursePressEvent";
     m_editValid = true;
     QListView::mousePressEvent(e);
 
@@ -570,11 +576,23 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
     m_model = sourceModel;
     m_sort_filter_proxy_model = proxyModel;
 
+    auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+    if (proxyModelSelectionModelHint != NoSelection) {
+        setSelectionMode(proxyModelSelectionModelHint);
+    }
+
+    connect(proxyModel, &FileItemProxyFilterSortModel::setSelectionModeChanged, this, [=]{
+        auto proxyModelSelectionModelHint = proxyModel->getSelectionModeHint();
+        if (proxyModelSelectionModelHint != NoSelection) {
+            setSelectionMode(proxyModelSelectionModelHint);
+        }
+    });
+
     setModel(m_sort_filter_proxy_model);
 
     //edit trigger
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
-        qDebug()<<"selection changed";
+        //qDebug()<<"selection changed";
         auto currentSelections = selection.indexes();
 
         for (auto index : deselection.indexes()) {
@@ -600,7 +618,7 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         }
 
 
-        qDebug()<<"selection changed2"<<m_editValid;
+        //qDebug()<<"selection changed2"<<m_editValid;
     });
 }
 
@@ -682,7 +700,7 @@ bool IconView::getDelegateEditFlag()
 
 int IconView::getSortType()
 {
-    int type = m_sort_filter_proxy_model->sortColumn();
+    int type = m_sort_filter_proxy_model->expectedSortType();
     return type<0? 0: type;
 }
 
@@ -693,7 +711,7 @@ void IconView::setSortType(int sortType)
 
 int IconView::getSortOrder()
 {
-    return m_sort_filter_proxy_model->sortOrder();
+    return m_sort_filter_proxy_model->expectedSortOrder();
 }
 
 void IconView::setSortOrder(int sortOrder)
@@ -799,6 +817,12 @@ void IconView::startDrag(Qt::DropActions flags)
     }
 }
 
+void IconView::setSearchKey(const QString &key)
+{
+    auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
+    viewItemDelegate->setSearchKeyword(key);
+}
+
 //Icon View 2
 IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
 {
@@ -875,7 +899,12 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             m_view->viewport()->repaint();
         }
 
-        if (!m_view->indexAt(pos).isValid())
+        bool indexWidgetContainsPos = false;
+        auto indexWidget = m_view->indexWidget(m_view->currentIndex());
+        if (indexWidget) {
+            indexWidgetContainsPos = indexWidget->geometry().contains(pos);
+        }
+        if (!m_view->indexAt(pos).isValid() && !indexWidgetContainsPos)
             m_view->clearSelection();
 
         //NOTE: we have to ensure that we have cleared the

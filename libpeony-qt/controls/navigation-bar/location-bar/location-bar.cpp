@@ -155,8 +155,10 @@ LocationBar::~LocationBar()
 
 void LocationBar::setRootUri(const QString &uri)
 {
+    Q_EMIT aboutToSetRootUri();
+
     //when is the same uri and has buttons return
-    if (m_current_uri == uri && m_buttons.count() >0)
+    if (FileUtils::isSamePath(m_current_uri, uri) && m_buttons.count() >0)
         return;
 
     m_current_uri = uri;
@@ -174,12 +176,12 @@ void LocationBar::setRootUri(const QString &uri)
     auto tmpUri = uri;
     while (!tmpUri.isEmpty() && tmpUri != "") {
         m_buttons_info.prepend(FileInfo::fromUri(tmpUri));
-        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
-            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
-        }
-        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
-            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
-        }
+//        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
+//        }
+//        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
+//        }
         tmpUri = FileUtils::getParentUri(tmpUri);
     }
 
@@ -188,18 +190,36 @@ void LocationBar::setRootUri(const QString &uri)
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
         infoJob->setAutoDelete();
-        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+        connect(this, &LocationBar::aboutToSetRootUri, infoJob, [=]{
+            infoJob->setProperty("isCancelled", true);
+            infoJob->cancel();
+        });
+        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+            if (!successed) {
+                qWarning()<<"can not query file:"<<info->uri();
+                // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                if (!infoJob->property("isCancelled").toBool()) {
+                    m_querying_buttons_info.removeOne(info);
+                    m_buttons_info.removeOne(info);
+                }
+                return;
+            }
             // enumerate buttons info directory
             auto enumerator = new FileEnumerator;
             enumerator->setEnumerateDirectory(info.get()->uri());
             //comment to fix kydroid path show abnormal issue
             //enumerator->setEnumerateWithInfoJob();
 
+            connect(this, &LocationBar::aboutToSetRootUri, enumerator, [=]{
+                enumerator->setProperty("isCancelled", true);
+                enumerator->cancel();
+            });
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -207,6 +227,19 @@ void LocationBar::setRootUri(const QString &uri)
                             addButton(info.get()->uri().toLocal8Bit(), true, true);
                         }
                         doLayout();
+                    }
+                } else {
+                    // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                    // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                    if (!enumerator->property("isCancelled").toBool()) {
+                        if (m_querying_buttons_info.isEmpty()) {
+                            // add buttons
+                            clearButtons();
+                            for (auto info : m_buttons_info) {
+                                addButton(info.get()->uri().toLocal8Bit(), true, true);
+                            }
+                            doLayout();
+                        }
                     }
                 }
 
@@ -219,6 +252,11 @@ void LocationBar::setRootUri(const QString &uri)
     }
 
     return;
+}
+
+void LocationBar::updateTrashIcon()
+{
+    updateButtons();
 }
 
 void LocationBar::clearButtons()
@@ -262,10 +300,19 @@ void LocationBar::updateButtons()
             enumerator->setEnumerateWithInfoJob();
 
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
+                    if (m_querying_buttons_info.isEmpty()) {
+                        // add buttons
+                        clearButtons();
+                        for (auto info : m_buttons_info) {
+                            addButton(info.get()->uri(), true, true);
+                        }
+                        doLayout();
+                    }
+                } else {
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -298,8 +345,8 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
 
-    auto displayName = FileUtils::getFileDisplayName(uri);
-    button->setToolTip(displayName);
+    auto completeName = FileUtils::getFileDisplayName(uri);
+    QString displayName = completeName;
     m_buttons.insert(QUrl(uri).toEncoded(), button);
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(m_current_uri);
@@ -310,7 +357,6 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         button->setFixedWidth(button->sizeHint().width());
         return;
     }
-
     if (setIcon) {
         QIcon icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri), QIcon::fromTheme("folder"));
         button->setIcon(icon);
@@ -324,32 +370,23 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     QUrl url = FileUtils::urlEncode(uri);
     if (!url.fileName().isEmpty())
     {
-        button->setText(displayName);
         m_current_uri = uri.left(uri.lastIndexOf("/")+1) + displayName;
-    } else {
-        if (uri == "file:///") {
-//            auto text = FileUtils::getFileDisplayName("computer:///root.link");
-//            if (text.isNull()) {
-//                text = tr("File System");
-//            }
-            //fix bug#47597, show as root.link issue
-            QString text = tr("File System");
-            button->setText(text);
-            //comment to fix button text show incomplete issue, link to bug#72080
-            //button->setStyleSheet("QToolButton{padding-left: 15px; padding-right: 15px}");
-        } else {
-            button->setText(displayName);
-        }
     }
 
     //if button text is too long, elide it
-    displayName = button->text();
     if (displayName.length() > ELIDE_TEXT_LENGTH)
     {
         int  charWidth = fontMetrics().averageCharWidth();
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
     button->setText(displayName);
+
+    //comment to fix UI improve bug, link to bug#125255
+    //缩略显示的情况下的文件夹，需要提供tips看全文件名，其他情况不显示
+    if (completeName != displayName)
+    {
+       button->setToolTip(completeName);
+    }
 
     connect(button, &QToolButton::clicked, [=]() {
         Q_EMIT this->groupChangedRequest(uri);

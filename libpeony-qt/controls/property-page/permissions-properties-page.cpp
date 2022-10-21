@@ -142,10 +142,11 @@ void PermissionsPropertiesPage::initTableWidget()
     m_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     m_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     m_table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    m_table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    m_table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Fixed);
     m_table->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
 
     m_table->setColumnWidth(0, 150);
+    m_table->setColumnWidth(4, 115);
     m_layout->addWidget(m_table);   
 }
 
@@ -497,6 +498,7 @@ void PermissionsPropertiesPage::updateCheckBox()
 
             //disable home path
             bool check_enable = true;
+            bool check_enable_filesafe = true;
             QString uri = m_uri;
 
             if(uri.startsWith("filesafe:///")){
@@ -504,10 +506,14 @@ void PermissionsPropertiesPage::updateCheckBox()
                 if(list.size()==4){
                     check_enable = false;
                 }
+
+                if(list.size()>=5){
+                    check_enable_filesafe = false;
+                }
             }
 
             QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-            if (this->m_uri == homeUri || !check_enable)
+            if (this->m_uri == homeUri || !check_enable || (!check_enable_filesafe && i > 0))
                 checkbox->setDisabled(true);
             else
                 checkbox->setDisabled(false);

@@ -38,6 +38,8 @@ public:
         return m_occupiedAppsInfoThread;
     }
 
+    bool isEmptyDrive(const Volume &volume);/* 判断是否为空光驱 */
+
 private:
     explicit VolumeManager(QObject *parent = nullptr);
     bool gpartedIsOpening();
@@ -159,9 +161,11 @@ public:
     QString originalDevice() const;
     QString mountPoint() const;
     GVolume* getGVolume() const;
+    GDrive* getGDrive() const;
     //property-to-set
     void setLabel(const QString& label);
     void setDevice(const QString &device);
+    void setIconName(const QString &iconName);
     void setFromMount(const Mount& mount);//通过Mount求Volume
     void setFromDrive(const Drive& drive);//通过Drive获取Volume
     void setMountPoint(QString point);

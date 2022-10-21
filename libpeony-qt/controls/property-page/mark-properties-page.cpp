@@ -143,7 +143,6 @@ void MarkPropertiesPage::initTableData()
         QLabel *label = new QLabel(widget);
         label->setText(item->name());
         boxLayout->addWidget(label);
-
         connect(checkBox,&QCheckBox::clicked,this,[=](bool checked){
             this->changeLabel(item->id(),checked);
         });

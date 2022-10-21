@@ -107,7 +107,8 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
 
     Q_UNUSED(e)
     QPainter p(this);
-    auto bgColor = m_option.palette.highlight().color();
+//    auto bgColor = m_option.palette.highlight().color();
+    auto bgColor = QApplication::palette().highlight().color();
     p.save();
     p.setPen(Qt::transparent);
     bgColor.setAlpha(255*0.7);
@@ -123,7 +124,8 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
     int y_delta = iconSizeExcepted.height() - iconRect.height();
     opt.rect.moveTo(opt.rect.x(), opt.rect.y() + y_delta);
 
-    int maxTextHight = this->height() - iconSizeExcepted.height() - 10;
+    //int maxTextHight = this->height() - iconSizeExcepted.height() - 10;
+    int maxTextHight = view->viewport()->height() - this->geometry().y() - iconSizeExcepted.height() - 10;
 
     //setFixedHeight(opt.rect.height() + y_delta);
 
@@ -142,12 +144,12 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
     // draw text shadow
     p.save();
 
-    auto expectedSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 2);
+    auto expectedSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 0, 0);
     QPixmap pixmap(expectedSize);
     pixmap.fill(Qt::transparent);
     QPainter shadowPainter(&pixmap);
     shadowPainter.setPen(Qt::black);
-    Peony::DirectoryView::IconViewTextHelper::paintText(&shadowPainter, m_option, m_index, maxTextHight, 2, 4, false, Qt::black);
+    Peony::DirectoryView::IconViewTextHelper::paintText(&shadowPainter, m_option, m_index, maxTextHight, 0, 9999, false, Qt::black);
     shadowPainter.end();
 
     QImage shadowImage(expectedSize + QSize(4, 4), QImage::Format_ARGB32_Premultiplied);
@@ -180,8 +182,8 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
             m_option,
             m_index,
             maxTextHight,
-            2,
-            4,
+            0,
+            9999,
             false);
 
     p.restore();
@@ -244,6 +246,10 @@ void DesktopIndexWidget::mousePressEvent(QMouseEvent *event)
 //            return;
 //        }
     }
+    if(event->button() == Qt::RightButton){
+        event->accept();
+        return;
+    }
     QWidget::mousePressEvent(event);
 }
 
@@ -278,23 +284,23 @@ void DesktopIndexWidget::updateItem()
     m_option.rect.setWidth(visualRect.width());
 
     int rawHeight = size.height();
-    auto textSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 2);
+    auto textSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 0, 0);
     int fixedHeight = 5 + m_delegate->getView()->iconSize().height() + 5 + textSize.height() + 10;
 
-    int y_bottom = rectCopy.y() + fixedHeight;
-    qDebug() << "Y:" <<rectCopy.y() <<fixedHeight <<m_delegate->getView()->height();
-    b_elide_text = false;
-    if ( y_bottom > m_delegate->getView()->height() && m_option.text.length() > ELIDE_TEXT_LENGTH)
-    {
-        b_elide_text = true;
-        int  charWidth = m_option.fontMetrics.averageCharWidth();
-        m_option.text = m_option.fontMetrics.elidedText(m_option.text, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
-        //recount size
-        textSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 2);
-        fixedHeight = 5 + m_delegate->getView()->iconSize().height() + 5 + textSize.height() + 10;
-    }
+//    int y_bottom = rectCopy.y() + fixedHeight;
+//    qDebug() << "Y:" <<rectCopy.y() <<fixedHeight <<m_delegate->getView()->height();
+//    b_elide_text = false;
+//    if ( y_bottom > m_delegate->getView()->height() && m_option.text.length() > ELIDE_TEXT_LENGTH)
+//    {
+//        b_elide_text = true;
+//        int  charWidth = m_option.fontMetrics.averageCharWidth();
+//        m_option.text = m_option.fontMetrics.elidedText(m_option.text, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+//        //recount size
+//        textSize = Peony::DirectoryView::IconViewTextHelper::getTextSizeForIndex(m_option, m_index, 0, 0);
+//        fixedHeight = 5 + m_delegate->getView()->iconSize().height() + 5 + textSize.height() + 10;
+//    }
 
-    qDebug() << "updateItem fixedHeight:" <<fixedHeight <<rawHeight <<m_option.text;
+//    qDebug() << "updateItem fixedHeight:" <<fixedHeight <<rawHeight <<m_option.text;
     if (fixedHeight < rawHeight)
         fixedHeight = rawHeight;
 
@@ -319,6 +325,8 @@ void DesktopIndexWidget::updateItem()
 
     rawTextRect.setTop(iconRect.bottom() + y_delta + 5);
     rawTextRect.setHeight(9999);
+
+    fixedHeight = qMin(view->viewport()->height() - this->geometry().y(), fixedHeight);
 
     setFixedHeight(fixedHeight);
 }

@@ -51,7 +51,7 @@
 using namespace Peony;
 
 static const int maxNumberOfDeletesByOne = 30;      /* 按个删除最大数量 */
-static const int maxNumberOfDeletesPerBatch = 1000; /* 每次批量最多删除数量 */
+static const int maxNumberOfDeletesPerBatch = 3000; /* 每次批量最多删除数量 */
 
 QString uri2FavoriteUri(const QString &sourceUri)
 {
@@ -62,9 +62,11 @@ QString uri2FavoriteUri(const QString &sourceUri)
 FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, FileItemModel *model, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QVector<FileItem*>* >("QVector<FileItem*>*");
+    qRegisterMetaType<QHash<QString, FileItem*>>("QHash<QString, FileItem*>");
     m_parent = parentItem;
     m_info = info;
     m_children = new QVector<FileItem*>();
+    m_uri_item_hash.clear();
 
     m_model = model;
 
@@ -75,7 +77,8 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
     m_idle = new QTimer(this);
     m_idle->setInterval(30);
     m_idle->setSingleShot(true);
-    connect(m_idle, &QTimer::timeout, this, [=](){
+    connect(m_idle, &QTimer::timeout, this, [=]{
+        m_waiting_update_queue.removeDuplicates(); /* 去重 */
         for (auto uri : m_waiting_update_queue) {
             auto infoJob = new FileInfoJob(FileInfo::fromUri(uri));
             infoJob->setAutoDelete();
@@ -90,13 +93,14 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 */
             });
             infoJob->queryAsync();
+            m_waiting_update_queue.removeOne(uri);
         }
         if (m_uris_to_be_removed.isEmpty())
             return;
 
         QStringList favoriteUris;
 
-        if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne) {
+        if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne && !m_batchProcessThread->isRunning()) {
             // do normal remove
             for (auto uri : m_uris_to_be_removed) {
                 for (int row = 0; row < m_children->count(); row++) {
@@ -111,6 +115,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_model->beginRemoveRows(this->firstColumnIndex(), row, row);
                         m_uris_to_be_removed.removeOne(uri);
                         m_children->remove(row);
+                        m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
                         delete child;
                         break;
@@ -165,6 +170,7 @@ FileItem::~FileItem()
     m_children->clear();
 
     delete m_children;
+    m_uri_item_hash.clear();
 }
 
 bool FileItem::operator==(const FileItem &item)
@@ -190,6 +196,7 @@ QVector<FileItem*> *FileItem::findChildrenSync()
     for (auto info : infos) {
         FileItem *child = new FileItem(info, this, m_model);
         m_children->append(child);
+        m_uri_item_hash.insert(child->uri(), child);
         FileInfoJob *job = new FileInfoJob(info);
         job->setAutoDelete();
         job->querySync();
@@ -318,6 +325,7 @@ void FileItem::findChildrenAsync()
                 for (auto info : infos) {
                     FileItem *child = new FileItem(info, this, m_model);
                     m_children->prepend(child);
+                    m_uri_item_hash.insert(child->uri(), child);
                     FileInfoJob *job = new FileInfoJob(info);
                     job->setAutoDelete();
                     /*
@@ -420,14 +428,16 @@ void FileItem::findChildrenAsync()
                 m_ending_uris.clear();
                 m_ending_uris = uris;
             }
+            uris.toSet().toList();/* 去重 */
             for (auto uri : uris) {
                 auto info = FileInfo::fromUri(uri);
                 auto infoJob = new FileInfoJob(info);
                 infoJob->setAutoDelete();
                 infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
                     auto item = new FileItem(info, this, m_model);
-                    m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
+                    m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                     m_children->append(item);
+                    m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
                     //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                     //Q_EMIT m_model->updated();
@@ -462,7 +472,7 @@ void FileItem::findChildrenAsync()
                 //tell the model update
                 this->onChildAdded(uri);
                 Q_EMIT this->childAdded(uri);
-                qDebug() << "positive onChildAdded:" <<uri;
+                //qDebug() << "positive onChildAdded:" <<uri;
                 //file changed, force create thubnail, link tobug#83108
                 ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
             });
@@ -545,7 +555,7 @@ void FileItem::onChildAdded(const QString &uri)
     if(m_uris_to_be_removed.contains(uri))
         m_uris_to_be_removed.removeOne(uri);
 
-    qDebug()<<"add child:" << uri;
+    //qDebug()<<"add child:" << uri;
     FileItem *child = getChildFromUri(uri);
     if (child) {
         qDebug()<<"has added, return";
@@ -572,8 +582,9 @@ void FileItem::onChildAdded(const QString &uri)
         // add exsited checkment. link to: #66999
         if (!item) {
             item = new FileItem(info, this, m_model);
-            m_model->beginInsertRows(firstColumnIndex(), m_children->count(), m_children->count());
+            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
             m_children->append(item);
+            m_uri_item_hash.insert(item->uri(), item);
             m_model->endInsertRows();
             qDebug() <<"successfully added child:" <<uri;
 
@@ -583,7 +594,6 @@ void FileItem::onChildAdded(const QString &uri)
             QTimer::singleShot(1000, this, [=](){
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             });
-
         } else {
             qInfo()<<"file"<<uri<<"has arealy in file item model";
         }
@@ -604,9 +614,7 @@ void FileItem::onChildRemoved(const QString &uri)
     // fix #62925
     m_waiting_add_queue.removeOne(uri);
     m_uris_to_be_removed.append(uri);
-    if (!m_idle->isActive()) {
-        m_idle->start();
-    }
+    m_idle->start();
     return;
 }
 
@@ -624,11 +632,13 @@ void FileItem::onDeleted(const QString &thisUri)
         if (m_parent->m_info->uri() == thisUri) {
             m_model->removeRow(m_parent->m_children->indexOf(this), m_parent->firstColumnIndex());
             m_parent->m_children->removeOne(this);
+            m_parent->m_uri_item_hash.remove(this->uri());
         } else {
             //if just clear children, there will be a small problem.
             clearChildren();
             m_model->removeRow(m_parent->m_children->indexOf(this), m_parent->firstColumnIndex());
             m_parent->m_children->removeOne(this);
+            m_parent->m_uri_item_hash.remove(this->uri());
             m_parent->onChildAdded(m_info->uri());
         }
         this->deleteLater();
@@ -679,10 +689,14 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
         if (!newChild) {
             int index = m_children->indexOf(child);
             m_children->at(index)->m_info= FileInfo::fromUri(newUri);
+            m_uri_item_hash.remove(oldUri);
             child->updateInfoAsync();
+            m_uri_item_hash.insert(child->uri(), child);
+
         } else {
             m_model->beginRemoveRows(this->firstColumnIndex(), m_children->indexOf(child), m_children->indexOf(child));
             m_children->removeOne(child);
+            m_uri_item_hash.remove(child->uri());
             child->deleteLater();
             m_model->endRemoveRows();
         }
@@ -692,7 +706,6 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
 void FileItem::onChanged(const QString &uri)
 {
     m_waiting_update_queue.append(uri);
-    m_waiting_update_queue.removeDuplicates();
     if (!m_idle->isActive()) {
         m_idle->start();
     }
@@ -780,33 +793,26 @@ void FileItem::batchRemoveItems()
         QStringList list;
         if(m_uris_to_be_removed.size() >= maxNumberOfDeletesPerBatch){/* 每次批量最多删除数量 */
             for(int i = 0; i < maxNumberOfDeletesPerBatch; i++){
-                QString uri = m_uris_to_be_removed.at(0);
+                QString uri = m_uris_to_be_removed.takeFirst();
                 list.append(uri);
-                m_uris_to_be_removed.removeOne(uri);
             }
         }else{
-            list = m_uris_to_be_removed;
-            m_uris_to_be_removed.clear();
-        }
-
-        QHash<QString, FileItem*> uri_item_hash;
-        for(auto entry: *m_children){
-            uri_item_hash.insert(entry->uri(), entry);
+            list.swap(m_uris_to_be_removed);
         }
 
         m_batchProcessItems = new BatchProcessItems();
-        m_batchProcessItems->setBatchRemoveParam(list, uri_item_hash, m_children);
+        m_batchProcessItems->setBatchRemoveParam(list, m_uri_item_hash, m_children);
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
-        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children){
+        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
+            m_model->beginResetModel();
+            auto old = m_children;
             m_children = children;
+            delete old;
+            m_uri_item_hash = uri_item_hash;
+            m_model->endResetModel();
             m_model->updated();/* 更新状态栏 */
-            qDebug()<<"remove items finished,children count:"<<m_children->size();
-
-            if(m_uris_to_be_removed.size() <= maxNumberOfDeletesByOne){
-                m_model->beginResetModel();
-                m_model->endResetModel();
-            }
+            qDebug()<<"remove items finished, children count,uri_item_hash count:"<<m_children->size()<<m_uri_item_hash.size();
 
             m_batchProcessThread->quit();
             if(m_batchProcessItems){
@@ -818,8 +824,12 @@ void FileItem::batchRemoveItems()
                 m_idle->start();
             }
 
-        });
+        }, Qt::BlockingQueuedConnection);
         m_batchProcessThread->start();
+    } else {
+        if (m_uris_to_be_removed.size()>0 && !m_idle->isActive()) {
+            m_idle->start();
+        }
     }
 }
 
@@ -831,6 +841,7 @@ void FileItem::clearChildren()
         delete child;
     }
     m_children->clear();
+    m_uri_item_hash.clear();
     m_expanded = false;
     m_watcher.reset();
     m_watcher = nullptr;
@@ -878,11 +889,11 @@ BatchProcessItems::~BatchProcessItems()
 
 }
 
-void BatchProcessItems::setBatchRemoveParam(QStringList uris_to_be_removed, QHash<QString, FileItem*> uri_item_hash, QVector<FileItem*> *children)
+void BatchProcessItems::setBatchRemoveParam(const QStringList& uris_to_be_removed, const QHash<QString, FileItem*>& uri_item_hash, QVector<FileItem*> *children)
 {
     m_uris_to_be_removed = uris_to_be_removed;
     m_uri_item_hash = uri_item_hash;
-    m_children = children;
+    m_children = new QVector<FileItem *>(*children);
 }
 
 void BatchProcessItems::slot_removeItems()
@@ -890,7 +901,8 @@ void BatchProcessItems::slot_removeItems()
     // do reset model
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
-    qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<"uri item hash count:"<<m_uri_item_hash.size();
+    QList<FileItem *> itemsToBeDeleted;
+    qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<",children count,uri item hash count:"<<m_children->size()<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
         if(m_uri_item_hash.contains(uri)){
             auto child = m_uri_item_hash[uri];
@@ -902,11 +914,14 @@ void BatchProcessItems::slot_removeItems()
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
-            delete child;
+            itemsToBeDeleted.append(child);
         }
     }
     BookMarkManager::getInstance()->removeBookMark(favoriteUris);
-    Q_EMIT removeItemsFinished(m_children);
+    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash);
+    for (auto child : itemsToBeDeleted) {
+        delete child;
+    }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
-    qDebug()<<"excute deletion finished, cost"<<time1 - time0<<"uris to be removed remaining count:"<<m_uris_to_be_removed.size()<<"children remaining count:"<<m_children->size();
+    qDebug()<<"excute deletion finished, cost"<<time1 - time0;
 }
