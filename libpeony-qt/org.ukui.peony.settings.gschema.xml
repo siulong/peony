@@ -9,7 +9,7 @@
     </key>
 
     <key type="b" name="show-trash-dialog">
-      <default>true</default>
+      <default>false</default>
       <summary>show trash dialog</summary>
       <description>Displays the delete to recycle bin dialog box</description>
     </key>
