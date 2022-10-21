@@ -1,3 +1,9 @@
+peony (3.14.4.5-ok8) yangtze; urgency=medium
+
+  * 同步3.20.4.7版本的改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 21 Oct 2022 13:16:57 +0800
+
 peony (3.14.4.5-ok7) yangtze; urgency=medium
 
   * close-cd #137305 【文件管理器】共享文件连接成功后无弹出标识 
