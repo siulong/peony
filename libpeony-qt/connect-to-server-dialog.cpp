@@ -30,6 +30,12 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QButtonGroup>
+#include <QRegExp>
+#include <QMessageBox>
+#include "file-enumerator.h"
+#include "file-utils.h"
+#include "file-info-job.h"
+#include "file-info.h"
 
 #include <openssl/aes.h>
 #include <glib.h>
@@ -256,7 +262,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     Q_EMIT m_remote_type_edit->currentTextChanged(ftpTypeStr);
 
     connect(m_btn_del, &QPushButton::clicked, this, [=] (bool checked) {
-        removeUri(uri());
+        QString delUri = uri();
+        if (delUri != m_favorite_list->currentItem()->text()) {
+            delUri = m_favorite_list->currentItem()->text();
+        }
+        removeUri(delUri);
         if (m_favorite_uri.count() <= 0) {
             m_favorite_list->clear();
         } else {
@@ -273,6 +283,17 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     connect(m_btn_conn, &QPushButton::clicked, this, [=] (bool checked) {
         if ("" != uri()) {
+            checkConnectIpAndPort(uri());
+
+            if (m_checkIp) {
+                m_checkIp = false;
+                QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+                return;
+            } else if (m_checkPort) {
+                m_checkPort = false;
+                QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+                return;
+            }
             accept();
         }
         /* 连接smb时，最外层连接时不会弹出登录框，如需添加到个人收藏服务器和侧边栏则需如下代码 */
@@ -334,6 +355,18 @@ void ConnectServerDialog::setUri(QString uri)
 
 void ConnectServerDialog::addUri(QString uri)
 {
+    checkConnectIpAndPort(uri);
+
+    if (m_checkIp) {
+        m_checkIp = false;
+        QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+        return;
+    } else if (m_checkPort) {
+        m_checkPort = false;
+        QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+        return;
+    }
+
     bool canInsert = false;
     QUrl url(uri);
 
@@ -378,6 +411,39 @@ void ConnectServerDialog::removeUri(QString uri)
         m_favorite_list->removeItemWidget(item);
         m_favorite_widgets.remove(removeUrl);
         delete item;
+    }
+}
+
+void ConnectServerDialog::checkConnectIpAndPort(QString uri)
+{
+    QString tmpUri = uri + "/";
+    bool isExistNetwork = false;
+    FileEnumerator e;
+    e.setEnumerateDirectory("network:///");
+    e.enumerateSync();
+    for (auto fileInfo : e.getChildren()) {
+        FileInfoJob infoJob(fileInfo);
+        infoJob.querySync();
+
+        /* 由远程服务器的targeturi获取uri来调用属性窗口, */
+        QUrl targetUrl(fileInfo.get()->targetUri());
+        if (tmpUri == targetUrl.toString() && tmpUri != "smb:///") {
+            isExistNetwork = true;
+            break;
+        }
+    }
+
+    if (!isExistNetwork) {
+        //filter ip and port
+        QRegExp regExpIp("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
+        if (!regExpIp.exactMatch(m_ip_edit->text())) {
+            m_checkIp = true;
+        }
+
+        QRegExp regExpPort("([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-4]\\d{4}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])");
+        if (!regExpPort.exactMatch(m_port_editor->currentText())) {
+            m_checkPort = true;
+        }
     }
 }
 
