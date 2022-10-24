@@ -275,6 +275,7 @@ LaunchHashList::LaunchHashList(const QString &uri, QWidget *parent)
                                         m_actionList);
         m_actionList->addItem(defaultItem);
         m_actionList->setCurrentItem(defaultItem);
+        m_actionHash->insert(defaultItem, defaultLaunchAction);
         //NOTE:是否需要在列表中显示默认的打开方式 - Do you need to display the default opening method in the list
 //        m_actionList->setItemHidden(defaultItem, true);
         for (auto action : allLaunchActions) {

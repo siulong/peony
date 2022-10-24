@@ -24,10 +24,23 @@
 #define FILELAUCHDIALOG_H
 
 #include <QDialog>
+#include <QVBoxLayout>
+#include <QListWidget>
+#include <QDebug>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QtConcurrent>
+#include <QLabel>
+#include <QHash>
+#include <QFileDialog>
+#include <QLineEdit>
 
 #include "peony-core_global.h"
-
-#include <QHash>
+#include "properties-window-tab-iface.h"
+#include "file-label-model.h"
+#include "file-info-job.h"
+#include "file-launch-action.h"
+#include "open-with-properties-page.h"
 
 class QVBoxLayout;
 class QListWidget;
@@ -43,28 +56,53 @@ class FileLaunchAction;
  * \brief The FileLauchDialog class
  * provides the dialog for choosing which application to open a file.
  */
+
 class PEONYCORESHARED_EXPORT FileLauchDialog : public QDialog
 {
     Q_OBJECT
 public:
     explicit FileLauchDialog(const QString &uri, QWidget *parent = nullptr);
-
     QSize sizeHint() const override {
         return QSize(400, 600);
     }
-
+Q_SIGNALS:
+    void open(FileLaunchAction *action);
 protected:
+    void init(const QString &uri);
+    void initFloorOne();
+
+    void initFloorTwo(const QString &uri);
+
+    void initFloorThree();
+
+    void initFloorFour();
+
+    void addSeparator(){
+        QFrame *separator = new QFrame(this);
+        separator->setFrameShape(QFrame::HLine);
+        m_layout->addWidget(separator);
+    }
+    void getFIleInfo(QString uri);
+    void createDefaultOpenWithWidget();
+    void saveChange();
+
+    void moreAction();
+
     void paintEvent(QPaintEvent *event) override;
+    bool event(QEvent *event) override;
 
 private:
     QVBoxLayout *m_layout;
+    std::shared_ptr<FileInfo> m_info = nullptr;
+    //默认打开方式
+    DefaultOpenWithWidget* m_defaultOpenWithWidget = nullptr;
 
     QListWidget *m_view;
+    QHash<QListWidgetItem*, FileLaunchAction*> m_hash;
     QCheckBox *m_check_box;
     QDialogButtonBox *m_button_box;
 
-    QString m_uri;
-    QHash<QListWidgetItem*, FileLaunchAction*> m_hash;
+    QFileDialog *fd;
 };
 
 }
