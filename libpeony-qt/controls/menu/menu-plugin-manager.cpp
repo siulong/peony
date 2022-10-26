@@ -178,7 +178,7 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
             if (uri.startsWith("trash://") || uri.startsWith("smb://")
                 || uri.startsWith("recent://") || uri.startsWith("computer://"))
                 return l;
-            auto action = new QAction(tr("Add File Label..."), nullptr);
+            auto action = new QAction(tr("Add File Label"), nullptr);
             auto uri = selectionUris.first();
             auto menu = new QMenu();
             auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();

@@ -248,7 +248,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
     if (m_selections.isEmpty()) {
-        auto createAction = new QAction(tr("New..."), this);
+        auto createAction = new QAction(tr("New"), this);
         l<<createAction;
         QMenu *subMenu = new QMenu(this);
         createAction->setMenu(subMenu);
@@ -348,7 +348,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
     QList<QAction *> l;
 
     if (m_selections.isEmpty()) {
-        auto viewTypeAction = addAction(tr("View Type..."));
+        auto viewTypeAction = addAction(tr("View Type"));
         l<<viewTypeAction;
         QMenu *viewTypeSubMenu = new QMenu(this);
         auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
@@ -391,7 +391,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         viewTypeAction->setMenu(viewTypeSubMenu);
 
         //sort type
-        auto sortTypeAction = addAction(tr("Sort By..."));
+        auto sortTypeAction = addAction(tr("Sort By"));
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
 
