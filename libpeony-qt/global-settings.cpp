@@ -29,6 +29,8 @@
 #include <QPalette>
 #include <QScreen>
 
+#include <kysdk/kysdk-system/libkysysinfo.h>
+
 using namespace Peony;
 
 static GlobalSettings *global_instance = nullptr;
@@ -252,6 +254,18 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     if (m_cache.value(REMOTE_SERVER_REMOTE_IP).isNull()) {
         setValue(REMOTE_SERVER_REMOTE_IP, QVariant(QList<QString>()));
     }
+
+    auto machine = kdk_system_get_hostCloudPlatform();
+    if (machine) {
+        if (qstrcmp(machine, "none") == 0) {
+            m_cache.insert(IS_GUESTOS_MACHINE, false);
+        } else {
+            m_cache.insert(IS_GUESTOS_MACHINE, true);
+        }
+        free(machine);
+    } else {
+        m_cache.insert(IS_GUESTOS_MACHINE, false);
+    }
 }
 
 GlobalSettings::~GlobalSettings()
@@ -335,6 +349,11 @@ void GlobalSettings::forceSync(const QString &key)
 void GlobalSettings::slot_updateRemoteServer(const QString& server, bool add)
 {
     Q_EMIT signal_updateRemoteServer(server, add);
+}
+
+bool GlobalSettings::isGuestOSMachine()
+{
+    return m_cache.value(IS_GUESTOS_MACHINE).toBool();
 }
 
 void GlobalSettings::setTimeFormat(const QString &value)

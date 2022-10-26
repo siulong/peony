@@ -30,6 +30,8 @@
 #include "volumeManager.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "global-settings.h"
+
 #include <QObject>
 #include <QMessageBox>
 #include <KWindowSystem>
@@ -206,6 +208,10 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mainLayout->addWidget(mProgress, 5, 1, 1, 12);
 
     auto cryptCheckBox = new QCheckBox(this);
+    // avoid #140543, guestos can not do luks format.
+    if (GlobalSettings::getInstance()->isGuestOSMachine()) {
+        cryptCheckBox->setVisible(false);
+    }
     cryptCheckBox->setText(tr("Set password"));
     cryptCheckBox->setToolTip(tr("Set password for volume based on LUKS (only ext4)"));
     cryptCheckBox->setObjectName("cryptCheckBox");

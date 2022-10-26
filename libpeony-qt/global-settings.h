@@ -74,6 +74,9 @@
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE       "org.ukui.control-center.panel.plugins.date"            // date format key, value is cn or en
 
+// guestos machine
+#define IS_GUESTOS_MACHINE           "isGuestOSMachine"
+
 class QGSettings;
 
 namespace Peony {
@@ -124,6 +127,8 @@ public Q_SLOTS:
      */
     void forceSync(const QString &key = nullptr);
     void slot_updateRemoteServer(const QString& server, bool add);
+
+    bool isGuestOSMachine();
 
 private:
     explicit GlobalSettings(QObject *parent = nullptr);
