@@ -1441,14 +1441,12 @@
         <translation type="vanished">列表视图</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="632"/>
         <source>View Type...</source>
-        <translation>视图类型...</translation>
+        <translation type="vanished">视图类型...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="652"/>
         <source>Sort By...</source>
-        <translation>排序类型...</translation>
+        <translation type="vanished">排序类型...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="658"/>
@@ -1466,9 +1464,8 @@
         <translation>文件大小</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="496"/>
         <source>New...</source>
-        <translation>新建...</translation>
+        <translation type="vanished">新建...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="278"/>
@@ -1507,6 +1504,11 @@
         <translation>打开%1个选中文件</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="496"/>
+        <source>New</source>
+        <translation>新建</translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="590"/>
         <source>Empty File</source>
         <translation>空文本</translation>
@@ -1515,6 +1517,16 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="602"/>
         <source>Folder</source>
         <translation>文件夹</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="632"/>
+        <source>View Type</source>
+        <translation>视图类型</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="652"/>
+        <source>Sort By</source>
+        <translation>排序类型</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="659"/>
@@ -1527,9 +1539,8 @@
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="687"/>
         <source>Sort Order...</source>
-        <translation>排序顺序...</translation>
+        <translation type="vanished">排序顺序...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="695"/>
@@ -1542,9 +1553,8 @@
         <translation>降序</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="708"/>
         <source>Sort Preferences...</source>
-        <translation>排序偏好...</translation>
+        <translation type="vanished">排序偏好...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="713"/>
@@ -1638,6 +1648,16 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1113"/>
         <source>Delete</source>
         <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="687"/>
+        <source>Sort Order</source>
+        <translation>排序顺序</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="708"/>
+        <source>Sort Preferences</source>
+        <translation>排序偏好</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1184"/>
@@ -2093,9 +2113,13 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileLabelInternalMenuPlugin</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="181"/>
         <source>Add File Label...</source>
-        <translation>添加标记...</translation>
+        <translation type="vanished">添加标记...</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="181"/>
+        <source>Add File Label</source>
+        <translation>添加标记</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="204"/>
@@ -3807,39 +3831,39 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation>查看和修改文件的权限。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="180"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="184"/>
         <source>Can not trash</source>
         <translation>不能回收</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="174"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="178"/>
         <source>Can not trash these files. You can delete them permanently. Are you sure doing that?</source>
         <translation>这些文件不能完全放入回收站，可以选择永久删除这些文件，确定这样做吗？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="178"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="182"/>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
         <translation>无法回收大于10G的文件，是否需要永久删除？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="270"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="274"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="279"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="283"/>
         <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
         <translation>是否永久清空回收站内的文件？删除后将无法恢复。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="336"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="338"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="340"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="342"/>
         <source>Delete Permanently</source>
         <translation>永久删除</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="336"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="338"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="340"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="342"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
         <translation>您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
     </message>
@@ -3993,7 +4017,7 @@ Do you want to unmount forcely?</source>
 是否强制卸载?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="274"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="278"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>

@@ -89,12 +89,12 @@ p, li { white-space: pre-wrap; }
         <translation>编辑颜色</translation>
     </message>
     <message>
-        <location filename="../../src/control/file-label-box.cpp" line="81"/>
+        <location filename="../../src/control/file-label-box.cpp" line="84"/>
         <source>Delete</source>
         <translation>删除标记</translation>
     </message>
     <message>
-        <location filename="../../src/control/file-label-box.cpp" line="86"/>
+        <location filename="../../src/control/file-label-box.cpp" line="89"/>
         <source>Create New Label</source>
         <translation>创建标记</translation>
     </message>
@@ -125,17 +125,17 @@ p, li { white-space: pre-wrap; }
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="373"/>
+        <location filename="../../src/control/header-bar.cpp" line="376"/>
         <source>View Type</source>
         <translation>视图类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="399"/>
+        <location filename="../../src/control/header-bar.cpp" line="402"/>
         <source>Sort Type</source>
         <translation>排序类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="434"/>
+        <location filename="../../src/control/header-bar.cpp" line="437"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
@@ -150,12 +150,12 @@ p, li { white-space: pre-wrap; }
         <translation>没有找到任何终端插件，请确认您至少安装了一个！</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="592"/>
+        <location filename="../../src/control/header-bar.cpp" line="595"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="595"/>
+        <location filename="../../src/control/header-bar.cpp" line="598"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
@@ -171,7 +171,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="752"/>
+        <location filename="../../src/control/header-bar.cpp" line="755"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -188,7 +188,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="777"/>
+        <location filename="../../src/control/header-bar.cpp" line="780"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -196,44 +196,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="740"/>
+        <location filename="../../src/windows/main-window.cpp" line="742"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="319"/>
+        <location filename="../../src/windows/main-window.cpp" line="321"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="326"/>
+        <location filename="../../src/windows/main-window.cpp" line="328"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="674"/>
+        <location filename="../../src/windows/main-window.cpp" line="676"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="674"/>
+        <location filename="../../src/windows/main-window.cpp" line="676"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="738"/>
+        <location filename="../../src/windows/main-window.cpp" line="740"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1611"/>
         <source>Tips info</source>
-        <translation>温馨提示</translation>
+        <translation type="vanished">温馨提示</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="1612"/>
         <source>Trash has no file need to be cleaned.</source>
-        <translation>回收站没有文件需要被清空！</translation>
+        <translation type="vanished">回收站没有文件需要被清空！</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -252,7 +250,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="753"/>
+        <location filename="../../src/windows/main-window.cpp" line="755"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -317,7 +315,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="555"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="556"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -684,12 +682,12 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1599"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1630"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1600"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1631"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
@@ -724,13 +722,13 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="584"/>
-        <location filename="../../src/control/tab-widget.cpp" line="720"/>
+        <location filename="../../src/control/tab-widget.cpp" line="585"/>
+        <location filename="../../src/control/tab-widget.cpp" line="746"/>
         <source>is</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="602"/>
+        <location filename="../../src/control/tab-widget.cpp" line="628"/>
         <source>Please input key words...</source>
         <translation>请输入关键词...</translation>
     </message>
@@ -739,8 +737,8 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="681"/>
-        <location filename="../../src/control/tab-widget.cpp" line="704"/>
+        <location filename="../../src/control/tab-widget.cpp" line="707"/>
+        <location filename="../../src/control/tab-widget.cpp" line="730"/>
         <source>contains</source>
         <translation>包含</translation>
     </message>
