@@ -266,44 +266,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="360"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="368"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="360"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="368"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="398"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="194"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="406"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="419"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="398"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="194"/>
+        <source>The device is in busy state, please perform this operation later.</source>
+        <translation>设备处于忙碌状态，请稍后执行此操作。</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="406"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="419"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="218"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="222"/>
         <source>Open In New Window</source>
         <translation>在新窗口中打开</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="234"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="268"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="238"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
         <source>Can not open %1, %2</source>
         <translation>无法打开%1, %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="252"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
         <source>Open In New Tab</source>
         <translation>在新标签页中打开</translation>
     </message>
@@ -315,7 +321,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="556"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="564"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>

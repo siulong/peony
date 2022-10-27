@@ -202,6 +202,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>This operation is not supported.</source>
         <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
+    <message>
+        <source>The device is in busy state, please perform this operation later.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NavigationSideBarContainer</name>
