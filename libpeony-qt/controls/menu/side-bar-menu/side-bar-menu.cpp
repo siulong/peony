@@ -153,7 +153,9 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             m_item->eject(G_MOUNT_UNMOUNT_NONE);
         });
 
-        //l.last()->setEnabled(m_item->isMounted());
+        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，弹出菜单置灰不可用。 */
+            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
+        }
     }
 
 
@@ -196,18 +198,19 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
             action->setEnabled(false);
             l.append(action);
-            DiscControl *discControl = new DiscControl(unixDevice);
-            if(discControl->work()){
-               connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
-                   connect(action, &QAction::triggered, [=](){
-                       UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
-                       udfFormatDlg->show();
+            if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+                DiscControl *discControl = new DiscControl(unixDevice);
+                if(discControl->work()){
+                   connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+                       connect(action, &QAction::triggered, [=](){
+                           UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                           udfFormatDlg->show();
+                       });
+                       qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
+                       l.last()->setEnabled(discCtrl->supportUdf());
                    });
-                   qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
-                   l.last()->setEnabled(discCtrl->supportUdf());
-               });
+                }
             }
-
         }else{/* 其它格式化 */
             l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
                 auto info = FileInfo::fromUri(uri);
@@ -256,6 +259,9 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         (0 != QString::compare(m_uri, "filesafe:///"))
             &&(m_item->isVolume())) {
         l.last()->setEnabled(m_item->isMounted());
+        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。 */
+            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
+        }
     }
 
     return l;

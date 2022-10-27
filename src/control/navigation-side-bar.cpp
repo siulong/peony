@@ -190,6 +190,10 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         case 1: {
             auto item = m_proxy_model->itemFromIndex(index);
             if (item->isMounted() || item->isEjectable()||item->isStopable()) {
+                if(item->getDevice().contains("/dev/sr") && FileUtils::isBusyDevice(item->getDevice())){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，不可弹出。link to bug#143293 */
+                    QMessageBox::information(this, tr("Tips"), tr("The device is in busy state, please perform this operation later."));
+                    break;
+                }
                 auto leftIndex = m_proxy_model->index(index.row(), 0, index.parent());
                 this->collapse(leftIndex);
                 item->ejectOrUnmount();
@@ -287,8 +291,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                     if ((0 != QString::compare(item->uri(), "computer:///")) &&
                         (0 != QString::compare(item->uri(), "filesafe:///"))) {
                         for (const auto &actionItem : actionList) {
-                            if(item->isVolume())/* 分区才去需要判断是否已挂载 */
+                            if(item->isVolume()){/* 分区才去需要判断是否已挂载 */
                                 actionItem->setEnabled(item->isMounted());
+                                if(item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。 */
+                                    actionItem->setDisabled(FileUtils::isBusyDevice(item->getDevice()));
+                                }
+                            }
                         }
                     }
                 }
