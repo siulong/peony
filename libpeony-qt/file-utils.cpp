@@ -1122,6 +1122,25 @@ bool FileUtils::isEmptyDisc(const QString &unixDevice)
     return isBlank;
 }
 
+bool FileUtils::isBusyDevice(const QString &unixDevice)
+{
+    if (unixDevice.isEmpty()) /* 没有设备时不做后续处理 */
+        return false;
+
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.kylin.burner.manager", "/com/kylin/burner/manager",
+                     "com.kylin.burner.manager", "isBusyDevice");
+    QList<QVariant> args;
+    args.append(QVariant(unixDevice));
+    msg.setArguments(args);
+    QDBusMessage response = QDBusConnection::sessionBus().call(msg);
+
+    bool isBusy = false;
+    if (response.type() == QDBusMessage::ReplyMessage){
+        isBusy = response.arguments().takeFirst().toBool();
+    }
+    return isBusy;
+}
+
 QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
 {
     QString iconName;
