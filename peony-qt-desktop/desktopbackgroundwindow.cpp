@@ -32,8 +32,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
     m_desktopIconView = new Peony::DesktopIconView(this);
     m_desktopIconView->setId(desktopWindowId);
     m_id = desktopWindowId;
-    move(getLogicalGeometryFromScreen().topLeft());
-    setFixedSize(getLogicalGeometryFromScreen().size());
+    move(m_output->geometry().topLeft());
+    setFixedSize(m_output->geometry().size());
     setContentsMargins(0, 0, 0, 0);
     //connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
@@ -113,7 +113,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
         p.setRenderHint(QPainter::SmoothPixmapTransform);
         auto animation = manager->getAnimation();
         QPixmap frontPixmap = manager->getFrontPixmap();
-        QSize screenSize = getLogicalGeometryFromScreen().size();
+        QSize screenSize = m_output->geometry().size();
         if (animation->state() == QVariantAnimation::Running) {
             auto opacity = animation->currentValue().toReal();
             QPixmap backPixmap = manager->getBackPixmap();
@@ -179,8 +179,15 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
                 //跨区
-                auto geometry = getLogicalGeometryFromScreen();
-                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+                for(auto screen : qApp->screens()){
+                    if (m_output.data()->name() == screen->name()) {
+                        QRect geometry = screen->virtualGeometry();
+                        p.drawPixmap(this->rect(), backPixmap, getSourceRect(backPixmap, geometry));
+                        p.setOpacity(opacity);
+                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+                        break;
+                    }
+                }
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
                 p.setOpacity(opacity);
@@ -218,8 +225,13 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
             } else if (manager->getBackgroundOption() == "zoom") {
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
-                auto geometry = getLogicalGeometryFromScreen();
-                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+                for(auto screen : qApp->screens()){
+                    if (m_output.data()->name() == screen->name()) {
+                        QRect geometry = screen->virtualGeometry();
+                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+                        break;
+                    }
+                }
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
             }
@@ -231,16 +243,6 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
 KScreen::OutputPtr DesktopBackgroundWindow::screen() const
 {
     return m_output;
-}
-
-QRect DesktopBackgroundWindow::getLogicalGeometryFromScreen()
-{
-    if (!m_output.isNull() && m_output->isEnabled()) {
-        QRect rect = QRect(m_output->geometry().topLeft()/this->windowHandle()->devicePixelRatio(), m_output->geometry().size()/this->windowHandle()->devicePixelRatio());
-        return rect;
-    } else {
-        return this->geometry();
-    }
 }
 
 void DesktopBackgroundWindow::invaidScreen()
@@ -261,7 +263,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
                 m_shellSurface->setSkipTaskbar(true);
                 // wayland中构造函数的move只能在这里生效
                 if (!m_output.isNull()) {
-                    m_shellSurface->setPosition(getLogicalGeometryFromScreen().topLeft());
+                    m_shellSurface->setPosition(m_output->geometry().topLeft());
                 }
             }
             break;
@@ -294,7 +296,7 @@ void DesktopBackgroundWindow::updateWindowGeometry()
     if (m_output.isNull()) {
         return;
     }
-    auto geometry = getLogicalGeometryFromScreen();
+    auto geometry = m_output->geometry();
     move(geometry.topLeft());
     if (m_shellSurface) {
         m_shellSurface->setPosition(geometry.topLeft());
@@ -416,27 +418,27 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
 
 QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
 {
-    QRegion virtualScreensRegion;
-    for (auto qscreen : qApp->screens()) {
-        virtualScreensRegion += qscreen->geometry();
-    }
-    QRect virtualGeometry = virtualScreensRegion.boundingRect().translated(0, 0);
-
+    QRect virtualGeometry;
+//    if (!m_output.isNull()) {
+//        virtualGeometry = m_output->virtualGeometry();
+//    } else {
+        virtualGeometry = screenGeometry;
+   // }
     qreal pixWidth = pixmap.width();
     qreal pixHeight = pixmap.height();
 
     QSize sourceSize = pixmap.size();
-    sourceSize.setWidth(screenGeometry.width() * 1.0 / virtualGeometry.width() * pixWidth);
-    sourceSize.setHeight(screenGeometry.height() * 1.0 / virtualGeometry.height() * pixHeight);
+    sourceSize.setWidth(screenGeometry.width() / virtualGeometry.width() * pixWidth);
+    sourceSize.setHeight(screenGeometry.height() / virtualGeometry.height() * pixHeight);
 
     qint32 offsetX = 0;
     qint32 offsetY = 0;
     if (screenGeometry.x() > 0) {
-        offsetX = (screenGeometry.x() * 1.0 / virtualGeometry.width() * pixWidth);
+        offsetX = (screenGeometry.x() / virtualGeometry.width() * pixWidth);
     }
 
     if (screenGeometry.y() > 0) {
-        offsetY = (screenGeometry.y() * 1.0 / virtualGeometry.height() * pixHeight);
+        offsetY = (screenGeometry.y() / virtualGeometry.height() * pixHeight);
     }
 
     QPoint offsetPoint = pixmap.rect().topLeft();

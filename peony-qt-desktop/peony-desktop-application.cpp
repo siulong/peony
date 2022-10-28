@@ -322,7 +322,7 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
     };
 
     for (auto window : m_bg_windows) {
-        QRegion screenRegion(window->getLogicalGeometryFromScreen());
+        QRegion screenRegion(window->screen()->geometry());
         if (screenRegion.contains(pos)) {
             desktopIconView = window->getIconView();
             break;
@@ -679,25 +679,26 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
 
 }
 
-void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
+void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
 {
-    if (output.isNull() || !output->isEnabled()) {
-        return;
-    }
+   if (output.isNull() || !output->isEnabled()) {
+       return;
+   }
     qDebug() << "output added:" << output.data()->name()<< output->id() << output->geometry();
     int desktopWindowId = getDesktopWindowId();
     auto window = new DesktopBackgroundWindow(output, desktopWindowId);
-    window->getIconView()->refresh();
+    if (output->isPrimary()) {
+        window->getIconView()->refresh();
+    }
     m_bg_windows.append(window);
     desktop_window_id = m_bg_windows.count();
     // recheck primary screen info. new screen might become
     // primary screen.
 
-    desktop_window_id = m_bg_windows.count();
     window->show();
 
     connect(output.data(), &KScreen::Output::posChanged,
-            window, [=](){
+            this, [=](){
         int mode = checkScreenMode(output->geometry());
         if (1 == mode) {
             for (auto bgWindow : m_bg_windows) {
@@ -717,7 +718,7 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
                 Q_EMIT bgWindow->getIconView()->updateView();
             }
         }
-        window->setWindowGeometry(window->getLogicalGeometryFromScreen());
+        window->setWindowGeometry(output->geometry());
     });
 
     //task#74174 更新图标大小
@@ -741,28 +742,6 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
     }
 
     relocateIconView();
-}
-
-void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
-{
-    for (auto bgWindow : m_bg_windows) {
-        if (output == bgWindow->screen()) {
-            qWarning("DesktopBackgroundWindow already exists and cannot be added");
-            return;
-        }
-    }
-    if (output.isNull()) {
-        return;
-    }
-    addBgWindow(output);
-    connect(output.data(), &KScreen::Output::isEnabledChanged,
-            this, [=](){
-        if(output->isEnabled()) {
-            addBgWindow(output);
-        } else {
-            outputRemoved(output->id());
-        }
-    });
 }
 
 void PeonyDesktopApplication::setupDesktop()
@@ -941,6 +920,14 @@ void PeonyDesktopApplication::setConfig(const KScreen::ConfigPtr &config)
 
     for (const KScreen::OutputPtr &output : m_config->outputs()) {
         outputAdded(output);
+        connect(output.data(), &KScreen::Output::isEnabledChanged,
+                this, [=](){
+            if(output->isEnabled()) {
+                outputAdded(output);
+            } else {
+                outputRemoved(output->id());
+            }
+        });
     }
     connect(m_config.data(), &KScreen::Config::primaryOutputChanged,
             this, &PeonyDesktopApplication::relocateIconView);
