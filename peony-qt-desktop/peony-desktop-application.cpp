@@ -442,7 +442,7 @@ void PeonyDesktopApplication::relocateIconView()
             break;
         }
     }
-    if (0 != id) {
+    if (0 < id) {
         for (auto window : m_bg_windows) {
             if (0 == window->id()) {
                 primaryWindow->getIconView()->refreshResolutionChange();
@@ -469,8 +469,9 @@ void PeonyDesktopApplication::relocateIconView()
             window->getIconView()->resolutionChange();
         }
     }
-    KWindowSystem::raiseWindow(primaryWindow->winId());
-
+    if(primaryWindow) {
+        KWindowSystem::raiseWindow(primaryWindow->winId());
+    }
 }
 
 void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)

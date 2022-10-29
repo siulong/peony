@@ -2651,7 +2651,7 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
 
 void DesktopIconView::saveExtendItemInfo()
 {
-    if (!m_proxy_model)
+    if (!m_proxy_model || m_id == 0)
         return;
     //task#74174 扩展屏的元素记录到metInfo,以便以后恢复
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
@@ -2664,7 +2664,7 @@ void DesktopIconView::saveExtendItemInfo()
         topLeft<<QString::number(m_id);
         QString uri = index.data(Qt::UserRole).toString();
         auto metaInfo = FileMetaInfo::fromUri(uri);
-        if (metaInfo) {
+        if (metaInfo && !m_model->m_items_need_relayout.contains(uri)) {
             qDebug() << "[DesktopIconView::saveExtendItemInfo] uri:"<<str<<" topLeft:"<<topLeft;
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, topLeft);
             metaInfo->setMetaInfoInt("peony-qt-desktop-id", 0);
