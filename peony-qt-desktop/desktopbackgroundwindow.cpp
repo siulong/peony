@@ -10,6 +10,8 @@
 #include <QPlatformSurfaceEvent>
 #include "plasma-shell-manager.h"
 
+#include <QRegion>
+
 static QTimeLine *gTimeLine = nullptr;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent) : QMainWindow(parent)
@@ -183,14 +185,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
                 //跨区
-                for(auto screen : qApp->screens()){
-                    if (m_screen->name() == screen->name()) {
-                        p.drawPixmap(this->rect(), backPixmap, getSourceRect(backPixmap, screen->geometry()));
-                        p.setOpacity(opacity);
-                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, screen->geometry()));
-                        break;
-                    }
-                }
+                p.drawPixmap(this->rect(), backPixmap, getSourceRect(backPixmap, m_screen->geometry()));
+                p.setOpacity(opacity);
+                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, m_screen->geometry()));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
                 p.setOpacity(opacity);
@@ -228,12 +225,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
             } else if (manager->getBackgroundOption() == "zoom") {
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
-                for(auto screen : qApp->screens()){
-                    if (m_screen->name() == screen->name()) {
-                        p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, screen->geometry()));
-                        break;
-                    }
-                }
+                p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, m_screen->geometry()));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
             }
@@ -421,27 +413,26 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
 
 QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
 {
-    QRect virtualGeometry;
-    if (m_screen) {
-        virtualGeometry = m_screen->virtualGeometry();
-    } else {
-        virtualGeometry = screenGeometry;
+    QRegion region;
+    for (auto screen : qApp->screens()) {
+        region += screen->geometry();
     }
+    QRect virtualGeometry = region.boundingRect().translated(0, 0);
     qreal pixWidth = pixmap.width();
     qreal pixHeight = pixmap.height();
 
     QSize sourceSize = pixmap.size();
-    sourceSize.setWidth(screenGeometry.width() / virtualGeometry.width() * pixWidth);
-    sourceSize.setHeight(screenGeometry.height() / virtualGeometry.height() * pixHeight);
+    sourceSize.setWidth(screenGeometry.width() * 1.0 / virtualGeometry.width() * pixWidth);
+    sourceSize.setHeight(screenGeometry.height() * 1.0 / virtualGeometry.height() * pixHeight);
 
     qint32 offsetX = 0;
     qint32 offsetY = 0;
     if (screenGeometry.x() > 0) {
-        offsetX = (screenGeometry.x() / virtualGeometry.width() * pixWidth);
+        offsetX = (screenGeometry.x() * 1.0 / virtualGeometry.width() * pixWidth);
     }
 
     if (screenGeometry.y() > 0) {
-        offsetY = (screenGeometry.y() / virtualGeometry.height() * pixHeight);
+        offsetY = (screenGeometry.y() * 1.0 / virtualGeometry.height() * pixHeight);
     }
 
     QPoint offsetPoint = pixmap.rect().topLeft();
