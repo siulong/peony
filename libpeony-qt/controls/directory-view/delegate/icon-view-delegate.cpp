@@ -145,11 +145,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 painter->setOpacity(0.5);
                 bCutFile = true;
                 qDebug()<<"cut item"<<index.data();
+            }else{
+                //fix bug#145085, same logic to list view
+                painter->setOpacity(1.0);
             }
         }
     }
-    else
-       painter->setOpacity(1.0);
 
     auto iconSizeExpected = view->iconSize();
     auto iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
