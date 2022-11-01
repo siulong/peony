@@ -309,11 +309,18 @@ void SideBarFileSystemItem::slot_volumeDeviceRemove(const QString &removeDevice)
 }
 
 void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Volume &volume)
-{
+{   
     QString device = volume.device();
     QString mountPoint = volume.mountPoint();
     if(mountPoint.isEmpty())
         return;
+
+    //过滤smb子项挂载后会更新computer:///ukui-data-volume，导致数据不准确
+    QUrl serverUrl = QUrl(volume.mountPoint());
+    if("smb"==serverUrl.scheme().toLower() && !serverUrl.path().isEmpty()){
+        return;
+    }
+
     //更新model,元素信息更新
     for(auto item:*m_children){
         if(item->m_device == device){
