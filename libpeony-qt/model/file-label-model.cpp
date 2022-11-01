@@ -296,6 +296,19 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
     labelIds.removeDuplicates();
     metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     Q_EMIT fileLabelChanged(uri);
+
+    /* add时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    auto iter = m_globalLabelMap.find(labelId);
+    QSet<QString> uriSet;
+    if(iter != m_globalLabelMap.end()){
+        uriSet = m_globalLabelMap.value(labelId);
+    }
+    uriSet.insert(uri);
+    m_globalLabelMap.insert(labelId, uriSet);
+    m_label_settings->setValue(QString::number(labelId), QVariant(m_globalLabelMap.value(labelId).toList()));
+    m_label_settings->endGroup();
+
 }
 
 void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
@@ -313,6 +326,18 @@ void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
         metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     }
     Q_EMIT fileLabelChanged(uri);
+
+    /* remove时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    auto iter = m_globalLabelMap.find(labelId);
+    if(iter != m_globalLabelMap.end()){
+        QSet<QString> uriSet;
+        uriSet = m_globalLabelMap.value(labelId);
+        uriSet.remove(uri);
+        m_globalLabelMap.insert(labelId, uriSet);
+        m_label_settings->setValue(QString::number(labelId), QVariant(m_globalLabelMap.value(labelId).toList()));
+    }
+    m_label_settings->endGroup();
 }
 
 int FileLabelModel::rowCount(const QModelIndex &parent) const
@@ -388,6 +413,12 @@ bool FileLabelModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
+QSet<QString> FileLabelModel::getFileUrisFromLabelId(int labelId)
+{
+    QSet<QString> uriSet = m_globalLabelMap.value(labelId);
+    return uriSet;
+}
+
 void FileLabelModel::setName(FileLabelItem *item, const QString &name)
 {
     m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
@@ -435,6 +466,13 @@ void FileLabelModel::initLabelItems()
     }
     m_label_settings->endArray();
     endResetModel();
+    m_label_settings->beginGroup("global labels");
+    QStringList keys = m_label_settings->allKeys();
+    for(const QString &key: keys){
+        QSet<QString> uriSet = m_label_settings->value(key).toStringList().toSet();
+        m_globalLabelMap.insert(key.toInt(), uriSet);
+    }
+    m_label_settings->endGroup();
 }
 
 void FileLabelModel::addId()

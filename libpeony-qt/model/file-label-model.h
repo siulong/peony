@@ -25,7 +25,8 @@
 
 #include <QAbstractListModel>
 #include <QSettings>
-
+#include <QMap>
+#include <QSet>
 #include <QColor>
 #include <peony-core_global.h>
 
@@ -78,6 +79,8 @@ public:
     // Remove data:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
+    QSet<QString> getFileUrisFromLabelId(int labelId);
+
 Q_SIGNALS:
     void fileLabelChanged(const QString &uri);
 
@@ -96,6 +99,7 @@ private:
     QSettings *m_label_settings;
 
     QList<FileLabelItem *> m_labels;
+    QMap<int, QSet<QString> > m_globalLabelMap;
 };
 
 class PEONYCORESHARED_EXPORT FileLabelItem : public QObject
