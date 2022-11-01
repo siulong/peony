@@ -233,7 +233,7 @@ Advanced settings are the peony preferences.21,Preferences are divided into thre
 
 (2)Share: sharing, printer, zip, mailbox sharing
 
-(3)Drop-down menus: file safe, quick select (file name, extension, tag), hide file, file comparison, help, about.
+(3)Drop-down menus:Keep Allow , Show Hidden, Show File Extension, Forbid thumbnailing, Resident in Backend,Parallel Operations,Help, About.
 
 |Icons|Description|Icons|Description
 | :------------ | :------------ | :------------ | :------------ |
@@ -250,10 +250,12 @@ The content that can be set contains multiple aspects, and the functions corresp
 
 |Tabs|Description
 | :------------ | :------------ |
-|Document safe|/
-|Quick Select|Used filenames, extensions and a quick selection of tags for the project
-|Hide files|Whether to hide the selected item or not
-|Document comparison|/
+|Keep Allow|Place the peony window on the top level for display
+|Show Hidden|Whether the file starting with "." is displayed
+|Show File Extension|Whether the file extension is displayed
+|Forbid thumbnailing|Whether to display the preview thumbnails of pictures, videos, and wps office files
+|Resident in Backend|Whether the file manager program has been kept in the background without completely exiting
+|Parallel Operations|Whether multiple file operations can be performed simultaneously
 |Help|Jump to User Manual
 |About|Show details of the peony 
 
