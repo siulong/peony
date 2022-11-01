@@ -231,7 +231,9 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             m_layout->addRow(progressBar);
             m_layout->setAlignment(progressBar, Qt::AlignBottom);
 
-            if (QString(fs_type) == "isofs" && QFile::exists("/usr/bin/kylin-burner")) {
+            //fix bug#141923, empty disks not show kylin burner issue
+            if ((QString(fs_type) == "isofs" || QString(fs_type) == "burn")
+                    && QFile::exists("/usr/bin/kylin-burner")) {
                 auto pushbutton = new QPushButton(tr("Kylin Burner"));
                 connect(pushbutton, &QPushButton::clicked, pushbutton, [=](){
                     QProcess p;
