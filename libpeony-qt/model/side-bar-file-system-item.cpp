@@ -569,7 +569,6 @@ void SideBarFileSystemItem::findChildren()
         for(int i=0; i<volumeCount; ++i){
             auto volume = volumeList->at(i);
 
-            qDebug() << "=============volume:" << volume.name();
             m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
             SideBarFileSystemItem* item = new SideBarFileSystemItem(volume.name(), volume, this, m_model);
             m_children->append(item);
