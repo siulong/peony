@@ -164,6 +164,8 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             quint64 usedSpace      = 0;
             quint64 availableSpace = 0;
 
+            bool isCDDisk = false;
+
             if (info) {
                 quint64 total = g_file_info_get_attribute_uint64(info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
                 quint64 used  = g_file_info_get_attribute_uint64(info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
@@ -178,6 +180,7 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
                     }
                     //光盘
                     if (!unixDeviceName.isNull() && !unixDeviceName.isEmpty() && unixDeviceName.startsWith("/dev/sr")) {
+                        isCDDisk = true;
                         DataCDROM *cdrom = new DataCDROM(unixDeviceName);
                         if (cdrom) {
                             cdrom->getCDROMInfo();
@@ -232,8 +235,8 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             m_layout->setAlignment(progressBar, Qt::AlignBottom);
 
             //fix bug#141923, empty disks not show kylin burner issue
-            if ((QString(fs_type) == "isofs" || QString(fs_type) == "burn")
-                    && QFile::exists("/usr/bin/kylin-burner")) {
+            //fix bug#146557, U盘系统盘显示刻录软件问题
+            if (isCDDisk && QFile::exists("/usr/bin/kylin-burner")) {
                 auto pushbutton = new QPushButton(tr("Kylin Burner"));
                 connect(pushbutton, &QPushButton::clicked, pushbutton, [=](){
                     QProcess p;
