@@ -753,15 +753,15 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་</translation>
+        <translation>ཐ་ཚིག་</translation>
     </message>
     <message>
         <source>ip input error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>ས་གནས་ནོར་འཁྲུལ་བྱུང་ན་ཡང་བསྐྱར་ནང་འདྲེན་གནང་རོགས།!</translation>
     </message>
     <message>
         <source>port input error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>ནང་འདྲེན་ནོར་འཁྲུལ་བྱུང་ན་ཡང་བསྐྱར་ནང་འདྲེན་གནང་རོགས།!</translation>
     </message>
 </context>
 <context>
@@ -1193,23 +1193,23 @@
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་འཛུགས།</translation>
     </message>
     <message>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Sort By</source>
-        <translation type="unfinished"></translation>
+        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Sort Order</source>
-        <translation type="unfinished"></translation>
+        <translation>གོ་རིམ་སྒྲིག་པ།</translation>
     </message>
     <message>
         <source>Sort Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>རིམ་སྒྲིག་ལེགས།</translation>
     </message>
 </context>
 <context>
@@ -1336,6 +1336,10 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <source>Error</source>
         <translation>ནོར་འཁྲུལ།</translation>
     </message>
+    <message>
+        <source>The password dialog box is canceled</source>
+        <translation>གསང་བའི་གླེང་མོལ་གྱི་སྒྲོམ་གཞི་མེད་པར་བཟོས།</translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileInfo</name>
@@ -1441,7 +1445,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Add File Label</source>
-        <translation type="unfinished"></translation>
+        <translation>མཚོན་རྟགས་སྣོན་པ།</translation>
     </message>
 </context>
 <context>
@@ -2013,7 +2017,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Login failed, unknown username or password error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>ཕམ་ཁ་བྱུང་བ་དང་། སྤྱོད་མཁན་གྱི་མིང་ངམ་གསང་བའི་ནོར་འཁྲུལ་མ་ཤེས་པར་བསྐྱར་དུ་ནང་འདྲེན་གནང་རོགས།!</translation>
     </message>
 </context>
 <context>
