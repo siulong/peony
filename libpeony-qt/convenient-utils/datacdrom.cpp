@@ -452,6 +452,14 @@ int DataCDROM::checkMediumType()
             }
             qWarning("CDROM cannot support to read DVD+R medium");
             break;
+        case 0x002B: // DVD+R DL
+            if (m_u32MediumRSupport & MEDIUM_DVD_PLUS_R_DL)
+            {
+                m_oMediumType = "DVD+R DL";
+                break;
+            }
+            qWarning()<<"CDROM %1 cannot support to read DVD+R DL medium";
+            break;
         default:
             qWarning()<<"the type" << profile << "undefined";
             return -1;
@@ -521,7 +529,7 @@ int DataCDROM::cdRomGetTrackNum()
 */
 void DataCDROM::DVDRWCapacity()
 {
-    int index = 0;
+    int i = 0;
     QProcess process;
     QStringList deviceName;
     deviceName<<m_oBlockName;
@@ -529,30 +537,64 @@ void DataCDROM::DVDRWCapacity()
     process.start("dvd+rw-mediainfo", deviceName);
     process.waitForFinished(10000);
     QString result = process.readAllStandardOutput();
-    QStringList dvdInfo = result.split("\n");
+    QStringList ss = result.split("\n");
+    QStringList sss;
 
-    for (index = dvdInfo.size() - 1; index > 0; --index){
-        if (dvdInfo.at(index).startsWith("READ FORMAT CAPACITIES:")) {
-            QStringList formatCapacity = dvdInfo.takeAt(index + 1).split("=");
-            qWarning()<<"format capacity is"<<formatCapacity.last();
-            if (m_oMediumType.contains("DVD+RW")) {
-                m_u64Capacity = formatCapacity.last().toULong();
-            }
-        }
-
-        if (dvdInfo.at(index).startsWith("READ CAPACITY:")) {
-            QStringList readCapacity = dvdInfo.takeAt(index).split("=");
-            qWarning()<<"DVD RW read capacity is "<<readCapacity.last();
-        }
-
-        if (dvdInfo.at(index).startsWith("READ DVD STRUCTURE")) {
-            QStringList dvdStruct = dvdInfo.takeAt(index + 2).split("=");
-            qWarning()<<"DVD RW struct capacity is"<<dvdStruct.last();
-            if (m_oMediumType.contains("DVD-RW")) {
-                m_u64Capacity += dvdStruct.last().toULong();
-            }
-        }
+    for (i = ss.size() - 1; i > 0; --i)
+    {
+        if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
     }
+
+    if (m_oMediumType.contains("DVD+RW"))
+    {
+        ss = ss.takeAt(i + 1).split("=");
+        //ss = ss.last().split("=");
+        m_u64Capacity = ss.last().toULong();
+    }
+    if (m_oMediumType.contains("DVD-RW"))
+    {
+        //解决bug:70940和83628擦除后总容量显示错误
+#if 0
+        sss = ss.takeAt(i + 1).split("=");
+        t = 0;
+        u = 0;
+        u = sss.last().toULong();//unformatted的容量
+        sss = ss.takeAt(i + 2).split("=");
+        t = sss.last().toULong();//00h(800h)的容量
+        if (t > u) m_u64Size = t - u;
+        else m_u64Size = u;
+        //出现下面这种情况导致bug出现
+        //no media:		4101552*2048=8399978496
+        //00h(800):		2297888*2048=4706074624
+#else
+        sss = ss.takeAt(i + 2).split("=");
+        auto t = sss.last().toULong();
+        m_u64Capacity = t;
+#endif
+    }
+
+//    for (index = dvdInfo.size() - 1; index > 0; --index){
+//        if (dvdInfo.at(index).startsWith("READ FORMAT CAPACITIES:")) {
+//            QStringList formatCapacity = dvdInfo.takeAt(index + 1).split("=");
+//            qWarning()<<"format capacity is"<<formatCapacity.last();
+//            if (m_oMediumType.contains("DVD+RW")) {
+//                m_u64Capacity = formatCapacity.last().toULong();
+//            }
+//        }
+
+//        if (dvdInfo.at(index).startsWith("READ CAPACITY:")) {
+//            QStringList readCapacity = dvdInfo.takeAt(index).split("=");
+//            qWarning()<<"DVD RW read capacity is "<<readCapacity.last();
+//        }
+
+//        if (dvdInfo.at(index).startsWith("READ DVD STRUCTURE")) {
+//            QStringList dvdStruct = dvdInfo.takeAt(index + 2).split("=");
+//            qWarning()<<"DVD RW struct capacity is"<<dvdStruct.last();
+//            if (m_oMediumType.contains("DVD-RW")) {
+//                m_u64Capacity += dvdStruct.last().toULong();
+//            }
+//        }
+//    }
 
     return;
 }
