@@ -428,7 +428,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     m_info->m_colors = FileLabelModel::getGlobalModel()->getFileColors(m_info->uri());
 
     auto customIconName = m_info->m_meta_info.get()->getMetaInfoString("custom-icon");
-    if (!customIconName.isEmpty() && !customIconName.startsWith("/")) {
+    if (!customIconName.isEmpty()/* && !customIconName.startsWith("/")*/) {
         m_info->m_icon_name = customIconName;
     }
 

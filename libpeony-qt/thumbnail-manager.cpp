@@ -376,7 +376,7 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
 
     auto info = FileInfo::fromUri(uri);
 
-    if (!info->customIcon().isEmpty() && info->customIcon().startsWith("/"))
+    if (!info->customIcon().isEmpty() /*&& info->customIcon().startsWith("/")*/)
         needThumbnail = true;
 
     if (!info->mimeType().isEmpty()) {

@@ -936,10 +936,10 @@ void BasicPropertiesPage::changeFileIcon()
 {
     if (!m_newFileIconPath.isEmpty()) {
         auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
-        QFileInfo fileInfo(m_newFileIconPath);
-        if (!QIcon::fromTheme(fileInfo.baseName()).isNull())
-            metaInfo.get()->setMetaInfoString("custom-icon", fileInfo.baseName());
-        else
+//        QFileInfo fileInfo(m_newFileIconPath);
+//        if (!QIcon::fromTheme(fileInfo.baseName()).isNull())
+//            metaInfo.get()->setMetaInfoString("custom-icon", fileInfo.baseName());
+//        else
             metaInfo.get()->setMetaInfoString("custom-icon", m_newFileIconPath);
 
         ThumbnailManager::getInstance()->createThumbnail(m_info.get()->uri(), m_thumbnail_watcher, true);
