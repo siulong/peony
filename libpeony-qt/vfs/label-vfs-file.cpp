@@ -3,6 +3,7 @@
 
 #include "label-vfs-file.h"
 #include "label-vfs-file-enumerator.h"
+#include "label-vfs-file-monitor.h"
 #include "file-utils.h"
 
 static void vfs_label_file_g_file_iface_init(GFileIface *iface);
@@ -237,7 +238,21 @@ gboolean vfs_label_file_make_symbolic_link(GFile* file, const char* svalue, GCan
 }
 
 GFileMonitor* vfs_label_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error){
-    return nullptr;
+
+    g_return_val_if_fail(VFS_IS_LABEL_FILE(file), nullptr);
+
+    LabelVFSFilePrivate* priv = VFS_LABEL_FILE((LabelVFSFile*)file)->priv;
+    priv->fileMonitor = (GFileMonitor*)g_object_new (VFS_TYPE_LABEL_FILE_MONITOR, nullptr);
+    QString uri = g_file_get_uri(file);
+    vfs_label_file_monitor_dir(VFS_LABEL_FILE_MONITOR(priv->fileMonitor), uri);
+
+
+    Q_UNUSED(file)
+    Q_UNUSED(flags)
+    Q_UNUSED(error)
+    Q_UNUSED(cancellable)
+
+    return priv->fileMonitor;
 }
 
 GFile* vfs_label_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error){
@@ -395,6 +410,7 @@ gboolean vfs_label_file_is_exist(const char *uri)
 
     return ret;
 }
+
 #include "file-label-model.h"
 void label_vfs_file_enumerator_parse_uri(LabelVFSFileEnumerator *enumerator, const QString& uri){
     LabelVFSFileEnumeratorPrivate *priv = enumerator->priv;

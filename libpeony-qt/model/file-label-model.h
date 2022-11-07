@@ -83,6 +83,8 @@ public:
 
 Q_SIGNALS:
     void fileLabelChanged(const QString &uri);
+    void fileLabelAdded(const QString &uri, bool successed);
+    void fileLabelRemoved(const QString &uri, bool successed);
 
 public Q_SLOTS:
     void setName(FileLabelItem *item, const QString &name);

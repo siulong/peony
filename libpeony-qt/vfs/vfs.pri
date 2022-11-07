@@ -6,6 +6,7 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/favorite-vfs-file.h                                   \
     $$PWD/label-vfs-file-enumerator.h \
+    $$PWD/label-vfs-file-monitor.h \
     $$PWD/label-vfs-file.h \
     $$PWD/label-vfs-register.h \
     $$PWD/search-vfs-manager.h                                  \
@@ -23,6 +24,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/favorite-vfs-file.cpp                                 \
     $$PWD/label-vfs-file-enumerator.cpp \
+    $$PWD/label-vfs-file-monitor.cpp \
     $$PWD/label-vfs-file.cpp \
     $$PWD/label-vfs-register.cpp \
     $$PWD/search-vfs-manager.cpp                                \
