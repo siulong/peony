@@ -59,6 +59,7 @@
 #include "clipboard-utils.h"
 #include "search-vfs-uri-parser.h"
 #include "file-delete-operation.h"
+#include "file-untrash-operation.h"
 
 #include "directory-view-menu.h"
 #include "directory-view-widget.h"
@@ -95,7 +96,7 @@
 #endif
 
 #include <QDebug>
-
+#include <QApplication>
 #include <X11/Xlib.h>
 #include <KWindowEffects>
 
@@ -1646,10 +1647,21 @@ void MainWindow::recoverFromTrash()
     if (m_selections.isEmpty())
         m_selections = getCurrentAllFileUris();
     if (m_selections.count() == 1) {
-        Peony::FileOperationUtils::restore(m_selections.first());
+        auto untrashop = Peony::FileOperationUtils::restore(m_selections.first());
+        if(untrashop){
+            connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            });
+        }
     } else {
-        Peony::FileOperationUtils::restore(m_selections);
+        auto untrashop = Peony::FileOperationUtils::restore(m_selections);
+        if(untrashop){
+            connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            });
+        }
     }
+//    qApp->setProperty("restoreFile",true);
 }
 
 QRect MainWindow::sideBarRect()

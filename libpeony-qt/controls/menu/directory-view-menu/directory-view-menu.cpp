@@ -1108,6 +1108,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                         });
                     }
                 }
+//                qApp->setProperty("restoreFile",true);
             });
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
             l.last()->setObjectName(DELETE_ACTION);
