@@ -4,7 +4,9 @@
 #include "label-vfs-file.h"
 #include "label-vfs-file-enumerator.h"
 #include "label-vfs-file-monitor.h"
+#include "file-label-model.h"
 #include "file-utils.h"
+
 
 static void vfs_label_file_g_file_iface_init(GFileIface *iface);
 static void label_vfs_file_enumerator_parse_uri(LabelVFSFileEnumerator *enumerator, const QString& uri);
@@ -211,8 +213,32 @@ GFileInputStream* vfs_label_file_read_fn(GFile* file, GCancellable* cancellable,
 }
 
 gboolean vfs_label_file_delete (GFile* file, GCancellable* cancellable, GError** error){
-    //todo
-    return false;
+    QString uri = nullptr;
+    GFileIface *iface = nullptr;
+
+    g_return_val_if_fail (VFS_IS_LABEL_FILE(file), FALSE);
+
+    if (g_cancellable_set_error_if_cancelled (cancellable, error)) {
+        return FALSE;
+    }
+
+    iface = G_FILE_GET_IFACE (file);
+
+    uri = g_file_get_uri (file);
+
+    QString errorStr = QObject::tr("Operation not supported");
+
+    if (iface->delete_file == NULL) {
+        g_set_error_literal (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, errorStr.toUtf8().constData());
+        return FALSE;
+    }
+
+    /* 删除文件标记 */
+    QUrl url(uri);
+    QString realUri = QString("file:///").append(url.path().section("/", 2,-1));
+    QString encodeUri = Peony::FileUtils::getEncodedUri(realUri);
+    FileLabelModel::getGlobalModel()->removeFileLabel(encodeUri);
+    return TRUE;
 }
 
 GFileIOStream* vfs_label_file_open_readwrite(GFile* file, GCancellable* cancellable, GError** error){
@@ -411,7 +437,6 @@ gboolean vfs_label_file_is_exist(const char *uri)
     return ret;
 }
 
-#include "file-label-model.h"
 void label_vfs_file_enumerator_parse_uri(LabelVFSFileEnumerator *enumerator, const QString& uri){
     LabelVFSFileEnumeratorPrivate *priv = enumerator->priv;
     *priv->label_vfs_directory_uri = uri;
