@@ -36,6 +36,8 @@
 #include "gerror-wrapper.h"
 #include "bookmark-manager.h"
 #include "audio-play-manager.h"
+#include "file-label-model.h"
+
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
 #else
@@ -129,6 +131,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_children->remove(row);
                         m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
+                        FileLabelModel::getGlobalModel()->removeFileLabel(uri);
                         delete child;
                         break;
                     }
@@ -291,6 +294,7 @@ void FileItem::findChildrenAsync()
                 {
                     //check bookmark and delete
                     BookMarkManager::getInstance()->removeBookMark(uri2FavoriteUri(this->uri()));
+                    FileLabelModel::getGlobalModel()->removeFileLabel(this->uri());
                     m_model->sendPathChangeRequest("computer:///", this->uri());
                 }
                 else
@@ -522,6 +526,7 @@ void FileItem::findChildrenAsync()
             });
             connect(m_watcher.get(), &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri) {
                 this->onRenamed(oldUri, newUri);
+                FileLabelModel::getGlobalModel()->fileLabelRenamed(oldUri, newUri);
                 BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
             });
             connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
@@ -1050,6 +1055,7 @@ void BatchProcessItems::slot_removeItems()
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
+            FileLabelModel::getGlobalModel()->removeFileLabel(uri);
             itemsToBeDeleted.append(child);
         }
     }

@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QMap>
 #include <QSet>
+#include <QMutex>
 #include <QColor>
 #include <peony-core_global.h>
 
@@ -85,10 +86,13 @@ Q_SIGNALS:
     void fileLabelChanged(const QString &uri);
     void fileLabelAdded(const QString &uri, bool successed);
     void fileLabelRemoved(const QString &uri, bool successed);
+    void fileLabelRenamed(const QString oldUri, const QString newUri);
 
 public Q_SLOTS:
     void setName(FileLabelItem *item, const QString &name);
     void setColor(FileLabelItem *item, const QColor &color);
+    void renameFileLabel(const QString oldUri, const QString newUri);
+
 
 protected:
     void initLabelItems();
@@ -102,6 +106,7 @@ private:
 
     QList<FileLabelItem *> m_labels;
     QMap<int, QSet<QString> > m_globalLabelMap;
+    QMutex m_mutex;
 };
 
 class PEONYCORESHARED_EXPORT FileLabelItem : public QObject

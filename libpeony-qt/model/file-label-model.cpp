@@ -65,6 +65,8 @@ FileLabelModel::FileLabelModel(QObject *parent)
     } else {
         initLabelItems();
     }
+
+    connect(this, &FileLabelModel::fileLabelRenamed, this, &FileLabelModel::renameFileLabel);
 }
 
 FileLabelModel::~FileLabelModel()
@@ -286,6 +288,7 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (!metaInfo) {
         return;
@@ -320,6 +323,7 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 
 void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (! metaInfo)
         return;
@@ -457,6 +461,22 @@ void FileLabelModel::setColor(FileLabelItem *item, const QColor &color)
     m_label_settings->setValue("color", color);
     m_label_settings->endArray();
     m_label_settings->sync();
+}
+
+#include <QtConcurrent>
+void FileLabelModel::renameFileLabel(const QString oldUri, const QString newUri)
+{
+    qDebug() << "rename file label -- old:" << oldUri << "  ==  new:" << newUri;
+    QtConcurrent::run([=]() {
+        QList<int> labelIds = getFileLabelIds(oldUri);
+        removeFileLabel(oldUri);
+        for(auto &id: labelIds){
+            if(id <= 0)
+                continue;
+            addLabelToFile(newUri, id);
+        }
+
+    });
 }
 
 void FileLabelModel::initLabelItems()
