@@ -289,22 +289,6 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
     QMutexLocker lock(&m_mutex);
-    auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
-    if (!metaInfo) {
-        return;
-    }
-    QStringList labelIds;
-    if (metaInfo && !metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
-        labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
-    labelIds<<QString::number(labelId);
-    labelIds.removeDuplicates();
-    metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
-    Q_EMIT fileLabelChanged(uri);
-
-    /* 同步全局标记 */
-    QUrl url(uri);
-    QString labelUri = QString("label:///").append(QString::number(labelId)) + url.path() + "?schema=" + url.scheme();
-    Q_EMIT fileLabelAdded(labelUri, true);
 
     /* add时更新全局标识 */
     m_label_settings->beginGroup("global labels");
@@ -318,6 +302,23 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
     m_label_settings->setValue(QString::number(labelId), QVariant(m_globalLabelMap.value(labelId).toList()));
     m_label_settings->sync();
     m_label_settings->endGroup();
+
+    /* 同步全局标记 */
+    QUrl url(uri);
+    QString labelUri = QString("label:///").append(QString::number(labelId)) + url.path() + "?schema=" + url.scheme();
+    Q_EMIT fileLabelAdded(labelUri, true);//end
+
+    auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
+    if (!metaInfo) {
+        return;
+    }
+    QStringList labelIds;
+    if (metaInfo && !metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
+        labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
+    labelIds<<QString::number(labelId);
+    labelIds.removeDuplicates();
+    metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
+    Q_EMIT fileLabelChanged(uri);
 
 }
 

@@ -27,6 +27,8 @@
 #include "file-info.h"
 
 #include "file-operation-manager.h"
+#include "file-label-model.h"
+
 #include <QDir>
 #include <QProcess>
 #include <QStorageInfo>
@@ -214,6 +216,19 @@ void FileMoveOperation::move()
             err = nullptr;
         } else {
             node->setState(FileNode::Handled);
+
+            /* 文件（夹）剪切/鼠标拖动move后，标识模式更新 */
+            g_autofree char* sourceUri = g_file_get_uri(srcFile.get()->get());
+            QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(sourceUri);
+            qDebug()<< "move(), update label, labelIds:"<< labelIds.size() ;
+
+            FileLabelModel::getGlobalModel()->removeFileLabel(sourceUri);
+            for(auto &id: labelIds){
+                if(id <= 0)
+                    continue;
+                qDebug()<< "move(), update label, id:"<< id <<" uri:"<<destUri<<" urlDecode:"<<FileUtils::urlDecode(destUri);
+                FileLabelModel::getGlobalModel()->addLabelToFile(destUri, id);
+            }
         }
 
         nodes << node;
