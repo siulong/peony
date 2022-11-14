@@ -184,6 +184,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     //p.fillRect(opt.rect, m_delegate->selectedBrush());
     auto rawDecoSize = opt.decorationSize;
     opt.decorationSize = m_delegate->getView()->iconSize();
+    opt.state &= ~QStyle::State_MouseOver;
     QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem,
                                          &opt,
                                          &p,
