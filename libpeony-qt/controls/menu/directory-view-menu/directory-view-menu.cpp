@@ -177,6 +177,10 @@ void DirectoryViewMenu::fillActions()
         m_is_boxpath = true;
     }
 
+    if (m_directory.startsWith("label://")){
+        m_is_label_model = true;
+    }
+
     if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
         m_is_mtp_ptp = true;
     }
@@ -537,7 +541,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
 const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
-    if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash) {
+    if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash && !m_is_label_model) {
         auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
@@ -834,7 +838,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (m_is_kydroid)
                 return l;
 
-            if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe)
+            if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model)
             {
                 bool canCut = true;
                 auto info = FileInfo::fromUri(m_directory);
@@ -852,7 +856,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             }
 
             bool hasDeleteForever = false;
-            if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe) {
+            if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe && !m_is_label_model) {
                 bool canTrash = true;
                 bool canDelete = true;
                 for (auto uri : m_selections) {
@@ -897,7 +901,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 }
             }
 
-            if (m_is_favorite && m_can_delete && !m_is_filesafe && !hasDeleteForever) {
+            if ((m_is_favorite || m_is_label_model) && m_can_delete && !m_is_filesafe && !hasDeleteForever ) {
                 l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
                 l.last()->setObjectName(DELETE_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -913,7 +917,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 });
             }
 
-            if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe) {
+            if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
                 l.last()->setObjectName(RENAME_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -926,7 +930,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             }
 
         } else {
-            if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd)
+            if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd && !m_is_label_model)
             {
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
@@ -1310,7 +1314,7 @@ bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
 const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
 {
     QList<QAction *> l;
-    if (!m_is_favorite) {
+    if (!m_is_favorite && !m_is_label_model) {
         auto pluginIds = MenuPluginManager::getInstance()->getPluginIds();
         //sort plugiins by name, so the menu option orders is relatively fixed
         std::sort(pluginIds.begin(), pluginIds.end());

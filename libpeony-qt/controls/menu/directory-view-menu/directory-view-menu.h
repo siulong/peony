@@ -98,6 +98,7 @@ private:
     bool m_is_mobile_file = false;
     bool m_is_boxpath = false;
     bool m_is_mtp_ptp = false;
+    bool m_is_label_model = false;
 
     const int ELIDE_TEXT_LENGTH = 16;
 
