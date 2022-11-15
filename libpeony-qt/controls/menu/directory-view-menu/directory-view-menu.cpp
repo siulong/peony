@@ -284,15 +284,17 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             //FIXME: show when prepared?
             newWindow->show();
         });
-        l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-        l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-        connect(l.last(), &QAction::triggered, [=]() {
-            if (!m_top_window)
-                return;
-            QStringList uris;
-            uris<<m_directory;
-            m_top_window->addNewTabs(uris);
-        });
+        if (!qApp->property("tabletMode").toBool()) {
+            l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+            l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+            connect(l.last(), &QAction::triggered, [=]() {
+                if (!m_top_window)
+                    return;
+                QStringList uris;
+                uris<<m_directory;
+                m_top_window->addNewTabs(uris);
+            });
+        }
     } else {
         if (m_selections.count() == 1) {
             auto info = FileInfo::fromUri(m_selections.first());
@@ -373,13 +375,15 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     //FIXME: show when prepared?
                     newWindow->show();
                 });
-                l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-                l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    if (!m_top_window)
-                        return;
-                    m_top_window->addNewTabs(m_selections);
-                });
+                if (!qApp->property("tabletMode").toBool()) {
+                    l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+                    l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        if (!m_top_window)
+                            return;
+                        m_top_window->addNewTabs(m_selections);
+                    });
+                }
             } else if (!info->isVolume()) {
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
