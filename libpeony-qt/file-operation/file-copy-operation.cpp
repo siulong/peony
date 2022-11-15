@@ -25,7 +25,6 @@
 #include "file-node.h"
 #include "file-enumerator.h"
 #include "file-info.h"
-
 #include "file-utils.h"
 #include "file-operation-manager.h"
 #include "sound-effect.h"
@@ -57,6 +56,12 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
 
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
     QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
+    if("label" == firstSrcUrl.scheme())
+    {
+        QString scheme = firstSrcUrl.path().section("?schema=",-1,-1);
+        QString path = firstSrcUrl.path().section("?schema=", 0, 0).section("/",2,-1);
+        firstSrcUrl = QString(scheme).append(":///").append(path);
+    }
 
     if (destDirUrl.isParentOf(firstSrcUrl)) {
         if (1 == firstSrcUrl.path().split("/").count() - destDirUrl.path().split("/").count()) {
@@ -72,12 +77,24 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
         }
     }*/
 
+    QStringList srcUris;
+    for(auto &uri : sourceUris){
+        if(uri.startsWith("label://"))
+        {
+            QUrl url(uri);
+            QString scheme = url.path().section("?schema=",-1,-1);
+            QString path = url.path().section("?schema=", 0, 0).section("/",2,-1);
+            uri = QString(scheme).append(":///").append(path);
+        }
+        srcUris.append(uri);
+    }
+
     m_conflict_files.clear();
-    m_source_uris = sourceUris;
+    m_source_uris = srcUris;
     m_dest_dir_uri = FileUtils::urlDecode(destDirUri);
     m_reporter = new FileNodeReporter;
     connect(m_reporter, &FileNodeReporter::nodeFound, this, &FileOperation::operationPreparedOne);
-    m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Copy);
+    m_info = std::make_shared<FileOperationInfo>(srcUris, destDirUri, FileOperationInfo::Copy);
 }
 
 FileCopyOperation::~FileCopyOperation()

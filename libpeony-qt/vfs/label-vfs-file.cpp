@@ -59,7 +59,6 @@ static void vfs_label_file_g_file_iface_init(GFileIface *iface)
     iface->dup                      = vfs_label_file_dup;
     iface->move                     = vfs_label_file_move;
     iface->trash                    = vfs_label_file_delete;
-    iface->read_fn                  = vfs_label_file_read_fn;
     iface->equal                    = vfs_label_file_is_equal;
     iface->get_uri                  = vfs_label_file_get_uri;
     iface->get_path                 = vfs_label_file_get_path;
@@ -258,7 +257,7 @@ gboolean vfs_label_file_make_symbolic_link(GFile* file, const char* svalue, GCan
     Q_UNUSED(cancellable);
 
     // fixme:// Do not implement
-    QString str = QObject::tr("Virtual file directories do not support move and copy operations");
+    QString str = QObject::tr("Virtual file directories do not support move operations");
     *error = g_error_new(G_FILE_ERROR_FAILED, G_IO_ERROR_NOT_SUPPORTED, "%s\n", str.toUtf8().constData());
     return FALSE;
 }
@@ -386,7 +385,7 @@ GFileEnumerator* vfs_label_file_enumerate_children(GFile *file, const char *attr
 }
 
 GFileOutputStream*  vfs_label_file_replace(GFile* file, const char* etag, gboolean make_backup, GFileCreateFlags flags, GCancellable* cancellable, GError** error){
-    QString str = QObject::tr("Virtual file directories do not support move and copy operations");
+    QString str = QObject::tr("Virtual file directories do not support move operations");
     *error = g_error_new(G_FILE_ERROR_FAILED, G_IO_ERROR_NOT_SUPPORTED, "%s\n", str.toUtf8().constData());
     return FALSE;
 }
