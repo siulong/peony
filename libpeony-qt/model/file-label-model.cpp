@@ -319,6 +319,8 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
     labelIds.removeDuplicates();
     metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     Q_EMIT fileLabelChanged(uri);
+    Q_EMIT fileLabelChanged(labelUri);/* 更新标识模式界面的该文件 */
+
 
 }
 
