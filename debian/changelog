@@ -1,3 +1,9 @@
+peony (3.14.4.5-ok10) yangtze; urgency=medium
+
+  * 同步平板版本改动和3.20.4.13改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 18 Nov 2022 16:36:17 +0800
+
 peony (3.14.4.5-ok9) yangtze; urgency=medium
 
   * 删除依赖udfclient.
