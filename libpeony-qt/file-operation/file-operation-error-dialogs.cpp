@@ -119,7 +119,8 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
         setTipFilename(file.getInfo()->displayName());
     } else {
         QString fileName = error.srcUri.split("/").back();
-        QString url = error.destDirUri.contains(fileName) ? error.destDirUri : error.destDirUri + "/" + fileName;
+        //fix bug 148806, matches end path name
+        QString url = error.destDirUri.split("/").back().contains(fileName) ? error.destDirUri : error.destDirUri + "/" + fileName;
         FileInfoJob file(url, nullptr);
         file.querySync();
         setTipFileicon(file.getInfo()->iconName());
