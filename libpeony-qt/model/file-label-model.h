@@ -81,6 +81,9 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
     QSet<QString> getFileUrisFromLabelId(int labelId);
+    QString getLabelNameFromLabelId(int id);
+    int getLabelIdFromLabelName(const QString &colorName);
+
 
 Q_SIGNALS:
     void fileLabelChanged(const QString &uri);

@@ -236,7 +236,8 @@ gboolean vfs_label_file_delete (GFile* file, GCancellable* cancellable, GError**
     QUrl url(uri);
     QString realUri = QString("file:///").append(url.path().section("/", 2,-1));
     QString encodeUri = Peony::FileUtils::getEncodedUri(realUri);
-    FileLabelModel::getGlobalModel()->removeFileLabel(encodeUri);
+    int labelId = FileLabelModel::getGlobalModel()->getLabelIdFromLabelName(url.path().section("/", 1, 1));
+    FileLabelModel::getGlobalModel()->removeFileLabel(encodeUri, labelId);
     return TRUE;
 }
 
@@ -309,8 +310,6 @@ GFileInfo* vfs_label_file_query_info(GFile *file, const char *attributes, GFileQ
                 if ("label" == scheam) {
                     trueUri = QString("%1://%2").arg("file").arg(url.path());
                 } else {
-                    QString s =url.path();
-                    QString s1 = url.path().section("/",2,-1);
                     trueUri = QString("%1:///%2").arg(scheam).arg(url.path().section("/",2,-1));
                 }
                 break;
@@ -440,7 +439,7 @@ void label_vfs_file_enumerator_parse_uri(LabelVFSFileEnumerator *enumerator, con
     LabelVFSFileEnumeratorPrivate *priv = enumerator->priv;
     *priv->label_vfs_directory_uri = uri;
     auto tmp = priv->label_vfs_directory_uri->section("/", -1,-1);
-    int labelId = tmp.toInt();
+    int labelId = FileLabelModel::getGlobalModel()->getLabelIdFromLabelName(tmp);
     QSet<QString> uriSet = FileLabelModel::getGlobalModel()->getFileUrisFromLabelId(labelId);
     for(const QString &str: uriSet){
         QUrl url = QUrl(str);

@@ -305,7 +305,7 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 
     /* 同步全局标记 */
     QUrl url(uri);
-    QString labelUri = QString("label:///").append(QString::number(labelId)) + url.path() + "?schema=" + url.scheme();
+    QString labelUri = QString("label:///").append(getLabelNameFromLabelId(labelId)) + url.path() + "?schema=" + url.scheme();
     Q_EMIT fileLabelAdded(labelUri, true);//end
 
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
@@ -360,7 +360,7 @@ void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
         }
         /* 同步全局标记 */
         QUrl url(uri);
-        QString labelUri = QString("label:///").append(QString::number(id)) + url.path() + "?schema=" + url.scheme();
+        QString labelUri = QString("label:///").append(getLabelNameFromLabelId(id)) + url.path() + "?schema=" + url.scheme();
         Q_EMIT fileLabelRemoved(labelUri, true);
     }
     m_label_settings->endGroup();
@@ -443,6 +443,26 @@ QSet<QString> FileLabelModel::getFileUrisFromLabelId(int labelId)
 {
     QSet<QString> uriSet = m_globalLabelMap.value(labelId);
     return uriSet;
+}
+
+int FileLabelModel::getLabelIdFromLabelName(const QString &colorName)
+{
+    for (auto item : m_labels) {
+        if (item->name() == colorName) {
+            return item->id();
+        }
+    }
+    return 0;
+}
+
+QString FileLabelModel::getLabelNameFromLabelId(int id)
+{
+    for (auto item : m_labels) {
+        if (item->id() == id) {
+            return item->name();
+        }
+    }
+    return QString();
 }
 
 void FileLabelModel::setName(FileLabelItem *item, const QString &name)
