@@ -186,7 +186,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="320"/>
@@ -201,7 +201,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation>视图类型</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
@@ -226,7 +226,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="394"/>
         <source>Sort By</source>
-        <translation type="unfinished"></translation>
+        <translation>排序方式</translation>
     </message>
     <message>
         <source>Sort By...</source>
