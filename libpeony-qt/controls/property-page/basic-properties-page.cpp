@@ -517,6 +517,8 @@ void BasicPropertiesPage::initFloorFour()
     bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
     //fix bug#113890,hiden Desktop folder change desktop show
     m_hidden->setDisabled(!m_info->canRename() || isDesktop);
+    m_isReadOnly = m_readOnly->isChecked();
+    m_isHidden = m_hidden->isChecked();
 
     layout4->addRow(this->createFixedLabel(m_labelWidth,32,tr("Property:"),floor4),hBoxLayout);
 
@@ -800,6 +802,11 @@ void BasicPropertiesPage::saveAllChange()
     //未发生修改
     if (!this->m_thisPageChanged)
         return;
+
+    if(m_isReadOnly == m_readOnly->isChecked() && m_isHidden == m_hidden->isChecked()){
+        return;
+    }
+
     //拒绝修改home目录
     if (m_info.get()->uri() == ("file://"+QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())) {
         return;
@@ -807,7 +814,7 @@ void BasicPropertiesPage::saveAllChange()
     //修改图标
     this->changeFileIcon();
 
-    if (m_readOnly) {
+    if (m_readOnly && m_isReadOnly != m_readOnly->isChecked()) {
         mode_t mod = 0;
         quint32 mode = 0;
         if(m_readOnly->isChecked()) {
