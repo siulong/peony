@@ -29,6 +29,8 @@
 #include "file-item-proxy-filter-sort-model.h"
 
 #include "directory-view-widget.h"
+#include "global-settings.h"
+#include "directoryviewhelper.h"
 
 #include <QListView>
 #include <QTimer>
@@ -39,7 +41,7 @@ namespace DirectoryView {
 
 class IconViewDelegate;
 
-class PEONYCORESHARED_EXPORT IconView : public QListView, public DirectoryViewIface
+class PEONYCORESHARED_EXPORT IconView : public QListView, public DirectoryViewIface, public DirectoryViewIface2
 {
     friend class IconViewDelegate;
     friend class IconViewIndexWidget;
@@ -97,6 +99,7 @@ public:
     QRect visualRect(const QModelIndex &index) const override;
 
     bool getDelegateEditFlag();
+    bool isEnableMultiSelect();
 
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
@@ -131,7 +134,10 @@ public Q_SLOTS:
     void resort();
     void reportViewDirectoryChanged();
     void clearIndexWidget();
+    void multiSelect();
+    void disableMultiSelect();
     void setSearchKey(const QString &key);
+    void doMultiSelect(bool isMultiSlelect);
 
 protected:
     /*!
@@ -162,10 +168,13 @@ protected:
 
     void focusInEvent(QFocusEvent *e) override;
 
+    void startDrag(Qt::DropActions supportedActions) override;
+
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
+
     bool getIgnore_mouse_move_event() const;
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
-    //绘制拖拽
-    void startDrag(Qt::DropActions flags) override;
+
 private Q_SLOTS:
     void slotRename();
 
@@ -199,9 +208,11 @@ private:
 
     bool m_delegate_editing = false;
 
+    bool m_multi_select =false;
     bool m_allow_set_index_widget = true;
 
     bool m_slider_bar_draging = false;
+    bool m_mouse_release_unselect = false;
 };
 
 //IconView2
@@ -243,13 +254,13 @@ public:
         return m_zoom_level;
     }
     int minimumZoomLevel() {
-        return 21;
+        return 41;
     }
     int maximumZoomLevel() {
         return 100;
     }
     bool supportZoom() {
-        return true;
+        return Peony::GlobalSettings::getInstance()->getValue(ZOOM_SLIDER_VISIBLE).toBool();
     }
 
 public Q_SLOTS:
@@ -277,6 +288,9 @@ public Q_SLOTS:
     }
     void invertSelections() {
         m_view->invertSelections();
+    }
+    void selectAll() {
+        m_view->selectAll();
     }
     void scrollToSelection(const QString &uri) {
         m_view->scrollToSelection(uri);
@@ -307,13 +321,19 @@ public Q_SLOTS:
     void setCurrentZoomLevel(int zoomLevel);
 
     void clearIndexWidget();
+    void multiSelect(){
+        m_view->multiSelect();
+    }
+    void disableMultiSelect(){
+        m_view->disableMultiSelect();
+    }
 
 private:
     IconView *m_view = nullptr;
     FileItemModel *m_model = nullptr;
     FileItemProxyFilterSortModel *m_proxy_model = nullptr;
 
-    int m_zoom_level = 25;
+    int m_zoom_level = 70;
 };
 
 }

@@ -67,6 +67,7 @@ public:
 
     const QString getCurrentUri();
     const QStringList getCurrentSelections();
+    const int getCurrentRowcount();
 
     const QStringList getAllFileUris();
 

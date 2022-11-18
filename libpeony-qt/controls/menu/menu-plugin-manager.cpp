@@ -171,14 +171,16 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
     auto info = FileInfo::fromUri(uri);
     if (info->isVirtual())
         return l;
-
+    if (qApp->property("tabletMode").toBool()) {
+        return l;
+    }
     if (types == DirectoryView) {
         if (selectionUris.count() == 1) {
             //not allow in trash path
             if (uri.startsWith("trash://") || uri.startsWith("smb://")
                 || uri.startsWith("recent://") || uri.startsWith("computer://"))
                 return l;
-            auto action = new QAction(tr("Add File Label..."), nullptr);
+            auto action = new QAction(tr("Add File Label"), nullptr);
             auto uri = selectionUris.first();
             auto menu = new QMenu();
             auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();

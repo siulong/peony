@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QDebug>
+#include "file-info.h"
 
 #include "file-info.h"
 
@@ -68,6 +69,8 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
                              "mount-removed",
                              G_CALLBACK(mount_removed_callback),
                              this);
+
+    m_volume_changed_handle = g_signal_connect(m_volume_monitor, "volume-changed", G_CALLBACK(volume_changed_callback), this);
 }
 
 VolumeManager::~VolumeManager()
@@ -80,6 +83,7 @@ VolumeManager::~VolumeManager()
     g_signal_handler_disconnect(m_volume_monitor, m_volume_removed_handle);
     g_signal_handler_disconnect(m_volume_monitor, m_mount_added_handle);
     g_signal_handler_disconnect(m_volume_monitor, m_mount_removed_handle);
+    g_signal_handler_disconnect(m_volume_monitor, m_volume_changed_handle);
 
     g_object_unref(m_volume_monitor);
 }
@@ -139,6 +143,12 @@ void VolumeManager::mount_removed_callback(GVolumeMonitor *monitor,
 {
     Q_UNUSED(monitor);
     Q_EMIT p_this->mountRemoved(std::make_shared<Mount>(mount));
+}
+
+void VolumeManager::volume_changed_callback(GVolumeMonitor *monitor, GVolume *volume, VolumeManager *p_this)
+{
+    Q_UNUSED(monitor);
+    Q_EMIT p_this->volumeChanged(std::make_shared<Volume>(volume));
 }
 
 void VolumeManager::unmount_cb(GFile *file, GAsyncResult *result, GError **error, QString *targetUri)

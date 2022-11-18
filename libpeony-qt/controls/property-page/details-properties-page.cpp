@@ -37,8 +37,8 @@
 using namespace Peony;
 
 #define FIXED_LABEL_WIDTH 150
-//460 - 150 - 22 - 22 =
-#define FIXED_CONTENT_WIDTH 266
+//460 - 150 - 24 - 24 =
+#define FIXED_CONTENT_WIDTH 262
 
 DetailsPropertiesPage::DetailsPropertiesPage(const QString &uri, QWidget *parent) : PropertiesWindowTabIface(parent)
 {
@@ -48,7 +48,7 @@ DetailsPropertiesPage::DetailsPropertiesPage(const QString &uri, QWidget *parent
     m_watcher->startMonitor();
 
     m_layout = new QVBoxLayout(this);
-    m_layout->setContentsMargins(0,10,0,0);
+    m_layout->setContentsMargins(8, 10, 8, 0);
     m_tableWidget = new QTableWidget(this);
 
     this->initTableWidget();
@@ -135,6 +135,7 @@ void DetailsPropertiesPage::addRow(QString labelText, QLabel *contentLabel)
 
 void DetailsPropertiesPage::initTableWidget()
 {
+    m_tableWidget->setContentsMargins(16, 0, 16, 0);
     m_tableWidget->setColumnCount(1);
     m_tableWidget->setRowCount(1);
 
@@ -193,11 +194,8 @@ void DetailsPropertiesPage::initDetailsPropertiesPage()
     this->addRow(tr("Location:"), m_localLabel);
 
     //createTime
-    if (m_fileInfo->isDir())
-    {
-      m_createDateLabel = this->createFixedLabel(0,0,"",m_tableWidget);
-      this->addRow(tr("Create time:"),m_createDateLabel);
-    }
+    m_createDateLabel = this->createFixedLabel(0,0,"",m_tableWidget);
+    this->addRow(tr("Create time:"),m_createDateLabel);
 
     //modifiedTime
     m_modifyDateLabel = this->createFixedLabel(0,0,"",m_tableWidget);
@@ -318,6 +316,18 @@ void DetailsPropertiesPage::updateFileInfo(const QString &uri)
         m_modifyDateLabel->setText(time2);
 
         g_object_unref(info);
+
+        //FIXME:文件的创建时间会随着文件被修改而发生改变，甚至会出现创建时间晚于修改时间问题 后期将qt的方法替换为gio的方法
+        //参考：https://www.oschina.net/news/126468/gnome-40-alpha-preview
+        quint64 timeNum = FileUtils::getCreateTimeOfMicro (uri);
+        // 客户需要必须显示创建时间，因此使用时间最小时间戳为创建时间
+
+        quint64 minTime = timeNum != 0 ? timeNum : timeNum2;
+        minTime = qMin (minTime, timeNum2);
+        timeNum = minTime;
+        QDateTime createDate = QDateTime::fromMSecsSinceEpoch(timeNum*1000);
+        QString createTime = createDate.toString(m_systemTimeFormat);
+        m_createDateLabel->setText(createTime);
 
     } else {
         if (m_createDateLabel)

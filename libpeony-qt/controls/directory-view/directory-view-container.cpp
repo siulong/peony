@@ -34,7 +34,7 @@
 #include "directory-view-factory-manager.h"
 
 #include "file-item-proxy-filter-sort-model.h"
-
+#include "global-settings.h"
 #include "file-info.h"
 #include "file-meta-info.h"
 
@@ -47,6 +47,8 @@ using namespace Peony;
 
 DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
+
     m_model = new FileItemModel(this);
     m_proxy_model = new FileItemProxyFilterSortModel(this);
     m_proxy_model->setSourceModel(m_model);
@@ -131,7 +133,10 @@ void DirectoryViewContainer::goBack()
         return;
 
     auto uri = m_back_list.takeLast();
-    m_forward_list.prepend(getCurrentUri());
+    //avoid same uri add twice
+    int count = m_forward_list.count();
+    if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
+        m_forward_list.prepend(getCurrentUri());
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -146,7 +151,12 @@ void DirectoryViewContainer::goForward()
         return;
 
     auto uri = m_forward_list.takeFirst();
-    m_back_list.append(getCurrentUri());
+    //avoid same uri add twice
+    int count = m_back_list.count();
+    if (! getCurrentUri().contains("search://") &&
+        (count <= 0 || m_back_list.at(count-1) != getCurrentUri()))
+        m_back_list.append(getCurrentUri());
+
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -432,6 +442,11 @@ const QStringList DirectoryViewContainer::getCurrentSelections()
     return QStringList();
 }
 
+const int DirectoryViewContainer::getCurrentRowcount()
+{
+    return m_model->rowCount(QModelIndex());
+}
+
 const QString DirectoryViewContainer::getCurrentUri()
 {
     if (m_view) {
@@ -498,6 +513,7 @@ void DirectoryViewContainer::setSortType(FileItemModel::ColumnType type)
         }
     }
     m_view->setSortType(type);
+    //Peony::GlobalSettings::getInstance()->setValue (SORT_TYPE, type);
 }
 
 Qt::SortOrder DirectoryViewContainer::getSortOrder()

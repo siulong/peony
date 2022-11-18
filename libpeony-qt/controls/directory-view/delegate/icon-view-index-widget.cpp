@@ -69,9 +69,9 @@ IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const
 
     m_delegate = delegate;
 
-    m_delegate->getView()->m_renameTimer->stop();
-    m_delegate->getView()->m_editValid = false;
-    m_delegate->getView()->m_renameTimer->start();
+//    m_delegate->getView()->m_renameTimer->stop();
+//    m_delegate->getView()->m_editValid = false;
+//    m_delegate->getView()->m_renameTimer->start();
 
     m_is_dragging = m_delegate->getView()->isDraggingState();
 
@@ -170,7 +170,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
     QWidget::paintEvent(e);
     QPainter p(this);
-    //p.fillRect(0, 0, 999, 999, Qt::red);
+//    p.fillRect(0, 0, 999, 999, qApp->palette().base());
 
     //adjustPos();
 
@@ -180,10 +180,21 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     auto opt = m_option;
     auto rawRect = m_option.rect;
     opt.rect = this->rect();
+
+    int horizalMargin = 2;
+    auto fontMetrics = opt.fontMetrics;
+    int pixelsWide = fontMetrics.width(opt.text);
+    int width = opt.rect.width() - 2*horizalMargin;
+
+    if(pixelsWide <= width){
+       opt.rect = opt.rect.adjusted(0,0,0,-31);
+    }
+
     opt.palette = QApplication::palette();
     //p.fillRect(opt.rect, m_delegate->selectedBrush());
     auto rawDecoSize = opt.decorationSize;
     opt.decorationSize = m_delegate->getView()->iconSize();
+    opt.state &= ~QStyle::State_MouseOver;
     QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem,
                                          &opt,
                                          &p,
@@ -195,8 +206,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     opt.text = nullptr;
     //bug#99340,修改图标选中状态，会变暗
     auto state = opt.state;
-    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected))
-    {
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected)) {
         opt.state &= ~QStyle::State_Selected;
     }
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &p, opt.widget);
@@ -209,7 +219,15 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     opt.text = std::move(tmp);
 
     //extra emblems
+    if (!m_info.lock()) {
+        return;
+    }
     auto info = m_info.lock();
+
+    // draw color symbols
+    if(info->uri().startsWith("favorite://")){/* 快速访问须特殊处理 */
+        info = FileInfo::fromUri(FileUtils::getEncodedUri(FileUtils::getTargetUri(info->uri())));
+    }
     auto colors = info->getColors();
     auto lineSpacing = opt.fontMetrics.lineSpacing();
     int yoffset = 0;
@@ -293,6 +311,11 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //Adjust link emblem to topLeft.link story#8354
         icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
     }
+    if(view->isEnableMultiSelect())
+    {
+        QIcon icon = QIcon(":/icons/icon-selected.png");
+        icon.paint(&p, this->width() - 20, 4, 16, 16, Qt::AlignCenter);
+    }
 
     //paint access emblems
     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
@@ -367,6 +390,17 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
             view->m_editValid = false;
             return QWidget::mousePressEvent(e);
         }
+        //FIXME: Modify the icon style, only click on the text to respond, click on the icon to not respond
+        QRect rect =  m_option.rect;
+        QSize iconExpectedSize = m_delegate->getView()->iconSize();
+        rect.setY(iconExpectedSize.height());
+        rect.setHeight(m_option.rect.height()-iconExpectedSize.height());
+        if(!rect.contains(e->pos()))
+        {
+            view->m_editValid = false;
+            view->m_renameTimer->start();
+            return ;
+        }
 
         view->m_editValid = true;
         if (view->m_renameTimer->isActive()) {
@@ -386,14 +420,7 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
             view->m_editValid = false;
             view->m_renameTimer->start();
         }
-        e->accept();
-        return;
-//        if (m_edit_trigger.isActive()) {
-//            qDebug()<<"IconViewIndexWidget::mousePressEvent: edit"<<e->type();
-//            m_delegate->getView()->setIndexWidget(m_index, nullptr);
-//            m_delegate->getView()->edit(m_index);
-//            return;
-//        }
+        e->ignore();
     }
     if(e->button() == Qt::RightButton){
         e->accept();
@@ -418,7 +445,8 @@ void IconViewIndexWidget::mouseReleaseEvent(QMouseEvent *e)
 void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
     bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
-    if (!singleClicked) {
+    bool isPreviewMode = m_delegate->getView()->topLevelWidget()->property("isPreviewMode").toBool();
+    if (!singleClicked || isPreviewMode) {
         m_delegate->getView()->activated(m_index);
     }
     return;

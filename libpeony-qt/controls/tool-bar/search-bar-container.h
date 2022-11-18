@@ -59,8 +59,14 @@ public:
     int getFilterIndex() {
         return m_filter_box->currentIndex();
     }
+
     void clearFilter() {
         m_filter_box->setCurrentIndex(0);
+    }
+
+    void deselectSearchBox() {
+        // Take action in the search bar to refresh search results
+        m_search_box->deselect();
     }
 
     void setSearchBoxHeight(qint32 height) {

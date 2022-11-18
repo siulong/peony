@@ -40,7 +40,7 @@
 #include <QKeyEvent>
 #include <QItemDelegate>
 #include <file-label-model.h>
-
+#include <QHeaderView>
 #include <QApplication>
 
 using namespace Peony;
@@ -71,48 +71,64 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QString uri = index.data(Qt::UserRole).toString();
     auto info = FileInfo::fromUri(uri);
     auto colors = info->getColors();
-
     if(uri.startsWith("favorite://")){/* 快速访问须特殊处理 */
         //快速访问目录，颜色标记设置后更新不及时问题单独处理,修复bug#118015
         uri =FileUtils::getEncodedUri(FileUtils::getTargetUri(uri));
         auto matchInfo = FileInfo::fromUri(uri);
         colors = matchInfo->getColors();
     }
-
+    auto rect = view->visualRect(index);
     if (index.column() == 0 && colors.count() >0) {
         if (!view->isDragging() || !view->selectionModel()->selectedIndexes().contains(index)) {
-            int xoffset = 5;
-            int yoffset = 0;
-            int index = 0;
+            //修改标记个数最多为3个，以及标记位置
             const int MAX_LABEL_NUM = 3;
+            const int LABEL_SIZE = 12;
             int startIndex = (colors.count() > MAX_LABEL_NUM ? colors.count() - MAX_LABEL_NUM : 0);
-            int num = colors.count() - startIndex + 1;
+            int num =  colors.count() - startIndex;
+            auto lineSpacing = option.fontMetrics.lineSpacing();
 
-            //set color label on center, fix bug#40609
-            auto iconSize = view->iconSize();
-            auto labelSize = iconSize.height()/3;
-            if (labelSize > 10)
-                labelSize = 10;
-            if (labelSize <6)
-                labelSize = 6;
+            int xOffSet = rect.topRight().x() - LABEL_SIZE/2 - 20;
+            int yOffSet = rect.height()/2 - LABEL_SIZE/2;
+            int width = rect.width();
+            if(num > 0){
+                //bug#94242 修改标记位置后和名称重叠，设置标记位置的背景颜色
+                QRect markRect = opt.rect;
+                markRect.setLeft(rect.width() - (num+1)*LABEL_SIZE/2 );
+                bool isHover = (opt.state & QStyle::State_MouseOver) && (opt.state & ~QStyle::State_Selected);
+                bool isSelected = opt.state & QStyle::State_Selected;
+                bool enable = opt.state & QStyle::State_Enabled;
+                QColor color = opt.palette.color(enable? QPalette::Active: QPalette::Disabled,
+                                                     QPalette::Highlight);
 
-            yoffset = (opt.rect.height()-labelSize*num/2)/2;
-            if(yoffset < 2)
-            {
-                yoffset = 2;
+                if (isSelected) {
+                    color.setAlpha(255);
+                } else if (isHover) {
+                    color = opt.palette.color(QPalette::Active, QPalette::BrightText);
+                    color.setAlphaF(0.05);
+                } else {
+                    color.setAlpha(0);
+                }
+
+                painter->save();
+                painter->fillRect(markRect, color);
+                painter->restore();
+                width = width - (num+1)*LABEL_SIZE/2 - 20;
             }
-            for (int i = startIndex; i < colors.count(); ++i, ++index) {
+            for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
                 painter->setRenderHint(QPainter::Antialiasing);
                 painter->translate(0, opt.rect.topLeft().y());
-                painter->translate(2, 0);
+                painter->translate(2, 2);
                 painter->setPen(opt.palette.highlightedText().color());
                 painter->setBrush(color);
-                painter->drawEllipse(QRectF(xoffset, yoffset, labelSize, labelSize));
+                painter->drawEllipse(QRectF(xOffSet, yOffSet, LABEL_SIZE, LABEL_SIZE));
                 painter->restore();
-                yoffset += labelSize/2;
+
+                xOffSet -= LABEL_SIZE/2;
             }
+            //bug#94242 修改标记位置后和名称重叠，设置汉字宽度
+            opt.rect.setWidth(width);
         }
     }
 
@@ -128,7 +144,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 painter->setOpacity(1.0);
         }
     }
-
+    else
+       painter->setOpacity(1.0);
     if (!opt.state.testFlag(QStyle::State_Selected)) {
         if (opt.state & QStyle::State_Sunken) {
             opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
@@ -197,7 +214,25 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     } else {
         opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
     }
-
+    if(view->isEnableMultiSelect()) {
+        int selectBox = 0;
+        //get current checkbox positon and draw them.
+        selectBox = view->getCurrentCheckboxColumn();
+        int selectBoxPosion = view->viewport()->width()+view->viewport()->x()-view->header()->sectionViewportPosition(selectBox)-48;
+        if(index.column() == selectBox)
+        {
+            if(view->selectionModel()->selectedIndexes().contains(index))
+            {
+                QIcon icon = QIcon(":/icons/icon-selected.png");
+                icon.paint(painter, rect.x()+selectBoxPosion, rect.y()+rect.height()/2-8, 16, 16, Qt::AlignCenter);
+            }
+            else
+            {
+                QIcon icon = QIcon(":/icons/icon-select.png");
+                icon.paint(painter, rect.x()+selectBoxPosion, rect.y()+rect.height()/2-8, 16, 16, Qt::AlignCenter);
+            }
+        }
+    }
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
     //add link and read only icon support
@@ -351,15 +386,14 @@ void ListViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     TextEdit *edit = qobject_cast<TextEdit*>(editor);
-    //qDebug() <<"setModelData entered";
     if (!edit)
         return;
 
     auto text = edit->toPlainText();
-    //qDebug() <<"setModelData edit text:"<<text;
     if (text.isEmpty())
         return;
-
+    if (text == index.data(Qt::DisplayRole).toString())
+        return;
     //process special name . or .. or only space
     if (text == "." || text == ".." || text.trimmed() == "")
         return;
@@ -424,7 +458,7 @@ void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 //TextEdit
 TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
 {
-
+    this->setContentsMargins(0,0,0,0);
 }
 
 void TextEdit::keyPressEvent(QKeyEvent *e)

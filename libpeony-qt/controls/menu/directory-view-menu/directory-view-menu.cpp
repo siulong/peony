@@ -60,6 +60,7 @@
 
 #include "global-settings.h"
 #include "sound-effect.h"
+#include "directoryviewhelper.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -224,6 +225,11 @@ void DirectoryViewMenu::fillActions()
         }
     }
 
+    //add multiselect action
+    auto multiselectAction = constructMultiSelectActions();
+    if(!multiselectAction.isEmpty())
+        addSeparator();
+
     //add operation actions
     auto fileOpActions = constructFileOpActions();
     if (!fileOpActions.isEmpty()) {
@@ -284,15 +290,17 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             //FIXME: show when prepared?
             newWindow->show();
         });
-        l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-        l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-        connect(l.last(), &QAction::triggered, [=]() {
-            if (!m_top_window)
-                return;
-            QStringList uris;
-            uris<<m_directory;
-            m_top_window->addNewTabs(uris);
-        });
+        if (!qApp->property("tabletMode").toBool()) {
+            l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+            l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+            connect(l.last(), &QAction::triggered, [=]() {
+                if (!m_top_window)
+                    return;
+                QStringList uris;
+                uris<<m_directory;
+                m_top_window->addNewTabs(uris);
+            });
+        }
     } else {
         if (m_selections.count() == 1) {
             auto info = FileInfo::fromUri(m_selections.first());
@@ -373,13 +381,15 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     //FIXME: show when prepared?
                     newWindow->show();
                 });
-                l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-                l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    if (!m_top_window)
-                        return;
-                    m_top_window->addNewTabs(m_selections);
-                });
+                if (!qApp->property("tabletMode").toBool()) {
+                    l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+                    l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        if (!m_top_window)
+                            return;
+                        m_top_window->addNewTabs(m_selections);
+                    });
+                }
             } else if (!info->isVolume()) {
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -493,7 +503,7 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
     if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash) {
-        auto createAction = new QAction(tr("New..."), this);
+        auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
             createAction->setEnabled(false);
@@ -629,7 +639,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         if (!viewNames.isEmpty()) {
             //view type;
-            auto viewTypeAction = addAction(tr("View Type..."));
+            auto viewTypeAction = addAction(tr("View Type"));
             viewTypeAction->setObjectName(VIEW_TYPE_ACTION);
             l<<viewTypeAction;
             QMenu *viewTypeSubMenu = new QMenu(this);
@@ -649,7 +659,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         }
 
         //sort type
-        auto sortTypeAction = addAction(tr("Sort By..."));
+        auto sortTypeAction = addAction(tr("Sort By"));
         sortTypeAction->setObjectName(SORT_TYPE_ACTION);
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
@@ -684,7 +694,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         }
 
         //sort order
-        auto sortOrderAction = addAction(tr("Sort Order..."));
+        auto sortOrderAction = addAction(tr("Sort Order"));
         sortOrderAction->setObjectName(SORT_ORDER_ACTION);
         l<<sortOrderAction;
         QMenu *sortOrderMenu = new QMenu(this);
@@ -705,7 +715,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         sortOrderAction->setMenu(sortOrderMenu);
 
-        auto sortPreferencesAction = addAction(tr("Sort Preferences..."));
+        auto sortPreferencesAction = addAction(tr("Sort Preferences"));
         sortPreferencesAction->setObjectName(SORT_PREFERENCES_ACTION);
         l<<sortPreferencesAction;
 
@@ -1097,18 +1107,19 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 if (m_selections.count() == 1) {
                     auto untrashop = FileOperationUtils::restore(m_selections.first());
                     if(untrashop){
-                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 } else {
                     auto untrashop = FileOperationUtils::restore(m_selections);
                     if(untrashop){
-                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 }
+//                qApp->setProperty("restoreFile",true);
             });
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
             l.last()->setObjectName(DELETE_ACTION);
@@ -1225,4 +1236,16 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
         }
     }
     return l;
+}
+
+const QList<QAction *> DirectoryViewMenu::constructMultiSelectActions()
+{
+    QList<QAction *> l;
+    auto MultiSelectAction = addAction(tr("MultiSelect"));
+    l<<MultiSelectAction;
+    connect(l.last(), &QAction::triggered, [=]() {
+        Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_view)->doMultiSelect(true);
+    });
+    return l;
+
 }

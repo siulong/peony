@@ -125,14 +125,15 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         opt.rect.adjust(1, 1, -1, -1);
     }
 
-    if (!opt.state.testFlag(QStyle::State_Selected)) {
-        if (opt.state & QStyle::State_Sunken) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
-        }
-        if (opt.state & QStyle::State_MouseOver) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
-        }
+    int horizalMargin = 2;
+    auto fontMetrics = opt.fontMetrics;
+    int pixelsWide = fontMetrics.width(opt.text);
+    int width = opt.rect.width() - 2*horizalMargin;
+
+    if(pixelsWide <= width){
+       opt.rect = opt.rect.adjusted(0,0,0,-31);
     }
+
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, nullptr);
     opt.decorationSize = rawDecoSize;
 
@@ -145,11 +146,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 painter->setOpacity(0.5);
                 bCutFile = true;
                 qDebug()<<"cut item"<<index.data();
+            }else{
+                //fix bug#145085, same logic to list view
+                painter->setOpacity(1.0);
             }
         }
     }
-    else
-       painter->setOpacity(1.0);
 
     auto iconSizeExpected = view->iconSize();
     auto iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
@@ -158,14 +160,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto text = opt.text;
     opt.text = nullptr;
-    auto state = opt.state;
-    //bug#99340,修改图标选中状态，会变暗
-    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected) && !m_isStartDrag)
-    {
-        opt.state &= ~QStyle::State_Selected;
-    }
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-    opt.state = state;
     opt.text = text;
 
     auto rect = view->visualRect(index);
@@ -295,6 +290,16 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
         icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+    }
+
+    if(view->isEnableMultiSelect()) {
+        if(view->selectedIndexes().contains(index)) {
+            QIcon icon = QIcon(":/icons/icon-selected.png");
+            icon.paint(painter, rect.x()+rect.width() - 20, rect.y()+4, 16, 16, Qt::AlignCenter);
+        } else {
+            QIcon icon = QIcon(":/icons/icon-select.png");
+            icon.paint(painter, rect.x()+rect.width() - 20, rect.y()+4, 16, 16, Qt::AlignCenter);
+        }
     }
 
     //paint access emblems
@@ -495,6 +500,16 @@ void IconViewDelegate::slot_finishEdit()
         edit = nullptr;
     }
     Q_EMIT isEditing(false);
+}
+
+void IconViewDelegate::setStartDrag(bool isDrag)
+{
+    m_isStartDrag = isDrag;
+}
+
+void IconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    initStyleOption(option, index);
 }
 
 IconView *IconViewDelegate::getView() const
@@ -703,7 +718,4 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     painter->restore();
 }
-void IconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
-{
-    return initStyleOption(option, index);
-}
+

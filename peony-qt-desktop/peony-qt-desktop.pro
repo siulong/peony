@@ -4,12 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient KScreen quick
+QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 include(../common.pri)
-include($$PWD/tablet-desktop/tablet-desktop.pri)
 
 TARGET = peony-qt-desktop
 TEMPLATE = app

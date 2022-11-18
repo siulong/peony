@@ -227,26 +227,8 @@ const QList<QAction *> DesktopMenu::constructOpenOpActions()
                 if (!dirs.isEmpty())
                     this->openWindow(dirs);
                 if (!files.isEmpty()) {
-                    QMap<QString, QStringList> fileMap;
                     for (auto uri : files) {
-                        QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
-                        QStringList list;
-                        if (fileMap.contains(defaultAppName)) {
-                            list = fileMap[defaultAppName];
-                            list << uri;
-                            fileMap.insert(defaultAppName, list);
-                        } else {
-                            list << uri;
-                            fileMap.insert(defaultAppName, list);
-                        }
-                    }
-                    if(!fileMap.empty()) {
-                        QMap<QString, QStringList>::iterator iter = fileMap.begin();
-                        while (iter != fileMap.end())
-                        {
-                            Peony::FileLaunchManager::openAsync(iter.value());
-                            iter++;
-                        }
+                        FileLaunchManager::openAsync(uri);
                     }
                 }
             });
@@ -266,7 +248,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
     if (m_selections.isEmpty()) {
-        auto createAction = new QAction(tr("New..."), this);
+        auto createAction = new QAction(tr("New"), this);
         l<<createAction;
         QMenu *subMenu = new QMenu(this);
         createAction->setMenu(subMenu);
@@ -366,7 +348,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
     QList<QAction *> l;
 
     if (m_selections.isEmpty()) {
-        auto viewTypeAction = addAction(tr("View Type..."));
+        auto viewTypeAction = addAction(tr("View Type"));
         l<<viewTypeAction;
         QMenu *viewTypeSubMenu = new QMenu(this);
         auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
@@ -409,7 +391,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         viewTypeAction->setMenu(viewTypeSubMenu);
 
         //sort type
-        auto sortTypeAction = addAction(tr("Sort By..."));
+        auto sortTypeAction = addAction(tr("Sort By"));
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
 
@@ -640,11 +622,6 @@ void DesktopMenu::openWindow(const QStringList &uris)
         QUrl url = arg;
         args<<QString(url.toEncoded());
     }
-
-    auto launchAction = FileLaunchManager::getDefaultAction(args.first());
-    launchAction->lauchFilesAsync(args);
-    return;
-
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     p.setProgram("peony");

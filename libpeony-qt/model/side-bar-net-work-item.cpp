@@ -374,7 +374,6 @@ void SideBarNetWorkItem::slot_deleteSharedFolder(const QString& originalPath, bo
 
 void SideBarNetWorkItem::slot_updateRemoteServer(const QString& server,bool add)
 {
-
    if(add){
        addItemForUri(server, "network-workgroup-symbolic", server, this, m_model, true);
 

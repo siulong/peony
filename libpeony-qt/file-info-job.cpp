@@ -232,37 +232,48 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
     if (info->isDesktopFile()) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
-        GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
-        if (!desktop_info) {
+        GKeyFile *desktop_key_file = g_key_file_new();
+        bool is_loaded = g_key_file_load_from_file(desktop_key_file, url.path().toUtf8(), G_KEY_FILE_NONE, nullptr);
+        if (!is_loaded) {
             m_info->m_mutex.unlock();
             info->updated();
             return;
         }
-#if GLIB_CHECK_VERSION(2, 56, 0)
-        auto string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
-#else
-        //FIXME: should handle locale?
-        //change "Name" to QLocale::system().name(),
-        //try to fix Qt5.6 untranslated desktop file issue
-        auto key = "Name[" +  QLocale::system().name() + "]";
-        auto string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
-#endif
-        qDebug() << "get name string:"<<string <<info->uri()<<info->displayName();
+
+        qDebug() << "get name string:" << info->displayName();
         QString path = "/usr/share/applications/" + info->displayName();
-        if(QFileInfo::exists(url.path().toUtf8()) && QFileInfo::exists(path))
-        {
+        if (QFileInfo::exists(url.path().toUtf8()) && QFileInfo::exists(path)) {
             url = path;
-            desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
-            string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
-            info->m_display_name = string;
-        }
-        else{
-            info->m_display_name = string;
+            g_key_file_free(desktop_key_file);
+            desktop_key_file = g_key_file_new();
+
+            is_loaded = g_key_file_load_from_file(desktop_key_file, url.path().toUtf8(), G_KEY_FILE_NONE, nullptr);
+            if (!is_loaded) {
+                qWarning() << "desktop file:" << path << "load failed";
+                info->updated();
+                return;
+            }
         }
 
-        if (string)
-           g_free(string);
-        g_object_unref(desktop_info);
+        QString key = "Name[" +  QLocale::system().name() + "]";
+        gchar *name_char = nullptr;
+
+        if (g_key_file_has_key(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, key.toUtf8().constData(), nullptr)) {
+            name_char = g_key_file_get_string(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, key.toUtf8().constData(), nullptr);
+
+        } else {
+            name_char = g_key_file_get_string(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, nullptr);
+        }
+
+        if (name_char) {
+            QString name = name_char;
+            g_free(name_char);
+
+            info->m_display_name = name;
+        }
+
+        g_key_file_free(desktop_key_file);
+
     } else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {
             info->m_display_name = tr("Trash");
@@ -422,17 +433,13 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
         info->setProperty("orig-path", origPath);
     }
-    if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
-        auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
-        info->setProperty("orig-path", origPath);
-    }
 
     m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);
     // update peony qt color list after meta info updated.
     m_info->m_colors = FileLabelModel::getGlobalModel()->getFileColors(m_info->uri());
 
     auto customIconName = m_info->m_meta_info.get()->getMetaInfoString("custom-icon");
-    if (!customIconName.isEmpty() && !customIconName.startsWith("/")) {
+    if (!customIconName.isEmpty()/* && !customIconName.startsWith("/")*/) {
         m_info->m_icon_name = customIconName;
     }
 

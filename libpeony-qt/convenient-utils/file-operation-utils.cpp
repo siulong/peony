@@ -117,8 +117,12 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
         oldBoxPath = "/box/root";
     }
 
-    for (auto uri : uris) {
+    if (!uris.isEmpty()) {
+        auto uri = uris.first();
         if (!uri.startsWith("file:/") || (uri.contains(newBoxPath)) || (uri.contains(oldBoxPath))) {
+            canNotTrash = true;
+        }
+        if (uri.contains("kydrive") && uri.startsWith("file:///media")) {
             canNotTrash = true;
         }
     }
@@ -290,7 +294,7 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
             }
             operation = FileOperationUtils::remove(uris);
         }
-//        SoundEffect::getInstance()->recycleBinDeleteMusic();
+        SoundEffect::getInstance()->recycleBinDeleteMusic();
         return operation;
     } else {
         return nullptr;

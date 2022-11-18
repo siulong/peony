@@ -77,6 +77,9 @@
 #include "directory-view-menu.h"
 #include "icon-view.h"
 
+#include "side-bar-factory-manager.h"
+#include "intel/tablet-side-bar-factory.h"
+
 #include "plugin-manager.h"
 
 #include "list-view.h"
@@ -118,6 +121,15 @@ static bool m_resident = false;
 
 PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicationName) : SingleApplication (argc, argv, applicationName, true)
 {
+    connect(this, &PeonyApplication::focusChanged, this, [=](QWidget *previous, QWidget *current){
+        Q_UNUSED(previous)
+        if (qobject_cast<QAbstractItemView *>(current)) {
+            this->inputMethod()->hide();
+        } else if (current && current->testAttribute(Qt::WA_InputMethodEnabled)) {
+            this->inputMethod()->show();
+        }
+    });
+
     bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
     setProperty("isWayland", isWayland);
 
@@ -177,6 +189,7 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
 
     if (this->isPrimary()) {
         connect(this, &SingleApplication::receivedMessage, this, &PeonyApplication::parseCmd);
+        Peony::SideBarFactoryManager::getInstance()->registerFactory(new Peony::Intel::TabletSideBarFactory);
     }
 
     //parse cmd

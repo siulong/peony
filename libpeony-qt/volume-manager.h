@@ -264,6 +264,7 @@ Q_SIGNALS:
     void volumeRemoved(const std::shared_ptr<Volume> &volume);
     void mountAdded(const std::shared_ptr<Mount> &mount);
     void mountRemoved(const std::shared_ptr<Mount> &mount);
+    void volumeChanged(const std::shared_ptr<Volume> &volume);
 
     // internal signal
     void fileUnmounted(const QString &uri);
@@ -293,6 +294,8 @@ protected:
                                        GMount *mount,
                                        VolumeManager *p_this);
 
+    static void volume_changed_callback(GVolumeMonitor *monitor, GVolume *volume, VolumeManager *p_this);
+
 public Q_SLOTS:
     static void unmount(const QString &uri);
 
@@ -312,6 +315,7 @@ private:
     gulong m_volume_removed_handle = 0;
     gulong m_mount_added_handle = 0;
     gulong m_mount_removed_handle = 0;
+    gulong m_volume_changed_handle = 0;
 };
 
 }

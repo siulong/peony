@@ -46,6 +46,7 @@ public:
         StylePlugin,
         VFSPlugin,
         EmblemPlugin,
+        SideBarPlugin,
         Other
     };
 

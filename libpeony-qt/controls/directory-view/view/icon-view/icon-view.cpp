@@ -32,6 +32,8 @@
 
 #include "global-settings.h"
 #include "search-vfs-uri-parser.h"
+#include "directoryviewhelper.h"
+
 #include <QMouseEvent>
 
 #include <QDragEnterEvent>
@@ -55,6 +57,7 @@
 
 #include <QStringList>
 #include <QStyleHints>
+#include <QPoint>
 
 #include <QDebug>
 #include <QToolTip>
@@ -73,13 +76,15 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     m_touch_active_timer = new QTimer(this);
     m_touch_active_timer->setSingleShot(true);
 
+    setFrameShape(QFrame::NoFrame);
+
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
 
-    setStyle(IconViewStyle::getStyle());
+    //setStyle(IconViewStyle::getStyle());
     //FIXME: do not create proxy in view itself.
     IconViewDelegate *delegate = new IconViewDelegate(this);
     setItemDelegate(delegate);
@@ -110,7 +115,7 @@ IconView::IconView(QWidget *parent) : QListView(parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    setIconSize(QSize(64, 64));
+    setGridSize(QSize(136, 136));
     setGridSize(itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));
 
     m_renameTimer = new QTimer(this);
@@ -332,7 +337,7 @@ void IconView::dropEvent(QDropEvent *e)
 }
 
 void IconView::mouseMoveEvent(QMouseEvent *e)
-{  
+{
     QModelIndex itemIndex = indexAt(e->pos());
     if (!itemIndex.isValid()) {
         if (QToolTip::isVisible()) {
@@ -349,27 +354,59 @@ void IconView::mouseMoveEvent(QMouseEvent *e)
     if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
         doAutoScroll();
     }
+
+    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+        multiSelect();
+    viewport()->update(viewport()->rect());
 }
 
 void IconView::mousePressEvent(QMouseEvent *e)
 {
     bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
-     if (singleClicked) {
-         if (!m_touch_active_timer->isActive()) {
-             m_touch_active_timer->start(1100);
-         }
-     }
+    if (singleClicked) {
+        if (!m_touch_active_timer->isActive()) {
+            m_touch_active_timer->start(1100);
+        }
+    }
 
     m_allow_set_index_widget = true;
 
-    //qDebug()<<"moursePressEvent";
-    m_editValid = true;
+    QModelIndex itemIndex = indexAt(e->pos());
+    if (itemIndex.isValid() && m_multi_select) {
+        m_mouse_release_unselect = selectedIndexes().contains(itemIndex);
+    } else {
+        m_mouse_release_unselect = false;
+    }
+
     QListView::mousePressEvent(e);
 
     if (e->button() != Qt::LeftButton) {
         return;
     }
 
+    if (true == m_mouse_release_unselect) {
+        selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+    }
+
+    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+        multiSelect();
+
+    viewport()->update(viewport()->rect());
+
+    if (!qApp->property("tabletMode").toBool() && !itemIndex.isValid()) {
+        disableMultiSelect();
+    }
+    //FIXME: Modify the icon style, only click on the text to respond, click on the icon to not respond
+    QRect rect = visualRect(indexAt(e->pos()));
+    QSize iconExpectedSize = iconSize();
+
+    QRect testRect(rect.x(), rect.y()+ iconExpectedSize.height(),rect.width(),rect.height()-iconExpectedSize.height());
+    if(!testRect.contains(e->pos()))
+    {
+        m_editValid = false;
+        m_renameTimer->start();
+        return;
+    }
     //m_renameTimer
     if(!m_renameTimer->isActive())
     {
@@ -398,6 +435,13 @@ void IconView::mouseReleaseEvent(QMouseEvent *e)
 
     if (e->button() != Qt::LeftButton) {
         return;
+    }
+
+    if (true == m_mouse_release_unselect) {
+        QModelIndex itemIndex = indexAt(e->pos());
+        if (itemIndex.isValid()) {
+            selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Deselect|QItemSelectionModel::Rows);
+        }
     }
 }
 
@@ -436,10 +480,9 @@ void IconView::paintEvent(QPaintEvent *e)
 
 void IconView::resizeEvent(QResizeEvent *e)
 {
-    //FIXME: first resize is disfluency.
-    //but I have to reset the index widget in view's resize.
     QListView::resizeEvent(e);
-    setIndexWidget(m_last_index, nullptr);
+    // fix 85058
+    updateEditorGeometries();
 }
 
 void IconView::wheelEvent(QWheelEvent *e)
@@ -470,6 +513,9 @@ void IconView::updateGeometries()
         return;
     }
 
+    if (model()->columnCount() == 0 || model()->rowCount() == 0)
+        return;
+    //bug#120710 文件未占满一屏时，不需要展示滑动条
     int itemCount = model()->rowCount();
     QRegion itemRegion;
     for (int row = 0; row < itemCount; row++) {
@@ -480,7 +526,8 @@ void IconView::updateGeometries()
         verticalScrollBar()->setRange(0, 0);
     } else {
         int vertiacalMax = verticalScrollBar()->maximum();
-        verticalScrollBar()->setMaximum(vertiacalMax + gridSize().height());
+        verticalScrollBar()->setMaximum(vertiacalMax + BOTTOM_STATUS_MARGIN);
+        int verticalValue = verticalOffset();
         verticalScrollBar()->setValue(verticalValue);
     }
 #else
@@ -528,6 +575,65 @@ void IconView::focusInEvent(QFocusEvent *e)
             });
         }
     }
+    setAttribute(Qt::WA_InputMethodEnabled, false);
+}
+
+void IconView::startDrag(Qt::DropActions supportedActions)
+{
+    auto indexes = selectedIndexes();
+    if (indexes.count() > 0) {
+        auto pos = mapFromGlobal(QCursor::pos());
+        qreal scale = 1.0;
+        QWidget *window = this->window();
+        if (window) {
+            auto windowHandle = window->windowHandle();
+            if (windowHandle) {
+                scale = windowHandle->devicePixelRatio();
+            }
+        }
+
+        auto drag = new QDrag(this);
+        drag->setMimeData(model()->mimeData(indexes));
+
+        QRegion rect;
+        QHash<QModelIndex, QRect> indexRectHash;
+        for (auto index : indexes) {
+            rect += (visualRect(index));
+            indexRectHash.insert(index, visualRect(index));
+        }
+
+        QRect realRect = rect.boundingRect();
+        QPixmap pixmap(realRect.size() * scale);
+        pixmap.fill(Qt::transparent);
+        pixmap.setDevicePixelRatio(scale);
+        QPainter painter(&pixmap);
+        for (auto index : indexes) {
+            painter.save();
+            QStyleOptionViewItem opt = viewOptions();
+            auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
+            viewItemDelegate->initIndexOption(&opt, index);
+
+            opt.state |= QStyle::State_Selected;
+            opt.rect.setSize(visualRect(index).size());
+            painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
+
+            viewItemDelegate->setStartDrag(true);
+            itemDelegate()->paint(&painter, opt, index);
+            viewItemDelegate->setStartDrag(false);
+            painter.restore();
+        }
+
+        drag->setPixmap(pixmap);
+        drag->setHotSpot(pos - rect.boundingRect().topLeft() );
+        drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+        drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+    }
+}
+
+void IconView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QListView::currentChanged(current, previous);
+    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::slotRename()
@@ -644,7 +750,12 @@ void IconView::setProxy(DirectoryViewProxyIface *proxy)
         if (getSelections().count() != 1)
             return;
         auto uri = getSelections().first();
-        Q_EMIT m_proxy->viewDoubleClicked(uri);
+        //process open symbolic link lllll
+        //auto info = FileInfo::fromUri(uri);
+        //if (info->isSymbolLink() && uri.startsWith("file://") && info->isValid())
+          //  uri = "file://" + FileUtils::getSymbolicTarget(uri);
+        if(!m_multi_select)
+            Q_EMIT m_proxy->viewDoubleClicked(uri);
     });
 
 
@@ -764,57 +875,21 @@ void IconView::clearIndexWidget()
         closePersistentEditor(index);
     }
 }
-//绘制拖拽
-void IconView::startDrag(Qt::DropActions flags)
+
+void IconView::multiSelect()
 {
-    auto indexes = selectedIndexes();
-    if (indexes.count() > 0) {
-        auto pos = mapFromGlobal(QCursor::pos());
-        qreal scale = 1.0;
-        QWidget *window = this->window();
-        if (window) {
-            auto windowHandle = window->windowHandle();
-            if (windowHandle) {
-                scale = windowHandle->devicePixelRatio();
-            }
-        }
-
-        auto drag = new QDrag(this);
-        drag->setMimeData(model()->mimeData(indexes));
-
-        QRegion rect;
-        QHash<QModelIndex, QRect> indexRectHash;
-        for (auto index : indexes) {
-            rect += (visualRect(index));
-            indexRectHash.insert(index, visualRect(index));
-        }
-
-        QRect realRect = rect.boundingRect();
-        QPixmap pixmap(realRect.size() * scale);
-        pixmap.fill(Qt::transparent);
-        pixmap.setDevicePixelRatio(scale);
-        QPainter painter(&pixmap);
-        for (auto index : indexes) {
-            painter.save();
-            QStyleOptionViewItem opt = viewOptions();
-            auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
-            viewItemDelegate->initIndexOption(&opt, index);
-
-            opt.state |= QStyle::State_Selected;
-            opt.rect.setSize(visualRect(index).size());
-            painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
-
-            viewItemDelegate->setStartDrag(true);
-            itemDelegate()->paint(&painter, opt, index);
-            viewItemDelegate->setStartDrag(false);
-            painter.restore();
-        }
-
-        drag->setPixmap(pixmap);
-        drag->setHotSpot(pos - rect.boundingRect().topLeft() );
-        drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
-        drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+    if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
+        m_multi_select = true;
     }
+    setSelectionMode(MultiSelection);
+    viewport()->update(viewport()->rect());
+}
+
+void IconView::disableMultiSelect()
+{
+    m_multi_select = false;
+    setSelectionMode(ExtendedSelection);
+    viewport()->update(viewport()->rect());
 }
 
 void IconView::setSearchKey(const QString &key)
@@ -823,13 +898,29 @@ void IconView::setSearchKey(const QString &key)
     viewItemDelegate->setSearchKeyword(key);
 }
 
+void IconView::doMultiSelect(bool isMultiSlelect)
+{
+    if (isMultiSlelect) {
+        multiSelect();
+    } else {
+        disableMultiSelect();
+    }
+}
+
+bool IconView::isEnableMultiSelect()
+{
+    return m_multi_select;
+}
+
 //Icon View 2
 IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
 {
     auto layout = new QVBoxLayout(this);
+    layout->setObjectName("_iconview2_layout");
     layout->setMargin(0);
     layout->setSpacing(0);
     m_view = new IconView(this);
+    DirectoryViewHelper::globalInstance()->addIconViewWithDirectoryViewWidget(m_view, this);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())
@@ -849,6 +940,15 @@ IconView2::~IconView2()
 
 void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *proxyModel)
 {
+    auto layout = findChild<QVBoxLayout *>("_iconview2_layout");
+    bool ok = false;
+    if (parentWidget()) {
+        int statusBarHeight = parentWidget()->property("statusBarHeight").toInt(&ok);
+        if (ok) {
+            layout->setContentsMargins(0, 0, 0, statusBarHeight);
+        }
+    }
+
     disconnect(m_model);
     disconnect(m_proxy_model);
     m_model = model;
@@ -864,8 +964,9 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     //connect(m_model, &FileItemModel::updated, m_view, &IconView::resort);
     connect(m_model, &FileItemModel::updated, m_view->viewport(), QOverload<>::of(&QWidget::update));
 
-    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &DirectoryViewWidget::viewSelectionChanged);
+    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        Q_EMIT viewSelectionChanged();
+    });
 
     connect(m_view, &IconView::activated, this, [=](const QModelIndex &index) {
         //平板模式下，长按打开文件处理
@@ -881,7 +982,12 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         if (getSelections().count() != 1)
             return;
         auto uri = getSelections().first();
-        Q_EMIT this->viewDoubleClicked(uri);
+        //process open symbolic link
+       // auto info = FileInfo::fromUri(uri);
+       // if (info->isSymbolLink() && uri.startsWith("file://") && info->isValid())
+        //    uri = "file://" +  FileUtils::getSymbolicTarget(uri);
+        if(!m_view->isEnableMultiSelect())
+            Q_EMIT this->viewDoubleClicked(uri);
 
         m_view->m_touch_active_timer->stop();
     });
@@ -935,7 +1041,7 @@ void IconView2::setCurrentZoomLevel(int zoomLevel)
     if (zoomLevel <= maximumZoomLevel() && zoomLevel >= minimumZoomLevel()) {
         m_zoom_level = zoomLevel;
         //FIXME: implement zoom
-        int base = 64 - 25; //50
+        int base = 16; //50
         int adjusted = base + zoomLevel;
         m_view->setIconSize(QSize(adjusted, adjusted));
         m_view->setGridSize(m_view->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));

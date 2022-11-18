@@ -83,8 +83,6 @@
 #include <QtX11Extras/QX11Info>
 #include <kstartupinfo.h>
 
-#include <ukuisdk/kylin-com4cxx.h>
-
 using namespace Peony;
 
 #define ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-item-position"
@@ -782,7 +780,7 @@ void DesktopIconView::resolutionChange()
     QSize screenSize = this->viewport()->size();
 
     // do not relayout items while screen size is empty.
-    if (screenSize.isEmpty() || !m_initialized) {
+    if (screenSize.isEmpty()) {
         qWarning()<<"screen size is not avaliable";
         return;
     }
@@ -1592,7 +1590,7 @@ const QRect DesktopIconView::getBoundingRect()
 
 void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
 {
-    if (uris.isEmpty() || m_item_rect_hash.isEmpty() || !m_initialized) {
+    if (uris.isEmpty() || m_item_rect_hash.isEmpty()) {
         return;
     }
     auto allFileUris = getAllFileUris();
@@ -2653,7 +2651,7 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
 
 void DesktopIconView::saveExtendItemInfo()
 {
-    if (!m_proxy_model || 0 == m_id)
+    if (!m_proxy_model || m_id == 0)
         return;
     //task#74174 扩展屏的元素记录到metInfo,以便以后恢复
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
@@ -2741,26 +2739,3 @@ static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect
 
     return true;
 }
-
-bool DesktopIconView::launchAppWithArguments(QString desktopFile, QStringList args)
-{
-    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
-    int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
-    if (features == 2 || features == 3 || mavis) {
-        if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
-            QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
-            if (session.isValid()) {
-                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
-                qDebug() << "[DesktopIconView::LaunchAppWithArguments]  desktopFile:" << desktopFile << "args:" <<args;
-
-                if (result.isValid()) {
-                    return true;
-                }
-                qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
-            }
-        }
-        return true;
-    }
-    return false;
-}
-

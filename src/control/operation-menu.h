@@ -29,6 +29,7 @@
 class MainWindow;
 class QToolButton;
 class OperationMenuEditWidget;
+class QWidgetAction;
 
 class OperationMenu : public QMenu
 {
@@ -48,6 +49,7 @@ private:
 private:
     MainWindow *m_window = nullptr;
     OperationMenuEditWidget *m_edit_widget = nullptr;
+    QWidgetAction *m_editWidgetContainer = nullptr;
 };
 
 class OperationMenuEditWidget : public QWidget

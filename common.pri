@@ -1,5 +1,6 @@
 VERSION = 3.2.2
 DEFINES += VERSION='\\"$${VERSION}\\"'
+
 DEFINES += V10_SP1='\\"V10SP1\\"'
 DEFINES += V10_SP1_EDU='\\"V10SP1-edu\\"'
 
