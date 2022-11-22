@@ -1223,6 +1223,10 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                         action->setParent(this);
                         action->setObjectName(plugin->name());
                         addAction(action);
+                        qDebug()<< id<<"-==================-";
+                        if(id == "Peony File Labels Menu Extension"){
+                            l<<addSeparator();
+                        }
                     }
                 }
             }
