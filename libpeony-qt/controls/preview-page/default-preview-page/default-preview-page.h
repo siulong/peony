@@ -31,7 +31,7 @@
 #include <QLabel>
 #include <QMap>
 
-class QGridLayout;
+class QVBoxLayout;
 class QPushButton;
 class QFormLayout;
 
@@ -89,6 +89,7 @@ private:
 public:
     void wrapData(QLabel *p_label, const QString &text);
     void updateForm(QSize size);
+    void addSeparator();
 
 private Q_SLOTS:
     void updateInfo(FileInfo *info);
@@ -116,7 +117,7 @@ private:
     quint64 m_hidden_count = 0;
     quint64 m_total_size = 0;
 
-    QGridLayout *m_layout;
+    QVBoxLayout *m_layout;
     IconContainer *m_icon;
     QFormLayout *m_form;
     QLabel *m_display_name_label;
@@ -125,6 +126,7 @@ private:
     QLabel *m_total_size_label;
     QLabel *m_time_modified_label;
     QLabel *m_time_access_label;
+    QLabel *m_time_create_label;
 
     //image
     QLabel *m_image_size;
