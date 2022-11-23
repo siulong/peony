@@ -48,7 +48,8 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
 
     m_bar->connect(m_bar, &Peony::LocationBar::blankClicked, [=]() {
         auto curUri = m_bar->getCurentUri();
-        if (! curUri.startsWith("trash:///") && ! curUri.startsWith("recent:///"))
+        //不允许编辑的路径，新增搜索目录，关联bug#94229 改动
+        if (! curUri.startsWith("trash:///") && ! curUri.startsWith("recent:///") && ! curUri.startsWith("search:///"))
         {
             layout->setCurrentWidget(m_edit);
             m_edit->setFocus();
@@ -137,6 +138,7 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
     m_bar->setRootUri(uri);
     m_edit->setUri(uri);
     m_text = uri;
+    //qDebug() << "m_edit visible:"<<isEditing();
     if (! uri.startsWith("search://"))
     {
         m_last_non_search_path = uri;
@@ -184,10 +186,11 @@ void AdvancedLocationBar::switchEditMode(bool bSearchMode)
     else if(m_in_search_mode)
     {
         //quit search mode, show non search contents
-        if (m_last_key.length() > 0)
-        {
-            Q_EMIT this->updateWindowLocationRequest(m_last_non_search_path, false);
-        }
+        // bug#94229 改动，不需要额外更新信号，退出搜索模式正常
+//        if (m_last_key.length() > 0)
+//        {
+//            Q_EMIT this->updateWindowLocationRequest(m_last_non_search_path, false);
+//        }
 
         //在文件保护箱中搜索时，清空搜索内容会导致刷新，路径更新需要授权，导致2次弹框
         //屏蔽清空搜索内容代码，解决bug#76431, 概率性闪退问题
