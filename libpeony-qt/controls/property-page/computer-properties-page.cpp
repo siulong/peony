@@ -126,6 +126,10 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             quint64 available = g_file_info_get_attribute_uint64(info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
 
             char *fs_type = g_file_info_get_attribute_as_string(info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+            QString type(fs_type);
+            if (type.contains("ext")) {
+                used = total - available;
+            }
             m_layout->addRow(tr("Name: "), new QLabel(targetUri == "file:///" ? tr("File System") : tr("Data"), this));
             m_layout->addRow(tr("Total Space: "), new QLabel(formatCapacityString(total), this));
             m_layout->addRow(tr("Used Space: "), new QLabel(formatCapacityString(used), this));
@@ -217,7 +221,9 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             QString type = getFileSystemType(uri);
             if (type.length() <=0)
                 type = fs_type;
-
+            if (type.contains("ext")) {
+                usedSpace = totalSpace - availableSpace;
+            }
             m_layout->addRow(tr("Name: "), new QLabel(mount->name(), this));
 /*            if (bMobileDevice)
                 m_layout->addRow(tr("Total Space: "), new QLabel(sizeInfo, this));
