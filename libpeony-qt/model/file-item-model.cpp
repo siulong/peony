@@ -385,6 +385,11 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
             flags |= Qt::ItemIsDragEnabled;
             flags |= Qt::ItemIsEditable;
         }
+        // to make the applications disable
+        if(item->m_info->canExecute()&&item->m_info->isExecDisable()) {
+            flags &= ~Qt::ItemIsEnabled;
+            flags |= Qt::ItemIsSelectable;
+        }
         return flags;
     } else {
         return Qt::ItemIsDropEnabled;
@@ -608,7 +613,6 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
-    //qDebug()<<"dropMimeData:" <<action;
     //can not move StandardPath to any dir
     if (action == Qt::MoveAction && FileUtils::containsStandardPath(srcUris)) {
         return false;
@@ -624,9 +628,8 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         }
     }
     //drag from trash to another place, return false
-    //comment to fix can not drag to copy trash file,link to bug#117741
-//    if (b_trash_item && destDirUri != "trash:///")
-//        return false;
+    if (b_trash_item && destDirUri != "trash:///")
+        return false;
 
     //fix drag file to trash issue, #42328
     if (destDirUri.startsWith("trash:///"))
@@ -644,6 +647,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         //not copy move, do target move to delete file in trash
         action = Qt::TargetMoveAction;
     }
+
 
     qDebug() << "dropMimeData:" <<action<<destDirUri;
     bool addHistory = true;

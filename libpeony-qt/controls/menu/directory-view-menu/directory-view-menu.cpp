@@ -60,6 +60,7 @@
 
 #include "global-settings.h"
 #include "sound-effect.h"
+#include "directoryviewhelper.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -224,6 +225,11 @@ void DirectoryViewMenu::fillActions()
         }
     }
 
+    //add multiselect action
+    auto multiselectAction = constructMultiSelectActions();
+    if(!multiselectAction.isEmpty())
+        addSeparator();
+
     //add operation actions
     auto fileOpActions = constructFileOpActions();
     if (!fileOpActions.isEmpty()) {
@@ -284,15 +290,17 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             //FIXME: show when prepared?
             newWindow->show();
         });
-        l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-        l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-        connect(l.last(), &QAction::triggered, [=]() {
-            if (!m_top_window)
-                return;
-            QStringList uris;
-            uris<<m_directory;
-            m_top_window->addNewTabs(uris);
-        });
+        if (!qApp->property("tabletMode").toBool()) {
+            l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+            l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+            connect(l.last(), &QAction::triggered, [=]() {
+                if (!m_top_window)
+                    return;
+                QStringList uris;
+                uris<<m_directory;
+                m_top_window->addNewTabs(uris);
+            });
+        }
     } else {
         if (m_selections.count() == 1) {
             auto info = FileInfo::fromUri(m_selections.first());
@@ -373,13 +381,15 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     //FIXME: show when prepared?
                     newWindow->show();
                 });
-                l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
-                l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    if (!m_top_window)
-                        return;
-                    m_top_window->addNewTabs(m_selections);
-                });
+                if (!qApp->property("tabletMode").toBool()) {
+                    l<<addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open in New Tab"));
+                    l.last()->setObjectName(OPEN_IN_NEW_TAB_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        if (!m_top_window)
+                            return;
+                        m_top_window->addNewTabs(m_selections);
+                    });
+                }
             } else if (!info->isVolume()) {
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -1097,18 +1107,19 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 if (m_selections.count() == 1) {
                     auto untrashop = FileOperationUtils::restore(m_selections.first());
                     if(untrashop){
-                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 } else {
                     auto untrashop = FileOperationUtils::restore(m_selections);
                     if(untrashop){
-                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                         });
                     }
                 }
+//                qApp->setProperty("restoreFile",true);
             });
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete"));
             l.last()->setObjectName(DELETE_ACTION);
@@ -1219,10 +1230,26 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                         action->setParent(this);
                         action->setObjectName(plugin->name());
                         addAction(action);
+                        qDebug()<< id<<"-==================-";
+                        if(id == "Peony File Labels Menu Extension"){
+                            l<<addSeparator();
+                        }
                     }
                 }
             }
         }
     }
     return l;
+}
+
+const QList<QAction *> DirectoryViewMenu::constructMultiSelectActions()
+{
+    QList<QAction *> l;
+    auto MultiSelectAction = addAction(tr("MultiSelect"));
+    l<<MultiSelectAction;
+    connect(l.last(), &QAction::triggered, [=]() {
+        Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_view)->doMultiSelect(true);
+    });
+    return l;
+
 }

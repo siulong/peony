@@ -21,6 +21,7 @@
  */
 
 #include "list-view-style.h"
+#include "list-view-delegate.h"
 
 #include <QStyleOption>
 #include <QPainterPath>
@@ -29,6 +30,8 @@
 #include <QTextLayout>
 
 #include <QApplication>
+
+#include <QDebug>
 
 using namespace Peony;
 using namespace Peony::DirectoryView;
@@ -307,3 +310,20 @@ void ListViewStyle::viewItemDrawText(QPainter *p, const QStyleOptionViewItem *op
     viewItemTextLayout(textLayout, textRect.width());
     textLayout.draw(p, paintPosition);
 }
+
+int ListViewStyle::styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
+{
+    switch (hint) {
+    case SH_ItemView_ActivateItemOnSingleClick: {
+        bool singleClick = qApp->style()->styleHint(hint, option, widget, returnData);
+        if (widget->topLevelWidget()->property("isPreviewMode").isValid() && singleClick) {
+            return !widget->topLevelWidget()->property("isPreviewMode").toBool();
+        } else {
+            return singleClick;
+        }
+    }
+    default:
+        return qApp->style()->styleHint(hint, option, widget, returnData);
+    }
+}
+

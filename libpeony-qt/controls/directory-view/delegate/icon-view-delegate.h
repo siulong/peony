@@ -55,11 +55,7 @@ public:
    //初始化option
     void initIndexOption(QStyleOptionViewItem *option,
                          const QModelIndex &index) const;
-    //设置是否是拖拽item
-    void setStartDrag(bool isStartDrag)
-    {
-        m_isStartDrag = isStartDrag;
-    }
+    void setStartDrag(bool isDrag);
     void setSearchKeyword(QString regFindKeyWords);
 
     const QString getRegFindKeyWords() const;
@@ -93,7 +89,7 @@ private:
     QWidget *m_index_widget;
 
     QPushButton *m_styled_button;
-    bool m_isStartDrag;  //是否是拖拽item
+    bool m_isStartDrag = false; ;  //是否是拖拽item
 
     QString m_regFindKeyWords;
 };

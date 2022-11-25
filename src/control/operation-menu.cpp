@@ -34,6 +34,7 @@
 
 #include "global-settings.h"
 #include "clipboard-utils.h"
+#include "thumbnail-manager.h"
 #include "file-operation-utils.h"
 #include "file-operation-manager.h"
 #include "directory-view-widget.h"
@@ -48,11 +49,11 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
 
     //FIXME: implement all actions.
 
-    auto editWidgetContainer = new QWidgetAction(this);
+    m_editWidgetContainer = new QWidgetAction(this);
     auto editWidget = new OperationMenuEditWidget(window, this);
     m_edit_widget = editWidget;
-    editWidgetContainer->setDefaultWidget(editWidget);
-    addAction(editWidgetContainer);
+    m_editWidgetContainer->setDefaultWidget(editWidget);
+    addAction(m_editWidgetContainer);
 
     connect(m_edit_widget, &OperationMenuEditWidget::operationAccepted, this, &QMenu::hide);
 
@@ -74,6 +75,9 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
             KWindowSystem::clearState(m_window->winId(), KWindowSystem::KeepAbove);
     });
     keepAllow->setCheckable(true);
+    if (QApplication::platformName().toLower().contains("wayland")) {
+        keepAllow->setVisible(false);
+    }
 
     auto showHidden = addAction(tr("Show Hidden"), this, [=](bool checked) {
         //window set show hidden
@@ -158,6 +162,9 @@ void OperationMenu::updateMenu()
 
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
+
+    bool tablet = qApp->property("tabletMode").toBool();
+    m_editWidgetContainer->setVisible(!tablet);
 }
 
 OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *parent) : QWidget(parent)

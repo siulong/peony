@@ -26,10 +26,16 @@
 #include <QObject>
 #include "peony-core_global.h"
 #include "menu-plugin-iface.h"
+#include <QListWidgetItem>
+#include <QPushButton>
+#include <QMenu>
+#include <QMainWindow>
+
+#include "color-pushbutton.h"
 
 namespace Peony {
 
-class MenuPluginManager : public QObject
+class PEONYCORESHARED_EXPORT MenuPluginManager : public QObject
 {
     Q_OBJECT
 public:
@@ -82,9 +88,11 @@ private:
     bool m_enable = true;
 };
 
+class FileLabelWidget;
 class FileLabelInternalMenuPlugin : public QObject, public MenuPluginInterface
 {
     Q_OBJECT
+    friend class FileLabelWidget;
 public:
     explicit FileLabelInternalMenuPlugin(QObject *parent);
 
@@ -114,6 +122,24 @@ public:
 
 private:
     bool m_enable = true;
+    FileLabelWidget* m_label = nullptr;
+};
+
+class FileLabelWidget : public QWidget
+{
+public:
+    friend class FileLabelInternalMenuPlugin;
+    Q_OBJECT
+
+public Q_SLOTS:
+    void clickItem(int index);
+
+private:
+    explicit FileLabelWidget(const QStringList &selectionUris);
+    QStringList  *m_selectionUris;
+    QButtonGroup *m_colorgroup;
+    ColorPushButton *m_colorbutton;
+    QList<int> m_ids;
 };
 
 class CreateSharedFileLinkMenuPlugin : public QObject, public MenuPluginInterface

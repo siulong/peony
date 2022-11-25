@@ -40,6 +40,8 @@ public:
                        const QStyleOption *option,
                        QPainter *painter,
                        const QWidget *widget = nullptr) const override;
+
+    int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override;
     void drawControl(ControlElement ce, const QStyleOption *option, QPainter *painter,
                      const QWidget *widget) const override;
     //绘制列表视图文本

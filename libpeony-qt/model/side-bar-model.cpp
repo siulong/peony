@@ -61,8 +61,9 @@ SideBarModel::SideBarModel(QObject *parent)
             continue;
         }
         if (plugin->holdInSideBar()) {
-            m_root_children->append(new SideBarVFSItem(plugin, this));
+            m_root_children->append(new SideBarVFSItem(plugin->uriScheme() + "/", nullptr, this));
         }
+
     }
 
 //    SideBarSeparatorItem *separator1 = new SideBarSeparatorItem(SideBarSeparatorItem::Large, nullptr, this, this);

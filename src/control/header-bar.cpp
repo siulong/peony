@@ -34,8 +34,17 @@
 
 #include "directory-view-factory-manager.h"
 #include "directory-view-plugin-iface2.h"
+#include "search-vfs-uri-parser.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-utils.h"
+#include "tab-widget.h"
+#include "preview-page-factory-manager.h"
+#include "preview-page-plugin-iface.h"
+
+#include "clipboard-utils.h"
+#include "file-operation-utils.h"
+#include "directoryviewhelper.h"
 
 #include <QHBoxLayout>
 #include <QUrl>
@@ -51,17 +60,33 @@
 #include <QStandardPaths>
 
 #include <KWindowSystem>
+#include "global-settings.h"
+#ifdef KYLIN_COMMON
+#include <ukuisdk/kylin-com4cxx.h>
+#endif
 
 #include <QtConcurrent>
+#include <QAction>
 
 #include <QX11Info>
 
+#include <QDBusInterface>
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
+#include <QDBusMessage>
+#include <QDBusReply>
 #include <QPainter>
 
 #include <QDebug>
+#include <QFileDialog>
+
+#include "search-widget.h"
+
+#define DBUS_STATUS_MANAGER_IF "com.kylin.statusmanager.interface"
 
 static HeaderBarStyle *global_instance = nullptr;
 static QString terminal_cmd = nullptr;
+static QDBusInterface *g_statusManagerDBus = nullptr;
 
 HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 {
@@ -91,20 +116,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 //    createFolder->setAutoRaise(false);
 //    createFolder->setFixedSize(QSize(40, 40));
 //    createFolder->setIconSize(QSize(16, 16));
-//    m_create_folder = createFolder;
-
-    //use theme buttons
-//    auto createFolder = new HeadBarPushButton(this);
-//    m_create_folder = createFolder;
-//    createFolder->setFixedSize(QSize(40, 40));
-//    createFolder->setIconSize(QSize(16, 16));
-//    createFolder->setIcon(QIcon::fromTheme("folder-new-symbolic"));
-//    createFolder->setToolTip(tr("Create Folder"));
-//    addWidget(createFolder);
-//    connect(createFolder, &QPushButton::clicked, m_window, [=]() {
-//        //use the same function
-//        m_window->createFolderOperation();
-//    });
 
 //    addSpacing(2);
 
@@ -119,132 +130,239 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 //    openTerminal->setFixedSize(QSize(40, 40));
 //    openTerminal->setIconSize(QSize(16, 16));
 
-    //use theme buttons
-//    auto openTerminal = new HeadBarPushButton(this);
-//    openTerminal->setFixedSize(QSize(40, 40));
-//    openTerminal->setIconSize(QSize(16, 16));
-//    openTerminal->setIcon(QIcon::fromTheme("terminal-app-symbolic"));
-//    openTerminal->setToolTip(tr("Open Terminal"));
-//    addWidget(openTerminal);
-//    connect(openTerminal, &QPushButton::clicked, m_window, [=]() {
-//        //open the default terminal
-//        openDefaultTerminal();
-//    });
 
-//    addSpacing(9 - 4);
-
-    auto goBack = new HeadBarPushButton(this);
+    auto goBack = new QToolButton(this);
     m_go_back = goBack;
     goBack->setEnabled(false);
     goBack->setToolTip(tr("Go Back"));
-    goBack->setFixedSize(QSize(40, 40));
-    goBack->setIconSize(QSize(16, 16));
     goBack->setIcon(QIcon::fromTheme("go-previous-symbolic"));
-    addWidget(goBack);
 
-    auto goForward = new HeadBarPushButton(this);
+    auto a = addWidget(goBack);
+    m_actions.insert(HeaderBarAction::GoBack, a);
+
+
+    auto goForward = new QToolButton(this);
     m_go_forward = goForward;
     goForward->setEnabled(false);
     goForward->setToolTip(tr("Go Forward"));
-    goForward->setFixedSize(QSize(40, 40));
-    goForward->setIconSize(QSize(16, 16));
     goForward->setIcon(QIcon::fromTheme("go-next-symbolic"));
-    addWidget(goForward);
+    a = addWidget(goForward);
+    m_actions.insert(HeaderBarAction::GoForward, a);
     connect(goForward, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goForward();
     });
 
-    addSpacing(ADDRESS_BAR_LEFT_WIDTH);
+    m_is_intel = (QString::compare("V10SP1-edu", QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
+    if (! m_is_intel)
+    {
+        //non intel project, show go up button
+        auto goUp = new QToolButton(this);
+        m_go_up = goUp;
+        goUp->setEnabled(true);
+        goUp->setToolTip(tr("Go Up"));
+        goUp->setIcon(QIcon::fromTheme("go-up-symbolic"));
+        a = addWidget(goUp);
+        m_actions.insert(HeaderBarAction::GoForward, a);
+        connect(goUp, &QPushButton::clicked, m_window, [=]() {
+            m_window->getCurrentPage()->cdUp();
+        });
+    }
+    addSpacing(9);
 
-    auto locationBar = new Peony::AdvancedLocationBar(this);
-    locationBar->setMinimumWidth(ADDRESS_BAR_MINIMUN_WIDTH);
-    m_location_bar = locationBar;
-    m_location_bar->setFocusPolicy(Qt::FocusPolicy(m_location_bar->focusPolicy() & ~Qt::TabFocus));
-    addWidget(locationBar);
+    //task#10993 实现文档管理器路径模式与搜索模式切换动画
+    m_searchWidget = new Peony::SearchWidget(this);
+    a = addWidget(m_searchWidget);
+    m_actions.insert(HeaderBarAction::LocationBar, a);
 
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
-        quitSerachMode();
+        Q_EMIT m_searchWidget->clearSearchBox();
     });
 
-    connect(m_location_bar, &Peony::AdvancedLocationBar::refreshRequest, [=]()
-    {
+    connect(m_searchWidget, &Peony::SearchWidget::refreshRequest, [=]() {
         m_window->updateTabPageTitle();
     });
-    connect(m_location_bar, &Peony::AdvancedLocationBar::updateFileTypeFilter, [=](const int &index) {
+    connect(m_searchWidget, &Peony::SearchWidget::updateFileTypeFilter, [=](const int &index) {
         m_window->getCurrentPage()->setSortFilter(index);
     });
-    connect(m_location_bar, &Peony::AdvancedLocationBar::searchRequest, [=](const QString &path, const QString &key){
-//        m_window->forceStopLoading();
-//        //key is null, clean search content, show all files
-//        if (key == "" || key.isNull())
-//            Q_EMIT this->updateLocationRequest(path, true);
-//        else
-//        {
-//            auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(path, key, true, false, "", m_search_recursive);
-//            Q_EMIT this->updateLocationRequest(targetUri, true);
-//        }
 
-        //search update all in main window
-        m_window->forceStopLoading();
-        Q_EMIT this->updateSearch(path, key, true);
+    connect(this, &HeaderBar::closeSearch, m_searchWidget, &Peony::SearchWidget::closeSearch );
+    connect(this, &HeaderBar::setGlobalFlag, m_searchWidget, &Peony::SearchWidget::setGlobalFlag );
+    connect(this, &HeaderBar::updateSearchRecursive, m_searchWidget, &Peony::SearchWidget::updateSearchRecursive);
+    connect(this, &HeaderBar::setLocation, m_searchWidget, &Peony::SearchWidget::updateLocation);
+    connect(this, &HeaderBar::cancelEdit, m_searchWidget, &Peony::SearchWidget::cancelEdit);
+    connect(this, &HeaderBar::startEdit, m_searchWidget, &Peony::SearchWidget::startEdit);
+    connect(this, &HeaderBar::finishEdit, m_searchWidget, &Peony::SearchWidget::finishEdit);
+    connect(m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, &HeaderBar::updateSearchRequest);
+    connect(m_searchWidget, &Peony::SearchWidget::updateLocationRequest, this, &HeaderBar::updateLocationRequest);
+    connect(this, &HeaderBar::setLocation, this, &HeaderBar::quitMultiSelect);
+
+    addSpacing(2);
+    //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加多选模式
+    addTabletMenu();
+    addSpacing(2);
+
+    a = addAction(QIcon::fromTheme("view-grid-symbolic"), tr("View Type"));
+    m_actions.insert(HeaderBarAction::ViewType, a);
+    auto viewType = qobject_cast<QToolButton *>(widgetForAction(a));
+    viewType->setAutoRaise(false);
+    viewType->setFixedWidth(57);
+    viewType->setIconSize(QSize(16, 16));
+    viewType->setPopupMode(QToolButton::InstantPopup);
+
+    m_view_type_menu = new ViewTypeMenu(viewType);
+    m_preview_action = new QAction(tr("Details"));
+    connect(m_view_type_menu,&QMenu::aboutToShow,m_view_type_menu,[=](){
+        m_view_type_menu->addSeparator();
+        m_view_type_menu->insertAction(0,m_preview_action);
     });
 
-    connect(m_location_bar, &Peony::AdvancedLocationBar::updateWindowLocationRequest, this, &HeaderBar::updateLocationRequest);
-    connect(this, &HeaderBar::clearTrash, m_location_bar, &Peony::AdvancedLocationBar::clearTrash);
-    addSpacing(ADDRESS_BAR_RIGHT_WIDTH);
-//    auto a = addAction(QIcon::fromTheme("edit-find-symbolic"), tr("Search"));
-//    connect(a, &QAction::triggered, this, &HeaderBar::searchButtonClicked);
-//    auto search = qobject_cast<QToolButton *>(widgetForAction(a));
-//    search->setAutoRaise(false);
-//    search->setFixedSize(QSize(40, 40));
-//    setIconSize(QSize(16, 16));
-//    m_search_button = search;
+    m_preview_action->setCheckable(true);
 
-    //use theme buttons
-    auto search = new HeadBarPushButton(this);
-    m_search_button = search;
-    search->setFixedSize(QSize(SEARCH_BTN_WIDTH, SEARCH_BTN_WIDTH));
-    search->setIconSize(QSize(16, 16));
-    search->setIcon(QIcon::fromTheme("edit-find-symbolic"));
-    search->setToolTip(tr("Search"));
-    addWidget(search);
-    connect(search, &QPushButton::clicked, this, &HeaderBar::searchButtonClicked);
+    a->setMenu(m_view_type_menu);
 
-//    createFolder->setFlat(true);
-//    createFolder->setProperty("isWindowButton", 1);
-//    createFolder->setProperty("useIconHighlightEffect", 2);
-//    createFolder->setProperty("isIcon", true);
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
 
-//    openTerminal->setFlat(true);
-//    openTerminal->setProperty("isWindowButton", 1);
-//    openTerminal->setProperty("useIconHighlightEffect", 2);
-//    openTerminal->setProperty("isIcon", true);
+    connect(m_preview_action,&QAction::triggered,[=](bool checked){
+        m_window->m_tab->setTriggeredPreviewPage(checked);
+        for (auto name : pluginNames) {
+            if (checked) {
+                auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+                m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
+            } else {
+                m_window->m_tab->setPreviewPage(nullptr);
+            }
+        }
+    });
 
-    search->setFlat(true);
-    //fix:bug#93521,修改控件三态
-    search->setProperty("useIconHighlightEffect", true);
-    search->setProperty("iconHighlightEffectMode", 1);
+    auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
+    m_window->m_tab->setTriggeredPreviewPage(check);
+    m_preview_action->setChecked(check);
 
-    goBack->setFlat(true);
-    goBack->setProperty("isWindowButton", 1);
-    goBack->setProperty("useIconHighlightEffect", 2);
-    goBack->setProperty("isIcon", true);
-    goForward->setFlat(true);
-    goForward->setProperty("isWindowButton", 1);
-    goForward->setProperty("useIconHighlightEffect", 2);
-    goForward->setProperty("isIcon", true);
+    connect(m_view_type_menu, &ViewTypeMenu::switchViewRequest, this, [=](const QString &id, const QIcon &icon, bool resetToZoomLevel) {
+        viewType->setText(id);
+        viewType->setIcon(icon);
+        this->viewTypeChangeRequest(id);
+        if (resetToZoomLevel) {
+            auto viewId = m_window->getCurrentPage()->getView()->viewId();
+            auto factoryManger = Peony::DirectoryViewFactoryManager2::getInstance();
+            auto factory = factoryManger->getFactory(viewId);
+            int zoomLevelHint = factory->zoom_level_hint();
+            m_window->getCurrentPage()->setZoomLevelRequest(zoomLevelHint);
+        }
+    });
 
-    addMenuButtons();
-    setMinimumWidth(GBACK_BTN_WIDTH * 2
-                    + ADDRESS_BAR_LEFT_WIDTH + ADDRESS_BAR_MINIMUN_WIDTH + ADDRESS_BAR_RIGHT_WIDTH
-                    + SEARCH_BTN_WIDTH
-                    + DRAG_AREA_MINIMUN_WIDTH);
-//    m_focus_list<<(createFolder);
-//    m_focus_list<<(openTerminal);
-    m_focus_list<<(goBack);
-    m_focus_list<<(goForward);
-    m_focus_list<<(search);
+    connect(m_view_type_menu, &ViewTypeMenu::updateZoomLevelHintRequest, this, &HeaderBar::updateZoomLevelHintRequest);
+
+    addSpacing(2);
+
+    a = addAction(QIcon::fromTheme("view-sort-ascending-symbolic"), tr("Sort Type"));
+    m_actions.insert(HeaderBarAction::SortType, a);
+    auto sortType = qobject_cast<QToolButton *>(widgetForAction(a));
+    sortType->setAutoRaise(false);
+    sortType->setFixedWidth(57);
+    sortType->setIconSize(QSize(16, 16));
+    sortType->setPopupMode(QToolButton::InstantPopup);
+
+    m_sort_type_menu = new SortTypeMenu(this);
+    a->setMenu(m_sort_type_menu);
+
+    connect(m_sort_type_menu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
+    connect(m_sort_type_menu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
+        if (order == Qt::AscendingOrder) {
+            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
+        } else {
+            sortType->setIcon(QIcon::fromTheme("view-sort-descending-symbolic"));
+        }
+        m_window->setCurrentSortOrder(order);
+    });
+    connect(m_sort_type_menu, &QMenu::aboutToShow, m_sort_type_menu, [=]() {
+        bool originPathVisible = m_window->getCurrentUri() == "trash:///";
+        m_sort_type_menu->setOriginPathVisible(originPathVisible);
+        m_sort_type_menu->setSortType(m_window->getCurrentSortColumn());
+        m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
+    });
+
+    addSpacing(3);
+
+    // Add by wnn, add tool button when select item
+    a = addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("&Copy"));
+    m_actions.insert(HeaderBarAction::Copy, a);
+    a->setVisible(false);
+    a->setToolTip(tr("Copy"));
+    auto copy = qobject_cast<QToolButton *>(widgetForAction(a));
+    connect(a, &QAction::triggered, [=]() {
+        if (!m_window->getCurrentSelections().isEmpty()) {
+            if (m_window->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
+                return ;
+            }
+
+            Peony::ClipboardUtils::setClipboardFiles(m_window->getCurrentSelections(), false);
+        }
+    });
+
+    a = addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("&Cut"));
+    m_actions.insert(HeaderBarAction::Cut, a);
+    a->setVisible(false);
+    a->setToolTip(tr("Cut"));
+    auto cut = qobject_cast<QToolButton *>(widgetForAction(a));
+    connect(a, &QAction::triggered, [=]() {
+        Peony::ClipboardUtils::setClipboardFiles(m_window->getCurrentSelections(), true);
+    });
+
+    a = addAction(tr("&Select All"));
+    a->setIcon(QIcon::fromTheme("edit-select-all-symbolic"));
+    m_actions.insert(HeaderBarAction::SeletcAll, a);
+    a->setVisible(false);
+    a->setToolTip(tr("Select All"));
+    auto select = qobject_cast<QToolButton *>(widgetForAction(a));
+    connect(a, &QAction::triggered, [=]() {
+        if (m_window->getCurrentPage()->getView())
+        {
+            /// note: 通过getAllFileUris设置的全选效率过低，如果增加接口则会导致二进制兼容性问题
+            /// 所以这里使用现有的反选接口实现高效的全选，这个方法在mainwindow中也有用到
+            //auto allFiles = this->getCurrentPage()->getView()->getAllFileUris();
+            //this->getCurrentPage()->getView()->setSelections(allFiles);
+            if (m_isSelectAll) {
+                m_window->getCurrentPage()->getView()->invertSelections();
+                m_isSelectAll = false;
+                select->setText(tr("Select All"));
+            } else {
+                m_window->getCurrentPage()->getView()->setSelections(QStringList());
+                m_window->getCurrentPage()->getView()->invertSelections();
+                m_isSelectAll = true;
+                select->setText(tr("Deselect All"));
+            }
+        }
+    });
+
+    a = addAction(QIcon::fromTheme("edit-delete-symbolic"), tr("&Delete to trash"));
+    m_actions.insert(HeaderBarAction::Delete, a);
+    a->setVisible(false);
+    a->setToolTip(tr("Delete to trash"));
+    auto trash = qobject_cast<QToolButton *>(widgetForAction(a));
+    connect(a, &QAction::triggered, [=]() {
+        if (m_window->getCurrentUri() == "trash:///") {
+            Peony::FileOperationUtils::executeRemoveActionWithDialog(m_window->getCurrentSelections());
+        } else {
+            Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
+        }
+    });
+    //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加关闭控件
+    addTopMenu();
+
+    for (auto action : actions()) {
+        auto w = widgetForAction(action);
+        w->setProperty("iconHighlightEffectMode", 1);
+        w->setProperty("useIconHighlightEffect", true);
+    }
+}
+
+HeaderBar::~HeaderBar()
+{
+    bool check = m_preview_action->isChecked();
+    Peony::GlobalSettings::getInstance()->setValue(DEFAULT_DETAIL, check);
 }
 
 void HeaderBar::findDefaultTerminal()
@@ -313,154 +431,52 @@ void HeaderBar::tryOpenAgain()
     p.waitForFinished(-1);
 }
 
-void HeaderBar::searchButtonClicked()
+void HeaderBar::switchSelectStatus(bool select)
 {
-    m_search_mode = ! m_search_mode;
-    qDebug() << "searchButtonClicked" <<m_search_mode;
-    m_window->updateSearchStatus(m_search_mode);
-}
-
-void HeaderBar::setSearchMode(bool mode)
-{
-    m_search_button->setCheckable(mode);
-    m_search_button->setChecked(mode);
-    m_search_button->setDown(mode);
-    if (! mode)
-        m_search_button->setFocusPolicy(Qt::NoFocus);
-    else
-        m_search_button->setFocusPolicy(Qt::ClickFocus);
-    m_location_bar->switchEditMode(mode);
-}
-
-void HeaderBar::closeSearch()
-{
-    m_search_mode = false;
-    setSearchMode(false);
-}
-
-void HeaderBar::initFocus()
-{
-    for (auto widget : m_focus_list) {
-        widget->setFocusPolicy(Qt::StrongFocus);
-        m_window->addFocusWidgetToFocusList(widget);
+    if (m_tablet_mode) {
+        // fixme: 没有实现directoryviewiface2接口的view不应该显示全选之类的选项
+        //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加多选模式
+        if (select) {
+            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(true);
+            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(true);
+            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(true);
+        } else {
+            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
+            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
+            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+        }
+        updateSelectAllStatus(true);
+        return;
     }
-}
 
-void HeaderBar::updateSearchRecursive(bool recursive)
-{
-    m_search_recursive = recursive;
+    if (select) {
+        m_actions.find(HeaderBarAction::SortType).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::ViewType).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Copy).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::Cut).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::Delete).value()->setVisible(true);
+    }
+    else {
+        m_actions.find(HeaderBarAction::SortType).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::ViewType).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::Copy).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
+    }
+    //fix bug#100105 After the selected status changes, the view type is grayed out.
+    if (!select) {
+        updateViewTypeEnable();
+        updateSortTypeEnable();
+    }
 }
 
 void HeaderBar::addSpacing(int pixel)
 {
-    QWidget *widget = new QWidget(this);
-    widget->setFixedSize(QSize((pixel < 1 ? 1 : pixel), 40));
-    widget->setAttribute(Qt::WA_TranslucentBackground);
-
-    addWidget(widget);
-//    for (int i = 0; i < pixel; i++) {
-//        addSeparator();
-//    }
-}
-
-void HeaderBar::addMenuButtons()
-{
-    //占位widget,5个widget共同组成拖动区域,共宽150px
-    for (int i = 1; i <= 5; ++i) {
-        QWidget *widget = new QWidget(this);
-        widget->setFixedSize(QSize(i * 10, 40));
-        widget->setAttribute(Qt::WA_TranslucentBackground);
-        addWidget(widget);
+    for (int i = 0; i < pixel; i++) {
+        addSeparator();
     }
-
-    QAction *action = addAction(QIcon::fromTheme("view-grid-symbolic"), tr("View Type"));
-    QToolButton *viewType = qobject_cast<QToolButton *>(widgetForAction(action));
-    viewType->setAutoRaise(true);
-    viewType->setFixedSize(QSize(57, 40));
-    viewType->setIconSize(QSize(16, 16));
-    viewType->setPopupMode(QToolButton::InstantPopup);
-
-    ViewTypeMenu* viewTypeMenu = new ViewTypeMenu(viewType);
-    m_view_type_menu = viewTypeMenu;
-    action->setMenu(viewTypeMenu);
-
-    connect(viewTypeMenu, &ViewTypeMenu::switchViewRequest, this, [=](const QString &id, const QIcon &icon, bool resetToZoomLevel) {
-        viewType->setText(id);
-        viewType->setIcon(icon);
-        viewTypeChangeRequest(id);
-        if (resetToZoomLevel) {
-            auto viewId = m_window->getCurrentPage()->getView()->viewId();
-            auto factoryManger = Peony::DirectoryViewFactoryManager2::getInstance();
-            auto factory = factoryManger->getFactory(viewId);
-            int zoomLevelHint = factory->zoom_level_hint();
-            m_window->getCurrentPage()->setZoomLevelRequest(zoomLevelHint);
-        }
-    });
-
-    connect(viewTypeMenu, &ViewTypeMenu::updateZoomLevelHintRequest, this, &HeaderBar::updateZoomLevelHintRequest);
-
-    action = addAction(QIcon::fromTheme("view-sort-ascending-symbolic"), tr("Sort Type"));
-    QToolButton *sortType = qobject_cast<QToolButton *>(widgetForAction(action));
-    sortType->setAutoRaise(true);
-    sortType->setFixedSize(QSize(57, 40));
-    sortType->setIconSize(QSize(16, 16));
-    sortType->setPopupMode(QToolButton::InstantPopup);
-
-    SortTypeMenu *sortTypeMenu = new SortTypeMenu(sortType);
-    m_sort_type_menu = sortTypeMenu;
-    action->setMenu(sortTypeMenu);
-
-    connect(sortTypeMenu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
-    connect(sortTypeMenu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
-        if (order == Qt::AscendingOrder) {
-            sortType->setIcon(QIcon::fromTheme("view-sort-descending-symbolic"));
-        } else {
-            sortType->setIcon(QIcon::fromTheme("view-sort-ascending-symbolic"));
-        }
-        m_window->setCurrentSortOrder(order);
-    });
-    connect(sortTypeMenu, &QMenu::aboutToShow, sortTypeMenu, [=]() {
-        bool originPathVisible = m_window->getCurrentUri() == "trash:///";
-        sortTypeMenu->setOriginPathVisible(originPathVisible);
-        sortTypeMenu->setSortType(m_window->getCurrentSortColumn());
-        sortTypeMenu->setSortOrder(m_window->getCurrentSortOrder());
-    });
-    connect(sortTypeMenu, &SortTypeMenu::globalSortingPolicyChanged, this, [=]{
-        auto sortType = m_window->getCurrentSortColumn();
-        auto sortOrder = m_window->getCurrentSortOrder();
-        sortTypeMenu->setSortType(sortType);
-        sortTypeMenu->setSortOrder(sortOrder);
-        m_window->setCurrentSortColumn(sortType);
-        m_window->setCurrentSortOrder(sortOrder);
-    });
-
-    action = addAction(QIcon::fromTheme("open-menu-symbolic"), tr("Option"));
-    QToolButton *popMenu = qobject_cast<QToolButton *>(widgetForAction(action));
-    popMenu->setAutoRaise(false);
-    popMenu->setFixedSize(QSize(40, 40));
-    popMenu->setIconSize(QSize(16, 16));
-    popMenu->setProperty("isOptionButton", true);
-    popMenu->setPopupMode(QToolButton::InstantPopup);
-
-    OperationMenu *operationMenu = new OperationMenu(m_window, popMenu);
-    m_operation_menu = operationMenu;
-    action->setMenu(operationMenu);
-
-    viewType->setProperty("isWindowButton", 1);
-    viewType->setProperty("useIconHighlightEffect", 0x2);
-    viewType->setAutoRaise(true);
-
-    sortType->setProperty("isWindowButton", 1);
-    sortType->setProperty("useIconHighlightEffect", 0x2);
-    sortType->setAutoRaise(true);
-
-    popMenu->setProperty("isWindowButton", 1);
-    popMenu->setProperty("useIconHighlightEffect", 0x2);
-    popMenu->setAutoRaise(true);
-
-    m_focus_list << (viewType);
-    m_focus_list << (sortType);
-    m_focus_list << (popMenu);
 }
 
 void HeaderBar::mouseMoveEvent(QMouseEvent *e)
@@ -480,73 +496,66 @@ void HeaderBar::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void HeaderBar::setLocation(const QString &uri)
+void HeaderBar::updatePreviewPageVisible()
 {
-    m_location_bar->updateLocation(uri);
-}
-
-void HeaderBar::cancelEdit()
-{
-    m_location_bar->cancelEdit();
-}
-
-void HeaderBar::startEdit(bool bSearch)
-{
-    //qDebug() << "bSearch" <<bSearch <<m_search_mode;
-    if (bSearch && m_search_mode)
-        return;
-
-    if (bSearch)
-    {
-        searchButtonClicked();
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
+    for (auto name : pluginNames) {
+        if (m_view_type_menu->menuAction()->isVisible() && m_preview_action->isChecked()) {
+            auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+            m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
+        } else {
+            m_window->m_tab->setPreviewPage(nullptr);
+        }
     }
-    else
-    {
-        m_search_mode = false;
-        m_location_bar->startEdit();
-        m_location_bar->switchEditMode(false);
-    }
-}
-
-void HeaderBar::finishEdit()
-{
-    m_location_bar->finishEdit();
-}
-
-void HeaderBar::quitSerachMode()
-{
-    if (m_search_mode)
-       m_location_bar->clearSearchBox();
 }
 
 void HeaderBar::updateIcons()
 {
     if(!m_window)
         return;
+
+    if (!m_window->getCurrentPage())
+        return;
+
+    if (!m_window->getCurrentPage()->getView())
+        return;
+
     qDebug()<<"updateIcons:" <<m_window->getCurrentUri();
     qDebug()<<"updateIcons:" <<m_window->getCurrentSortColumn();
     qDebug()<<"updateIcons:" <<m_window->getCurrentSortOrder();
     m_view_type_menu->setCurrentDirectory(m_window->getCurrentUri());
-    if(m_window->getCurrentPage() && m_window->getCurrentPage()->getView())
-        m_view_type_menu->setCurrentView(m_window->getCurrentPage()->getView()->viewId(), true);
+    m_view_type_menu->setCurrentView(m_window->getCurrentPage()->getView()->viewId(), true);
     m_sort_type_menu->switchSortTypeRequest(m_window->getCurrentSortColumn());
     m_sort_type_menu->switchSortOrderRequest(m_window->getCurrentSortOrder());
-
+    //use fixed icon mark-location-symbolic in close search button
+    //m_searchWidget->updateCloseSearch(Peony::FileUtils::getFileIconName(m_window->getCurrentUri()));
     //go back & go forward
-    if(m_window->getCurrentPage()){
+    if (m_window->getCurrentPage()) {
         m_go_back->setEnabled(m_window->getCurrentPage()->canGoBack());
         m_go_forward->setEnabled(m_window->getCurrentPage()->canGoForward());
+        if (! m_is_intel)
+        {
+            m_go_up->setEnabled(m_window->getCurrentPage()->canCdUp());
+            m_go_up->setProperty("useIconHighlightEffect", 0x2);
+            m_go_up->setProperty("isWindowButton", 1);
+        }
     }
 
     //fix create folder fail issue in special path
 //    auto curUri = m_window->getCurrentUri();
-//    auto info = Peony::FileInfo::fromUri(curUri);
-    //Peony::FileInfoJob job(info);
-    //job.querySync();
+//    auto info = Peony::FileInfo::fromUri(curUri, false);
+//    Peony::FileInfoJob job(info);
+//    job.querySync();
 //    if (info->canWrite())
 //        m_create_folder->setEnabled(true);
 //    else
 //        m_create_folder->setEnabled(false);
+
+    m_go_back->setProperty("useIconHighlightEffect", 0x2);
+    m_go_back->setProperty("isWindowButton", 1);
+    m_go_forward->setProperty("useIconHighlightEffect", 0x2);
+    m_go_forward->setProperty("isWindowButton", 1);
 
     //maximize & restore
     //updateMaximizeState();
@@ -562,15 +571,9 @@ void HeaderBar::updateViewTypeEnable()
     }else{
         m_view_type_menu->setEnabled(true);
         m_view_type_menu->menuAction()->setVisible(true);
+        //bug#118439 修改切换成列表视图后，图标仍然是图标视图
+        m_actions.find(HeaderBarAction::ViewType).value()->setIcon(m_view_type_menu->getCurrentIconFromViewId());
     }
-}
-
-void HeaderBar::updateHeaderState()
-{
-//    if (! m_window->getFilterWorking())
-//        m_create_folder->setEnabled(true);
-//    else
-//        m_create_folder->setEnabled(false);
 }
 
 void HeaderBar::updateSortTypeEnable()
@@ -597,6 +600,265 @@ void HeaderBar::updateMaximizeState()
         m_maximize_restore_button->setIcon(QIcon::fromTheme("window-maximize-symbolic"));
         m_maximize_restore_button->setToolTip(tr("Maximize"));
     }
+}
+
+void HeaderBar::cancleSelect() 
+{
+    switchSelectStatus(false);
+}
+
+void HeaderBar::addTabletMenu()
+{
+    //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加多选模式
+    QAction *tabletAction = addAction(tr("Select All Item"));
+    m_actions.insert(HeaderBarAction::TabletSelectAll, tabletAction);
+    auto select = qobject_cast<QToolButton *>(widgetForAction(tabletAction));
+    select->setProperty("textColor", 0x01);
+
+    tabletAction->setVisible(false);
+    connect(tabletAction, &QAction::triggered, [=]() {
+        updateSelectAllStatus(false);
+    });
+
+    tabletAction = addAction(tr("Select"));
+    m_actions.insert(HeaderBarAction::TabletSelectDone, tabletAction);
+    auto selectDone = qobject_cast<QToolButton *>(widgetForAction(tabletAction));
+    selectDone->setProperty("textColor", 0x01);
+
+    connect(tabletAction, &QAction::triggered, this, [=]() {
+        auto view = m_window->getCurrentPage()->getView();
+        auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
+        if (iface2) {
+            if (iface2->isEnableMultiSelect()) {
+                iface2->doMultiSelect(false);
+                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
+                selectDone->setText(tr("Select"));
+                quitMultiSelect();
+            } else {
+                iface2->doMultiSelect(true);
+                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(true);
+                updateSelectAllStatus(true);
+                selectDone->setText(tr("Select Done"));
+            }
+         }
+        m_window->getCurrentPage()->getView()->repaintView();
+    });
+
+    addSpacing(2);
+
+    tabletAction = addAction(tr("MoveTo"));
+    m_actions.insert(HeaderBarAction::TabletMoveTo, tabletAction);
+    tabletAction->setVisible(false);
+    connect(tabletAction, &QAction::triggered, [=]() {
+        if (CopyOrMoveTo(true)) {
+            quitMultiSelect();
+        }
+    });
+
+    tabletAction = addAction(tr("CopyTo"));
+    m_actions.insert(HeaderBarAction::TabletCopyTo, tabletAction);
+    tabletAction->setVisible(false);
+    connect(tabletAction, &QAction::triggered, [=]() {
+        if (CopyOrMoveTo(false)) {
+            quitMultiSelect();
+        }
+    });
+
+    tabletAction = addAction(tr("Delete"));
+    m_actions.insert(HeaderBarAction::TabletDelete, tabletAction);
+    tabletAction->setVisible(false);
+    auto trash = qobject_cast<QToolButton *>(widgetForAction(tabletAction));
+    trash->setProperty("textColor", 0x02);
+
+    connect(tabletAction, &QAction::triggered, [=]() {
+        if (m_window->getCurrentUri() == "trash:///") {
+            Peony::FileOperationUtils::executeRemoveActionWithDialog(m_window->getCurrentSelections());
+        } else {
+            Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
+        }
+    });
+}
+
+void HeaderBar::updateTabletModeValue(bool isTabletMode)
+{
+    setStyle(HeaderBarStyle::getStyle());
+    m_searchWidget->updateTabletModeValue(isTabletMode);
+    m_tablet_mode = isTabletMode;
+    bool noComputer = false;
+    auto url = m_window->getCurrentUri();
+    if(url != "computer:///"){
+        noComputer = true;
+    }
+    m_actions.find(HeaderBarAction::SortType).value()->setVisible(noComputer);
+    m_actions.find(HeaderBarAction::ViewType).value()->setVisible(noComputer);
+    if (isTabletMode) {
+        m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(noComputer);
+        m_actions.find(HeaderBarAction::Copy).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::Option).value()->setVisible(true);
+        if (! m_is_intel) {
+            m_actions.find(HeaderBarAction::GoForward).value()->setVisible(false);
+        }
+    } else {
+        m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Option).value()->setVisible(false);
+        if (! m_is_intel) {
+            m_actions.find(HeaderBarAction::GoForward).value()->setVisible(true);
+        }
+    }
+    m_preview_action->setVisible(!isTabletMode);
+}
+
+bool HeaderBar::CopyOrMoveTo(bool isCut)
+{
+    auto currentUri = m_window->getCurrentSelections();
+    if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
+        || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
+        || currentUri.startsWith("search://"))
+    {
+        return false;
+    }
+
+    QString targetPath = QFileDialog::getExistingDirectory(this, tr("Select path"), "computer://", QFileDialog::ShowDirsOnly);
+    if (targetPath.isEmpty()) {
+        return false;
+    }
+    Peony::ClipboardUtils::setClipboardFiles(currentUri, isCut);
+    if (! targetPath.contains("file://") && targetPath != "") {
+        targetPath = "file://" + targetPath;
+    }
+    if (Peony::ClipboardUtils::isClipboardHasFiles()) {
+        Peony::ClipboardUtils::pasteClipboardFiles(targetPath);
+    }
+    return true;
+}
+
+void HeaderBar::addTopMenu()
+{
+    QToolButton *optionButton = new QToolButton(this);
+    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
+    optionButton->setToolTip(tr("Option"));
+    optionButton->setAutoRaise(true);
+    optionButton->setFixedSize(QSize(48, 48));
+    optionButton->setIconSize(QSize(16, 16));
+    optionButton->setPopupMode(QToolButton::InstantPopup);
+    optionButton->setProperty("isOptionButton", true);
+    optionButton->setProperty("isWindowButton", 1);
+
+    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
+    optionButton->setMenu(operationMenu);
+    QAction *a = addWidget(optionButton);
+    m_actions.insert(HeaderBarAction::Option, a);
+
+    QToolButton *minimize = new QToolButton(this);
+    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
+    minimize->setToolTip(tr("Minimize"));
+    minimize->setAutoRaise(true);
+    minimize->setFixedSize(QSize(48, 48));
+    minimize->setIconSize(QSize(16, 16));
+    minimize->setProperty("isWindowButton", 1);
+    a = addWidget(minimize);
+    m_actions.insert(HeaderBarAction::TabletMin, a);
+    connect(minimize, &QToolButton::clicked, this, [=]() {
+        KWindowSystem::minimizeWindow(m_window->winId());
+        m_window->showMinimized();
+    });
+
+    QToolButton *close = new QToolButton(this);
+    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
+    close->setToolTip(tr("Close"));
+    close->setAutoRaise(true);
+    close->setFixedSize(QSize(48, 48));
+    close->setIconSize(QSize(16, 16));
+
+    //fix bug#143507, button color is not red issue
+    close->setProperty("isWindowButton", 2);
+    close->setProperty("useIconHighlightEffect", 0x8);
+
+    a = addWidget(close);
+    m_actions.insert(HeaderBarAction::TabletClose, a);
+    a->setVisible(false);
+    connect(close, &QToolButton::clicked, this, [=]() {
+        m_window->close();
+    });
+}
+
+void HeaderBar::quitMultiSelect()
+{
+    if (m_tablet_mode) {
+        m_isSelectAll = false;
+        auto view = m_window->getCurrentPage()->getView();
+        view->setSelections(QStringList());
+
+        QAction *action = m_actions.find(HeaderBarAction::TabletSelectDone).value();
+        auto select = qobject_cast<QToolButton *>(widgetForAction(action));
+        select->setText(tr("Select"));
+
+        if (view->getAllFileUris().count() == 0) {
+            action->setVisible(false);
+        } else {
+            action->setVisible(true);
+        }
+
+        auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
+        if (iface2 && iface2->isEnableMultiSelect()) {
+            iface2->doMultiSelect(false);
+        }
+        m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+    }
+}
+
+void HeaderBar::updateSelectAllStatus(bool autoUpdate)
+{
+    auto view = m_window->getCurrentPage()->getView();
+    auto action = m_actions.find(HeaderBarAction::TabletSelectAll).value();
+    auto selectAll = qobject_cast<QToolButton *>(widgetForAction(action));
+
+    if (autoUpdate) {
+        int num = view->getSelections().count();
+        int totalNum = view->getAllFileUris().count();
+        if (num == totalNum) {
+            m_isSelectAll = true;
+            selectAll->setText(tr("Deselect All"));
+        } else {
+            m_isSelectAll = false;
+            selectAll->setText(tr("Select All Item"));
+        }
+    } else {
+        if (m_isSelectAll) {
+            view->invertSelections();
+            m_isSelectAll = false;
+            selectAll->setText(tr("Select All Item"));
+            auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
+            if (iface2 && iface2->isEnableMultiSelect()) {
+               iface2->doMultiSelect(true);
+            }
+        } else {
+            view->setSelections(QStringList());
+            view->invertSelections();
+            m_isSelectAll = true;
+            selectAll->setText(tr("Deselect All"));
+        }
+    }
+}
+
+void HeaderBar::updatePreviewStatus(bool check)
+{
+    m_preview_action->setChecked(check);
+    m_preview_action->triggered(check);
 }
 
 //HeaderBarToolButton
@@ -653,6 +915,14 @@ void HeaderBarStyle::drawComplexControl(QStyle::ComplexControl control, const QS
                 button.features |= QStyleOptionToolButton::MenuButtonPopup;
                 button.subControls |= QStyle::SC_ToolButtonMenu;
             }
+            button.palette.setColor(QPalette::Button,Qt::transparent);
+            return qApp->style()->drawComplexControl(control, &button, painter, widget);
+        } else {
+            if (0x01 == widget->property("textColor").toInt()) {
+                button.palette.setColor(QPalette::ButtonText, QColor(55, 144, 250));
+            } else if (0x02 == widget->property("textColor").toInt()) {
+                button.palette.setColor(QPalette::ButtonText, QColor(243, 34, 45));
+            }
             return qApp->style()->drawComplexControl(control, &button, painter, widget);
         }
     }
@@ -663,8 +933,193 @@ void HeaderBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyl
 {
     if (element == PE_IndicatorToolBarSeparator) {
         return;
+
     }
     return qApp->style()->drawPrimitive(element, option, painter, widget);
+}
+
+TopMenuBar::TopMenuBar(HeaderBar *headerBar, MainWindow *parent) : QMenuBar(parent)
+{
+    m_window = parent;
+    m_header_bar = headerBar;
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
+    setStyleSheet(".TopMenuBar"
+                  "{"
+                  "background-color: transparent;"
+                  "border: 0px solid transparent"
+                  "}");
+
+    setFixedHeight(48);
+
+    m_top_menu_layout = new QHBoxLayout(this);
+    m_top_menu_layout->setSpacing(0);
+    m_top_menu_layout->setContentsMargins(0, 0, 0, 0);
+
+    m_top_menu_internal_widget = new QWidget(this);
+    m_top_menu_internal_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    addWindowButtons();
+    m_window->installEventFilter(this);
+}
+
+bool TopMenuBar::eventFilter(QObject *obj, QEvent *e)
+{
+
+    Q_UNUSED(obj)
+    if (m_window) {
+        //use updateMaximizeState function, comment those code
+        if (e->type() == QEvent::Resize || QEvent::WindowStateChange == e->type()) {
+            //fix bug#95419, drag change window to restore not change state issue
+            m_header_bar->updateMaximizeState();
+        }
+        //fix double click space window has no change issue, bug#38499
+//        if (e->type() == QEvent::MouseButtonDblClick)
+//        {
+//            m_header_bar->m_window->maximizeOrRestore();
+//        }
+        return false;
+    } else {
+        if (e->type() == QEvent::MouseMove) {
+            //auto w = qobject_cast<QWidget *>(obj);
+            QCursor c;
+            c.setShape(Qt::ArrowCursor);
+            //this->setCursor(c);
+            //w->setCursor(c);
+            this->topLevelWidget()->setCursor(c);
+        }
+
+    }
+
+    return false;
+
+}
+void TopMenuBar::addWindowButtons()
+{
+    m_window->installEventFilter(this);
+    auto layout = new QHBoxLayout;
+
+    layout->setContentsMargins(0, 0, 8, 0);
+    layout->setSpacing(4);
+
+    auto optionButton = new QToolButton(m_top_menu_internal_widget);
+    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
+    optionButton->setToolTip(tr("Option"));
+    optionButton->setAutoRaise(true);
+    optionButton->setPopupMode(QToolButton::InstantPopup);
+    optionButton->setProperty("isOptionButton", true);
+    optionButton->setProperty("isWindowButton", 1);
+
+    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
+    optionButton->setMenu(operationMenu);
+
+    //minimize, maximize and close
+    //  最小化，最大化，关闭
+    auto minimize = new QToolButton(m_top_menu_internal_widget);
+    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
+    minimize->setToolTip(tr("Minimize"));
+    minimize->setAutoRaise(true);
+
+    connect(minimize, &QToolButton::clicked, this, [=]() {
+        KWindowSystem::minimizeWindow(m_window->winId());
+        m_window->showMinimized();
+    });
+
+    //window-maximize-symbolic
+    //window-restore-symbolic
+    auto maximizeAndRestore = new QToolButton(m_top_menu_internal_widget);
+    m_header_bar->m_maximize_restore_button = maximizeAndRestore;
+    //switch tips with button status, fix bug#77604
+    m_header_bar->updateMaximizeState();
+    maximizeAndRestore->setAutoRaise(true);
+
+    connect(maximizeAndRestore, &QToolButton::clicked, this, [=]() {
+        m_window->maximizeOrRestore();
+    });
+    m_max_or_restore = maximizeAndRestore;
+
+    auto close = new QToolButton(m_top_menu_internal_widget);
+    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
+    close->setToolTip(tr("Close"));
+    close->setAutoRaise(true);
+
+    connect(close, &QToolButton::clicked, this, [=]() {
+        m_window->close();
+    });
+
+    auto palette = qApp->palette();
+    palette.setColor(QPalette::Highlight, QColor("#E54A50"));
+    close->setPalette(palette);
+
+    m_minimize = minimize;
+    m_close = close;
+
+    if (QDBusConnection::connectToBus(0,QString("com.kylin.statusmanager.interface")).isConnected())
+    {
+        if (!g_statusManagerDBus) {
+            g_statusManagerDBus = new QDBusInterface(DBUS_STATUS_MANAGER_IF, "/" ,DBUS_STATUS_MANAGER_IF,QDBusConnection::sessionBus(),this);
+        }
+        QDBusReply<bool> message_a = g_statusManagerDBus->call("get_current_tabletmode");
+        if (message_a.isValid()) {
+            m_tablet_mode = message_a.value();
+        }
+        updateTabletMode(m_tablet_mode);
+
+        connect(g_statusManagerDBus, SIGNAL(mode_change_signal(bool)), this, SLOT(updateTabletMode(bool)));
+    }
+
+
+    layout->addWidget(optionButton);
+    layout->addWidget(minimize);
+    layout->addWidget(maximizeAndRestore);
+    layout->addWidget(close);
+
+    m_top_menu_internal_widget->setLayout(layout);
+    QSpacerItem *spacer = new QSpacerItem(4000, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+    m_top_menu_layout->addSpacerItem(spacer);
+    m_top_menu_layout->addWidget(m_top_menu_internal_widget);
+
+    optionButton->setMouseTracking(true);
+    optionButton->installEventFilter(this);
+    minimize->setMouseTracking(true);
+    minimize->installEventFilter(this);
+    maximizeAndRestore->setMouseTracking(true);
+    maximizeAndRestore->installEventFilter(this);
+    close->setMouseTracking(true);
+    close->installEventFilter(this);
+
+    for (int i = 0; i < layout->count(); i++) {
+        auto w = layout->itemAt(i)->widget();
+        w->setProperty("isWindowButton", 1);
+        w->setProperty("useIconHighlightEffect", 0x2);
+    }
+    close->setProperty("isWindowButton", 2);
+    close->setProperty("useIconHighlightEffect", 0x8);
+
+    optionButton->setVisible((Peony::GlobalSettings::getInstance()->getProjectName() != V10_SP1_EDU));
+}
+
+void TopMenuBar::updateTabletMode(bool isTabletMode)
+{
+    m_tablet_mode = isTabletMode;
+    if(m_tablet_mode)
+    {
+        m_minimize->hide();
+        m_max_or_restore->hide();
+        m_close->hide();
+    }
+    else
+    {
+        m_minimize->setVisible(true);
+        m_max_or_restore->setVisible(true);
+        m_close->setVisible(true);
+    }
+    QTimer::singleShot(100, this, [=](){
+        auto palette = qApp->palette();
+        palette.setColor(QPalette::Highlight, QColor("#E54A50"));
+        m_close->setPalette(palette);
+    });
+    qApp->setProperty("tabletMode", isTabletMode);
 }
 
 HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)
@@ -673,13 +1128,13 @@ HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    setStyleSheet(".HeaderBarContainer"
-                  "{"
-                  "background-color: transparent;"
-                  "border: 0px solid transparent"
-                  "}");
+//    setStyleSheet(".HeaderBarContainer"
+//                  "{"
+//                  "background-color: transparent;"
+//                  "border: 0px solid transparent"
+//                  "}");
 
-    setFixedHeight(50);
+    setFixedHeight(54);
     setMovable(false);
 
     m_layout = new QHBoxLayout;
@@ -716,7 +1171,6 @@ bool HeaderBarContainer::eventFilter(QObject *obj, QEvent *e)
             //w->setCursor(c);
             this->topLevelWidget()->setCursor(c);
         }
-
     }
 
     return false;
@@ -731,108 +1185,10 @@ void HeaderBarContainer::addHeaderBar(HeaderBar *headerBar)
     headerBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addWidget(headerBar);
 
-    headerBar->initFocus();
-
-    addWindowButtons();
-
     m_internal_widget->setLayout(m_layout);
     addWidget(m_internal_widget);
 
-    m_header_bar->m_window->installEventFilter(this);
-}
-
-void HeaderBarContainer::addWindowButtons()
-{
-    //m_window_buttons = new QWidget(this);
-    auto layout = new QHBoxLayout;
-
-    layout->setContentsMargins(0, 0, 4, 0);
-    layout->setSpacing(4);
-
-    //minimize, maximize and close
-    auto minimize = new QToolButton(m_internal_widget);
-    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
-    minimize->setToolTip(tr("Minimize"));
-    minimize->setAutoRaise(false);
-    minimize->setFixedSize(QSize(40, 40));
-    minimize->setIconSize(QSize(16, 16));
-    connect(minimize, &QToolButton::clicked, this, [=]() {
-        KWindowSystem::minimizeWindow(m_header_bar->m_window->winId());
-        //m_header_bar->m_window->showMinimized();
-    });
-
-    //window-maximize-symbolic
-    //window-restore-symbolic
-    auto maximizeAndRestore = new QToolButton(m_internal_widget);
-    m_header_bar->m_maximize_restore_button = maximizeAndRestore;
-    //switch tips with button status, fix bug#77604
-    m_header_bar->updateMaximizeState();
-    maximizeAndRestore->setAutoRaise(false);
-    maximizeAndRestore->setFixedSize(QSize(40, 40));
-    maximizeAndRestore->setIconSize(QSize(16, 16));
-    connect(maximizeAndRestore, &QToolButton::clicked, this, [=]() {
-        m_header_bar->m_window->maximizeOrRestore();
-    });
-    m_max_or_restore = maximizeAndRestore;
-
-    auto close = new QToolButton(m_internal_widget);
-    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
-    close->setToolTip(tr("Close"));
-    close->setAutoRaise(false);
-    close->setFixedSize(QSize(40, 40));
-    close->setIconSize(QSize(16, 16));
-
-    minimize->setProperty("isWindowButton", 1);
-    minimize->setProperty("useIconHighlightEffect", 0x2);
-    minimize->setAutoRaise(true);
-
-    maximizeAndRestore->setProperty("isWindowButton", 1);
-    maximizeAndRestore->setProperty("useIconHighlightEffect", 0x2);
-    maximizeAndRestore->setAutoRaise(true);
-
-    close->setProperty("isWindowButton", 2);
-    close->setProperty("useIconHighlightEffect", 0x8);
-    close->setAutoRaise(true);
-
-    connect(close, &QToolButton::clicked, this, [=]() {
-        m_header_bar->m_window->close();
-    });
-
-    //fix bug#98500, comment self change palette code, use platform-theme way
-//    connect(qApp, &QApplication::paletteChanged, close, [=](){
-//        QTimer::singleShot(100, this, [=](){
-//            auto palette = qApp->palette();
-//            palette.setColor(QPalette::Highlight, QColor("#E54A50"));
-//            close->setPalette(palette);
-//        });
-//    });
-//    auto palette = qApp->palette();
-//    palette.setColor(QPalette::Highlight, QColor("#E54A50"));
-//    close->setPalette(palette);
-
-    layout->addWidget(minimize);
-    layout->addWidget(maximizeAndRestore);
-    layout->addWidget(close);
-
-    m_layout->addLayout(layout);
-
-    minimize->setMouseTracking(true);
-    minimize->installEventFilter(this);
-    maximizeAndRestore->setMouseTracking(true);
-    maximizeAndRestore->installEventFilter(this);
-    close->setMouseTracking(true);
-    close->installEventFilter(this);
-
-    if (!QX11Info::isPlatformX11()) {
-        minimize->setVisible(false);
-        maximizeAndRestore->setVisible(false);
-        close->setVisible(false);
-        m_layout->removeItem(layout);
-    }
-
-    m_header_bar->m_window->addFocusWidgetToFocusList(minimize);
-    m_header_bar->m_window->addFocusWidgetToFocusList(maximizeAndRestore);
-    m_header_bar->m_window->addFocusWidgetToFocusList(close);
+//    m_header_bar->m_window->installEventFilter(this);
 }
 
 void HeaderBarContainer::paintEvent(QPaintEvent *e)

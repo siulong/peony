@@ -59,6 +59,7 @@ QString uri2FavoriteUri(const QString &sourceUri)
     QString favoriteUri = "favorite://" + url.path() + "?schema=" + url.scheme();
     return favoriteUri;
 }
+
 FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, FileItemModel *model, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QVector<FileItem*>* >("QVector<FileItem*>*");
@@ -95,6 +96,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
             infoJob->queryAsync();
             m_waiting_update_queue.removeOne(uri);
         }
+
         if (m_uris_to_be_removed.isEmpty())
             return;
 
@@ -255,7 +257,10 @@ void FileItem::findChildrenAsync()
         if (!target.isEmpty()) {
             enumerator->cancel();
             //enumerator->deleteLater();
+
+            //! \note fix direct setRootUri() prevents view switch error
             m_model->setRootUri(target);
+            //m_model->sendPathChangeRequest(target, this->uri());
             return;
         }
         if (err) {
@@ -270,9 +275,11 @@ void FileItem::findChildrenAsync()
                     BookMarkManager::getInstance()->removeBookMark(uri2FavoriteUri(this->uri()));
                     m_model->sendPathChangeRequest("computer:///", this->uri());
                 }
-                else {
-                    m_model->setRootUri(FileUtils::getParentUri(this->uri()));
-                }
+                else
+                    //! \note fix direct setRootUri() prevents view switch error
+                    // m_model->setRootUri(FileUtils::getParentUri(this->uri()));
+                    m_model->sendPathChangeRequest(FileUtils::getParentUri(this->uri()), this->uri());
+
                 auto fileInfo = FileInfo::fromUri(this->uri());
                 if (err.get()->code() == G_IO_ERROR_NOT_FOUND && fileInfo->isSymbolLink())
                 {
@@ -594,6 +601,7 @@ void FileItem::onChildAdded(const QString &uri)
             QTimer::singleShot(1000, this, [=](){
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             });
+
         } else {
             qInfo()<<"file"<<uri<<"has arealy in file item model";
         }
@@ -656,7 +664,9 @@ void FileItem::onDeleted(const QString &thisUri)
             else
                 m_model->setRootUri(tmpUri);
         } else {
-            m_model->setRootUri("file:///");
+            //! \note Fix direct setRootUri() prevents view switch error
+            // m_model->setRootUri("file:///");
+            m_model->sendPathChangeRequest("file:///", tmpItem->uri());
         }
     }
     m_model->updated();

@@ -12,12 +12,34 @@
 
 #include <QApplication>
 #include <QFontMetrics>
+#include <QDBusInterface>
+#include <QDBusReply>
+
 #include "file-utils.h"
+
+#include "global-settings.h"
 
 KyFileDialogRename::KyFileDialogRename(QWidget *parent) : KyFileOperationDialog(parent), Peony::FileOperationErrorHandler()
 {
+    bool isTabletMode = false;
+    m_statusManagerDBus = new QDBusInterface(DBUS_STATUS_MANAGER_IF, "/" ,DBUS_STATUS_MANAGER_IF,QDBusConnection::sessionBus(),this);
+    if (m_statusManagerDBus) {
+        qDebug() << "[PeonyDesktopApplication::initGSettings] init statusManagerDBus" << m_statusManagerDBus->isValid();
+        if (m_statusManagerDBus->isValid()) {
+            QDBusReply<bool> message = m_statusManagerDBus->call("get_current_tabletmode");
+            if (message.isValid()) {
+                isTabletMode = message.value();
+            }
+        }
+    }
+
     setFixedWidth(600);
-    setFixedHeight(225);
+    if(true == isTabletMode){
+        setFixedHeight(255);
+    }else{
+        setFixedHeight(225);
+    }
+
 }
 
 void KyFileDialogRename::handle(Peony::FileOperationError &error)

@@ -42,7 +42,7 @@ public:
 
 Q_SIGNALS:
     void pageAdded(const QString &uri);
-    void pageRemoved(const QString &uri);
+    void pageRemoved();
     void closeWindowRequest();
     void addPageRequest(const QString &uri, bool jumpTo);
     void locationUpdated(const QString &uri);
@@ -75,8 +75,6 @@ private:
     bool m_should_trigger_drop = false;
 
     const int ELIDE_TEXT_LENGTH = 16;
-
-    std::shared_ptr<Peony::FileInfo> m_info;
 };
 
 class TabBarStyle : public QProxyStyle
@@ -84,15 +82,20 @@ class TabBarStyle : public QProxyStyle
     friend class NavigationTabBar;
     friend class TabWidget;
     static TabBarStyle *getStyle();
-    TabBarStyle() {}
+    TabBarStyle();
 
     void polish(QWidget *widget) override;
 
     int pixelMetric(PixelMetric metric, const QStyleOption *option = nullptr, const QWidget *widget = nullptr) const override;
+    void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option,
+                            QPainter *painter,
+                            const QWidget *widget = nullptr) const override;
     QRect subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const override;
-    void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const override;
     void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
+
+private:
+    bool m_need_adjust = false;
 };
 
 #endif // NAVIGATIONTABBAR_H

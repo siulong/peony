@@ -29,6 +29,10 @@
 #include <QStandardPaths>
 #include <file-utils.h>
 
+#ifdef KYLIN_COMMON
+#include <ukuisdk/kylin-com4cxx.h>
+#endif
+
 extern bool kydroidInstall;
 extern QString kydroidPath;
 
@@ -67,8 +71,8 @@ static void vfs_favorites_file_enumerator_init (FavoritesVFSFileEnumerator* self
     if (kydroidInstall) {
         if (kydroidPath.startsWith("kydroid:///"))
            self->priv->enumerate_queue->enqueue("favorite:///?schema=kydroid");
-        else
-          self->priv->enumerate_queue->enqueue("favorite:///?schema=kmre");
+        else if(kydroidPath.startsWith("kmre:///"))
+           self->priv->enumerate_queue->enqueue("favorite:///?schema=kmre");
     }
 
 

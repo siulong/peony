@@ -24,6 +24,7 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "volume-manager.h"
+#include "linux-pwd-helper.h"
 #include <QUrl>
 #include <QFileInfo>
 #include <QFileInfoList>
@@ -348,6 +349,7 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
     if (uri == "file:///")
         return QObject::tr("File System");
+
     //fix bug#139600，替换windows共享名称, “172.17.123.173上的Windows共享” 显示为 "172.17.123.173上的共享"
     bool isSmbPath = uri.startsWith("smb://");
     QString showName = fileInfo.get()->displayName();
@@ -1073,6 +1075,23 @@ QString FileUtils::getFileSystemType(QString uri)
     return fsType;
 }
 
+QString FileUtils::getMobieDataPath()
+{
+    //path like "file:///var/lib/kmre/data/kmre-1000-kylin/KmreData"
+    //file:///var/lib/kmre/data/kmre-1000-hemh/KmreData
+    //1000 is uuid, kylin is username
+    QString prePath = "/var/lib/kmre/data";
+    //user infos
+    auto user = LinuxPWDHelper::getCurrentUser();
+    QString sufPath =  QString("/kmre-%1-%2/KmreData").arg(user.userId()).arg(user.userName());
+    QString completePath = prePath + sufPath;
+    qDebug() <<"getMobieDataPath:" <<completePath;
+    if (QFile::exists(completePath))
+        return "file://" + completePath;
+    else
+        return "";
+}
+
 bool FileUtils::isRemoteServerUri(const QString &uri)
 {
     if(uri.startsWith("smb://") || uri.startsWith("ftp://") || uri.startsWith("sftp://"))
@@ -1212,4 +1231,42 @@ QString FileUtilsPrivate::getFileIconName(const QString &uri)
     }
 
     return icon_name;
+}
+
+void FileUtils::saveCreateTime(const QString &url)
+{
+    g_autoptr (GError) error = NULL;
+    g_autoptr (GFile) file = url.startsWith ("file://") ? g_file_new_for_uri (url.toUtf8 ().constData ()) : g_file_new_for_path (url.toUtf8 ().constData ());
+    g_autofree gchar* currentTime = g_strdup_printf ("%ld", g_get_real_time ());
+
+    g_return_if_fail (G_IS_FILE (file) && g_file_query_exists (file, NULL));
+    g_file_set_attribute (file, "metadata::CreateTime", G_FILE_ATTRIBUTE_TYPE_STRING, currentTime, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error);
+
+    if (error)      qDebug () << "set create time error: " << error->message;
+}
+
+gint64 FileUtils::getCreateTimeOfMicro(const QString &url)
+{
+    g_autoptr (GError) error = NULL;
+    g_autoptr (GFile) file = g_file_new_for_uri (url.toUtf8 ().constData ());
+    g_autoptr (GFileInfo) fileInfo = g_file_query_info (file, G_FILE_ATTRIBUTE_TIME_CHANGED "," G_FILE_ATTRIBUTE_TIME_CREATED "," "metadata::CreateTime", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error);
+    g_return_val_if_fail (G_IS_FILE (file) && G_IS_FILE_INFO (fileInfo) && g_file_query_exists (file, NULL), 0);
+
+    if (g_file_info_has_attribute (fileInfo, G_FILE_ATTRIBUTE_TIME_CREATED)) {
+        gint64 createTime = g_file_info_get_attribute_uint64 (fileInfo, G_FILE_ATTRIBUTE_TIME_CREATED);
+        gint64 modifyTime = g_file_info_get_attribute_uint64 (fileInfo, G_FILE_ATTRIBUTE_TIME_CHANGED);
+        if (createTime != 0 && createTime <= modifyTime) {
+            return createTime;
+        }
+    }
+
+    if (g_file_info_has_attribute (fileInfo, "metadata::CreateTime")) {
+        const gchar* createTimeStr = g_file_info_get_attribute_string (fileInfo, "metadata::CreateTime");
+        if (createTimeStr) {
+            g_autofree char* createTime10 = g_strndup (createTimeStr, 10);
+            return atoll (createTime10);
+        }
+    }
+
+    return 0;
 }

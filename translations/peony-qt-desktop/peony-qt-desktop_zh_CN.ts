@@ -55,6 +55,10 @@
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
+    <message>
+        <source>My Document</source>
+        <translation type="vanished">我的文档</translation>
+    </message>
 </context>
 <context>
     <name>Peony::DesktopMenu</name>
@@ -159,6 +163,10 @@
         <translation>打开</translation>
     </message>
     <message>
+        <source>Can not open path &quot;%1&quot;，permission denied.</source>
+        <translation type="vanished">无法打开路径 &quot;%1&quot;, 权限被拒绝。</translation>
+    </message>
+    <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="145"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="170"/>
         <source>Open with...</source>
@@ -178,7 +186,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation>新建</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="320"/>
@@ -193,7 +201,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
         <source>View Type</source>
-        <translation>视图类型</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
@@ -218,7 +226,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="394"/>
         <source>Sort By</source>
-        <translation>排序方式</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sort By...</source>
@@ -375,6 +383,13 @@
     </message>
 </context>
 <context>
+    <name>Peony::DesktopModeFactory</name>
+    <message>
+        <source>desktop icon mode</source>
+        <translation type="vanished">桌面图标模式</translation>
+    </message>
+</context>
+<context>
     <name>Peony::DesktopWindow</name>
     <message>
         <source>Desktop</source>
@@ -387,6 +402,25 @@
     <message>
         <source>New Folder</source>
         <translation type="vanished">新建文件夹</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::StudyCenterMode</name>
+    <message>
+        <source>math</source>
+        <translation type="vanished">数学</translation>
+    </message>
+    <message>
+        <source>english</source>
+        <translation type="vanished">英语</translation>
+    </message>
+    <message>
+        <source>chinese</source>
+        <translation type="vanished">语文</translation>
+    </message>
+    <message>
+        <source>other</source>
+        <translation type="vanished">其他</translation>
     </message>
 </context>
 <context>
@@ -434,6 +468,10 @@
         <translation>Clear standard icons</translation>
     </message>
     <message>
+        <source>Open learning center.</source>
+        <translation type="vanished">打开学习中心</translation>
+    </message>
+    <message>
         <source>set background</source>
         <translation type="vanished">设置背景</translation>
     </message>
@@ -453,6 +491,51 @@
     <message>
         <source>set resolution</source>
         <translation type="vanished">设置分辨率</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="vanished">错误</translation>
+    </message>
+</context>
+<context>
+    <name>StudyStatusWidget</name>
+    <message>
+        <source>学情中心</source>
+        <translation type="vanished">学情中心</translation>
+    </message>
+    <message>
+        <source>STATISTICS</source>
+        <translation type="vanished">统计数据</translation>
+    </message>
+    <message>
+        <source>今日使用时长</source>
+        <translation type="vanished">今日使用时长</translation>
+    </message>
+    <message>
+        <source>本周使用时长</source>
+        <translation type="vanished">本周使用时长</translation>
+    </message>
+    <message>
+        <source>本月使用时长</source>
+        <translation type="vanished">本月使用时长</translation>
+    </message>
+    <message>
+        <source>最常使用 (本周累计)</source>
+        <translation type="vanished">最常使用 (本周累计)</translation>
+    </message>
+</context>
+<context>
+    <name>TabletMenu</name>
+    <message>
+        <source>Uninstall</source>
+        <translation type="vanished">卸载</translation>
+    </message>
+</context>
+<context>
+    <name>TabletPluginWidget</name>
+    <message>
+        <source>Search</source>
+        <translation type="vanished">搜索</translation>
     </message>
 </context>
 </TS>

@@ -28,6 +28,8 @@
 #include "file-meta-info.h"
 #include <QUrl>
 #include <QStandardPaths>
+#include "sound-effect.h"
+#include <QApplication>
 
 using namespace Peony;
 

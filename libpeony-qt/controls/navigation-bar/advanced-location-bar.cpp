@@ -25,10 +25,12 @@
 #include "location-bar.h"
 #include "search-vfs-uri-parser.h"
 #include "search-bar-container.h"
+#include "global-settings.h"
 
 #include <QStackedLayout>
 #include <QDebug>
-
+#include <QToolButton>
+#include <QResizeEvent>
 using namespace Peony;
 
 AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
@@ -42,9 +44,6 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
     m_bar = new Peony::LocationBar(this);
     m_edit = new Peony::PathEdit(this);
     m_search_bar = new Peony::SearchBarContainer(this);
-
-    m_edit->setFixedHeight(36);
-    m_search_bar->setSearchBoxHeight(36);
 
     m_bar->connect(m_bar, &Peony::LocationBar::blankClicked, [=]() {
         auto curUri = m_bar->getCurentUri();
@@ -105,13 +104,19 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         Q_EMIT this->updateFileTypeFilter(index);
     });
 
+    bool is_intel = (QString::compare("V10SP1-edu", GlobalSettings::getInstance()->getProjectName(), Qt::CaseInsensitive) == 0);
+    if (is_intel) {
+        QToolButton* indicator = m_bar->findChild<QToolButton*>("peony_location_bar_indicator");
+        if (indicator) {
+            indicator->move(0, 1);
+        }
+    }
 
     layout->addWidget(m_bar);
     layout->addWidget(m_edit);
     layout->addWidget(m_search_bar);
 
     setLayout(layout);
-    setFixedHeight(m_edit->height());
 }
 
 QString AdvancedLocationBar::processSpecialChar(QString key)
@@ -148,6 +153,10 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
             clearSearchBox();
     }
     Q_EMIT this->refreshRequest();
+}
+void AdvancedLocationBar::setAnimationMode(bool isAnimation)
+{
+    m_bar->setAnimationMode(isAnimation);
 }
 
 bool AdvancedLocationBar::isEditing()
@@ -207,3 +216,18 @@ void AdvancedLocationBar::clearSearchBox()
     m_search_bar->clearSearchBox();
     m_last_key = "";
 }
+
+void AdvancedLocationBar::deselectSearchBox()
+{
+    m_search_bar->deselectSearchBox();
+    m_last_key = "";
+}
+
+void AdvancedLocationBar::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    m_edit->setFixedHeight(e->size().height());
+    m_search_bar->setFixedHeight(e->size().height());
+    m_bar->setFixedHeight(e->size().height());
+}
+

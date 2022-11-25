@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>Service &amp; Support: </source>
-        <translation>ཞབས་ཞུ་དང་རྒྱབ་སྐྱོར་ཚོགས་པ།： </translation>
+        <translation>ཞབས་ཞུ་དང་རྒྱབ་སྐྱོར་ཚོགས་པ།：</translation>
     </message>
     <message>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>གདོང་འཛར།</translation>
+        <translation>ཡིག་རྐྱང་ཕྲེང་བ།</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -75,7 +75,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Search</source>
-        <translation>འཚོལ་བ།</translation>
+        <translation type="vanished">འཚོལ་བ།</translation>
     </message>
     <message>
         <source>Sort Type</source>
@@ -103,22 +103,120 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Maximize</source>
-        <translation>ཆེས་ཆེ་བསྒྱུར།</translation>
+        <translation>ཚད་གཞི་མཐོ་ཤོས་ཀྱི་སྒོ་ནས</translation>
+    </message>
+    <message>
+        <source>Go Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Delete to trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete to trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MoveTo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CopyTo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select path</source>
+        <translation type="unfinished">རྒྱུ་ལམ་གདམ་གསེས།</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">ཁ་རྒྱག་པ།</translation>
+    </message>
+    <message>
+        <source>Deselect All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">བསུབ་པ།</translation>
     </message>
 </context>
 <context>
     <name>HeaderBarContainer</name>
     <message>
         <source>Close</source>
-        <translation>ཁ་རྒྱག་པ།</translation>
+        <translation type="vanished">ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation>ཆེས་ཆུང་འགྱུར།</translation>
+        <translation type="vanished">ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
         <translation type="vanished">ཆེས་ཆེ་བ/སླར་གསོ།</translation>
+    </message>
+</context>
+<context>
+    <name>Intel::NavigationSideBar</name>
+    <message>
+        <source>Open In &amp;New Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open In New &amp;Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Intel::TitleLabel</name>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -145,7 +243,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">བརྟན་འདོར།</translation>
+        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -165,14 +263,14 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation>བཀོལ་སྤྱོད་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
+        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
     <name>NavigationSideBar</name>
     <message>
         <source>Open In New Tab</source>
-        <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ།</translation>
+        <translation>དོང་འཛར་གསར་པའི་ཁ་འབྱེད་པ།</translation>
     </message>
     <message>
         <source>Can not open %1, %2</source>
@@ -188,7 +286,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Uསྡེར་ཞིག་ཡིན་པས་ཞིག་གསོ་དང་རྣམ་གཞག་ཅན་དུ་གཏོང་རོགས།</translation>
+        <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Udiskཡིན་པས་ཞིག་གསོ་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>This is an empty drive, please insert a Disc.</source>
@@ -204,7 +302,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation>སྒྲིག་ཆས་འདི་བྲེལ་བ་ཆེ་བས་རྗེས་སུ་གཤགས་བཅོས་འདི་བྱེད་རོགས།</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -245,7 +343,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Parallel Operations</source>
-        <translation>བཀོལ་སྤྱོད་དང་ལག་བསྟར་བྱེད་ཆོག</translation>
+        <translation>བཀོལ་སྤྱོད་བྱེད་ཆོག</translation>
     </message>
     <message>
         <source>Forbid thumbnailing</source>
@@ -253,7 +351,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Show File Extension</source>
-        <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བ་མངོན་པ།</translation>
+        <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བའི</translation>
     </message>
 </context>
 <context>
@@ -276,7 +374,113 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>trash</source>
-        <translation>བསུབ་པ།</translation>
+        <translation>སྙིགས་སྒམ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarCloudItem</name>
+    <message>
+        <source>CloudStorage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CloudFile</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarFavoriteItem</name>
+    <message>
+        <source>Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarFileSystemItem</name>
+    <message>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>文件系统</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System Disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarMenu</name>
+    <message>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Symbolic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unmount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>format</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarPersonalItem</name>
+    <message>
+        <source>Personal</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarSeparatorItem</name>
+    <message>
+        <source>(No Sub Directory)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::SideBarUserDiskItem</name>
+    <message>
+        <source>User Disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::Intel::TabletSideBarFactory</name>
+    <message>
+        <source>Intel Side Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::SearchWidget</name>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished">འཚོལ་བ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::TrashWarnDialog</name>
+    <message>
+        <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
+        <translation type="unfinished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">བསུབ་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -307,7 +511,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Files or directories to open</source>
-        <translation>ཁ་ཕྱེ་དགོས་པའི་ཡིག་ཆའམ་ཡིག་ཁུག།</translation>
+        <translation>ཡིག་ཆའམ་ཡིག་ཁུག་ཁ་ཕྱེ་དགོས།</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -323,9 +527,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱིས་རྒྱུད་ཁོངས་པར་རྟགས་བརྗོད་གཞི་རྙེད་མ་ཐུབ་པའི་རྒྱུ་རྐྱེན་ནི།
- ༡ དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་སྤྱོད་པའི་སྐབས་ལ་འཁེལ་བ། འདི་ལས་ཁྱེད་ཀྱི་དབང་ཚད་གཞན་ལས་མཐོ་བ་མཚོན་མོང། འོན་ཀྱང་ཁྱེད་ཀྱིས་ངེས་པར་རང་ཉིད་ཀྱིས་སྤྱོད་མཁན་ཕལ་བའི་དབང་ཚད་འགའ་ཤས་ཤོར་བ་འང་ངོས་ཟིན་ཐུབ་དགོས། དཔེར་ན། བདག་གི་རྩིས་འཁོརའམ་རྒྱུད་ཁོངས་བརྗོད་གཞི། གལ་ཏེ་གནས་ཚུལ་ཁྱད་པར་ཅན་མིན་ན། ཁྱོད་ཀྱིས་དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་ཁ་མ་འབྱེད། 
-༢ ཁྱོད་ཀྱིས་བཀོལ་བའི་རྒྱུད་ཁོངས་བརྗོད་གཞིར་qtསོར་བཞག་བརྗོད་གཞིས་རྒྱབ་སྐྱོར་མི་བྱེད་པ་དང་། ཁྱོད་ལ་གཞན་གྱི་འབྲེལ་ཡོད་སྟེགས་བུ་ནང་འཇུག་བྱས་མེད་ན། གལ་སྲིད་ཁྱོས་Gtkབརྗོད་གཞི་རྒྱུད་ཁོངས་ཀྱི་བརྗོད་གཞིར་བེད་སྤྱོད་བྱེད་བཞིན་ཡོད་ན། qt5-gtk2-platformthemeསྒྲིག་འཇུག་བྱས་ན་གནད་དོན་ཐག་གཅོད་བྱེད་ཐུབ།</translation>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱིས་རྒྱུད་ཁོངས་པར་རྟགས་བརྗོད་གཞི་རྙེད་མ་ཐུབ་པའི་རྒྱུ་རྐྱེན་ནི། ༡ དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་སྤྱོད་པའི་སྐབས་ལ་འཁེལ་བ། འདི་ལས་ཁྱེད་ཀྱི་དབང་ཚད་གཞན་ལས་མཐོ་བ་མཚོན་མོང། འོན་ཀྱང་ཁྱེད་ཀྱིས་ངེས་པར་རང་ཉིད་ཀྱིས་སྤྱོད་མཁན་ཕལ་བའི་དབང་ཚད་འགའ་ཤས་ཤོར་བ་འང་ངོས་ཟིན་ཐུབ་དགོས། དཔེར་ན། བདག་གི་རྩིས་འཁོརའམ་རྒྱུད་ཁོངས་བརྗོད་གཞི། གལ་ཏེ་གནས་ཚུལ་ཁྱད་པར་ཅན་མིན་ན། ཁྱོད་ཀྱིས་དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་ཁ་མ་འབྱེད། ༢ ཁྱོད་ཀྱིས་བཀོལ་བའི་རྒྱུད་ཁོངས་བརྗོད་གཞིར་qtསོར་བཞག་བརྗོད་གཞིས་རྒྱབ་སྐྱོར་མི་བྱེད་པ་དང་། ཁྱོད་ལ་གཞན་གྱི་འབྲེལ་ཡོད་སྟེགས་བུ་ནང་འཇུག་བྱས་མེད་ན། གལ་སྲིད་ཁྱོས་Gtkབརྗོད་གཞི་རྒྱུད་ཁོངས་ཀྱི་བརྗོད་གཞིར་བེད་སྤྱོད་བྱེད་བཞིན་ཡོད་ན། qt5-gtk2-platformthemeསྒྲིག་འཇུག་བྱས་ན་གནད་དོན་ཐག་གཅོད་བྱེད་ཐུབ།</translation>
     </message>
     <message>
         <source>Author:
@@ -333,10 +535,66 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
-        <translation>རྩོམ་པ་པོ།  
-Yue Lan &lt;lanyue@kylinos.cn&gt;
+        <translation>རྩོམ་པ་པོ།  Yue Lan &lt;lanyue@kylinos.cn&gt;
  Meihong He &lt;hemeihong@kylinos.cn&gt;
 པར་དབང་ཡོད་ཚད (C): 2020 ཆི་ལིན་མཉེན་ཆས་ཚད་ཡོད་ཀུང་ཟི།</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <source>Force unmount failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data synchronization is complete,the device has been unmount successfully!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unmount failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: %1
+Do you want to unmount forcely?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eject failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eject Anyway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data synchronization is complete and the device can be safely unplugged!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to eject %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PeonyNotify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Manager</source>
+        <translation type="unfinished">ཡིག་ཆ་དོ་དམ་ཆས།</translation>
     </message>
 </context>
 <context>
@@ -367,7 +625,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Use global sorting</source>
-        <translation>ཁྱོན་ཡོངས་ཀྱི་གོ་རིམ་བེད་སྤྱོད།</translation>
+        <translation>གོ་ལ་ཧྲིལ་པོའི་རིགས་འབྱེད་</translation>
     </message>
     <message>
         <source>Original Path</source>
@@ -378,15 +636,27 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <name>TabStatusBar</name>
     <message>
         <source> %1 items </source>
-        <translation> %1རྣམ་གྲངས་སྒེར། </translation>
+        <translation>%1རྣམ་གྲངས་སྒེར།</translation>
     </message>
     <message>
         <source> selected %1 items</source>
-        <translation> %1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
+        <translation type="vanished">%1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
     </message>
     <message>
         <source> selected %1 items    %2</source>
-        <translation> %1རྣམ་གྲངས་སྒེར་འདེམ་པ།    %2</translation>
+        <translation>%1རྣམ་གྲངས་སྒེར་འདེམ་པ།    %2</translation>
+    </message>
+    <message>
+        <source>selected%1%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
+        <translation type="unfinished">%2ཁྲོད་%1འཚོལ་ཞིབ།</translation>
+    </message>
+    <message>
+        <source> %1 items    selected %2 items</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -405,7 +675,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>type</source>
-        <translation>རིགས་རྣམ།</translation>
+        <translation> རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -429,7 +699,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>image</source>
-        <translation>པར་རིས།</translation>
+        <translation>པར་རིས།།</translation>
     </message>
     <message>
         <source>today</source>
@@ -449,7 +719,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Filter</source>
-        <translation>འཚག་འདེམས།</translation>
+        <translation type="vanished">གནད་ཡིག</translation>
     </message>
     <message>
         <source>medium(1M-128M)</source>
@@ -465,7 +735,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Search recursively</source>
-        <translation>རིམ་ལོག་འཚོལ་བཤེར།</translation>
+        <translation type="vanished">རིམ་ལོག་འཚོལ་བཤེར།</translation>
     </message>
     <message>
         <source>file folder</source>
@@ -473,7 +743,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Close Filter.</source>
-        <translation>འཚག་འདེམས་སྒོ་རྒྱག་པ།</translation>
+        <translation type="vanished">གདམ་གསེས་སྒོ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>wps file</source>
@@ -505,7 +775,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Choose other path to search.</source>
-        <translation>གཞན་གྱི་འཚོལ་བཤེར་བརྒྱུད་ལམ་འདེམ་པ།</translation>
+        <translation type="vanished">གཞན་གྱི་འཚོལ་བཤེར་བརྒྱུད་ལམ་འདེམ་པ།</translation>
     </message>
     <message>
         <source>tiny(0-16K)</source>
@@ -529,11 +799,11 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>text file</source>
-        <translation>ཡིག་ཆའི་ཡིག་ཚགས།</translation>
+        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>Select Path</source>
-        <translation>ལམ་བུ་བདམས་པ།</translation>
+        <translation>ལམ་ཕྲན་བདམས་པ།</translation>
     </message>
     <message>
         <source>Open failed</source>
@@ -541,7 +811,37 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ཡིག་ཁུག་གི་ཁ་ཕྱེ་ནས་ཕམ་སོང་། ཁྱོད་ལ་དཀར་ཆག་འདིའི་དབང་ཆ་མེད།</translation>
+        <translation>ཁ་ཕྱེ་བའི་དཀར་ཆག་ལ་ཕམ་ཉེས་བྱུང་ན་ཁྱེད་ལ་ཆོག་མཆན་མ་ཐོབ།</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished">འཚོལ་བ།</translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TitleLabel</name>
+    <message>
+        <source>Peony</source>
+        <translation type="unfinished">ཡིག་ཆ་དོ་དམ་ཆས།</translation>
+    </message>
+</context>
+<context>
+    <name>TopMenuBar</name>
+    <message>
+        <source>Option</source>
+        <translation type="unfinished">འདེམས་ཚན།</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">ཁ་རྒྱག་པ།</translation>
     </message>
 </context>
 </TS>

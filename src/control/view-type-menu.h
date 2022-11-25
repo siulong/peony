@@ -34,6 +34,7 @@ class ViewTypeMenu : public QMenu
     Q_OBJECT
 public:
     explicit ViewTypeMenu(QWidget *parent = nullptr);
+    const QIcon getCurrentIconFromViewId();
 
 Q_SIGNALS:
     void switchViewRequest(const QString &viewId, const QIcon &icon, bool resetToZoomLevelHint = false);

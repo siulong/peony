@@ -59,6 +59,7 @@ protected:
     bool isValid();
     void execFile();
     void execFileInterm();
+    void preCheck();
 
 public Q_SLOTS:
     void lauchFileSync(bool forceWithArg = false, bool skipDialog = true);
@@ -66,6 +67,14 @@ public Q_SLOTS:
     void lauchFilesAsync(const QStringList files, bool forceWithArg = false, bool skipDialog = true);
 
     bool isExcuteableFile(QString fileType);
+
+private:
+    bool launchAppWithDBus();
+    bool launchAppWithAppMgr();
+    bool launchDefaultAppWithUrl();
+    bool launchAppWithSession();
+
+    bool checkAppDisabled();
 
 private:
     QString m_uri;

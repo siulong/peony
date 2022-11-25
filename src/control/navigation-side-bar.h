@@ -22,10 +22,12 @@
 
 #ifndef NAVIGATIONSIDEBAR_H
 #define NAVIGATIONSIDEBAR_H
+#include "side-bar.h"
 
 #include <QTreeView>
 #include <QStyledItemDelegate>
 #include <QProxyStyle>
+#include <QGSettings>
 
 namespace Peony {
 class SideBarModel;
@@ -35,6 +37,7 @@ class SideBarAbstractItem;
 
 class QPushButton;
 class QVBoxLayout;
+class QLabel;
 
 class NavigationSideBar : public QTreeView
 {
@@ -53,6 +56,8 @@ public:
 
     QSize sizeHint() const;
     void JumpDirectory(const QString& uri);/* 跳转目录 */
+
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
@@ -73,7 +78,7 @@ private:
     bool m_notAllowHorizontalMove = false;/* 按下左右键不可使侧边栏内容左右平移显示 */
 };
 
-class NavigationSideBarContainer : public QWidget
+class NavigationSideBarContainer : public Peony::SideBar
 {
     Q_OBJECT
 public:
@@ -104,6 +109,18 @@ public:
     explicit NavigationSideBarStyle();
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
     void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
+};
+
+class TitleLabel : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit TitleLabel(QWidget *parent);
+
+private:
+    QLabel *m_pix_label;
+    QLabel *m_text_label;
+    QGSettings *m_gSettings;
 };
 
 #endif // NAVIGATIONSIDEBAR_H

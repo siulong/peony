@@ -294,7 +294,7 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
             }
             operation = FileOperationUtils::remove(uris);
         }
-//        SoundEffect::getInstance()->recycleBinDeleteMusic();
+        SoundEffect::getInstance()->recycleBinDeleteMusic();
         return operation;
     } else {
         return nullptr;

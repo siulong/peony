@@ -27,6 +27,7 @@
 #include "file-utils.h"
 #include "global-settings.h"
 #include "file-count-operation.h"
+#include "file-operation-utils.h"
 
 #include <QGSettings>
 #include <QFormLayout>
@@ -226,4 +227,10 @@ void RecentAndTrashPropertiesPage::saveAllChange()
 {
     bool check = this->property("check").toBool();
     GlobalSettings::getInstance()->setGSettingValue("showTrashDialog", check);
+
+    //task#100231 trash page OK button set as restore, restore file
+    //fix bug#143817, trash properties issue
+    if (m_uri.startsWith("trash:///") && m_uri != "trash:///"){
+       FileOperationUtils::restore(m_uri);
+    }
 }

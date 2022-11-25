@@ -54,6 +54,12 @@ void ViewTypeMenu::setCurrentView(const QString &viewId, bool blockSignal)
     if (viewId == m_current_view_id)
         return;
 
+    // Fixme: switch view in cloud page
+    if (m_current_uri == "cloud:///") {
+        m_current_view_id = "Cloud View";
+        return;
+    }
+
     if (isViewIdValid(viewId)) {
         m_current_view_id = viewId;
     }
@@ -108,4 +114,9 @@ void ViewTypeMenu::updateMenuActions()
             action->setChecked(true);
         }
     }
+}
+
+const QIcon ViewTypeMenu::getCurrentIconFromViewId()
+{
+    return m_model->iconFromViewId(m_current_view_id);
 }

@@ -30,6 +30,8 @@
 #include "emblem-provider.h"
 
 #include <QUrl>
+#include <QtDBus/QDBusConnection>
+#include <QStandardPaths>
 #include <QDir>
 #include <QDebug>
 
@@ -185,6 +187,17 @@ bool FileInfo::isVideoFile()
     }
 }
 
+bool FileInfo::isExecDisable()
+{
+    if (m_meta_info) {
+        int nRet = m_meta_info->getMetaInfoInt("exec_disable");
+        if(1 == nRet) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 bool FileInfo::isOfficeFile()
 {
@@ -311,4 +324,29 @@ const QString FileInfo::displayName()
     deviceName = m_display_name;
     FileUtils::handleVolumeLabelForFat32(deviceName,unixDevice);
     return deviceName;
+}
+
+QString FileInfo::displayFileType()
+{
+    if (isDir()) {
+        return tr("folder");
+    } else if (isOfficeFile()) {
+        return m_file_type;
+    } else if (isDesktopFile()) {
+        return "DESKTOP" + tr("file");
+    } else {
+        if (m_file_type.contains("plain text document")) {
+            return tr("text file");
+        } else {
+            QString fileName = displayName();
+            if (fileName.contains(".")) {
+                QStringList strElement = fileName.split(".");
+                return QString(strElement.last()).toUpper() + tr("file");
+            } else {
+                return tr("file");
+            }
+        }
+    }
+
+    return m_file_type;
 }

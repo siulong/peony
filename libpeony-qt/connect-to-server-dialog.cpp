@@ -451,6 +451,9 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     : QDialog(parent),m_remoteIP(uri)
 {
     setFixedSize(m_widget_size);
+    if("bo_CN" == QLocale::system().name()){
+        setFixedSize(QSize(424,455));
+    }
     setWindowIcon(QIcon::fromTheme("network-server"));
     setWindowTitle(tr("The login user"));
     setBackgroundRole(QPalette::Base);
@@ -655,6 +658,7 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
             if (savePassword () && !getPassWordProperty().isEmpty ()) {
                 userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
             }
+
             uriList.insert (remoteUri, userInfo);
             GlobalSettings::getInstance()->slot_updateRemoteServer(remoteUri, true);
         } else {

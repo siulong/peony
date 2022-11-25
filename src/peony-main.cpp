@@ -28,12 +28,15 @@
 #include <stdlib.h>
 #include <QTime>
 #include <QFile>
+#include <QFileInfo>
 
 #include <QStandardPaths>
 
 #include <ukui-log4qt.h>
 #include "navigation-tab-bar.h"
 #include "tab-widget.h"
+
+#include "global-settings.h"
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -42,9 +45,10 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 
     bool showDebug = true;
     QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/peony-qt.log";
-    if (!QFile::exists(logFilePath)) {
-        showDebug = false;
-    }
+    //屏蔽代码，自动生成日志，无需手动创建
+//    if (!QFile::exists(logFilePath)) {
+//        showDebug = false;
+//    }
     FILE *log_file = nullptr;
 
     if (showDebug) {
@@ -90,6 +94,17 @@ int main(int argc, char *argv[])
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
+
+    if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
+        // hide template file
+        QFile file(QString("%1/.hidden").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)));
+        if (!file.exists()) {
+            file.open(QFile::WriteOnly);
+            QFileInfo templateFileInfo(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
+            file.write(templateFileInfo.baseName().toLocal8Bit().constData());
+            file.close();
+        }
+    }
 
     PeonyApplication app(argc, argv, "peony-qt");
     if (app.isSecondary())
