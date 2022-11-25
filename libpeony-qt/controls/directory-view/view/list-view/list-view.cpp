@@ -54,6 +54,7 @@
 #include <QApplication>
 #include <QStyleHints>
 
+#include <QToolTip>
 #include <QDebug>
 #include <QToolTip>
 
@@ -80,8 +81,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
-    //setAttribute(Qt::WA_TranslucentBackground);
-    setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
@@ -101,6 +102,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setAlternatingRowColors(true);
     setAutoFillBackground(true);
     setBackgroundRole(QPalette::Base);
+
+    setItemDelegate(new ListViewDelegate(this));
 
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
@@ -131,9 +134,6 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setDragDropMode(QTreeView::DragDrop);
     setSelectionMode(QTreeView::ExtendedSelection);
 
-    //setAlternatingRowColors(true);
-
-    //setContextMenuPolicy(Qt::CustomContextMenu);
     m_renameTimer = new QTimer(this);
     m_renameTimer->setInterval(3000);
     m_editValid = false;
@@ -213,29 +213,6 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
     //adjust columns layout.
     adjustColumnsSize();
 
-    //fix diffcult to unselect all item issue
-//    connect(this->selectionModel(), &QItemSelectionModel::currentColumnChanged, [=]
-//            (const QModelIndex &current, const QModelIndex &previous) {
-//        qDebug()<<"list view currentColumnChanged changed";
-//        if (getSelections().count() > 1 && !m_ctrl_key_pressed)
-//        {
-//            this->clearSelection();
-//            if (current.isValid())
-//                setCurrentIndex(current);
-//        }
-//    });
-
-//    connect(this->selectionModel(), &QItemSelectionModel::currentRowChanged, [=]
-//            (const QModelIndex &current, const QModelIndex &previous) {
-//        qDebug()<<"list view currentRowChanged changed";
-//        if (getSelections().count() > 1 && !m_ctrl_key_pressed)
-//        {
-//            this->clearSelection();
-//            if (current.isValid())
-//                setCurrentIndex(current);
-//        }
-//    });
-
     //edit trigger
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
         //qDebug()<<"list view selection changed"<<m_delegate_editing;
@@ -275,6 +252,12 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
 void ListView::keyPressEvent(QKeyEvent *e)
 {
     QTreeView::keyPressEvent(e);
+   //if(e->key() == Qt::Key_Down||e->key() == Qt::Key_Up)
+    //{
+     //   QStringList selections = getSelections();
+      //  if(selections.size() == 1)
+       //     this->scrollToSelection(selections.at(0));
+  //  }
     switch (e->key()) {
     case Qt::Key_Control:
         m_ctrl_key_pressed = true;
@@ -327,12 +310,25 @@ void ListView::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    m_isLeftButtonPressed = true;
     m_rubberBand->hide();
     m_lastPressedLogicPoint = e->pos() + QPoint(horizontalOffset(), verticalOffset());
 
     auto index = indexAt(e->pos());
     bool isIndexSelected = selectedIndexes().contains(index);
+
+    if (isEnableMultiSelect() && index.isValid()) {
+        m_mouse_release_unselect = isIndexSelected;
+    } else {
+        m_mouse_release_unselect = false;
+    }
+
+    if (m_mouse_release_unselect) {
+        this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+    }
+
+    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1) {
+        multiSelect();
+    }
 
     m_editValid = true;
     QTreeView::mousePressEvent(e);
@@ -340,24 +336,21 @@ void ListView::mousePressEvent(QMouseEvent *e)
     auto visualRect = this->visualRect(index);
     auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
     auto validRect = QRect(visualRect.topLeft(), sizeHint);
-    if (!validRect.contains(e->pos())) {
+    if (!isEnableMultiSelect() && !validRect.contains(e->pos())) {
         if (isIndexSelected) {
             clearSelection();
             setCurrentIndex(index);
         }
         this->setState(QAbstractItemView::DragSelectingState);
     }
-    //comment to fix can not enter rename issue
-//    else if (isIndexSelected) {
-//        return;
-//    }
 
     //if click left button at blank space, it should select nothing
     //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid();
-    if(e->button() == Qt::LeftButton && (!indexAt(e->pos()).isValid()) )
+    bool isClearSelection = !(qApp->property("tabletMode").toBool() && isEnableMultiSelect());
+    if(isClearSelection && (!indexAt(e->pos()).isValid()) )
     {
         this->clearSelection();
-        //this->clearFocus();
+        disableMultiSelect();
         return;
     }
 
@@ -400,7 +393,6 @@ void ListView::mouseReleaseEvent(QMouseEvent *e)
 {
     QTreeView::mouseReleaseEvent(e);
     m_rubberBand->hide();
-    m_isLeftButtonPressed = false;
 }
 
 void ListView::mouseMoveEvent(QMouseEvent *e)
@@ -408,8 +400,8 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
     QModelIndex itemIndex = indexAt(e->pos());
     if (!itemIndex.isValid()) {
         if (QToolTip::isVisible()) {
-             QToolTip::hideText();
-         }
+            QToolTip::hideText();
+        }
     } else {
         if (0 != itemIndex.column() && QToolTip::isVisible()) {
             QToolTip::hideText();
@@ -440,6 +432,14 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
     } else {
         m_rubberBand->hide();
     }
+
+    // fix #115124, drag selection can not trigger auto scroll in view.
+    if (e->buttons() & Qt::LeftButton && !this->viewport()->rect().adjusted(0, autoScrollMargin(), 0, -autoScrollMargin()).contains(e->pos())) {
+        doAutoScroll();
+    }
+
+    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+        multiSelect();
 }
 
 void ListView::mouseDoubleClickEvent(QMouseEvent *event)
@@ -578,6 +578,9 @@ void ListView::resizeEvent(QResizeEvent *e)
         m_last_size = size();
         adjustColumnsSize();
     }
+    if (state() == QTreeView::EditingState && qApp->property("tabletMode").toBool()) {
+        scrollTo(currentIndex());
+    }
 }
 
 /*!
@@ -601,23 +604,28 @@ void ListView::reUpdateScrollBar()
     if (model()->rowCount() == 0) {
         return;
     }
-
     int totalHeight = 0;
     int rowCount = model()->rowCount();
-    for (int row = 0; row < rowCount; row++) {
-        auto index = model()->index(row, 0);
-        totalHeight += sizeHintForIndex(index).height();
-    }
+    int rowHeight = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()).height();
+    totalHeight = rowCount * rowHeight;
+//    for (int row = 0; row < rowCount; row++) {
+//        auto index = model()->index(row, 0);
+//        totalHeight += sizeHintForIndex(index).height();
+//    }
 
+    int currentScrollBarValue = verticalScrollBar()->value();
     verticalScrollBar()->setSingleStep(iconSize().height());
     verticalScrollBar()->setPageStep(viewport()->height() - header()->height());
     verticalScrollBar()->setRange(0, totalHeight + header()->height() + 100 - viewport()->height());
+    verticalScrollBar()->setValue(currentScrollBarValue);
 }
 
 void ListView::updateGeometries()
 {
+    setUpdatesEnabled(false);
     QTreeView::updateGeometries();
     reUpdateScrollBar();
+    setUpdatesEnabled(true);
 }
 
 void ListView::wheelEvent(QWheelEvent *e)
@@ -646,6 +654,7 @@ void ListView::focusInEvent(QFocusEvent *e)
             });
         }
     }
+    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void ListView::startDrag(Qt::DropActions flags)
@@ -719,6 +728,12 @@ void ListView::startDrag(Qt::DropActions flags)
     }
 }
 
+void ListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QTreeView::currentChanged(current, previous);
+    setAttribute(Qt::WA_InputMethodEnabled, false);
+}
+
 void ListView::slotRename()
 {
     //special path like trash path not allow rename
@@ -767,6 +782,8 @@ void ListView::reportViewDirectoryChanged()
 
 void ListView::adjustColumnsSize()
 {
+    int columnSize = 0;
+
     if (!model())
         return;
 
@@ -777,9 +794,11 @@ void ListView::adjustColumnsSize()
 
     int rightPartsSize = 0;
     for (int column = 1; column < model()->columnCount(); column++) {
-        int columnSize = header()->sectionSize(column);
+        columnSize = header()->sectionSize(column);
         rightPartsSize += columnSize;
     }
+
+    rightPartsSize += columnSize;
 
     //set column 0 minimum width, fix header icon overlap with name issue
     if(columnWidth(0) < columnWidth(1))
@@ -796,6 +815,23 @@ void ListView::adjustColumnsSize()
     }
 
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
+    header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+}
+
+void ListView::multiSelect()
+{
+    if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
+        m_multi_select = true;
+    }
+    setSelectionMode(MultiSelection);
+    viewport()->update(viewport()->rect());
+}
+
+void ListView::disableMultiSelect()
+{
+    m_multi_select = false;
+    setSelectionMode(ExtendedSelection);
+    viewport()->update(viewport()->rect());
 }
 
 void ListView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -861,15 +897,23 @@ const QStringList ListView::getAllFileUris()
     return m_proxy_model->getAllFileUris();
 }
 
-QRect ListView::visualRect(const QModelIndex &index) const
+int ListView::getCurrentCheckboxColumn()
 {
-    auto rect = QTreeView::visualRect(index);
-    //comment to fix rename state not show icon issue
-//    if (index.column() == 0) {
-//        rect.setX(0);
-//    }
+    int section =header()->sectionViewportPosition(3);
+    int viewportWidth =viewport()->width()+viewport()->x();
+    int selectBox = 3;
 
-    return rect;
+    for(int i=1;i<=model()->columnCount()-1;i++)
+    {
+
+        section =header()->sectionViewportPosition(i);
+        if(section+32>=viewportWidth)
+        {
+            selectBox = i-1;
+            break;
+        }
+    }
+    return selectBox;
 }
 
 void ListView::open(const QStringList &uris, bool newWindow)
@@ -901,6 +945,8 @@ void ListView::invertSelections()
     const QItemSelection currentSelection = selectionModel->selection();
     this->selectAll();
     selectionModel->select(currentSelection, QItemSelectionModel::Deselect);
+
+    viewport()->update();
 }
 
 void ListView::scrollToSelection(const QString &uri)
@@ -929,7 +975,9 @@ int ListView::getSortType()
 void ListView::setSortType(int sortType)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
+    QTimer::singleShot(0, this, [=]{
+        header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
+    });
     m_proxy_model->sort(sortType, Qt::SortOrder(getSortOrder()));
 }
 
@@ -941,7 +989,9 @@ int ListView::getSortOrder()
 void ListView::setSortOrder(int sortOrder)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
+    QTimer::singleShot(0, this, [=]{
+        header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
+    });
     m_proxy_model->sort(getSortType(), Qt::SortOrder(sortOrder));
 }
 
@@ -958,14 +1008,27 @@ void ListView::editUri(const QString &uri)
     edit(index);
     //fix bug#70769, edit box overlapped with status bar issue
     //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
-    if(index.row() >= m_proxy_model->rowCount()-1)
-       QTreeView::scrollToBottom();
+    if(index.row() >= m_proxy_model->rowCount()-1) {
+        reUpdateScrollBar();
+        QTreeView::scrollToBottom();
+        QTimer::singleShot(300, this, [=]{
+            if (qApp->property("tabletMode").toBool()) {
+                reUpdateScrollBar();
+                QTreeView::scrollToBottom();
+            }
+        });
+    }
 }
 
 void ListView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
+}
+
+bool ListView::isEnableMultiSelect()
+{
+    return m_multi_select;
 }
 
 void ListView::keyboardSearch(const QString &key)
@@ -999,6 +1062,17 @@ void ListView::setSearchKey(const QString &key)
     viewItemDelegate->setSearchKeyword(key);
 }
 
+void ListView::doMultiSelect(bool isMultiSlelect)
+{
+    if (isMultiSlelect) {
+        multiSelect();
+    } else {
+        disableMultiSelect();
+    }
+
+    viewport()->update();
+}
+
 //List View 2
 ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
 {
@@ -1009,6 +1083,8 @@ ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     m_view = new ListView(this);
+
+    DirectoryViewHelper::globalInstance()->addListViewWithDirectoryViewWidget(m_view, this);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())
@@ -1052,10 +1128,11 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     //connect(m_model, &FileItemModel::updated, m_view, &ListView::resort);
     connect(m_model, &FileItemModel::updated, m_view->viewport(), QOverload<>::of(&QWidget::update));
 
-    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &DirectoryViewWidget::viewSelectionChanged);
+    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        Q_EMIT viewSelectionChanged();
+    });
 
-    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {    
+    connect(m_view, &ListView::activated, this, [=](const QModelIndex &index) {
         if (m_view->m_touch_active_timer->isActive()) {
             auto costTime = m_view->m_touch_active_timer->interval() - m_view->m_touch_active_timer->remainingTime();
             if (costTime > qApp->doubleClickInterval()) {
@@ -1068,7 +1145,9 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         if (getSelections().count() != 1)
             return;
         auto uri = getSelections().first();
-        Q_EMIT this->viewDoubleClicked(uri);
+        if(!m_view->isEnableMultiSelect()) {
+            Q_EMIT this->viewDoubleClicked(uri);
+        }
 
         m_view->m_touch_active_timer->stop();
     });
@@ -1104,7 +1183,7 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         //selection if menu request at blank pos.
         QTimer::singleShot(1, this, [=]() {
             m_view->m_touch_active_timer->stop();
-            Q_EMIT this->menuRequest(QCursor::pos());
+            Q_EMIT this->menuRequest(mapToGlobal(pos + m_view->header()->geometry().bottomLeft()));
         });
     });
 
@@ -1117,7 +1196,9 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
 
     connect(m_model, &FileItemModel::findChildrenFinished, this, [=]() {
         if (m_need_resize_header) {
-            m_view->adjustColumnsSize();
+            QTimer::singleShot(0, this, [=]{
+                m_view->adjustColumnsSize();
+            });
         }
         m_need_resize_header = false;
     });

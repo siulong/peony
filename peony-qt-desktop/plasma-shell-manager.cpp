@@ -94,7 +94,7 @@ KWayland::Client::PlasmaShellSurface *PlasmaShellManager::createSurface(QWindow 
 
 PlasmaShellManager::PlasmaShellManager(QObject *parent) : QObject(parent)
 {
-    if (!QApplication::platformName().toLower().contains("wayland"))
+    if (QX11Info::isPlatformX11() || QString(qgetenv("QT_QPA_PLATFORM")) != "wayland" || !QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland"))
         return;
     auto connection = KWayland::Client::ConnectionThread::fromApplication(qApp);
     auto registry = new KWayland::Client::Registry(this);

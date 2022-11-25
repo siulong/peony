@@ -342,8 +342,6 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     button->setAutoRaise(true);
     button->setStyle(LocationBarButtonStyle::getStyle());
     button->setProperty("uri", uri);
-    button->setFixedHeight(this->height());
-    button->setIconSize(QSize(16, 16));
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
 
@@ -360,6 +358,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         button->setContextMenuPolicy(Qt::CustomContextMenu);
         return;
     }
+
     if (setIcon) {
         QIcon icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri), QIcon::fromTheme("folder"));
         button->setIcon(icon);
@@ -373,10 +372,26 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     QUrl url = FileUtils::urlEncode(uri);
     if (!url.fileName().isEmpty())
     {
+        button->setText(displayName);
         m_current_uri = uri.left(uri.lastIndexOf("/")+1) + displayName;
+    } else {
+        if (uri == "file:///") {
+//            auto text = FileUtils::getFileDisplayName("computer:///root.link");
+//            if (text.isNull()) {
+//                text = tr("File System");
+//            }
+            //fix bug#47597, show as root.link issue
+            QString text = tr("File System");
+            button->setText(text);
+            //comment to fix button text show incomplete issue, link to bug#72080
+            //button->setStyleSheet("QToolButton{padding-left: 15px; padding-right: 15px}");
+        } else {
+            button->setText(displayName);
+        }
     }
 
     //if button text is too long, elide it
+    displayName = button->text();
     if (displayName.length() > ELIDE_TEXT_LENGTH)
     {
         int  charWidth = fontMetrics().averageCharWidth();
@@ -447,8 +462,8 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     }
 
     button->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(button, &QWidget::customContextMenuRequested, this, [=](){
-        QMenu menu;
+    connect(button, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos){
+        QMenu menu(button);
         FMWindowIface *windowIface = dynamic_cast<FMWindowIface *>(this->topLevelWidget());
         auto copy = menu.addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy Directory"));
 
@@ -461,7 +476,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
             dynamic_cast<QWidget *>(newWindow)->show();
         });
 
-        if (copy == menu.exec(QCursor::pos())) {
+        if (copy == menu.exec(button->mapToGlobal(pos))) {
             if (uri.startsWith("file://")) {
                 QUrl url = uri;
                 QApplication::clipboard()->setText(url.path());
@@ -505,7 +520,14 @@ void LocationBar::paintEvent(QPaintEvent *e)
 void LocationBar::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    doLayout();
+   if (!m_isAnimation) {
+       doLayout();
+   }
+}
+
+void LocationBar::setAnimationMode(bool isAnimation)
+{
+    m_isAnimation = isAnimation;
 }
 
 void LocationBar::doLayout()
@@ -518,7 +540,7 @@ void LocationBar::doLayout()
 
     for (auto button : m_buttons) {
         button->setVisible(true);
-        button->resize(button->sizeHint().width(), button->height());
+        button->setFixedHeight(this->height());
         button->setToolButtonStyle(Qt::ToolButtonTextOnly);
         button->adjustSize();
         sizeHints<<button->sizeHint().width();
@@ -563,7 +585,7 @@ void LocationBar::doLayout()
         auto button = m_buttons.values().at(sizeHints.count() - 1);
         button->setVisible(true);
         button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        button->resize(totalWidth - 20, button->height());
+        button->resize(totalWidth - 20, this->height());
     }
 
     int spaceCount = 0;

@@ -125,7 +125,6 @@ void FileCopyOperation::progress_callback(goffset current_num_bytes,
     auto fileIconName = FileUtilsPrivate::getFileIconName(p_this->m_current_src_uri);
     auto destFileName = FileUtils::isFileDirectory(p_this->m_current_dest_dir_uri) ?
                 p_this->m_current_dest_dir_uri + "/" + url.fileName() : p_this->m_current_dest_dir_uri;
-//    qDebug()<<currnet*1.0/total;
     Q_EMIT p_this->FileProgressCallback(p_this->m_current_src_uri, destFileName, fileIconName, currnet, total);
 }
 
@@ -143,7 +142,6 @@ fallback_retry:
     destFileUri = FileUtils::urlEncode(destFileUri);
     node->setDestUri(destFileUri);
     QString srcUri = node->uri();
-    qDebug()<<"dest file uri:"<<destFileUri;
 
     GFileWrapperPtr destFile = wrapGFile(g_file_new_for_uri(destFileUri.toUtf8().constData()));
 
@@ -172,12 +170,22 @@ fallback_retry:
             except.title = tr("File copy error");
             except.errorCode = err->code;
             if (handle_type == Other) {
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    auto typeData = except.respCode;
+                    handle_type = typeData;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
@@ -185,6 +193,8 @@ fallback_retry:
                     if (handle_type != Cancel) {
                         return;
                     }
+                    break;
+                }
                 }
             }
             //handle.
@@ -246,6 +256,11 @@ fallback_retry:
                 goto fallback_retry;
             }
             case Retry: {
+                goto fallback_retry;
+            }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                setHasError(false);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -381,18 +396,28 @@ fallback_retry:
             }
 
             if (handle_type == Other) {
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
-                    qDebug()<<"get return";
                     handle_type = typeData;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    auto typeData = except.respCode;
+                    handle_type = typeData;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
-                    qDebug()<<"get return";
                     handle_type = typeData;
+                    break;
+                }
                 }
             }
             //handle.
@@ -477,6 +502,11 @@ fallback_retry:
                 goto fallback_retry;
             }
             case Retry: {
+                goto fallback_retry;
+            }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                setHasError(false);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -617,8 +647,6 @@ void FileCopyOperation::run()
 
     QList<FileNode*> nodes;
     for (auto uri : m_source_uris) {
-        qDebug() << "copy uri:" << uri;
-
         QString szTempUri = uri;
         if(szTempUri.startsWith("filesafe:///") && szTempUri.remove("filesafe:///").indexOf("/") == -1) {
             continue;
@@ -646,7 +674,6 @@ void FileCopyOperation::run()
     if (isCancelled()) {
         Q_EMIT operationStartRollbacked();
         for (auto file : nodes) {
-            qDebug()<<file->uri();
             if (isCancelled()) {
                 rollbackNodeRecursively(file);
             }

@@ -545,13 +545,13 @@ void DataCDROM::DVDRWCapacity()
         if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
     }
 
-    if (m_oMediumType.contains("DVD+RW"))
+    if (m_oMediumType.contains("DVD+RW") && ss.size() >= i+1)
     {
         ss = ss.takeAt(i + 1).split("=");
         //ss = ss.last().split("=");
         m_u64Capacity = ss.last().toULong();
     }
-    if (m_oMediumType.contains("DVD-RW"))
+    if (m_oMediumType.contains("DVD-RW") && ss.size() >= i+2)
     {
         //解决bug:70940和83628擦除后总容量显示错误
 #if 0

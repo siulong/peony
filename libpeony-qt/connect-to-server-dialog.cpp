@@ -658,6 +658,7 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
             if (savePassword () && !getPassWordProperty().isEmpty ()) {
                 userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
             }
+
             uriList.insert (remoteUri, userInfo);
             GlobalSettings::getInstance()->slot_updateRemoteServer(remoteUri, true);
         } else {

@@ -58,7 +58,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
     connect(this, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos) {
         auto index = indexAt(pos);
         //bool labelRemovable = false;
-        QMenu menu;
+        QMenu menu(this);
         if (index.isValid()) {
             auto item = FileLabelModel::getGlobalModel()->itemFormIndex(index);
             int id = item->id();
@@ -98,7 +98,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
                 }
             });
         }
-        menu.exec(QCursor::pos());
+        menu.exec(mapToGlobal(pos));
     });
 }
 

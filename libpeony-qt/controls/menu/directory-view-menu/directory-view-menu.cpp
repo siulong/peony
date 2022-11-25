@@ -60,6 +60,7 @@
 
 #include "global-settings.h"
 #include "sound-effect.h"
+#include "directoryviewhelper.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -223,6 +224,11 @@ void DirectoryViewMenu::fillActions()
             l.last()->setObjectName(VIEW_ACTIONS_SEPARATOR);
         }
     }
+
+    //add multiselect action
+    auto multiselectAction = constructMultiSelectActions();
+    if(!multiselectAction.isEmpty())
+        addSeparator();
 
     //add operation actions
     auto fileOpActions = constructFileOpActions();
@@ -497,7 +503,7 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
     if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash) {
-        auto createAction = new QAction(tr("New..."), this);
+        auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
             createAction->setEnabled(false);
@@ -633,7 +639,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         if (!viewNames.isEmpty()) {
             //view type;
-            auto viewTypeAction = addAction(tr("View Type..."));
+            auto viewTypeAction = addAction(tr("View Type"));
             viewTypeAction->setObjectName(VIEW_TYPE_ACTION);
             l<<viewTypeAction;
             QMenu *viewTypeSubMenu = new QMenu(this);
@@ -653,7 +659,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         }
 
         //sort type
-        auto sortTypeAction = addAction(tr("Sort By..."));
+        auto sortTypeAction = addAction(tr("Sort By"));
         sortTypeAction->setObjectName(SORT_TYPE_ACTION);
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
@@ -688,7 +694,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         }
 
         //sort order
-        auto sortOrderAction = addAction(tr("Sort Order..."));
+        auto sortOrderAction = addAction(tr("Sort Order"));
         sortOrderAction->setObjectName(SORT_ORDER_ACTION);
         l<<sortOrderAction;
         QMenu *sortOrderMenu = new QMenu(this);
@@ -709,7 +715,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
 
         sortOrderAction->setMenu(sortOrderMenu);
 
-        auto sortPreferencesAction = addAction(tr("Sort Preferences..."));
+        auto sortPreferencesAction = addAction(tr("Sort Preferences"));
         sortPreferencesAction->setObjectName(SORT_PREFERENCES_ACTION);
         l<<sortPreferencesAction;
 
@@ -1077,11 +1083,12 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             connect(l.last(), &QAction::triggered, [=]() {
                 auto uris = m_top_window->getCurrentAllFileUris();
                 auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
-                    if(removeop){
-                        connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
-                             Peony::SoundEffect::getInstance()->recycleBinClearMusic();
-                        });
-                    }
+                qApp->setProperty("clearTrash",true);
+//                    if(removeop){
+//                        removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+//                            Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+//                        });
+//                    }
 
 //                AudioPlayManager::getInstance()->playWarningAudio();
 //                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
@@ -1233,4 +1240,16 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
         }
     }
     return l;
+}
+
+const QList<QAction *> DirectoryViewMenu::constructMultiSelectActions()
+{
+    QList<QAction *> l;
+    auto MultiSelectAction = addAction(tr("MultiSelect"));
+    l<<MultiSelectAction;
+    connect(l.last(), &QAction::triggered, [=]() {
+        Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_view)->doMultiSelect(true);
+    });
+    return l;
+
 }

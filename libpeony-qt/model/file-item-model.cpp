@@ -385,6 +385,11 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
             flags |= Qt::ItemIsDragEnabled;
             flags |= Qt::ItemIsEditable;
         }
+        // to make the applications disable
+        if(item->m_info->canExecute()&&item->m_info->isExecDisable()) {
+            flags &= ~Qt::ItemIsEnabled;
+            flags |= Qt::ItemIsSelectable;
+        }
         return flags;
     } else {
         return Qt::ItemIsDropEnabled;

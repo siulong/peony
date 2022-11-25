@@ -178,7 +178,9 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
     auto info = FileInfo::fromUri(uri);
     if (info->isVirtual())
         return l;
-
+    if (qApp->property("tabletMode").toBool()) {
+        return l;
+    }
     if (types == DirectoryView) {
         //not allow in trash path
         if (uri.startsWith("trash://") || uri.startsWith("smb://")

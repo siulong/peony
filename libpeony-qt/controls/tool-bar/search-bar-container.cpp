@@ -21,7 +21,7 @@
  */
 
 #include <QStringListModel>
-
+#include <QApplication>
 #include "search-bar-container.h"
 
 #include <QAction>
@@ -52,10 +52,14 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
 //    filter->setModel(model);
 //    filter->setFixedWidth(80);
 //    filter->setFixedHeight(parent->height());
+//    AdvancedLocationBar * a = qobject_cast<AdvancedLocationBar *>(parent);
 
     QLineEdit *edit = new QLineEdit(this);
     m_search_box = edit;
-    edit->setFixedHeight(parent->height());
+
+    QAction *searchAction = new QAction(m_search_box);
+    searchAction->setIcon(QIcon::fromTheme("edit-find-symbolic"));
+    m_search_box->addAction(searchAction,QLineEdit::LeadingPosition);
 
 //    layout->addWidget(filter, Qt::AlignLeft);
     layout->addWidget(edit, Qt::AlignLeft);
@@ -67,7 +71,6 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     completer->setMaxVisibleItems(10);
 
     auto m_list = m_model->stringList();
-    m_list.prepend(tr("Clear"));
     m_model->setStringList(m_list);
     m_list_view = new QListView(m_search_box);
 
@@ -93,14 +96,16 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     m_search_trigger.setInterval(500);
     m_clear_action = true;
     connect(&m_search_trigger, SIGNAL(timeout()), this, SLOT(startSearch()));
-    connect(m_search_box, &QLineEdit::textChanged, [=]()
+    connect(m_search_box, &QLineEdit::textChanged, [=](const QString &text)
     {
         //fix input key words can not search issue, link to bug#77977
-        if (m_clear_action && ! m_search_trigger.isActive())
+        if (m_clear_action && ! m_search_trigger.isActive()) {
             m_search_trigger.start();
-        else
+        } else {
             m_clear_action = false;
+        }
     });
+
 //    connect(m_filter_box, &QComboBox::currentTextChanged, [=]()
 //    {
 //        Q_EMIT this->filterUpdate(m_filter_box->currentIndex());
@@ -117,7 +122,6 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     searchButton->setProperty("isWindowButton", 1);
     searchButton->setProperty("useIconHighlightEffect", 0x2);
     searchButton->setAutoRaise(true);
-    searchButton->setFixedSize(edit->height() - 2, edit->height() - 2);
     editlayout->addWidget(searchButton,Qt::AlignRight);
     connect(searchButton, &QToolButton::clicked, this, [=]() {
         //qDebug() << "triggered search history!";
@@ -128,7 +132,6 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     clearButton->setObjectName("toolButton");
     clearButton->setStyle(ToolButtonStyle::getStyle());
     editlayout->addWidget(clearButton,Qt::AlignRight);
-    clearButton->setFixedSize(edit->height() - 2, edit->height() - 2);
     clearButton->setAutoRaise(true);
 //    QToolButton* goToButton = new QToolButton(edit);
 //    goToButton->setAttribute(Qt::WA_TranslucentBackground);
@@ -217,6 +220,7 @@ void SearchBarContainer::startSearch()
 void SearchBarContainer::clearSearchBox()
 {
     m_search_box->setText("");
+    m_search_box->deselect();
     m_clear_action = true;
     //need stop search action
     m_search_trigger.stop();

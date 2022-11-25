@@ -21,6 +21,11 @@
  */
 
 #include "global-settings.h"
+//ukui-interface
+#ifdef KYLIN_COMMON
+#include <ukuisdk/kylin-com4cxx.h>
+#endif
+
 #include <QtConcurrent>
 
 #include <QGSettings>
@@ -28,6 +33,8 @@
 #include <QApplication>
 #include <QPalette>
 #include <QScreen>
+
+#include <kysdk/kysdk-system/libkysysinfo.h>
 
 using namespace Peony;
 
@@ -54,21 +61,6 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(SORT_CHINESE_FIRST, true);
     for (auto key : m_settings->allKeys()) {
         m_cache.insert(key, m_settings->value(key));
-    }
-
-    m_cache.insert(DISPLAY_STANDARD_ICONS, true);
-    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
-        m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
-        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
-            m_cache.remove(key);
-            m_cache.insert(key, m_peonyGSettings->get(key));
-            Q_EMIT this->valueChanged(key);
-        });
-
-        for (auto key : m_peonyGSettings->keys()) {
-            m_cache.remove(key);
-            m_cache.insert(key, m_peonyGSettings->get(key));
-        }
     }
 
     m_date_format = tr("yyyy/MM/dd");
@@ -130,10 +122,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         }
 
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
-            if ((key == SHOW_TRASH_DIALOG) || (key == SEND_URIS_OF_COPY_DSPS) || key == DOC_IS_OCCUPIED_BY_WPS) {
-                m_cache.remove(key);
-                m_cache.insert(key, m_peony_gsettings->get(key).toBool());
-            } else if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key)) {
+            bool sendChanged = false;
+            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);
@@ -141,59 +131,19 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
                 }
                 /* Solve the problem: When opening multiple document management, check "Show hidden files" in one document management,
                  *  but the other document management does not take effect in real time.modified by 2021/06/15  */
+                sendChanged = true;
+            } else {
+                m_cache.remove(key);
+                m_cache.insert(key, m_peony_gsettings->get(key));
+            }
+            if (sendChanged) {
                 Q_EMIT this->valueChanged(key);
             }
         });
 
-        // fix #135482
-        auto keys = m_peony_gsettings->keys();
-
-        if (keys.contains(SHOW_TRASH_DIALOG)) {
-            m_cache.remove(SHOW_TRASH_DIALOG);
-            m_cache.insert(SHOW_TRASH_DIALOG, m_peony_gsettings->get(SHOW_TRASH_DIALOG).toBool());
-        } else {
-            m_cache.remove(SHOW_TRASH_DIALOG);
-            m_cache.insert(SHOW_TRASH_DIALOG, true);
-        }
-
-        if (keys.contains(SHOW_HIDDEN_PREFERENCE)) {
-            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
-            m_cache.insert(SHOW_HIDDEN_PREFERENCE, m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool());
-        } else {
-            m_cache.remove(SHOW_HIDDEN_PREFERENCE);
-            m_cache.insert(SHOW_HIDDEN_PREFERENCE, false);
-        }
-
-        if (keys.contains(SHOW_FILE_EXTENSION)) {
-            m_cache.remove(SHOW_FILE_EXTENSION);
-            m_cache.insert(SHOW_FILE_EXTENSION, m_peony_gsettings->get(SHOW_FILE_EXTENSION).toBool());
-        } else {
-            m_cache.remove(SHOW_FILE_EXTENSION);
-            m_cache.insert(SHOW_FILE_EXTENSION, true);
-        }
-
-        if (keys.contains(SEND_URIS_OF_COPY_DSPS)) {
-            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
-            m_cache.insert(SEND_URIS_OF_COPY_DSPS, m_peony_gsettings->get(SEND_URIS_OF_COPY_DSPS).toBool());
-        } else {
-            m_cache.remove(SEND_URIS_OF_COPY_DSPS);
-            m_cache.insert(SEND_URIS_OF_COPY_DSPS, false);
-        }
-
-        if (keys.contains(DOC_IS_OCCUPIED_BY_WPS)) {
-            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
-            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, m_peony_gsettings->get(DOC_IS_OCCUPIED_BY_WPS).toBool());
-        } else {
-            m_cache.remove(DOC_IS_OCCUPIED_BY_WPS);
-            m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
-        }
-
-        if (keys.contains(USE_GLOBAL_DEFAULT_SORTING)) {
-            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
-            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, m_peony_gsettings->get(USE_GLOBAL_DEFAULT_SORTING).toBool());
-        } else {
-            m_cache.remove(USE_GLOBAL_DEFAULT_SORTING);
-            m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
+        for (auto key : m_peony_gsettings->keys()) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peony_gsettings->get(key));
         }
     }
 
@@ -219,18 +169,28 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         }
     }
 
-    if (m_cache.value(DEFAULT_WINDOW_SIZE).isNull() || m_cache.value(DEFAULT_SIDEBAR_WIDTH) <= 0) {
+    getUkuiStyle();
+    getDualScreenMode();
+    getMachineMode();
+
+    if (m_cache.value(DEFAULT_WINDOW_WIDTH).isNull()
+        || m_cache.value(DEFAULT_WINDOW_HEIGHT).isNull()
+        || m_cache.value(DEFAULT_SIDEBAR_WIDTH) <= 0)
+    {
         QScreen *screen=qApp->primaryScreen();
-        QRect geometry = screen->availableGeometry();
-        int default_width = geometry.width() * 2/3;
-        int default_height =  geometry.height() * 4/5;
-        if (default_width < 850)
-            default_width = 850;
-        if (default_height < 850 *0.618)
-            default_height = 850 *0.618;
-        setValue(DEFAULT_WINDOW_SIZE, QSize(default_width, default_height));
-        setValue(DEFAULT_SIDEBAR_WIDTH, 210);
-        qDebug() << "deafult set DEFAULT_SIDEBAR_WIDTH:"<<210;
+        if (screen) {
+            QRect geometry = screen->availableGeometry();
+            int default_width = geometry.width() * 2/3;
+            int default_height =  geometry.height() * 4/5;
+            if (default_width < 850)
+                default_width = 850;
+            if (default_height < 850 *0.618)
+                default_height = 850 *0.618;
+            setValue(DEFAULT_WINDOW_WIDTH, default_width);
+            setValue(DEFAULT_WINDOW_HEIGHT, default_height);
+            setValue(DEFAULT_SIDEBAR_WIDTH, 292);
+            qDebug() << "deafult set DEFAULT_SIDEBAR_WIDTH:"<<210;
+        }
     }
 
     if (m_cache.value(DEFAULT_VIEW_ID).isNull()) {
@@ -246,17 +206,112 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 
     if (m_cache.value(DEFAULT_VIEW_ZOOM_LEVEL).isNull()) {
-        setValue(DEFAULT_VIEW_ZOOM_LEVEL, 25);
+        setValue(DEFAULT_VIEW_ZOOM_LEVEL, 70);
     }
 
     if (m_cache.value(REMOTE_SERVER_REMOTE_IP).isNull()) {
         setValue(REMOTE_SERVER_REMOTE_IP, QVariant(QList<QString>()));
+    }
+
+
+    if (m_cache.value (SORT_TYPE).isNull()) {
+        setValue (SORT_TYPE, 0);
+    }
+
+    if (m_cache.value (SORT_ORDER).isNull()) {
+        setValue (SORT_ORDER, 0);
+    }
+
+    auto machine = kdk_system_get_hostCloudPlatform();
+    if (machine) {
+        if (qstrcmp(machine, "none") == 0) {
+            m_cache.insert(IS_GUESTOS_MACHINE, false);
+        } else {
+            m_cache.insert(IS_GUESTOS_MACHINE, true);
+        }
+        free(machine);
+    } else {
+        m_cache.insert(IS_GUESTOS_MACHINE, false);
     }
 }
 
 GlobalSettings::~GlobalSettings()
 {
 
+}
+
+void GlobalSettings::getUkuiStyle()
+{
+    if (QGSettings::isSchemaInstalled(UKUI_CONTROL_CENTER_PERSONALISE)) {
+        m_gsettings = new QGSettings(UKUI_CONTROL_CENTER_PERSONALISE);
+        connect(m_gsettings, &QGSettings::changed, [this](const QString &key) {
+            if (key == PERSONALISE_EFFECT) {
+                qreal opacity = 100.0;
+                if (m_gsettings->get(PERSONALISE_EFFECT).toBool()) {
+                    opacity *= m_gsettings->get(PERSONALISE_TRANSPARENCY).toReal();
+                }
+                m_cache.remove(SIDEBAR_BG_OPACITY);
+                m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+            }
+        });
+        qreal opacity = 100.0;
+        if (m_gsettings->keys().contains(PERSONALISE_EFFECT) && m_gsettings->keys().contains(PERSONALISE_TRANSPARENCY)) {
+            if (m_gsettings->get(PERSONALISE_EFFECT).toBool()) {
+                opacity *= m_gsettings->get(PERSONALISE_TRANSPARENCY).toReal();
+            }
+        }
+        m_cache.remove(SIDEBAR_BG_OPACITY);
+        m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+    } else {
+        if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+            m_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
+            connect(m_gsettings, &QGSettings::changed, this, [=](const QString &key) {
+                if (key == "peonySideBarTransparency") {
+                    m_cache.remove(SIDEBAR_BG_OPACITY);
+                    m_cache.insert(SIDEBAR_BG_OPACITY, m_gsettings->get(key).toString());
+                    qApp->paletteChanged(qApp->palette());
+                }
+            });
+            m_cache.remove(SIDEBAR_BG_OPACITY);
+            m_cache.insert(SIDEBAR_BG_OPACITY, m_gsettings->get("peonySideBarTransparency").toString());
+        }
+    }
+}
+
+void GlobalSettings::getMachineMode()
+{
+    m_cache.insert(TABLET_MODE, "false");
+    if (QGSettings::isSchemaInstalled("org.ukui.SettingsDaemon.plugins.tablet-mode")) {
+        m_gsettings_tablet_mode = new QGSettings("org.ukui.SettingsDaemon.plugins.tablet-mode", QByteArray(), this);
+        m_cache.remove(TABLET_MODE);
+        m_cache.insert(TABLET_MODE, m_gsettings_tablet_mode->get("tablet-mode").toString());
+        connect(m_gsettings_tablet_mode, &QGSettings::changed, this, [=](const QString &key) {
+            if (key == "tabletMode") {
+                m_cache.remove(TABLET_MODE);
+                m_cache.insert(TABLET_MODE, m_gsettings_tablet_mode->get(key).toString());
+                qApp->paletteChanged(qApp->palette());
+            }
+        });
+    }
+}
+
+void GlobalSettings::getDualScreenMode()
+{
+    m_cache.insert(DUAL_SCREEN_MODE, DUAL_SCREEN_EXPAND_MODE);
+    if(QGSettings::isSchemaInstalled(SETTINGS_DAEMON_SCHEMA_XRANDR)) {
+        m_gsettings_dual_screen_mode = new QGSettings(SETTINGS_DAEMON_SCHEMA_XRANDR, QByteArray(), this);
+        m_cache.remove(DUAL_SCREEN_MODE);
+        if (m_gsettings_dual_screen_mode->keys().contains(DUAL_SCREEN_MODE)) {
+            m_cache.insert(DUAL_SCREEN_MODE, m_gsettings_dual_screen_mode->get(DUAL_SCREEN_MODE).toString());
+        }
+        connect(m_gsettings_dual_screen_mode, &QGSettings::changed, this, [=](const QString &key){
+           if (key == DUAL_SCREEN_MODE) {
+               m_cache.remove(DUAL_SCREEN_MODE);
+               m_cache.insert(DUAL_SCREEN_MODE, m_gsettings_dual_screen_mode->get(key).toString());
+               qApp->paletteChanged(qApp->palette());
+           }
+        });
+    }
 }
 
 const QVariant GlobalSettings::getValue(const QString &key)
@@ -300,22 +355,19 @@ void GlobalSettings::resetAll()
 
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
-
-    m_cache.remove(key);
-    m_cache.insert(key, value);
-    if ((key == DISPLAY_STANDARD_ICONS) && m_peonyGSettings) {
-        if (m_peonyGSettings->keys().contains(DISPLAY_STANDARD_ICONS)) {
-            m_peonyGSettings->set(DISPLAY_STANDARD_ICONS, value);
-        }
-        return;
+    if (key == REMOTE_SERVER_REMOTE_IP || key == DEFAULT_WINDOW_SIZE) {
+        m_cache.remove(key);
+        m_cache.insert(key, value);
+        QtConcurrent::run([=]() {
+            if (m_mutex.tryLock(1000)) {
+                m_settings->setValue(key, value);
+                m_settings->sync();
+                m_mutex.unlock();
+            }
+        });
+    } else {
+        setGSettingValue(key, value);
     }
-    QtConcurrent::run([=]() {
-        if (m_mutex.tryLock(1000)) {
-            m_settings->setValue(key, value);
-            m_settings->sync();
-            m_mutex.unlock();
-        }
-    });
 }
 
 void GlobalSettings::forceSync(const QString &key)
@@ -326,15 +378,30 @@ void GlobalSettings::forceSync(const QString &key)
         for (auto key : m_settings->allKeys()) {
             m_cache.insert(key, m_settings->value(key));
         }
+
+        if (m_peony_gsettings) {
+            for (auto key : m_peony_gsettings->keys()) {
+                m_cache.insert(key, m_peony_gsettings->get(key));
+            }
+        }
     } else {
         m_cache.remove(key);
-        m_cache.insert(key, m_settings->value(key));
+        if (m_settings->allKeys().contains(key)) {
+            m_cache.insert(key, m_settings->value(key));
+        } else {
+            m_cache.insert(key, m_peony_gsettings ? m_peony_gsettings->get(key) : QVariant());
+        }
     }
 }
 
 void GlobalSettings::slot_updateRemoteServer(const QString& server, bool add)
 {
     Q_EMIT signal_updateRemoteServer(server, add);
+}
+
+bool GlobalSettings::isGuestOSMachine()
+{
+    return m_cache.value(IS_GUESTOS_MACHINE).toBool();
 }
 
 void GlobalSettings::setTimeFormat(const QString &value)
@@ -368,10 +435,17 @@ void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
         return;
 
     const QStringList list = m_peony_gsettings->keys();
-    if (!list.contains(key))
+    if (!list.contains(key)) {
+        qWarning()<<"set gsettings failed"<<key<<value<<"not existed!";
         return;
+    }
 
     m_peony_gsettings->set(key, value);
     m_cache.remove(key);
     m_cache.insert(key, m_peony_gsettings->get(key));
+}
+
+QString GlobalSettings::getProjectName()
+{
+    return QString::fromStdString(KDKGetPrjCodeName());
 }

@@ -127,6 +127,7 @@ void MarkPropertiesPage::initTableData()
         checkBox->setChecked(m_thisFileLabelIds.contains(item->id()));
         boxLayout->addWidget(checkBox);
 
+        boxLayout->addSpacing(-10);
         QPushButton *button = new QPushButton(widget);
         button->palette().window();
         button->setStyleSheet("QPushButton{"

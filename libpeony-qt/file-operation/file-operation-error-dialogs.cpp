@@ -32,6 +32,8 @@
 #include <QStyleOptionViewItem>
 #include "sound-effect.h"
 
+#include "file-operation-dialog/kyfiledialogrename.h"
+
 static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
 static QString formatGerrorString (const Peony::FileOperationError* error);
@@ -159,7 +161,7 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
 
 Peony::FileOperationErrorHandler *Peony::FileOperationErrorDialogFactory::getDialog(Peony::FileOperationError &errInfo)
 {
-    FileOperationErrorDialogBase* dlg = nullptr;
+    FileOperationErrorHandler* dlg = nullptr;
 
     switch (errInfo.dlgType) {
     case ED_CONFLICT:
@@ -172,6 +174,15 @@ Peony::FileOperationErrorHandler *Peony::FileOperationErrorDialogFactory::getDia
         dlg = new FileOperationErrorDialogNotSupported();
         break;
     }
+#ifdef KY_FILE_DIALOG
+    case ED_RENAME: {
+        dlg = new KyFileDialogRename();
+        break;
+    }
+#endif
+    default:
+        dlg = new FileOperationErrorDialogWarning();
+        break;
     }
 
     return dlg;

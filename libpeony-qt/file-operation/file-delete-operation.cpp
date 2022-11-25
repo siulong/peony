@@ -24,6 +24,8 @@
 #include "file-operation-manager.h"
 #include "file-node.h"
 #include "file-node-reporter.h"
+#include "sound-effect.h"
+#include <QApplication>
 #include <QStandardPaths>
 #include <QProcess>
 
@@ -104,7 +106,6 @@ void FileDeleteOperation::deleteRecursively(FileNode *node)
             except.errorStr = err->message;
             Q_EMIT errored(except);
             auto response = except.respCode;
-            qDebug()<<response;
             auto responseType = response;
             if (responseType == Cancel) {
                 cancel();
@@ -193,6 +194,11 @@ void FileDeleteOperation::run()
     }
 
     Q_EMIT operationFinished();
+
+    qApp->property("clearTrash");
+    if(true == qApp->property("clearTrash").toBool()){
+        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+    }
 }
 
 void FileDeleteOperation::cancel()
