@@ -107,7 +107,7 @@
     </message>
     <message>
         <source>New...</source>
-        <translation>གསར་འཛུགས།...</translation>
+        <translation type="vanished">གསར་འཛུགས།...</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -123,7 +123,7 @@
     </message>
     <message>
         <source>Sort By...</source>
-        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
+        <translation type="vanished">རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Properties</source>
@@ -171,7 +171,19 @@
     </message>
     <message>
         <source>View Type...</source>
-        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
+        <translation type="vanished">མཐོང་རིས་རིགས་རྣམ།</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort By</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

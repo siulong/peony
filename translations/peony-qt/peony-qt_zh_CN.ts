@@ -138,7 +138,7 @@ p, li { white-space: pre-wrap; }
         <translation>排序类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="745"/>
+        <location filename="../../src/control/header-bar.cpp" line="750"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
@@ -190,8 +190,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="335"/>
-        <location filename="../../src/control/header-bar.cpp" line="828"/>
-        <location filename="../../src/control/header-bar.cpp" line="846"/>
+        <location filename="../../src/control/header-bar.cpp" line="835"/>
+        <location filename="../../src/control/header-bar.cpp" line="853"/>
         <source>Deselect All</source>
         <translation>取消全选</translation>
     </message>
@@ -212,15 +212,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="613"/>
-        <location filename="../../src/control/header-bar.cpp" line="831"/>
-        <location filename="../../src/control/header-bar.cpp" line="837"/>
+        <location filename="../../src/control/header-bar.cpp" line="838"/>
+        <location filename="../../src/control/header-bar.cpp" line="844"/>
         <source>Select All Item</source>
         <translation>全部选择</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="621"/>
-        <location filename="../../src/control/header-bar.cpp" line="632"/>
-        <location filename="../../src/control/header-bar.cpp" line="800"/>
+        <location filename="../../src/control/header-bar.cpp" line="623"/>
+        <location filename="../../src/control/header-bar.cpp" line="635"/>
+        <location filename="../../src/control/header-bar.cpp" line="805"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
@@ -235,37 +235,37 @@ p, li { white-space: pre-wrap; }
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="638"/>
+        <location filename="../../src/control/header-bar.cpp" line="641"/>
         <source>Select Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="646"/>
+        <location filename="../../src/control/header-bar.cpp" line="649"/>
         <source>MoveTo</source>
         <translation>移动到</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="655"/>
+        <location filename="../../src/control/header-bar.cpp" line="658"/>
         <source>CopyTo</source>
         <translation>复制到</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="664"/>
+        <location filename="../../src/control/header-bar.cpp" line="667"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="727"/>
+        <location filename="../../src/control/header-bar.cpp" line="732"/>
         <source>Select path</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="760"/>
+        <location filename="../../src/control/header-bar.cpp" line="765"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="774"/>
+        <location filename="../../src/control/header-bar.cpp" line="779"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -389,44 +389,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="378"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="386"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="378"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="386"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="416"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="429"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="197"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="424"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="437"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="416"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="197"/>
+        <source>The device is in busy state, please perform this operation later.</source>
+        <translation>设备正忙, 请稍后执行此操作.</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="424"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="429"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="437"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="225"/>
         <source>Open In New Window</source>
         <translation>在新窗口中打开</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="237"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="271"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="241"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
         <source>Can not open %1, %2</source>
         <translation>无法打开%1, %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="255"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Tab</source>
         <translation>在新标签页中打开</translation>
     </message>
@@ -438,7 +444,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="594"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="602"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -1219,7 +1225,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="717"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="725"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>
@@ -1227,17 +1233,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="991"/>
+        <location filename="../../src/control/header-bar.cpp" line="1006"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1004"/>
+        <location filename="../../src/control/header-bar.cpp" line="1019"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1027"/>
+        <location filename="../../src/control/header-bar.cpp" line="1042"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>

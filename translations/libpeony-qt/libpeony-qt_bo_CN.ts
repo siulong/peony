@@ -759,6 +759,18 @@
         <source>Personal Collection server:</source>
         <translation>སྒེར་གྱི་གསོག་ཉར་ཞབས་ཞུ་ཆས།</translation>
     </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">ཐ་ཚིག་</translation>
+    </message>
+    <message>
+        <source>ip input error, please re-enter!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>port input error, please re-enter!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::ConnectServerLogin</name>
@@ -1061,7 +1073,7 @@
     </message>
     <message>
         <source>Sort Order...</source>
-        <translation>གོ་རིམ་སྒྲིག་པ།</translation>
+        <translation type="vanished">གོ་རིམ་སྒྲིག་པ།</translation>
     </message>
     <message>
         <source>Delete to trash</source>
@@ -1089,7 +1101,7 @@
     </message>
     <message>
         <source>New...</source>
-        <translation>གསར་འཛུགས།...</translation>
+        <translation type="vanished">གསར་འཛུགས།...</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -1101,11 +1113,11 @@
     </message>
     <message>
         <source>Sort Preferences...</source>
-        <translation>རིམ་སྒྲིག་ལེགས།</translation>
+        <translation type="vanished">རིམ་སྒྲིག་ལེགས།</translation>
     </message>
     <message>
         <source>Sort By...</source>
-        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
+        <translation type="vanished">རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Properties</source>
@@ -1173,7 +1185,7 @@
     </message>
     <message>
         <source>View Type...</source>
-        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
+        <translation type="vanished">མཐོང་རིས་རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Peony-Qt filesafe menu Extension</source>
@@ -1189,6 +1201,26 @@
     </message>
     <message>
         <source>MultiSelect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort By</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort Preferences</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1316,6 +1348,10 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <source>Error</source>
         <translation>ནོར་འཁྲུལ།</translation>
     </message>
+    <message>
+        <source>The password dialog box is canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileInfo</name>
@@ -1421,11 +1457,11 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Delete All Label</source>
-        <translation>མཚོན་རྟགས་ཆ་ཚང་གསུབས་པ།</translation>
+        <translation type="vanished">མཚོན་རྟགས་ཆ་ཚང་གསུབས་པ།</translation>
     </message>
     <message>
         <source>Add File Label...</source>
-        <translation>མཚོན་རྟགས་སྣོན་པ།</translation>
+        <translation type="vanished">མཚོན་རྟགས་སྣོན་པ།</translation>
     </message>
     <message>
         <source>Peony File Labels Menu Extension</source>
@@ -1927,7 +1963,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File Name:</source>
-        <translation>ཡིག་ཆ་མིང་།:</translation>
+        <translation type="vanished">ཡིག་ཆ་མིང་།:</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -1944,6 +1980,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>usershare</source>
         <translation>རང་སའི་རྩིས་འཁོར་མཉམ་སྤྱོད་</translation>
+    </message>
+    <message>
+        <source>Time Created:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2397,6 +2437,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>Favorite</source>
         <translation>མཉེན་ཆས།</translation>
+    </message>
+    <message>
+        <source>KmreData</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

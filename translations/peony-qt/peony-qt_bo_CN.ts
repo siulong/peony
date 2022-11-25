@@ -173,6 +173,18 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>Close</source>
         <translation type="unfinished">ཁ་རྒྱག་པ།</translation>
     </message>
+    <message>
+        <source>Deselect All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">བསུབ་པ།</translation>
+    </message>
 </context>
 <context>
     <name>HeaderBarContainer</name>
@@ -287,6 +299,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <message>
         <source>This operation is not supported.</source>
         <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
+    </message>
+    <message>
+        <source>The device is in busy state, please perform this operation later.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
