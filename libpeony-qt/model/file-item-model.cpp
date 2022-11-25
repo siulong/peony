@@ -642,6 +642,13 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return true;
     }
 
+    //fix drag trash file to other path is copy issue,link to bug#117741
+    if (srcUris.first().startsWith("trash:///") && action == Qt::MoveAction){
+        //not copy move, do target move to delete file in trash
+        action = Qt::TargetMoveAction;
+    }
+
+
     qDebug() << "dropMimeData:" <<action<<destDirUri;
     bool addHistory = true;
     //krme files can not move to other place, default set as copy action
