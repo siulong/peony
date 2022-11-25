@@ -1102,7 +1102,7 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         //selection if menu request at blank pos.
         QTimer::singleShot(1, this, [=]() {
             m_view->m_touch_active_timer->stop();
-            Q_EMIT this->menuRequest(QCursor::pos());
+            Q_EMIT this->menuRequest(mapToGlobal(pos));
         });
     });
 

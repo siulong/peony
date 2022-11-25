@@ -447,8 +447,8 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     }
 
     button->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(button, &QWidget::customContextMenuRequested, this, [=](){
-        QMenu menu;
+    connect(button, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos){
+        QMenu menu(button);
         FMWindowIface *windowIface = dynamic_cast<FMWindowIface *>(this->topLevelWidget());
         auto copy = menu.addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy Directory"));
 
@@ -461,7 +461,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
             dynamic_cast<QWidget *>(newWindow)->show();
         });
 
-        if (copy == menu.exec(QCursor::pos())) {
+        if (copy == menu.exec(button->mapToGlobal(pos))) {
             if (uri.startsWith("file://")) {
                 QUrl url = uri;
                 QApplication::clipboard()->setText(url.path());

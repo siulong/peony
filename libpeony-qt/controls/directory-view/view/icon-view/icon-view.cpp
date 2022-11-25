@@ -912,7 +912,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         QTimer::singleShot(isDragSelecting? 300: 1, this, [=]() {
             m_view->setIgnore_mouse_move_event(false);
             m_view->m_touch_active_timer->stop();
-            Q_EMIT this->menuRequest(QCursor::pos());
+            Q_EMIT this->menuRequest(mapToGlobal(pos));
         });
     });
 

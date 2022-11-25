@@ -114,8 +114,8 @@ SideBar::SideBar(QWidget *parent) : QTreeView(parent)
         auto item = proxy_model->itemFromIndex(index);
         if (item) {
             if (item->type() != SideBarAbstractItem::SeparatorItem) {
-                SideBarMenu menu(item, this);
-                menu.exec(QCursor::pos());
+                SideBarMenu menu(item, this, this);
+                menu.exec(mapToGlobal(pos));
             }
         }
     });
