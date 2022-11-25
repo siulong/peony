@@ -1,6 +1,9 @@
 #include "color-pushbutton.h"
 #include <QPainter>
 #include <QDebug>
+
+#include <QPainterPath>
+
 ColorPushButton::ColorPushButton(QColor color,QWidget *parent) : QPushButton(parent)
 {
     m_color = color;
