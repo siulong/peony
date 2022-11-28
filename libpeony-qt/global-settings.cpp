@@ -412,6 +412,7 @@ void GlobalSettings::setTimeFormat(const QString &value)
     else{
         m_time_format = tr("HH:mm:ss");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 void GlobalSettings::setDateFormat(const QString &value)
@@ -422,11 +423,12 @@ void GlobalSettings::setDateFormat(const QString &value)
     else{
         m_date_format = tr("yyyy-MM-dd");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 QString GlobalSettings::getSystemTimeFormat()
 {
-    m_system_time_format = m_date_format + " " + m_time_format;
+    //m_system_time_format = m_date_format + " " + m_time_format;
     return m_system_time_format;
 }
 void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
