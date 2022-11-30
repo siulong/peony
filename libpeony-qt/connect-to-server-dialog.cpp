@@ -450,6 +450,9 @@ void ConnectServerDialog::checkConnectIpAndPort(QString uri)
 ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     : QDialog(parent),m_remoteIP(uri)
 {
+    if("bo_CN" == QLocale::system().name()){
+        m_widget_size.setHeight(m_widget_size.height() + 61);
+    }
     setFixedSize(m_widget_size);
     if("bo_CN" == QLocale::system().name()){
         setFixedSize(QSize(424,455));
