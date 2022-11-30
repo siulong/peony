@@ -79,6 +79,7 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
         m_thumbnail_thread_pool->clear();
         m_thumbnail_thread_pool->waitForDone(500);
     });
+
     m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
     connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {
         if (FORBID_THUMBNAIL_IN_VIEW == key) {
@@ -92,6 +93,15 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
             }
         }
     });
+
+    connect(this, &ThumbnailManager::updateFileThemedIconFromThread, this, [=](const QString &uri, const QString &themedIcon){
+        auto icon = QIcon::fromTheme(themedIcon);
+        if (icon.isNull()) {
+            return false;
+        }
+        this->insertOrUpdateThumbnail(uri, icon);
+        return true;
+    }, Qt::BlockingQueuedConnection);
 }
 
 ThumbnailManager::~ThumbnailManager()
@@ -145,13 +155,18 @@ void ThumbnailManager::createImagePdfFileThumbnail(const QString &uri, std::shar
     QIcon thumbnail;
 
     ImagePdfThumbnail officeThumbnail(uri);
-    thumbnail = officeThumbnail.generateThumbnail();;
-    if (!thumbnail.isNull()) {
-        insertOrUpdateThumbnail(uri, thumbnail);
-        if (watcher) {
-            watcher->fileChanged(uri);
-        }
+    ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, "atril");
+    if (watcher) {
+        watcher->fileChanged(uri);
     }
+
+//    thumbnail = officeThumbnail.generateThumbnail();;
+//    if (!thumbnail.isNull()) {
+//        insertOrUpdateThumbnail(uri, thumbnail);
+//        if (watcher) {
+//            watcher->fileChanged(uri);
+//        }
+//    }
 
     return;
 }
@@ -220,50 +235,67 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
 {
     QIcon thumbnail;
     QUrl url = uri;
+    QString path = url.path();
 
     if (!uri.startsWith("file:///")) {
-        url = FileUtils::getTargetUri(uri);
-    }
-
-//    auto _desktop_file = g_desktop_app_info_new_from_filename(url.path().toUtf8().constData());
-//    if (!_desktop_file) {
-//        return;
-//    }
-
-//    auto _icon_string = g_desktop_app_info_get_string(_desktop_file, "Icon");
-    //! \note add for mdm
-    //! mdm禁用应用会把可执行文件的属性改为不可执行，g_desktop_app_info_new_from_filename会
-    //! 认为这个desktop文件不是快捷方式，导致图标变为默认图标
-    if (!uri.endsWith(".desktop") || !QFile(url.path()).exists())
-        return;
-    QSettings desktop_file(url.path(), QSettings::IniFormat);
-    desktop_file.beginGroup("Desktop Entry");
-    QString _icon_string = desktop_file.value("Icon").toString();
-
-    thumbnail = QIcon::fromTheme(_icon_string);
-    QString string = _icon_string;
-
-    //fix desktop file set customer icon issue, link to bug#77638
-    auto info = FileInfo::fromUri(uri);
-    if (! info->customIcon().isEmpty()){
-        thumbnail = GenericThumbnailer::generateThumbnail(info->customIcon(), true);
-    }
-
-    if (thumbnail.isNull()) {
-        if (string.startsWith("/")) {
-            thumbnail = GenericThumbnailer::generateThumbnail(_icon_string, true);
-        } else if (string.contains(".")) {
-            // try getting themed icon with image suffix.
-            string.chop(string.count() - string.lastIndexOf("."));
-            thumbnail = QIcon::fromTheme(string);
+        g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+        g_autoptr (GFileInfo) gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI, G_FILE_QUERY_INFO_NONE, 0, 0);
+        g_autofree gchar *target_uri = g_file_info_get_attribute_as_string(gfileinfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+        if (target_uri) {
+            url = QString(target_uri);
         }
     }
 
+    QString string;
+    g_autoptr (GDesktopAppInfo) desktop_app_info = g_desktop_app_info_new_from_filename(path.toUtf8().constData());
+    if (desktop_app_info) {
+        auto app_info = G_APP_INFO(desktop_app_info);
+        GIcon *icon = g_app_info_get_icon(app_info);
+        string = FileUtils::getIconStringFromGIcon(icon);
+    }
+
+    if (string.isEmpty()) {
+        string = url.fileName().remove(".desktop");
+        auto key_file = g_key_file_new();
+        if (g_key_file_load_from_file(key_file, path.toUtf8().constData(), G_KEY_FILE_NONE, 0)) {
+            g_autofree gchar* icon_name = g_key_file_get_value(key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, 0);
+            if (icon_name) {
+                string = icon_name;
+            }
+            g_key_file_free(key_file);
+        } else {
+            qWarning()<<"failed to load desktop file";
+            return;
+        }
+    }
+
+    if (string.startsWith("/")) {
+        thumbnail = GenericThumbnailer::generateThumbnail(string, true);
+        insertOrUpdateThumbnail(uri, thumbnail);
+        if (watcher) {
+            watcher->fileChanged(uri);
+        }
+        return;
+    } else {
+        if (string.endsWith(".jpg") || string.endsWith(".jpeg") || string.endsWith(".png") || string.endsWith(".svg")) {
+            string.chop(string.count() - string.lastIndexOf("."));
+        }
+    }
+
+    bool successed = ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, string);
+    successed = !thumbnail.isNull() || successed;
+
+    //fix desktop file set customer icon issue, link to bug#77638
+//    auto info = FileInfo::fromUri(uri);
+//    if (! info->customIcon().isEmpty()){
+//        thumbnail = GenericThumbnailer::generateThumbnail(info->customIcon(), true);
+//    }
+
     //add special path search /use/share/pixmaps
-    if (thumbnail.isNull())
+    if (!successed)
     {
-        QString path = QString("/usr/share/pixmaps/%1.%2").arg(_icon_string).arg("png");
-        QString path_svg = QString("/usr/share/pixmaps/%1.%2").arg(_icon_string).arg("svg");
+        QString path = QString("/usr/share/pixmaps/%1.%2").arg(string).arg("png");
+        QString path_svg = QString("/usr/share/pixmaps/%1.%2").arg(string).arg("svg");
         //qDebug() << "createDesktopFileThumbnail path:" <<path;
         if(QFile::exists(path)){
             thumbnail=QIcon(path);
@@ -274,7 +306,7 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
         else{
             //search /usr/share/icons/hicolor/scalable/apps
             //fix installed app desktop icon not loaded in time issue
-            path_svg = QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(_icon_string).arg("svg");
+            path_svg = QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(string).arg("svg");
             if(QFile::exists(path_svg))
             {
                thumbnail=QIcon(path_svg);
@@ -285,19 +317,32 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
         //link to bug#69429, after install app not show icon issue
         if (thumbnail.isNull())
         {
-            path = QString("/usr/share/icons/hicolor/64x64/apps/%1.%2").arg(_icon_string).arg("png");
+            path = QString("/usr/share/icons/hicolor/64x64/apps/%1.%2").arg(string).arg("png");
             if(QFile::exists(path)){
                 thumbnail=QIcon(path);
             }
         }
-    }
 
+        if (thumbnail.isNull()) {
+            path = QString("/usr/share/kylin-software-center/data/icons/%1.%2").arg(string).arg("png");
+            if(QFile::exists(path)){
+                thumbnail=QIcon(path);
+            }
+        }
+    } else {
+        if (watcher) {
+            watcher->fileChanged(uri);
+        }
+        return;
+    }
 
     if (!thumbnail.isNull()) {
         insertOrUpdateThumbnail(uri, thumbnail);
         if (watcher) {
             watcher->fileChanged(uri);
         }
+    } else {
+        qWarning()<<"can not pharse desktop file"<<uri;
     }
 
     return;
@@ -323,59 +368,7 @@ void ThumbnailManager::findAtril()
 
 void ThumbnailManager::createThumbnailInternal(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
 {
-    auto settings = GlobalSettings::getInstance();
-    if (settings->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
-        bool do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
-        if (do_not_thumbnail && !force) {
-            qDebug()<<"setting is not thumbnail";
-            return;
-        }
-    }
-
-    //NOTE: we should do createThumbnail() after we have queried the file's info.
-    auto info = FileInfo::fromUri(uri);
-    //qDebug()<<"file uri:"<< uri << " mime type:" << info->mimeType();
-    //qDebug()<<"file path:" << info->filePath();
-    //qDebug()<<"file modify time:" << info->modifiedTime();
-
-    if (!info->mimeType().isEmpty()) {
-        if (!info->customIcon().isEmpty()) {
-            auto icon = GenericThumbnailer::generateThumbnail(info->customIcon());
-            if (!icon.isNull()) {
-                insertOrUpdateThumbnail(uri, icon);
-                if (watcher) {
-                    watcher->fileChanged(uri);
-                }
-            }
-        }
-        else if (info->isImagePdfFile())
-        {
-             qDebug() <<"isImagePdfFile m_tril_exist:" <<m_tril_exist;
-             if (m_tril_exist)
-             {
-                 createImagePdfFileThumbnail(uri, watcher);
-             }
-        }
-        else if (info->isImageFile()) {
-            createImageFileThumbnail(uri, watcher);
-        }
-        else if (info->mimeType().contains("pdf")) {
-            createPdfFileThumbnail(uri, watcher);
-        }
-        else if(info->isVideoFile()) {
-            createVideFileThumbnail(uri, watcher);
-        }
-        else if (info->isOfficeFile()) {
-            createOfficeFileThumbnail(uri, watcher);
-        }
-        else if (info->isDesktopFile()) {
-            createDesktopFileThumbnail(uri, watcher);
-        }
-        else {
-            //qDebug()<<"the file type: " << info->mimeType();
-            //qDebug()<<"the mime type can not generate thumbnail.";
-        }
-    }
+    // deprecated
 }
 
 void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
@@ -427,6 +420,7 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
         return;
 
     auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
+    thumbnailJob->setForceUpdate(force);
     m_thumbnail_thread_pool->start(thumbnailJob);
     qDebug() <<"createThumbnail thumbnailJob start:" <<uri;
 }
@@ -439,9 +433,8 @@ void ThumbnailManager::updateDesktopFileThumbnail(const QString &uri, std::share
         //get desktop file icon.
         //async
         //qDebug()<<"desktop file"<<uri;
-        QtConcurrent::run([=]() {
-            createDesktopFileThumbnail(uri, watcher);
-        });
+        auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
+        QThreadPool::globalInstance()->start(thumbnailJob, QThread::Priority::HighestPriority);
     } else {
         releaseThumbnail(uri);
         if (watcher) {
@@ -481,4 +474,12 @@ const QIcon ThumbnailManager::tryGetThumbnail(const QString &uri)
     auto icon = m_hash.value(uri);
     m_semaphore->release();
     return icon;
+}
+
+bool ThumbnailManager::hasThumbnailThreadSafety(const QString &uri)
+{
+    m_semaphore->acquire();
+    bool res = hasThumbnail(uri);
+    m_semaphore->release();
+    return res;
 }
