@@ -504,7 +504,6 @@ void BasicPropertiesPage::loadOptionalData()
     //fix bug#113890,hiden Desktop folder change desktop show
     m_hidden->setDisabled(!m_info->canRename() || isDesktop);
     m_isReadOnly = m_readOnly->isChecked();
-    m_isHidden = m_hidden->isChecked();
 
 
     //确认被修改
@@ -754,10 +753,6 @@ void BasicPropertiesPage::saveAllChange()
     //未发生修改
     if (!this->m_thisPageChanged)
         return;
-
-    if(m_isReadOnly == m_readOnly->isChecked() && m_isHidden == m_hidden->isChecked()){
-        return;
-    }
 
     //拒绝修改home目录
     if (m_info.get()->uri() == ("file://"+QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())) {
