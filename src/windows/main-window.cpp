@@ -754,6 +754,11 @@ void MainWindow::setShortCuts()
                     return;
                 }
 
+                auto info = Peony::FileInfo::fromUri(currentUri);
+                if (!info->canWrite()) {
+                    return;
+                }
+
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
                 QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);

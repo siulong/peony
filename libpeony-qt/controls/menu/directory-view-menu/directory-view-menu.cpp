@@ -795,12 +795,19 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe)
             {
-                l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
-                l.last()->setObjectName(CUT_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    ClipboardUtils::setClipboardFiles(m_selections, true);
-                    m_view->repaintView();
-                });
+                bool canCut = true;
+                auto info = FileInfo::fromUri(m_directory);
+                if (!info->canWrite()) {
+                    canCut = false;
+                }
+                if (canCut) {
+                    l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
+                    l.last()->setObjectName(CUT_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        ClipboardUtils::setClipboardFiles(m_selections, true);
+                        m_view->repaintView();
+                    });
+                }
             }
 
             bool hasDeleteForever = false;
