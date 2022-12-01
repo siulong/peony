@@ -565,36 +565,132 @@ bool DiscControl::formatUdfSync(QString discLabel){
     return formatRet;
 }
 
-/** FIXME: 失败时，根据命令输出结果@output1匹配错误信息
- * 阻塞式对CD-RW/DVD+RW盘进行udf格式化
-*/
-bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1){
-    QString output1;
-    QString errInfo;
-    QStringList arg1;
-    QProcess formatUdf1;
-    QProcess::ProcessError formatErr;
+/** 阻塞式使用xorriso清空光盘
+ * @brief DiscControl::xorrisoBlankFullSync
+ * @return 清空光盘成功返回true,失败返回false
+ */
+bool DiscControl::xorrisoBlankFullSync()
+{
+    QString output;
+    QStringList arg;
+    QProcess formatUdf;
 
-    arg1<<"-P"<<udfLabel1<<"-L"<<udfLabel1<<mDevice;
-    formatUdf1.setProcessChannelMode(QProcess::MergedChannels);
-    formatUdf1.start("newfs_udf", arg1);
-    formatUdf1.waitForFinished(-1);
-    output1 = formatUdf1.readAll();
-    formatErr = formatUdf1.error();
-    formatUdf1.close();
+    arg << "-dev" << mDevice << "-blank" << "full";
+    formatUdf.setProcessChannelMode(QProcess::MergedChannels);
+    formatUdf.start("xorriso", arg);
+    formatUdf.waitForFinished(-1);
+    output = formatUdf.readAll();
+    formatUdf.close();
 
-    if(output1.contains("Disc is not properly formatted")){
-		errInfo = mMediaType + tr("is not properly formatted.");
-		formatUdfFinished(false, errInfo);
+    if(output.contains("xorriso : aborting")){     //xorriso命令失败
+        qInfo() << "["<<mDevice<<"] xorriso -blank full failed";
         return false;
-	}
+    }
+    return true;
+}
+
+/** 阻塞式使用xorriso命令格式化光盘
+ * @brief DiscControl::xorrisoFormatFullSync
+ * @return 格式化成功返回true,失败返回false
+ */
+bool DiscControl::xorrisoFormatFullSync()
+{
+    QString output;
+    QStringList arg;
+    QProcess formatUdf;
+
+    arg << "-dev" << mDevice << "-format" << "full";
+    formatUdf.setProcessChannelMode(QProcess::MergedChannels);
+    formatUdf.start("xorriso", arg);
+    formatUdf.waitForFinished(-1);
+    output = formatUdf.readAll();
+    formatUdf.close();
+
+    if(output.contains("xorriso : aborting")){     //xorriso命令失败
+        qInfo() << "["<<mDevice<<"] xorriso -format full failed";
+        return false;
+    }
+    return true;
+}
+
+/** 阻塞式使用udfclient中的newfs_udf命令对光盘进行udf格式化
+ * @brief DiscControl::formatUdfByUdfclientSync
+ * @param dvdRwLabel 光盘卷标名
+ * @return 格式化成功返回true; 失败返回false
+ */
+bool DiscControl::formatUdfByUdfclientSync(const QString &dvdRwLabel)
+{
+    QString output;
+    QStringList arg;
+    QString formatErr;
+    QProcess formatUdf;
+
+    arg << "-P" << dvdRwLabel << "-L" << dvdRwLabel << mDevice;
+    formatUdf.setProcessChannelMode(QProcess::MergedChannels);
+    formatUdf.start("newfs_udf", arg);
+    formatUdf.waitForFinished(-1);
+    output = formatUdf.readAll();
+    formatErr = formatUdf.error();
+    formatUdf.close();
+
+    if(output.contains("Disc is not properly formatted")){     //newfs_udf命令无法对空盘进行格式化
+        qInfo() << "["<<mDevice<<"] preparation failed before udf format.";
+        return false;
+    } else if(output.contains("No support yet for creating filingsystem on sequential recordables")) {
+        qInfo() << "[" <<mDevice << "] No support yet for creating filingsystem on sequential recordables";
+        return false;
+    } else if(output.contains("Disc is marked being not serial, full, but the last session is not marked closed")) {
+        // Disc is marked being not serial, full, but the last session is not marked closed
+        // Most likely formatting problem, try formatting it again
+        qInfo() << "[" <<mDevice << "] Disc is marked being not serial, full, but the last session is not marked closed";
+        return false;
+    } else if(output.contains("Can't create filingsystem on a non recordable disc")) {
+        qInfo() << "[" <<mDevice << "] Can't create filingsystem on a non recordable disc";
+        return false;
+    } else if(output.contains("No support yet for non-sequential WORM devices")) {
+        qInfo() << "[" <<mDevice << "] No support yet for non-sequential WORM devices";
+        return false;
+    } else if(output.contains("Disc is empty; please packet-format it before use")) {
+        qInfo() << "[" <<mDevice << "] Disc is empty; please packet-format it before use";
+        return false;
+    } else if(output.contains("Can't handle multiple session rewritable discs yet")) {
+        qInfo() << "[" <<mDevice << "] Can't handle multiple session rewritable discs yet";
+        return false;
+    }
+
     if(QProcess::FailedToStart == formatErr){
-        errInfo = tr("Can not found newfs_udf tool.");
-        formatUdfFinished(false, errInfo);
+        qInfo() << "[" <<mDevice << "] Can not found newfs_udf tool.";
         return false;
     }
 
     return true;
+}
+
+
+/** FIXME: 失败时，根据命令输出结果@output1匹配错误信息
+ * 阻塞式对CD-RW/DVD+RW盘进行udf格式化
+*/
+bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1)
+{
+    // 空光盘
+    QString formatErrInfo;
+    if(mIsBlank) {
+        if(!xorrisoFormatFullSync()) {
+            qInfo() << __LINE__<< "xorriso -format full: format DVD+RW fail.";
+        } else {
+            qInfo() << __LINE__<< "xorriso -format full: format DVD+RW success.";
+        }
+    }
+
+    if(!formatUdfByUdfclientSync(udfLabel1)) {
+        qInfo() << __LINE__ << "newfs_udf: udf format DVD+RW fail.";
+        QString errInfo = tr("DVD+RW udf format fail.");
+        formatUdfFinished(false, errInfo);
+        return false;
+    } else {
+        qInfo() << "newfs_udf: udf format DVD+RW success.";
+        return true;
+    }
 }
 
 /** DVD-RW空盘的格式化操作比较繁琐，分为两步

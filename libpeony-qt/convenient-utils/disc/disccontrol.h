@@ -44,6 +44,12 @@ public:
     bool discEjectSync();       //阻塞式光盘弹出操作
     /** udf格式化操作 */
     bool formatUdfSync(QString discLabel);//阻塞式Udf格式化操作接口，格式化成功后会立即弹出光盘
+
+    /** 不同格式化工具执行格式化操作，以阻塞方式*/
+    bool xorrisoBlankFullSync();  // xorriso阻塞式执行blank操作
+    bool xorrisoFormatFullSync();  // xorriso阻塞式执行format操作
+    bool formatUdfByUdfclientSync(const QString &);  // 阻塞式执行udf格式化操作
+
     /** iso9660刻录操作 */
     bool discBurnSync(QString src, QString dest, const QString& discLabel, QString& burnError);
     void discBurn(QString src, QString dest, const QString& discLabel);
