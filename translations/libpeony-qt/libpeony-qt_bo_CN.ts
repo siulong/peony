@@ -66,6 +66,10 @@
         <source>Can not found newfs_udf tool.</source>
         <translation>newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
     </message>
+    <message>
+        <source>DVD+RW udf format fail.</source>
+        <translation>DVD+RW udfརྣམ་གཞག་ཕམ་ཁ </translation>
+    </message>
 </context>
 <context>
     <name>FileLabelModel</name>

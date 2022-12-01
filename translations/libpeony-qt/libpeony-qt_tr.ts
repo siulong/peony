@@ -67,17 +67,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="587"/>
-        <source>is not properly formatted.</source>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="687"/>
+        <source>DVD+RW udf format fail.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="592"/>
-        <source>Can not found newfs_udf tool.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="623"/>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="719"/>
         <source>preparation failed before DVD-RW udf format.</source>
         <translation type="unfinished"></translation>
     </message>

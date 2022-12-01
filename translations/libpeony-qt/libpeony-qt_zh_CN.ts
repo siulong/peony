@@ -67,17 +67,20 @@
         <translation>在 udf 格式之前卸载磁盘失败。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="587"/>
         <source>is not properly formatted.</source>
-        <translation>格式不正确。</translation>
+        <translation type="vanished">格式不正确。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="592"/>
         <source>Can not found newfs_udf tool.</source>
-        <translation>未找到newfs_udf工具。</translation>
+        <translation type="vanished">未找到newfs_udf工具。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="623"/>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="687"/>
+        <source>DVD+RW udf format fail.</source>
+        <translation>DVD+RW udf格式化失败</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="719"/>
         <source>preparation failed before DVD-RW udf format.</source>
         <translation>DVD-RW udf 格式之前的准备失败。</translation>
     </message>
