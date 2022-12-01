@@ -360,10 +360,13 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                         //this->endResetModel();
                         Q_EMIT this->requestClearIndexWidget();
                         Q_EMIT this->requestUpdateItemPositions();
-                        QStringList list;
-                        list.append(info->uri());
-                        //auto remove, link to task#10131
-                        FileOperationUtils::remove(list);
+                        //fix bug#148380, 148375 remove file not exist, deleted by app
+                        if (QFile::exists(info->uri().replace("file://", ""))){
+                            QStringList list;
+                            list.append(info->uri());
+                            //auto remove, link to task#10131
+                            FileOperationUtils::remove(list);
+                        }
                       }
                     });
                 }
@@ -399,11 +402,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                         //this->endResetModel();
                         Q_EMIT this->requestClearIndexWidget();
                         Q_EMIT this->requestUpdateItemPositions();
-                        QStringList list;
-                        list.append(info->uri());
-                        //auto remove, link to task#10131
-                        FileOperationUtils::remove(list);
-                      }
+                        //fix bug#148380, 148375 remove file not exist, deleted by app
+                        if (QFile::exists(info->uri().replace("file://", ""))){
+                            QStringList list;
+                            list.append(info->uri());
+                            //auto remove, link to task#10131
+                            FileOperationUtils::remove(list);
+                         }
+                       }
                     });
                 }
             }
