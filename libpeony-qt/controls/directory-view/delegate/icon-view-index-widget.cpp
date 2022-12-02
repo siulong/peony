@@ -273,7 +273,8 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         for (int i = startIndex; i < colors.count(); ++i) {
             auto color = colors.at(i);
             p.save();
-            p.setRenderHint(QPainter::Antialiasing);
+            //fix bug#147348
+            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             p.translate(0, m_delegate->getView()->iconSize().height() + 5);
 
            // p.translate(2, 2);

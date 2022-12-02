@@ -404,7 +404,7 @@ void TabBarStyle::drawComplexControl(QStyle::ComplexControl control, const QStyl
 {
     if (widget && (widget->objectName() == "addPageButton" || widget->objectName() == "toolButton")) {
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         QPainterPath path;
         if (!m_need_adjust) {
             path.addEllipse(QRect(option->rect.adjusted(4, 4, -4, -4)));

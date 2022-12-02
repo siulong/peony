@@ -249,7 +249,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
-                painter->setRenderHint(QPainter::Antialiasing);
+                //fix bug#147348
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 painter->translate(opt.rect.topLeft());
                 painter->translate(0, iconRect.size().height() + 5);
                 painter->setPen(opt.palette.highlightedText().color());

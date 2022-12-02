@@ -118,7 +118,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
-                painter->setRenderHint(QPainter::Antialiasing);
+                //fix bug#147348
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 painter->translate(0, opt.rect.topLeft().y());
                 painter->translate(2, 2);
                 painter->setPen(opt.palette.highlightedText().color());

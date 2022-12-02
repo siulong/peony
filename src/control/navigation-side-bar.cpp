@@ -560,7 +560,7 @@ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionV
 //        //painter->setClipPath(rightRoundedRegion);
 //    }
 
-    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QStyledItemDelegate::paint(painter, option, index);
     painter->restore();
 }
@@ -642,7 +642,7 @@ void NavigationSideBarStyle::drawPrimitive(QStyle::PrimitiveElement element, con
     switch (element) {
     case QStyle::PE_IndicatorItemViewItemDrop: {
         /* hotfixbug#99344：拖拽文件到侧边栏，出现黑框 */
-        painter->setRenderHint(QPainter::Antialiasing, true);/* 反锯齿 */
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);/* 反锯齿 */
         /* 按设计要求，边框颜色为调色板highlight值，圆角为6px */
         QColor color = option->palette.color(QPalette::Highlight);
         painter->setPen(color);

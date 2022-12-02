@@ -238,7 +238,7 @@ void ToolButtonStyle::drawComplexControl(QStyle::ComplexControl control, const Q
 {
     if (widget &&  widget->objectName() == "toolButton") {
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         QPainterPath path;
         path.addEllipse(widget->rect().adjusted(2, 2, -2, -2));
         painter->setClipPath(path);
