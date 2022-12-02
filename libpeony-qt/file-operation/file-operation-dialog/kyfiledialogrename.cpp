@@ -16,6 +16,7 @@
 #include <QDBusReply>
 
 #include "file-utils.h"
+#include "rename-editor.h"
 
 #include "global-settings.h"
 
@@ -133,7 +134,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     auto label2 = new QLabel;
     label2->setText(tr("Please enter a new name"));
     gridLayout2->addWidget(label2, 0, 1, Qt::AlignLeft);
-    auto textEdit = new QTextEdit;
+    auto textEdit = new RenameEditor;
     textEdit->setBackgroundRole(QPalette::Button);
     textEdit->setAutoFillBackground(true);
     textEdit->viewport()->setBackgroundRole(QPalette::Button);
@@ -150,12 +151,36 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
 
     textEdit->setText(newName);
     textEdit->selectAll();
+    //textEdit->setFocus();
+    auto cursor = textEdit->textCursor();
+    cursor.setPosition(0, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    bool isDir = Peony::FileUtils::getFileIsFolder(textEdit->toPlainText());
+    bool isDesktopFile = textEdit->toPlainText().endsWith(".desktop");
+    bool isSoftLink = Peony::FileUtils::getFileIsSymbolicLink(textEdit->toPlainText());
+
+    if (!isDesktopFile && !isSoftLink && !isDir && textEdit->toPlainText().contains(".") && !textEdit->toPlainText().startsWith(".")) {
+        int n = 1;
+        if(textEdit->toPlainText().contains(".tar.")) //ex xxx.tar.gz xxx.tar.bz2
+            n = 2;
+        while(n){
+            cursor.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor, 1);
+            cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, 1);
+            --n;
+        }
+    }
+
+    textEdit->setTextCursor(cursor);
+
+    gridLayout2->addWidget(textEdit, 1, 1, Qt::AlignTop);
+    textEdit->activateWindow();
+    //textEdit->setFocus();
 
     stack->setCurrentWidget(page1);
     connect(rename, &QPushButton::clicked, this, [=]{
         setFixedHeight(300);
         stack->setCurrentWidget(page2);
-        ensure2->setFocus();
+        textEdit->setFocus();
     });
     connect(cancel2, &QPushButton::clicked, this, &KyFileDialogRename::reject);
     connect(ensure2, &QPushButton::clicked, this, [=, &error]{
@@ -174,6 +199,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
         error.respCode = Peony::ExceptionResponse::IgnoreAll;
         accept();
     });
+    connect(textEdit, &RenameEditor::returnPressed, ensure2, &QPushButton::click);
 
     if (!exec()) {
         error.respCode = responseCode;
