@@ -49,15 +49,6 @@ Peony::ThumbnailJob::ThumbnailJob(const QString &uri, const std::shared_ptr<Peon
 
     setAutoDelete(true);
 
-    auto settings = Peony::GlobalSettings::getInstance();
-    if (settings->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
-        bool do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
-        if (do_not_thumbnail) {
-            setType(Invalid);
-            return;
-        }
-    }
-
     auto info = FileInfo::fromUri(uri);
     if (!info->mimeType().isEmpty()) {
         setProperty("mimeType", info->mimeType());
@@ -65,6 +56,16 @@ Peony::ThumbnailJob::ThumbnailJob(const QString &uri, const std::shared_ptr<Peon
     if (!info->customIcon().isEmpty()) {
         setProperty("customIcon", info->customIcon());
         setType(CustomIcon);
+        return;
+    }
+
+    auto settings = Peony::GlobalSettings::getInstance();
+    if (settings->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
+        bool do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+        if (do_not_thumbnail) {
+            setType(Invalid);
+            return;
+        }
     }
 }
 
@@ -84,7 +85,7 @@ void Peony::ThumbnailJob::run()
         return;
     }
 
-    if (type() == Invalid) {
+    if (type() == Invalid && !m_uri.endsWith(".desktop")) {
         return;
     }
 
