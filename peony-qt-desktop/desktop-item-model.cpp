@@ -332,89 +332,90 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
         }
     });
 
+    //comment these code to fix bug#149540, story-view-19425
     //when system app uninstalled, delete link in desktop if exist
-    QString system_app_path = "file:///usr/share/applications/";
-    m_system_app_watcher = std::make_shared<FileWatcher>(system_app_path, this);
-    m_system_app_watcher->setMonitorChildrenChange(true);
-    auto mInfo = FileInfo::fromUri(system_app_path);
-    qDebug() <<"system_app_path:" <<mInfo->isDir();
-    this->connect(m_system_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
-        qDebug() << "m_system_app_watcher:" <<uri;
-        if (uri.endsWith(".desktop"))
-        {
-            QString fileName = uri;
-            fileName = fileName.replace(system_app_path, "");
-            qDebug() << "m_system_app_watcher:" <<fileName <<uri;
-            for (auto info : m_files) {
-                if (info->uri().endsWith(fileName)) {
-                    //fix bug#136661, desktop file may be auto deleted wrong
-                    //desktop file be deleted and then created
-                    QString absPath = uri;
-                    absPath = absPath.replace("file://", "");
-                    QTimer::singleShot(100, this, [=](){
-                    if (! QFile::exists(absPath)){
-                        //this->beginResetModel();
-                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                        m_files.removeOne(info);
-                        this->endRemoveRows();
-                        //this->endResetModel();
-                        Q_EMIT this->requestClearIndexWidget();
-                        Q_EMIT this->requestUpdateItemPositions();
-                        //fix bug#148380, 148375 remove file not exist, deleted by app
-                        if (QFile::exists(info->uri().replace("file://", ""))){
-                            QStringList list;
-                            list.append(info->uri());
-                            //auto remove, link to task#10131
-                            FileOperationUtils::remove(list);
-                        }
-                      }
-                    });
-                }
-            }
-        }
-    });
+//    QString system_app_path = "file:///usr/share/applications/";
+//    m_system_app_watcher = std::make_shared<FileWatcher>(system_app_path, this);
+//    m_system_app_watcher->setMonitorChildrenChange(true);
+//    auto mInfo = FileInfo::fromUri(system_app_path);
+//    qDebug() <<"system_app_path:" <<mInfo->isDir();
+//    this->connect(m_system_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
+//        qDebug() << "m_system_app_watcher:" <<uri;
+//        if (uri.endsWith(".desktop"))
+//        {
+//            QString fileName = uri;
+//            fileName = fileName.replace(system_app_path, "");
+//            qDebug() << "m_system_app_watcher:" <<fileName <<uri;
+//            for (auto info : m_files) {
+//                if (info->uri().endsWith(fileName)) {
+//                    //fix bug#136661, desktop file may be auto deleted wrong
+//                    //desktop file be deleted and then created
+//                    QString absPath = uri;
+//                    absPath = absPath.replace("file://", "");
+//                    QTimer::singleShot(100, this, [=](){
+//                    if (! QFile::exists(absPath)){
+//                        //this->beginResetModel();
+//                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+//                        m_files.removeOne(info);
+//                        this->endRemoveRows();
+//                        //this->endResetModel();
+//                        Q_EMIT this->requestClearIndexWidget();
+//                        Q_EMIT this->requestUpdateItemPositions();
+//                        //fix bug#148380, 148375 remove file not exist, deleted by app
+//                        if (QFile::exists(info->uri().replace("file://", ""))){
+//                            QStringList list;
+//                            list.append(info->uri());
+//                            //auto remove, link to task#10131
+//                            FileOperationUtils::remove(list);
+//                        }
+//                      }
+//                    });
+//                }
+//            }
+//        }
+//    });
 
-    //when andriod app uninstalled, delete link in desktop if exist
-    QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    auto andriod_app_path = homePath + "/.local/share/applications/";
-    auto app_info = FileInfo::fromUri(andriod_app_path);
-    qDebug() <<"andriod_app_path:" <<app_info->isDir();
-    m_andriod_app_watcher = std::make_shared<FileWatcher>(andriod_app_path, this);
-    m_andriod_app_watcher->setMonitorChildrenChange(true);
-    this->connect(m_andriod_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
-        if (uri.endsWith(".desktop"))
-        {
-            QString fileName = uri;
-            fileName = fileName.replace(andriod_app_path, "");
-            qDebug() << "andriod_app_path:" <<fileName <<uri;
-            for (auto info : m_files) {
-                if (info->uri().endsWith(fileName)) {
-                    //fix bug#136661,android desktop file be auto deleted wrong
-                    //desktop file be deleted and then created
-                    QString absPath = uri;
-                    absPath = absPath.replace("file://", "");
-                    QTimer::singleShot(100, this, [=](){
-                    if (! QFile::exists(absPath)){
-                        //this->beginResetModel();
-                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                        m_files.removeOne(info);
-                        this->endRemoveRows();
-                        //this->endResetModel();
-                        Q_EMIT this->requestClearIndexWidget();
-                        Q_EMIT this->requestUpdateItemPositions();
-                        //fix bug#148380, 148375 remove file not exist, deleted by app
-                        if (QFile::exists(info->uri().replace("file://", ""))){
-                            QStringList list;
-                            list.append(info->uri());
-                            //auto remove, link to task#10131
-                            FileOperationUtils::remove(list);
-                         }
-                       }
-                    });
-                }
-            }
-        }
-    });
+//    //when andriod app uninstalled, delete link in desktop if exist
+//    QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+//    auto andriod_app_path = homePath + "/.local/share/applications/";
+//    auto app_info = FileInfo::fromUri(andriod_app_path);
+//    qDebug() <<"andriod_app_path:" <<app_info->isDir();
+//    m_andriod_app_watcher = std::make_shared<FileWatcher>(andriod_app_path, this);
+//    m_andriod_app_watcher->setMonitorChildrenChange(true);
+//    this->connect(m_andriod_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
+//        if (uri.endsWith(".desktop"))
+//        {
+//            QString fileName = uri;
+//            fileName = fileName.replace(andriod_app_path, "");
+//            qDebug() << "andriod_app_path:" <<fileName <<uri;
+//            for (auto info : m_files) {
+//                if (info->uri().endsWith(fileName)) {
+//                    //fix bug#136661,android desktop file be auto deleted wrong
+//                    //desktop file be deleted and then created
+//                    QString absPath = uri;
+//                    absPath = absPath.replace("file://", "");
+//                    QTimer::singleShot(100, this, [=](){
+//                    if (! QFile::exists(absPath)){
+//                        //this->beginResetModel();
+//                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+//                        m_files.removeOne(info);
+//                        this->endRemoveRows();
+//                        //this->endResetModel();
+//                        Q_EMIT this->requestClearIndexWidget();
+//                        Q_EMIT this->requestUpdateItemPositions();
+//                        //fix bug#148380, 148375 remove file not exist, deleted by app
+//                        if (QFile::exists(info->uri().replace("file://", ""))){
+//                            QStringList list;
+//                            list.append(info->uri());
+//                            //auto remove, link to task#10131
+//                            FileOperationUtils::remove(list);
+//                         }
+//                       }
+//                    });
+//                }
+//            }
+//        }
+//    });
 
     //handle standard dir changing.
     m_dir_manager =new UserdirManager(this);
@@ -703,8 +704,8 @@ void DesktopItemModel::onEnumerateFinished()
                     m_desktop_watcher->setMonitorChildrenChange(true);
                 }
                 m_desktop_watcher->startMonitor();
-                m_system_app_watcher->startMonitor();
-                m_andriod_app_watcher->startMonitor();
+//                m_system_app_watcher->startMonitor();
+//                m_andriod_app_watcher->startMonitor();
 
                 Q_EMIT refreshed();
 
