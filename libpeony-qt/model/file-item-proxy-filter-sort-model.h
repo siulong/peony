@@ -27,6 +27,10 @@
 #include <QObject>
 #include <QSortFilterProxyModel>
 #include <QColor>
+#include <QDir>
+#include <QAbstractItemView>
+#include <QTimer>
+
 
 #include "peony-core_global.h"
 
@@ -86,6 +90,7 @@ public:
     void setUseDefaultNameSortOrder(bool use);
     void setFolderFirst(bool folderFirst);
     void setFilterConditions(int fileType=0, int modifyTime=0, int fileSize=0);
+    void setFilterConditions(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity);
 
     //multiple filter conditions for new advance search
     void addFileNameFilter(QString key, bool updateNow = false);
@@ -108,10 +113,24 @@ public:
     QStringList getAllFileUris();
     QModelIndexList getAllFileIndexes();
 
+    QAbstractItemView::SelectionMode getSelectionModeHint();
+
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+
+    int expectedSortType();
+    Qt::SortOrder expectedSortOrder();
+
+    void manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order);
+
 public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);
     void checkSortSettings();
+
+    void setSelectionModeHint(QAbstractItemView::SelectionMode mode);
+
+Q_SIGNALS:
+    void setSelectionModeChanged();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
@@ -146,6 +165,15 @@ private:
     QStringList m_file_name_list;
     QStringList m_show_label_names;
     QList<QColor> m_show_label_colors;
+
+    //filters for file dialog
+    QStringList m_mimeTypeFilters;
+    QStringList m_nameFilters;
+    int m_dirFilters = -1;
+
+    QTimer *m_sortTimer = nullptr;
+    int m_sortType = 0;
+    Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
 };
 
 }

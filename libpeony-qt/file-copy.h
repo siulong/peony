@@ -26,6 +26,8 @@
 #include <QObject>
 #include <gio/gio.h>
 
+#include <peony-core_global.h>
+
 namespace Peony
 {
 /**
@@ -33,7 +35,7 @@ namespace Peony
  * @note The source file must be a file, not a folder,
  */
 class FileInfo;
-class FileCopy : public QObject
+class PEONYCORESHARED_EXPORT FileCopy : public QObject
 {
     Q_OBJECT
 public:

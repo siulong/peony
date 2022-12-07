@@ -30,7 +30,7 @@
 #include "file-utils.h"
 
 #include "file-operation-manager.h"
-
+#include "sound-effect.h"
 #include "clipboard-utils.h"
 #include <QProcess>
 #include <QDebug>
@@ -79,6 +79,7 @@ FileCopyOperation::~FileCopyOperation()
 ExceptionResponse FileCopyOperation::prehandle(GError *err)
 {
     setHasError(true);
+//    SoundEffect::getInstance()->copyOrMoveFailedMusic();
 
     switch (err->code) {
         case G_IO_ERROR_BUSY:
@@ -124,7 +125,6 @@ void FileCopyOperation::progress_callback(goffset current_num_bytes,
     auto fileIconName = FileUtilsPrivate::getFileIconName(p_this->m_current_src_uri);
     auto destFileName = FileUtils::isFileDirectory(p_this->m_current_dest_dir_uri) ?
                 p_this->m_current_dest_dir_uri + "/" + url.fileName() : p_this->m_current_dest_dir_uri;
-//    qDebug()<<currnet*1.0/total;
     Q_EMIT p_this->FileProgressCallback(p_this->m_current_src_uri, destFileName, fileIconName, currnet, total);
 }
 
@@ -142,7 +142,6 @@ fallback_retry:
     destFileUri = FileUtils::urlEncode(destFileUri);
     node->setDestUri(destFileUri);
     QString srcUri = node->uri();
-    qDebug()<<"dest file uri:"<<destFileUri;
 
     GFileWrapperPtr destFile = wrapGFile(g_file_new_for_uri(destFileUri.toUtf8().constData()));
 
@@ -164,22 +163,38 @@ fallback_retry:
             auto errWrapperPtr = GErrorWrapper::wrapFrom(err);
             int handle_type = prehandle(err);
             except.errorType = ET_GIO;
+            except.errorStr = tr("Create folder %1 failed: %2").arg(node->destBaseName()).arg(err->message);
             except.srcUri = m_current_src_uri;
             except.destDirUri = m_current_dest_dir_uri;
             except.op = FileOpCopy;
             except.title = tr("File copy error");
             except.errorCode = err->code;
             if (handle_type == Other) {
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    auto typeData = except.respCode;
+                    handle_type = typeData;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
+                    if (handle_type != Cancel) {
+                        return;
+                    }
+                    break;
+                }
                 }
             }
             //handle.
@@ -241,6 +256,11 @@ fallback_retry:
                 goto fallback_retry;
             }
             case Retry: {
+                goto fallback_retry;
+            }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                setHasError(false);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -368,24 +388,36 @@ fallback_retry:
             except.errorStr = err->message;
             except.destDirUri = m_current_dest_dir_uri;
 
-            //
+            //fix bug#121093, paste deleted file issue
             if (err->code == G_IO_ERROR_PERMISSION_DENIED) {
                 except.errorStr = tr("Cannot opening file, permission denied!");
+            }else if (err->code == G_IO_ERROR_NOT_FOUND) {
+                except.errorStr = tr("File:%1 was not found.").arg(except.srcUri);
             }
 
             if (handle_type == Other) {
-                if (G_IO_ERROR_EXISTS == err->code) {
+                switch (err->code) {
+                case G_IO_ERROR_EXISTS: {
                     except.dlgType = ED_CONFLICT;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
-                    qDebug()<<"get return";
                     handle_type = typeData;
-                } else {
+                    break;
+                }
+                case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    except.dlgType = ED_RENAME;
+                    Q_EMIT errored(except);
+                    auto typeData = except.respCode;
+                    handle_type = typeData;
+                    break;
+                }
+                default: {
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
-                    qDebug()<<"get return";
                     handle_type = typeData;
+                    break;
+                }
                 }
             }
             //handle.
@@ -470,6 +502,11 @@ fallback_retry:
                 goto fallback_retry;
             }
             case Retry: {
+                goto fallback_retry;
+            }
+            case RenameOne: {
+                node->setDestFileName(except.respValue.value("newName").toString());
+                setHasError(false);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -610,8 +647,6 @@ void FileCopyOperation::run()
 
     QList<FileNode*> nodes;
     for (auto uri : m_source_uris) {
-        qDebug() << "copy uri:" << uri;
-
         QString szTempUri = uri;
         if(szTempUri.startsWith("filesafe:///") && szTempUri.remove("filesafe:///").indexOf("/") == -1) {
             continue;
@@ -639,7 +674,6 @@ void FileCopyOperation::run()
     if (isCancelled()) {
         Q_EMIT operationStartRollbacked();
         for (auto file : nodes) {
-            qDebug()<<file->uri();
             if (isCancelled()) {
                 rollbackNodeRecursively(file);
             }
@@ -657,9 +691,7 @@ void FileCopyOperation::run()
     m_info->m_dest_uris = m_info->m_node_map.values();
 
     nodes.clear();
-
     Q_EMIT operationFinished();
-
     sendSrcAndDestUrisOfCopyDspsFiles();
 }
 

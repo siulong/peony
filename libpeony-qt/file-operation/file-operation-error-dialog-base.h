@@ -39,10 +39,14 @@ public:
     explicit FileOperationErrorDialogBase(QDialog *parent);
     ~FileOperationErrorDialogBase() override;
 
+    void adjustTextContent();
+
     void setText (QString text);
     void setIcon (QString iconName);
     QPushButton* addButton (QString name);
     QCheckBox* addCheckBoxLeft (QString name);
+
+    bool event(QEvent *event) override;
 
 Q_SIGNALS:
     void cancel();

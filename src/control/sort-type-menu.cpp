@@ -47,6 +47,11 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     fileSize->setCheckable(true);
     sortTypeGroup->addAction(fileSize);
 
+    auto originalPath = addAction(tr("Original Path"));
+    m_origin_path = originalPath;
+    originalPath->setCheckable(true);
+    sortTypeGroup->addAction(originalPath);
+
     connect(sortTypeGroup, &QActionGroup::triggered, this, [=](QAction *action) {
         int index = sortTypeGroup->actions().indexOf(action);
         switchSortTypeRequest(index);
@@ -78,10 +83,16 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     useGlobalSortAction->setCheckable(true);
     useGlobalSortAction->setChecked(Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool());
     connect(useGlobalSortAction, &QAction::triggered, this, [=](bool checked){
-        Peony::GlobalSettings::getInstance()->setValue(USE_GLOBAL_DEFAULT_SORTING, checked);
+        Peony::GlobalSettings::getInstance()->setGSettingValue(USE_GLOBAL_DEFAULT_SORTING, checked);
+        Q_EMIT globalSortingPolicyChanged();
     });
 
     addAction(useGlobalSortAction);
+}
+
+void SortTypeMenu::setOriginPathVisible(bool visible)
+{
+    m_origin_path->setVisible(visible);
 }
 
 void SortTypeMenu::setSortType(int type)

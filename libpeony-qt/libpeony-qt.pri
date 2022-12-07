@@ -28,6 +28,7 @@ HEADERS += \
     $$PWD/global-settings.h         \
     $$PWD/complementary-style.h     \
     $$PWD/global-fstabdata.h        \
+    $$PWD/sound-effect.h
 
 SOURCES += \
     $$PWD/file-copy.cpp             \
@@ -35,6 +36,7 @@ SOURCES += \
     $$PWD/global-settings.cpp       \
     $$PWD/complementary-style.cpp   \
     $$PWD/global-fstabdata.cpp      \
+    $$PWD/sound-effect.cpp
 
 
 FORMS += \

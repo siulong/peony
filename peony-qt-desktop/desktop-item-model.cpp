@@ -40,6 +40,7 @@
 #include "peony-desktop-application.h"
 #include "desktop-icon-view.h"
 #include "global-settings.h"
+#include "sound-effect.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -137,8 +138,16 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             job->querySync();
 
             // locate new item =====
+            //task#74174 扩展模式下支持拖拽图标放置到扩展屏, 创建文件获取当前view
+            auto view = ((PeonyDesktopApplication*)qApp)->getIconView(QCursor::pos());
+            //校验图标是否已经满了，如果满了寻找没有满的view
+            if (view && view->isFull()) {
+                Peony::DesktopIconView *notFullView = ((PeonyDesktopApplication*)qApp)->getNotFullView();
+                if (notFullView) {
+                    view = notFullView;
+                }
+            }
 
-            auto view = PeonyDesktopApplication::getIconView();
             auto itemRectHash = view->getCurrentItemRects();
             auto grid = view->gridSize();
             auto viewRect = view->viewport()->rect();
@@ -161,8 +170,8 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             auto metaInfoPos = view->getFileMetaInfoPos(uri);
             if (metaInfoPos.x() >= 0) {
                 // check if overlapped, it might happend whild drag out and in desktop view.
-                auto indexRect = QRect(metaInfoPos, itemRectHash.values().first().size());
-                if (notEmptyRegion.contains(indexRect.center())) {
+                auto indexRect = QRect(metaInfoPos, itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
+                if (notEmptyRegion.intersects(indexRect)) {
 
                     // move index to closest empty grid.
                     auto next = indexRect;
@@ -180,7 +189,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                             //put item to next column first row
                             next.moveTo(next.x() + grid.width(), top);
                         }
-                        if (notEmptyRegion.contains(next.center()))
+                        if (notEmptyRegion.intersects(next))
                             continue;
 
                         isEmptyPos = true;
@@ -204,7 +213,8 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 //this->endResetModel();
                 Q_EMIT this->requestUpdateItemPositions();
                 Q_EMIT this->requestLayoutNewItem(info->uri());
-                Q_EMIT this->fileCreated(uri);
+                //task#74174 在当前view中创建文件
+                view->fileCreated(uri);
                 return;
             }
 
@@ -220,7 +230,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             auto indexRect = QRect(QPoint(marginLeft, marginTop), itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
-            if (notEmptyRegion.contains(indexRect.center())) {
+            if (notEmptyRegion.intersects(indexRect)) {
 
                 // move index to closest empty grid.
                 auto next = indexRect;
@@ -238,7 +248,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                         //put item to next column first row
                         next.moveTo(next.x() + grid.width(), top);
                     }
-                    if (notEmptyRegion.contains(next.center()))
+                    if (notEmptyRegion.intersects(next))
                         continue;
 
                     isEmptyPos = true;
@@ -264,7 +274,8 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             //this->endResetModel();
             Q_EMIT this->requestUpdateItemPositions();
             Q_EMIT this->requestLayoutNewItem(info->uri());
-            Q_EMIT this->fileCreated(uri);
+            //task#74174 在当前view中创建文件
+            view->fileCreated(uri);
         }
         else{
             //file content changed, need update fileinfo, fix bug#76908
@@ -276,15 +287,22 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
-        auto view = PeonyDesktopApplication::getIconView();
-        view->removeItemRect(uri);
-
+        auto info = FileInfo::fromUri(uri);
+        Peony::DesktopIconView *view = nullptr;
+        if (info.get()->isEmptyInfo()) {
+            view = ((PeonyDesktopApplication*)qApp)->removeUri(uri);
+        } else {
+            view = getIconView(uri);
+        }
         auto itemRectHash = view->getCurrentItemRects();
 
         for (auto info : m_files) {
             if (info->uri() == uri) {
                 //this->beginResetModel();
+                // continue fix #18155、#52228、#52231、#49442
+                // 注意有时不会走到view的aboutToRemoveRows中，所以需要在此调用relayoutAddedItem
                 this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                view->relayoutExsitingItems(m_items_need_relayout);
                 m_files.removeOne(info);
                 this->endRemoveRows();
                 //this->endResetModel();
@@ -295,8 +313,6 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
     });
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileChanged, [=](const QString &uri) {
-        auto view = PeonyDesktopApplication::getIconView();
-        auto itemRectHash = view->getCurrentItemRects();
 
         for (auto info : m_files) {
             if (info->uri() == uri) {
@@ -331,16 +347,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "m_system_app_watcher:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661, desktop file may be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
@@ -361,17 +386,25 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             qDebug() << "andriod_app_path:" <<fileName <<uri;
             for (auto info : m_files) {
                 if (info->uri().endsWith(fileName)) {
-                    //this->beginResetModel();
-                    this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                    m_files.removeOne(info);
-                    this->endRemoveRows();
-                    //this->endResetModel();
-                    Q_EMIT this->requestClearIndexWidget();
-                    Q_EMIT this->requestUpdateItemPositions();
-                    QStringList list;
-                    list.append(info->uri());
-                    //auto remove, link to task#10131
-                    FileOperationUtils::remove(list);
+                    //fix bug#136661,android desktop file be auto deleted wrong
+                    //desktop file be deleted and then created
+                    QString absPath = uri;
+                    absPath = absPath.replace("file://", "");
+                    QTimer::singleShot(100, this, [=](){
+                    if (! QFile::exists(absPath)){
+                        //this->beginResetModel();
+                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+                        m_files.removeOne(info);
+                        this->endRemoveRows();
+                        //this->endResetModel();
+                        Q_EMIT this->requestClearIndexWidget();
+                        Q_EMIT this->requestUpdateItemPositions();
+                        QStringList list;
+                        list.append(info->uri());
+                        //auto remove, link to task#10131
+                        FileOperationUtils::remove(list);
+                      }
+                    });
                 }
             }
         }
@@ -396,7 +429,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 return;
             }
             m_renaming_file_pos.first = renamingUri;
-            m_renaming_file_pos.second = PeonyDesktopApplication::getIconView()->getFileMetaInfoPos(renamingUri);
+            m_renaming_file_pos.second = getIconView(renamingUri)->getFileMetaInfoPos(renamingUri);
         } else {
             m_renaming_file_pos.first = nullptr;
             m_renaming_file_pos.second = QPoint();
@@ -413,23 +446,23 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                     m_renaming_file_pos.second = QPoint();
                     return;
                 }
-
-                QPoint target_pos = PeonyDesktopApplication::getIconView()->getCurrentItemRects().value(renamingUri).topLeft();
+                auto view = getIconView(renamingUri);
+                QPoint target_pos = view->getCurrentItemRects().value(renamingUri).topLeft();
                 //desktop文件重命名时，如果存在相同文件则不会重命名成功。由于该文件uri不会变，所以pos不变，无需更新pos
                 if (target_pos.isNull() || (m_renaming_file_pos.second == target_pos)) {
                     //desktop文件重命名成功
                     m_renaming_file_pos.first = renamingUri;
                     m_items_need_relayout.removeOne(renamingUri);
                     m_items_need_relayout.removeOne(renamingUri + ".desktop");
-                    PeonyDesktopApplication::getIconView()->updateItemPosByUri(renamingUri, m_renaming_file_pos.second);
-                    PeonyDesktopApplication::getIconView()->setFileMetaInfoPos(renamingUri, m_renaming_file_pos.second);
+                    view->updateItemPosByUri(renamingUri, m_renaming_file_pos.second);
+                    view->setFileMetaInfoPos(renamingUri, m_renaming_file_pos.second);
                 } else {
                     //desktop文件(uri)重命名失败
                     QString &src_uri = info->m_src_uris.first();
-                    QTimer::singleShot(100, PeonyDesktopApplication::getIconView(), [=]() {
-                        PeonyDesktopApplication::getIconView()->setSelections(QStringList() << src_uri);
-                        PeonyDesktopApplication::getIconView()->scrollToSelection(src_uri);
-                        PeonyDesktopApplication::getIconView()->setFocus();
+                    QTimer::singleShot(100, view, [=]() {
+                        view->setSelections(QStringList() << src_uri);
+                        view->scrollToSelection(src_uri);
+                        view->setFocus();
                     });
                 }
             } else {
@@ -639,7 +672,7 @@ void DesktopItemModel::onEnumerateFinished()
 
                 for (auto info : m_files) {
                     auto uri = info->uri();
-                    auto view = PeonyDesktopApplication::getIconView();
+                    auto view = getIconView(uri);
                     auto pos = view->getFileMetaInfoPos(info->uri());
                     if (pos.x() >= 0) {
                         view->updateItemPosByUri(info->uri(), pos);
@@ -679,11 +712,6 @@ void DesktopItemModel::onEnumerateFinished()
 void DesktopItemModel::clearFloatItems()
 {
     m_items_need_relayout.clear();
-}
-
-void DesktopItemModel::relayoutAddedItems()
-{
-    PeonyDesktopApplication::getIconView()->relayoutExsitingItems(m_items_need_relayout);
 }
 
 bool DesktopItemModel::acceptDropAction() const
@@ -815,7 +843,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     QStringList srcUris;
     if (data->hasFormat("peony-qt/encoded-uris")) {
-        srcUris = data->text().split(" ");
+        srcUris = QString(data->data("peony-qt/encoded-uris")).split(" ");
         for (QString uri : srcUris) {
             if (uri.startsWith("recent://"))
                 srcUris.removeOne(uri);
@@ -858,8 +886,9 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         }
     }
     //drag from trash to another place, return false
-    if (b_trash_item && destDirUri != "trash:///")
-        return false;
+    //comment to fix can not drag to copy trash file,link to bug#117741
+//    if (b_trash_item && destDirUri != "trash:///")
+//        return false;
 
     auto fileOpMgr = FileOperationManager::getInstance();
     bool addHistory = true;
@@ -895,7 +924,16 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         if (srcUris.first().startsWith("filesafe:///"))
             action = Qt::CopyAction;
 
-        FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        //fix drag trash file to other path is copy issue,link to bug#117741
+        if (srcUris.first().startsWith("trash:///") && action == Qt::MoveAction){
+            //not copy move, do target move to delete file in trash
+            action = Qt::TargetMoveAction;
+        }
+
+        auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        op->connect(op, &FileOperation::operationFinished, this, [=](){
+            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        });
     }
 
     //NOTE:
@@ -924,4 +962,15 @@ void DesktopItemModel::refresh()
         refreshInternal();
     });
     infoJob->queryAsync();
+}
+
+Peony::DesktopIconView *DesktopItemModel::getIconView(const QString &uri)
+{
+    //获取当前屏幕的view
+    auto metaInfo = FileMetaInfo::fromUri(uri);
+    if (metaInfo) {
+        int id = metaInfo->getMetaInfoInt("peony-qt-desktop-id");
+        return ((PeonyDesktopApplication*)qApp)->getIconView(id);
+    }
+    return ((PeonyDesktopApplication*)qApp)->getIconView(0);
 }

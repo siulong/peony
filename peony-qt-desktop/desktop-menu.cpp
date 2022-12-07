@@ -22,6 +22,8 @@
 
 #include "desktop-menu.h"
 
+#include "file-delete-operation.h"
+#include "sound-effect.h"
 #include "directory-view-plugin-iface.h"
 #include "file-info-job.h"
 #include "file-info.h"
@@ -33,8 +35,6 @@
 #include "clipboard-utils.h"
 #include "file-operation-utils.h"
 #include "file-enumerator.h"
-
-#include "desktop-icon-view.h"
 
 #include "desktop-menu-plugin-manager.h"
 
@@ -248,7 +248,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
     if (m_selections.isEmpty()) {
-        auto createAction = new QAction(tr("New..."), this);
+        auto createAction = new QAction(tr("New"), this);
         l<<createAction;
         QMenu *subMenu = new QMenu(this);
         createAction->setMenu(subMenu);
@@ -266,7 +266,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
                 for (auto t : templates) {
                     QFileInfo qinfo(templateDir, t);
                     qWarning()<<"template entry is"<<qinfo.filePath();
-                    GFile *gtk_file = g_file_new_for_path(qinfo.filePath().toUtf8().data());
+                    GFile *gtk_file = g_file_new_for_path(qinfo.filePath().toUtf8().constData());
                     char *uri_str = g_file_get_uri(gtk_file);
                     //FIXME: replace BLOCKING api in ui thread.
                     std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri_str);
@@ -348,31 +348,23 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
     QList<QAction *> l;
 
     if (m_selections.isEmpty()) {
-        auto viewTypeAction = addAction(tr("View Type..."));
+        auto viewTypeAction = addAction(tr("View Type"));
         l<<viewTypeAction;
         QMenu *viewTypeSubMenu = new QMenu(this);
         auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
         auto zoomLevel = desktopView->zoomLevel();
 
         auto smallAction = viewTypeSubMenu->addAction(tr("Small"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Small)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Small);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Small);
         });
         auto normalAction = viewTypeSubMenu->addAction(tr("Normal"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Normal)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Normal);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Normal);
         });
         auto largeAction = viewTypeSubMenu->addAction(tr("Large"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Large)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Large);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Large);
         });
         auto hugeAction = viewTypeSubMenu->addAction(tr("Huge"), [=]() {
-            if (desktopView->zoomLevel() == DesktopIconView::Huge)
-                return;
-            desktopView->setDefaultZoomLevel(DesktopIconView::Huge);
+            Q_EMIT setDefaultZoomLevel(DesktopIconView::Huge);
         });
 
         switch (zoomLevel) {
@@ -399,7 +391,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         viewTypeAction->setMenu(viewTypeSubMenu);
 
         //sort type
-        auto sortTypeAction = addAction(tr("Sort By..."));
+        auto sortTypeAction = addAction(tr("Sort By"));
         l<<sortTypeAction;
         QMenu *sortTypeMenu = new QMenu(this);
 
@@ -421,7 +413,7 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
         for (int i = 0; i < tmp.count(); i++) {
             connect(tmp.at(i), &QAction::triggered, [=]() {
                 qDebug() << "setSortType in menu:" <<i;
-                m_view->setSortType(i);
+                Q_EMIT setSortType(i);
                 GlobalSettings::getInstance()->setValue(LAST_DESKTOP_SORT_ORDER, i);
             });
         }
@@ -480,14 +472,21 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
 //            });
 //            l.last()->setEnabled(!trashChildren.isEmpty());
             l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Clean the trash"), [=]() {
-                Peony::AudioPlayManager::getInstance()->playWarningAudio();
-                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
-                                                    "Once you start a deletion, the files deleting will never be "
-                                                    "restored again."));
-                if (result == QMessageBox::Yes) {
-                    FileEnumerator e;
-                    FileOperationUtils::remove(trashChildren);
-                }
+                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(trashChildren);
+                qApp->setProperty("clearTrash",true);
+//                if(removeop){
+//                    removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+//                        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+//                    });
+//                }
+//                Peony::AudioPlayManager::getInstance()->playWarningAudio();
+//                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
+//                                                    "Once you start a deletion, the files deleting will never be "
+//                                                    "restored again."));
+//                if (result == QMessageBox::Yes) {
+//                    FileEnumerator e;
+//                    FileOperationUtils::remove(trashChildren);
+//                }
             });
             l.last()->setEnabled(!trashChildren.isEmpty());
         } else if (m_selections.count() == 1 && m_selections.first() == "computer:///") {

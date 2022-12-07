@@ -33,6 +33,7 @@
 #include <memory>
 #include <QtConcurrent>
 #include <QProxyStyle>
+#include <QComboBox>
 
 #include "properties-window-tab-iface.h"
 #include "open-with-properties-page.h"
@@ -42,6 +43,8 @@
 #define CELL4K 4096
 #define CELL1M 1048576
 #define CELL1G 1073741824
+
+#define TEMP_PERMISSIONS    "temp-permissions"
 
 class QVBoxLayout;
 class QFormLayout;
@@ -88,15 +91,14 @@ public:
 
     explicit BasicPropertiesPage(const QStringList &uris, QWidget *parent = nullptr);
     ~BasicPropertiesPage();
-    void init();
 
-
-    // PropertiesWindowTabIface interface
-public:
     void saveAllChange();
 
 protected:
-    void addSeparator();
+    /**
+     * @brief 初始化ui组件
+     */
+    void initUI();
 
     /*!
      *
@@ -109,27 +111,31 @@ protected:
      */
     QLabel *createFixedLabel(quint64 minWidth, quint64 minHeight, QString text, QWidget *parent = nullptr);
     QLabel *createFixedLabel(quint64 minWidth, quint64 minHeight, QWidget *parent = nullptr);
-    void addOpenWithLayout(QWidget *parent = nullptr);
-    /*!
-     * 初始化第一层显示区域
-     * \brief
-     * \param uris
-     * \param fileType
+    /**
+     * @brief 顶部图标，名称和地址信息区域
      */
-    void initFloorOne(const QStringList &uris,BasicPropertiesPage::FileType fileType);
-    void initFloorTwo(const QStringList &uris,BasicPropertiesPage::FileType fileType);
-    void initFloorThree(BasicPropertiesPage::FileType fileType);
-    void initFloorFour();
+    void initFloorOne();
+
+    /**
+     * @brief 日期，大小信息区域
+     */
+    void initFloorTwo();
+
+    void addSeparator();
+
+    void loadData();
+    void loadPartOne();
+    void loadPartTwo();
+    void loadOptionalData();
+
+    void updateCountInfo(bool isDone = false);
+    void addOpenWithLayout(QWidget *parent = nullptr);
     BasicPropertiesPage::FileType checkFileType(const QStringList &uris);
     void chooseFileIcon();
     void changeFileIcon();
-    void moveFile();
-    /**
-     * \brief
-     * \return 如果对名称进行了修改，返回true
-     */
     bool isNameChanged();
     void setSysTimeFormat();
+    QString elideText(QFont font,int width,QString strInfo);
 
 protected Q_SLOTS:
     void getFIleInfo(QString uri);
@@ -137,21 +143,18 @@ protected Q_SLOTS:
     void countFilesAsync(const QStringList &uris);
     void onFileCountOne(const QString &uri, quint64 size);
     void cancelCount();
-
     void updateInfo(const QString &uri);
 
 private:
     QVBoxLayout                 *m_layout = nullptr;
     std::shared_ptr<FileInfo>    m_info   = nullptr;
     QStringList                  m_uris;
-//    QFutureWatcher<void>        *m_futureWatcher = nullptr;
+    QFutureWatcher<void>        *m_futureWatcher = nullptr;
     std::shared_ptr<FileWatcher> m_watcher;
     std::shared_ptr<FileWatcher> m_thumbnail_watcher;
 
-    void updateCountInfo(bool isDone = false);
-
-    qint64 m_fileDoneCount     = 0;
-    qint64 m_labelWidth        = 0;  //左侧label宽度
+    FileType m_fileType        = BP_File;
+    qint64   m_fileDoneCount   = 0;
 
     //floor1
     QPushButton *m_iconButton       = nullptr;    //文件图标
@@ -159,7 +162,6 @@ private:
     //**new version
     QLineEdit   *m_displayNameEdit  = nullptr;    //文件名称
     QLineEdit   *m_locationEdit     = nullptr;    //文件路径
-    QPushButton *m_moveButton = nullptr;    //移动位置按钮
 
     //floor2  --  public
     QLabel *m_fileTypeLabel         = nullptr;    //文件类型
@@ -178,6 +180,7 @@ private:
     //file , zip
     QHBoxLayout           *m_openWithLayout        = nullptr;    //文件打开方式
     DefaultOpenWithWidget *m_defaultOpenWithWidget = nullptr;
+    QComboBox             *m_moreAppBox            = nullptr;
 
     //application
     QLabel *m_descrptionLabel = nullptr;       //应用程序描述
@@ -198,6 +201,9 @@ private:
     //
     FileCountOperation *m_countOp = nullptr;
 
+    QTimer *m_timer = nullptr;
+    bool m_isReadOnly = false;
+    bool m_isHidden = false;
 };
 
 class PushButtonStyle : public QProxyStyle

@@ -25,6 +25,7 @@
 
 #include "file-utils.h"
 #include "search-vfs-uri-parser.h"
+#include "global-settings.h"
 
 #include <QToolButton>
 
@@ -41,7 +42,8 @@
 
 #include <QApplication>
 #include <QWindow>
-
+#include <QStyleOptionTab>
+#include <QStyle>
 #include <QPainter>
 #include <QPainterPath>
 
@@ -68,8 +70,7 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
     setStyle(TabBarStyle::getStyle());
 
     setContentsMargins(0, 0, 0, 0);
-    //setUsesScrollButtons(false);
-    //setFixedHeight(36);
+    setFixedHeight(47);
 
     setProperty("useStyleWindowManager", false);
     setMovable(true);
@@ -93,10 +94,6 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
     connect(this, &QTabBar::tabBarDoubleClicked, this, [=](int index) {
         //qDebug()<<"tab bar double clicked"<<index;
     });
-
-//    connect(this, &QTabBar::tabCloseRequested, this, [=](int index){
-//        removeTab(index);
-//    });
 
     setDrawBase(false);
 }
@@ -127,14 +124,13 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         }
 
         //elide text if it is too long
-        if (displayName.length() > ELIDE_TEXT_LENGTH)
-        {
-            int  charWidth = fontMetrics().averageCharWidth();
-            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
-        }
-
+//        if (displayName.length() > ELIDE_TEXT_LENGTH)
+//        {
+//            int  charWidth = fontMetrics().averageCharWidth();
+//            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+//        }
+        setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
-        setTabIcon(index, QIcon::fromTheme(iconName));
         setTabData(index, uri);
 
         Q_EMIT this->locationUpdated(uri);
@@ -148,11 +144,11 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
     setFocus();
     if (uri.isEmpty())
         return;
-    m_info = Peony::FileInfo::fromUri(uri);
+    //m_info = Peony::FileInfo::fromUri(uri);
     if (!uri.isNull()) {
-        auto iconName = Peony::FileUtils::getFileIconName(uri);
+        //FIXME: replace BLOCKING api in ui thread.
         auto displayName = Peony::FileUtils::getFileDisplayName(uri);
-        addTab(QIcon::fromTheme(iconName), displayName);
+        addTab(displayName);        
         setTabData(count() - 1, uri);
         if (jumpToNewTab)
             setCurrentIndex(count() - 1);
@@ -170,12 +166,9 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
 void NavigationTabBar::tabRemoved(int index)
 {
     //qDebug()<<"tab removed"<<index;
-    QString uri = tabData(index).toString();
-
     QTabBar::tabRemoved(index);
 
-    Q_EMIT pageRemoved(uri);
-
+    Q_EMIT pageRemoved();
     if (count() == 0) {
         Q_EMIT closeWindowRequest();
     }
@@ -332,35 +325,78 @@ TabBarStyle *TabBarStyle::getStyle()
     return global_instance;
 }
 
+TabBarStyle::TabBarStyle()
+{
+    m_need_adjust = Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU;
+}
+
 void TabBarStyle::polish(QWidget *widget)
 {
     QProxyStyle::polish(widget);
-    widget->setProperty("isWindowButton", 0x1);
-    widget->setProperty("useIconHighlightEffect", 0x2);
+    if (widget && qobject_cast<QToolButton *>(widget)) {
+        widget->setProperty("isWindowButton", 0x1);
+        widget->setProperty("useIconHighlightEffect", 0x2);
+    }
 }
 
 int TabBarStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
 {
-    return QProxyStyle::pixelMetric(metric, option, widget);
+    if (!m_need_adjust) {
+        return QProxyStyle::pixelMetric(metric, option, widget);
+    } else {
+        switch (metric) {
+        case PM_TabBarScrollButtonWidth:
+            return 48;
+        default:
+            return QProxyStyle::pixelMetric(metric, option, widget);
+        }
+    }
 }
 
 QRect TabBarStyle::subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
-    switch (element) {
-    case SE_TabBarScrollLeftButton:
-    case SE_TabBarTearIndicatorLeft: {
-        QRect tabRect = option->rect;
-        tabRect.setRight(tabRect.left() + 8);
-        return tabRect;
-    }
-    case SE_TabBarScrollRightButton:
-    case SE_TabBarTearIndicatorRight: {
-        QRect tabRect = option->rect;
-        tabRect.setLeft(tabRect.right() - 8);
-        return tabRect;
-    }
-    default:
+    if (!m_need_adjust) {
         return QProxyStyle::subElementRect(element, option, widget);
+    } else {
+        switch (element) {
+        case SE_TabBarScrollLeftButton:{
+            QRect tabRect = option->rect;
+            tabRect.setRight(tabRect.left() + 48);
+            return tabRect;
+        }
+        case SE_TabBarScrollRightButton:{
+            QRect tabRect = option->rect;
+            tabRect.setLeft(tabRect.right() - 48);
+            return tabRect;
+        }
+        default:
+            return QProxyStyle::subElementRect(element, option, widget);
+        }
+    }
+}
+
+void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    if (!m_need_adjust) {
+        return QProxyStyle::drawPrimitive(element, option, painter, widget);
+    } else {
+        switch (element) {
+        case PE_PanelButtonTool:{
+            QPainterPath path;
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            path.addRoundedRect(widget->rect(), 16, 16);
+            painter->setClipPath(path);
+            return qApp->style()->drawPrimitive(element, option, painter, widget);
+        }
+        case PE_IndicatorArrowLeft:
+        case PE_IndicatorArrowRight: {
+            QStyleOption tmp = *option;
+            tmp.palette.setColor(QPalette::HighlightedText, qApp->palette().buttonText().color());
+            return qApp->style()->drawPrimitive(element, &tmp, painter, widget);
+        }
+        default:
+            return qApp->style()->drawPrimitive(element, option, painter, widget);
+        }
     }
 }
 
@@ -370,12 +406,17 @@ void TabBarStyle::drawComplexControl(QStyle::ComplexControl control, const QStyl
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
         QPainterPath path;
-        path.addEllipse(widget->rect().adjusted(2, 2, -2, -2));
-        painter->setClipPath(path);
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        if (!m_need_adjust) {
+            path.addEllipse(QRect(option->rect.adjusted(4, 4, -4, -4)));
+            painter->setClipPath(path);
+        } else {
+            path.addRoundedRect(widget->rect(), 16, 16);
+            painter->setClipPath(path);
+        }
+        qApp->style()->drawComplexControl(control, option, painter, widget);
         painter->restore();
     } else {
-        QProxyStyle::drawComplexControl(control, option, painter, widget);
+        qApp->style()->drawComplexControl(control, option, painter, widget);
     }
 }
 
@@ -384,19 +425,5 @@ void TabBarStyle::drawControl(QStyle::ControlElement element, const QStyleOption
     if (widget && widget->objectName() == "previewButtons") {
         return;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
-}
-
-void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
-{
-    switch (element) {
-    case PE_IndicatorArrowLeft:
-    case PE_IndicatorArrowRight: {
-        QStyleOption tmp = *option;
-        tmp.palette.setColor(QPalette::HighlightedText, qApp->palette().buttonText().color());
-        return QProxyStyle::drawPrimitive(element, &tmp, painter, widget);
-    }
-    default:
-        return QProxyStyle::drawPrimitive(element, option, painter, widget);
-    }
+    qApp->style()->drawControl(element, option, painter, widget);
 }

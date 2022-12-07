@@ -227,7 +227,6 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     //paint link icon and locker icon
     FileInfo* file = FileInfo::fromUri(index.data(Qt::UserRole).toString()).get();
     if ((index.data(Qt::UserRole).toString() != "computer:///") && (index.data(Qt::UserRole).toString() != "trash:///")) {
-        emblemPoses.removeOne(2);
         QSize lockerIconSize = QSize(16, 16);
         int offset = 8;
         switch (view->zoomLevel()) {
@@ -260,18 +259,21 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
         if (! file->canRead())
         {
+            emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
         }
-        else if(! file->canWrite() && ! file->canExecute())
+        else if(! file->canWrite()/* && ! file->canExecute()*/)
         {
+            //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
+            emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-readonly");
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
         }
     }
 
     if (index.data(Qt::UserRole + 1).toBool()) {
-        emblemPoses.removeOne(1);
+        emblemPoses.removeOne(3);
         QSize symbolicIconSize = QSize(16, 16);
         int offset = 8;
         switch (view->zoomLevel()) {
@@ -297,11 +299,16 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             break;
         }
         }
-        auto topRight = opt.rect.topRight();
-        topRight.setX(topRight.x() - offset - symbolicIconSize.width());
-        topRight.setY(topRight.y() + offset);
-        auto linkRect = QRect(topRight, symbolicIconSize);
-        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-symbolic-link");
+//        auto topRight = opt.rect.topRight();
+//        topRight.setX(topRight.x() - offset - symbolicIconSize.width());
+//        topRight.setY(topRight.y() + offset);
+//        auto linkRect = QRect(topRight, symbolicIconSize);
+        //Adjust link emblem to topLeft.link story#8354
+        auto topLeft = opt.rect.topLeft();
+        topLeft.setX(opt.rect.topLeft().x() + 10);
+        topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
+        auto linkRect = QRect(topLeft, symbolicIconSize);
+        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
         symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
     }
 
@@ -312,7 +319,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             break;
         }
 
-        QIcon icon = QIcon::fromTheme(extensionsEmblem, QIcon(extensionsEmblem));
+        QIcon icon = QIcon::fromTheme(extensionsEmblem);
 
         QSize emblemsIconSize = QSize(16, 16);
         int offset = 8;
@@ -340,46 +347,48 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         }
         }
 
-        int pos = emblemPoses.takeFirst();
-        switch (pos) {
-        case 1: {
-            icon.paint(painter,
-                       opt.rect.topLeft().x() + 10,
-                       opt.rect.topLeft().y() + 10,
-                       emblemsIconSize.width(),
-                       emblemsIconSize.height(),
-                       Qt::AlignCenter);
-            break;
-        }
-        case 2: {
-            icon.paint(painter,
-                       opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                       opt.rect.topRight().y() + 10,
-                       emblemsIconSize.width(),
-                       emblemsIconSize.height(),
-                       Qt::AlignCenter);
-            break;
-        }
-        case 3: {
-            icon.paint(painter,
-                       opt.rect.topLeft().x() + 10,
-                       opt.rect.topLeft().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                       emblemsIconSize.width(),
-                       emblemsIconSize.height(),
-                       Qt::AlignCenter);
-            break;
-        }
-        case 4: {
-            icon.paint(painter,
-                       opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                       opt.rect.topRight().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                       emblemsIconSize.width(),
-                       emblemsIconSize.height(),
-                       Qt::AlignCenter);
-            break;
-        }
-        default:
-            break;
+        if (!icon.isNull()) {
+            int pos = emblemPoses.takeFirst();
+            switch (pos) {
+            case 1: {
+                icon.paint(painter,
+                           opt.rect.topLeft().x() + 10,
+                           opt.rect.topLeft().y() + 10,
+                           emblemsIconSize.width(),
+                           emblemsIconSize.height(),
+                           Qt::AlignCenter);
+                break;
+            }
+            case 2: {
+                icon.paint(painter,
+                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
+                           opt.rect.topRight().y() + 10,
+                           emblemsIconSize.width(),
+                           emblemsIconSize.height(),
+                           Qt::AlignCenter);
+                break;
+            }
+            case 3: {
+                icon.paint(painter,
+                           opt.rect.topLeft().x() + 10,
+                           opt.rect.topLeft().y() + offset + iconRect.height() - emblemsIconSize.height(),
+                           emblemsIconSize.width(),
+                           emblemsIconSize.height(),
+                           Qt::AlignCenter);
+                break;
+            }
+            case 4: {
+                icon.paint(painter,
+                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
+                           opt.rect.topRight().y() + offset + iconRect.height() - emblemsIconSize.height(),
+                           emblemsIconSize.width(),
+                           emblemsIconSize.height(),
+                           Qt::AlignCenter);
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
 

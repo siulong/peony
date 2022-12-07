@@ -212,7 +212,8 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
             m_mounted = true;
         }
         else if(m_device.contains("/dev/sr") &&
-                (m_displayName.contains("DVD") ||m_displayName.contains("CD")))//更好的方法区分是否是空光盘?
+                (FileUtils::isEmptyDisc(m_device) /* 空光盘linkto bug#127947 */
+                 || Experimental_Peony::VolumeManager::getInstance()->isEmptyDrive(volumeItem)))/* 空光驱,linkto bug#133362 */
         {
             m_mounted=true;
             m_unmountable = m_mountable=false;
@@ -253,6 +254,11 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
         m_mounted = true;
         m_displayName = QObject::tr("Data");
         m_iconName = "drive-harddisk";
+    }
+
+    // kydrive特殊处理
+    if (m_device.startsWith("kydrive:")) {
+        m_unmountable = false;
     }
 }
 
@@ -303,11 +309,18 @@ void SideBarFileSystemItem::slot_volumeDeviceRemove(const QString &removeDevice)
 }
 
 void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Volume &volume)
-{
+{   
     QString device = volume.device();
     QString mountPoint = volume.mountPoint();
     if(mountPoint.isEmpty())
         return;
+
+    //过滤smb子项挂载后会更新computer:///ukui-data-volume，导致数据不准确
+    QUrl serverUrl = QUrl(volume.mountPoint());
+    if("smb"==serverUrl.scheme().toLower() && !serverUrl.path().isEmpty()){
+        return;
+    }
+
     //更新model,元素信息更新
     for(auto item:*m_children){
         if(item->m_device == device){
@@ -315,12 +328,14 @@ void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Vol
             item->m_mountPoint = mountPoint;     /* 设置挂载点，属性页会用到 */
             item->m_mountable =volume.canMount();
             item->m_unmountable = true;
+            if (device.startsWith("kydrive:")) {
+                item->m_unmountable = false;
+            }
             item->m_iconName = volume.icon();
             /* 更新uri,为了枚举操作 */
             if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                 item->m_uri = "computer:///" + volume.name() + ".volume";
-            else if(item->m_device.contains("/dev/sr") &&
-                    (item->m_displayName.contains("DVD") ||item->m_displayName.contains("CD")))/* 空光盘 */
+            else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
             {
                 item->m_uri="burn:///";
             }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
@@ -371,12 +386,40 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
     if(property != "name")
         return;
 
+    auto gvolume = updateDevice.getGVolume();
     device = updateDevice.device();
     for(auto& item:*m_children){
-        if(item->m_device == device){
+        if("file:///" == item->uri() || "computer:///ukui-data-volume" == item->uri())/* hotfix bug#125095 打开文件管理器后，插入U盘，侧边栏中文件系统消失 */
+            continue;
+
+        auto fs_item = qobject_cast<SideBarFileSystemItem *>(item);
+        auto item_gvolume = fs_item->getVolume().getGVolume();
+        if(item_gvolume == gvolume){
             item->m_displayName = updateDevice.name() + "(" + device + ")";
             item->m_hidden = updateDevice.getHidden();
             item->m_iconName = updateDevice.icon();
+            // 更新mount信息, 加密分区改变时需要
+            g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);
+            if (gmount) {
+                item->m_mounted = true;            /* 更新挂载状态 */
+                QString mountPoint = updateDevice.mountPoint();
+                item->m_mountPoint = mountPoint;     /* 设置挂载点，属性页会用到 */
+                item->m_mountable = updateDevice.canMount();
+                item->m_unmountable = true;
+                item->m_iconName = updateDevice.icon();
+
+                /* 更新uri,为了枚举操作 */
+                if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
+                    item->m_uri = "computer:///" + updateDevice.name() + ".volume";
+                else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
+                {
+                    item->m_uri="burn:///";
+                }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
+                    item->m_uri = mountPoint;
+                }else{
+                    item->m_uri = "file://" + mountPoint;
+                }//end
+            }
             //model更新
              m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
             break;
@@ -623,6 +666,9 @@ bool SideBarFileSystemItem::isMounted()
 
 void SideBarFileSystemItem::unmount()
 {
+    if (m_device.startsWith("kydrive:")) {
+        return;
+    }
     SyncThread *syncThread = new SyncThread(m_uri);
     QThread* currentThread = new QThread();
     syncThread->moveToThread(currentThread);
@@ -676,7 +722,7 @@ static UDisksObject *get_object_from_block_device (UDisksClient *client,const gc
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
     g_object_unref (block);
 
-    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     crypto_backing_object = udisks_client_get_object (client, crypto_backing_device);
     if (crypto_backing_object != NULL)
     {

@@ -34,6 +34,7 @@
 #include <glib/gi18n.h>
 #include <udisks/udisks.h>
 #include <libnotify/notify.h>
+#include <QProxyStyle>
 
 #include "peony-core_global.h"
 
@@ -59,6 +60,7 @@ struct CreateformatData{
     const gchar *erase_type;
     const gchar *filesystem_name;
     int *format_finish;
+    GVariantBuilder *builder;
     Format_Dialog *dl;
 };
 
@@ -113,6 +115,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent* );
+    void resizeEvent(QResizeEvent *event);
 
 Q_SIGNALS:
      void ensure_format(bool flags);
@@ -150,6 +153,28 @@ private:
     QString fm_uris;
     SideBarAbstractItem *fm_item = nullptr;
 
+};
+
+class ButtonStyle : public QProxyStyle
+{
+
+public:
+    static ButtonStyle *getStyle();
+
+    ButtonStyle() : QProxyStyle() {}
+
+    void drawControl(QStyle::ControlElement element,
+                     const QStyleOption *option,
+                     QPainter *painter,
+                     const QWidget *widget = nullptr) const;
+
+    int pixelMetric(PixelMetric metric,
+                    const QStyleOption *option = nullptr,
+                    const QWidget *widget = nullptr) const override;
+
+    QRect subElementRect(SubElement element,
+                         const QStyleOption *option,
+                         const QWidget *widget = nullptr) const;
 };
 
 #endif // FORMAT_DIALOG_H

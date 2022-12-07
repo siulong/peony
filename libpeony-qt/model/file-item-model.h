@@ -57,6 +57,7 @@ public:
         ModifiedDate,
         FileType,
         FileSize,
+        TrashOriginPath,
         Owner,
         Other
     };
@@ -210,6 +211,9 @@ public:
     void sendPathChangeRequest(const QString &destUri, const QString &sourceUri);
 
     void setShowFileExtensions(bool show);
+
+private:
+    const QModelIndex indexFromItemAndUri(FileItem *item, const QString &uri);
 
 Q_SIGNALS:
     /*!

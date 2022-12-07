@@ -34,6 +34,8 @@
 #include <QTreeView>
 
 #include <QScreen>
+#include <QDBusInterface>
+#include <QDBusReply>
 
 #include "side-bar-proxy-filter-sort-model.h"
 #include "side-bar-model.h"
@@ -49,8 +51,11 @@
 #include "advance-search-bar.h"
 #include "status-bar.h"
 
+#include "intel/intel-navigation-side-bar.h"
+
 #include "peony-main-window-style.h"
 
+#include "file-label-box.h"
 #include "file-operation-manager.h"
 #include "file-operation-utils.h"
 #include "file-utils.h"
@@ -58,6 +63,8 @@
 #include "file-operation-error-dialog.h"
 #include "clipboard-utils.h"
 #include "search-vfs-uri-parser.h"
+#include "file-delete-operation.h"
+#include "file-untrash-operation.h"
 
 #include "directory-view-menu.h"
 #include "directory-view-widget.h"
@@ -70,9 +77,12 @@
 #include "audio-play-manager.h"
 
 #include "float-pane-widget.h"
-
+#include "side-bar-factory-manager.h"
 #include "file-meta-info.h"
-
+#include "sound-effect.h"
+#include "location-bar.h"
+#include "file-launch-action.h"
+#include "file-launch-manager.h"
 #include <QSplitter>
 
 #include <QPainter>
@@ -91,13 +101,21 @@
 #endif
 
 #include <QDebug>
-
+#include <QApplication>
 #include <X11/Xlib.h>
 #include <KWindowEffects>
+
+#include "directoryviewhelper.h"
 
 // NOTE build failed on Archlinux. Can't detect `QGSettings/QGSettings' header
 // fixed by replaced `QGSettings/QGSettings' with `QGSettings'
 #include <QGSettings>
+//#include "xatom-helper.h"
+#include "trash-warn-dialog.h"
+
+#include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
+
+#define FONT_SETTINGS "org.ukui.style"
 
 static MainWindow *last_resize_window = nullptr;
 
@@ -113,7 +131,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
     //check all settings and init
     checkSettings();
 
-    setStyle(PeonyMainWindowStyle::getStyle());
+    //setStyle(PeonyMainWindowStyle::getStyle());
 
     m_effect = new BorderShadowEffect(this);
     m_effect->setPadding(0);
@@ -136,9 +154,25 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
 
     //set minimum width by design request
     setMinimumWidth(WINDOW_MINIMUM_WIDTH);
+    //short cut settings
+    setShortCuts();
 
+    bool isTabletMode = false;
+    m_statusManagerDBus = new QDBusInterface(DBUS_STATUS_MANAGER_IF, "/" ,DBUS_STATUS_MANAGER_IF,QDBusConnection::sessionBus(),this);
+    if (m_statusManagerDBus) {
+        qDebug() << "[PeonyDesktopApplication::initGSettings] init statusManagerDBus" << m_statusManagerDBus->isValid();
+        if (m_statusManagerDBus->isValid()) {
+            QDBusReply<bool> message = m_statusManagerDBus->call("get_current_tabletmode");
+            if (message.isValid()) {
+                isTabletMode = message.value();
+            }
+            //平板模式切换
+            connect(m_statusManagerDBus, SIGNAL(mode_change_signal(bool)), this, SLOT(updateTabletModeValue(bool)));
+        }
+    }
     //init UI
     initUI(uri);
+    updateTabletModeValue(isTabletMode);
 
     // set tab order
 
@@ -149,6 +183,8 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
         hints.functions = MWM_FUNC_ALL;
         hints.decorations = MWM_DECOR_BORDER;
         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+    } else {
+        kdk::UkuiStyleHelper::self()->removeHeader(this);
     }
 
     startMonitorThumbnailForbidStatus();
@@ -156,6 +192,13 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
     auto start_cost_time = QDateTime::currentMSecsSinceEpoch()- PeonyApplication::peony_start_time;
     qDebug() << "peony start end in main-window time:" <<start_cost_time
              <<"ms"<<QDateTime::currentMSecsSinceEpoch();
+
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=](const QString &key){
+        if (key == USE_GLOBAL_DEFAULT_SORTING) {
+            this->setCurrentSortColumn(this->getCurrentSortColumn());
+            this->setCurrentSortOrder(this->getCurrentSortOrder());
+        }
+    });
 }
 
 MainWindow::~MainWindow()
@@ -163,7 +206,8 @@ MainWindow::~MainWindow()
     //fix bug 40913, when window is maximazed, not update size
     if (last_resize_window == this && !isMaximized()) {
         auto settings = Peony::GlobalSettings::getInstance();
-        settings->setValue(DEFAULT_WINDOW_SIZE, this->size());
+        settings->setValue(DEFAULT_WINDOW_WIDTH, this->size().width());
+        settings->setValue(DEFAULT_WINDOW_HEIGHT, this->size().height());
         last_resize_window = nullptr;
     }
 }
@@ -198,7 +242,8 @@ QSize MainWindow::sizeHint() const
     QSize windowSize;
     windowSize.setWidth(screenSize.width()*2/3);
     windowSize.setHeight(screenSize.height()*4/5);
-    QSize defaultSize = (Peony::GlobalSettings::getInstance()->getValue(DEFAULT_WINDOW_SIZE)).toSize();
+    QSize defaultSize(Peony::GlobalSettings::getInstance()->getValue(DEFAULT_WINDOW_WIDTH).toInt(),
+                      Peony::GlobalSettings::getInstance()->getValue(DEFAULT_WINDOW_HEIGHT).toInt());
     if (!defaultSize.isValid())
         return windowSize;
     int width = qMin(defaultSize.width(), screenSize.width());
@@ -509,23 +554,18 @@ void MainWindow::setShortCuts()
         addAction(maxAction);
 
         auto previewPageAction = new QAction(this);
+        connect(this,&MainWindow::tabletModeChanged,previewPageAction,[=](bool isTabletMode){
+            if(isTabletMode){
+                previewPageAction->setEnabled(false);
+                m_header_bar->updatePreviewStatus(false);
+           }else{
+                previewPageAction->setEnabled(true);
+           }
+        });
         previewPageAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_F3<<QKeySequence(Qt::ALT + Qt::Key_P));
         connect(previewPageAction, &QAction::triggered, this, [=]() {
-            auto triggered = m_tab->getTriggeredPreviewPage();
-            if (triggered)
-            {
-                m_tab->setPreviewPage(nullptr);
-            }
-            else
-            {
-                auto instance = Peony::PreviewPageFactoryManager::getInstance();
-                auto lastPreviewPageId  = instance->getLastPreviewPageId();
-                auto *page = instance->getPlugin(lastPreviewPageId)->createPreviewPage();
-                m_tab->setPreviewPage(page);
-            }
-            m_tab->setTriggeredPreviewPage(!triggered);
-            m_tab->updatePreviewButtonStatus(!triggered);
-
+            bool triggered = m_tab->getTriggeredPreviewPage();
+            m_header_bar->updatePreviewStatus(!triggered);
         });
         addAction(previewPageAction);
 
@@ -612,8 +652,12 @@ void MainWindow::setShortCuts()
         connect(selectAllAction, &QAction::triggered, this, [=]() {
             if (this->getCurrentPage()->getView())
             {
-                auto allFiles = this->getCurrentPage()->getView()->getAllFileUris();
-                this->getCurrentPage()->getView()->setSelections(allFiles);
+                /// note: 通过getAllFileUris设置的全选效率过低，如果增加接口则会导致二进制兼容性问题
+                /// 所以这里使用现有的反选接口实现高效的全选，这个方法在mainwindow中也有用到
+                //auto allFiles = this->getCurrentPage()->getView()->getAllFileUris();
+                //this->getCurrentPage()->getView()->setSelections(allFiles);
+                this->getCurrentPage()->getView()->setSelections(QStringList());
+                this->getCurrentPage()->getView()->invertSelections();
             }
         });
         addAction(selectAllAction);
@@ -661,7 +705,8 @@ void MainWindow::setShortCuts()
             auto currentUri = getCurrentUri();
             if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
                 || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
-                || currentUri.startsWith("search://") || currentUri == "filesafe:///")
+                || currentUri.startsWith("search://") || currentUri == "filesafe:///"
+                || currentUri.startsWith("burn://"))
             {
                 /* Add hint information,link to bug#107640. */
                 QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
@@ -701,8 +746,13 @@ void MainWindow::setShortCuts()
                 }
 
                 auto currentUri = getCurrentUri();
-                if (currentUri.startsWith("search://"))
+                if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
+                    || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
+                    || currentUri.startsWith("search://") || currentUri == "filesafe:///") {
+                    /* Add hint information,link to bug#107640. */
+                    QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
                     return;
+                }
 
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
                 QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
@@ -797,8 +847,27 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             for (auto uri : dirs) {
                 m_tab->addPage(uri);
             }
+
+            QMap<QString, QStringList> fileMap;
             for (auto uri : files) {
-                Q_EMIT m_tab->currentPage()->viewDoubleClicked(uri);
+                QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
+                QStringList list;
+                if (fileMap.contains(defaultAppName)) {
+                    list = fileMap[defaultAppName];
+                    list << uri;
+                    fileMap.insert(defaultAppName, list);
+                } else {
+                    list << uri;
+                    fileMap.insert(defaultAppName, list);
+                }
+            }
+            if(!fileMap.empty()) {
+                QMap<QString, QStringList>::iterator iter = fileMap.begin();
+                while (iter != fileMap.end())
+                {
+                    Peony::FileLaunchManager::openAsync(iter.value());
+                    iter++;
+                }
             }
         }
     }
@@ -840,7 +909,7 @@ bool MainWindow::getWindowShowHidden()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): (settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool());
+            return metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).isValid()? metaInfo->getMetaInfoVariant(SHOW_HIDDEN_PREFERENCE).toBool(): false;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool();
@@ -857,7 +926,7 @@ bool MainWindow::getWindowUseDefaultNameSortOrder()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): (settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_CHINESE_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_CHINESE_FIRST).isValid()? settings->getValue(SORT_CHINESE_FIRST).toBool(): true;
@@ -874,7 +943,7 @@ bool MainWindow::getWindowSortFolderFirst()
         auto uri = getCurrentUri();
         auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): (settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true);
+            return metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).isValid()? metaInfo->getMetaInfoVariant(SORT_FOLDER_FIRST).toBool(): true;
         } else {
             qDebug()<<"can not get file meta info"<<uri;
             return settings->getValue(SORT_FOLDER_FIRST).isValid()? settings->getValue(SORT_FOLDER_FIRST).toBool(): true;
@@ -935,6 +1004,7 @@ void MainWindow::updateHeaderBar()
     //fix bug#66336, 83711
     m_header_bar->updateViewTypeEnable();
     //m_status_bar->update();
+    m_header_bar->updatePreviewPageVisible();
 }
 
 void MainWindow::updateWindowIcon()
@@ -959,6 +1029,16 @@ void MainWindow::updateWindowIcon()
 
 void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
 {
+    auto viewId = this->getCurrentPage()->getView()->viewId();
+
+    if (QString::compare(viewId, "Icon View", Qt::CaseSensitive) == 0) {
+        //FIXME: 判空
+        auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(getCurrentPage()->getView());
+        if (iface2) {
+            iface2->doMultiSelect(false);
+        }
+    }
+
     QUrl url(uri);
     auto realUri = uri;
     if (uri == "computer:///ukui-data-volume") {
@@ -983,6 +1063,14 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
         }
     }
 
+    //if in search mode and key is not null, need quit search mode, bug#93528
+    //清空搜索关键字时，不应该退出搜索状态，其他情况下，跳转非搜索路径，需要退出搜索
+    if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
+    {
+        m_is_search = false;
+        m_header_bar->updateSearchRequest(m_is_search);
+    }
+
     if (getCurrentUri() == realUri) {
         if (!force) {
             refresh();
@@ -990,20 +1078,12 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
         }
     }
 
-    //if in search mode and key is not null, need quit search mode
-    if (m_is_search && m_last_key != "" && !uri.startsWith("search://"))
-    {
-        m_tab->updateSearchBar(false);
-        m_is_search = false;
-        m_header_bar->startEdit(false);
-    }
-
     locationChangeStart();
     m_tab->goToUri(realUri, addHistory, force);
     m_header_bar->setLocation(uri);
 
-    m_label_box->clearSelection();
-    Q_EMIT m_label_box->leftClickOnBlank();
+   // m_label_box->clearSelection();
+    //Q_EMIT m_label_box->leftClickOnBlank();
 }
 
 void MainWindow::updateSearch(const QString &uri, const QString &key, bool updateKey)
@@ -1029,8 +1109,11 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
     {
         //qDebug() << "updateSearch needUpdate:" <<m_last_key<<m_last_search_path;
         forceStopLoading();
-        if (m_last_key == "")
+        if (m_last_key == ""){
+            m_is_clear_serach = true;
             goToUri(m_last_search_path, true);
+            m_is_clear_serach = false;
+        }
         else
         {
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
@@ -1070,12 +1153,12 @@ void MainWindow::beginSwitchView(const QString &viewId)
     m_tab->setCurrentSelections(selection);
     bool supportZoom = m_tab->currentPage()->getView()->supportZoom();
     m_tab->m_status_bar->m_slider->setEnabled(supportZoom);
-    m_tab->m_status_bar->m_slider->setVisible(supportZoom);
+//    m_tab->m_status_bar->m_slider->setVisible(supportZoom);
     //fix slider value not update issue
-    m_tab->m_status_bar->m_slider->setValue(currentViewZoomLevel());
+    int zoomLevel = currentViewZoomLevel();
+    m_tab->m_status_bar->m_slider->setValue(zoomLevel);
+    m_tab->currentPage()->getView()->setCurrentZoomLevel(zoomLevel);
 }
-
-
 
 void MainWindow::refresh()
 {
@@ -1085,6 +1168,33 @@ void MainWindow::refresh()
     if (Peony::ClipboardUtils::isPeonyFilesBeCut())
         Peony::ClipboardUtils::clearClipboard();/* Refresh clear cut status */
     //goToUri(getCurrentUri(), false, true);
+}
+
+void MainWindow::advanceSearch()
+{
+    qDebug()<<"advanceSearch clicked";
+    initAdvancePage();
+}
+
+void MainWindow::clearRecord()
+{
+    //qDebug()<<"clearRecord clicked";
+//    m_search_bar->clearSearchRecord();
+//    m_clear_record->setDisabled(true);
+}
+
+void MainWindow::searchFilter(QString target_path, QString keyWord, bool search_file_name, bool search_content)
+{
+//    auto targetUri = SearchVFSUriParser::parseSearchKey(target_path, keyWord, search_file_name, search_content);
+//    //qDebug()<<"targeturi:"<<targetUri;
+//    m_update_condition = true;
+//    this->goToUri(targetUri, true);
+}
+
+void MainWindow::filterUpdate(int type_index, int time_index, int size_index)
+{
+    //qDebug()<<"filterUpdate:";
+    //m_tab->getActivePage()->setSortFilter(type_index, time_index, size_index);
 }
 
 void MainWindow::setLabelNameFilter(QString name)
@@ -1097,7 +1207,7 @@ void MainWindow::setLabelNameFilter(QString name)
         m_filter_working = false;
     else
         m_filter_working = true;
-    m_header_bar->updateHeaderState();
+    //m_header_bar->updateHeaderState();
     getCurrentPage()->setFilterLabelConditions(name);
 }
 
@@ -1240,18 +1350,29 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
     QPainterPath sidebarPath;
     sidebarPath.setFillRule(Qt::FillRule::WindingFill);
-    auto adjustedRect = sideBarRect().adjusted(0, 1, 0, 0);
-    sidebarPath.addRoundedRect(adjustedRect, 6, 6);
-    sidebarPath.addRect(adjustedRect.adjusted(0, 0, 0, -6));
-    sidebarPath.addRect(adjustedRect.adjusted(6, 0, 0, 0));
-    m_effect->setTransParentPath(sidebarPath);
-    m_effect->setTransParentAreaBg(colorBase);
 
-    //color.setAlphaF(0.5);
-    m_effect->setWindowBackground(color);
+    auto pos = m_tab->mapTo(this, QPoint());
+    auto tmpRect = QRect(pos, m_tab->size());
+    QPainterPath deletePath;
+    QPainterPath tmpPath;
+
+    tmpPath.addRect(rect());
+
+    deletePath.addRoundedRect(tmpRect.adjusted(0, 48, 0, 0), 16, 16);
+    deletePath.addRect(rect().width()-18,rect().height()-18,18,18);
+    deletePath.addRect(tmpRect.x(),tmpRect.height()-18,18,18);
+
+    sidebarPath = tmpPath - deletePath;
+
     QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing); // 抗锯齿
+    p.fillPath(sidebarPath,colorBase);
 
-    m_effect->drawWindowShadowManually(&p, this->rect(), false);
+    QPainter painter(this);
+    if(m_is_first_tab)
+        deletePath.addRect(m_tab->x(),48,16,16);
+    deletePath.setFillRule(Qt::FillRule::WindingFill);
+    painter.fillPath(deletePath,this->palette().base());
     QMainWindow::paintEvent(e);
 }
 
@@ -1272,60 +1393,60 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e)
     //get the release event correctly.
     //qDebug()<<"mouse move";
     QMainWindow::mouseMoveEvent(e);
-    if (!m_is_draging)
-        return;
+//    if (!m_is_draging)
+//        return;
 
-    qreal  dpiRatio = qApp->devicePixelRatio();
-    if (QX11Info::isPlatformX11()) {
-        Display *display = QX11Info::display();
-        Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
-        XEvent xEvent;
-        const auto pos = QCursor::pos();
+//    qreal  dpiRatio = qApp->devicePixelRatio();
+//    if (QX11Info::isPlatformX11()) {
+//        Display *display = QX11Info::display();
+//        Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
+//        XEvent xEvent;
+//        const auto pos = QCursor::pos();
 
-        memset(&xEvent, 0, sizeof(XEvent));
-        xEvent.xclient.type = ClientMessage;
-        xEvent.xclient.message_type = netMoveResize;
-        xEvent.xclient.display = display;
-        xEvent.xclient.window = this->winId();
-        xEvent.xclient.format = 32;
-        xEvent.xclient.data.l[0] = pos.x() * dpiRatio;
-        xEvent.xclient.data.l[1] = pos.y() * dpiRatio;
-        xEvent.xclient.data.l[2] = 8;
-        xEvent.xclient.data.l[3] = Button1;
-        xEvent.xclient.data.l[4] = 0;
+//        memset(&xEvent, 0, sizeof(XEvent));
+//        xEvent.xclient.type = ClientMessage;
+//        xEvent.xclient.message_type = netMoveResize;
+//        xEvent.xclient.display = display;
+//        xEvent.xclient.window = this->winId();
+//        xEvent.xclient.format = 32;
+//        xEvent.xclient.data.l[0] = pos.x() * dpiRatio;
+//        xEvent.xclient.data.l[1] = pos.y() * dpiRatio;
+//        xEvent.xclient.data.l[2] = 8;
+//        xEvent.xclient.data.l[3] = Button1;
+//        xEvent.xclient.data.l[4] = 0;
 
-        XUngrabPointer(display, CurrentTime);
-        XSendEvent(display, QX11Info::appRootWindow(QX11Info::appScreen()),
-                   False, SubstructureNotifyMask | SubstructureRedirectMask,
-                   &xEvent);
-        //XFlush(display);
+//        XUngrabPointer(display, CurrentTime);
+//        XSendEvent(display, QX11Info::appRootWindow(QX11Info::appScreen()),
+//                   False, SubstructureNotifyMask | SubstructureRedirectMask,
+//                   &xEvent);
+//        //XFlush(display);
 
-        XEvent xevent;
-        memset(&xevent, 0, sizeof(XEvent));
+//        XEvent xevent;
+//        memset(&xevent, 0, sizeof(XEvent));
 
-        xevent.type = ButtonRelease;
-        xevent.xbutton.button = Button1;
-        xevent.xbutton.window = this->winId();
-        xevent.xbutton.x = e->pos().x() * dpiRatio;
-        xevent.xbutton.y = e->pos().y() * dpiRatio;
-        xevent.xbutton.x_root = pos.x() * dpiRatio;
-        xevent.xbutton.y_root = pos.y() * dpiRatio;
-        xevent.xbutton.display = display;
+//        xevent.type = ButtonRelease;
+//        xevent.xbutton.button = Button1;
+//        xevent.xbutton.window = this->winId();
+//        xevent.xbutton.x = e->pos().x() * dpiRatio;
+//        xevent.xbutton.y = e->pos().y() * dpiRatio;
+//        xevent.xbutton.x_root = pos.x() * dpiRatio;
+//        xevent.xbutton.y_root = pos.y() * dpiRatio;
+//        xevent.xbutton.display = display;
 
-        XSendEvent(display, this->effectiveWinId(), False, ButtonReleaseMask, &xevent);
-        XFlush(display);
+//        XSendEvent(display, this->effectiveWinId(), False, ButtonReleaseMask, &xevent);
+//        XFlush(display);
 
-        if (e->source() == Qt::MouseEventSynthesizedByQt) {
-            if (!this->mouseGrabber()) {
-                this->grabMouse();
-                this->releaseMouse();
-            }
-        }
+//        if (e->source() == Qt::MouseEventSynthesizedByQt) {
+//            if (!this->mouseGrabber()) {
+//                this->grabMouse();
+//                this->releaseMouse();
+//            }
+//        }
 
-        m_is_draging = false;
-    } else {
-        this->move((QCursor::pos() - m_offset) * dpiRatio);
-    }
+//        m_is_draging = false;
+//    } else {
+//        this->move((QCursor::pos() - m_offset) * dpiRatio);
+//    }
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e)
@@ -1342,23 +1463,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void MainWindow::validBorder()
 {
-    if (this->isMaximized()) {
-        setContentsMargins(0, 0, 0, 0);
-        m_effect->setPadding(0);
-        setProperty("blurRegion", QVariant());
-        KWindowEffects::enableBlurBehind(this->winId(), true);
-    } else {
-        //setContentsMargins(4, 4, 4, 4);
-        m_effect->setPadding(4);
-        QPainterPath path;
-        auto rect = this->rect();
-        rect.adjust(4, 4, -4, -4);
-        path.addRoundedRect(rect, 6, 6);
-        //setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
-        //use KWindowEffects
-        //KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-        KWindowEffects::enableBlurBehind(this->winId(), true);
-    }
+    QPainterPath path;
+    auto rect = this->rect();
+    path.addRect(rect);
+    setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
+    //use KWindowEffects
+    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 }
 #include "file-utils.h"
 void MainWindow::initUI(const QString &uri)
@@ -1396,11 +1506,16 @@ void MainWindow::initUI(const QString &uri)
     });
 
     //HeaderBar
-    auto headerBar = new HeaderBar(this);
-    m_header_bar = headerBar;
-    auto headerBarContainer = new HeaderBarContainer(this);
-    headerBarContainer->addHeaderBar(headerBar);
-    addToolBar(headerBarContainer);
+    m_tab = new TabWidget;
+
+    m_header_bar = new HeaderBar(this);
+    m_headerBarContainer = new HeaderBarContainer(this);
+    m_headerBarContainer->addHeaderBar(m_header_bar);
+
+    TopMenuBar *top = new TopMenuBar(m_header_bar, this);
+    m_tab->setMenuBar(top);
+//    m_tab->m_header_bar_layout->insertWidget(0,headerBarContainer);
+    m_tab->addToolBar(m_headerBarContainer);
     //m_header_bar->setVisible(false);
 
     connect(m_header_bar, &HeaderBar::updateLocationRequest, this, &MainWindow::goToUri);
@@ -1415,62 +1530,48 @@ void MainWindow::initUI(const QString &uri)
     });
 
     //SideBar
-    QDockWidget *sidebarContainer = new QDockWidget(this);
+    auto sideBarFactory = Peony::SideBarFactoryManager::getInstance()->getFactoryFromPlatformName();
+    if (!sideBarFactory) {
+        NavigationSideBarContainer *sidebar = new NavigationSideBarContainer(this);
+        m_side_bar = sidebar;
+    } else {
+        m_side_bar = sideBarFactory->create(this);
+    }
+    m_transparent_area_widget = m_side_bar;
+    connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, this, &MainWindow::goToUri);
+    connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
+    addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
 
-    sidebarContainer->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    auto palette = sidebarContainer->palette();
-    palette.setColor(QPalette::Window, Qt::transparent);
-    sidebarContainer->setPalette(palette);
-//    sidebarContainer->setStyleSheet("{"
-//                                    "background-color: transparent;"
-//                                    "border: 0px solid transparent"
-//                                    "}");
-    sidebarContainer->setTitleBarWidget(new QWidget(this));
-    sidebarContainer->titleBarWidget()->setFixedHeight(0);
-    sidebarContainer->setAttribute(Qt::WA_TranslucentBackground);
-    sidebarContainer->setContentsMargins(0, 0, 0, 0);
+   // auto labelDialog = new FileLabelBox(this);
+   // labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+   // labelDialog->hide();
+   // m_label_box = labelDialog;
 
-    NavigationSideBar *sidebar = new NavigationSideBar(this);
-    m_side_bar = sidebar;
-
-    auto navigationSidebarContainer = new NavigationSideBarContainer(this);
-    navigationSidebarContainer->addSideBar(m_side_bar);
-
-    m_transparent_area_widget = navigationSidebarContainer;
-
-    connect(m_side_bar, &NavigationSideBar::updateWindowLocationRequest, this, &MainWindow::goToUri);
-
-    auto labelDialog = new FileLabelBox(this);
-    labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    labelDialog->hide();
-    m_label_box = labelDialog;
-
-    connect(labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
-    {
-        auto selected = labelDialog->selectionModel()->selectedIndexes();
-        //qDebug() << "FileLabelBox selectionChanged:" <<selected.count();
-        if (selected.count() > 0)
-        {
-            auto name = selected.first().data().toString();
-            setLabelNameFilter(name);
-        }
-    });
+   // connect(labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
+   // {
+   //     auto selected = labelDialog->selectionModel()->selectedIndexes();
+   //     //qDebug() << "FileLabelBox selectionChanged:" <<selected.count();
+   //     if (selected.count() > 0)
+  //      {
+   //         auto name = selected.first().data().toString();
+   //         setLabelNameFilter(name);
+   //     }
+   // });
     //when clicked in blank, currentChanged may not triggered
-    connect(labelDialog, &FileLabelBox::leftClickOnBlank, [=]()
-    {
-        setLabelNameFilter("");
-    });
+    //connect(labelDialog, &FileLabelBox::leftClickOnBlank, [=]()
+   // {
+   //     setLabelNameFilter("");
+   // });
 
 
 
-    sidebarContainer->setWidget(navigationSidebarContainer);
-    addDockWidget(Qt::LeftDockWidgetArea, sidebarContainer);
+  //  sidebarContainer->setWidget(navigationSidebarContainer);
+  //  addDockWidget(Qt::LeftDockWidgetArea, sidebarContainer);
 
 //    m_status_bar = new Peony::StatusBar(this, this);
 //    setStatusBar(m_status_bar);
 
-    auto views = new TabWidget;
-    m_tab = views;
+//    auto views = new TabWidget;
     if (uri.isNull()) {
         auto home = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         m_tab->addPage(home, true);
@@ -1489,45 +1590,69 @@ void MainWindow::initUI(const QString &uri)
         m_tab->updateStatusBarGeometry();
     });
 
-    connect(views->tabBar(), &QTabBar::tabBarDoubleClicked, this, [=](int index) {
-        if (index == -1)
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=](const QString &key) {
+        if (key == ZOOM_SLIDER_VISIBLE) {
+            m_tab->updateStatusBarGeometry();
+        }
+    });
+
+    connect(m_tab->tabBar(), &QTabBar::tabBarDoubleClicked, this, [=](int index) {
+        bool tablet = Peony::GlobalSettings::getInstance()->getValue(TABLET_MODE).toBool();
+        if (index == -1&&!tablet)
             maximizeOrRestore();
     });
-    connect(views, &TabWidget::closeWindowRequest, this, &QWidget::close);
-    connect(m_header_bar, &HeaderBar::updateSearchRequest, this, [=](bool showSearch)
-    {
-        m_tab->updateSearchBar(showSearch);
+    connect(m_tab,&TabWidget::tabBarIndexUpdate,this,[=](int index){
+        if(index == 0)
+            m_is_first_tab = true;
+        else
+           m_is_first_tab = false;
+        update();
+
+    });
+    connect(m_tab, &TabWidget::closeWindowRequest, this, &QWidget::close);
+    connect(m_header_bar, &HeaderBar::updateSearchRequest, m_tab, &TabWidget::updateSearchBar);
+    connect(m_header_bar, &HeaderBar::updateSearchRequest, this, [=](bool showSearch){
         m_is_search = showSearch;
     });
+    //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
     connect(m_header_bar, &HeaderBar::updateSearch, this, &MainWindow::updateSearch);
 
     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
-    tabBarHandler->registerWidget(views->tabBar());
+    tabBarHandler->registerWidget(m_tab->tabBar());
+    //tabBarHandler->registerWidget(m_header_bar);
 
-    auto paneAndViews = new FloatPaneWidget(views, labelDialog, this);
-    connect(sidebar, &NavigationSideBar::labelButtonClicked, this, [=](bool checked)
-    {
-        bool visible = checked;
-        //quit label filter, clear conditions
-        if (visible)
-        {
-           setLabelNameFilter("");
-           m_label_box->clearSelection();
-        } else {
-            setLabelNameFilter("");
-        }
-        paneAndViews->setFloatWidgetVisible(visible);
-    });
-    setCentralWidget(paneAndViews);
+    setCentralWidget(m_tab);
+//    auto paneAndViews = new FloatPaneWidget(views, labelDialog, this);
+//    connect(m_side_bar, &NavigationSideBar::labelButtonClicked, this, [=](bool checked)
+//    {
+//        bool visible = checked;
+//        //quit label filter, clear conditions
+//        if (visible)
+//        {
+//           setLabelNameFilter("");
+//           m_label_box->clearSelection();
+//        } else {
+//            setLabelNameFilter("");
+//        }
+//        paneAndViews->setFloatWidgetVisible(visible);
+//    });
+//    setCentralWidget(paneAndViews);
 
 //    // check slider zoom level
 //    if (currentViewSupportZoom())
 //        setCurrentViewZoomLevel(currentViewZoomLevel());
 
     //bind signals
-    connect(m_tab, &TabWidget::searchRecursiveChanged, headerBar, &HeaderBar::updateSearchRecursive);
-    connect(m_tab, &TabWidget::closeSearch, headerBar, &HeaderBar::closeSearch);
+    connect(m_tab, &TabWidget::searchRecursiveChanged, m_header_bar, &HeaderBar::updateSearchRecursive);
+    connect(m_tab, &TabWidget::closeSearch, m_header_bar, &HeaderBar::closeSearch);
+    connect(m_tab, &TabWidget::viewSelectStatus, m_header_bar, &HeaderBar::switchSelectStatus);
+    connect(m_tab, &TabWidget::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
+    connect(m_tab,&TabWidget::globalSearch, m_header_bar, &HeaderBar::setGlobalFlag);
     connect(m_tab, &TabWidget::clearTrash, this, &MainWindow::cleanTrash);
+    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
+        m_tab->updateTabPageTitle();
+    });
+    connect(this, &MainWindow::trashcleaned, m_header_bar, &HeaderBar::clearTrash);
     connect(m_tab, &TabWidget::recoverFromTrash, this, &MainWindow::recoverFromTrash);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_tab, &TabWidget::updateSearch, this, &MainWindow::updateSearch);
@@ -1552,33 +1677,47 @@ void MainWindow::initUI(const QString &uri)
         this->m_uris_to_edit.clear();
     });
 
-    connect(m_tab, &TabWidget::menuRequest, this, [=]() {
-        Peony::DirectoryViewMenu menu(this);
-        menu.exec(QCursor::pos());
+    connect(m_tab, &TabWidget::menuRequest, this, [=](const QPoint &pos) {
+        Peony::DirectoryViewMenu menu(this, this);
+        menu.exec(pos);
         m_uris_to_edit = menu.urisToEdit();
     });
 
     connect(m_tab, &TabWidget::updateWindowSelectionRequest, this, [=](const QStringList &uris){
         setCurrentSelectionUris(uris);
     });
-//    connect(m_tab, &TabWidget::currentSelectionChanged, this, [=](){
-//        m_status_bar->update();
-//    });
+    connect(m_tab, &TabWidget::currentSelectionChanged, this, [=](){
+        int num = this->getCurrentPage()->getView()->getSelections().count();
+        bool isSelect = num > 0 ? true :false;
+        m_header_bar->switchSelectStatus(isSelect);
+    });
+    connect(Peony::ThumbnailManager::getInstance(), &Peony::ThumbnailManager::updateFileThumbnail, this, [=](){
+        this->refresh();
+    });
+//    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
+//        m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
+//        connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {
+//            if (FORBID_THUMBNAIL_IN_VIEW == key) {
+//                auto settings = Peony::GlobalSettings::getInstance();
+//                if (m_do_not_thumbnail != settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool()) {
+//                    m_do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+//                    if (true == m_do_not_thumbnail) {
+//                        Peony::ThumbnailManager::getInstance()->clearThumbnail();
+//                    }
+//                    refresh();
+//                }
+//            }
+//        });
+//    }
 
-    addFocusWidgetToFocusList(m_side_bar);
-    addFocusWidgetToFocusList(m_tab);
-
-    setTabOrder(nullptr, this);
-
-    QWidget *oldWidget = this;
-    for (auto widget : m_focus_list) {
-        setTabOrder(oldWidget, widget);
-        oldWidget = widget;
-        if (m_focus_list.last() == widget) {
-            setTabOrder(widget, m_focus_list.first());
-        }
-    }
 }
+
+//void MainWindow::updateSearchStatus(bool showSearch)
+//{
+//    m_tab->updateSearchBar(showSearch);
+//    m_header_bar->setSearchMode(showSearch);
+//    m_is_search = showSearch;
+//}
 
 void MainWindow::cleanTrash()
 {
@@ -1586,18 +1725,30 @@ void MainWindow::cleanTrash()
     Peony::AudioPlayManager::getInstance()->playWarningAudio();
     if (uris.count() >0)
     {
-        auto result = QMessageBox::question(nullptr, tr("Delete Permanently"),
-                                            tr("Are you sure that you want to delete these files? "
-                                               "Once you start a deletion, the files deleting will never be "
-                                               "restored again."));
-        if (result == QMessageBox::Yes) {
-            Peony::FileOperationUtils::remove(uris);
+        if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
+            Peony::TrashWarnDialog *dialog = new Peony::TrashWarnDialog(nullptr);
+
+            connect(dialog, &Peony::TrashWarnDialog::accepted, [=]{
+                Peony::FileOperationUtils::remove(uris);
+            });
+
+            dialog->exec();
+        } else {
+            auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
+            qApp->setProperty("clearTrash",true);
+            if(removeop){
+                removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
+//                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+                Q_EMIT trashcleaned();
+                });
+            }
         }
     }
     else
-    {
-        QMessageBox::information(nullptr, tr("Tips info"),
-                                 tr("Trash has no file need to be cleaned."));
+    {     /* 由于QMessageBox的setParent还不支持，暂先注释处理，link to bug#22692 【回收站】清空时，其他工作区的文件管理器会转到当前工作区 */
+//        QMessageBox::information(nullptr, tr("Tips info"),
+//                                 tr("Trash has no file need to be cleaned."));
+
     }
 }
 
@@ -1607,10 +1758,27 @@ void MainWindow::recoverFromTrash()
     if (m_selections.isEmpty())
         m_selections = getCurrentAllFileUris();
     if (m_selections.count() == 1) {
-        Peony::FileOperationUtils::restore(m_selections.first());
+        auto untrashop = Peony::FileOperationUtils::restore(m_selections.first());
+        if(untrashop){
+            connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            });
+        }
     } else {
-        Peony::FileOperationUtils::restore(m_selections);
+        auto untrashop = Peony::FileOperationUtils::restore(m_selections);
+        if(untrashop){
+            connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            });
+        }
     }
+//    qApp->setProperty("restoreFile",true);
+}
+
+void MainWindow::initAdvancePage()
+{
+    //Fix me: advance search page, need the new design to develop new UI
+    //auto filterBar = new Peony::AdvanceSearchBar(this);
 }
 
 QRect MainWindow::sideBarRect()
@@ -1644,16 +1812,6 @@ void MainWindow::startMonitorThumbnailForbidStatus()
 
 }
 
-void MainWindow::addFocusWidgetToFocusList(QWidget *widget)
-{
-    m_focus_list<<widget;
-}
-
-QWidgetList MainWindow::focusWidgetsList()
-{
-    return m_focus_list;
-}
-
 const QList<std::shared_ptr<Peony::FileInfo>> MainWindow::getCurrentSelectionFileInfos()
 {
     const QStringList uris = getCurrentSelections();
@@ -1663,4 +1821,20 @@ const QList<std::shared_ptr<Peony::FileInfo>> MainWindow::getCurrentSelectionFil
         infos<<info;
     }
     return infos;
+}
+
+void MainWindow::updateTabletModeValue(bool isTabletMode)
+{
+    //task#106007 【文件管理器】文件管理器应用做平板UI适配，切换模式
+    qApp->setProperty("tabletMode", isTabletMode);
+    if(isTabletMode) {
+        m_headerBarContainer->setFixedHeight(72);
+    } else {
+        m_headerBarContainer->setFixedHeight(60);
+    }
+
+    m_tab->updateTabletModeValue(isTabletMode);
+    m_tab->menuWidget()->setVisible(!isTabletMode);
+    m_header_bar->updateTabletModeValue(isTabletMode);
+    Q_EMIT tabletModeChanged(isTabletMode);
 }

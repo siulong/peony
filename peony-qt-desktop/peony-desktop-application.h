@@ -35,6 +35,7 @@ class DesktopBackgroundWindow;
 
 namespace Peony {
 class DesktopIconView;
+class DesktopItemModel;
 }
 
 using namespace Peony;
@@ -47,13 +48,19 @@ class PeonyDesktopApplication : public QtSingleApplication
 public:
     explicit PeonyDesktopApplication(int &argc, char *argv[], const QString &applicationName = "peony-qt-desktop");
 
-    static Peony::DesktopIconView *getIconView();
     static bool userGuideDaemonRunning();
     static void showGuide(const QString &appName = "");
     static void gotoSetBackground();
     static void gotoSetResolution();
 
     static qint64 peony_desktop_start_time;
+    static Peony::DesktopItemModel* getModel();
+    Peony::DesktopIconView *getIconView(QPoint pos);
+    Peony::DesktopIconView *getIconView(int id);
+    Peony::DesktopIconView *getIconView(QScreen *screen);
+    Peony::DesktopIconView * removeUri(const QString& uri);
+    int checkScreenMode(const QRect &geometry);
+    Peony::DesktopIconView *getNotFullView();
 
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
@@ -81,6 +88,7 @@ private:
     void setupDesktop();
     void setupBgAndDesktop();
     void clearIcons(const QStringList &args);
+    int getDesktopWindowId();
 
     bool m_first_parse = true;
 

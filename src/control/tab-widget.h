@@ -32,6 +32,8 @@
 #include <QList>
 #include <QLineEdit>
 #include <QSignalMapper>
+#include <QProxyStyle>
+#include <QActionGroup>
 #include "navigation-tab-bar.h"
 #include "file-info.h"
 #include "tab-status-bar.h"
@@ -41,6 +43,7 @@ class QStackedWidget;
 class PreviewPageButtonGroups;
 class QHBoxLayout;
 class QVBoxLayout;
+class QSplitter;
 
 namespace Peony {
 class PreviewPageIface;
@@ -74,6 +77,7 @@ public:
 
     const QString getCurrentUri();
     const QStringList getCurrentSelections();
+    const int getCurrentRowcount();
 
     const QStringList getAllFileUris();
     const QList<std::shared_ptr<Peony::FileInfo>> getCurrentSelectionFileInfos();
@@ -119,6 +123,11 @@ Q_SIGNALS:
     void closeSearch();
     void recoverFromTrash();
     void currentSelectionChanged();
+    void tabBarIndexUpdate(int index);
+
+    void viewSelectStatus(bool isSelected);
+    void globalSearch(bool isGlobal);
+
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void updateItemsNum(); /*显示隐藏文件，更新项目个数*/
 
@@ -185,9 +194,13 @@ public Q_SLOTS:
 
     void handleZoomLevel(int zoomLevel);
     void enableSearchBar(bool enable);
-    /* 当设备(U盘、硬盘、光盘、文件保护箱等)在一个或多个文件管理器中打开一个或多个tab页时，设备卸载/弹出/文件保护箱锁定后，
-     * 属于该设备：执行动作的文件管理器的当前标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭；不属于该设备的tab页不处理 */
+
+    void updateCurrentSearchPath();
+    void switchSearchPath (bool isCurrent);
+
+    /* 设备卸载、弹出后，其所在标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭 */
     void slot_responseUnmounted(const QString &destUri, const QString &sourceUri);
+    void updateTabletModeValue(bool isTabletMode);
 
 protected:
     void changeCurrentIndex(int index);
@@ -208,11 +221,13 @@ protected:
     void updateStatusBarSliderState();
     void updatePreviewButtonStatus(bool status);
 
+    void paintEvent(QPaintEvent *e);
 private:
     NavigationTabBar *m_tab_bar;
     QToolButton *m_add_page_button;
 
-    QWidget *m_tab_bar_bg;
+    //QWidget *m_tab_bar_bg;
+    QWidget *m_header_bar_bg;
 
     QStackedWidget *m_stack;
 
@@ -225,20 +240,27 @@ private:
 
     QAction *m_current_preview_action = nullptr;
     QAction *m_preview_action = nullptr;
+    QActionGroup *m_preview_action_group = nullptr;
 
     QToolBar *m_trash_bar;
     QToolBar *m_search_bar;
     QVBoxLayout *m_top_layout;
+    QHBoxLayout *m_header_bar_layout;
     QHBoxLayout *m_trash_bar_layout;
     QHBoxLayout *m_search_bar_layout;
     QLabel *m_trash_label;
     QPushButton *m_clear_button;
     QPushButton *m_recover_button;
-    QPushButton *m_search_path;
-    QPushButton *m_search_close;
-    QPushButton *m_search_child;
-    QPushButton *m_search_more;
+//    QPushButton *m_search_path;
+//    QPushButton *m_search_close;
+//    QPushButton *m_search_child;
+//    QPushButton *m_search_more;
     QLabel *m_search_title;
+//    QString m_current_uri;
+    QPushButton* m_current_search;
+    QPushButton* m_home_search;
+    QPushButton* m_add_filter_button;
+    QSplitter* m_preview_splitter;
 
     //use qlist for dynamic generated search conditions list
     QList<QHBoxLayout*> m_layout_list;
@@ -260,7 +282,8 @@ private:
     bool m_triggered_preview_page = false;
     bool m_show_search_list = false;
     bool m_show_search_bar = false;
-    bool m_search_child_flag = false;
+    bool m_search_child_flag = true;
+    bool m_isTabletMode = false;
 
     //Button size macro definition
     //change height to 36 to ensure max size font can show complete, link to bug#58824
@@ -299,7 +322,7 @@ Q_SIGNALS:
 
 class PushButtonStyle : public QProxyStyle
 {
-
+    Q_OBJECT
 public:
     static PushButtonStyle *getStyle();
 

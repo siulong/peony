@@ -39,12 +39,14 @@
 #include "file-untrash-operation.h"
 
 #include "file-operation-error-dialog.h"
+#include "file-operation-internal-dialog.h"
 #include "file-operation-progress-wizard.h"
 
 #include "file-watcher.h"
 #include "audio-play-manager.h"
 
 #include "properties-window.h"
+#include "sound-effect.h"
 
 #include <QVector4D>
 
@@ -201,23 +203,56 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         }
 
         // check dialog
-        QMessageBox questionBox;
-        questionBox.addButton(QMessageBox::Yes);
-        questionBox.addButton(QMessageBox::No);
-        questionBox.addButton(tr("No, go to settings"), QMessageBox::ActionRole);
-        questionBox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
-        auto result = questionBox.exec();
-
-        if (result != QMessageBox::Yes) {
-            if (result != QMessageBox::No) {
-                // settings
-                QStringList uris;
-                uris<<"trash:///";
-                auto propertyWindow = new PropertiesWindow(uris);
-                propertyWindow->show();
+        QWidget *widget = QApplication::topLevelAt(QCursor::pos());
+        qDebug()<<"top level widget:"<<widget<<",current QPoint:"<<QCursor::pos();
+        FileOperationInternalDialog questionbox((QDialog*)widget);
+        auto okButton = questionbox.addButton(tr("OK"));
+        connect(okButton, &QPushButton::clicked, &questionbox, [&]{
+            questionbox.accept();
+        });
+        auto cancelButton = questionbox.addButton(tr("Cancel"));
+        connect(cancelButton, &QPushButton::clicked, &questionbox, [&]{
+            questionbox.reject();
+        });
+        okButton->setFocus();
+        questionbox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
+        questionbox.setIcon("user-trash");
+        auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
+        if (questionbox.exec()) {
+//            SoundEffect::getInstance()->recycleBinDeleteMusic();
+            if (checkbox->isChecked()) {
+                GlobalSettings::getInstance()->setGSettingValue(SHOW_TRASH_DIALOG, false);
             }
+        } else {
             return;
         }
+
+//        QMessageBox questionBox;
+//        questionBox.setIcon(QMessageBox::Question);
+//        questionBox.setIconPixmap(QIcon::fromTheme("user-trash").pixmap(64, 64));
+//        questionBox.addButton(QMessageBox::Yes);
+//        questionBox.addButton(QMessageBox::No);
+//        //questionBox.addButton(tr("No, go to settings"), QMessageBox::ActionRole);
+//        QCheckBox checkbox(tr("Do not show again"), &questionBox);
+//        questionBox.setCheckBox(&checkbox);
+//        questionBox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
+//        auto result = questionBox.exec();
+//        if(result == QMessageBox::Yes){
+//            SoundEffect::getInstance()->recycleBinDeleteMusic();
+//            if (checkbox.isChecked()) {
+//                GlobalSettings::getInstance()->setGSettingValue(SHOW_TRASH_DIALOG, false);
+//            }
+//        }
+//        if (result != QMessageBox::Yes) {
+//            if (result != QMessageBox::No) {
+//                // settings
+//                QStringList uris;
+//                uris<<"trash:///";
+//                auto propertyWindow = new PropertiesWindow(uris);
+//                propertyWindow->show();
+//            }
+//            return;
+//        }
     }
 
     // do not add move operation between favorite:///

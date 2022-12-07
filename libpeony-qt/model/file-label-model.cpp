@@ -29,10 +29,19 @@
 #include <QMessageBox>
 
 static FileLabelModel *global_instance = nullptr;
+static QMap<int, QString> standardLabelNames;
 
 FileLabelModel::FileLabelModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    standardLabelNames.insert(1, tr("Red"));
+    standardLabelNames.insert(2, tr("Orange"));
+    standardLabelNames.insert(3, tr("Yellow"));
+    standardLabelNames.insert(4, tr("Green"));
+    standardLabelNames.insert(5, tr("Blue"));
+    standardLabelNames.insert(6, tr("Purple"));
+    standardLabelNames.insert(7, tr("Gray"));
+
     m_label_settings = new QSettings(QSettings::UserScope, "org.ukui", "peony-qt", this);
     if (m_label_settings->value("lastid").isNull()) {
         //adjsut color value to design instead of Qt define color,task#25507
@@ -277,6 +286,9 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
+    if (!metaInfo) {
+        return;
+    }
     QStringList labelIds;
     if (metaInfo && !metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
         labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
@@ -381,6 +393,7 @@ void FileLabelModel::setName(FileLabelItem *item, const QString &name)
     m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
     m_label_settings->setArrayIndex(item->id());
     m_label_settings->setValue("label", name);
+    m_label_settings->setValue("isNameModified", true);
     m_label_settings->endArray();
     m_label_settings->sync();
 }
@@ -403,6 +416,13 @@ void FileLabelModel::initLabelItems()
         bool visible = m_label_settings->value("visible").toBool();
         if (visible) {
             auto name = m_label_settings->value("label").toString();
+            bool isNameModified = m_label_settings->value("isNameModified").toBool();
+            if (!isNameModified) {
+                // try find locale label name
+                auto tmp = standardLabelNames.value(i);
+                if (!tmp.isEmpty())
+                    name = tmp;
+            }
             auto color = qvariant_cast<QColor>(m_label_settings->value("color"));
 
             auto item = new FileLabelItem(this);

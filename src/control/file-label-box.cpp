@@ -58,7 +58,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
     connect(this, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos) {
         auto index = indexAt(pos);
         //bool labelRemovable = false;
-        QMenu menu;
+        QMenu menu(this);
         if (index.isValid()) {
             auto item = FileLabelModel::getGlobalModel()->itemFormIndex(index);
             int id = item->id();
@@ -72,6 +72,9 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
 
             menu.addAction(tr("Edit Color"), [=]() {
                 QColorDialog d;
+                d.setStyleSheet("QSpinBox{"
+                                "min-width: 2em;"
+                                "}");
                 if (d.exec()) {
                     auto color = d.selectedColor();
                     FileLabelModel::getGlobalModel()->setLabelColor(item->id(), color);
@@ -85,6 +88,9 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
         } else {
             menu.addAction(tr("Create New Label"), [=]() {
                 QColorDialog dialog;
+                dialog.setStyleSheet("QSpinBox{"
+                                "min-width: 2em;"
+                                "}");
                 if (dialog.exec()) {
                     auto color = dialog.selectedColor();
                     auto name = color.name();
@@ -92,7 +98,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
                 }
             });
         }
-        menu.exec(QCursor::pos());
+        menu.exec(mapToGlobal(pos));
     });
 }
 

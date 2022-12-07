@@ -30,6 +30,7 @@
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
 #include "file-copy-operation.h"
+#include "sound-effect.h"
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -186,8 +187,18 @@ QStringList ClipboardUtils::getClipboardFilesUris()
     } else {
         auto urls = mimeData->urls();
         for (auto url : urls) {
+            // fix #144280, shenxinfu virual machine copy failed
+            if (url.toString().count() < 5) {
+                qWarning()<<url<<"is not standard uri, skip...";
+                continue;
+            }
             g_autofree gchar* uri = g_uri_unescape_string(url.toString().toUtf8().constData(), nullptr);
-            l<<QString(uri);
+            if (uri) {
+               l<<QString(uri);
+            } else {
+                qWarning()<<"can not unescape uri:"<<url.toString().toUtf8().constData();
+                l<<url.toString().toUtf8().constData();
+            }
         }
     }
 
@@ -222,6 +233,8 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
 
     auto fileOpMgr = FileOperationManager::getInstance();
     if (isClipboardFilesBeCut()) {
+
+        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug()<<uris;
         auto moveOp = new FileMoveOperation(uris, targetDirUri);
         moveOp->setAction(Qt::TargetMoveAction);
@@ -230,6 +243,7 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
         QApplication::clipboard()->clear();
     } else {
 
+        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug() << "clipboard:" << uris;
         auto copyOp = new FileCopyOperation(uris, targetDirUri);
         op = copyOp;

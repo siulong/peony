@@ -34,7 +34,7 @@
 #include "directory-view-factory-manager.h"
 
 #include "file-item-proxy-filter-sort-model.h"
-
+#include "global-settings.h"
 #include "file-info.h"
 #include "file-meta-info.h"
 
@@ -47,6 +47,8 @@ using namespace Peony;
 
 DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
+
     m_model = new FileItemModel(this);
     m_proxy_model = new FileItemProxyFilterSortModel(this);
     m_proxy_model->setSourceModel(m_model);
@@ -131,7 +133,10 @@ void DirectoryViewContainer::goBack()
         return;
 
     auto uri = m_back_list.takeLast();
-    m_forward_list.prepend(getCurrentUri());
+    //avoid same uri add twice
+    int count = m_forward_list.count();
+    if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
+        m_forward_list.prepend(getCurrentUri());
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -144,9 +149,14 @@ void DirectoryViewContainer::goForward()
 {
     if (!canGoForward())
         return;
-
+    qDebug() << "m_back_list.append goForward:"<<getCurrentUri();
     auto uri = m_forward_list.takeFirst();
-    m_back_list.append(getCurrentUri());
+    //avoid same uri add twice
+    int count = m_back_list.count();
+    if (! getCurrentUri().contains("search://") &&
+        (count <= 0 || m_back_list.at(count-1) != getCurrentUri()))
+        m_back_list.append(getCurrentUri());
+
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -243,11 +253,24 @@ void DirectoryViewContainer::goToUri(const QString &uri, bool addHistory, bool f
 update:
     if (addHistory) {
         m_forward_list.clear();
-        //qDebug() << "getCurrentUri():" <<getCurrentUri()<<uri;
+        QString curUri = getCurrentUri();
+        qDebug() << "getCurrentUri():" <<curUri<<uri;
         //fix bug 41094, avoid go back to same path issue
-        if (! getCurrentUri().startsWith("search://")
-            && !FileUtils::isSamePath(getCurrentUri(), uri)) {
-            m_back_list.append(getCurrentUri());
+        if (! curUri.startsWith("search://")
+            && !FileUtils::isSamePath(curUri, uri)) {
+            qDebug() << "m_back_list.append first:"<<curUri;
+            m_back_list.append(curUri);
+        }else if(curUri.startsWith("search://")){
+            //process remeber search record,only remeber the last search history,relate to bug#94229
+            if (m_back_list.length() > 0 ){
+                QString preHistory = m_back_list.last();
+                //如果已经有一条搜索记录，需要先去掉，再加入最近的搜索记录
+                if (preHistory.startsWith("search://")){
+                    m_back_list.takeLast();
+                }
+            }
+            qDebug() << "m_back_list.append second:"<<curUri;
+            m_back_list.append(curUri);
         }
     }
 
@@ -275,7 +298,6 @@ update:
     if (m_view) {
         m_view->setDirectoryUri(m_current_uri);
         m_view->beginLocationChange();
-        //m_active_view_prxoy->setDirectoryUri(uri);
     }
 
     updatePreviewPageRequest();
@@ -304,9 +326,9 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
     if (!factory)
         return;
 
-    auto settings = GlobalSettings::getInstance();
-    auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
-    auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
+//    auto settings = GlobalSettings::getInstance();
+//    auto sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt() : 0;
+//    auto sortOrder = settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt() : 0;
 
     auto oldView = m_view;
     QStringList selection;
@@ -329,8 +351,8 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
     //fix go to root path issue after refresh
     view->setDirectoryUri(getCurrentUri());
 
-    view->setSortType(sortType);
-    view->setSortOrder(sortOrder);
+//    view->setSortType(sortType);
+//    view->setSortOrder(sortOrder);
 
     connect(m_view, &DirectoryViewWidget::menuRequest, this, &DirectoryViewContainer::menuRequest);
     connect(m_view, &DirectoryViewWidget::viewDirectoryChanged, this, [=](){
@@ -433,6 +455,11 @@ const QStringList DirectoryViewContainer::getCurrentSelections()
     return QStringList();
 }
 
+const int DirectoryViewContainer::getCurrentRowcount()
+{
+    return m_model->rowCount(QModelIndex());
+}
+
 const QString DirectoryViewContainer::getCurrentUri()
 {
     if (m_view) {
@@ -499,6 +526,7 @@ void DirectoryViewContainer::setSortType(FileItemModel::ColumnType type)
         }
     }
     m_view->setSortType(type);
+    //Peony::GlobalSettings::getInstance()->setValue (SORT_TYPE, type);
 }
 
 Qt::SortOrder DirectoryViewContainer::getSortOrder()
@@ -531,4 +559,16 @@ void DirectoryViewContainer::setSortOrder(Qt::SortOrder order)
 void DirectoryViewContainer::onViewDoubleClicked(const QString& uri)
 {
 
+}
+
+void DirectoryViewContainer::setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+    m_proxy_model->setSelectionModeHint(mode);
+}
+
+void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
+{
+    if (m_proxy_model) {
+        m_proxy_model->setFilterConditions(mimeTypeFilters, nameFilters, dirFilters, caseSensitivity);
+    }
 }

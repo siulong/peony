@@ -155,8 +155,10 @@ LocationBar::~LocationBar()
 
 void LocationBar::setRootUri(const QString &uri)
 {
+    Q_EMIT aboutToSetRootUri();
+
     //when is the same uri and has buttons return
-    if (m_current_uri == uri && m_buttons.count() >0)
+    if (FileUtils::isSamePath(m_current_uri, uri) && m_buttons.count() >0)
         return;
 
     m_current_uri = uri;
@@ -166,6 +168,8 @@ void LocationBar::setRootUri(const QString &uri)
     if (m_current_uri.startsWith("search://")) {
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
+        //fix bug 94229, show button
+        doLayout();
         return;
     }
 
@@ -174,9 +178,12 @@ void LocationBar::setRootUri(const QString &uri)
     auto tmpUri = uri;
     while (!tmpUri.isEmpty() && tmpUri != "") {
         m_buttons_info.prepend(FileInfo::fromUri(tmpUri));
-        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
-            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
-        }
+//        if(tmpUri.startsWith("kmre:///") && tmpUri != "kmre:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("kmre:///"));
+//        }
+//        if(tmpUri.startsWith("mult:///") && tmpUri != "mult:///"){
+//            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
+//        }
         tmpUri = FileUtils::getParentUri(tmpUri);
     }
 
@@ -185,18 +192,36 @@ void LocationBar::setRootUri(const QString &uri)
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
         infoJob->setAutoDelete();
-        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+        connect(this, &LocationBar::aboutToSetRootUri, infoJob, [=]{
+            infoJob->setProperty("isCancelled", true);
+            infoJob->cancel();
+        });
+        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+            if (!successed) {
+                qWarning()<<"can not query file:"<<info->uri();
+                // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                if (!infoJob->property("isCancelled").toBool()) {
+                    m_querying_buttons_info.removeOne(info);
+                    m_buttons_info.removeOne(info);
+                }
+                return;
+            }
             // enumerate buttons info directory
             auto enumerator = new FileEnumerator;
             enumerator->setEnumerateDirectory(info.get()->uri());
             //comment to fix kydroid path show abnormal issue
             //enumerator->setEnumerateWithInfoJob();
 
+            connect(this, &LocationBar::aboutToSetRootUri, enumerator, [=]{
+                enumerator->setProperty("isCancelled", true);
+                enumerator->cancel();
+            });
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -204,6 +229,19 @@ void LocationBar::setRootUri(const QString &uri)
                             addButton(info.get()->uri().toLocal8Bit(), true, true);
                         }
                         doLayout();
+                    }
+                } else {
+                    // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                    // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                    if (!enumerator->property("isCancelled").toBool()) {
+                        if (m_querying_buttons_info.isEmpty()) {
+                            // add buttons
+                            clearButtons();
+                            for (auto info : m_buttons_info) {
+                                addButton(info.get()->uri().toLocal8Bit(), true, true);
+                            }
+                            doLayout();
+                        }
                     }
                 }
 
@@ -216,6 +254,11 @@ void LocationBar::setRootUri(const QString &uri)
     }
 
     return;
+}
+
+void LocationBar::updateTrashIcon()
+{
+    updateButtons();
 }
 
 void LocationBar::clearButtons()
@@ -259,10 +302,19 @@ void LocationBar::updateButtons()
             enumerator->setEnumerateWithInfoJob();
 
             connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
                 if (successed) {
                     auto infos = enumerator->getChildren();
                     m_infos_hash.insert(info.get()->uri(), infos);
-                    m_querying_buttons_info.removeOne(info);
+                    if (m_querying_buttons_info.isEmpty()) {
+                        // add buttons
+                        clearButtons();
+                        for (auto info : m_buttons_info) {
+                            addButton(info.get()->uri(), true, true);
+                        }
+                        doLayout();
+                    }
+                } else {
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -290,13 +342,11 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     button->setAutoRaise(true);
     button->setStyle(LocationBarButtonStyle::getStyle());
     button->setProperty("uri", uri);
-    button->setFixedHeight(this->height());
-    button->setIconSize(QSize(16, 16));
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setPopupMode(QToolButton::MenuButtonPopup);
 
-    auto displayName = FileUtils::getFileDisplayName(uri);
-    button->setToolTip(displayName);
+    auto completeName = FileUtils::getFileDisplayName(uri);
+    QString displayName = completeName;
     m_buttons.insert(QUrl(uri).toEncoded(), button);
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(m_current_uri);
@@ -305,6 +355,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         displayName = tr("Search \"%1\" in \"%2\"").arg(nameRegexp).arg(targetDirectory);
         button->setText(displayName);
         button->setFixedWidth(button->sizeHint().width());
+        button->setContextMenuPolicy(Qt::CustomContextMenu);
         return;
     }
 
@@ -347,6 +398,13 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
     button->setText(displayName);
+
+    //comment to fix UI improve bug, link to bug#125255
+    //缩略显示的情况下的文件夹，需要提供tips看全文件名，其他情况不显示
+    if (completeName != displayName)
+    {
+       button->setToolTip(completeName);
+    }
 
     connect(button, &QToolButton::clicked, [=]() {
         Q_EMIT this->groupChangedRequest(uri);
@@ -404,8 +462,8 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     }
 
     button->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(button, &QWidget::customContextMenuRequested, this, [=](){
-        QMenu menu;
+    connect(button, &QWidget::customContextMenuRequested, this, [=](const QPoint &pos){
+        QMenu menu(button);
         FMWindowIface *windowIface = dynamic_cast<FMWindowIface *>(this->topLevelWidget());
         auto copy = menu.addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy Directory"));
 
@@ -418,7 +476,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
             dynamic_cast<QWidget *>(newWindow)->show();
         });
 
-        if (copy == menu.exec(QCursor::pos())) {
+        if (copy == menu.exec(button->mapToGlobal(pos))) {
             if (uri.startsWith("file://")) {
                 QUrl url = uri;
                 QApplication::clipboard()->setText(url.path());
@@ -462,7 +520,14 @@ void LocationBar::paintEvent(QPaintEvent *e)
 void LocationBar::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    doLayout();
+   if (!m_isAnimation) {
+       doLayout();
+   }
+}
+
+void LocationBar::setAnimationMode(bool isAnimation)
+{
+    m_isAnimation = isAnimation;
 }
 
 void LocationBar::doLayout()
@@ -475,7 +540,7 @@ void LocationBar::doLayout()
 
     for (auto button : m_buttons) {
         button->setVisible(true);
-        button->resize(button->sizeHint().width(), button->height());
+        button->setFixedHeight(this->height());
         button->setToolButtonStyle(Qt::ToolButtonTextOnly);
         button->adjustSize();
         sizeHints<<button->sizeHint().width();
@@ -520,7 +585,7 @@ void LocationBar::doLayout()
         auto button = m_buttons.values().at(sizeHints.count() - 1);
         button->setVisible(true);
         button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        button->resize(totalWidth - 20, button->height());
+        button->resize(totalWidth - 20, this->height());
     }
 
     int spaceCount = 0;
@@ -577,18 +642,18 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
         auto opt = *toolButton;
         if (widget && widget->objectName() == "peony_location_bar_indicator") {
             opt.features.setFlag(QStyleOptionToolButton::HasMenu, false);
-            return QProxyStyle::drawComplexControl(control, &opt, painter);
+            return qApp->style()->drawComplexControl(control, &opt, painter);
         } else {
             opt.rect.adjust(1, 1, -1, -1);
         }
-        return QProxyStyle::drawComplexControl(control, &opt, painter, widget);
+        return qApp->style()->drawComplexControl(control, &opt, painter, widget);
     }
-    return QProxyStyle::drawComplexControl(control, option, painter, widget);
+    return qApp->style()->drawComplexControl(control, option, painter, widget);
 }
 
 void LocationBarButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
-    return QProxyStyle::drawControl(element, option, painter, widget);
+    return qApp->style()->drawControl(element, option, painter, widget);
 }
 
 IndicatorToolButton::IndicatorToolButton(QWidget *parent) : QToolButton(parent)

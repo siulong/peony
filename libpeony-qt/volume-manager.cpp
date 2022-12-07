@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QDebug>
+#include "file-info.h"
 
 #include "file-info.h"
 
@@ -68,6 +69,8 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
                              "mount-removed",
                              G_CALLBACK(mount_removed_callback),
                              this);
+
+    m_volume_changed_handle = g_signal_connect(m_volume_monitor, "volume-changed", G_CALLBACK(volume_changed_callback), this);
 }
 
 VolumeManager::~VolumeManager()
@@ -80,6 +83,7 @@ VolumeManager::~VolumeManager()
     g_signal_handler_disconnect(m_volume_monitor, m_volume_removed_handle);
     g_signal_handler_disconnect(m_volume_monitor, m_mount_added_handle);
     g_signal_handler_disconnect(m_volume_monitor, m_mount_removed_handle);
+    g_signal_handler_disconnect(m_volume_monitor, m_volume_changed_handle);
 
     g_object_unref(m_volume_monitor);
 }
@@ -139,6 +143,12 @@ void VolumeManager::mount_removed_callback(GVolumeMonitor *monitor,
 {
     Q_UNUSED(monitor);
     Q_EMIT p_this->mountRemoved(std::make_shared<Mount>(mount));
+}
+
+void VolumeManager::volume_changed_callback(GVolumeMonitor *monitor, GVolume *volume, VolumeManager *p_this)
+{
+    Q_UNUSED(monitor);
+    Q_EMIT p_this->volumeChanged(std::make_shared<Volume>(volume));
 }
 
 void VolumeManager::unmount_cb(GFile *file, GAsyncResult *result, GError **error, QString *targetUri)
@@ -331,14 +341,7 @@ QString Drive::iconName()
     if (!m_drive)
         return nullptr;
     GIcon *g_icon = g_drive_get_icon(m_drive);
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
-    QString iconName;
-    if(icon_names) {
-        iconName= *icon_names;
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(g_icon);
-        iconName = icon_name;
-    }
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
     if (iconName.isEmpty())
         return "drive-harddisk";
@@ -349,12 +352,12 @@ QString Drive::symbolicIconName()
 {
     if (!m_drive)
         return nullptr;
-    GThemedIcon *g_icon = G_THEMED_ICON(g_drive_get_symbolic_icon(m_drive));
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
+    GIcon *g_icon = g_drive_get_symbolic_icon(m_drive);
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
-    if (! icon_names)
+    if (iconName.isEmpty())
         return "drive-harddisk";
-    return *icon_names;
+    return iconName;
 }
 
 QString Volume::name()
@@ -368,14 +371,7 @@ QString Volume::name()
 QString Volume::iconName()
 {
     GIcon *g_icon = g_volume_get_icon(m_volume);
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
-    QString iconName;
-    if(icon_names) {
-        iconName= *icon_names;
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(g_icon);
-        iconName = icon_name;
-    }
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
     if (iconName.isEmpty())
         return "drive-harddisk";
@@ -384,12 +380,12 @@ QString Volume::iconName()
 
 QString Volume::symbolicIconName()
 {
-    GThemedIcon *g_icon = G_THEMED_ICON(g_volume_get_symbolic_icon(m_volume));
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
+    GIcon *g_icon = g_volume_get_symbolic_icon(m_volume);
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
-    if (! icon_names)
+    if (iconName.isEmpty())
         return "drive-harddisk";
-    return *icon_names;
+    return iconName;
 }
 
 QString Mount::name()
@@ -403,14 +399,7 @@ QString Mount::name()
 QString Mount::iconName()
 {
     GIcon *g_icon = g_mount_get_icon(m_mount);
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
-    QString iconName;
-    if(icon_names) {
-        iconName= *icon_names;
-    } else {
-        g_autofree gchar *icon_name = g_icon_to_string(g_icon);
-        iconName = icon_name;
-    }
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
     if (iconName.isEmpty())
         return "drive-harddisk";
@@ -419,10 +408,10 @@ QString Mount::iconName()
 
 QString Mount::symbolicIconName()
 {
-    GThemedIcon *g_icon = G_THEMED_ICON(g_mount_get_symbolic_icon(m_mount));
-    const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
+    GIcon *g_icon = g_mount_get_symbolic_icon(m_mount);
+    QString iconName = FileUtils::getIconStringFromGIcon(g_icon);
     g_object_unref(g_icon);
-    if (! icon_names)
+    if (iconName.isEmpty())
         return "drive-harddisk";
-    return *icon_names;
+    return iconName;
 }

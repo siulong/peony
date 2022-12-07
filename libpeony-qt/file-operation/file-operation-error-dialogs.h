@@ -108,7 +108,7 @@ public:
 private:
     bool m_ok = false;
     bool m_cancel = false;
-    bool m_do_same = false;
+    bool m_do_same = true;
 };
 
 };

@@ -163,7 +163,7 @@ retry_create_template:
         break;
     }
     }
-
+    FileUtils::saveCreateTime (m_target_uri);
     // judge if the operation should sync.
     bool needSync = false;
     GFile *src_first_file = g_file_new_for_uri(FileUtils::urlEncode(m_src_uri).toUtf8().constData());
@@ -179,6 +179,12 @@ retry_create_template:
 
     GFile *dest_dir_file = g_file_new_for_uri(FileUtils::urlEncode(m_dest_dir_uri).toUtf8().constData());
     GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+
+    //fix create folder not sync issue, bug#128665, 132326
+    if (m_type == EmptyFolder) {
+        dest_dir_file = g_file_new_for_uri(FileUtils::urlEncode(m_target_uri).toUtf8().constData());
+    }
+
     if (src_first_mount) {
         needSync = g_mount_can_unmount(dest_dir_mount);
         g_object_unref(dest_dir_mount);

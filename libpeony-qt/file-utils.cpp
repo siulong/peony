@@ -24,6 +24,7 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "volume-manager.h"
+#include "linux-pwd-helper.h"
 #include <QUrl>
 #include <QFileInfo>
 #include <QFileInfoList>
@@ -36,6 +37,8 @@
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusReply>
+
 
 using namespace Peony;
 
@@ -119,7 +122,7 @@ QString FileUtils::urlEncode(const QString& url)
 
 QString FileUtils::urlDecode(const QString &url)
 {
-    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8(), ":/");
+    g_autofree gchar* decodeUrl = g_uri_unescape_string(url.toUtf8().constData(), ":/");
     if (!decodeUrl) {
 //        qDebug() << "decode url from:'" << url <<"' to '" << url << "'";
         return url;
@@ -343,6 +346,21 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     auto fileInfo = FileInfo::fromUri(uri);
     if (uri == "file:///data")
         return QObject::tr("data");
+    //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
+    if (uri == "file:///")
+        return QObject::tr("File System");
+
+    //fix bug#139600，替换windows共享名称, “172.17.123.173上的Windows共享” 显示为 "172.17.123.173上的共享"
+    bool isSmbPath = uri.startsWith("smb://");
+    QString showName = fileInfo.get()->displayName();
+    //设置尽量苛刻的条件减少错误的替换
+    if (isSmbPath && showName.length()>=18 && showName.contains("Windows") && showName.split(".").length() ==4){
+        showName = showName.replace("Windows", "");
+        //only replaced one "Windows" to specific match
+        if (fileInfo.get()->displayName().length() - showName.length() == 7){
+            return showName;
+        }
+    }
     return fileInfo.get()->displayName();
 }
 
@@ -530,18 +548,34 @@ bool FileUtils::isStandardPath(const QString &uri)
     return false;
 }
 
-/* @func: 判断文件是否属于移动设备上的文件，是的话，提示为永久删除
- * FIXME 目前根据挂载路径进行判断的，可能不准确，目前暂未找到好的判断方法
- * 其他系统分区文件可能也会判断为移动设备文件
- * 目前的定位为，判断是否非本系统文件更为合适
+/* @func: 使用设备是否可卸载的方式判断是否为移动设备
+ * 可移动设备是可以卸载的，可卸载的不一定是移动设备
+ * 排除掉网络地址，如ftp,sftp,smb挂载
 */
 bool FileUtils::isMobileDeviceFile(const QString &uri)
 {
-    auto targetUri = getTargetUri(uri);
-    if (uri.startsWith("file:///media") || targetUri.startsWith("file:///media"))
-        return true;
+    if (uri.isEmpty() || uri.startsWith("ftp:///") || uri.startsWith("sftp:///") || uri.startsWith("smb:///"))
+        return false;
 
-    return false;
+    bool isMobile = false;
+    //多次测试发现不准确，使用canEject和canStop属性来做判断
+//    GFile *dest_dir_file = g_file_new_for_path(uri.toUtf8().constData());
+//    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+//    if (dest_dir_mount) {
+//        isMobile = g_mount_can_unmount(dest_dir_mount);
+//        g_object_unref(dest_dir_mount);
+//    }
+//    g_object_unref(dest_dir_file);
+    auto dev = VolumeManager::getDriveFromUri(getParentUri(uri));
+    if(dev != nullptr){
+        bool canEject = g_drive_can_eject(dev.get()->getGDrive());
+        bool canStop = g_drive_can_stop(dev.get()->getGDrive());
+        if(canEject || canStop){
+            isMobile = true;
+        }
+        qDebug() << "isMobile :" << isMobile;
+    }
+    return isMobile;
 }
 
 bool FileUtils::isSamePath(const QString &uri, const QString &targetUri)
@@ -636,7 +670,7 @@ bool FileUtils::queryVolumeInfo(const QString &volumeUri, QString &volumeName, Q
 
     GFile *file = g_file_new_for_uri(volumeUri.toUtf8().constData());
     GFileInfo *info = g_file_query_info(file,
-                                        "*",
+                                        G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE","G_FILE_ATTRIBUTE_STANDARD_TARGET_URI,
                                         G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                         nullptr,
                                         nullptr);
@@ -907,7 +941,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
         return nullptr;
 
     cancel = g_cancellable_new();
-    file = g_file_new_for_uri(uri.toUtf8().data());
+    file = g_file_new_for_uri(uri.toUtf8().constData());
     if(!file ||!cancel)
         return nullptr;
 
@@ -928,7 +962,7 @@ QString FileUtils::getUnixDevice(const QString &uri)
     if(targetUri.isEmpty())
         return nullptr;
 
-    mountPoint = g_filename_from_uri(targetUri.toUtf8().data(),NULL,NULL);
+    mountPoint = g_filename_from_uri(targetUri.toUtf8().constData(),NULL,NULL);
     if(mountPoint)
         tmpPath = Peony::VolumeManager::getUnixDeviceFileFromMountPoint(mountPoint);
     devicePath = tmpPath;
@@ -965,7 +999,7 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     object = UDISKS_OBJECT (g_dbus_interface_dup_object (G_DBUS_INTERFACE (block)));
     g_object_unref (block);
 
-    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_peek_block (object)));
+    crypto_backing_device = udisks_block_get_crypto_backing_device ((udisks_object_get_block (object)));
     crypto_backing_object = udisks_client_get_object (client, crypto_backing_device);
     if (crypto_backing_object != NULL)
     {
@@ -1041,6 +1075,123 @@ QString FileUtils::getFileSystemType(QString uri)
     return fsType;
 }
 
+QString FileUtils::getMobieDataPath()
+{
+    //path like "file:///var/lib/kmre/data/kmre-1000-kylin/KmreData"
+    //file:///var/lib/kmre/data/kmre-1000-hemh/KmreData
+    //1000 is uuid, kylin is username
+    QString prePath = "/var/lib/kmre/data";
+    //user infos
+    auto user = LinuxPWDHelper::getCurrentUser();
+    QString sufPath =  QString("/kmre-%1-%2/KmreData").arg(user.userId()).arg(user.userName());
+    QString completePath = prePath + sufPath;
+    qDebug() <<"getMobieDataPath:" <<completePath;
+    if (QFile::exists(completePath))
+        return "file://" + completePath;
+    else
+        return "";
+}
+
+bool FileUtils::isRemoteServerUri(const QString &uri)
+{
+    if(uri.startsWith("smb://") || uri.startsWith("ftp://") || uri.startsWith("sftp://"))
+        return true;
+
+    return false;
+}
+
+bool FileUtils::isEmptyDisc(const QString &unixDevice)
+{
+    if (unixDevice.isEmpty()) //没有设备时不做后续处理
+        return false;
+
+    if (!QDBusConnection::systemBus().isConnected())
+        return false;
+
+    /* 通过Properties获取Drive的path */
+    QString  dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
+    QDBusInterface PropertiesIf("org.freedesktop.UDisks2",
+                                  dbusPath,
+                                  "org.freedesktop.DBus.Properties",
+                                  QDBusConnection::systemBus());
+    if(!PropertiesIf.isValid())
+        return false;
+
+    QDBusReply<QDBusVariant> reply = PropertiesIf.call("Get", "org.freedesktop.UDisks2.Block", "Drive");
+    if(!reply.isValid())
+        return false;
+
+    QDBusObjectPath* busObjectPath = (QDBusObjectPath*)(reply.value().variant().data());
+    if(!busObjectPath)
+        return false;
+
+    QString drivePath = busObjectPath->path();//end
+
+    /* 获取Drive的"OpticalBlank"属性，判断是否是空光盘 */
+    QDBusInterface driveInterface("org.freedesktop.UDisks2",
+                                  drivePath,
+                                  "org.freedesktop.UDisks2.Drive",
+                                  QDBusConnection::systemBus());
+
+    bool isBlank = false;
+    if(driveInterface.isValid()){
+        isBlank = driveInterface.property("OpticalBlank").toBool(); /* 获取"OpticalBlank"属性值 */
+    }
+
+    return isBlank;
+}
+
+bool FileUtils::isBusyDevice(const QString &unixDevice)
+{
+    if (unixDevice.isEmpty()) /* 没有设备时不做后续处理 */
+        return false;
+
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.kylin.burner.manager", "/com/kylin/burner/manager",
+                     "com.kylin.burner.manager", "isBusyDevice");
+    QList<QVariant> args;
+    args.append(QVariant(unixDevice));
+    msg.setArguments(args);
+    QDBusMessage response = QDBusConnection::sessionBus().call(msg);
+
+    bool isBusy = false;
+    if (response.type() == QDBusMessage::ReplyMessage){
+        isBusy = response.arguments().takeFirst().toBool();
+    }
+    return isBusy;
+}
+
+QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
+{
+    QString iconName;
+    if (G_IS_THEMED_ICON (gicon)) {
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
+        if(icon_names) {
+            iconName = *icon_names;
+
+            // fix #81852, refer to #57660, #70014, #96652, task #25343
+            if (QString(iconName) == "drive-harddisk-usb") {
+                double size = 0.0;
+                if(!deviceFile.isEmpty()){
+                    size = Peony::FileUtils::getDeviceSize(deviceFile.toUtf8().constData());
+                    if (size < 128) {
+                        iconName = "drive-removable-media-usb";
+                    }
+                }
+            }
+        }
+    } else if (G_IS_FILE_ICON (gicon)) {
+        g_autofree gchar *icon_name = g_icon_to_string(gicon);
+        iconName = icon_name;
+    } else if (G_IS_EMBLEMED_ICON (gicon)) {
+        GIcon *icon_emblemed = g_emblemed_icon_get_icon((GEmblemedIcon *)(gicon));
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)icon_emblemed);
+        if(icon_names) {
+            iconName = *icon_names;
+        }
+    }
+    return iconName;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";
@@ -1080,4 +1231,42 @@ QString FileUtilsPrivate::getFileIconName(const QString &uri)
     }
 
     return icon_name;
+}
+
+void FileUtils::saveCreateTime(const QString &url)
+{
+    g_autoptr (GError) error = NULL;
+    g_autoptr (GFile) file = url.startsWith ("file://") ? g_file_new_for_uri (url.toUtf8 ().constData ()) : g_file_new_for_path (url.toUtf8 ().constData ());
+    g_autofree gchar* currentTime = g_strdup_printf ("%ld", g_get_real_time ());
+
+    g_return_if_fail (G_IS_FILE (file) && g_file_query_exists (file, NULL));
+    g_file_set_attribute (file, "metadata::CreateTime", G_FILE_ATTRIBUTE_TYPE_STRING, currentTime, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error);
+
+    if (error)      qDebug () << "set create time error: " << error->message;
+}
+
+gint64 FileUtils::getCreateTimeOfMicro(const QString &url)
+{
+    g_autoptr (GError) error = NULL;
+    g_autoptr (GFile) file = g_file_new_for_uri (url.toUtf8 ().constData ());
+    g_autoptr (GFileInfo) fileInfo = g_file_query_info (file, G_FILE_ATTRIBUTE_TIME_CHANGED "," G_FILE_ATTRIBUTE_TIME_CREATED "," "metadata::CreateTime", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error);
+    g_return_val_if_fail (G_IS_FILE (file) && G_IS_FILE_INFO (fileInfo) && g_file_query_exists (file, NULL), 0);
+
+    if (g_file_info_has_attribute (fileInfo, G_FILE_ATTRIBUTE_TIME_CREATED)) {
+        gint64 createTime = g_file_info_get_attribute_uint64 (fileInfo, G_FILE_ATTRIBUTE_TIME_CREATED);
+        gint64 modifyTime = g_file_info_get_attribute_uint64 (fileInfo, G_FILE_ATTRIBUTE_TIME_CHANGED);
+        if (createTime != 0 && createTime <= modifyTime) {
+            return createTime;
+        }
+    }
+
+    if (g_file_info_has_attribute (fileInfo, "metadata::CreateTime")) {
+        const gchar* createTimeStr = g_file_info_get_attribute_string (fileInfo, "metadata::CreateTime");
+        if (createTimeStr) {
+            g_autofree char* createTime10 = g_strndup (createTimeStr, 10);
+            return atoll (createTime10);
+        }
+    }
+
+    return 0;
 }

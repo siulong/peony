@@ -33,7 +33,7 @@
 #include <QIcon>
 #include <QMimeDatabase>
 
-#include <QGridLayout>
+#include <QVBoxLayout>
 #include <QFormLayout>
 
 #include <QLocale>
@@ -59,6 +59,8 @@
 #include "file-count-operation.h"
 
 #include "FMWindowIface.h"
+#include "file-utils.h"
+#include "global-settings.h"
 
 using namespace Peony;
 
@@ -202,62 +204,95 @@ void DefaultPreviewPage::paintEvent(QPaintEvent *e)
 
 FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
 {
-    m_layout = new QGridLayout(this);
+    m_layout = new QVBoxLayout(this);
     setLayout(m_layout);
 
     m_icon = new IconContainer(this);
     m_icon->setIconSize(QSize(96, 96));
     m_layout->addWidget(m_icon);
+    m_layout->addSpacing(24);
 
     m_form = new QFormLayout(this);
     m_form->setSpacing(3);
+    m_form->setContentsMargins(0, 0, 0, 0);
 
     m_display_name_label = new QLabel(this);
-    QLabel *file_name_label = new QLabel(this);
-    file_name_label->setAlignment(Qt::AlignTop);
-    file_name_label->setText(tr("File Name:"));
-    m_form->addRow(file_name_label, m_display_name_label);
+    QFont font;
+    font.setBold(true);
+    m_display_name_label->setFont(font);
+    m_layout->addWidget(m_display_name_label);
     m_form_label_map.insert(m_display_name_label, "");
+    m_layout->addSpacing(16);
 
     m_type_label = new QLabel(this);
     m_form->addRow(tr("File Type:"), m_type_label);
+    m_type_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_type_label, "");
 
-    m_time_access_label = new QLabel(this);
-    m_form->addRow(tr("Time Access:"), m_time_access_label);
-    m_form_label_map.insert(m_time_access_label, "");
+    addSeparator();
+
+    m_total_size_label = new QLabel(this);
+    m_form->addRow(tr("Size:"), m_total_size_label);
+    m_total_size_label->setAlignment(Qt::AlignRight);
+    m_form_label_map.insert(m_total_size_label, "");
+
+    addSeparator();
+
+    m_time_create_label = new QLabel(this);
+    m_form->addRow(tr("Time Created:"), m_time_create_label);
+    m_time_create_label->setAlignment(Qt::AlignRight);
+    m_form_label_map.insert(m_time_create_label, "");
+
+    addSeparator();
 
     m_time_modified_label = new QLabel(this);
     m_form->addRow(tr("Time Modified:"), m_time_modified_label);
+    m_time_modified_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_time_modified_label, "");
+
+    addSeparator();
+
+    m_time_access_label = new QLabel(this);
+    m_form->addRow(tr("Time Access:"), m_time_access_label);
+    m_time_access_label->setAlignment(Qt::AlignRight);
+    m_form_label_map.insert(m_time_access_label, "");
+
+    addSeparator();
 
     m_file_count_label = new QLabel(this);
     QLabel *children_label = new QLabel(this);
     children_label->setAlignment(Qt::AlignTop);
     children_label->setText(tr("Children Count:"));
     m_form->addRow(children_label, m_file_count_label);
+    m_file_count_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_file_count_label, "");
 
-    m_total_size_label = new QLabel(this);
-    m_form->addRow(tr("Size:"), m_total_size_label);
-    m_form_label_map.insert(m_total_size_label, "");
+    addSeparator();
 
     //image
     m_image_size = new QLabel(this);
     m_form->addRow(tr("Image resolution:"), m_image_size);
+    m_image_size->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_image_size, "");
+
+    addSeparator();
 
     m_image_format = new QLabel(this);
     m_form->addRow(tr("color model:"), m_image_format);
+    m_image_format->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_image_format, "");
+
+    addSeparator();
 
     m_form->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
     m_form->setFormAlignment(Qt::AlignHCenter);
-    m_form->setLabelAlignment(Qt::AlignLeft);
 
     QWidget *form = new QWidget(this);
     form->setLayout(m_form);
-    m_layout->addWidget(form, 1, 0);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setAlignment(Qt::AlignHCenter);
+    m_layout->addWidget(form);
+    m_layout->addStretch(1);
 }
 
 FilePreviewPage::~FilePreviewPage()
@@ -317,6 +352,19 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     wrapData(m_type_label, info->fileType());
     m_form_label_map[m_type_label] = info->fileType();
 
+    quint64 timeNum = FileUtils::getCreateTimeOfMicro (info->uri());
+    quint64 modifiedTime = info->modifiedTime();
+    // 客户需要必须显示创建时间，因此使用时间最小时间戳为创建时间
+    quint64 minTime = timeNum != 0 ? timeNum : modifiedTime;
+    minTime = qMin (minTime, modifiedTime);
+    if (info->accessTime() != 0) {
+        minTime = qMin (minTime, info->accessTime());
+    }
+    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(minTime*1000);
+    QString createTime = createDate.toString(GlobalSettings::getInstance()->getSystemTimeFormat());
+    wrapData(m_time_create_label, createTime);
+    m_form_label_map[m_time_create_label] = createTime;
+
     wrapData(m_time_access_label, info->accessDate());
     m_form_label_map[m_time_access_label] = info->accessDate();
 
@@ -327,17 +375,20 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     m_form_label_map[m_file_count_label] = "";
 
     if (info->isDir()) {
-        m_form->itemAt(4, QFormLayout::LabelRole)->widget()->setVisible(true);
+        m_form->labelForField(m_file_count_label)->setVisible(true);
         m_file_count_label->setVisible(true);
+        m_form->itemAt(11, QFormLayout::SpanningRole)->widget()->setVisible(true);
     } else {
-        m_form->itemAt(4, QFormLayout::LabelRole)->widget()->setVisible(false);
+        m_form->labelForField(m_file_count_label)->setVisible(false);
         m_file_count_label->setVisible(false);
+        m_form->itemAt(11, QFormLayout::SpanningRole)->widget()->setVisible(false);
     }
 
     if (info->mimeType().startsWith("image/")) {
         QUrl url = info->uri();
         QImageReader r(url.path());
-        auto image_size_row_left = m_form->itemAt(6, QFormLayout::LabelRole)->widget();
+
+        auto image_size_row_left = m_form->labelForField(m_image_size);
         image_size_row_left->setVisible(true);
 
         m_image_size->setText(tr("%1x%2").arg(r.size().width()).arg(r.size().height()));
@@ -346,18 +397,23 @@ void FilePreviewPage::updateInfo(FileInfo *info)
         auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(info->uri());
         bool rgba = thumbnail.pixmap(r.size()).hasAlphaChannel();
         m_image_size->setVisible(true);
-        auto image_format_row_left = m_form->itemAt(7, QFormLayout::LabelRole)->widget();
+
+        auto image_format_row_left = m_form->labelForField(m_image_format);
         image_format_row_left->setVisible(true);
         m_image_format->setText(rgba? "RGBA": "RGB");
         m_form_label_map[m_image_format] = rgba? "RGBA": "RGB";
         m_image_format->setVisible(true);
+        m_form->itemAt(13, QFormLayout::SpanningRole)->widget()->setVisible(true);
+        m_form->itemAt(15, QFormLayout::SpanningRole)->widget()->setVisible(true);
     } else {
-        auto image_size_row_left = m_form->itemAt(6, QFormLayout::LabelRole)->widget();
+        auto image_size_row_left = m_form->labelForField(m_image_size);
         image_size_row_left->setVisible(false);
         m_image_size->setVisible(false);
-        auto image_format_row_left = m_form->itemAt(7, QFormLayout::LabelRole)->widget();
+        auto image_format_row_left = m_form->labelForField(m_image_format);
         image_format_row_left->setVisible(false);
         m_image_format->setVisible(false);
+        m_form->itemAt(13, QFormLayout::SpanningRole)->widget()->setVisible(false);
+        m_form->itemAt(15, QFormLayout::SpanningRole)->widget()->setVisible(false);
     }
     if (info->fileType().startsWith("video/")) {
 
@@ -448,30 +504,44 @@ void FilePreviewPage::onCountDone()
 
 void FilePreviewPage::updateForm(QSize size)
 {
-    if (m_form->count() > 4) {
-        int labelWidth = 0;
-        QMap<QLabel*, QString>::const_iterator i = m_form_label_map.constBegin();
-        int iLongTextWidth = 0;
-        while (i != m_form_label_map.constEnd()) {
-            iLongTextWidth = qMax(fontMetrics().width(i.value()), iLongTextWidth);
-            QString text =((QLabel*)m_form->labelForField(i.key()))->text();
-            labelWidth = qMax(fontMetrics().width(text), labelWidth);
+    int labelWidth = 0;
+    QMap<QLabel*, QString>::const_iterator i = m_form_label_map.constBegin();
+    int iLongTextWidth = 0;
+    while (i != m_form_label_map.constEnd()) {
+        if (i.key() == m_display_name_label) {
             ++i;
+            continue;
         }
-        i = m_form_label_map.constBegin();
-
-        int fieldWidth = size.width() - 3*m_form->spacing() - labelWidth;
-        fieldWidth = qMin(fieldWidth,iLongTextWidth);
-        while (i != m_form_label_map.constEnd()) {
-            auto label = i.key();
-            if (label) {
-                if (fieldWidth == label->width()) {
-                    return;
-                }
-                label->setFixedWidth(fieldWidth);
-                wrapData(i.key(), i.value());
-            }
-            ++i;
-        }
+        iLongTextWidth = qMax(fontMetrics().width(i.value()), iLongTextWidth);
+        QString text =((QLabel*)m_form->labelForField(i.key()))->text();
+        labelWidth = qMax(fontMetrics().width(text), labelWidth);
+        ++i;
     }
+    i = m_form_label_map.constBegin();
+
+    int fieldWidth = size.width() - 3*m_form->spacing() - labelWidth - 30;
+    fieldWidth = qMin(fieldWidth,iLongTextWidth);
+
+    while (i != m_form_label_map.constEnd()) {
+        auto label = i.key();
+        if (label) {
+            if (fieldWidth == label->width()) {
+                return;
+            }
+            if (m_display_name_label == label) {
+                label->setFixedWidth(fieldWidth + labelWidth);
+            } else {
+                label->setFixedWidth(fieldWidth);
+            }
+            wrapData(i.key(), i.value());
+        }
+        ++i;
+    }
+}
+
+void FilePreviewPage::addSeparator()
+{
+    auto separator = new QFrame(this);
+    separator->setFrameShape(QFrame::HLine);
+    m_form->addRow(separator);
 }

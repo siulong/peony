@@ -28,7 +28,7 @@
 
 #include <QObject>
 #include <QVector>
-
+#include <QHash>
 class QTimer;
 
 namespace Peony {
@@ -39,6 +39,7 @@ class FileItemModel;
 class FileWatcher;
 class FileItemProxyFilterSortModel;
 class FileEnumerator;
+class BatchProcessItems;
 
 /*!
  * \brief The FileItem class
@@ -145,12 +146,13 @@ protected:
     void updateInfoAsync();
 
     void removeChildren();
+    void batchRemoveItems();
 
 private:
     FileItem *m_parent = nullptr;
     std::shared_ptr<Peony::FileInfo> m_info;
     QVector<FileItem*> *m_children = nullptr;
-
+    QHash<QString, FileItem*> m_uri_item_hash; /* <key:uri,value:fileItem> 必须与m_children同增减！！！ */
     FileItemModel *m_model = nullptr;
 
     bool m_expanded = false;
@@ -164,7 +166,8 @@ private:
 
     QStringList m_uris_to_be_removed;
     QTimer *m_idle = nullptr;
-
+    QThread *m_batchProcessThread = nullptr;
+    BatchProcessItems *m_batchProcessItems = nullptr;
 
     /*!
      * \brief m_async_count
@@ -182,6 +185,29 @@ private:
      * only used in directory not support monitor.
      */
     FileEnumerator *m_backend_enumerator;
+};
+
+
+class BatchProcessItems: public QObject{
+    Q_OBJECT
+
+public:
+    BatchProcessItems();
+    ~BatchProcessItems();
+
+    void setBatchRemoveParam(const QStringList& uris_to_be_removed, const QHash<QString, FileItem*>& uri_item_hash, QVector<FileItem*> *children);
+
+Q_SIGNALS:
+    void removeItemsFinished(QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash);
+
+
+public Q_SLOTS:
+    void slot_removeItems();
+
+private:
+    QStringList m_uris_to_be_removed;
+    QHash<QString, FileItem*> m_uri_item_hash;
+    QVector<FileItem*> *m_children = nullptr;
 };
 
 }

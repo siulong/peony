@@ -31,17 +31,28 @@
 #include <QPainterPath>
 #include <QtMath>
 
+#include <ukuistylehelper/ukuistylehelper.h>
+
 AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
+    kdk::KAboutDialog(parent)
 {
-    ui->setupUi(this);
-    initUI();
+    setAppIcon(QIcon::fromTheme("system-file-manager"));
+    setAppName(tr("Peony"));
+    setAppSupport(tr("Service & Support: ") + "<a href=\"mailto://support@kylinos.cn\" style=\"color:"
+                  + convertRGB16HexStr(palette().color(QPalette::ButtonText))
+                  + ";\">support@kylinos.cn</a><br/>");
+    setAppVersion(QString(tr("Version number: %1")).arg(getCurrentVersion()));
+    setBodyText(tr("Peony is a graphical software to help users manage system files. "
+                   "It provides common file operation functions for users, such as file viewing, "
+                   "file copy, paste, cut, delete, rename, file selection, application opening, "
+                   "file search, file sorting, file preview, etc. it is convenient for users to "
+                   "manage system files intuitively on the interface."));
+    setBodyTextVisiable(true);
 }
 
 AboutDialog::~AboutDialog()
 {
-    delete ui;
+
 }
 
 void AboutDialog::initUI()
@@ -50,12 +61,7 @@ void AboutDialog::initUI()
     setBackgroundRole(QPalette::Base);
     setFixedWidth(420);
 
-    //bug#101149 使用窗管
-    MotifWmHints hints;
-    hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    hints.functions = MWM_FUNC_ALL;
-    hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
+    kdk::UkuiStyleHelper::self()->removeHeader(this);
 
     ui->logoLabel->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
 
@@ -149,15 +155,16 @@ QString AboutDialog::convertRGB16HexStr(const QColor &color)
 QString AboutDialog::getCurrentVersion()
 {
     //use self define main version
-    return VERSION;
+    //return VERSION;
 
     FILE *pp = NULL;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
     char *q = NULL;
-    QString version = tr("none");
+    QString version = VERSION;
 
+    //fix bug#125289, use dpkg query version instead of self define version
     pp = popen("dpkg -l peony", "r");
     if(NULL == pp)
         return version;
@@ -204,15 +211,4 @@ void AboutDialog::resetSize()
     this->setFixedHeight(finalHeight);
     ui->verticalLayout_3->update();
 
-}
-
-void AboutDialog::resizeEvent(QResizeEvent *e)
-{
-    QDialog::resizeEvent(e);
-    if(!m_isFirstLoad)
-    {
-        //bug#101112 第一次加载获取控件实际大小
-        resetSize();
-        m_isFirstLoad = true;
-    }
 }

@@ -53,6 +53,22 @@ FileWatcher::FileWatcher(QString uri, QObject *parent, bool isWatchMovesFlag)
     creatorMonitor();
 
     FileOperationManager::getInstance()->registerFileWatcher(this);
+
+    // fix 97517, could not monitor filesafe box directory changement after unmounted and mount again.
+    connect(this, &FileWatcher::directoryUnmounted, this, [=](const QString &uri){
+        if (FileUtils::isSamePath(m_uri, uri)) {
+            if (m_monitor) {
+                //g_file_monitor_cancel(m_monitor);
+                g_object_unref(m_monitor);
+                m_monitor = nullptr;
+            }
+            if (m_dir_monitor) {
+                //g_file_monitor_cancel(m_dir_monitor);
+                g_object_unref(m_dir_monitor);
+                m_dir_monitor = nullptr;
+            }
+        }
+    });
 }
 
 FileWatcher::~FileWatcher()
@@ -111,8 +127,12 @@ void FileWatcher::startMonitor()
 {
     //make sure only connect once in a watcher.
     stopMonitor();
-    m_file_handle = g_signal_connect(m_monitor, "changed", G_CALLBACK(file_changed_callback), this);
-    m_dir_handle = g_signal_connect(m_dir_monitor, "changed", G_CALLBACK(dir_changed_callback), this);
+    if (m_monitor) {
+        m_file_handle = g_signal_connect(m_monitor, "changed", G_CALLBACK(file_changed_callback), this);
+    }
+    if (m_dir_monitor) {
+        m_dir_handle = g_signal_connect(m_dir_monitor, "changed", G_CALLBACK(dir_changed_callback), this);
+    }
 
     connect(FileLabelModel::getGlobalModel(), &FileLabelModel::fileLabelChanged, this, [=](const QString &uri) {
         auto parentUri = FileUtils::getParentUri(uri);
@@ -120,8 +140,10 @@ void FileWatcher::startMonitor()
         QString originalUri = FileUtils::getOriginalUri(m_uri);
         QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);/* 家目录 */
         bool favoriteCond  = (m_uri=="favorite:///" && parentUri == homeUri);/* 快速访问下 */
+        bool filesafeCond = (uri.startsWith("filesafe:///") && originalUri.startsWith("file:///"));
         if (parentUri == m_uri || parentUri == m_target_uri || parentUrl.toDisplayString() == m_uri
-            || parentUrl.toDisplayString() == m_target_uri || parentUri == originalUri || favoriteCond) {
+            || parentUrl.toDisplayString() == m_target_uri || parentUri == originalUri || favoriteCond
+            || filesafeCond) {
             Q_EMIT fileChanged(uri);
             qDebug()<<"file label changed"<<uri;
         }
@@ -254,7 +276,7 @@ void FileWatcher::file_changed_callback(GFileMonitor *monitor,
     }
     case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED: {
         char *uri = g_file_get_uri(file);
-        qDebug()<<uri;
+        //qDebug()<<uri;
         Q_EMIT p_this->fileChanged(uri);
         g_free(uri);
         break;

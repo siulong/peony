@@ -1,8 +1,30 @@
+/*
+ * Peony-Qt's Library
+ *
+ * Copyright (C) 2021, KylinSoft Co., Ltd.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yang Ling <yangling@kylinos.cn>
+ *
+ */
 
 #include "usershare-manager.h"
 
 #include <QDebug>
 #include <QProcess>
+#include <QMessageBox>
 
 #include <glib.h>
 
@@ -59,11 +81,12 @@ static void parseShareInfo (ShareInfo& shareInfo, QString& content)
 
 QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* out */, QString sharedPath)
 {
+    Q_UNUSED(sharedPath);
     QProcess proc;
     proc.open();
 
     // Check whether sambashare exists and contains the current user
-    QProcess::execute ("bash pkexec /usr/bin/peony-share.sh", QStringList() << g_get_user_name () << sharedPath);
+    //QProcess::execute ("bash pkexec /usr/bin/peony-share.sh", QStringList() << g_get_user_name () << sharedPath);
 
     // Shared folder
     args.prepend ("net");
@@ -71,14 +94,22 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
 //    args.prepend("pkexec");
     proc.waitForStarted();
     QString cmd = args.join(" ");
+    QString err;
     proc.write(cmd.toUtf8() + "\n");
     proc.waitForFinished(500);
+    err = proc.readAllStandardError();
     if (retb) {
-        if (proc.readAllStandardError().isEmpty()) {
+        if (err.isEmpty()) {
             *retb = true;
         } else {
             *retb = false;
         }
+    }
+
+    if (!err.isEmpty() && cmd.contains("usershare add")) {
+        proc.close();
+        QMessageBox::warning(nullptr, tr("Warning"), err, QMessageBox::Ok);
+        return err;
     }
 
     QString all = proc.readAllStandardOutput();
@@ -118,8 +149,8 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
     m_mutex.unlock();
 
     args << "usershare" << "add";
-    args << sharedInfo->name;
-    args << sharedInfo->originalPath;
+    args << QString("\"%1\"").arg(sharedInfo->name);
+    args << QString("\"%1\"").arg(sharedInfo->originalPath);
     args << (sharedInfo->comment.isNull() ? "Peony-Qt-Share-Extension" : sharedInfo->comment);
     args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
     args << (sharedInfo->allowGuest ? "guest_ok=y" : "guest_ok=n");
@@ -140,7 +171,7 @@ const ShareInfo* UserShareInfoManager::getShareInfo(QString &name)
     if (!m_bInit) {
         bool            ret;
         QStringList     args;
-        args << "usershare" << "info" << name;
+        args << "usershare" << "info" << QString("\"%1\"").arg(name);
         QString result = exectueCommand (args, &ret);
         if (!ret && result.isEmpty()) {
             return nullptr;
@@ -202,7 +233,7 @@ void UserShareInfoManager::removeShareInfo(QString &name)
     m_mutex.unlock();
 
     QStringList args;
-    args << "usershare" << "delete" << name;
+    args << "usershare" << "delete" << QString("\"%1\"").arg(name);
 
     bool ret = false;
     exectueCommand (args, &ret);

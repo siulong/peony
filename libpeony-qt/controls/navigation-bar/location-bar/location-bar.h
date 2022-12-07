@@ -45,14 +45,16 @@ public:
     const QString getCurentUri() {
         return m_current_uri;
     }
+    void setAnimationMode(bool isAnimation);
 
 Q_SIGNALS:
     void groupChangedRequest(const QString &uri);
     void blankClicked();
+    void aboutToSetRootUri();
 
 public Q_SLOTS:
     void setRootUri(const QString &uri);
-
+    void updateTrashIcon();
 protected:
     void clearButtons();
     void addButton(const QString &uri, bool setIcon = false, bool setMenu = true);
@@ -72,6 +74,7 @@ private:
     QMap<QString, QToolButton *> m_buttons;
     QToolButton *m_indicator;
     QMenu *m_indicator_menu;
+    bool m_isAnimation = false;   //在动画过程中不会重新布局
 
     const int ELIDE_TEXT_LENGTH = 16;
 

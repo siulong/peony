@@ -109,6 +109,7 @@ void MarkPropertiesPage::initTableData()
         QWidget *widget = new QWidget(m_tableWidget);
         QHBoxLayout *boxLayout = new QHBoxLayout(m_tableWidget);
         boxLayout->setAlignment(Qt::AlignLeft);
+        boxLayout->setContentsMargins(8,0,8,0);
         widget->setLayout(boxLayout);
         //fix last single box can input letters issue, bug#38757
         if (i >= allLabels.count())
@@ -126,6 +127,7 @@ void MarkPropertiesPage::initTableData()
         checkBox->setChecked(m_thisFileLabelIds.contains(item->id()));
         boxLayout->addWidget(checkBox);
 
+        boxLayout->addSpacing(-10);
         QPushButton *button = new QPushButton(widget);
         button->palette().window();
         button->setStyleSheet("QPushButton{"
@@ -142,7 +144,6 @@ void MarkPropertiesPage::initTableData()
         QLabel *label = new QLabel(widget);
         label->setText(item->name());
         boxLayout->addWidget(label);
-
         connect(checkBox,&QCheckBox::clicked,this,[=](bool checked){
             this->changeLabel(item->id(),checked);
         });

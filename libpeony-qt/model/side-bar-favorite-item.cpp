@@ -65,6 +65,7 @@ SideBarFavoriteItem::SideBarFavoriteItem(QString uri,SideBarFavoriteItem *parent
         g_object_unref(file);
     }
 
+    qDebug() << "SideBarFavoriteItem m_displayName:"<<m_displayName <<m_uri;
     if (m_displayName.isEmpty() || "" == m_displayName) {
         m_displayName = FileUtils::getFileDisplayName(m_uri);
     }
@@ -86,36 +87,47 @@ void SideBarFavoriteItem::initChildren()
     m_displayName = tr("Favorite");
 
     QString desktopUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString videoUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-    QString pictureUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    QString downloadUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QString musicUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    QString docUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+//    QString videoUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+//    QString pictureUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+//    QString downloadUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+//    QString musicUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+//    QString docUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
     auto recentItem = new SideBarFavoriteItem("recent:///", this, m_model);
     auto desktopItem = new SideBarFavoriteItem(desktopUri, this, m_model);
     auto trashItem = new SideBarFavoriteItem("trash:///", this, m_model);
-    auto videoItem = new SideBarFavoriteItem(videoUri, this, m_model);
-    auto pictureItem = new SideBarFavoriteItem(pictureUri, this, m_model);
-    auto downloadItem = new SideBarFavoriteItem(downloadUri, this, m_model);
-    auto musicItem = new SideBarFavoriteItem(musicUri, this, m_model);
-    auto docItem = new SideBarFavoriteItem(docUri, this, m_model);
+//    auto videoItem = new SideBarFavoriteItem(videoUri, this, m_model);
+//    auto pictureItem = new SideBarFavoriteItem(pictureUri, this, m_model);
+//    auto downloadItem = new SideBarFavoriteItem(downloadUri, this, m_model);
+//    auto musicItem = new SideBarFavoriteItem(musicUri, this, m_model);
+//    auto docItem = new SideBarFavoriteItem(docUri, this, m_model);
 
     m_children->append(recentItem);
     m_children->append(desktopItem);
-    m_children->append(docItem);
-    m_children->append(musicItem);
-    m_children->append(downloadItem);
-    m_children->append(pictureItem);
-    m_children->append(videoItem);
     m_children->append(trashItem);
+    //m_children->append(docItem);
+    //m_children->append(musicItem);
+    //m_children->append(downloadItem);
+    //m_children->append(pictureItem);
+    //m_children->append(videoItem);
+
 
     if (FileUtils::isFileExsit("file:///data/usershare")) {
         m_children->append(new SideBarFavoriteItem("favorite:///data/usershare?schema=file", this, m_model));
     }
 
     // check kydroid is install
-    if (FileUtils::isFileExsit("file:///var/lib/kydroid") || FileUtils::isFileExsit("file:///var/lib/kmre")) {
+    if (QFile::exists("/usr/lib/libkmre.so")){
+        // new version has no kmre plugin, use /usr/lib/libkmre.so and path /var/lib/kmre/data/kmre-1000-kylin/KmreData
+        QString MobileDataPath = FileUtils::getMobieDataPath();
+        if (MobileDataPath.length() > 0)
+        {
+            kydroidInstall = true;
+            auto kmreItem = new SideBarFavoriteItem(MobileDataPath, this, m_model);
+            kmreItem->setProperty("isKmre", true);
+            m_children->append(kmreItem);
+        }
+    }else if (FileUtils::isFileExsit("file:///var/lib/kydroid") || FileUtils::isFileExsit("file:///var/lib/kmre")) {
         GVfs* vfs = g_vfs_get_default();
         if (vfs) {
             const gchar* const* schemas = g_vfs_get_supported_uri_schemes (vfs);
@@ -164,6 +176,10 @@ QString SideBarFavoriteItem::uri()
 
 QString SideBarFavoriteItem::displayName()
 {
+    //fix bug#125040
+    if (property("isKmre").toBool())
+        return tr("KmreData");
+
     if (!m_info)
         return m_displayName;
     return m_info.get()->displayName();
@@ -171,6 +187,10 @@ QString SideBarFavoriteItem::displayName()
 
 QString SideBarFavoriteItem::iconName()
 {
+    //fix bug#125040
+    if (property("isKmre").toBool())
+        return "folder-phone";
+
     if (!m_info)
         return m_iconName;
     /* 设计要求图标统一，文件夹图标名称为folder；而从底层读取的文件夹名称为inode-directory，因此替换一下 */

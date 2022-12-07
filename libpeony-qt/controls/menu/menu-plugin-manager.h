@@ -26,10 +26,16 @@
 #include <QObject>
 #include "peony-core_global.h"
 #include "menu-plugin-iface.h"
+#include <QListWidgetItem>
+#include <QPushButton>
+#include <QMenu>
+#include <QMainWindow>
+
+#include "color-pushbutton.h"
 
 namespace Peony {
 
-class MenuPluginManager : public QObject
+class PEONYCORESHARED_EXPORT MenuPluginManager : public QObject
 {
     Q_OBJECT
 public:
@@ -64,7 +70,7 @@ public:
         return tr("Create Link Menu Extension.");
     }
     const QIcon icon() override {
-        return QIcon::fromTheme("emblem-symbolic-link");
+        return QIcon::fromTheme("emblem-link-symbolic");
     }
     void setEnable(bool enable) override {
         m_enable = enable;
@@ -82,9 +88,11 @@ private:
     bool m_enable = true;
 };
 
+class FileLabelWidget;
 class FileLabelInternalMenuPlugin : public QObject, public MenuPluginInterface
 {
     Q_OBJECT
+    friend class FileLabelWidget;
 public:
     explicit FileLabelInternalMenuPlugin(QObject *parent);
 
@@ -98,7 +106,7 @@ public:
         return tr("Tag a File with Menu.");
     }
     const QIcon icon() override {
-        return QIcon::fromTheme("emblem-symbolic-link");
+        return QIcon::fromTheme("emblem-link-symbolic");
     }
     void setEnable(bool enable) override {
         m_enable = enable;
@@ -109,6 +117,58 @@ public:
 
     QString testPlugin() override {
         return "test create file label";
+    }
+    QList<QAction *> menuActions(Types types, const QString &uri, const QStringList &selectionUris) override;
+
+private:
+    bool m_enable = true;
+    FileLabelWidget* m_label = nullptr;
+};
+
+class FileLabelWidget : public QWidget
+{
+public:
+    friend class FileLabelInternalMenuPlugin;
+    Q_OBJECT
+
+public Q_SLOTS:
+    void clickItem(int index);
+
+private:
+    explicit FileLabelWidget(const QStringList &selectionUris);
+    QStringList  *m_selectionUris;
+    QButtonGroup *m_colorgroup;
+    ColorPushButton *m_colorbutton;
+    QList<int> m_ids;
+};
+
+class CreateSharedFileLinkMenuPlugin : public QObject, public MenuPluginInterface
+{
+    Q_OBJECT
+public:
+    explicit CreateSharedFileLinkMenuPlugin(QObject *parent);
+
+    PluginInterface::PluginType pluginType() override {
+        return PluginInterface::MenuPlugin;
+    }
+    const QString name() override {
+        return tr("Peony-Qt Share File menu Extension");
+    }
+    const QString description() override {
+        return tr("Tag  with Menu.");
+    }
+    const QIcon icon() override {
+        return QIcon::fromTheme("emblem-link-symbolic");
+    }
+    void setEnable(bool enable) override {
+        m_enable = enable;
+    }
+    bool isEnable() override {
+        return m_enable;
+    }
+
+    QString testPlugin() override {
+        return "test create share file link label";
     }
     QList<QAction *> menuActions(Types types, const QString &uri, const QStringList &selectionUris) override;
 

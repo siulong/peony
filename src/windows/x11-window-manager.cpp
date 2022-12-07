@@ -31,6 +31,7 @@
 #include <QStyleOptionTabBarBase>
 
 #include <QApplication>
+#include <QWindow>
 
 #include <QDebug>
 
@@ -38,6 +39,8 @@
 #include <X11/Xlib.h>
 #include <X11/X.h>
 #include <X11/Xatom.h>
+
+#define START_DRAG_TIME 120
 
 static X11WindowManager *global_instance = nullptr;
 
@@ -81,6 +84,9 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
         if (QObject::eventFilter(watched, event))
             return true;
         if (e->button() == Qt::LeftButton) {
+            m_prepare_drag_time = e->timestamp();
+            //修改页签可以拖拽，记录鼠标位置
+            //bug#94981 修改页签可以拖拽，记录鼠标位置
             m_press_pos = QCursor::pos();
             m_is_draging = true;
             m_current_widget = static_cast<QWidget *>(watched);
@@ -96,14 +102,20 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
 
         qDebug()<<e->type()<<e->pos();
 
-        bool isTouchMove = e->source() == Qt::MouseEventSynthesizedByQt;
-
         if (m_is_draging) {
             if (QX11Info::isPlatformX11()) {
+                bool isTouchMove = e->source() == Qt::MouseEventSynthesizedByQt;
+
+                QPoint currentPos = QCursor::pos();
+                QPoint offset = QCursor::pos() - m_press_pos;
+                bool smallOffset = qAbs(offset.x()) <= 2 && qAbs(offset.y() <= 2);
+                if (smallOffset)
+                    break;
+
                 Display *display = QX11Info::display();
                 Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
                 XEvent xEvent;
-                const auto pos = QCursor::pos();
+                const auto pos = currentPos;
 
                 memset(&xEvent, 0, sizeof(XEvent));
                 xEvent.xclient.type = ClientMessage;
@@ -146,14 +158,32 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
 
                 return true;
             } else {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+                auto widget = qobject_cast<QWidget *>(watched);
+                auto topLevel = widget->topLevelWidget();
+                topLevel->windowHandle()->startSystemMove();
+#else
                 //auto me = static_cast<QMouseEvent *>(event);
                 auto widget = qobject_cast<QWidget *>(watched);
                 auto topLevel = widget->topLevelWidget();
                 auto globalPos = QCursor::pos();
                 //auto offset = globalPos - m_press_pos;
                 topLevel->move(globalPos - m_toplevel_offset);
+#endif
             }
         }
+        //commit id: 339dbaf18b9555d274e69c0589a755457e3f555b [FIX] 【文件管理器】首页页签未按UI设计稿还原 [LINK]94981
+        /*else {
+            bool overDragTime = 0 < m_prepare_drag_time && (m_prepare_drag_time + START_DRAG_TIME) < e->timestamp();
+            bool canDrag = !isTouchMove || overDragTime;
+            if (canDrag) {
+                m_is_draging = true;
+                m_prepare_drag_time = 0;
+                m_press_pos = QCursor::pos();
+                m_current_widget = static_cast<QWidget *>(watched);
+                m_toplevel_offset = m_current_widget->topLevelWidget()->mapFromGlobal(m_press_pos);
+            }
+        }*/
         break;
     }
     case QEvent::MouseButtonRelease: {
@@ -162,6 +192,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
         if (me->source() == Qt::MouseEventSynthesizedByApplication)
             break;
 
+        m_prepare_drag_time = 0;
         m_press_pos = QPoint();
         m_is_draging = false;
         m_current_widget = nullptr;
@@ -178,7 +209,6 @@ void X11WindowManager::registerWidget(QWidget *widget)
     widget->removeEventFilter(this);
     widget->installEventFilter(this);
 }
-
 
 static XAtomHelper *global_instance1 = nullptr;
 
@@ -363,4 +393,3 @@ void XAtomHelper::unregisterUKUICsdNetWmSupportAtom()
 {
     // fixme:
 }
-

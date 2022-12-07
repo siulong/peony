@@ -25,10 +25,12 @@
 #include "location-bar.h"
 #include "search-vfs-uri-parser.h"
 #include "search-bar-container.h"
+#include "global-settings.h"
 
 #include <QStackedLayout>
 #include <QDebug>
-
+#include <QToolButton>
+#include <QResizeEvent>
 using namespace Peony;
 
 AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
@@ -42,9 +44,11 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
     m_bar = new Peony::LocationBar(this);
     m_edit = new Peony::PathEdit(this);
     m_search_bar = new Peony::SearchBarContainer(this);
+
     m_bar->connect(m_bar, &Peony::LocationBar::blankClicked, [=]() {
         auto curUri = m_bar->getCurentUri();
-        if (! curUri.startsWith("trash:///") && ! curUri.startsWith("recent:///"))
+        //不允许编辑的路径，新增搜索目录，关联bug#94229 改动
+        if (! curUri.startsWith("trash:///") && ! curUri.startsWith("recent:///") && ! curUri.startsWith("search:///"))
         {
             layout->setCurrentWidget(m_edit);
             m_edit->setFocus();
@@ -52,6 +56,7 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         }
     });
 
+    connect(this,&AdvancedLocationBar::clearTrash,m_bar,&LocationBar::updateTrashIcon);
     m_edit->connect(m_edit, &Peony::PathEdit::uriChangeRequest, [=](const QString uri) {
         //qDebug() << "uriChangeRequest:" <<uri;
         QString targetUri = uri;
@@ -99,13 +104,19 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         Q_EMIT this->updateFileTypeFilter(index);
     });
 
+    bool is_intel = (QString::compare("V10SP1-edu", GlobalSettings::getInstance()->getProjectName(), Qt::CaseInsensitive) == 0);
+    if (is_intel) {
+        QToolButton* indicator = m_bar->findChild<QToolButton*>("peony_location_bar_indicator");
+        if (indicator) {
+            indicator->move(0, 1);
+        }
+    }
 
     layout->addWidget(m_bar);
     layout->addWidget(m_edit);
     layout->addWidget(m_search_bar);
 
     setLayout(layout);
-    setFixedHeight(m_edit->height());
 }
 
 QString AdvancedLocationBar::processSpecialChar(QString key)
@@ -132,6 +143,7 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
     m_bar->setRootUri(uri);
     m_edit->setUri(uri);
     m_text = uri;
+    //qDebug() << "m_edit visible:"<<isEditing();
     if (! uri.startsWith("search://"))
     {
         m_last_non_search_path = uri;
@@ -141,6 +153,10 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
             clearSearchBox();
     }
     Q_EMIT this->refreshRequest();
+}
+void AdvancedLocationBar::setAnimationMode(bool isAnimation)
+{
+    m_bar->setAnimationMode(isAnimation);
 }
 
 bool AdvancedLocationBar::isEditing()
@@ -179,10 +195,11 @@ void AdvancedLocationBar::switchEditMode(bool bSearchMode)
     else if(m_in_search_mode)
     {
         //quit search mode, show non search contents
-        if (m_last_key.length() > 0)
-        {
-            Q_EMIT this->updateWindowLocationRequest(m_last_non_search_path, false);
-        }
+        // bug#94229 改动，不需要额外更新信号，退出搜索模式正常
+//        if (m_last_key.length() > 0)
+//        {
+//            Q_EMIT this->updateWindowLocationRequest(m_last_non_search_path, false);
+//        }
 
         //在文件保护箱中搜索时，清空搜索内容会导致刷新，路径更新需要授权，导致2次弹框
         //屏蔽清空搜索内容代码，解决bug#76431, 概率性闪退问题
@@ -199,3 +216,18 @@ void AdvancedLocationBar::clearSearchBox()
     m_search_bar->clearSearchBox();
     m_last_key = "";
 }
+
+void AdvancedLocationBar::deselectSearchBox()
+{
+    m_search_bar->deselectSearchBox();
+    m_last_key = "";
+}
+
+void AdvancedLocationBar::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    m_edit->setFixedHeight(e->size().height());
+    m_search_bar->setFixedHeight(e->size().height());
+    m_bar->setFixedHeight(e->size().height());
+}
+

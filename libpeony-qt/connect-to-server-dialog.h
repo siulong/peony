@@ -54,6 +54,7 @@ private:
     void setUri(QString uri);
     void addUri (QString uri);
     void removeUri (QString uri);
+    void checkConnectIpAndPort(QString uri);
 
 private:
     float           m_widget_margin         = 24;
@@ -84,6 +85,8 @@ private:
 
     QMap<QString, QVariant>         m_favorite_uri;
     QMap<QString, QListWidgetItem*> m_favorite_widgets;
+    bool m_checkIp                           = false;
+    bool m_checkPort                         = false;
 };
 
 
@@ -102,6 +105,7 @@ public:
     bool savePassword();
 
     void syncRemoteServer(const QUrl& url);
+    QString getPassWordProperty();
 
 private:
     float           m_widget_margin         = 24;

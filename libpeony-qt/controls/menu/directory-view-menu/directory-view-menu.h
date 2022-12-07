@@ -55,6 +55,8 @@ public:
         return m_uris_to_edit;
     }
 
+    void setHiddenActionsByObjectName(const QStringList &actionNames);
+
 protected:
     void fillActions();
     const QList<QAction *> constructOpenOpActions();
@@ -66,6 +68,7 @@ protected:
     const QList<QAction *> constructComputerActions();
     const QList<QAction *> constructTrashActions();
     const QList<QAction *> constructSearchActions();
+    const QList<QAction *> constructMultiSelectActions();
 
 private:
     FMWindowIface *m_top_window;

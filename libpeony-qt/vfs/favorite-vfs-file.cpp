@@ -31,6 +31,10 @@
 #include <QDebug>
 #include <bookmark-manager.h>
 
+#ifdef KYLIN_COMMON
+#include <ukuisdk/kylin-com4cxx.h>
+#endif
+
 static char* vfs_favorite_file_get_target_file (GFile* file);
 static void vfs_favorite_file_g_file_iface_init(GFileIface *iface);
 
@@ -259,6 +263,9 @@ GFileInfo* vfs_favorite_file_query_info(GFile *file, const char *attributes, GFi
     } else {
         info = g_file_info_new ();
         QString name = QObject::tr("favorite");
+        if (QString::fromStdString(KDKGetPrjCodeName()) == V10_SP1_EDU) {
+            name = QObject::tr("Favorites");
+        }
         auto icon = g_themed_icon_new("favorite");
         g_file_info_set_icon(info, icon);
         g_object_unref(icon);
@@ -305,6 +312,14 @@ GFileInfo* vfs_favorite_file_query_info(GFile *file, const char *attributes, GFi
     if (url.path() == "/data/usershare") {
         g_file_info_set_attribute_boolean(info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE, FALSE);
         g_file_info_set_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, QObject::tr("Share Data").toUtf8());
+    }
+    if (trueUri == "trash:///") {
+        g_file_info_set_attribute_boolean(info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE, FALSE);
+        g_file_info_set_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, QObject::tr("Trash").toUtf8());
+    }
+    if (trueUri == "recent:///") {
+        g_file_info_set_attribute_boolean(info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE, FALSE);
+        g_file_info_set_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, QObject::tr("Recent").toUtf8());
     }
 
     return info;

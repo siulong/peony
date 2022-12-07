@@ -97,18 +97,18 @@ void BookMarkManager::addBookMarkPrivate(const QString &uri)
     qDebug() << "add bookmarket: " << uri;
     //desktop uri is fixed in favorite item
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString videoPath = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    QString docPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+//    QString videoPath = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+//    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+//    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+//    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+//    QString docPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     QString trashPath = QString("favorite:///?schema=trash");
     QString usersharePath = QString("favorite:///data/usershare?schema=file");
     QString kmrePath = QString("favorite:///?schema=kmre");
     QString recentPath = QString("favorite:///?schema=recent");
-    if (url.path() == desktopPath || url.path() == videoPath
+    if (url.path() == desktopPath /*|| url.path() == videoPath
         || url.path() == picturePath || url.path() == downloadPath
-        || url.path() == musicPath || url.path() == docPath
+        || url.path() == musicPath || url.path() == docPath*/
         || uri == trashPath || uri == usersharePath
         || uri == kmrePath || uri == recentPath)
         return;

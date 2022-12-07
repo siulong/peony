@@ -49,7 +49,7 @@ NavigationToolBar::NavigationToolBar(QWidget *parent) : QToolBar(parent)
     //historyButton->setPopupMode(QToolButton::DelayedPopup);
 
     connect(m_history_action, &QAction::triggered, [=]() {
-        QMenu historyMenu;
+        QMenu historyMenu(this);
         //historyButton->setMenu(&historyMenu);
         auto back_list = m_current_container->getBackList();
         auto current_uri = m_current_container->getCurrentUri();

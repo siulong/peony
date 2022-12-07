@@ -36,11 +36,11 @@
     <name>Peony::DesktopItemModel</name>
     <message>
         <source>Computer</source>
-        <translation type="unfinished"></translation>
+        <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>ཚུར་བསྡུའི་ས་ཚིགས་</translation>
     </message>
 </context>
 <context>
@@ -107,7 +107,7 @@
     </message>
     <message>
         <source>New...</source>
-        <translation>གསར་འཛུགས།...</translation>
+        <translation type="vanished">གསར་འཛུགས།...</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -119,11 +119,11 @@
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།(_D)</translation>
+        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
     </message>
     <message>
         <source>Sort By...</source>
-        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
+        <translation type="vanished">རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Properties</source>
@@ -155,7 +155,7 @@
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Clean the trash</source>
@@ -171,7 +171,19 @@
     </message>
     <message>
         <source>View Type...</source>
-        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
+        <translation type="vanished">མཐོང་རིས་རིགས་རྣམ།</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort By</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -205,22 +217,22 @@
     </message>
     <message>
         <source>Setup backgrounds</source>
-        <translation type="unfinished"></translation>
+        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
     </message>
     <message>
         <source>Clear standard icons</source>
-        <translation type="unfinished"></translation>
+        <translation>དྭངས་གཙང་ཚད་གཞི་རིས་རྟགས་</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>set background</source>
-        <translation type="unfinished">རྒྱབ་ལྗོངས་འདེམ་པ།</translation>
+        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
     </message>
     <message>
-        <source>set resolution</source>
-        <translation type="unfinished"></translation>
+        <source>display settings</source>
+        <translation>བཀོད་སྒྲིག་བྱས་ཚུལ་གསལ་པོར་མངོན་པ།</translation>
     </message>
 </context>
 </TS>

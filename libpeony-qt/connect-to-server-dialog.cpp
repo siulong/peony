@@ -30,9 +30,17 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QButtonGroup>
+#include <QRegExp>
+#include <QMessageBox>
+#include "file-enumerator.h"
+#include "file-utils.h"
+#include "file-info-job.h"
+#include "file-info.h"
 
 #include <openssl/aes.h>
 #include <glib.h>
+
+#include <QApplication>
 
 using namespace Peony;
 static const QString ftpTypeStr="ftp";
@@ -73,7 +81,7 @@ void ButtonStyle::drawControl(QStyle::ControlElement element, const QStyleOption
     default:
         break;
     }
-    QProxyStyle::drawControl(element, option, painter, widget);
+    qApp->style()->drawControl(element, option, painter, widget);
 }
 
 int ButtonStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
@@ -210,7 +218,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_btn_conn->setAutoDefault(true);
     m_btn_add->setAutoDefault(false);
     m_btn_del->setAutoDefault(false);
-    m_btn_conn->setStyle(ButtonStyle::getStyle());
+    //m_btn_conn->setStyle(ButtonStyle::getStyle());
     m_main_layout->addLayout(m_btn_layout);
 
     setLayout(m_main_layout);
@@ -221,6 +229,9 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
         for (auto uri = uriList.constBegin(); uri != uriList.constEnd(); ++uri) {
             QUrl url(uri.key ());
             if ("" != uri.key ()) {
+                if("smb"==url.scheme().toLower() && !url.path().isEmpty()){/* samba的子项不添加到个人收藏服务器中 */
+                    continue;
+                }
                 QString urit = uri.key () == url.toDisplayString() ? uri.key() : url.toDisplayString();
                 QListWidgetItem* item = new QListWidgetItem;
                 item->setText(urit);
@@ -251,7 +262,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     Q_EMIT m_remote_type_edit->currentTextChanged(ftpTypeStr);
 
     connect(m_btn_del, &QPushButton::clicked, this, [=] (bool checked) {
-        removeUri(uri());
+        QString delUri = uri();
+        if (delUri != m_favorite_list->currentItem()->text()) {
+            delUri = m_favorite_list->currentItem()->text();
+        }
+        removeUri(delUri);
         if (m_favorite_uri.count() <= 0) {
             m_favorite_list->clear();
         } else {
@@ -268,9 +283,24 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     connect(m_btn_conn, &QPushButton::clicked, this, [=] (bool checked) {
         if ("" != uri()) {
+            checkConnectIpAndPort(uri());
+
+            if (m_checkIp) {
+                m_checkIp = false;
+                QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+                return;
+            } else if (m_checkPort) {
+                m_checkPort = false;
+                QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+                return;
+            }
             accept();
         }
-
+        /* 连接smb时，最外层连接时不会弹出登录框，如需添加到个人收藏服务器和侧边栏则需如下代码 */
+        QUrl url(uri());
+        if("smb"==url.scheme().toLower() && url.path().isEmpty()){/* smb最外层uri，无挂载卸载能力，例如：smb://127.0.0.1:445 */
+            addUri(uri());
+        }
         Q_UNUSED(checked);
     });
 }
@@ -325,6 +355,18 @@ void ConnectServerDialog::setUri(QString uri)
 
 void ConnectServerDialog::addUri(QString uri)
 {
+    checkConnectIpAndPort(uri);
+
+    if (m_checkIp) {
+        m_checkIp = false;
+        QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+        return;
+    } else if (m_checkPort) {
+        m_checkPort = false;
+        QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+        return;
+    }
+
     bool canInsert = false;
     QUrl url(uri);
 
@@ -372,10 +414,46 @@ void ConnectServerDialog::removeUri(QString uri)
     }
 }
 
+void ConnectServerDialog::checkConnectIpAndPort(QString uri)
+{
+    QString tmpUri = uri + "/";
+    bool isExistNetwork = false;
+    FileEnumerator e;
+    e.setEnumerateDirectory("network:///");
+    e.enumerateSync();
+    for (auto fileInfo : e.getChildren()) {
+        FileInfoJob infoJob(fileInfo);
+        infoJob.querySync();
+
+        /* 由远程服务器的targeturi获取uri来调用属性窗口, */
+        QUrl targetUrl(fileInfo.get()->targetUri());
+        if (tmpUri == targetUrl.toString() && tmpUri != "smb:///") {
+            isExistNetwork = true;
+            break;
+        }
+    }
+
+    if (!isExistNetwork) {
+        //filter ip and port
+        QRegExp regExpIp("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
+        if (!regExpIp.exactMatch(m_ip_edit->text())) {
+            m_checkIp = true;
+        }
+
+        QRegExp regExpPort("([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-4]\\d{4}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])");
+        if (!regExpPort.exactMatch(m_port_editor->currentText())) {
+            m_checkPort = true;
+        }
+    }
+}
+
 ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     : QDialog(parent),m_remoteIP(uri)
 {
     setFixedSize(m_widget_size);
+    if("bo_CN" == QLocale::system().name()){
+        setFixedSize(QSize(424,455));
+    }
     setWindowIcon(QIcon::fromTheme("network-server"));
     setWindowTitle(tr("The login user"));
     setBackgroundRole(QPalette::Base);
@@ -520,8 +598,9 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
 
     connect(m_btn_ok, &QPushButton::clicked, [=] () {
         accept();
-        QUrl url(m_remoteIP);
-        syncRemoteServer(url);
+        //QUrl url(m_remoteIP);
+        //syncRemoteServer(url);
+        m_reg_usr_passwd_editor->setProperty("password", m_reg_usr_passwd_editor->text());
     });
 }
 
@@ -576,27 +655,35 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
         QString remoteUri= type.append("://").append(url.host()).append(":").append(portStr);
         QMap<QString, QVariant> userInfo;
         if (!uriList.contains (remoteUri)) {
-            if (savePassword () && !m_reg_usr_passwd_editor->text().isEmpty ()) {
-                userInfo.insert (m_reg_usr_name_editor->currentText (), passwdEncode (m_reg_usr_passwd_editor->text().toUtf8 ()));
+            if (savePassword () && !getPassWordProperty().isEmpty ()) {
+                userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
             }
 
             uriList.insert (remoteUri, userInfo);
             GlobalSettings::getInstance()->slot_updateRemoteServer(remoteUri, true);
         } else {
             userInfo = uriList[remoteUri].toMap ();
-            if (savePassword ()  && !m_reg_usr_passwd_editor->text().isEmpty ()) {
-                userInfo[m_reg_usr_name_editor->currentText ()] = passwdEncode (m_reg_usr_passwd_editor->text().toUtf8 ());
-            } /*else {
-                if (userInfo.contains (m_reg_usr_name_editor->currentText ())) {
-                    userInfo.remove (m_reg_usr_name_editor->currentText ());
+            if (savePassword()){
+                if (!getPassWordProperty().isEmpty ()) {
+                    userInfo[user()] = passwdEncode (getPassWordProperty().toUtf8 ());
                 }
-            }*/
+            }else {
+                if (userInfo.contains(m_reg_usr_name_editor->currentText ())) {
+                    userInfo.remove(m_reg_usr_name_editor->currentText ());
+                }
+            }
+
             uriList[remoteUri] = userInfo;
         }
 
         GlobalSettings::getInstance()->setValue(REMOTE_SERVER_REMOTE_IP,uriList);
         GlobalSettings::getInstance()->forceSync(REMOTE_SERVER_REMOTE_IP);
     }
+}
+
+QString ConnectServerLogin::getPassWordProperty()
+{
+    return m_reg_usr_passwd_editor->property("password").toString();
 }
 
 

@@ -25,9 +25,10 @@
 
 #include <QMainWindow>
 #include "FMWindowIface.h"
+#include "header-bar.h"
 #include "file-label-box.h"
 #include <QFileSystemWatcher>
-
+#include <QGSettings>
 class MainWindowPrivate;
 class BorderShadowEffect;
 class HeaderBar;
@@ -36,15 +37,18 @@ class TabWidget;
 class QWidgetResizeHandler;
 class QStackedWidget;
 class QGSettins;
+class QDBusInterface;
 
 namespace Peony {
 class DirectoryViewContainer;
 class FileInfo;
 class StatusBar;
+class SideBar;
 }
 
 class MainWindow : public QMainWindow, public Peony::FMWindowIface
 {
+    friend class HeaderBar;
     Q_OBJECT
 public:
     explicit MainWindow(const QString &uri = nullptr, QWidget *parent = nullptr);
@@ -78,13 +82,11 @@ public:
     int currentViewZoomLevel();
     bool currentViewSupportZoom();
 
-    void addFocusWidgetToFocusList(QWidget *widget);
-    QWidgetList focusWidgetsList();
-
 Q_SIGNALS:
     void windowSelectionChanged();
     void locationChanged(const QString &uri);
     void viewLoaded(bool successed = true);
+    void trashcleaned();
 
     /*!
      * \brief locationChangeStart
@@ -103,6 +105,7 @@ Q_SIGNALS:
     void locationChangeEnd();
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
 
+    void tabletModeChanged(bool isTabletMode);
 
 public Q_SLOTS:
     void maximizeOrRestore();
@@ -110,6 +113,7 @@ public Q_SLOTS:
     void syncControlsLocation(const QString &uri);
     void updateHeaderBar();
     void updateWindowIcon();
+    //void updateSearchStatus(bool showSearch);
     void updateSearch(const QString &uri, const QString &key="", bool updateKey=false);
     void createFolderOperation();
     void goToUri(const QString &uri, bool addHistory = false, bool force = false);
@@ -121,6 +125,12 @@ public Q_SLOTS:
     void refresh();
     void forceStopLoading();
 
+    //imigrate from fm-window
+    void advanceSearch();
+    void clearRecord();
+    void searchFilter(QString target_path, QString keyWord, bool search_file_name, bool search_content);
+    void filterUpdate(int type_index=0, int time_index=0, int size_index=0);
+    
     void setShowHidden(bool showHidden);
     void setShowFileExtensions(bool checked);
     void setUseDefaultNameSortOrder(bool use);
@@ -145,6 +155,7 @@ public Q_SLOTS:
 
     void setCurrentViewZoomLevel(int zoomLevel);
     QString getLastSearchKey();
+    void updateTabletModeValue(bool isTabletMode);
 
 protected:
     void resizeEvent(QResizeEvent *e);
@@ -157,6 +168,7 @@ protected:
 
     void validBorder();
     void initUI(const QString &uri);
+    void initAdvancePage();
 
     QRect sideBarRect();
 
@@ -166,7 +178,8 @@ private:
     BorderShadowEffect *m_effect;
 
     HeaderBar *m_header_bar;
-    NavigationSideBar *m_side_bar;
+    HeaderBarContainer *m_headerBarContainer;
+    Peony::SideBar *m_side_bar;
     QWidget *m_transparent_area_widget;
     QStackedWidget *m_side_bar_container;
     TabWidget *m_tab;
@@ -178,10 +191,12 @@ private:
 
     bool m_is_draging = false;
     bool m_is_search = false;
+    bool m_is_clear_serach = false;
     bool m_filter_working = false;
 
     bool m_should_save_side_bar_width = false;
     bool m_should_save_window_size = false;
+    bool m_is_first_tab =true;
 
     QPoint m_offset;
 
@@ -192,10 +207,12 @@ private:
 
     QFileSystemWatcher *m_thumbnail_watcher;
     bool m_do_not_thumbnail = false;
-
+    QGSettings* m_thumbnail = nullptr;
     //change minimum width to avoid bug#90366
     const int WINDOW_MINIMUM_WIDTH = 740;
     QStringList m_uris_to_edit;/* 新建文件/文件夹，可编辑文件名list */
+
+    QDBusInterface *m_statusManagerDBus = nullptr;
 };
 
 #endif // MAINWINDOW_H

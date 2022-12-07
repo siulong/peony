@@ -27,6 +27,7 @@
 #include <QToolButton>
 #include <QPushButton>
 #include <QProxyStyle>
+#include <QMenuBar>
 
 class MainWindow;
 class ViewTypeMenu;
@@ -34,7 +35,7 @@ class SortTypeMenu;
 class OperationMenu;
 
 namespace Peony {
-class AdvancedLocationBar;
+class SearchWidget;
 }
 
 class HeaderBar;
@@ -51,7 +52,6 @@ public:
     void addHeaderBar(HeaderBar *headerBar);
 
 protected:
-    void addWindowButtons();
     void paintEvent(QPaintEvent *e);
 
 private:
@@ -67,9 +67,35 @@ class HeaderBar : public QToolBar
 {
     friend class HeaderBarContainer;
     friend class MainWindow;
+    friend class TopMenuBar;
     Q_OBJECT
+    enum HeaderBarAction {
+        GoBack,
+        GoForward,
+        LocationBar,
+        Search,
+        ViewType,
+        SortType,
+        Option,
+        Copy,
+        Cut,
+        SeletcAll,
+        Delete,
+        TabletSelectAll,  //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加选项控件
+        TabletSelectDone,
+        TabletMoveTo,
+        TabletCopyTo,
+        TabletDelete,
+        TabletMin,
+        TabletClose
+    };
+
+public:
+    void updatePreviewStatus(bool check);
+
 private:
     explicit HeaderBar(MainWindow *parent = nullptr);
+    ~HeaderBar();
 
 Q_SIGNALS:
     void updateLocationRequest(const QString &uri, bool addHistory = true, bool force = true);
@@ -77,68 +103,71 @@ Q_SIGNALS:
     void viewTypeChangeRequest(const QString &viewId);
     void updateZoomLevelHintRequest(int zoomLevelHint);
     void updateSearchRequest(bool showSearch);
+    void clearTrash();
+    void refreshRequest();
+    void updateFileTypeFilter(const int &index);
+    void setGlobalFlag(bool isGlobal);
+    void updateSearchRecursive(bool recursive);
+    void closeSearch();
+    void setLocation(const QString &uri);
+    void cancelEdit();
+    void startEdit(bool bSearch = false);
+    void finishEdit();
 
 protected:
     void addSpacing(int pixel);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseDoubleClickEvent(QMouseEvent *e);
-    void addMenuButtons();
+    void addTabletMenu();
+    void addTopMenu();
+    void updateSelectAllStatus(bool autoUpdate);
 
 private Q_SLOTS:
-    void setLocation(const QString &uri);
-    void cancelEdit();
     void updateIcons();
-    void updateSearchRecursive(bool recursive);
     void updateMaximizeState();
-    void startEdit(bool bSearch = false);
-    void finishEdit();
-    void searchButtonClicked();
     void openDefaultTerminal();
     void findDefaultTerminal();
     void tryOpenAgain();
-    void setSearchMode(bool mode);
-    void closeSearch();
-    void initFocus();
-    void updateHeaderState();
+    void switchSelectStatus(bool select);
+    void cancleSelect();
     void updateSortTypeEnable();
     void updateViewTypeEnable();
-    void quitSerachMode();
+    void updatePreviewPageVisible();
+    void updateTabletModeValue(bool isTabletMode);
+    bool CopyOrMoveTo(bool isCut);
+    void quitMultiSelect();
 
 private:
     const QString m_uri;
     MainWindow *m_window;
-
-    Peony::AdvancedLocationBar *m_location_bar;
-
+    Peony::SearchWidget *m_searchWidget;
     ViewTypeMenu *m_view_type_menu;
     SortTypeMenu *m_sort_type_menu;
     OperationMenu *m_operation_menu;
 
-    QPushButton *m_create_folder;
-    QPushButton *m_go_back;
-    QPushButton *m_go_forward;
+    QToolButton *m_create_folder;
+    QToolButton *m_go_back;
+    QToolButton *m_go_forward;
+    QToolButton *m_go_up;
+    QToolButton *m_search_button;
+
+   // bool m_search_global = false;
+    bool m_is_intel = false;
+    bool m_tablet_mode = false;
+//    bool m_isDone = false;
+    bool m_isSelectAll = false;
+    // save the actions to show or hide
+    QHash<HeaderBarAction, QAction*> m_actions;
+
     QToolButton *m_maximize_restore_button;
-    QPushButton *m_search_button;
-
-    bool m_search_mode = false;
-    bool m_search_recursive = true;
-
-    QWidgetList m_focus_list;
-
-    const int GBACK_BTN_WIDTH = 36;
-    const int SEARCH_BTN_WIDTH = 40;
-    const int ADDRESS_BAR_LEFT_WIDTH = 9;
-    const int ADDRESS_BAR_RIGHT_WIDTH = 2;
-    const int ADDRESS_BAR_MINIMUN_WIDTH = 250;
-    const int DRAG_AREA_MINIMUN_WIDTH = 80;
-    const int DRAG_AREA_DEFAULT_WIDTH = 120;
+    QAction *m_preview_action = nullptr;
 };
 
 class HeaderBarToolButton : public QToolButton
 {
     friend class HeaderBar;
     friend class MainWindow;
-    Q_OBJECT;
+    Q_OBJECT
     explicit HeaderBarToolButton(QWidget *parent = nullptr);
 };
 
@@ -162,6 +191,32 @@ class HeaderBarStyle : public QProxyStyle
 
     void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+};
+
+class TopMenuBar : public QMenuBar
+{
+    Q_OBJECT
+public:
+    explicit TopMenuBar(HeaderBar *headerBar, MainWindow *parent = nullptr);
+
+    bool eventFilter(QObject *obj, QEvent *e);
+
+protected:
+    void addWindowButtons();
+
+private Q_SLOTS:
+    void updateTabletMode(bool isTabletMode);
+
+private:
+    QWidget *m_top_menu_internal_widget = nullptr;
+    QHBoxLayout *m_top_menu_layout = nullptr;
+    MainWindow *m_window = nullptr;
+    QToolButton *m_max_or_restore = nullptr;
+    QToolButton *m_minimize = nullptr;
+    QToolButton *m_close = nullptr;
+    bool m_tablet_mode = false;
+
+    HeaderBar *m_header_bar = nullptr;
 };
 
 #endif // HEADERBAR_H

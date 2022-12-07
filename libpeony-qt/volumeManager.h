@@ -1,3 +1,25 @@
+/*
+ * Peony-Qt's Library
+ *
+ * Copyright (C) 2021, KylinSoft Co., Ltd.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yang Ling <yangling@kylinos.cn>
+ *
+ */
+
 #ifndef VOLUMEMANAGER_H
 #define VOLUMEMANAGER_H
 
@@ -37,6 +59,8 @@ public:
     GetOccupiedAppsInfoThread* getOccupiedInfoThread(){
         return m_occupiedAppsInfoThread;
     }
+
+    bool isEmptyDrive(const Volume &volume);/* 判断是否为空光驱 */
 
 private:
     explicit VolumeManager(QObject *parent = nullptr);
@@ -87,6 +111,7 @@ Q_SIGNALS:
     void mountRemove(const QString& device);
     void signal_unmountFinished(const QString &uri);/* 卸载完成信号 */
     void signal_mountFinished();/* 挂载完成信号，目前用于侧边栏设备挂载后路径跳转 */
+    void signal_encryptedVolumeMountFinished(const QString &uri);
 };
 
 class Q_DECL_EXPORT Drive{
@@ -155,10 +180,14 @@ public:
     QString icon() const;
     QString uuid() const;
     QString device() const;
+    QString originalDevice() const;
     QString mountPoint() const;
     GVolume* getGVolume() const;
+    GDrive* getGDrive() const;
     //property-to-set
     void setLabel(const QString& label);
+    void setDevice(const QString &device);
+    void setIconName(const QString &iconName);
     void setFromMount(const Mount& mount);//通过Mount求Volume
     void setFromDrive(const Drive& drive);//通过Drive获取Volume
     void setMountPoint(QString point);
@@ -193,6 +222,7 @@ private:
     QString  m_name;
     QString  m_uuid;
     QString  m_icon;
+    QString  m_originalDevice;
     QString  m_device;
     QString  m_mountPoint;
 

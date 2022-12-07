@@ -26,6 +26,7 @@
 #include <QStyledItemDelegate>
 #include <QTextEdit>
 #include "peony-core_global.h"
+#include "list-view.h"
 
 class QPushButton;
 
@@ -52,7 +53,11 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     //void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
+    int getCurrentCheckboxColumn(){
+        return m_checkbox_column;
+    }
     //QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const override;
+    void setSearchKeyword(QString regFindKeyWords);
 
 Q_SIGNALS:
     void isEditing(bool editing) const;
@@ -63,6 +68,8 @@ private Q_SLOT:
 
 private:
     QPushButton *m_styled_button;
+    int m_checkbox_column =3;
+    QString m_regFindKeyWords = "";
 };
 
 class TextEdit : public QTextEdit

@@ -31,6 +31,7 @@
 #include <QIcon>
 #include <QMutex>
 
+#include <QGSettings>
 class QThreadPool;
 class QSemaphore;
 
@@ -59,7 +60,7 @@ public:
     const QIcon tryGetThumbnail(const QString &uri);
 
 Q_SIGNALS:
-
+    void updateFileThumbnail();
 public Q_SLOTS:
     void syncThumbnailPreferences();
 
@@ -86,6 +87,9 @@ private:
 
     QThreadPool *m_thumbnail_thread_pool;
     QSemaphore *m_semaphore;
+
+    bool m_do_not_thumbnail = false;
+    QGSettings* m_thumbnail = nullptr;
 };
 
 }

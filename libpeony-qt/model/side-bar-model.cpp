@@ -61,8 +61,9 @@ SideBarModel::SideBarModel(QObject *parent)
             continue;
         }
         if (plugin->holdInSideBar()) {
-            m_root_children->append(new SideBarVFSItem(plugin, this));
+            m_root_children->append(new SideBarVFSItem(plugin->uriScheme() + "/", nullptr, this));
         }
+
     }
 
 //    SideBarSeparatorItem *separator1 = new SideBarSeparatorItem(SideBarSeparatorItem::Large, nullptr, this, this);
@@ -80,8 +81,8 @@ SideBarModel::SideBarModel(QObject *parent)
 //        m_root_children->append(userShareItem);
 //    }
 
-//    SideBarPersonalItem *personal_root_item = new SideBarPersonalItem(nullptr, nullptr, this);
-//    m_root_children->append(personal_root_item);
+    SideBarPersonalItem *personal_root_item = new SideBarPersonalItem(nullptr, nullptr, this);
+    m_root_children->append(personal_root_item);
     //personal_root_item->findChildren();
 
 //    SideBarSeparatorItem *separator3 = new SideBarSeparatorItem(SideBarSeparatorItem::Small, nullptr, this, this);

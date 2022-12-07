@@ -32,7 +32,7 @@
 
 using namespace Peony;
 
-QRegExp gInvalidName("[\\\\/:\\*\\?\\\"<>\\|]");/* 文件名或文件夹名中不能出现以下字符：\、/、:、*、?、"、<、>、|  */
+QRegExp gInvalidName("[\\\\/:\\*\\?\\\"<>\\|\\n\\t]");/* 文件名或文件夹名中不能出现以下字符：\、/、:、*、?、"、<、>、| 、\n 、\t */
 
 FileOperation::FileOperation(QObject *parent) : QObject (parent)
 {
@@ -101,6 +101,9 @@ bool FileOperation::makeFileNameValidForDestFS(QString &srcPath, QString &destPa
 
 void FileOperation::fileSync(QString srcFile, QString destDir)
 {
+    if (srcFile == destDir)
+        return;
+
     if (srcFile.endsWith("/")) {
         srcFile.chop(1);
     }
@@ -108,12 +111,14 @@ void FileOperation::fileSync(QString srcFile, QString destDir)
     QString destFile = "";
     g_autoptr (GFile) ddir = g_file_new_for_uri (destDir.toUtf8 ().constData ());
     if (G_FILE_TYPE_DIRECTORY & g_file_query_file_type (ddir, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL)) {
-        if (destDir.split("/").back() == srcFile.split("/").back()) {
-            // src and dest are directory
-            destFile = destDir;
-        } else {
-            destFile = destDir + "/" + srcFile.split("/").back();
-        }
+//        if (destDir.split("/").back() == srcFile.split("/").back()) {
+//            // src and dest are directory
+//            destFile = destDir;
+//        } else {
+//            destFile = destDir + "/" + srcFile.split("/").back();
+//        }
+        //fix bug#111385, rename folder sync wrong issue
+        destFile = destDir;
     } else {
         g_autofree char* uri = g_file_get_uri (ddir);
         destFile = uri;

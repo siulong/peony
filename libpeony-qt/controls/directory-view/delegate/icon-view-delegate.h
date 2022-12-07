@@ -55,11 +55,11 @@ public:
    //初始化option
     void initIndexOption(QStyleOptionViewItem *option,
                          const QModelIndex &index) const;
-    //设置是否是拖拽item
-    void setStartDrag(bool isStartDrag)
-    {
-        m_isStartDrag = isStartDrag;
-    }
+    void setStartDrag(bool isDrag);
+    void setSearchKeyword(QString regFindKeyWords);
+
+    const QString getRegFindKeyWords() const;
+
 Q_SIGNALS:
     void isEditing(bool editing) const;
     void requestDone(QWidget *editor);
@@ -89,7 +89,9 @@ private:
     QWidget *m_index_widget;
 
     QPushButton *m_styled_button;
-    bool m_isStartDrag;  //是否是拖拽item
+    bool m_isStartDrag = false; ;  //是否是拖拽item
+
+    QString m_regFindKeyWords;
 };
 
 class PEONYCORESHARED_EXPORT IconViewTextHelper
@@ -112,6 +114,14 @@ class PEONYCORESHARED_EXPORT IconViewTextHelper
                           int textMaxHeight,
                           int horizalMargin = 0,
                           int maxLineCount = 4, bool useSystemPalette = true, const QColor &customColor = Qt::transparent);
+
+    static void paintText(QPainter *painter,
+                          const QStyleOptionViewItem &option,
+                          int textMaxHeight,
+                          int xOffset,
+                          const QString &regFindKeyWords,
+                          int horizalMargin = 0,
+                          int maxLineCount = 4) ;
 };
 
 }

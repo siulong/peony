@@ -56,8 +56,12 @@ class PEONYCORESHARED_EXPORT FileMetaInfo
 public:
     static std::shared_ptr<FileMetaInfo> fromGFileInfo(const QString &uri, GFileInfo *g_info);
     static std::shared_ptr<FileMetaInfo> fromUri(const QString &uri);
+    static std::shared_ptr<FileMetaInfo> dupFromUri(const QString &uri);
 
     FileMetaInfo(const QString &uri, GFileInfo *g_info);
+    FileMetaInfo(const FileMetaInfo &other);
+    FileMetaInfo(FileMetaInfo *other);
+    ~FileMetaInfo();
 
     void setMetaInfoString(const QString &key, const QString &value);
     const QString getMetaInfoString(const QString &key);

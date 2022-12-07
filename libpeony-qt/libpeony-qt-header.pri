@@ -4,6 +4,7 @@ INCLUDEPATH += $$PWD/file-launcher
 INCLUDEPATH += $$PWD/model
 INCLUDEPATH += $$PWD/vfs
 INCLUDEPATH += $$PWD/convenient-utils
+INCLUDEPATH += $$PWD/convenient-utils/disc
 INCLUDEPATH += $$PWD/controls
 INCLUDEPATH += $$PWD/windows
 
