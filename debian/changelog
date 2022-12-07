@@ -1,3 +1,10 @@
+peony (3.22.0.0-ok2~1207) yangtze; urgency=medium
+
+  * 更新桌面的翻译文件
+  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 13:43:36 +0800
+
 peony (3.22.0.0-ok1) yangtze; urgency=medium
 
   * 同步3.22.0.0的改动
