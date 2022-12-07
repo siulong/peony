@@ -149,7 +149,7 @@ void DirectoryViewContainer::goForward()
 {
     if (!canGoForward())
         return;
-
+    qDebug() << "m_back_list.append goForward:"<<getCurrentUri();
     auto uri = m_forward_list.takeFirst();
     //avoid same uri add twice
     int count = m_back_list.count();
@@ -253,11 +253,24 @@ void DirectoryViewContainer::goToUri(const QString &uri, bool addHistory, bool f
 update:
     if (addHistory) {
         m_forward_list.clear();
-        //qDebug() << "getCurrentUri():" <<getCurrentUri()<<uri;
+        QString curUri = getCurrentUri();
+        qDebug() << "getCurrentUri():" <<curUri<<uri;
         //fix bug 41094, avoid go back to same path issue
-        if (! getCurrentUri().startsWith("search://")
-            && !FileUtils::isSamePath(getCurrentUri(), uri)) {
-            m_back_list.append(getCurrentUri());
+        if (! curUri.startsWith("search://")
+            && !FileUtils::isSamePath(curUri, uri)) {
+            qDebug() << "m_back_list.append first:"<<curUri;
+            m_back_list.append(curUri);
+        }else if(curUri.startsWith("search://")){
+            //process remeber search record,only remeber the last search history,relate to bug#94229
+            if (m_back_list.length() > 0 ){
+                QString preHistory = m_back_list.last();
+                //如果已经有一条搜索记录，需要先去掉，再加入最近的搜索记录
+                if (preHistory.startsWith("search://")){
+                    m_back_list.takeLast();
+                }
+            }
+            qDebug() << "m_back_list.append second:"<<curUri;
+            m_back_list.append(curUri);
         }
     }
 

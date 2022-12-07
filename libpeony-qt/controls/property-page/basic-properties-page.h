@@ -202,6 +202,8 @@ private:
     FileCountOperation *m_countOp = nullptr;
 
     QTimer *m_timer = nullptr;
+    bool m_isReadOnly = false;
+    bool m_isHidden = false;
 };
 
 class PushButtonStyle : public QProxyStyle

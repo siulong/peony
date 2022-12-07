@@ -1,0 +1,29 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Thu, 21 Jul 2022 15:03:51 +0800
+Subject: update debian/changelog.
+
+---
+ peony-qt-desktop/desktopbackgroundwindow.cpp | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index d7ee14c..b1bd524 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -57,7 +57,7 @@ QWidget *getSpecialWidget() {
+     return gSpecialWidget;
+ }
+ 
+-DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : QMainWindow(parent)
++DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *parent) : m_screen(screen), QMainWindow(parent)
+ {
+     connect(screen, &QScreen::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
+ 
+@@ -73,7 +73,6 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, QWidget *paren
+ 
+     setContextMenuPolicy(Qt::CustomContextMenu);
+ 
+-    m_screen = screen;
+     m_desktopIconView = new Peony::DesktopIconView(this);
+     m_desktopIconView->setId(desktop_window_id);
+     m_id = desktop_window_id;

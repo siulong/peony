@@ -1,0 +1,52 @@
+From: cckylin-cibot <cckylin-cibot@kylinos.cn>
+Date: Sat, 18 Jun 2022 08:44:45 +0000
+Subject: =?utf-8?b?ITYg6KeE6YG/56ys5LqM5qyh5YiH5o2i5bmz5p2/5qGM6Z2i5pe25peg?=
+ =?utf-8?b?5rOV5L2/55So5ZKM6buR5bGP55qE6Zeu6aKY?=
+
+---
+ peony-qt-desktop/desktopbackgroundwindow.cpp      |  2 +-
+ peony-qt-desktop/tablet-desktop/tabletdesktop.cpp | 13 +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index 3b89d15..8b25556 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -313,7 +313,7 @@ void DesktopBackgroundWindow::setCentralWidget1()
+         if (m_screen != qApp->primaryScreen()) {
+             setCentralWidget(nullptr);
+         } else {
+-            setCentralWidget(getSpecialWidget());
++            setCentralWidget(new TabletDesktop);
+         }
+     } else {
+         setCentralWidget(m_desktopIconView);
+diff --git a/peony-qt-desktop/tablet-desktop/tabletdesktop.cpp b/peony-qt-desktop/tablet-desktop/tabletdesktop.cpp
+index 31b926b..a32378f 100755
+--- a/peony-qt-desktop/tablet-desktop/tabletdesktop.cpp
++++ b/peony-qt-desktop/tablet-desktop/tabletdesktop.cpp
+@@ -1,11 +1,24 @@
+ #include "tabletdesktop.h"
+ #include <QQuickItem>
+ 
++#include <QApplication>
++#include <QScreen>
++
+ TabletDesktop::TabletDesktop(QWidget *parent)
+     : QQuickWidget(parent)
+ {
+     setProperty("useWindowManagerStyle", false);
+     setSource(QUrl(kQmlUrl));
++
++    this->connect(qApp, &QApplication::primaryScreenChanged, this, [=]{
++        auto rect = qApp->primaryScreen()->geometry();
++        rect.moveTo(0, 0);
++        this->setGeometry(rect);
++    });
++    auto rect = qApp->primaryScreen()->geometry();
++    rect.moveTo(0, 0);
++    this->setGeometry(rect);
++    this->showTabletDesktop();
+ }
+ 
+ void TabletDesktop::setGeometry(const QRect &rect)

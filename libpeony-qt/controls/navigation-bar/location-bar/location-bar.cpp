@@ -168,6 +168,8 @@ void LocationBar::setRootUri(const QString &uri)
     if (m_current_uri.startsWith("search://")) {
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
+        //fix bug 94229, show button
+        doLayout();
         return;
     }
 
@@ -353,6 +355,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         displayName = tr("Search \"%1\" in \"%2\"").arg(nameRegexp).arg(targetDirectory);
         button->setText(displayName);
         button->setFixedWidth(button->sizeHint().width());
+        button->setContextMenuPolicy(Qt::CustomContextMenu);
         return;
     }
 

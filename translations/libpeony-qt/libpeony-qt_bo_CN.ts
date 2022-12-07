@@ -1457,7 +1457,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Delete All Label</source>
-        <translation>མཚོན་རྟགས་ཆ་ཚང་གསུབས་པ།</translation>
+        <translation type="vanished">མཚོན་རྟགས་ཆ་ཚང་གསུབས་པ།</translation>
     </message>
     <message>
         <source>Add File Label...</source>
@@ -1466,10 +1466,6 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <source>Peony File Labels Menu Extension</source>
         <translation type="vanished">ཡིག་ཆའི་མཚོན་རྟགས།</translation>
-    </message>
-    <message>
-        <source>Add File Label</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1967,7 +1963,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File Name:</source>
-        <translation>ཡིག་ཆ་མིང་།:</translation>
+        <translation type="vanished">ཡིག་ཆ་མིང་།:</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -1984,6 +1980,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>usershare</source>
         <translation>རང་སའི་རྩིས་འཁོར་མཉམ་སྤྱོད་</translation>
+    </message>
+    <message>
+        <source>Time Created:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

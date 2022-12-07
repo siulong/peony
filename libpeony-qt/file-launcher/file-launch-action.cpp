@@ -238,7 +238,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
 
     KStartupInfoData data;
     data.addPid(pid);
-    //data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
+//    data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
 
     KStartupInfo::sendChange(*startInfoId, data);
     KStartupInfo::resetStartupEnv();

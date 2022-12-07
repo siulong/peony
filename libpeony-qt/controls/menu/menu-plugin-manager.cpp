@@ -43,7 +43,14 @@
 #include <QIcon>
 
 #include <QDebug>
+#include <QWidgetAction>
+#include <QToolButton>
+#include <QButtonGroup>
 
+#include <QMainWindow>
+
+#include "color-pushbutton.h"
+#include <QRadioButton>
 using namespace Peony;
 
 static MenuPluginManager *global_instance = nullptr;
@@ -175,40 +182,16 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
         return l;
     }
     if (types == DirectoryView) {
-        if (selectionUris.count() == 1) {
-            //not allow in trash path
-            if (uri.startsWith("trash://") || uri.startsWith("smb://")
-                || uri.startsWith("recent://") || uri.startsWith("computer://"))
-                return l;
-            auto action = new QAction(tr("Add File Label"), nullptr);
-            auto uri = selectionUris.first();
-            auto menu = new QMenu();
-            auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
-            for (auto item : items) {
-                auto ids = FileLabelModel::getGlobalModel()->getFileLabelIds(uri);
-                bool checked = ids.contains(item->id());
-                auto a = menu->addAction(item->name(), [=]() {
-                    if (!checked) {
-                        // note: while add label to file at first time (usually new user created),
-                        // it might fail to add a label correctly, but second time will work.
-                        // it might be a bug of gvfsd-metadata. anyway we should to avoid this
-                        // situation.
-                        FileLabelModel::getGlobalModel()->addLabelToFile(uri, item->id());
-                        FileLabelModel::getGlobalModel()->addLabelToFile(uri, item->id());
-                    } else {
-                        FileLabelModel::getGlobalModel()->removeFileLabel(uri, item->id());
-                    }
-                });
-                a->setCheckable(true);
-                a->setChecked(checked);
-            }
-            menu->addSeparator();
-            menu->addAction(tr("Delete All Label"), [=]() {
-                FileLabelModel::getGlobalModel()->removeFileLabel(uri);
-            });
-            action->setMenu(menu);
-            l<<action;
-        }
+        //not allow in trash path
+        if (uri.startsWith("trash://") || uri.startsWith("smb://")
+            || uri.startsWith("recent://") || uri.startsWith("computer://"))
+            return l;
+
+        auto labelWidgetContainer = new QWidgetAction(this);
+        auto labelWidget = new FileLabelWidget(selectionUris);
+        m_label = labelWidget;
+        labelWidgetContainer->setDefaultWidget(labelWidget);
+        l<<labelWidgetContainer;
     }
     return l;
 }
@@ -260,3 +243,104 @@ QList<QAction *> CreateSharedFileLinkMenuPlugin::menuActions(MenuPluginInterface
     }
     return l;
 }
+
+void FileLabelWidget::clickItem(int index)
+{
+    m_colorgroup->button(index)->setFocus();
+    QList<int> updateids;
+    updateids = m_ids;
+    if(m_selectionUris->count() == 1){
+       auto ids = FileLabelModel::getGlobalModel()->getFileLabelIds(m_selectionUris->first());
+       bool checked = ids.contains(index);
+       if (!checked) {
+           FileLabelModel::getGlobalModel()->addLabelToFile(m_selectionUris->first(), index);
+           FileLabelModel::getGlobalModel()->addLabelToFile(m_selectionUris->first(), index);
+       }else{
+           FileLabelModel::getGlobalModel()->removeFileLabel(m_selectionUris->first(), index);
+       }
+
+    }
+    else{
+        bool check = true;
+
+        QList<QString>::iterator it = m_selectionUris->begin();
+        for (; it < m_selectionUris->end(); it++){
+            auto ids = FileLabelModel::getGlobalModel()->getFileLabelIds(*it);
+            FileLabelModel::getGlobalModel()->getFileLabelIds(*it);
+            updateids.append(ids);
+
+            if(m_ids.contains(index)){
+                if(!ids.contains(index)){
+                    check = false;
+                    break;
+                }
+            }
+        }
+        m_ids = updateids.toSet().toList();
+
+        it = m_selectionUris->begin();
+
+        for (; it < m_selectionUris->end(); it++){
+            if(!m_ids.contains(index)){
+                FileLabelModel::getGlobalModel()->addLabelToFile(*it, index);
+                FileLabelModel::getGlobalModel()->addLabelToFile(*it, index);
+            }else{
+                if(check){
+                    FileLabelModel::getGlobalModel()->removeFileLabel(*it, index);
+                }else{
+                    auto ids = FileLabelModel::getGlobalModel()->getFileLabelIds(*it);
+                    if(!ids.contains(index)){
+                        FileLabelModel::getGlobalModel()->addLabelToFile(*it, index);
+                        FileLabelModel::getGlobalModel()->addLabelToFile(*it, index);
+                        m_colorgroup->button(index)->setChecked(true);
+                    }
+                }
+            }
+        }
+    }
+}
+
+FileLabelWidget::FileLabelWidget(const QStringList &selectionUris)
+{
+    m_selectionUris = const_cast<QStringList*>(&selectionUris);
+
+    auto hbox = new QHBoxLayout;
+    auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
+
+    auto colorgroup = new QButtonGroup(this);
+    m_colorgroup = colorgroup;
+    m_colorgroup->setExclusive(false);
+
+    int btnid = 1;
+    for (auto item : items) {
+        ColorPushButton *colorButton=new ColorPushButton(item->color(),this);
+
+        colorButton->palette().window();
+        colorButton->setCheckable(true);
+        colorButton->setEnabled(true);
+        QList<int> ids;
+
+        for (auto selectionUri : selectionUris) {
+            auto id = FileLabelModel::getGlobalModel()->getFileLabelIds(selectionUri);
+            ids.append(id);
+        }
+        ids = ids.toSet().toList();
+        m_ids = ids;
+        bool checked = ids.contains(item->id());
+        colorgroup->addButton(colorButton,btnid);
+        colorButton->setChecked(checked);
+        colorgroup->button(btnid)->setChecked(checked);
+
+        btnid++;
+    }
+
+    for (QWidget * item : m_colorgroup->buttons()) {
+            hbox->addWidget(item,0);
+            item->installEventFilter(this);
+        }
+
+    this->setLayout(hbox);
+
+    connect(m_colorgroup,SIGNAL(buttonClicked(int)),this,SLOT(clickItem(int)));
+}
+
