@@ -1,3 +1,9 @@
+peony (3.22.0.0-ok1) yangtze; urgency=medium
+
+  * 同步3.22.0.0的改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 09:56:14 +0800
+
 peony (3.14.4.5-ok10) yangtze; urgency=medium
 
   * 同步平板版本改动和3.20.4.13改动
