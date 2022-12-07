@@ -64,6 +64,8 @@
 #include <QGSettings>
 #include "file-info-job.h"
 
+#include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
+
 using namespace Peony;
 
 #define WINDOW_NOT_OPEN -1
@@ -260,11 +262,12 @@ void PropertiesWindow::init()
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setContentsMargins(0, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
-    MotifWmHints hints;
-    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-    hints.functions = MWM_FUNC_ALL;
-    hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
+    kdk::UkuiStyleHelper::self()->removeHeader(this);
+//    MotifWmHints hints;
+//    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+//    hints.functions = MWM_FUNC_ALL;
+//    hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
     //only show close button
     //this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
 
