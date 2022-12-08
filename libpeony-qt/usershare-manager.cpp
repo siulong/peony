@@ -118,6 +118,39 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
     return all;
 }
 
+QString UserShareInfoManager::exectueSetAclCommand(QStringList &args, bool *ret)
+{
+    QProcess proc;
+    proc.open();
+
+    proc.start("bash");
+    proc.waitForStarted();
+    QString cmd = args.join(" ");
+    QString error;
+    proc.write(cmd.toUtf8() + "\n");
+    proc.waitForFinished(500);
+    error = proc.readAllStandardError();
+
+    if (ret) {
+        if (error.isEmpty()) {
+            *ret = true;
+        } else {
+            *ret = false;
+        }
+    }
+
+    if (!error.isEmpty()) {
+        proc.close();
+        QMessageBox::warning(nullptr, tr("Warning"), error, QMessageBox::Ok);
+        return error;
+    }
+
+    QString all = proc.readAllStandardOutput();
+    proc.close();
+
+    return all;
+}
+
 bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
 {
     if ("" == shareInfo.name
@@ -146,13 +179,22 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
         delete m_sharedInfoMap[sharedInfo->name];
     }
     m_sharedInfoMap[sharedInfo->name] = sharedInfo;
+    if (m_usershareAclMap.contains(sharedInfo->name) && !m_usershareAcl.isEmpty()) {
+        m_usershareAclMap.remove(sharedInfo->name);
+        m_usershareAclMap.insert(sharedInfo->name, m_usershareAcl);
+    }
     m_mutex.unlock();
 
     args << "usershare" << "add";
     args << QString("\"%1\"").arg(sharedInfo->name);
     args << QString("\"%1\"").arg(sharedInfo->originalPath);
     args << (sharedInfo->comment.isNull() ? "Peony-Qt-Share-Extension" : sharedInfo->comment);
-    args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
+    if (m_usershareAcl.isEmpty()) {
+         args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
+    } else {
+        args << m_usershareAcl;
+        m_usershareAcl.clear();
+    }
     args << (sharedInfo->allowGuest ? "guest_ok=y" : "guest_ok=n");
 
     exectueCommand (args, &ret);
@@ -195,6 +237,89 @@ const ShareInfo* UserShareInfoManager::getShareInfo(QString &name)
     m_mutex.unlock();
 
     return m_sharedInfoMap[name];
+}
+
+QString UserShareInfoManager::getUserShareAcl(QString &name)
+{
+    QString acl;
+    if (nullptr == name || name.isEmpty()) {
+        qDebug() << "invalid param";
+        return acl;
+    }
+
+    if (!m_bInit) {
+        bool            ret;
+        QStringList     args;
+        args << "usershare" << "info" << QString("\"%1\"").arg(name);
+        QString result = exectueCommand (args, &ret);
+        if (!ret && result.isEmpty()) {
+            return acl;
+        }
+
+        QString usershareAcl  = parseUserShareAcl(result);
+        if (!addUserShareAcl(name, usershareAcl)) {
+            qDebug() << "Add usershare failed or usershare isExist";
+        }
+    }
+
+    m_mutex.lock();
+    if (!m_usershareAclMap.contains(name)) {
+        m_mutex.unlock();
+        return acl;
+    }
+
+    m_mutex.unlock();
+    return m_usershareAclMap[name];
+}
+
+bool UserShareInfoManager::addUserShareAcl(QString &name, QString &acl)
+{
+    if (nullptr == name || name.isEmpty() || acl.isEmpty()) {
+        return false;
+    }
+
+    m_mutex.lock();
+    if (m_usershareAclMap.contains(name)) {
+        m_mutex.unlock();
+        return false;
+    }
+
+    m_usershareAclMap[name] = acl;
+    m_mutex.unlock();
+
+    return true;
+}
+
+void UserShareInfoManager::removeUserShareAcl(QString &name)
+{
+    m_mutex.lock();
+    if (m_usershareAclMap.contains(name)) {
+        if (!m_usershareAclMap[name].isEmpty())
+        {
+             m_usershareAclMap.remove(name);
+        }
+    }
+    m_mutex.unlock();
+}
+
+void UserShareInfoManager::updateUserShareAcl(const QString acl)
+{
+    m_usershareAcl.clear();
+    m_usershareAcl = acl;
+}
+
+QString UserShareInfoManager::parseUserShareAcl(QString &content)
+{
+    auto lines = content.split('\n');
+    QString acl;
+
+    for (auto line : lines) {
+        if (line.startsWith("usershare_acl")) {
+            acl = line;
+            acl.remove(0, 14);
+        }
+    }
+    return acl;
 }
 
 bool UserShareInfoManager::addShareInfo(ShareInfo* shareInfo)
