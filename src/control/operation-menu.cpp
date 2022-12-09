@@ -136,8 +136,12 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                  QDBusReply<bool> hasPasswdReply = interFace->call("hasPasswd");
                  if (hasPasswdReply.isValid()) {
                     if (hasPasswdReply.value()) {
-                        QMessageBox::information(nullptr, tr("Tips"), tr("The user already has a samba password, no need to set a samba password again!"));
+                        auto result = QMessageBox::question(nullptr, tr("Tips"), tr("The user already has a samba password, do you need to reset the samba password?"));
+                        if (result == QMessageBox::Yes) {
+                              goto setPasswd;
+                        }
                     } else {
+setPasswd:
                         bool ok = false;
                         QString text = QInputDialog::getText(nullptr, tr("Samba set user password"), tr("Samba password:"), QLineEdit::Password, "", &ok);
                         if (ok && !text.isNull() && !text.isEmpty()) {
