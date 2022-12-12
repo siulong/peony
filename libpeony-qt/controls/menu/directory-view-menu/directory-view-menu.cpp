@@ -160,6 +160,11 @@ void DirectoryViewMenu::fillActions()
         m_is_smb_file = true;
     }
 
+    QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
+    if(m_directory == boxpath) {
+        m_is_boxpath = true;
+    }
+
     auto dev = VolumeManager::getDriveFromUri(m_directory);
     if(dev != nullptr){
         bool canEject = g_drive_can_eject(dev.get()->getGDrive());
@@ -506,6 +511,9 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
         auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
+            createAction->setEnabled(false);
+        }
+        if (m_is_boxpath) {
             createAction->setEnabled(false);
         }
         //fix create folder fail issue in special path

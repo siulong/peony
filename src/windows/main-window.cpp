@@ -512,7 +512,14 @@ void MainWindow::setShortCuts()
 
         auto newFolderAction = new QAction(this);
         newFolderAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
-        connect(newFolderAction, &QAction::triggered, this, &MainWindow::createFolderOperation);
+        connect(newFolderAction, &QAction::triggered, this, [=](){
+            QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
+            if (boxpath == getCurrentUri()) {
+                return;
+            }
+
+            createFolderOperation();
+        });
         addAction(newFolderAction);
 
         //show selected item's properties
