@@ -1076,6 +1076,14 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                             selectUriList<< m_selections.at(uriIndex);
                         }
                     }
+                }else if(m_selections.first().startsWith("label:///")){
+                    for(auto &labelUri : m_selections){/* 标记模式页面为不同目录下的文件（夹），所以每个都需要一个属性对话框 */
+                        QStringList urisList;
+                        urisList.append(labelUri);
+                        PropertiesWindow *p = new PropertiesWindow(urisList);
+                        p->setAttribute(Qt::WA_DeleteOnClose);
+                        p->show();
+                    }
                 }else {
                     selectUriList = m_selections;
                 }

@@ -203,6 +203,8 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
         } else if (uri.startsWith("network://")) {
             m_destroyThis = true;
             return;
+        }else if(uri.startsWith("label://")){
+            uri = FileUtils::getTargetUri(uri);/* 转化为真实的路径 */
         }
         //fix bug:70565,将已被编码的字符串解码后从新编码，保证在属性窗口中的编码中特殊字符为%xx形式。
         //编码时排除'()',防止 FileUtils::handleDesktopFileName 方法匹配不到(),避免出现bug:53504.
