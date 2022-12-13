@@ -164,6 +164,10 @@ bool DirectoryViewContainer::canCdUp()
 {
     if (!m_view)
         return false;
+
+    if("label:///" == FileUtils::getParentUri(m_view->getDirectoryUri()))/* 全局标记页面‘上一级’菜单置灰 */
+        return false;
+
     return !FileUtils::getParentUri(m_view->getDirectoryUri()).isNull();
 }
 
