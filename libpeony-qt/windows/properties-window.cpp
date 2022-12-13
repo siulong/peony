@@ -256,6 +256,7 @@ void PropertiesWindow::init()
     //this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
 
     this->setWindowTitleTextAndIcon();
+    KWindowSystem::setState(this->winId(), NET::SkipTaskbar|NET::SkipPager);
 
     if (m_notDir) {
         //如果含有文件夹，那么高度是600，如果是其他文件，那么高度是652
