@@ -475,6 +475,16 @@ void FileItem::findChildrenAsync()
                     m_children->append(item);
                     m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
+
+                    /* 解决：升级上来的版本点击标记以后无法显示原来已有的标记文件（兼容性问题） */
+                    if(!item->uri().startsWith("label://")){
+                        QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(item->uri());
+                        for(auto &labelId: labelIds){
+                            if(labelId <= 0)
+                                continue;
+                            FileLabelModel::getGlobalModel()->addLabelToFile(item->uri(), labelId);
+                        }
+                    }//end
                     //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                     //Q_EMIT m_model->updated();
                     ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
