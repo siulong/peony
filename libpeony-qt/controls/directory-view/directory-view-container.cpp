@@ -431,7 +431,7 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
         bool hasStandardPath = FileUtils::containsStandardPath(selections);
         if (selections.count() == 1 && !hasStandardPath) {
             QString one = selections.first();
-            if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {
+            if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1 || one.startsWith("label://")) {
                 return ;
             }
             //修复在选中文件不可见时，重命名操作不会跳转显示重命名文件问题，link to bug#160799
