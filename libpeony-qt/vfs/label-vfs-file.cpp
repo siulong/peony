@@ -302,7 +302,8 @@ GFileInfo* vfs_label_file_query_info(GFile *file, const char *attributes, GFileQ
     QString trueUri = nullptr;
     QUrl url(vfs_label_file_get_uri(file));
 
-    if ("label:///" != url.toString()) {
+    QString uriStr = url.toString();
+    if (uriStr.startsWith("label:///") && uriStr.contains("?schema=")) {
         QStringList querys = url.query().split("&");
         for (int i = 0; i < querys.count(); ++i) {
             if (querys.at(i).contains("schema=")) {
@@ -317,10 +318,16 @@ GFileInfo* vfs_label_file_query_info(GFile *file, const char *attributes, GFileQ
         }
     } else {
         info = g_file_info_new ();
-        QString name = QObject::tr("label");
-        auto icon = g_themed_icon_new("label");
-        g_file_info_set_icon(info, icon);
-        g_object_unref(icon);
+        QString name;
+        if("label:///"== url.toString()){
+            name = QObject::tr("label");
+            auto icon = g_themed_icon_new("label");
+            g_file_info_set_icon(info, icon);
+            g_object_unref(icon);
+        }else{
+            name = url.toString().section("/", -1,-1);
+        }
+
         g_file_info_set_size(info, 0);
         g_file_info_set_is_hidden(info, FALSE);
         g_file_info_set_is_symlink(info, FALSE);

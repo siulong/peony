@@ -366,7 +366,7 @@ QString FileUtils::getFileDisplayName(const QString &uri)
     }
     if(uri.startsWith("label://")){/* 标记模式uri的displayName */
         if("label:///" == uri){
-            showName = "label";
+            showName = QObject::tr("label");
         }else{
             showName = uri.section("/", -1,-1).replace("?schema=file","");
         }

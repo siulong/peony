@@ -258,8 +258,12 @@ update:
         //fix bug 41094, avoid go back to same path issue
         if (! curUri.startsWith("search://")
             && !FileUtils::isSamePath(curUri, uri)) {
-            qDebug() << "m_back_list.append first:"<<curUri;
-            m_back_list.append(curUri);
+            if(getCurrentUri().startsWith("label:///") && FileUtils::getTargetUri(getCurrentUri()) == uri){
+                m_back_list.append(FileUtils::getTargetUri(getCurrentUri()));/* 解决标记路径进入文件夹内，后退不了问题 */
+            }else{
+                qDebug() << "m_back_list.append first:"<<curUri;
+                m_back_list.append(getCurrentUri());
+            }
         }else if(curUri.startsWith("search://")){
             //process remeber search record,only remeber the last search history,relate to bug#94229
             if (m_back_list.length() > 0 ){
