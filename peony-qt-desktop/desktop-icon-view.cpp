@@ -780,7 +780,7 @@ void DesktopIconView::resolutionChange()
     QSize screenSize = this->viewport()->size();
 
     // do not relayout items while screen size is empty.
-    if (screenSize.isEmpty()) {
+    if (screenSize.isEmpty() || !m_initialized) {
         qWarning()<<"screen size is not avaliable";
         return;
     }
@@ -2664,7 +2664,7 @@ void DesktopIconView::saveExtendItemInfo()
         topLeft<<QString::number(m_id);
         QString uri = index.data(Qt::UserRole).toString();
         auto metaInfo = FileMetaInfo::fromUri(uri);
-        if (metaInfo && !m_model->m_items_need_relayout.contains(uri)) {
+        if (metaInfo) {
             qDebug() << "[DesktopIconView::saveExtendItemInfo] uri:"<<str<<" topLeft:"<<topLeft;
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, topLeft);
             metaInfo->setMetaInfoInt("peony-qt-desktop-id", 0);
@@ -2693,7 +2693,6 @@ void DesktopIconView::resetExtendItemInfo()
         return;
 
     //bug#108126 一开始加载将上一次超出屏幕的元素恢复
-    int aa = m_model->rowCount();
     for (int i = 0; i < m_model->rowCount(); i++) {
         auto index = m_model->index(i, 0);
         QString uri = index.data(Qt::UserRole).toString();
