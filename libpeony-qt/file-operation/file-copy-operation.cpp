@@ -46,6 +46,12 @@ static void handleDuplicate(FileNode *node)
 
 FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    for (auto u : sourceUris) {
+        if (u.split ("://").length () != 2) {
+            sourceUris.removeOne (u);
+        }
+    }
+
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
     QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
 

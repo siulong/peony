@@ -40,6 +40,12 @@ static void handleDuplicate(FileNode *node)
 
 FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    for (auto u : sourceUris) {
+        if (u.split("://").length() != 2) {
+            sourceUris.removeOne (u);
+        }
+    }
+
     m_src_uris = sourceUris;
 
     /* favorite://xxx特殊处理,例如本机共享，bug#83353 */

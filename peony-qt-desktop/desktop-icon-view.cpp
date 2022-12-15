@@ -79,6 +79,7 @@
 #include <QMimeData>
 #include <QPixmap>
 #include <QPainter>
+#include <QClipboard>
 
 #include <QtX11Extras/QX11Info>
 #include <kstartupinfo.h>
@@ -552,9 +553,13 @@ void DesktopIconView::initShoutCut()
     QAction *pasteAction = new QAction(this);
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
-        auto clipUris = ClipboardUtils::getClipboardFilesUris();
-        if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
+        if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
             ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+        } else {
+            //auto clipUris = ClipboardUtils::getClipboardFilesUris();
+            if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
+                ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            }
         }
     });
     addAction(pasteAction);
