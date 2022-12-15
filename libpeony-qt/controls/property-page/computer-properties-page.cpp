@@ -169,6 +169,7 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             quint64 availableSpace = 0;
 
             bool isCDDisk = false;
+            bool isFtp = false;
 
             if (info) {
                 quint64 total = g_file_info_get_attribute_uint64(info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
@@ -224,21 +225,27 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             if (type.contains("ext")) {
                 usedSpace = totalSpace - availableSpace;
             }
+            if (targetUri.startsWith("ftp://")) {
+                isFtp = true;
+            }
             m_layout->addRow(tr("Name: "), new QLabel(mount->name(), this));
 /*            if (bMobileDevice)
                 m_layout->addRow(tr("Total Space: "), new QLabel(sizeInfo, this));
             else */
-
-            m_layout->addRow(tr("Total Space: "), new QLabel(formatCapacityString(totalSpace), this));
-            m_layout->addRow(tr("Used Space: "), new QLabel(formatCapacityString(usedSpace), this));
-            m_layout->addRow(tr("Free Space: "), new QLabel(formatCapacityString(availableSpace), this));
+            if (!isFtp) {
+                m_layout->addRow(tr("Total Space: "), new QLabel(formatCapacityString(totalSpace), this));
+                m_layout->addRow(tr("Used Space: "), new QLabel(formatCapacityString(usedSpace), this));
+                m_layout->addRow(tr("Free Space: "), new QLabel(formatCapacityString(availableSpace), this));
+            }
             m_layout->addRow(tr("Type: "), new QLabel(type, this));
 
-            auto progressBar = new QProgressBar(this);
-            auto value = double(usedSpace*1.0/totalSpace)*100;
-            progressBar->setValue(int((value > 0 && value < 1 ) ? 1 : value));
-            m_layout->addRow(progressBar);
-            m_layout->setAlignment(progressBar, Qt::AlignBottom);
+            if (!isFtp) {
+                auto progressBar = new QProgressBar(this);
+                auto value = double(usedSpace*1.0/totalSpace)*100;
+                progressBar->setValue(int((value > 0 && value < 1 ) ? 1 : value));
+                m_layout->addRow(progressBar);
+                m_layout->setAlignment(progressBar, Qt::AlignBottom);
+            }
 
             //fix bug#141923, empty disks not show kylin burner issue
             //fix bug#146557, U盘系统盘显示刻录软件问题
