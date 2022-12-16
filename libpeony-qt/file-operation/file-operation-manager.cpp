@@ -597,7 +597,7 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
             auto firstUri = info->m_src_uris.first();
             
             //'file:///run/user/1000/gvfs/smb-share:server=xxx,share=xxx/' converted to 'smb://xxx'
-            GFile * file  = g_file_new_for_uri(destDir.toLatin1().data());
+            GFile * file  = g_file_new_for_uri(destDir.toUtf8().data());
             char *uri = g_file_get_uri(file);	
             if (uri) {
                 destDir = uri;
