@@ -209,7 +209,10 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected)) {
         opt.state &= ~QStyle::State_Selected;
     }
+    p.save();
+    p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &p, opt.widget);
+    p.restore();
     opt.state = state;
     if (b_elide_text)
     {
@@ -310,7 +313,10 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //qDebug()<< "symbolic:" << info->symbolicIconName();
         //icon.paint(&p, this->width() - 30, 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        p.restore();
     }
     if(view->isEnableMultiSelect())
     {
@@ -328,12 +334,18 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if (!info->canRead()) {
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        p.restore();
     } else if (!info->canWrite()/* && !info->canExecute()*/) {
         //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-readonly");
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        p.restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
@@ -346,6 +358,8 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
             if (!icon.isNull()) {
+                p.save();
+                p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
@@ -367,6 +381,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
                 default:
                     break;
                 }
+                p.restore();
             }
         }
 

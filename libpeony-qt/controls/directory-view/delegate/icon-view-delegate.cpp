@@ -160,7 +160,17 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto text = opt.text;
     opt.text = nullptr;
+    auto state = opt.state;
+    //bug#99340,修改图标选中状态，会变暗
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected) && !m_isStartDrag)
+    {
+        opt.state &= ~QStyle::State_Selected;
+    }
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    painter->restore();
+    opt.state = state;
     opt.text = text;
 
     auto rect = view->visualRect(index);
@@ -282,7 +292,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
-
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
         emblemPoses.removeOne(3);
@@ -351,6 +362,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
     }
+    painter->restore();
 
 
     //single selection, we have to repaint the emblems.
@@ -719,4 +731,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     painter->restore();
 }
-
+void IconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    return initStyleOption(option, index);
+}

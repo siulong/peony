@@ -131,7 +131,11 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
 
     // draw icon
     opt.text = nullptr;
+
+    p.save();
+    p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &p, m_delegate->getView());
+    p.restore();
 
     p.save();
     p.translate(0, 5 + m_delegate->getView()->iconSize().height() + 5);

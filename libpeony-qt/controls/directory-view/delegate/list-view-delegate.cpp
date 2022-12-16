@@ -258,8 +258,10 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             if(iconSize.height() < 28){
                 iconSizeHeight = 28;
             }
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-            //painter->restore();
+            painter->restore();
         }
 
         //paint access emblems
@@ -269,12 +271,18 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             if (!info->canRead()) {
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-unreadable");
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 icon.paint(painter, loc_x, loc_y, size, size);
+                painter->restore();
             } else if (!info->canWrite()/* && !info->canExecute()*/) {
                 //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-readonly");
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 icon.paint(painter, loc_x, loc_y, size, size);
+                painter->restore();
             }
         }
 
@@ -293,6 +301,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
             if (!icon.isNull()) {
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
@@ -314,6 +324,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 default:
                    break;
                 }
+                painter->restore();
             }
         }
     }
