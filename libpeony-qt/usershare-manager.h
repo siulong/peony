@@ -58,11 +58,11 @@ public:
     bool addShareInfo (ShareInfo* shareInfo);
     bool updateShareInfo (ShareInfo& shareInfo);
     const ShareInfo* getShareInfo (QString& name);
+    bool updateShareInfo (ShareInfo& shareInfo, const QString usershareAcl);
+    void removeShareInfoAcl (QString& name);
 
     QString getUserShareAcl(QString& name);
     bool addUserShareAcl(QString &name, QString &acl);
-    void removeUserShareAcl(QString &name);
-    void updateUserShareAcl(const QString acl);
     QString parseUserShareAcl(QString &content);
 
 private:
@@ -78,7 +78,6 @@ private:
     QMap <QString, ShareInfo*>      m_sharedInfoMap;
     QMap <QString, QString>         m_usershareAclMap;
     static UserShareInfoManager*    g_shareInfo;
-    QString                         m_usershareAcl;
 };
 }
 #endif // USERSHARE_MANAGER_H

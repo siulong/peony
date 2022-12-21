@@ -179,9 +179,52 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
         delete m_sharedInfoMap[sharedInfo->name];
     }
     m_sharedInfoMap[sharedInfo->name] = sharedInfo;
-    if (m_usershareAclMap.contains(sharedInfo->name) && !m_usershareAcl.isEmpty()) {
+    m_mutex.unlock();
+
+    args << "usershare" << "add";
+    args << QString("\"%1\"").arg(sharedInfo->name);
+    args << QString("\"%1\"").arg(sharedInfo->originalPath);
+    args << (sharedInfo->comment.isNull() ? "Peony-Qt-Share-Extension" : sharedInfo->comment);
+    args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
+    args << (sharedInfo->allowGuest ? "guest_ok=y" : "guest_ok=n");
+
+    exectueCommand (args, &ret);
+    if(isShare)
+        Q_EMIT signal_addSharedFolder(*sharedInfo, ret);
+    return ret;
+}
+
+bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo, const QString usershareAcl)
+{
+    if ("" == shareInfo.name
+            || shareInfo.name.isEmpty()
+            || shareInfo.originalPath.isEmpty()) {
+        return false;
+    }
+
+    bool ret = false;
+    QStringList args;
+    ShareInfo* sharedInfo = new ShareInfo;
+    sharedInfo->name = shareInfo.name;
+    sharedInfo->comment = shareInfo.comment;
+    sharedInfo->isShared = shareInfo.isShared;
+    sharedInfo->readOnly = shareInfo.readOnly;
+    sharedInfo->allowGuest = shareInfo.allowGuest;
+    sharedInfo->originalPath = shareInfo.originalPath;
+
+    m_mutex.lock();
+    bool isShare = true;
+    if (m_sharedInfoMap.contains(sharedInfo->name)
+            && nullptr != m_sharedInfoMap[sharedInfo->name]) {
+        if(sharedInfo->isShared == m_sharedInfoMap[sharedInfo->name]->isShared){
+            isShare = false;
+        }
+        delete m_sharedInfoMap[sharedInfo->name];
+    }
+    m_sharedInfoMap[sharedInfo->name] = sharedInfo;
+    if (m_usershareAclMap.contains(sharedInfo->name) && !usershareAcl.isEmpty()) {
         m_usershareAclMap.remove(sharedInfo->name);
-        m_usershareAclMap.insert(sharedInfo->name, m_usershareAcl);
+        m_usershareAclMap.insert(sharedInfo->name, usershareAcl);
     }
     m_mutex.unlock();
 
@@ -189,11 +232,10 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
     args << QString("\"%1\"").arg(sharedInfo->name);
     args << QString("\"%1\"").arg(sharedInfo->originalPath);
     args << (sharedInfo->comment.isNull() ? "Peony-Qt-Share-Extension" : sharedInfo->comment);
-    if (m_usershareAcl.isEmpty()) {
+    if (usershareAcl.isEmpty()) {
          args << (sharedInfo->readOnly ? "Everyone:R" : "Everyone:F");
     } else {
-        args << m_usershareAcl;
-        m_usershareAcl.clear();
+        args << usershareAcl;
     }
     args << (sharedInfo->allowGuest ? "guest_ok=y" : "guest_ok=n");
 
@@ -201,6 +243,34 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo)
     if(isShare)
         Q_EMIT signal_addSharedFolder(*sharedInfo, ret);
     return ret;
+}
+
+void UserShareInfoManager::removeShareInfoAcl(QString &name)
+{
+    m_mutex.lock();
+    QString originalPath;
+    if (m_sharedInfoMap.contains(name)) {
+        if (nullptr != m_sharedInfoMap[name])
+        {
+            originalPath=m_sharedInfoMap[name]->originalPath;
+            delete m_sharedInfoMap[name];
+        }
+        m_sharedInfoMap.remove(name);
+    }
+    if (m_usershareAclMap.contains(name)) {
+        if (!m_usershareAclMap[name].isEmpty())
+        {
+             m_usershareAclMap.remove(name);
+        }
+    }
+    m_mutex.unlock();
+
+    QStringList args;
+    args << "usershare" << "delete" << QString("\"%1\"").arg(name);
+
+    bool ret = false;
+    exectueCommand (args, &ret);
+    Q_EMIT signal_deleteSharedFolder(originalPath, ret);
 }
 
 const ShareInfo* UserShareInfoManager::getShareInfo(QString &name)
@@ -288,24 +358,6 @@ bool UserShareInfoManager::addUserShareAcl(QString &name, QString &acl)
     m_mutex.unlock();
 
     return true;
-}
-
-void UserShareInfoManager::removeUserShareAcl(QString &name)
-{
-    m_mutex.lock();
-    if (m_usershareAclMap.contains(name)) {
-        if (!m_usershareAclMap[name].isEmpty())
-        {
-             m_usershareAclMap.remove(name);
-        }
-    }
-    m_mutex.unlock();
-}
-
-void UserShareInfoManager::updateUserShareAcl(const QString acl)
-{
-    m_usershareAcl.clear();
-    m_usershareAcl = acl;
 }
 
 QString UserShareInfoManager::parseUserShareAcl(QString &content)
