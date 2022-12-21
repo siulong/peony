@@ -594,10 +594,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     document.setPlainText(elidedText);
 
-    //painter->translate(option.rect.topLeft());
     painter->translate(horizalMargin, 0);
-   // painter->translate(0, iconRect.size().height() + 5);
-
 
     //设置关键字高亮
     QTextCursor highlightCursor(&document);
@@ -607,6 +604,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     QTextBlock textStyleBlock = cursor.block();
     QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
     textStyleFormat.setTextIndent(xOffset);
     cursor.setBlockFormat(textStyleFormat);
     QTextCharFormat plainFormat(highlightCursor.charFormat());
