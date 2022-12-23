@@ -365,8 +365,9 @@ QStringList ClipboardThread::getUrlsByX11()
         return QStringList ();
     }
 
-    if (!gIsRemoteUri) {
-        qWarning() << "不是云粘贴板";
+    bool isWayland = qApp->property("isWayland").toBool();
+    if (!gIsRemoteUri || isWayland) {
+        qWarning() << "不是云粘贴板或者是Wayland环境："<<gIsRemoteUri<<isWayland;
         return QStringList();
     }
 
@@ -470,6 +471,10 @@ void ClipboardThread::run ()
 {
     mIsMove = true;
     mUris.clear ();
+
+    bool isWayland = qApp->property("isWayland").toBool();
+    if (isWayland)
+        return;
 
     qDebug() << "ClipboardThread";
     do {
