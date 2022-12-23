@@ -43,7 +43,7 @@ static QString handleDuplicate(QString name)
 FileRenameOperation::FileRenameOperation(QString uri, QString newName)
 {
     m_uri = uri;
-    m_new_name = FileUtils::urlDecode(newName);
+    m_new_name = newName;
     m_old_name = FileUtils::getFileDisplayName(uri);
     QStringList srcUris;
     srcUris<<uri;
