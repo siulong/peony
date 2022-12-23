@@ -3,13 +3,15 @@
 #include <QMessageBox>
 #include <QThread>
 #include <QDebug>
+#include <volumeManager.h>
+#include <QMutexLocker>
 
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
 
 UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, QWidget *parent):
-        QDialog(parent), m_uri(uri),m_discControl(discControl)
+        QDialog(parent), m_uri(uri), m_check(false), m_discControl(discControl)
 {
 
     setAutoFillBackground(true);
@@ -68,6 +70,10 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     connect(m_okBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfFormat, Qt::UniqueConnection);
     connect(m_cancelBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfCancel, Qt::UniqueConnection);
     connect(m_discControl, &DiscControl::formatUdfFinished, this,  &UdfFormatDialog::slot_formatFinished, Qt::UniqueConnection);
+
+    //监控光驱设备是否被移除
+    auto volumeManager = Experimental_Peony::VolumeManager::getInstance();
+    connect(volumeManager,&Experimental_Peony::VolumeManager::volumeRemove,this,&UdfFormatDialog::slot_volumeDeviceRemove);
 }
 
 UdfFormatDialog::~UdfFormatDialog()
@@ -107,8 +113,9 @@ void UdfFormatDialog::slot_udfFormat()
     connect(m_thread, &QThread::started, m_discControl, [=](){
          m_discControl->formatUdfSync(m_discNameEdit->text());
     }, Qt::UniqueConnection);
-    connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
-    connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
+    //connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
+    //connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
+    connect(m_thread, &QThread::finished, this, &UdfFormatDialog::slot_FreeMemory, Qt::UniqueConnection);
     m_thread->start();
 }
 
@@ -137,6 +144,31 @@ void UdfFormatDialog::slot_formatFinished(bool successful, QString errorInfo)
 
     this->close();
 }
+
+void UdfFormatDialog::slot_volumeDeviceRemove(const QString dev)
+{
+    qDebug() << __func__ << __LINE__ << QString("[%1] device has been removed").arg(dev);
+    QMutexLocker locker(&m_mutex);
+    if (m_check) {
+        qDebug() << __LINE__ << "m_check =  " << m_check;
+        return ;
+    }
+    if (dev == m_discControl->discDevice()) {
+        qDebug() << __func__ << __LINE__ << QString("[%1] prepare to kill the formatting process").arg(dev);
+        m_discControl->setRemoved(true);
+        m_discControl->killFormatProcess();
+    }
+}
+
+void UdfFormatDialog::slot_FreeMemory()
+{
+    qDebug() << __LINE__ << "UDF format thread Finshed";
+    QMutexLocker locker(&m_mutex);
+    this->m_check = true;
+    this->m_discControl->deleteLater();  // 这个在前
+    this->m_thread->deleteLater(); // 这个在后
+}
+
 
 void UdfFormatDialog::closeEvent(QCloseEvent *e)
 {

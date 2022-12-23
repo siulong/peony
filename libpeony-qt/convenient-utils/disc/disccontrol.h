@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
-
+#include <QProcess>
 #include "peony-core_global.h"
 
 const QString DiscBusName = "org.freedesktop.UDisks2";
@@ -38,6 +38,12 @@ public:
     bool discCanAppend() const;             //是否可追加
     QString discMediaType() const;          //光盘介质类型
     QString discFilesystemType() const;     //光盘内部文件系统类型
+    QString discDevice() const;             //光驱设备号
+    bool isRunningFormat();                 //光盘是否进行格式化操作
+    void killFormatProcess();               //杀死不能正常结束的格式化进程
+    bool isRemoved();                       //光驱是否被移除了
+    void setRemoved(bool);                  //检测到光驱移除后，设置光驱被移除标识
+
     /** 行为接口如下 */
     void discUnmount();         //异步光盘卸载操作，下方有对应信号
     bool discUnmountSync();     //阻塞卸载光盘操作
@@ -84,6 +90,7 @@ private:
     bool mIsGood;               //是否损坏
     bool mIsReady;              //是否插入了光盘
     bool mIsBlank;              //是否是空盘
+    bool mIsRemove;             //是否被移除
     uint mProfile;              //scsi光盘介质类型
     bool mCanErase;             //是否可擦除(是否是RW盘)
     bool mCanAppend;            //是否可追加数据
@@ -99,6 +106,8 @@ private:
     QDBusInterface* mBlockInf;
     QDBusInterface* mPropertyInf;
     QDBusInterface* mFilesystemInf;
+
+    QProcess formatUdf;	//UDF格式化进程,目前主要用于<newfs_udf>
 };
 
 quint16 from2Byte(const uchar *str);

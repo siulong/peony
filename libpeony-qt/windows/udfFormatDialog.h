@@ -9,6 +9,7 @@
 #include <QProgressBar>
 #include <QGridLayout>
 #include <QCloseEvent>
+#include <QMutex>
 
 #include "peony-core_global.h"
 
@@ -24,6 +25,10 @@ public:
 
 private:
     QString m_uri;
+
+    bool m_check;
+    QMutex m_mutex;
+
     DiscControl *m_discControl = nullptr;
     QThread *m_thread = nullptr;
 
@@ -46,6 +51,9 @@ public Q_SLOTS:
     void slot_udfFormat();
     void slot_udfCancel();
     void slot_formatFinished(bool successful, QString errorInfo);
+    void slot_volumeDeviceRemove(const QString dev);
+    void slot_FreeMemory();
+
 
 protected:
     void closeEvent(QCloseEvent *) override;

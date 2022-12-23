@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QMap>
 #include <QDebug>
+#include <QThread>
 #include <QProcess>
 #include <QVariant>
 #include <QFileInfo>
@@ -15,6 +16,7 @@
 
 DiscControl::DiscControl(QString device, QObject* parent):QObject(parent){
     mDevice = device;
+    mIsRemove = false;
     //work();
 }
 
@@ -597,7 +599,7 @@ bool DiscControl::xorrisoFormatFullSync()
 {
     QString output;
     QStringList arg;
-    QProcess formatUdf;
+    QProcess formatUdf; //xorriso -format full在拔出光驱时会自动退出进程，不需主动杀死
 
     arg << "-dev" << mDevice << "-format" << "full";
     formatUdf.setProcessChannelMode(QProcess::MergedChannels);
@@ -605,8 +607,11 @@ bool DiscControl::xorrisoFormatFullSync()
     formatUdf.waitForFinished(-1);
     output = formatUdf.readAll();
     formatUdf.close();
-
-    if(output.contains("xorriso : aborting")){     //xorriso命令失败
+    qDebug() << __LINE__ << output;
+    if(output.contains("Failure to open device or file")) {
+            qInfo() << "["<<mDevice<<"] xorriso -format full failed: can't open device or file";
+            return false;
+    } else if(output.contains("xorriso : aborting")){     //xorriso命令失败
         qInfo() << "["<<mDevice<<"] xorriso -format full failed";
         return false;
     }
@@ -623,7 +628,7 @@ bool DiscControl::formatUdfByUdfclientSync(const QString &dvdRwLabel)
     QString output;
     QStringList arg;
     QString formatErr;
-    QProcess formatUdf;
+    //QProcess formatUdf;
 
     arg << "-P" << dvdRwLabel << "-L" << dvdRwLabel << mDevice;
     formatUdf.setProcessChannelMode(QProcess::MergedChannels);
@@ -632,6 +637,7 @@ bool DiscControl::formatUdfByUdfclientSync(const QString &dvdRwLabel)
     output = formatUdf.readAll();
     formatErr = formatUdf.error();
     formatUdf.close();
+    qDebug() << __LINE__ << output;
 
     if(output.contains("Disc is not properly formatted")){     //newfs_udf命令无法对空盘进行格式化
         qInfo() << "["<<mDevice<<"] preparation failed before udf format.";
@@ -655,6 +661,12 @@ bool DiscControl::formatUdfByUdfclientSync(const QString &dvdRwLabel)
         return false;
     } else if(output.contains("Can't handle multiple session rewritable discs yet")) {
         qInfo() << "[" <<mDevice << "] Can't handle multiple session rewritable discs yet";
+        return false;
+    } else if(output.contains("Input/output error")) {
+        qInfo() << "[" <<mDevice << "] Input/output error";
+        return false;
+    } else if(output.contains(("Failure to open device or file"))) {
+        qInfo() << "[" <<mDevice << "] Failure to open device or file";
         return false;
     }
 
@@ -681,7 +693,7 @@ bool DiscControl::formatUdfCdRwOrDvdPlusRw(const QString& udfLabel1)
             qInfo() << __LINE__<< "xorriso -format full: format DVD+RW success.";
         }
     }
-
+    qInfo() << __LINE__ <<"newfs_udf start exec....";
     if(!formatUdfByUdfclientSync(udfLabel1)) {
         qInfo() << __LINE__ << "newfs_udf: udf format DVD+RW fail.";
         QString errInfo = tr("DVD+RW udf format fail.");
@@ -952,6 +964,45 @@ QString DiscControl::discMediaType() const{
 QString DiscControl::discFilesystemType() const{
     return mFilesystemType;
 }
+
+QString DiscControl::discDevice() const
+{
+    return mDevice;
+}
+
+bool DiscControl::isRunningFormat()
+{
+    qDebug() << "formatUdf.state() = " << formatUdf.state();
+    if ((formatUdf.state() != QProcess::NotRunning) ){
+        qDebug() << __LINE__ << "format process is still running";
+        return true;
+    } else
+        return false;
+}
+
+void DiscControl::killFormatProcess()
+{
+    qDebug() << __LINE__ << "isRunningFormat() ==" << isRunningFormat();
+    if (isRunningFormat()){
+        if(mProfile & (MEDIA_CD_RW | MEDIA_DVD_PLUS_RW | MEDIA_DVD_RW_ALL) ){   //CD-RW DVD+RW
+            qDebug() << __FILE__ << "cd-rw or dvd+/-rw process of formatting UDFs will be killed";
+            formatUdf.kill();
+        }
+    }
+
+}
+
+bool DiscControl::isRemoved()
+{
+    return mIsRemove;
+}
+
+void DiscControl::setRemoved(bool value)
+{
+    qDebug() << "mIsRemove = " << mIsRemove;
+    mIsRemove = value;
+}
+
 
 /** 目前仅CD-RW DVD-RW DVD+RW支持udf
 */
