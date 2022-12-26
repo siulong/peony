@@ -155,6 +155,10 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
     t4->load("/usr/share/qt5/translations/qtbase_"+QLocale::system().name());
     QApplication::installTranslator(t4);
     //setStyle(Peony::ComplementaryStyle::getStyle());
+    QTranslator *sdkTrans = new QTranslator(this);
+    if (sdkTrans->load(":/translations/gui_" + QLocale::system().name() + ".qm")) {
+        QApplication::installTranslator(sdkTrans);
+    }
 
     setApplicationName(tr("peony-qt"));
 
