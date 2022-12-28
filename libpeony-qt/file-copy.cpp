@@ -123,8 +123,8 @@ void FileCopy::run ()
 {
     int                     syncTim = 0;
     GError*                 error = nullptr;
-    gssize                  readSize = 0;
-    gssize                  writeSize = 0;
+    gsize                  readSize = 0;
+    gsize                  writeSize = 0;
     GFileInputStream*       readIO = nullptr;
     GFileOutputStream*      writeIO = nullptr;
     GFile*                  srcFile = nullptr;
@@ -285,7 +285,8 @@ void FileCopy::run ()
 
             mPause.lock();
             // read data
-            readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
+            // readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
+            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, &readSize, mCancel ? mCancel : nullptr, &error);
             if (0 == readSize && nullptr == error) {
                 mStatus = FINISHED;
                 mPause.unlock();
@@ -299,7 +300,8 @@ void FileCopy::run ()
             mPause.unlock();
 
             // write data
-            writeSize = g_output_stream_write(G_OUTPUT_STREAM(writeIO), buf, readSize, mCancel ? mCancel : nullptr, &error);
+            // writeSize = g_output_stream_write(G_OUTPUT_STREAM(writeIO), buf, readSize, mCancel ? mCancel : nullptr, &error);
+            g_output_stream_write_all(G_OUTPUT_STREAM(writeIO), buf, readSize, &writeSize, mCancel ? mCancel : nullptr, &error);
             if (nullptr != error) {
                 qInfo() << "write destfile: " << mDestUri << " error: " << error->message;
                 detailError(&error);
