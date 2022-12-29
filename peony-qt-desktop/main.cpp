@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
 //    qInstallMessageHandler(messageOutput);
     qDebug() << "desktop start time in main:" <<PeonyDesktopApplication::peony_desktop_start_time;
 
+    QGuiApplication::setFallbackSessionManagementEnabled(true);
+    QGuiApplication::setQuitOnLastWindowClosed(false);
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))

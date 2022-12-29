@@ -66,7 +66,10 @@
 #include <QScreen>
 #include <QTimeLine>
 
+#include <QSessionManager>
 #include <KWindowSystem>
+#include <QX11Info>
+#include <X11/Xlib.h>
 
 #define KYLIN_USER_GUIDE_PATH "/"
 #define KYLIN_USER_GUIDE_SERVICE QString("com.kylinUserGuide.hotel_%1").arg(getuid())
@@ -184,6 +187,21 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
     //added for session call interactive
     QGuiApplication::setFallbackSessionManagementEnabled(true);
     QGuiApplication::setQuitOnLastWindowClosed(false);
+    // fix #145378, logout background displayment issue.
+    QObject::connect(this, &QGuiApplication::saveStateRequest, this, [=](QSessionManager &manager){
+        if (KWindowSystem::isPlatformX11()) {
+            if (manager.allowsErrorInteraction()) {
+                qInfo()<<"session about to logout, clear the root window background";
+                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+                XSync(QX11Info::display(), false);
+                manager.release();
+            } else {
+                qInfo()<<"session not support interaction or not x11 platform";
+                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+                XSync(QX11Info::display(), false);
+            }
+        }
+    });
 
     // global settings
     if (QGSettings::isSchemaInstalled (FONT_SETTINGS)) {
