@@ -1,4 +1,4 @@
-peony (3.22.0.0-ok2~1216) yangtze; urgency=medium
+peony (3.22.0.0-ok2~1230) yangtze; urgency=medium
 
   * 更新桌面的翻译文件
   * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
