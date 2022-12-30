@@ -340,6 +340,11 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                 }
                 iconName = m_fileInfo.get()->iconName();
 
+                QString type = FileUtils::getFileSystemType(m_fileInfo.get()->uri());
+                if (type.startsWith("iso")) {
+                    iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
+                }
+
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
                     iconName = "drive-harddisk";
