@@ -1632,10 +1632,13 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
         listWidget->insertItem(i, newItem);
     }
 
+    QLabel* hintLabel = new QLabel(tr("Forcibly pulling out the device may cause data\n loss or device exceptions!"));
+
     layout->addWidget(massageLabel);
     layout->addStretch(5);
     layout->addWidget(listWidget);
     layout->addStretch();
+    layout->addWidget(hintLabel);
     setLayout(layout);
 }
 
