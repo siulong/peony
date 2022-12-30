@@ -35,7 +35,8 @@ Build-Depends: debhelper-compat (=12),
                libkysdk-qtwidgets-dev,
                libkysdk-waylandhelper-dev,
                libkysdk-qtwidgets-dev,
-               libkysdk-sysinfo-dev
+               libkysdk-sysinfo-dev,
+               libkf5screen-dev
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Homepage: https://www.ukui.org/
