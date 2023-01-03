@@ -729,7 +729,3 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     painter->restore();
 }
-void IconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
-{
-    return initStyleOption(option, index);
-}
