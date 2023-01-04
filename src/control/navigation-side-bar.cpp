@@ -96,8 +96,8 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
     setProperty("doNotBlur", true);
     viewport()->setProperty("doNotBlur", true);
 
-    //auto delegate = new NavigationSideBarItemDelegate(this);
-    //setItemDelegate(delegate);
+    auto delegate = new NavigationSideBarItemDelegate(this);
+    setItemDelegate(delegate);
 
     installEventFilter(this);
 
@@ -540,7 +540,12 @@ QSize NavigationSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option
 {
     auto size = QStyledItemDelegate::sizeHint(option, index);
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，修改侧边栏项的高度--48px
-    //size.setHeight(36);
+    if(qApp->property("tabletMode").toBool()) {
+        size.setHeight(48);
+    } else {
+        size.setHeight(36);
+    }
+
     return size;
 }
 
