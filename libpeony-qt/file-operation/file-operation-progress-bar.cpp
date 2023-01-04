@@ -109,6 +109,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
 void FileOperationProgressBar::showProgress(ProgressBar &progress)
 {
     if (m_progress_size > 0) {
+        kdk::UkuiStyleHelper::self()->removeHeader(this);
         progress.show();
         show();
     }
@@ -162,8 +163,6 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
 
     setAutoFillBackground (true);
     setBackgroundRole (QPalette::Base);
-
-    kdk::UkuiStyleHelper::self()->removeHeader(this);
 
     setWindowOpacity(0.9999);
 
@@ -367,6 +366,7 @@ void FileOperationProgressBar::showDelay(int msec)
 {
     QTimer::singleShot(msec, this, [=] () {
         if (m_list_widget->count() > 0 && !m_error) {
+            kdk::UkuiStyleHelper::self()->removeHeader(this);
             show();
         }
     });
