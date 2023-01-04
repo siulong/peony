@@ -192,13 +192,13 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
         if (KWindowSystem::isPlatformX11()) {
             if (manager.allowsErrorInteraction()) {
                 qInfo()<<"session about to logout, clear the root window background";
-                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
-                XSync(QX11Info::display(), false);
+//                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+//                XSync(QX11Info::display(), false);
                 manager.release();
             } else {
                 qInfo()<<"session not support interaction or not x11 platform";
-                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
-                XSync(QX11Info::display(), false);
+//                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+//                XSync(QX11Info::display(), false);
             }
         }
     });
