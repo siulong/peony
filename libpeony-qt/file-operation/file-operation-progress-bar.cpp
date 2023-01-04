@@ -116,6 +116,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
 void FileOperationProgressBar::showProgress(ProgressBar &progress)
 {
     if (m_progress_size > 0) {
+        kdk::UkuiStyleHelper::self()->removeHeader(this);
         progress.show();
         show();
     }
@@ -400,6 +401,7 @@ void FileOperationProgressBar::showDelay(int msec)
 {
     QTimer::singleShot(msec, this, [=] () {
         if (m_list_widget->count() > 0 && !m_error) {
+            kdk::UkuiStyleHelper::self()->removeHeader(this);
             show();
         }
     });
