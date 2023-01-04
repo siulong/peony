@@ -1,3 +1,10 @@
+peony (3.22.0.0-ok3~0104) yangtze; urgency=medium
+
+  * close #I64KZQ【文件管理器】文件管理器右键属性窗口有两层标题栏,修改复制窗口出现两层标题
+  * close #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 04 Jan 2023 17:52:11 +0800
+
 peony (3.22.0.0-ok2~1230) yangtze; urgency=medium
 
   * 更新桌面的翻译文件
