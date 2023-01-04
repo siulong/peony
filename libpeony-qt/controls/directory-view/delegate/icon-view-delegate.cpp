@@ -67,6 +67,7 @@ IconViewDelegate::IconViewDelegate(QObject *parent) : QStyledItemDelegate (paren
 {
     m_styled_button = new QPushButton;
     m_isStartDrag = false;
+    m_watcher = new QFileSystemWatcher;
 }
 
 IconViewDelegate::~IconViewDelegate()
@@ -198,6 +199,24 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+
+            auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+            auto item = model->itemFromIndex(index);
+            QString itemPath = item->info().get()->filePath();
+            m_watcher->addPath(itemPath);
+            connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, [=](){
+                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+                    Q_EMIT updateIndexWidget(option);
+                }
+            });
+            connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=](){
+                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+                    Q_EMIT updateIndexWidget(option);
+                }
+            });
+            connect(indexWidget, &IconViewIndexWidget::destroyed, this, [=](){
+                m_watcher->removePath(itemPath);
+            });
         }
     }
 

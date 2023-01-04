@@ -130,6 +130,29 @@ IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const
 
     m_option.rect.setHeight(fixedHeight - y_delta);
 
+    connect(m_delegate, &IconViewDelegate::updateIndexWidget, this, [=](const QStyleOptionViewItem &option){
+        m_option = option;
+        m_delegate->initStyleOption(&m_option, m_index);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+        m_option.features.setFlag(QStyleOptionViewItem::WrapText);
+#else
+        m_option.features |= QStyleOptionViewItem::WrapText;
+#endif
+        m_option.textElideMode = Qt::ElideNone;
+
+        auto opt = m_option;
+        opt.rect.moveTo(0, 0);
+
+        auto iconExpectedSize = m_delegate->getView()->iconSize();
+        QRect iconRect = QApplication::style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        auto y_delta = iconExpectedSize.height() - iconRect.height();
+        opt.rect.moveTo(opt.rect.x(), opt.rect.y() + y_delta);
+        m_option = opt;
+
+        m_option.rect.setHeight(fixedHeight - y_delta);
+        update();
+    });
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
     connect(qApp, &QApplication::fontChanged, this, [=]() {
         m_delegate->getView()->setIndexWidget(m_index, nullptr);
