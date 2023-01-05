@@ -613,9 +613,18 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     //NOTE:
     //do not allow drop on it self.
     auto urls = data->urls();
+    if (urls.isEmpty())
+        return false;
+
+    bool hasPeonyEncodedUris = false;
+    if (data->hasFormat("peony-qt/encoded-uris")) {
+        if (!data->data("peony-qt/encoded-uris").isEmpty()) {
+            hasPeonyEncodedUris = true;
+        }
+    }
 
     QStringList srcUris;
-    if (data->hasFormat("peony-qt/encoded-uris")) {
+    if (hasPeonyEncodedUris) {
         srcUris = QString(data->data("peony-qt/encoded-uris")).split(" ");
         for (QString uri : srcUris) {
             if (uri.startsWith("recent://"))
