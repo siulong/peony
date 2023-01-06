@@ -824,7 +824,8 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
         {
             //all window accessed mount path should goto self top path，related to bug#104551
             if((Peony::GlobalSettings::getInstance()->getValue("LAST_FOCUS_PEONY_WINID") == dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()
-                ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()))
+                ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId())
+                ||QApplication::topLevelWidgets().contains(this->topLevelWidget()))
                     && index == currentIndex
                     && (decodedSrcUri == uri || Peony::FileUtils::isRemoteServerUri(decodedSrcUri))){/* 远程服务进入内部目录后卸载,link to bug#98623 */
                 qDebug()<<"sourceUri:"<<sourceUri<<"change to self top path"<<" index:"<<currentIndex;
