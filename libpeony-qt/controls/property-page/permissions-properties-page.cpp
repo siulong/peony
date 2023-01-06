@@ -149,6 +149,7 @@ void PermissionsPropertiesPage::initTableWidget()
     m_table->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
 
     m_table->setColumnWidth(0, 150);
+    m_table->setColumnWidth(1, 75);
     m_table->setColumnWidth(2, 120);
     m_layout->addWidget(m_table);   
 }
