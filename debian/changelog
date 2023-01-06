@@ -1,3 +1,10 @@
+peony (3.22.0.0-ok3~0106) yangtze; urgency=medium
+
+  * close #I64SM9 修复重命名U盘后文件管理器退出问题
+  * close #I65YUO 手指触摸拖拽文件到桌面异常
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 06 Jan 2023 11:43:25 +0800
+
 peony (3.22.0.0-ok3~0104) yangtze; urgency=medium
 
   * close #I64KZQ【文件管理器】文件管理器右键属性窗口有两层标题栏,修改复制窗口出现两层标题
