@@ -679,12 +679,15 @@ PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidge
     this->tabBar()->setAttribute(Qt::WA_Hover, true);
     auto manager = PropertiesWindowPluginManager::getInstance();
     auto names = manager->getFactoryNames();
+    int index = 0;
     for (auto name : names) {
         auto factory = manager->getFactory(name);
         if (factory->supportUris(uris)) {
             auto tabPage = factory->createTabPage(uris);
             tabPage->setParent(this);
             addTab(tabPage, factory->name());
+            setTabToolTip(index, factory->name());
+            ++index;
 
             (qobject_cast<PropertiesWindow *>(parent))->addTabPage(tabPage);
         }
