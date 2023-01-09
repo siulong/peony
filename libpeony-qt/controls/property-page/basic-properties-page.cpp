@@ -428,6 +428,7 @@ void BasicPropertiesPage::loadPartOne()
     if(fileUri.startsWith("filesafe:///") && (fileUri.remove("filesafe:///").indexOf("/") == -1)) {
         disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
         m_displayNameEdit->setReadOnly(true);
+        m_locationEdit->setDisabled(true);
     }
 }
 
