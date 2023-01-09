@@ -52,6 +52,7 @@
 #include <QPushButton>
 
 #include "clipboard-utils.h"
+#include "global-settings.h"
 
 #include <QTextLayout>
 #include <QFileInfo>
@@ -402,7 +403,20 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setMinimumSize(sizeHint(option, index).width(), 54);
 
-    edit->setText(index.data(Qt::DisplayRole).toString());
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto displayName = index.data(Qt::UserRole + 1).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setMaxLengthLimit(255 - suffix.length());
+    }
+    edit->setText(displayString);
+    edit->blockSignals(false);
+
     edit->setAlignment(Qt::AlignCenter);
     //NOTE: if we directly call this method, there will be
     //nothing happen. add a very short delay will ensure that

@@ -275,6 +275,9 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             }
             return QVariant(item->m_info->displayName());
         }
+        case Qt::UserRole + 1: {
+            return item->m_info->displayName();
+        }
         default:
             return QVariant();
         }
