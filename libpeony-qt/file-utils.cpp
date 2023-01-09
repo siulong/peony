@@ -1192,6 +1192,15 @@ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
     return iconName;
 }
 
+QString FileUtils::handleSpecialSymbols(const QString &displayName)
+{
+    QString tmpStr = displayName;
+    if (displayName.contains("&")) {
+        tmpStr = tmpStr.replace("&", "&&");
+    }
+    return tmpStr;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";

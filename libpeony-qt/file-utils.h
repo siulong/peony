@@ -112,6 +112,7 @@ public:
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
     static void   saveCreateTime (const QString& url);
     static gint64 getCreateTimeOfMicro (const QString& url);
+    static QString handleSpecialSymbols(const QString &displayName);
 private:
     FileUtils();
 };

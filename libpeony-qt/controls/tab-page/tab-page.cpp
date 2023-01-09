@@ -85,6 +85,9 @@ void TabPage::addPage(const QString &uri)
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
 
+    if (displayName.contains("&")) {
+        displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+    }
     addTab(container,
            QIcon::fromTheme(FileUtils::getFileIconName(uri), QIcon::fromTheme("folder")),
            displayName);

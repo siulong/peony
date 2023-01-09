@@ -129,6 +129,9 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 //            int  charWidth = fontMetrics().averageCharWidth();
 //            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
 //        }
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabData(index, uri);
@@ -148,6 +151,9 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
     if (!uri.isNull()) {
         //FIXME: replace BLOCKING api in ui thread.
         auto displayName = Peony::FileUtils::getFileDisplayName(uri);
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         addTab(displayName);        
         setTabData(count() - 1, uri);
         if (jumpToNewTab)
