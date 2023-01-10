@@ -33,13 +33,13 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     m_discTypeEdit->setReadOnly(true);
     m_discTypeEdit->setEnabled(false);
     m_mainLayout->addWidget(m_discTypeLabel, 1, 1, 1, 2);
-    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 8);
+    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 6);
 
     m_discNameLabel = new QLabel;
     m_discNameLabel->setText(tr("Device Name:"));
     m_discNameEdit = new QLineEdit;
     m_mainLayout->addWidget(m_discNameLabel, 2, 1, 1, 2);
-    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 8);
+    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 6);
 
     m_progress = new QProgressBar;
     m_progress->setMinimum(0);
