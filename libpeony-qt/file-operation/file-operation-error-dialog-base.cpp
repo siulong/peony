@@ -44,7 +44,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     kdk::UkuiStyleHelper::self()->removeHeader(this);
 
     QVBoxLayout* mainLayout = new QVBoxLayout (this);
-    mainLayout->setContentsMargins (16, 4, 8, 16);
+    mainLayout->setContentsMargins (16, 5, 5, 16);
 
     QHBoxLayout* headerLayout = new QHBoxLayout;
 
@@ -71,7 +71,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     mainLayout->addLayout (headerLayout);
 
     QHBoxLayout* contentLayout = new QHBoxLayout;
-    contentLayout->setContentsMargins (6, 0, 0, 0);
+    contentLayout->setContentsMargins (6, 0, 3, 0);
     contentLayout->setAlignment (Qt::AlignTop | Qt::AlignLeft);
 
     m_tipimage = new QLabel(this);
@@ -107,7 +107,8 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_buttonRight->setSpacing(16); /* 按设计稿设置button的space,link to bug#139766 */
 
     QHBoxLayout* buttonLayout = new QHBoxLayout;
-    buttonLayout->setContentsMargins (0, 0, 13, 3);
+    buttonLayout->setContentsMargins (0, 0, 16, 3);
+    m_buttonLeft->addStretch();
 
     buttonLayout->addLayout (m_buttonLeft);
     buttonLayout->addStretch ();
@@ -171,6 +172,7 @@ QPushButton *Peony::FileOperationErrorDialogBase::addButton(QString name)
 {
     if (!name.isNull () && !name.isEmpty ()) {
         QPushButton* b = new QPushButton(name);
+        b->setMinimumWidth(96);
         m_buttonRight->addWidget (b, Qt::AlignRight | Qt::AlignVCenter);
         return b;
     }
