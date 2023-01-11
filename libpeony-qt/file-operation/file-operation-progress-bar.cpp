@@ -575,7 +575,11 @@ void MainProgressBar::paintHeader(QPainter &painter)
     painter.drawPixmap (iconArea, QIcon::fromTheme("system-file-manager").pixmap (iconSize, iconSize)); //(textArea, Qt::Ali | Qt::AlignHCenter, m_title);
 
     // paint title
+    if("bo_CN" == QLocale::system().name()){
+       m_header_height = 30 + 15;
+    }
     QRect textArea (m_text_area_x + iconSize, 0, m_title_width, m_header_height);
+
     QFont font = painter.font();
 //    font.setPixelSize(14);
     painter.setFont(font);
