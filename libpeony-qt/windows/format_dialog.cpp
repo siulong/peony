@@ -394,9 +394,9 @@ void Format_Dialog::slot_format(bool enable)
         full_clean = mEraseCkbox->isChecked();
         //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
         if(full_clean){
-            //完全擦除方式格式化，预估为半小时，1秒更新一次
+            //完全擦除方式格式化，从udisksjob获取进度，1秒更新一次
             mTimer->setInterval(1000);
-            m_total_predict = 1800;
+            m_total_predict = -1;
         }else{
             //快速格式化，预估时间为75S,0.5秒更新一次
             mTimer->setInterval(500);
@@ -603,6 +603,7 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
     }
     if(jobs!=NULL)
     {
+        mProgress->setRange(0, 100);
         UDisksJob *job =(UDisksJob *)jobs->data;
         if(udisks_job_get_progress_valid (job))
         {
@@ -616,6 +617,8 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
 
         g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
         g_list_free (jobs);
+    } else {
+        mProgress->setRange(0, 0);
     }
 
     return 0;
@@ -649,27 +652,23 @@ void Format_Dialog::formatloop(){
     if(nullptr != devName)
     strcpy(name_dev,devName.toUtf8().constData());
 
-    double pre = (get_format_bytes_done(name_dev) * 100);
-    double cost = m_cost_seconds * 100/m_total_predict;
-    if (cost > 100)
-        cost = 100;
-
-    if (m_simulate_progress >= pre){
-        //fix waiting in 100% issue
-        if (m_simulate_progress < 99)
-           m_simulate_progress += (cost - pre)/100;
-    }
-    else{
+    if (m_total_predict > 0) {
+        double cost = m_cost_seconds * 100.0/m_total_predict;
+        if (cost >= 99) {
+            cost = 99;
+            mTimer->stop();
+        }
+        m_simulate_progress = cost;
+        qDebug()<<"get format 0.5s timer count"<<cost;
+    } else {
+        double pre = (get_format_bytes_done(name_dev) * 100);
         m_simulate_progress = pre;
+        qDebug()<<"get erase-format progress"<<pre;
     }
 
     //防止看起来回退现象，进度值比之前还小了
     if (m_simulate_progress < m_before_progress)
         m_simulate_progress = m_before_progress;
-
-
-    qDebug() << "formatloop predict and cost:" <<pre <<cost
-             <<m_simulate_progress <<m_cost_seconds <<b_finished;
 
     m_before_progress = m_simulate_progress;
 //    sprintf(prestr,"%.1f",m_simulate_progress);
