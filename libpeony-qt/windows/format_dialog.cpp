@@ -41,6 +41,8 @@
 #include <QInputDialog>
 #include <QValidator>
 
+#include <QTime>
+
 using namespace  Peony;
 static bool b_finished = false;
 static bool b_failed = false;
@@ -202,6 +204,9 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 12, Qt::AlignLeft);
 
     mProgress = new QProgressBar;
+    // show progress bar tooltip when inactived
+    this->setAttribute(Qt::WA_AlwaysShowToolTips);
+    mProgress->setMouseTracking(true);
     mProgress->setMinimum(0);
     mProgress->setValue (0);
     mProgress->setMaximum(100);
@@ -643,7 +648,34 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
         UDisksJob *job =(UDisksJob *)jobs->data;
         if(udisks_job_get_progress_valid (job))
         {
+            setProperty("hasProgress", true);
                 double res = udisks_job_get_progress(job);
+                guint64 rate = udisks_job_get_rate(job);
+                guint64 expect_end_time = udisks_job_get_expected_end_time(job);
+                guint64 time_left = expect_end_time - g_get_real_time();
+                if (rate > 0) {
+                    g_autofree gchar* size_format = g_format_size(rate);
+                    QString speed = size_format;
+                    bool showMinutes = false;
+                    bool showHours = false;
+                    auto seconds = time_left/1000000;
+                    auto minutes = seconds/60;
+                    if (minutes) {
+                        showMinutes = true;
+                        seconds = seconds%60;
+                    }
+                    auto hours = minutes/60;
+                    if (hours) {
+                        showHours = true;
+                        minutes = minutes%60;
+                    }
+
+                    QTime t(hours, minutes, seconds);
+                    auto timeString = t.toString();
+                    mProgress->setToolTip(tr("%1/sec, %2 remaining.").arg(speed).arg(timeString.isEmpty()? tr("over one day"): timeString));
+                } else {
+                    mProgress->setToolTip(tr("getting progress..."));
+                }
 
                 g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
                 g_list_free (jobs);
@@ -654,7 +686,9 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
         g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
         g_list_free (jobs);
     } else {
-        mProgress->setRange(0, 0);
+        if (!property("hasProgress").toBool()) {
+            mProgress->setRange(0, 0);
+        }
     }
 
     return 0;
@@ -939,6 +973,7 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
 
     if(end_flag == 1){
         b_finished = true;
+        data->dl->setProperty("isFinished", true);
         data->dl->mProgress->setValue(100);
 //        data->dl->ui->label_process->setText("100%");
         data->dl->format_ok_dialog();
