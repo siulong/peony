@@ -908,11 +908,11 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
     }
     else
     {
-        UDisksClient* client = udisks_client_new_sync(NULL, NULL);
+        g_autoptr (UDisksClient) client = udisks_client_new_sync(NULL, NULL);
         if (client) {
-            UDisksObject* udiskObj = getObjectFromBlockDevice(client, data->dl->mVolumeName.toStdString().c_str());
+            g_autoptr (UDisksObject) udiskObj = getObjectFromBlockDevice(client, data->dl->mVolumeName.toStdString().c_str());
             if (udiskObj) {
-                UDisksBlock* diskBlock = udisks_object_get_block (udiskObj);
+                g_autoptr (UDisksBlock) diskBlock = udisks_object_get_block (udiskObj);
                 if (diskBlock) {
                     curName = udisks_block_get_id_label (diskBlock);
                     qDebug () << data->dl->mVolumeName << "  --  " << data->filesystem_name << "  --  " << curName;
