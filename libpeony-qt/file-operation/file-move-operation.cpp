@@ -642,13 +642,21 @@ void FileMoveOperation::copyRecursively(FileNode *node)
 
     char *dest_file_uri = g_file_get_uri(destFile.get()->get());
     node->setDestUri(dest_file_uri);
-    g_free(dest_file_uri);
     m_current_src_uri = node->uri();
-    GFile *dest_parent = g_file_get_parent(destFile.get()->get());
-    char *dest_dir_uri = g_file_get_uri(dest_parent);
-    m_current_dest_dir_uri = dest_dir_uri;
-    g_free(dest_dir_uri);
-    g_object_unref(dest_parent);
+    if (relativePath.isEmpty()) {
+        qDebug() << "node relative path is empty";
+        if (m_current_src_uri.startsWith("filesafe:///")) {
+            m_current_dest_dir_uri = dest_file_uri;
+            m_current_dest_dir_uri = FileUtils::urlEncode(m_current_dest_dir_uri);
+        }
+    } else {
+        GFile *dest_parent = g_file_get_parent(destFile.get()->get());
+        char *dest_dir_uri = g_file_get_uri(dest_parent);
+        m_current_dest_dir_uri = dest_dir_uri;
+        g_free(dest_dir_uri);
+        g_object_unref(dest_parent);
+    }
+    g_free(dest_file_uri);
     QString destName = "";
 
 fallback_retry:
