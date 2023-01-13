@@ -26,9 +26,11 @@
 
 #include "file-watcher.h"
 #include "file-info.h"
+#include "file-utils.h"
 
 #include "global-settings.h"
 #include "generic-thumbnailer.h"
+#include "volumeManager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -77,6 +79,19 @@ Peony::ThumbnailJob::~ThumbnailJob()
 
 void Peony::ThumbnailJob::run()
 {
+    /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
+    {
+        auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
+        QMutexLocker lk(mutex);
+        auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
+        if(occupiedVolume){
+            QString volumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(occupiedVolume->device());
+            qDebug()<<occupiedVolume->device()<<volumeUri<<m_uri;
+            if(m_uri.startsWith(volumeUri))
+                return;
+        }
+    }//end
+
     if (!parent())
         return;
 
@@ -84,14 +99,13 @@ void Peony::ThumbnailJob::run()
     if (qApp->topLevelWindows().count() == 0) {
         return;
     }
-
-    if (type() == Invalid && !m_uri.endsWith(".desktop")) {
+    if (type() == Invalid && !m_uri.endsWith(".desktop")|| !Peony::FileUtils::isFileExsit(m_uri)) {
         return;
     }
 
     runCount++;
 
-    qDebug()<<"job start, current end:"<<endCount<<"current start request:"<<runCount;
+    qDebug()<<"job start, current end:"<<endCount<<"current start request:"<<runCount<<"uri:"<<m_uri;
 
     setParent(nullptr);
     auto strongPtr = m_watcher.lock();

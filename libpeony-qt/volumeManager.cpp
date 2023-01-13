@@ -27,6 +27,7 @@
 #include<QMessageBox>
 #include<QProcess>
 #include <QInputDialog>
+#include <QTimer>
 #include"sync-thread.h"
 #include "file-utils.h"
 
@@ -130,6 +131,23 @@ bool VolumeManager::isEmptyDrive(const Volume &volume)
     return false;
 }
 
+static void forceUnmountOfOccupiedDeviceCb(GMount* gmount, GAsyncResult* result, VolumeManager *pThis) {
+
+    GError *err = nullptr;
+    g_mount_unmount_with_operation_finish(gmount, result, &err);
+    if (err) {
+        QMessageBox::warning(nullptr, QObject::tr("Force unmount failed"), QObject::tr("Error: %1\n").arg(err->message));
+        g_error_free(err);
+    } else {        
+        QMutexLocker lk(pThis->getMutex());
+        if(pThis->getOccupiedVolume() && (pThis->getOccupiedVolume()->canEject() || pThis->getOccupiedVolume()->canStop())){
+            qDebug()<<"Force eject Operation:"<<pThis->getOccupiedVolume()->device()<<pThis->getOccupiedVolume();
+            pThis->getOccupiedVolume()->eject(G_MOUNT_UNMOUNT_FORCE);
+        }
+
+    }
+}
+
 VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
 {
     initManagerInfo();
@@ -141,8 +159,26 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<std::map<QString,QIcon> >("std::map<QString,QIcon>&");
     m_occupiedAppsInfoThread = new GetOccupiedAppsInfoThread();
     connect(m_occupiedAppsInfoThread, &GetOccupiedAppsInfoThread::signal_occupiedAppInfo, this, [=](std::map<QString,QIcon>& occupiedAppMap, const QString& message){
-        if(!occupiedAppMap.size()){
-            QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
+        if(1 == occupiedAppMap.size() && occupiedAppMap.count("ffmpeg")){/* 过滤应用，只有ffmpeg占用时可以强制弹出 */
+            {
+                QMutexLocker lk(&m_mutex);
+                if(!m_occupiedVolume)
+                    return;
+
+                qDebug()<<"Force unmount Operation: "<<m_occupiedVolume->device();
+                g_mount_unmount_with_operation(m_occupiedVolume->getGMount(), G_MOUNT_UNMOUNT_FORCE, nullptr, nullptr,
+                                               GAsyncReadyCallback(forceUnmountOfOccupiedDeviceCb), this);
+
+                return;
+            }
+        }
+
+        if(0 == occupiedAppMap.size()){
+            QTimer::singleShot(500,[=](){
+                QMutexLocker lk(&m_mutex);
+                m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
+            });
+            //QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
         }else{
             MessageDialog* dlg = new MessageDialog();
             dlg->init(occupiedAppMap, message);
@@ -151,7 +187,6 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
         }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
-
 }
 
 VolumeManager::~VolumeManager(){
@@ -163,6 +198,7 @@ VolumeManager::~VolumeManager(){
         g_signal_handler_disconnect(m_volumeMonitor, m_volumeRemoveHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveConnectHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveDisconnectHandle);
+        g_signal_handler_disconnect(m_volumeMonitor, m_mountPreUnmountHandle);
         g_object_unref(m_volumeMonitor);
         m_volumeMonitor = nullptr;
     }
@@ -176,6 +212,13 @@ VolumeManager::~VolumeManager(){
         }
         m_volumeList->clear();
         delete m_volumeList;
+    }
+    {
+        QMutexLocker lk(&m_mutex);
+        if(m_occupiedVolume){
+            delete m_occupiedVolume;
+            m_occupiedVolume = nullptr;
+        }
     }
 }
 
@@ -191,6 +234,7 @@ void VolumeManager::initManagerInfo(){
     m_volumeChangeHandle = g_signal_connect(m_volumeMonitor,"volume-changed",G_CALLBACK(volumeChangeCallback),this);
     m_driveConnectHandle = g_signal_connect(m_volumeMonitor,"drive-connected",G_CALLBACK(driveConnectCallback),this);
     m_driveDisconnectHandle = g_signal_connect(m_volumeMonitor,"drive-disconnected",G_CALLBACK(driveDisconnectCallback),this);
+    m_mountPreUnmountHandle = g_signal_connect(m_volumeMonitor,"mount-pre-unmount",G_CALLBACK(mountPreUnmountCallback),this);
 }
 
 /*gparted应用是否打开*/
@@ -445,6 +489,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->mountRemove(mountPoint);
     }
 
+
     delete mountItem;
 }
 
@@ -540,6 +585,23 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     g_object_unref(rootFile);
 }
 
+void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
+{
+    if(!pThis->m_volumeList)
+        return;
+
+    GMount* gMount = (GMount*)g_object_ref(gmount);
+    GVolume* gVolume = (GVolume*)g_object_ref(g_mount_get_volume(gMount));
+    Volume* volume = new Volume(gVolume);
+    if(pThis->m_volumeList->contains(volume->device())){
+        {
+            QMutexLocker lk(pThis->getMutex());
+            pThis->m_occupiedVolume = volume;
+            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume;
+        }
+    }
+}
+
 void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                                          GDrive *gdrive,VolumeManager *pThis)
 {
@@ -608,6 +670,13 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
         //非暴力拔出的情况,如正常弹出(在其他回调内部处理)
         //此时的先后顺序：1、mount-removed 2、volume-removed 3、drive-connnected(拔出才会触发)
     }*/
+    {
+        QMutexLocker lk(pThis->getMutex());
+        if(pThis->m_occupiedVolume){
+            delete pThis->m_occupiedVolume;
+            pThis->m_occupiedVolume = nullptr;
+        }
+    }
 }
 
 VolumeManager* VolumeManager::getInstance(){
@@ -1226,7 +1295,7 @@ static GAsyncReadyCallback eject_cb(GDrive *gDrive, GAsyncResult *result, QStrin
     bool successed = g_drive_eject_with_operation_finish(gDrive, result, &error);
     qDebug()<<"The result that drive eject with operation finish:"<<successed;
     if (error) {
-        qDebug()<<error->message;
+        qDebug()<<"error code of drive stop:"<<error->code<<", error message:"<<error->message;
         if(targetUri){
             delete targetUri;
             targetUri = nullptr;
@@ -1266,6 +1335,7 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
         if((NULL != error) && (G_IO_ERROR_FAILED_HANDLED != error->code)){
             // @note 这里不要拼接字符串，多次弹出会崩溃
 //            QString errorMsg = QObject::tr("Unable to eject").arg(pThis->name());
+            qDebug()<<"error code of drive stop:"<<error->code<<", error message:"<<error->message;
             if(G_IO_ERROR_BUSY == error->code){/* 卷被占用时，防止二次弹出信息提示框 */
                 return;
             }
@@ -1294,6 +1364,7 @@ void Drive::eject(GMountUnmountFlags ejectFlag)
     // drive will do operation without user interaction.
     auto mount_op = VolumeManager::getInstance()->getOccupiedInfoThread()->getMountOp();
     QString *targetUri = new QString(VolumeManager::getInstance()->getTargetUriFromUnixDevice(m_device));
+    qDebug()<<"eject flag: "<<ejectFlag<<m_device;
     if(m_canEject && !m_device.startsWith("/dev/sd")){ /* U盘使用安全移除 */
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
@@ -1457,6 +1528,11 @@ GVolume* Volume::getGVolume() const{
 GDrive *Volume::getGDrive() const
 {
     return m_gdrive;
+}
+
+GMount *Volume::getGMount() const
+{
+    return m_gMount;
 }
 
 bool Volume::canEject() const{
@@ -1657,6 +1733,7 @@ void GetOccupiedAppsInfoThread::run()
 
 void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char *message, GArray *processes, char **choices, gpointer user_data)
 {
+    qDebug()<<"len of processes:"<<processes->len;
     std::map<QString,QIcon> occupiedAppMap;
     for(int i=0; i< processes->len; i++)
     {
@@ -1669,10 +1746,17 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
         QString iconName = "application-x-executable";
         if(application=="bash")
             iconName = "utilities-terminal";
+
+        if (application == "ffmpeg") {
+            QProcess p;
+            p.start(QString("kill -9 %1").arg(pid));
+            p.waitForFinished(-1);
+            p.close();
+        }
+
         auto icon = QIcon::fromTheme(iconName);
         occupiedAppMap.insert(std::pair<QString, QIcon>(application,icon));
-        qDebug()<<application;
-
+        qDebug()<<application<<pid;
     }
 
     auto thread = static_cast<GetOccupiedAppsInfoThread *>(user_data);
