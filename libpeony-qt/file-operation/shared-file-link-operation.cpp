@@ -69,8 +69,11 @@ void SharedFileLinkOperation::run()
 void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
 {
     m_dest_uri += ".desktop";
-    QUrl url  = m_dest_uri;
+    QUrl url(m_dest_uri);
     QString desktopfp =  url.path();
+    if (!url.fragment().isEmpty()) {
+        desktopfp = url.path() + "#" + url.fragment();
+    }
 
     g_autoptr (GError) error = nullptr;
     GKeyFile* keyfile = g_key_file_new ();
@@ -79,7 +82,7 @@ void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TYPE, "Application");
 
     QUrl srcUrl = srcUri;
-    QString exec = "peony " + srcUri;
+    QString exec = "peony " + FileUtils::urlDecode(srcUri);
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, exec.toUtf8().constData());
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, "folder-remote");
 
@@ -98,7 +101,9 @@ void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
     if (keyfile) {
         g_key_file_free(keyfile);
     }
-    g_autoptr(GFile) destFile = g_file_new_for_uri(m_dest_uri.toUtf8().constData());
+
+    QString destUri = FileUtils::urlEncode(m_dest_uri);
+    g_autoptr(GFile) destFile = g_file_new_for_uri(destUri.toUtf8().constData());
     if (destFile) {
         mode_t mod = S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP;
         g_file_set_attribute_uint32(destFile, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
