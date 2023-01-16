@@ -114,6 +114,7 @@ public:
     void resetExtendItemInfo();
     void clearItemRect();
     bool isFull();
+    void clearExtendItemPos();
 
 private:
     QRect getScreenArea(QScreen* screen);
@@ -247,7 +248,7 @@ protected:
     const QRect getBoundingRect();
 
     void relayoutExsitingItems(const QStringList &uris);
-    void relayoutExsitingItems();
+    void checkItemsOver();
     void dragToOtherScreen(QDropEvent *e);
 
 private:

@@ -41,6 +41,7 @@
 #include "desktop-icon-view.h"
 #include "global-settings.h"
 #include "sound-effect.h"
+#include "desktop-icon-view-delegate.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -168,9 +169,16 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             auto metaInfoPos = view->getFileMetaInfoPos(uri);
+            QSize iconSize;
+            if (itemRectHash.isEmpty()) {
+                auto delegate = qobject_cast<DesktopIconViewDelegate *>(view->itemDelegate());
+                iconSize = delegate->sizeHint(QStyleOptionViewItem(), QModelIndex());
+            } else {
+                iconSize = itemRectHash.values().first().size();
+            }
             if (metaInfoPos.x() >= 0) {
                 // check if overlapped, it might happend whild drag out and in desktop view.
-                auto indexRect = QRect(metaInfoPos, itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
+                auto indexRect = QRect(metaInfoPos, iconSize);
                 if (notEmptyRegion.intersects(indexRect)) {
 
                     // move index to closest empty grid.
@@ -219,7 +227,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             // aligin exsited rect
-            int marginTop = notEmptyRegion.boundingRect().top();
+            int marginTop = notEmptyRegion.isEmpty()? view->getViewRect().top() : notEmptyRegion.boundingRect().top();
             while (marginTop - grid.height() >= 0) {
                 marginTop -= grid.height();
             }
@@ -229,7 +237,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 marginLeft -= grid.width();
             }
 
-            auto indexRect = QRect(QPoint(marginLeft, marginTop), itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
+            auto indexRect = QRect(QPoint(marginLeft, marginTop), iconSize);
             if (notEmptyRegion.intersects(indexRect)) {
 
                 // move index to closest empty grid.
