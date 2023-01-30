@@ -231,7 +231,20 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
 }
 
 #if USE_STARTUP_INFO
+static void
+dummy_child_watch (GPid     pid,
+                   gint     status,
+                   gpointer user_data)
+{
+  /* Nothing, this is just to ensure we don't double fork
+   * and break pkexec:
+   * https://bugzilla.gnome.org/show_bug.cgi?id=675789
+   */
+}
+
 void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
+    g_child_watch_add(pid, dummy_child_watch, NULL);
+
     KStartupInfoId* startInfoId = static_cast<KStartupInfoId*>(user_data);
     if (!startInfoId)
         return;
@@ -402,7 +415,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
     if (isDesktopFileAction() && !forceWithArg) {
 #if USE_STARTUP_INFO
         needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), nullptr, nullptr,
-                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr,
+                                                  GSpawnFlags(G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD), nullptr, nullptr,
                                                   pid_callback, (gpointer)startInfoId, nullptr);
 #elif GLIB_CHECK_VERSION(2, 60, 0)
         g_app_info_launch_uris_async(m_app_info, nullptr,
@@ -416,8 +429,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         char *uri = g_strdup(m_uri.toUtf8().constData());
         l = g_list_prepend(l, uri);
 #if USE_STARTUP_INFO
-        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), l, nullptr,
-                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr,
+        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), l, nullptr, 
+                                                  GSpawnFlags(G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD), nullptr, nullptr,
                                                   pid_callback, (gpointer)startInfoId, nullptr);
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
 #elif GLIB_CHECK_VERSION(2, 60, 0)
