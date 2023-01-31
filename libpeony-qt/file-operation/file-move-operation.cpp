@@ -1153,6 +1153,16 @@ bool FileMoveOperation::isValid()
 void FileMoveOperation::run()
 {
     Q_EMIT operationStarted();
+
+    if (hook_check_operation_valid) {
+        if (!hook_check_operation_valid(m_src_uris, m_dest_dir_uri, FILE_OPERATION_MOVE)) {
+            setHasError(true);
+            cancel();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
 start:
     if (!isValid()) {
         FileOperationError except;

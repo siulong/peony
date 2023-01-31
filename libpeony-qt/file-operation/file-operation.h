@@ -36,6 +36,14 @@
 
 namespace Peony {
 
+typedef enum _FileOperationMode
+{
+    FILE_OPERATION_COPY,
+    FILE_OPERATION_MOVE
+} FileOperationMode;
+
+Q_DECL_EXPORT __attribute__((weak)) bool hook_check_operation_valid (const QStringList& srcUris, const QString& destUri, FileOperationMode mode);
+
 class FileOperationInfo;
 /*!
  * \brief The FileOperation class

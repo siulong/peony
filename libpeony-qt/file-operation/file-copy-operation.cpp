@@ -645,6 +645,15 @@ void FileCopyOperation::run()
     if (isCancelled())
         return;
 
+    if (hook_check_operation_valid) {
+        if (!hook_check_operation_valid(m_source_uris, m_dest_dir_uri, FILE_OPERATION_COPY)) {
+            setHasError(true);
+            cancel();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
     Q_EMIT operationStarted();
 
     Q_EMIT operationRequestShowWizard();
