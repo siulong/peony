@@ -389,8 +389,11 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
 
     auto info = FileInfo::fromUri(uri);
 
-    if (!info->customIcon().isEmpty() /*&& info->customIcon().startsWith("/")*/)
+    bool hasCustomIcon = false;
+    if (!info->customIcon().isEmpty() /*&& info->customIcon().startsWith("/")*/) {
         needThumbnail = true;
+        hasCustomIcon = true;
+    }
 
     if (!info->mimeType().isEmpty()) {
         if (info->isImageFile()) {
@@ -421,7 +424,7 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
 
     auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
     thumbnailJob->setForceUpdate(force);
-    m_thumbnail_thread_pool->start(thumbnailJob);
+    m_thumbnail_thread_pool->start(thumbnailJob, hasCustomIcon? QThread::HighestPriority: 0);
     qDebug() <<"createThumbnail thumbnailJob start:" <<uri;
 }
 
