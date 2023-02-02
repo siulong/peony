@@ -122,11 +122,6 @@ void Peony::ThumbnailJob::run()
         return;
     }
 
-    QString customIcon = property("customIcon").toString();
-    if (!customIcon.isEmpty()) {
-        setType(CustomIcon);
-    }
-
     if (mimeType.startsWith("image/")) {
         setType(Image);
     } else if (mimeType.contains("pdf")) {
@@ -155,6 +150,11 @@ void Peony::ThumbnailJob::run()
                 break;
             }
         }
+    }
+
+    QString customIcon = property("customIcon").toString();
+    if (!customIcon.isEmpty()) {
+        setType(CustomIcon);
     }
 
     if (strongPtr.get()) {
