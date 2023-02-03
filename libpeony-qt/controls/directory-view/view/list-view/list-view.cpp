@@ -126,6 +126,10 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
         }
     });
 
+    connect(header(), &QHeaderView::sectionResized, this, [=]{
+        m_header_section_resized_manually = true;
+    });
+
     setExpandsOnDoubleClick(false);
     setSortingEnabled(true);
 
@@ -790,6 +794,12 @@ void ListView::adjustColumnsSize()
     if (model()->columnCount() == 0)
         return;
 
+    // try fixing #155969, list view can not save columns' state while resizing.
+    if (m_header_section_resized_manually)
+        return;
+
+    // do not trigger header's sectionResized() signal. related to #155969.
+    header()->blockSignals(true);
     header()->resizeSections(QHeaderView::ResizeToContents);
 
     int rightPartsSize = 0;
@@ -811,11 +821,13 @@ void ListView::adjustColumnsSize()
         for (int column = 1; column < model()->columnCount(); column++) {
             setColumnWidth(column, size);
         }
+        header()->blockSignals(false);
         return;
     }
 
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
     header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+    header()->blockSignals(false);
 }
 
 void ListView::multiSelect()
