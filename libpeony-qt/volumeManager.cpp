@@ -295,6 +295,7 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
     // use gvolume for quering volume item is more reliable for now.
     for (auto volumeItem : pThis->m_volumeList->values()) {
         if (volumeItem->getGVolume() == gvolume) {
+            qDebug()<<__func__<<__LINE__<<volumeItem->device()<<name<<device;
             volumeItem->setLabel(name);
             volumeItem->setDevice(device);
             Q_EMIT pThis->volumeUpdate(Volume(*volumeItem),"name");
@@ -320,6 +321,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->volumeRemove(device);
         pThis->m_volumeList->remove(device);
         pThis->m_volumeList->insert(device, addItem);
+        qDebug()<<__func__<<__LINE__<<device;
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
         //情景1、关闭gparted时，所有具有卸载属性的设备均会触发volume-added信号
         //      该情景似乎不需要更新属性信息，确认一下name属性？
@@ -331,6 +333,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
             if (pThis->m_volumeList->contains(gdevice)) {
                 auto driveItem = pThis->m_volumeList->value(gdevice);
                 driveItem->setHidden(true);
+                qDebug()<<__func__<<__LINE__<<driveItem->device()<<driveItem->getHidden();
                 Q_EMIT pThis->volumeUpdate(*driveItem, "name");
             }
             g_object_unref(gdrive);
@@ -341,6 +344,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         //情景3、默认用数据线连接的手机("仅充电")
         pThis->m_volumeList->remove(addItem->device());
         pThis->m_volumeList->insert(addItem->device(),addItem);
+        qDebug()<<__func__<<__LINE__<<addItem->device();
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
     }
 }
@@ -378,8 +382,27 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                 if (device.startsWith("/dev/sr")) {
                     addItem->setHidden(false);
                 }
+                /* hotfix bug#154563 【文件管理器】【PTOF】格式化U盘后，文件管理器侧边栏出现两个U盘  */
+                if (device.startsWith("/dev/sd")) {
+                    QString uuid = getDeviceUUID(device.toUtf8().constData());
+                    auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+                    qDebug()<<__func__<<__LINE__<<uuid<<size;
+                    if (uuid.isEmpty() && size == 0) {
+                        addItem->setHidden(true);
+                        // if drive has media, it is not represent a docking station.
+                        // so it should not be hidden.
+                        if (g_drive_has_media(gdrive)) {
+                            addItem->setHidden(false);
+                        }
+                    }else if(uuid.isEmpty()){
+                        qDebug()<<__func__<<__LINE__<<device<<uuid;
+                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
+                        addItem->setHidden(true);
+                    }
+                }//end
                 pThis->m_volumeList->remove(device);
                 Q_EMIT pThis->volumeRemove(device);
+                qDebug()<<__func__<<__LINE__<<device<<addItem->device();
                 pThis->m_volumeList->insert(device, addItem);
                 Q_EMIT pThis->volumeAdd(Volume(*addItem));
             }
@@ -641,6 +664,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         if(volume->canEject()){
             pThis->m_volumeList->remove(device);
             pThis->m_volumeList->insert(device, volume);
+            qDebug()<<__func__<<__LINE__<<device<<volume->getHidden();
             Q_EMIT pThis->volumeAdd(Volume(*volume));
         }
     }

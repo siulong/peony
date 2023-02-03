@@ -282,6 +282,7 @@ void SideBarFileSystemItem::slot_volumeDeviceAdd(const Experimental_Peony::Volum
         }
     }
 
+    qDebug()<<__func__<<__LINE__<<addItem.device()<<addItem.getHidden();
     SideBarFileSystemItem *item = new SideBarFileSystemItem(nullptr,
                                                           addItem,
                                                           this,
@@ -301,6 +302,7 @@ void SideBarFileSystemItem::slot_volumeDeviceRemove(const QString &removeDevice)
             m_model->beginRemoveRows(firstColumnIndex(), index, index);
             m_children->removeOne(child);
             m_model->endRemoveRows();
+            qDebug()<<__func__<<__LINE__<<child->m_device;
             child->deleteLater();
             break;
         }
@@ -381,7 +383,7 @@ void SideBarFileSystemItem::slot_volumeDeviceUnmount(const QString &unmountDevic
 
 void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Volume &updateDevice, QString property)
 {
-    qDebug()<<__func__<<__LINE__;
+    qDebug()<<__func__<<__LINE__<<updateDevice.device();
     QString device;
     if(property != "name")
         return;
@@ -394,10 +396,14 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
 
         auto fs_item = qobject_cast<SideBarFileSystemItem *>(item);
         auto item_gvolume = fs_item->getVolume().getGVolume();
+        if(!item_gvolume || !gvolume)
+            continue;
+
         if(item_gvolume == gvolume){
             item->m_displayName = updateDevice.name() + "(" + device + ")";
             item->m_hidden = updateDevice.getHidden();
             item->m_iconName = updateDevice.icon();
+            qDebug()<<__func__<<__LINE__<<item->m_device<<item->m_displayName<<item->m_hidden;
             // 更新mount信息, 加密分区改变时需要
             g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);
             if (gmount) {
@@ -421,7 +427,7 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
                 }//end
             }
             //model更新
-             m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
+            m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
             break;
         }
     }
