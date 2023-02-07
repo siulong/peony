@@ -1110,9 +1110,6 @@ void ListView::editUri(const QString &uri)
         origin = uri;
     QModelIndex index = m_proxy_model->indexFromUri(origin);
     setIndexWidget(index, nullptr);
-    //注释该行以修复bug:#60474
-//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
-    edit(index);
     //fix bug#70769, edit box overlapped with status bar issue
     //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
     if(index.row() >= m_proxy_model->rowCount()-1) {
@@ -1125,6 +1122,9 @@ void ListView::editUri(const QString &uri)
             }
         });
     }
+    //注释该行以修复bug:#60474
+//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
+    edit(index);
 }
 
 void ListView::editUris(const QStringList uris)
