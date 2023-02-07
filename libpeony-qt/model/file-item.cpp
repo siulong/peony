@@ -152,6 +152,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 //m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                 //m_model->dataChanged(item->firstColumnIndex(), item->firstColumnIndex());
                 m_model->updated();
+                m_model->thumbnailUpdated(uri);
             }
         }
     });
@@ -493,7 +494,7 @@ void FileItem::findChildrenAsync()
                 this->onRenamed(oldUri, newUri);
                 BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
             });
-            connect(m_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
+            connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
                 m_model->updated();
                 //m_model->dataChanged(m_model->indexFromUri(uri), m_model->indexFromUri(uri));
             });

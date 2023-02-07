@@ -203,21 +203,29 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
             auto item = model->itemFromIndex(index);
-            QString itemPath = item->info().get()->filePath();
-            m_watcher->addPath(itemPath);
-            connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, [=](){
-                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
-                    Q_EMIT updateIndexWidget(option);
-                }
+            QString tmpUri = item->info().get()->uri();
+            connect(getView()->m_model, &FileItemModel::thumbnailUpdated, indexWidget, [=](QString uri){
+                if (getView()->getSelections().count() == 1
+                        && view->selectedIndexes().first() == index
+                        && tmpUri == uri) {
+                       Q_EMIT updateIndexWidget(option);
+                   }
             });
-            connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=](){
-                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
-                    Q_EMIT updateIndexWidget(option);
-                }
-            });
-            connect(indexWidget, &IconViewIndexWidget::destroyed, this, [=](){
-                m_watcher->removePath(itemPath);
-            });
+//            QString itemPath = item->info().get()->filePath();
+//            m_watcher->addPath(itemPath);
+//            connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(indexWidget, &IconViewIndexWidget::destroyed, this, [=](){
+//                m_watcher->removePath(itemPath);
+//            });
         }
     }
 
