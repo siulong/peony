@@ -443,6 +443,11 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
         return;
     }
 
+    // try fixing #133429.
+    if (m_currSelectedItem->getDevice().startsWith("/dev/sr") && uri.startsWith("computer://")) {
+        return;
+    }
+
     //some side bar item doesn't have a uri.
     //do not emit signal with a null uri to window.
     if (!uri.isNull())
