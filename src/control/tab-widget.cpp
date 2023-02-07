@@ -973,6 +973,9 @@ void TabWidget::updateSearchPathButton(const QString &uri)
         int  charWidth = fontMetrics().averageCharWidth();
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
+    if (displayName.contains("&")) {
+        displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+    }
     m_current_search->setText(displayName);
 }
 
