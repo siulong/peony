@@ -337,13 +337,8 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                     windowTitle = tr("usershare");
                 } else {
                     windowTitle = m_fileInfo.get()->displayName();
-                }
-                iconName = m_fileInfo.get()->iconName();
-
-                QString type = FileUtils::getFileSystemType(m_fileInfo.get()->uri());
-                if (type.startsWith("iso")) {
-                    iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
-                }
+                }  
+                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
 
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
