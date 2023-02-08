@@ -375,6 +375,9 @@ void SideBarFileSystemItem::slot_volumeDeviceUnmount(const QString &unmountDevic
             item->m_mounted = false;            /* 分区已卸载 */
             item->m_unmountable = false;
             item->m_mountable = true;
+            if("burn:///" == unmountDevice && item->m_device.startsWith("/dev/sr")){/* 空光盘弹出后光驱要显示挂载状态，与其他光盘弹出后状态保持一致,hotfix bug#156012 */
+                item->m_mounted = true;
+            }
             m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
             break;
         }

@@ -91,6 +91,7 @@ private:
     static void mountRemoveCallback(GVolumeMonitor*,GMount*,VolumeManager*);
     static void driveConnectCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
     static void driveDisconnectCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
+    static void driveChangedCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
     static void volumeChangeCallback(GVolumeMonitor*,GVolume*,VolumeManager*);
     static void mountChangedCallback(GMount *mount, VolumeManager *pThis);
     static void mountPreUnmountCallback(GVolumeMonitor*, GMount*,VolumeManager*);
@@ -104,6 +105,7 @@ private:
     quint64 m_mountRemoveHandle;
     quint64 m_driveConnectHandle;
     quint64 m_driveDisconnectHandle;
+    quint64 m_driveChangedHandle;
     quint64 m_mountOpreationHandle;
     quint64 m_mountPreUnmountHandle;
     bool m_gpartedIsOpening = false;

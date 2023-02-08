@@ -198,6 +198,7 @@ VolumeManager::~VolumeManager(){
         g_signal_handler_disconnect(m_volumeMonitor, m_volumeRemoveHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveConnectHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveDisconnectHandle);
+        g_signal_handler_disconnect(m_volumeMonitor, m_driveChangedHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_mountPreUnmountHandle);
         g_object_unref(m_volumeMonitor);
         m_volumeMonitor = nullptr;
@@ -234,6 +235,7 @@ void VolumeManager::initManagerInfo(){
     m_volumeChangeHandle = g_signal_connect(m_volumeMonitor,"volume-changed",G_CALLBACK(volumeChangeCallback),this);
     m_driveConnectHandle = g_signal_connect(m_volumeMonitor,"drive-connected",G_CALLBACK(driveConnectCallback),this);
     m_driveDisconnectHandle = g_signal_connect(m_volumeMonitor,"drive-disconnected",G_CALLBACK(driveDisconnectCallback),this);
+    m_driveChangedHandle = g_signal_connect(m_volumeMonitor,"drive-changed",G_CALLBACK(driveChangedCallback),this);
     m_mountPreUnmountHandle = g_signal_connect(m_volumeMonitor,"mount-pre-unmount",G_CALLBACK(mountPreUnmountCallback),this);
 }
 
@@ -701,6 +703,24 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
             pThis->m_occupiedVolume = nullptr;
         }
     }
+}
+
+void VolumeManager::driveChangedCallback(GVolumeMonitor *monitor, GDrive *gdrive, VolumeManager *pThis)
+{
+    if(!pThis->m_volumeList)
+        return;
+
+    Drive* dirve = new Drive(gdrive);
+    Volume* volume = new Volume(nullptr);
+    volume->setFromDrive(*dirve);
+    QString device = dirve->device();
+
+    if(device.startsWith("/dev/sr") && volume->canEject()){
+        pThis->m_volumeList->remove(device);
+        pThis->m_volumeList->insert(device, volume);
+        qDebug()<<__func__<<__LINE__<<device<<volume->getHidden();
+    }
+
 }
 
 VolumeManager* VolumeManager::getInstance(){
