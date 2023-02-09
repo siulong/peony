@@ -624,7 +624,10 @@ void MainProgressBar::paintContent(QPainter &painter)
             this->setToolTip(m_file_name);
             QString display_name;
             display_name = elideText(this->font(),400,m_file_name);
-            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
+            int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
+            int fileNameHeight = qMax(m_file_name_height, fontHeight);
+            int textY = m_fix_height / 2 - fileNameHeight / 2;
+            painter.drawText(m_file_name_x, textY, m_file_name_w, fileNameHeight, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
             if (m_pause) {
                 painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-start-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
             } else {
@@ -856,7 +859,10 @@ void ProgressBar::paintEvent(QPaintEvent *event)
         this->setToolTip(m_dest_uri);
         QString display_name;
         display_name = elideText(this->font(),335,m_dest_uri);
-        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, display_name);
+        int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
+        int fileNameHeight = qMax(m_text_height, fontHeight);
+        int textY = (m_fix_height - m_margin_ud * 2 - fileNameHeight) / 2 + m_margin_ud;
+        painter.drawText(m_text_x, textY, m_text_w, fileNameHeight, Qt::AlignLeft | Qt::AlignVCenter, display_name);
     }
 
     // paint progress
