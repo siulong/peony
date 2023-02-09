@@ -118,12 +118,13 @@ bool FileInfoJob::querySync()
     refreshInfoContents(_info);
     refreshFileSystemInfo(_fs_info);
     g_object_unref(_info);
-    if (m_auto_delete)
-        deleteLater();
 
     EmblemProviderManager::getInstance()->querySync(m_info->uri());
 
     infoUpdated();
+
+    if (m_auto_delete)
+        deleteLater();
 
     return true;
 }
