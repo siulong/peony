@@ -853,6 +853,8 @@ void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
         if(guessType && g_strv_length(guessType) > 0){
             int n;
             for(n = 0; guessType[n]; ++n){
+                if(g_content_type_is_a(guessType[n],"x-content/image-dcf"))
+                    openFolder = false;
                 if(g_content_type_is_a(guessType[n],"x-content/win32-software"))
                     openFolder = false;
                 if(unixDevice && !strcmp(guessType[n],"x-content/bootable-media") && !strstr(unixDevice,"/dev/sr"))
