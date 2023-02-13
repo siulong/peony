@@ -231,7 +231,9 @@ retry:
                 case OverWriteOne: {
                     // 避免重名替换
                     //fix bug#143435, use m_src_uris is null cause crash issue
-                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)) {
+                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)
+                            || !FileUtils::isFileExsit(except.srcUri)
+                            || !FileUtils::isFileExsit(except.destDirUri)) {
                         break;
                     }
                     g_file_delete(newFile.get()->get(), nullptr, nullptr);
