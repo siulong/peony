@@ -263,7 +263,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     connect(m_btn_del, &QPushButton::clicked, this, [=] (bool checked) {
         QString delUri = uri();
-        if (delUri != m_favorite_list->currentItem()->text()) {
+        if (!m_favorite_list && !m_favorite_list->currentItem() && delUri != m_favorite_list->currentItem()->text()) {
             delUri = m_favorite_list->currentItem()->text();
         }
         removeUri(delUri);
