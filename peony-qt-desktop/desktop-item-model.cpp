@@ -541,44 +541,9 @@ void DesktopItemModel::refreshInternal()
         ThumbnailManager::getInstance()->releaseThumbnail(info->uri());
     }
     m_files.clear();
-
-    auto desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
-    //FIXME: replace BLOCKING api in ui thread.
-    if (!FileUtils::isFileExsit(desktopUri)) {
-        // try get correct desktop path delay.
-        //FIXME: replace BLOCKING api in ui thread.
-
-        if (findProgram("xdg-user-dirs-update")) {
-            do {
-                QProcess p;
-                p.setProgram("xdg-user-dirs-update");
-                p.start();
-                p.waitForFinished();
-                desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-            } while (!FileUtils::isFileExsit(desktopUri));
-        }
-
-        QTimer::singleShot(1000, this, [=](){
-            if (!FileUtils::isFileExsit(desktopUri)) {
-                endResetModel();
-                Q_EMIT refreshed();
-                refresh();
-            } else {
-                m_enumerator = new FileEnumerator(this);
-                m_enumerator->setAutoDelete();
-                m_enumerator->setEnumerateWithInfoJob();
-                m_enumerator->setEnumerateDirectory(desktopUri);
-                m_enumerator->connect(m_enumerator, &FileEnumerator::enumerateFinished, this, &DesktopItemModel::onEnumerateFinished);
-                m_enumerator->enumerateAsync();
-                endResetModel();
-            }
-        });
-        return;
-    }
-
     m_enumerator = new FileEnumerator(this);
     m_enumerator->setAutoDelete();
+    QString desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     m_enumerator->setEnumerateDirectory(desktopUri);
     m_enumerator->connect(m_enumerator, &FileEnumerator::enumerateFinished, this, &DesktopItemModel::onEnumerateFinished);
     m_enumerator->enumerateAsync();
