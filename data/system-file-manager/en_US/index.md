@@ -152,43 +152,31 @@ Advanced search function:Under the current directory (contains subdirectories), 
 
 ### Common Operation
 (1)Copy
-
 * Way 1:Check, right-click > "Copy"> Target, right-click > "Paste"
-
 * Way 2:Check, Ctrl+C > Target, Ctrl+V
-
 * Way 3:Drag from the folder window where the project is located to the destination folder window
 
 In way 3, if both folders are on the same hard disk device on the computer, the item is moved;If dragged from a USB stick to the system folder, the item will be copied.To drag copy on the same device, users need to hold down "Ctrl"while dragging.
 
 (2)Move
-
 * Way 1:Check, right-click > "Cut"> Target, right-click > "Paste"
-
 * Way 2:Check, Ctrl+X > Target, Ctrl+V
 
 (3)Delete
 
 Delete to recycling bin:
-
 * Way 1:Check, right-click > "Delete"
-
 * Way 2:Selected, Delete
-
 * Way 3:Select it and drag it to the "Trash"on the desktop
 
 If the deleted files are on a removable device, eject the device without emptying the Trash, the deleted files on the removable device may not be visible on other operating systems, but they still exist;When the device is reinserted into the system used to delete this file, it will be visible in the Trash.
 
 Delete permanently:
-
 * Way 1:Delete again in the "Trash"
-
 * Way 2:Selected, Shift+Delete
 
 (4)Rename
-
 * Way 1:Check, right-click > "Rename"
-
 * Way 2:Selected, F2
 
 To undo a rename, press Ctrl+Z to restore it.
@@ -198,7 +186,6 @@ In the sidebar, for the device accessing the system, right-click and the menu ap
 ![Fig 13 Mobile device right-click menu](image/13.png)
 
 * Unload/pop:Both of these serve the purpose of offloading mobile devices.The difference is that the device still exists in the system after uninstallation (unmounted state) and can no longer be found in the system when ejected.The "![](image/icon18-o.png)"button on the right side of the device is the pop-up role.
-
 * Formatting:System default format is FAT32 file system, users can change to Ext2/3/4 or NTFS format;To use this feature, users need to uninstall the device first.
 
 ![Fig 14 Formatted](image/14.png)
