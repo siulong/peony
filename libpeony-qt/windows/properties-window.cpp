@@ -60,7 +60,7 @@
 #include <pwd.h>
 
 #include <QApplication>
-
+#include <QGSettings>
 #include "file-info-job.h"
 
 using namespace Peony;
@@ -354,9 +354,17 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
         iconName = getIconName();
     }
 
-    QIcon fileIcon = QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic"));
+    const QByteArray id("org.ukui.style");
+    if (QGSettings::isSchemaInstalled(id)) {
+        QGSettings *styleSettings = new QGSettings(id, QByteArray(), this);
+        connect(styleSettings, &QGSettings::changed, this, [=](const QString &key){
+            if (key == "iconThemeName") {
+                setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic")));
+            }
+        });
+    }
 
-    this->setWindowIcon(fileIcon);
+    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic")));
     this->setWindowTitle(windowTitle);
     headerBar->setIcon(iconName);
     headerBar->setTitle(windowTitle);
