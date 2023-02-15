@@ -52,6 +52,7 @@
 #include <QStyleOptionTab>
 #include <QApplication>
 #include <KWindowSystem>
+#include <QGSettings>
 
 #include <QPainterPath>
 
@@ -239,6 +240,18 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
             widget->setFont(font);
         }
     });
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key)
+            {
+                if (!m_uris.isEmpty()) {
+                    this->setWindowTitleTextAndIcon();
+                }
+            }
+        });
+    }
 }
 
 void PropertiesWindow::init()
