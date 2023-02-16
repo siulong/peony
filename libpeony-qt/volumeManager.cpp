@@ -1763,7 +1763,8 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
 }
 
 #include <gio/gio.h>
-
+#include <gio/gdesktopappinfo.h>
+#include"file-utils.h"
 GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent)
 {
 
@@ -1786,8 +1787,34 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
         QString cmd =QString("ps -p %1 o comm=").arg(pid);
         process->start(cmd);
         process->waitForFinished();
-        auto application = QString(process->readAll()).replace("\n","");
+        QString application = QString(process->readAll()).replace("\n","");
+
         QString iconName = "application-x-executable";
+        /* 通过应用名获取.desktop,再获取iconName,linkto bug#157362 【文件管理器】优盘占用提示弹窗中正在占用卷的应用程序图标显示为齿轮  */
+        auto results = g_desktop_app_info_search(application.toUtf8().constData());
+        if(results){
+            for (int i = 0; results[i]; i++)
+            {
+                QString desktopFileName = *results[i];
+                if("wps" == application){
+                    desktopFileName = "wps-office-wps.desktop";
+                }else if("peony" == application){
+                    desktopFileName = "peony.desktop";
+                }
+                QString fileName = QString("/usr/share/applications/").append(desktopFileName);
+                g_autoptr (GDesktopAppInfo) desktop_app_info = g_desktop_app_info_new_from_filename(fileName.toUtf8().constData());
+                if (desktop_app_info) {
+                    auto app_info = G_APP_INFO(desktop_app_info);
+                    GIcon *icon = g_app_info_get_icon(app_info);
+                    iconName = Peony::FileUtils::getIconStringFromGIcon(icon);
+                }
+                qDebug()<<application<<desktopFileName<<iconName;
+                g_strfreev (results[i]);
+                break;
+            }
+            g_free (results);
+        }//end
+
         if(application=="bash")
             iconName = "utilities-terminal";
 
