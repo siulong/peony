@@ -155,6 +155,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         /*!
           \bug can not expanded? enumerator can not get prepared signal, why?
           */
+        bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                    Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+        if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+            this->setRowHidden(index.row(), index.parent(), true);
+            return;
+        }
         item->findChildrenAsync();
     });
 
@@ -313,6 +319,25 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
     connect(m_model, &QAbstractItemModel::dataChanged, this, [=](){
         this->viewport()->update();
         m_proxy_model->invalidate();
+    });
+
+    connect(Peony::GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString& key){
+        if (SHOW_NETWORK == key) {
+            for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+                auto index = m_proxy_model->index(i, 0);
+                auto item = m_proxy_model->itemFromIndex(index);
+                bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                            Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+                if (item->type() == SideBarAbstractItem::NetWorkItem) {
+                    this->setRowHidden(index.row(), index.parent(), !isShowNetwork);
+                    if (!isShowNetwork) {
+                        item->findChildrenAsync();
+                    }
+                    return;
+                }
+            }
+            this->viewport()->update();
+        }
     });
 
     connect(m_model, &SideBarModel::signal_collapsedChildren, this, [=](const QModelIndex &index){
