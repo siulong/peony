@@ -642,6 +642,15 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         Volume* volume = new Volume(nullptr);
         volume->setFromDrive(*dirve);
 
+        /* hotfix bug#158557 【文件管理器】【安全密钥】文件管理器将ukey设备识别为光驱，显示在了文管侧边栏 */
+        if(device.contains("/dev/sr")){
+            QString uuid = getDeviceUUID(device.toUtf8().constData());
+            auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+            if (uuid.isEmpty() && size == 0 && "UltraSec USK220 KEY" == volume->name()) {
+                volume->setHidden(true);
+            }
+        }//end
+
         // try fix #90641, a docking station should be hidden.
         if (device.startsWith("/dev/sd")) {
             auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
@@ -655,7 +664,6 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 }
             }
         }
-
         // 如果有volume，应该被隐藏
         GList *volumes = g_drive_get_volumes(gdrive);
         if (volumes) {
@@ -840,6 +848,14 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
             m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
+            /* hotfix bug#158557 【文件管理器】【安全密钥】文件管理器将ukey设备识别为光驱，显示在了文管侧边栏 */
+            if(device.contains("/dev/sr")){
+                QString uuid = getDeviceUUID(device.toUtf8().constData());
+                auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+                if (uuid.isEmpty() && size == 0 && "UltraSec USK220 KEY" == volumeItem->name()) {
+                    volumeItem->setHidden(true);
+                }
+            }//end
         }
         if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
             m_volumeList->remove(volumeItem->device());
