@@ -33,7 +33,12 @@
 #include <QPushButton>
 #include <QApplication>
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
+#else
+#include <QX11Info>
+#include "xatom-helper.h"
+#endif
 
 Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *parent) : QDialog(parent)
 {
@@ -41,7 +46,18 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     setAutoFillBackground (true);
     setBackgroundRole (QPalette::Base);
 
+#ifdef KY_SDK_WAYLANDHELPER
     kdk::UkuiStyleHelper::self()->removeHeader(this);
+#else
+    if (QX11Info::isPlatformX11()) {
+        XAtomHelper::getInstance()->setUKUIDecoraiontHint(this->winId(), true);
+        MotifWmHints hints;
+        hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+        hints.functions = MWM_FUNC_ALL;
+        hints.decorations = MWM_DECOR_BORDER;
+        XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+    }
+#endif
 
     QVBoxLayout* mainLayout = new QVBoxLayout (this);
     mainLayout->setContentsMargins (16, 5, 5, 16);

@@ -35,7 +35,12 @@
 
 #include <QVector4D>
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
+#else
+#include <QX11Info>
+#include "xatom-helper.h"
+#endif
 
 QPushButton* btn;
 
@@ -163,7 +168,18 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
     setAutoFillBackground (true);
     setBackgroundRole (QPalette::Base);
 
+#ifdef KY_SDK_WAYLANDHELPER
     kdk::UkuiStyleHelper::self()->removeHeader(this);
+#else
+    if (QX11Info::isPlatformX11()) {
+        XAtomHelper::getInstance()->setUKUIDecoraiontHint(this->winId(), true);
+        MotifWmHints hints;
+        hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+        hints.functions = MWM_FUNC_ALL;
+        hints.decorations = MWM_DECOR_BORDER;
+        XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+    }
+#endif
 
     setWindowOpacity(0.9999);
 

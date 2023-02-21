@@ -113,7 +113,9 @@
 //#include "xatom-helper.h"
 #include "trash-warn-dialog.h"
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
+#endif
 
 #define FONT_SETTINGS "org.ukui.style"
 
@@ -184,7 +186,9 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
         hints.decorations = MWM_DECOR_BORDER;
         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
     } else {
+#ifdef KY_SDK_WAYLANDHELPER
         kdk::UkuiStyleHelper::self()->removeHeader(this);
+#endif
     }
 
     startMonitorThumbnailForbidStatus();

@@ -21,11 +21,19 @@ include(control/control.pri)
 #include(view/view.pri)
 DEFINES += QAPPLICATION_CLASS=QApplication
 
-PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf kysdk-waylandhelper kysdk-qtwidgets
+PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf
 LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 
 LIBS += -L$$PWD/../libpeony-qt/ -lpeony
+
+contains(DEFINES, KY_SDK_QT_WIDGETS) {
+    PKGCONFIG += kysdk-qtwidgets
+}
+
+contains(DEFINES, KY_SDK_WAYLANDHELPER) {
+    PKGCONFIG += kysdk-waylandhelper
+}
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
