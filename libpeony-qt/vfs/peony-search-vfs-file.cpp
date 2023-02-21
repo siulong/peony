@@ -209,6 +209,20 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
 
     QStringList args = details->search_vfs_directory_uri->split("&", QString::SkipEmptyParts);
 
+    if (args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
+            && !details->search_vfs_directory_uri->contains("search_hidden=")
+            && !details->search_vfs_directory_uri->contains("use_regexp=")
+            && !details->search_vfs_directory_uri->contains("case_sensitive=")
+            && !details->search_vfs_directory_uri->contains("extend_regexp=")
+            && !details->search_vfs_directory_uri->contains("save=")) {
+        int indexOne = details->search_vfs_directory_uri->indexOf("name_regexp=");
+        int indexSecond = details->search_vfs_directory_uri->indexOf("&recursive=");
+        if (indexSecond > indexOne) {
+            QString nameRegExp = details->search_vfs_directory_uri->mid(indexOne, indexSecond - indexOne);
+            args.replace(1, nameRegExp);
+        }
+    }
+
     //we should judge case sensitive, then we confirm the regexp when
     //we match file in file enumeration.
     for (auto arg: args) {
