@@ -34,7 +34,9 @@
 #include <QPalette>
 #include <QScreen>
 
+#ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
+#endif
 
 using namespace Peony;
 
@@ -222,6 +224,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue (SORT_ORDER, 0);
     }
 
+#ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
         if (qstrcmp(machine, "none") == 0) {
@@ -233,6 +236,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     } else {
         m_cache.insert(IS_GUESTOS_MACHINE, false);
     }
+#endif
 }
 
 GlobalSettings::~GlobalSettings()

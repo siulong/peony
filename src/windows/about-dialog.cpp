@@ -31,8 +31,14 @@
 #include <QPainterPath>
 #include <QtMath>
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
+#else
+#include <QX11Info>
+#include "xatom-helper.h"
+#endif
 
+#ifdef KY_SDK_QT_WIDGETS
 AboutDialog::AboutDialog(QWidget *parent) :
     kdk::KAboutDialog(parent)
 {
@@ -50,9 +56,20 @@ AboutDialog::AboutDialog(QWidget *parent) :
     setBodyTextVisiable(true);
 }
 
+#else
+AboutDialog::AboutDialog(QWidget *parent) :
+    QDialog(parent)
+{
+    this->initUI();
+}
+
+#endif
+
 AboutDialog::~AboutDialog()
 {
-
+#ifndef KY_SDK_QT_WIDGETS
+    delete ui;
+#endif
 }
 
 void AboutDialog::initUI()
@@ -61,7 +78,20 @@ void AboutDialog::initUI()
     setBackgroundRole(QPalette::Base);
     setFixedWidth(420);
 
+#ifdef KY_SDK_WAYLANDHELPER
     kdk::UkuiStyleHelper::self()->removeHeader(this);
+#else
+    if (QX11Info::isPlatformX11()) {
+        XAtomHelper::getInstance()->setUKUIDecoraiontHint(this->winId(), true);
+        MotifWmHints hints;
+        hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+        hints.functions = MWM_FUNC_ALL;
+        hints.decorations = MWM_DECOR_BORDER;
+        XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+    }
+#endif
+    ui = new Ui::AboutDialog;
+    ui->setupUi(this);
 
     ui->logoLabel->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
 
