@@ -12,3 +12,23 @@ exists(/usr/include/ukuisdk/kylin-com4cxx.h) {
     DEFINES += KYLIN_COMMON=true
     LIBS += -lukui-com4cxx
 }
+
+exists(/usr/include/kysdk/applications/kdialog.h) {
+    message("kyfiledialog find")
+    DEFINES += KY_FILE_DIALOG
+}
+
+exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
+    message("kysysinfo find")
+    DEFINES += KY_SDK_SYSINFO
+}
+
+exists(/usr/include/kysdk/applications/kaboutdialog.h) {
+    message("kyqtwidgets find")
+    DEFINES += KY_SDK_QT_WIDGETS
+}
+
+exists(/usr/include/kysdk/applications/ukuistylehelper/ukuistylehelper.h) {
+    message("kywaylandhelper find")
+    DEFINES += KY_SDK_WAYLANDHELPER
+}
