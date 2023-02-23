@@ -96,6 +96,7 @@ using namespace Peony;
 static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect, QString> &p2);
 
 static bool refreshing = false;
+static bool g_isHighVersion = false;
 
 DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
@@ -150,7 +151,13 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 
     m_proxy_model->setSourceModel(m_model);
     m_proxy_model->setId(m_id);
-
+    QString version = qVersion();
+    if (version >= QString("5.14.0")) {
+        g_isHighVersion = true;
+    } else {
+        g_isHighVersion = false;
+    }
+    qDebug() << "qt version: " << version <<  g_isHighVersion;
     connect(m_model, &QAbstractItemModel::rowsRemoved, this, [=](){
         for (auto uri : getAllFileUris()) {
             auto pos = getFileMetaInfoPos(uri);
@@ -1351,13 +1358,13 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 setIndexWidget(upIndex, indexWidget);
                 indexWidget->move(visualRect(upIndex).topLeft());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                           updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1378,13 +1385,13 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 setIndexWidget(downIndex, indexWidget);
                 indexWidget->move(visualRect(downIndex).topLeft());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1404,13 +1411,14 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 auto indexWidget = new DesktopIndexWidget(delegate, viewOptions(), leftIndex, this);
                 setIndexWidget(leftIndex, indexWidget);
                 indexWidget->move(visualRect(leftIndex).topLeft());
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1429,13 +1437,14 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 auto delegate = qobject_cast<DesktopIconViewDelegate *>(itemDelegate());
                 auto indexWidget = new DesktopIndexWidget(delegate, viewOptions(), rightIndex, this);
                 setIndexWidget(rightIndex, indexWidget);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1913,13 +1922,13 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
                 indexWidget->move(visualRect(m_last_index).topLeft());
             }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-            for (auto uri : getAllFileUris()) {
-                auto pos = getFileMetaInfoPos(uri);
-                if (pos.x() >= 0)
-                    updateItemPosByUri(uri, pos);
+            if (g_isHighVersion) {
+                for (auto uri : getAllFileUris()) {
+                    auto pos = getFileMetaInfoPos(uri);
+                    if (pos.x() >= 0)
+                        updateItemPosByUri(uri, pos);
+                }
             }
-#endif
         }
     }
 
