@@ -135,6 +135,9 @@ QRect ButtonStyle::subElementRect(SubElement element, const QStyleOption *option
 
 ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 {
+    if("bo_CN" == QLocale::system().name()){
+        m_widget_size.setWidth(m_widget_size.width() + 57);
+    }
     setFixedSize(m_widget_size);
     setWindowIcon(QIcon::fromTheme("network-server"));
     setWindowTitle(tr("connect to server"));
@@ -170,7 +173,6 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_remote_type_edit->setAutoCompletion(true);
     m_ip_label->setFixedHeight(36);
     m_ip_edit->setFixedHeight(36);
-    m_ip_edit->setFixedWidth(194);
     m_port_label->setFixedHeight(36);
     m_port_editor->setFixedHeight(36);
     m_port_editor->setFixedWidth(65);
@@ -184,9 +186,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_remote_layout->addWidget(m_remote_type_edit,  0, 1, 1, 5);
     m_remote_layout->setVerticalSpacing(20);
     m_remote_layout->addWidget(m_ip_label,          1, 0, 1, 1);
-    m_remote_layout->addWidget(m_ip_edit,           1, 1, 1, 1);
-    m_remote_layout->addWidget(m_port_label,        1, 2, 1, 1);
-    m_remote_layout->addWidget(m_port_editor,       1, 3, 1, 3);
+    m_remote_layout->addWidget(m_ip_edit,           1, 1, 1, 3);
+    m_remote_layout->addWidget(m_port_label,        1, 4, 1, 1);
+    m_remote_layout->addWidget(m_port_editor,       1, 5, 1, 1);
+    m_remote_layout->setColumnStretch(0, 1);
+    m_remote_layout->setColumnStretch(1, 5);
 
     m_main_layout->addLayout(m_remote_layout);
     m_main_layout->addSpacing(28);
