@@ -1509,13 +1509,13 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
     }
     // try fix item overrlapped sometimes, link to #58739
     //task#74174 扩展模式下支持拖拽图标放置到扩展屏,当扩展屏没有时会崩溃
-    if (start == end && m_item_rect_hash.count() != 1) {
+    if (start == end && m_item_rect_hash.count() > 1) {
         auto index = model()->index(start, 0);
         auto uri = index.data(Qt::UserRole).toString();
         auto itemRectHash = m_item_rect_hash;
         itemRectHash.remove(uri);
         QRegion notEmptyRegion;
-        QSize itemRectSize = itemRectHash.first().size();
+        QSize itemRectSize = m_item_rect_hash.first().size();
         for (auto rect : itemRectHash.values()) {
             notEmptyRegion += rect;
         }
