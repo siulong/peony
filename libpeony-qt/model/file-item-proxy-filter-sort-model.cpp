@@ -88,6 +88,14 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
         qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
         return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
     });
+
+    m_show_hidden = settings->isExist(SHOW_HIDDEN_PREFERENCE)? settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
+        if (SHOW_HIDDEN_PREFERENCE == key) {
+            m_show_hidden= GlobalSettings::getInstance()->getValue(key).toBool();
+            invalidateFilter();
+        }
+    });
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
