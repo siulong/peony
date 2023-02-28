@@ -22,12 +22,14 @@
 
 #ifndef LISTVIEW_H
 #define LISTVIEW_H
-
+#include <QObject>
 #include <QTreeView>
 #include "directory-view-plugin-iface.h"
 #include "peony-core_global.h"
 
 #include "directory-view-widget.h"
+#include "global-settings.h"
+#include "directoryviewhelper.h"
 
 #include <QTimer>
 
@@ -43,9 +45,10 @@ namespace DirectoryView {
  * \todo
  * improve extend selection actions.
  */
-class PEONYCORESHARED_EXPORT ListView : public QTreeView, public DirectoryViewIface
+class PEONYCORESHARED_EXPORT ListView : public QTreeView, public DirectoryViewIface, public DirectoryViewIface2
 {
     friend class ListView2;
+    friend class ListViewDelegate;
     Q_OBJECT
 public:
     explicit ListView(QWidget *parent = nullptr);
@@ -77,8 +80,13 @@ public:
     //children
     const QStringList getAllFileUris() override;
 
-    QRect visualRect(const QModelIndex &index) const override;
+    int getCurrentCheckboxColumn();
 
+    /**
+     * @brief 定制版本需要显示多选框
+     * @return
+     */
+    bool isEnableMultiSelect();
     bool getDelegateEditFlag();
 
 Q_SIGNALS:
@@ -114,9 +122,13 @@ public Q_SLOTS:
     void resort();
     void reportViewDirectoryChanged();
     void adjustColumnsSize();
+    void multiSelect();
+    void disableMultiSelect();
 
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
     void setSearchKey(const QString &key);
+
+    void doMultiSelect(bool isMultiSlelect);
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
@@ -141,6 +153,8 @@ protected:
     void focusInEvent(QFocusEvent *e) override;
 
     void startDrag(Qt::DropActions flags) override;
+
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 
 private Q_SLOTS:
     void slotRename();
@@ -217,11 +231,11 @@ public:
         return 0;
     }
     int maximumZoomLevel() {
-        return 20;
+        return 40;
     }
 
     bool supportZoom() {
-        return true;
+        return Peony::GlobalSettings::getInstance()->getValue(ZOOM_SLIDER_VISIBLE).toBool();
     }
 
 public Q_SLOTS:
@@ -251,6 +265,9 @@ public Q_SLOTS:
     void invertSelections() {
         m_view->invertSelections();
     }
+    void selectAll() {
+        m_view->selectAll();
+    }
     void scrollToSelection(const QString &uri) {
         m_view->scrollToSelection(uri);
     }
@@ -279,6 +296,13 @@ public Q_SLOTS:
 
     void clearIndexWidget();
 
+    void multiSelect(){
+        m_view->multiSelect();
+    }
+    void disableMultiSelect(){
+        m_view->disableMultiSelect();
+    }
+
     void repaintView();
 
 private:
@@ -286,7 +310,7 @@ private:
     FileItemModel *m_model = nullptr;
     FileItemProxyFilterSortModel *m_proxy_model = nullptr;
 
-    int m_zoom_level = 20;
+    int m_zoom_level = 24;
     bool m_need_resize_header;
 };
 
