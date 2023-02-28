@@ -246,7 +246,7 @@ void FileLauchDialog::initFloorThree()
     layout3->setContentsMargins(10,0,0,0);
 
     QString str1;
-    str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
+    str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
           + tr("Choose other application")
           + "</a>";
     QLabel *allOpenLabel = new QLabel(str1, floor3);
@@ -259,7 +259,7 @@ void FileLauchDialog::initFloorThree()
     layout3->addWidget(allOpenLabel);
 
     QString str2;
-    str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
+    str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
           + tr("Go to application center")
           + "</a>";
     QLabel *otherOpenLabel = new QLabel(str2, floor3);
