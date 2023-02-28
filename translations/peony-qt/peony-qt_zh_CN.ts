@@ -317,7 +317,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="783"/>
+        <location filename="../../src/windows/main-window.cpp" line="795"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -332,19 +332,19 @@ p, li { white-space: pre-wrap; }
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="712"/>
-        <location filename="../../src/windows/main-window.cpp" line="753"/>
+        <location filename="../../src/windows/main-window.cpp" line="719"/>
+        <location filename="../../src/windows/main-window.cpp" line="760"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="712"/>
-        <location filename="../../src/windows/main-window.cpp" line="753"/>
+        <location filename="../../src/windows/main-window.cpp" line="719"/>
+        <location filename="../../src/windows/main-window.cpp" line="760"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="781"/>
+        <location filename="../../src/windows/main-window.cpp" line="793"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -373,7 +373,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="796"/>
+        <location filename="../../src/windows/main-window.cpp" line="808"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -389,50 +389,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="386"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="386"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="197"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="424"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="437"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="203"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="197"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="203"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>设备正忙, 请稍后执行此操作.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="424"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="437"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="225"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="231"/>
         <source>Open In New Window</source>
         <translation>在新窗口中打开</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="241"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="247"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="281"/>
         <source>Can not open %1, %2</source>
         <translation>无法打开%1, %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="265"/>
         <source>Open In New Tab</source>
         <translation>在新标签页中打开</translation>
     </message>
@@ -444,7 +444,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="602"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="632"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -468,42 +468,83 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">高级搜索</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="70"/>
+        <location filename="../../src/control/operation-menu.cpp" line="76"/>
         <source>Keep Allow</source>
         <translation>置顶窗口</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="82"/>
+        <location filename="../../src/control/operation-menu.cpp" line="88"/>
         <source>Show Hidden</source>
         <translation>显示隐藏文件</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="90"/>
+        <location filename="../../src/control/operation-menu.cpp" line="96"/>
         <source>Show File Extension</source>
         <translation>显示文件扩展名</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="95"/>
+        <location filename="../../src/control/operation-menu.cpp" line="101"/>
         <source>Forbid thumbnailing</source>
         <translation>禁用缩略图</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="104"/>
+        <location filename="../../src/control/operation-menu.cpp" line="110"/>
         <source>Resident in Backend</source>
         <translation>常驻后台</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="113"/>
+        <location filename="../../src/control/operation-menu.cpp" line="119"/>
         <source>Parallel Operations</source>
         <translation>允许操作并行</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="122"/>
+        <location filename="../../src/control/operation-menu.cpp" line="125"/>
+        <source>Set samba password</source>
+        <translation>设置samba共享密码</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="139"/>
+        <source>Tips</source>
+        <translation>提示</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="139"/>
+        <source>The user already has a samba password, do you need to reset the samba password?</source>
+        <translation>用户已经设置了samba共享密码, 是否希望重新设置?</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="146"/>
+        <source>Samba set user password</source>
+        <translation>设置samba共享密码</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="146"/>
+        <source>Samba password:</source>
+        <translation>Samba密码:</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="151"/>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="151"/>
+        <source>Samba set password failed, Please re-enter!</source>
+        <translation>设置Samba密码失败, 请重新输入!</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
+        <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
+        <translation>共享配置服务异常, 请确认是否有已经存在的共享设置操作, 或者重新设置共享!</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="126"/>
+        <location filename="../../src/control/operation-menu.cpp" line="177"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -511,27 +552,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="176"/>
+        <location filename="../../src/control/operation-menu.cpp" line="227"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="187"/>
+        <location filename="../../src/control/operation-menu.cpp" line="238"/>
         <source>copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="196"/>
+        <location filename="../../src/control/operation-menu.cpp" line="247"/>
         <source>paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="205"/>
+        <location filename="../../src/control/operation-menu.cpp" line="256"/>
         <source>cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="214"/>
+        <location filename="../../src/control/operation-menu.cpp" line="265"/>
         <source>trash</source>
         <translation>删除</translation>
     </message>
@@ -674,27 +715,27 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="159"/>
+        <location filename="../../src/peony-application.cpp" line="163"/>
         <source>peony-qt</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="166"/>
+        <location filename="../../src/peony-application.cpp" line="170"/>
         <source>Files or directories to open</source>
         <translation>需要打开的文件或文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="166"/>
+        <location filename="../../src/peony-application.cpp" line="170"/>
         <source>[FILE1, FILE2,...]</source>
         <translation>[文件1，文件2...]</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="207"/>
+        <location filename="../../src/peony-application.cpp" line="211"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="207"/>
+        <location filename="../../src/peony-application.cpp" line="211"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
@@ -707,12 +748,12 @@ p, li { white-space: pre-wrap; }
 2.你使用的系统主题不是qt默认支持的主题，并且你没有安装相关的平台插件。如果你正在使用Gtk主题作为系统主题，尝试安装qt5-gtk2-platformtheme以解决此问题。</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="466"/>
+        <location filename="../../src/peony-application.cpp" line="470"/>
         <source>Peony Qt</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="467"/>
+        <location filename="../../src/peony-application.cpp" line="471"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -1028,12 +1069,12 @@ Do you want to unmount forcely?</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1543"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1546"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1544"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1547"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
@@ -1225,7 +1266,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="725"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="755"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>

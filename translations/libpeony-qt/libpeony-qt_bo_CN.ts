@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>is not properly formatted.</source>
-        <translation>ཡོངས་སུ་མ་པའི་རྣམ་གཞག་</translation>
+        <translation type="vanished">ཡོངས་སུ་མ་པའི་རྣམ་གཞག་</translation>
     </message>
     <message>
         <source>preparation failed before DVD-RW udf format.</source>
@@ -64,7 +64,7 @@
     </message>
     <message>
         <source>Can not found newfs_udf tool.</source>
-        <translation>newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
+        <translation type="vanished">newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
     </message>
     <message>
         <source>DVD+RW udf format fail.</source>
@@ -232,6 +232,18 @@
         <source>Device name cannot start with a decimal point, Please re-enter!</source>
         <translation>ཁུལ་དབྱེའི་མིང་ལ་བརྟེན་ནས་གྲངས་ཆུང་ཚེག་རྟགས་མགོ་བརྩམས་།ཡང་བསྐྱར་ནང་འཇུག་རོགས་།</translation>
     </message>
+    <message>
+        <source>%1/sec, %2 remaining.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>over one day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>getting progress...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>KyFileDialogRename</name>
@@ -333,6 +345,14 @@
     <message>
         <source>sync ...</source>
         <translation>གོམ་པ་མཉམ་སྤོ་བྱེད་བཞིན་པ།</translation>
+    </message>
+</context>
+<context>
+    <name>MessageDialog</name>
+    <message>
+        <source>Forcibly pulling out the device may cause data
+ loss or device exceptions!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -877,6 +897,13 @@
     <message>
         <source>Error not be handled correctly</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::DefaultAcitonWidget</name>
+    <message>
+        <source>No default app</source>
+        <translation type="unfinished">没有设置默认打开方式</translation>
     </message>
 </context>
 <context>
@@ -1540,6 +1567,10 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Desktop files(*.desktop)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Still using the last opened application:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2445,6 +2476,14 @@ Do you want to delete the link file?</source>
     <message>
         <source>KmreData</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trash</source>
+        <translation type="unfinished">སྙིགས་སྒམ།</translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation type="unfinished">ཉེ་ཆར།</translation>
     </message>
 </context>
 <context>
