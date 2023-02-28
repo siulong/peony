@@ -380,7 +380,7 @@ void BasicPropertiesPage::loadPartOne()
         connect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
         this->onSingleFileChanged(nullptr, m_uris.first());
     } else {
-        m_iconButton->setIcon(QIcon::fromTheme("text-x-generic"));
+        m_iconButton->setIcon(QIcon::fromTheme("unknown"));
     }
 
     //select multiplefiles
@@ -584,7 +584,7 @@ void BasicPropertiesPage::onSingleFileChanged(const QString &oldUri, const QStri
     this->getFIleInfo(newUri);
 
     ThumbnailManager::getInstance()->createThumbnail(m_info.get()->uri(), m_thumbnail_watcher);
-    auto icon = QIcon::fromTheme(m_info.get()->iconName(), QIcon::fromTheme("text-x-generic"));
+    auto icon = QIcon::fromTheme(m_info.get()->iconName(), QIcon::fromTheme("unknown"));
     auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(m_info.get()->uri());
 
     m_iconButton->setIcon(thumbnail.isNull() ? icon : thumbnail);

@@ -609,7 +609,7 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
         if (!thumbnail.isNull()) {
             return thumbnail;
         }
-        return QIcon::fromTheme(info->iconName(), QIcon::fromTheme("text-x-generic"));
+        return QIcon::fromTheme(info->iconName(), QIcon::fromTheme("unknown"));
     }
     case UriRole:
         return info->uri();

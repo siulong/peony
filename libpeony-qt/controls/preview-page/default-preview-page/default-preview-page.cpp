@@ -339,7 +339,7 @@ void FilePreviewPage::updateInfo(FileInfo *info)
         QUrl url = info->uri();
         thumbnail.addFile(url.path());
     }
-    auto icon = QIcon::fromTheme(info->iconName(), QIcon::fromTheme("text-x-generic"));
+    auto icon = QIcon::fromTheme(info->iconName(), QIcon::fromTheme("unknown"));
     m_icon->setIcon(thumbnail.isNull()? icon: thumbnail);
     //fix bug:#82320
     QString displayName = info->displayName();

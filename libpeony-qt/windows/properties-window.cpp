@@ -372,12 +372,12 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
         QGSettings *styleSettings = new QGSettings(id, QByteArray(), this);
         connect(styleSettings, &QGSettings::changed, this, [=](const QString &key){
             if (key == "iconThemeName") {
-                setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic")));
+                setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
             }
         });
     }
 
-    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic")));
+    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
     this->setWindowTitle(windowTitle);
     headerBar->setIcon(iconName);
     headerBar->setTitle(windowTitle);

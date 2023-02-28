@@ -263,7 +263,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             if (!thumbnail.isNull()) {
                 return thumbnail;
             }
-            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("text-x-generic"));
+            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
             return QVariant(icon);
         }
         case Qt::ToolTipRole: {
