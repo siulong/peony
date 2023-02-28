@@ -631,8 +631,9 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         }
     }
     //drag from trash to another place, return false
-    if (b_trash_item && destDirUri != "trash:///")
-        return false;
+    //comment to fix can not drag to copy trash file,link to bug#117741
+//    if (b_trash_item && destDirUri != "trash:///")
+//        return false;
 
     //fix drag file to trash issue, #42328
     if (destDirUri.startsWith("trash:///"))
