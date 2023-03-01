@@ -49,8 +49,6 @@ ActionGlobalData *FileLauchDialog::actionGlobalData = nullptr;
 FileLauchDialog::FileLauchDialog(const QString &uri, QWidget *parent) : QDialog(parent)
 {
     this->getFIleInfo(uri);
-    QString fileName = m_info->displayName();
-    setWindowFilePath(fileName);
     QIcon windowicon = QIcon::fromTheme(m_info->iconName());
     setWindowIcon(windowicon);
     this->setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint );
@@ -113,11 +111,18 @@ void FileLauchDialog::initFloorOne()
     QLabel *targetTypeMsgLabel = new QLabel(floor1);
     targetTypeMsgLabel->setMinimumHeight(60);
 
+    QFileInfo fi(m_info.get()->displayName());
+    QString suffix;
+    if (!fi.suffix().isEmpty() && !m_info.get()->isDir()) {
+        suffix = fi.suffix().prepend(".");
+    }
+    QString title ;
     if(m_info.get()->displayName().contains(".")||m_info.get()->isDir() || m_info.get()->isDesktopFile()){
         QString appname = FileLaunchManager::getDefaultAction(m_info.get()->uri())->getAppInfoDisplayName();
         if("" == appname)
         {
-            targetTypeMsgLabel->setText(tr("No application is set to open file %1").arg(m_info.get()->displayName()));
+            title = QString (tr("The opening mode of the %1 %2")).arg(tr("unknown")).arg(suffix);
+            targetTypeMsgLabel->setText(tr("No application is set to open file \"%1 %2\"").arg(tr("unknown")).arg(suffix));
             layout1->addWidget(targetTypeMsgLabel);
             this->setFixedHeight(680);
             QLabel *defaultOpenLabel = new QLabel(floor1);
@@ -132,6 +137,7 @@ void FileLauchDialog::initFloorOne()
             layout1->addWidget(m_defaultOpenWithWidget);
         }
         else{
+            title = QString (tr("The opening mode of the %1 %2")).arg(tr("known")).arg(suffix);
             QLabel *defaultOpenLabel = new QLabel(floor1);
             defaultOpenLabel->setMinimumHeight(55);
             defaultOpenLabel->setText(tr("Open application is used by default:"));
@@ -146,7 +152,8 @@ void FileLauchDialog::initFloorOne()
             layout1->addWidget(m_defaultOpenWithWidget);
         }
     }else{
-        targetTypeMsgLabel->setText(tr("No application is set to open file %1").arg(m_info.get()->displayName()));
+        title = QString (tr("The opening mode of the %1 %2")).arg(tr("unknown")).arg(suffix);
+        targetTypeMsgLabel->setText(tr("No application is set to open file \"%1 %2\"").arg(tr("unknown")).arg(suffix));
         targetTypeMsgLabel->setContentsMargins(10,0,0,0);
 
         layout1->addWidget(targetTypeMsgLabel);
@@ -160,8 +167,10 @@ void FileLauchDialog::initFloorOne()
         layout1->addWidget(tipsLabel);
 
     }
-        m_layout->addWidget(floor1);
-        layout1->addStretch(1);
+
+    setWindowFilePath(title);
+    m_layout->addWidget(floor1);
+    layout1->addStretch(1);
 }
 
 void FileLauchDialog::initFloorTwo(const QString &uri)

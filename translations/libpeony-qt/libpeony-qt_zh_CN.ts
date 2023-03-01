@@ -1211,7 +1211,7 @@
 <context>
     <name>Peony::DefaultAcitonWidget</name>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="482"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="491"/>
         <source>No default app</source>
         <translation>没有设置默认打开方式</translation>
     </message>
@@ -2213,74 +2213,98 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="120"/>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="149"/>
         <source>No application is set to open file %1</source>
-        <translation>未设定用来打开文件“%1”的应用程序。</translation>
+        <translation type="vanished">未设定用来打开文件“%1”的应用程序。</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="124"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="140"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="155"/>
+        <source>The opening mode of the %1 %2</source>
+        <translation>%1%2   打开方式</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="124"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="125"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="155"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="156"/>
+        <source>unknown</source>
+        <translation>未知</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="125"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="156"/>
+        <source>No application is set to open file &quot;%1 %2&quot;</source>
+        <translation>未设定用来打开文件“%1%2”的应用程序。</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="130"/>
         <source>Still using the last opened application:</source>
         <translation>仍使用最后打开的应用:</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="137"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="140"/>
+        <source>known</source>
+        <translation>已知</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="143"/>
         <source>Open application is used by default:</source>
         <translation>默认使用打开的应用程序：</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="157"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="164"/>
         <source>You can search in the Software Center for an application that can open this file, or select an existing application on your computer.</source>
         <translation>您可以在软件中心搜索能够打开此文件的应用程序，或者选取电脑上的现有应用程序。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="177"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="186"/>
         <source>Other application:</source>
         <translation>其他应用程序：</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="179"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="188"/>
         <source>Select application:</source>
         <translation>选取应用程序：</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="225"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="234"/>
         <source>Always open the %1%2 file with this application</source>
         <translation>始终用该应用打开%1%2文件</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="250"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="259"/>
         <source>Choose other application</source>
         <translation>选择其他应用</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="263"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="272"/>
         <source>Go to application center</source>
         <translation>去软件中心安装应用</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="312"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="321"/>
         <source>Ok</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="313"/>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="372"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="322"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="381"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="363"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="372"/>
         <source>Desktop files(*.desktop)</source>
         <translation>桌面文件(*.desktop)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="370"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="379"/>
         <source>Select Open Action</source>
         <translation>选择打开方式</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="371"/>
+        <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="380"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
