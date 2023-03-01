@@ -283,6 +283,16 @@ void ListView::keyPressEvent(QKeyEvent *e)
         }
         break;
     }
+    case Qt::Key_Home:
+    case Qt::Key_End:
+    case Qt::Key_PageUp:
+    case Qt::Key_PageDown: {
+        //fix bug#160799, can not update scrollBar to show selected file issue
+        if (!selectedIndexes().isEmpty()) {
+            QTreeView::scrollTo(selectedIndexes().first());
+        }
+        break;
+    }
     default:
         break;
     }
