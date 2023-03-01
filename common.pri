@@ -32,3 +32,7 @@ exists(/usr/include/kysdk/applications/ukuistylehelper/ukuistylehelper.h) {
     message("kywaylandhelper find")
     DEFINES += KY_SDK_WAYLANDHELPER
 }
+
+exists("/usr/include/libkyudfburn/udfburn_global.h") {
+    DEFINES += KY_UDF_BURN
+}

@@ -25,7 +25,13 @@
 #include "linux-pwd-helper.h"
 
 #include "file-utils.h"
+
+#ifndef KY_UDF_BURN
 #include "datacdrom.h"
+#else
+#include <libkyudfburn/datacdrom.h>
+using namespace UdfBurn;
+#endif
 
 #include <QFormLayout>
 #include <QFile>
