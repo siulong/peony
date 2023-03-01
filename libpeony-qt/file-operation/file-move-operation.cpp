@@ -663,7 +663,9 @@ fallback_retry:
     if (node->isFolder()) {
         auto realDestUri = node->resolveDestFileUri(m_dest_dir_uri);
         destFile = wrapGFile(g_file_new_for_uri(realDestUri.toUtf8().constData()));
+        GFileWrapperPtr srcFile = wrapGFile(g_file_new_for_uri(m_current_src_uri.toUtf8().constData()));
         GError *err = nullptr;
+        GError *error = nullptr;
         auto fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
         auto destFileName = FileUtils::isFileDirectory(m_current_dest_dir_uri) ? nullptr : m_current_dest_dir_uri;
         //NOTE: mkdir doesn't have a progress callback.
@@ -730,6 +732,16 @@ fallback_retry:
             case OverWriteOne: {
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 //make dir has no overwrite
                 break;
             }
@@ -737,6 +749,16 @@ fallback_retry:
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 break;
             }
             case BackupOne: {
@@ -766,6 +788,16 @@ fallback_retry:
                 }
                 g_object_unref(destFile.get());
                 destFile = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 setHasError(false);
                 goto fallback_retry;
             }
@@ -792,6 +824,16 @@ fallback_retry:
             }
         } else {
             //node->setState(FileNode::Handled);
+            g_file_copy_attributes(srcFile.get()->get(),
+                                   destFile.get()->get(),
+                                   G_FILE_COPY_ALL_METADATA,
+                                   nullptr,
+                                   &error);
+            if (error) {
+                qDebug() << __func__ << error->code << error->message;
+            }
+            g_error_free(error);
+
         }
 
         fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
