@@ -39,12 +39,13 @@
 
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
+#include "udfFormatDialog.h"
 #else
 #include <libkyudfburn/disccontrol.h>
 #include "ky-udf-format-dialog.h"
+using namespace UdfBurn;
 #endif
 
-#include "udfFormatDialog.h"
 #include <QDebug>
 #include <volume-manager.h>
 
@@ -225,7 +226,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 if(discControl->work()){
                    connect(discControl, &UdfBurn::DiscControl::workFinished, [=](UdfBurn::DiscControl *discCtrl){
                        connect(action, &QAction::triggered, [=](){
-                           UdfBurn::UdfFormatDialog *udfFormatDlg = new UdfBurn::UdfFormatDialog(uri, discCtrl);
+                           UdfBurn::UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
@@ -313,7 +314,7 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
     if (!m_uri.startsWith("file://")) {
         l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
             m_item->unmount();
-        });       
+        });
         l.last()->setEnabled(m_item->isMounted());
     }
     if(netWorkUri != m_uri){
@@ -371,6 +372,3 @@ QString SideBarMenu::getComputerUriFromUnixDevice(const QString &unixDevice){
     }
     return uri;
 }
-
-
-

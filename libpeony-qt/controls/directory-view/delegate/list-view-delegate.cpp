@@ -24,6 +24,8 @@
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
 #include "file-item-model.h"
+#include "file-item-proxy-filter-sort-model.h"
+#include "file-item.h"
 
 #include "list-view.h"
 #include "clipboard-utils.h"
@@ -68,6 +70,21 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto view = qobject_cast<DirectoryView::ListView *>(parent());
     opt.decorationSize = view->iconSize();
+
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(index);
+
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            painter->setOpacity(0.5);
+        }else{
+            painter->setOpacity(1.0);
+        }
+    }//end
+#endif
+
     /* 此处以中文命名的文件保护箱标记实时同步还存在问题，是由于uri编码（尽管使用FileUtils::urlEncoded进行转换）与底层(info的uri)不匹配 */
     QString uri = index.data(Qt::UserRole).toString();
     auto info = FileInfo::fromUri(uri);
@@ -328,6 +345,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
     }
+
 }
 
 QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -294,8 +294,18 @@ cancel:
 
     fileSync(m_uri, destUri);
 
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_uri);
+    if (mHelper->isUnixDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        QString oldNamePath = mHelper->getDestName(m_uri);
+        mHelper->discRenameOperation(oldNamePath, m_new_name);
+    }
+#endif
+
     Q_EMIT operationFinished();
     //notifyFileWatcherOperationFinished();
+
 }
 
 #include <QFileInfo>

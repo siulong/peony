@@ -90,6 +90,8 @@ private:
     QStringList m_source_uris;
     QString m_dest_dir_uri = nullptr;
 
+    QString m_disc_media_type = nullptr;
+    bool m_is_disk_work = false;
     int m_current_count = 0;
     int m_total_count = 0;
     QSet<QString> m_conflict_files;

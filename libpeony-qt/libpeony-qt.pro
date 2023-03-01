@@ -80,7 +80,7 @@ unix {
     # fixme:// format_dialog.h
     header.path = /usr/include/peony-qt
     header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h windows/FMWindowIface.h \
-                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h
+                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h windows/udfAppendBurnDataDialog.h
 #    header.depends = header2
     header.files += development-files/header-files/*
     INSTALLS += header
@@ -97,5 +97,3 @@ unix {
     #QM_FILES_RESOURCE_PREFIX = ../translations/libpeony-qt
     QM_FILES_INSTALL_PATH = /usr/share/libpeony-qt
 }
-
-

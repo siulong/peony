@@ -27,7 +27,7 @@
 #include "file-info.h"
 
 #include "file-operation-manager.h"
-
+#include <QDir>
 #include <QProcess>
 #include <file-copy.h>
 
@@ -1205,6 +1205,23 @@ void FileMoveOperation::run()
         }
     }
 
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
+    if (mHelper->isUnixDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        if (!mHelper->dealDVDReduce().isEmpty()) {
+            m_dest_dir_uri = mHelper->dealDVDReduce();
+            if (isCancelled())
+               return;
+            //should block and wait for other object prepared.
+            setCopyMove(true);
+            setAction(Qt::CopyAction);
+            moveForceUseFallback();
+            goto end;
+        }
+    }
+#endif
+
 start:
     if (!isValid()) {
         FileOperationError except;
@@ -1240,7 +1257,22 @@ start:
 //    }
 
 end:
+#ifdef KY_UDF_BURN
+    if (mHelper->isUnixDevice()) {
+        if(!mHelper->discWriteOperation(m_src_uris, m_dest_dir_uri)) {
+            FileOperationError except;
+            except.errorType = ET_CUSTOM;
+            except.op = FileOpMove;
+            except.title = tr("Move file error");
+            except.srcUri = m_src_uris.first();
+            except.errorStr = tr("Burn failed");
+            except.destDirUri = m_dest_dir_uri;
+            except.dlgType = ED_WARNING;
+            Q_EMIT errored(except);
+        }
+    }
     Q_EMIT operationFinished();
+#endif
 
     sendSrcAndDestUrisOfCopyDspsFiles();
 }

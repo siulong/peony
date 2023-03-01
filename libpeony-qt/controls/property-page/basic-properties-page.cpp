@@ -66,6 +66,8 @@
 
 #include <QApplication>
 
+#define DEBUG qDebug() << "[" << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << "]"
+
 using namespace Peony;
 
 static PushButtonStyle *global_instance = nullptr;

@@ -33,6 +33,12 @@
 #include "peony-core_global.h"
 #include "file-operation-error-handler.h"
 #include "file-operation-manager.h"
+#include "file-operation-helper.h"
+
+#ifdef KY_UDF_BURN
+#include <libkyudfburn/disccontrol.h>
+#include <libkyudfburn/udfreadwrite.h>
+#endif
 
 namespace Peony {
 

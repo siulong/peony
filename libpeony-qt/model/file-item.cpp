@@ -35,10 +35,16 @@
 #include "gerror-wrapper.h"
 #include "bookmark-manager.h"
 #include "audio-play-manager.h"
+#ifndef KY_UDF_BURN
+#include "disccontrol.h"
+#else
+#include <libkyudfburn/disccontrol.h>
+using namespace UdfBurn;
+#endif
 
 #include <QDebug>
 #include <QStandardPaths>
-
+#include <QDir>
 #include <QMessageBox>
 #include <QUrl>
 #include <QTimer>
@@ -370,6 +376,10 @@ void FileItem::findChildrenAsync()
                 return;
             }
 
+
+            /* 如果是R类型光盘，遍历完当前目录后，再遍历将要刻录的缓冲数据加入item的m_children列表 */
+            showFilesForBurningOnRTypeDisc();
+
             enumerator->cancel();
             delete enumerator;
 
@@ -472,6 +482,9 @@ void FileItem::findChildrenAsync()
 
             if (!m_model||!m_children||!m_info)
                 return;
+
+            /* 如果是R类型光盘，遍历完当前目录后，再遍历将要刻录的缓冲数据加入item的m_children列表 */
+            showFilesForBurningOnRTypeDisc();
 
             m_watcher = std::make_shared<FileWatcher>(this->m_info->uri(), nullptr, true);
             m_watcher->setMonitorChildrenChange(true);
@@ -590,6 +603,11 @@ void FileItem::onChildAdded(const QString &uri)
         // add exsited checkment. link to: #66999
         if (!item) {
             item = new FileItem(info, this, m_model);
+#ifdef KY_UDF_BURN
+            if(m_isRTypeDisc){
+                item->setProperty("isFileForBurning", true);
+            }
+#endif
             m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
             m_children->append(item);
             m_uri_item_hash.insert(item->uri(), item);
@@ -844,6 +862,71 @@ void FileItem::batchRemoveItems()
     }
 }
 
+void FileItem::showFilesForBurningOnRTypeDisc()
+{
+#ifdef KY_UDF_BURN
+    QString unixDevice = m_info.get()->unixDeviceFile();
+    if(!unixDevice.startsWith("/dev/sr"))
+        return;
+
+    DiscControl *discControl = new DiscControl(unixDevice);
+    if(discControl->work()){
+       connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+           if(discControl->isAllRType()){
+               m_isRTypeDisc = true;
+               FileEnumerator e;
+               QString parentDirForBurnFiles = "file://" + QDir::homePath()+"/.cache/KylinTransitBurner/";/* 例：file:///home/kylin/.cache/KylinTransitBurner */
+               e.setEnumerateDirectory(parentDirForBurnFiles);
+               e.enumerateSync();
+               for(auto &fileInfo : e.getChildren()){
+                   auto info = FileInfo::fromUri(fileInfo.get()->uri());
+                   auto infoJob = new FileInfoJob(info);
+                   infoJob->setAutoDelete();
+                   infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
+                       if(m_uri_item_hash.contains(info.get()->uri()))
+                           return;
+                       auto item = new FileItem(info, this, m_model);
+                       item->setProperty("isFileForBurning", true);/* 所有"/home/家目录/.cache/KylinTransitBurner/"中的子文件展示在挂载点时都应该半透明显示，区别于普通文件 */
+                       m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+                       m_children->append(item);
+                       m_uri_item_hash.insert(item->uri(), item);
+                       m_model->endInsertRows();
+                       ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                   });
+                   infoJob->queryAsync();
+               }
+               /* 监听 */
+               m_rTypeDiscWatcher = std::make_shared<FileWatcher>(parentDirForBurnFiles, nullptr, true);
+               m_rTypeDiscWatcher->setMonitorChildrenChange(true);
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileCreated, this, [=](QString uri) {
+                   this->onChildAdded(uri);
+                   Q_EMIT this->childAdded(uri);
+                   ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileDeleted, this, [=](QString uri) {
+                   this->onChildRemoved(uri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileChanged, this, [=](const QString &uri) {
+                  onChanged(uri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri) {
+                   this->onRenamed(oldUri, newUri);
+                   BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
+                   m_model->updated();
+               });
+               m_rTypeDiscWatcher->startMonitor();
+           }
+           if(discControl){
+               discControl->deleteLater();
+           }
+       });
+
+    }
+#endif
+}
+
 void FileItem::clearChildren()
 {
     auto parent = firstColumnIndex();
@@ -856,6 +939,8 @@ void FileItem::clearChildren()
     m_expanded = false;
     m_watcher.reset();
     m_watcher = nullptr;
+    m_rTypeDiscWatcher.reset();
+    m_rTypeDiscWatcher = nullptr;
 }
 
 /* Func: if it isn't a vaild volume device,it should not be displayed.

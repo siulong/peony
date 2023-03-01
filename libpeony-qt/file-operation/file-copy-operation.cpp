@@ -21,18 +21,17 @@
  */
 
 #include "file-copy-operation.h"
-
 #include "file-node-reporter.h"
 #include "file-node.h"
 #include "file-enumerator.h"
 #include "file-info.h"
 
 #include "file-utils.h"
-
 #include "file-operation-manager.h"
 #include "sound-effect.h"
 #include "clipboard-utils.h"
 #include <QProcess>
+#include <QDir>
 #include <QDebug>
 #include "file-copy.h"
 #include <gio/gdesktopappinfo.h>
@@ -72,7 +71,6 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
     m_dest_dir_uri = FileUtils::urlDecode(destDirUri);
     m_reporter = new FileNodeReporter;
     connect(m_reporter, &FileNodeReporter::nodeFound, this, &FileOperation::operationPreparedOne);
-
     m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Copy);
 }
 
@@ -672,7 +670,7 @@ void FileCopyOperation::rollbackNodeRecursively(FileNode *node)
                 g_file_delete(dest_file, nullptr, nullptr);
                 g_object_unref(dest_file);
             }
-        }    
+        }
         operationRollbackedOne(node->destUri(), node->uri());
         break;
     }
@@ -704,6 +702,16 @@ void FileCopyOperation::run()
     }
 
     Q_EMIT operationStarted();
+
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
+    if (mHelper->isUnixDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        if (!mHelper->dealDVDReduce().isEmpty()) {
+            m_dest_dir_uri = mHelper->dealDVDReduce();
+        }
+    }
+#endif
 
     Q_EMIT operationRequestShowWizard();
 
@@ -753,8 +761,24 @@ void FileCopyOperation::run()
     }
 
     m_info->m_dest_uris = m_info->m_node_map.values();
-
     nodes.clear();
+
+#ifdef KY_UDF_BURN
+    if (mHelper->isUnixDevice()) {
+        if(!mHelper->discWriteOperation(m_source_uris, m_dest_dir_uri)) {
+            FileOperationError except;
+            except.errorType = ET_CUSTOM;
+            except.op = FileOpCopy;
+            except.title = tr("File copy error");
+            except.srcUri = m_source_uris.first();
+            except.errorStr = tr("Burn failed");
+            except.destDirUri = m_dest_dir_uri;
+            except.dlgType = ED_WARNING;
+            Q_EMIT errored(except);
+        }
+    }
+#endif
+
     Q_EMIT operationFinished();
     sendSrcAndDestUrisOfCopyDspsFiles();
 }

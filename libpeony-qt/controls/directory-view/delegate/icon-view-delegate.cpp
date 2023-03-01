@@ -111,6 +111,25 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
 
+
+    //get file info from index
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(index);
+    //NOTE: item might be deleted when painting, because we might start a
+    //location change during the painting.
+    if (!item) {
+        return;
+    }
+
+#ifdef KY_UDF_BURN
+    /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+    if(item->property("isFileForBurning").toBool()){
+        painter->setOpacity(0.5);
+    }else{
+        painter->setOpacity(1.0);
+    }
+#endif
+
     //default painter
     //QStyledItemDelegate::paint(painter, option, index);
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
@@ -233,14 +252,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (bCutFile && !getView()->getDelegateEditFlag())/* Rename is index is not set to nullptr,link to bug#61119.modified by 2021/06/22 */
         view->setIndexWidget(index, nullptr);
 
-    //get file info from index
-    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
-    auto item = model->itemFromIndex(index);
-    //NOTE: item might be deleted when painting, because we might start a
-    //location change during the painting.
-    if (!item) {
-        return;
-    }
     auto info = item->info();
     // draw color symbols
     int yoffset = 0;
@@ -391,7 +402,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
     painter->restore();
-
 
     //single selection, we have to repaint the emblems.
 

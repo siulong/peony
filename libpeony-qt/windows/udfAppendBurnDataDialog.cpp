@@ -1,21 +1,26 @@
-#include "udfFormatDialog.h"
-#include "disccontrol.h"
+#ifdef KY_UDF_BURN
+
+#include "udfAppendBurnDataDialog.h"
+#include <libkyudfburn/disccontrol.h>
 #include <QMessageBox>
 #include <QThread>
 #include <QDebug>
-#include <volumeManager.h>
-#include <QMutexLocker>
+#include <QDir>
 
-static bool b_finished = false;
-static bool b_failed = false;
+#include "file-enumerator.h"
+#include "file-info-job.h"
+#include "file-info.h"
+
 static bool b_canClose = true;
 
-UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, QWidget *parent):
-        QDialog(parent), m_uri(uri), m_check(false), m_discControl(discControl)
+using namespace UdfBurn;
+
+UdfAppendBurnDataDialog::UdfAppendBurnDataDialog(const QString &uri, DiscControl *discControl, QWidget *parent):
+        QDialog(parent), m_uri(uri),m_discControl(discControl)
 {
 
     setAutoFillBackground(true);
-    setWindowTitle(tr("Format"));
+    setWindowTitle(tr("AppendBurnData"));
     setBackgroundRole(QPalette::Base);
     setContentsMargins(24,24,24,24);
     setFixedSize(m_widgetWidth, m_widgetHeight);
@@ -33,17 +38,16 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     m_discTypeEdit->setReadOnly(true);
     m_discTypeEdit->setEnabled(false);
     m_mainLayout->addWidget(m_discTypeLabel, 1, 1, 1, 2);
-    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 6);
+    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 8);
 
     m_discNameLabel = new QLabel;
     m_discNameLabel->setText(tr("Device Name:"));
     m_discNameEdit = new QLineEdit;
     m_mainLayout->addWidget(m_discNameLabel, 2, 1, 1, 2);
-    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 6);
+    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 8);
 
     m_progress = new QProgressBar;
     m_progress->setMinimum(0);
-//    m_progress->setMaximum(0);
     m_progress->setValue(0);
     m_progress->setTextVisible(false);
     m_progress->setVisible(false);
@@ -67,16 +71,12 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     m_discNameEdit->setText(discName);
     b_canClose = true;
 
-    connect(m_okBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfFormat, Qt::UniqueConnection);
-    connect(m_cancelBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfCancel, Qt::UniqueConnection);
-    connect(m_discControl, &DiscControl::formatUdfFinished, this,  &UdfFormatDialog::slot_formatFinished, Qt::UniqueConnection);
-
-    //监控光驱设备是否被移除
-    auto volumeManager = Experimental_Peony::VolumeManager::getInstance();
-    connect(volumeManager,&Experimental_Peony::VolumeManager::volumeRemove,this,&UdfFormatDialog::slot_volumeDeviceRemove);
+    connect(m_okBtn, &QPushButton::clicked, this, &UdfAppendBurnDataDialog::slot_udfAppendBurnData, Qt::UniqueConnection);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &UdfAppendBurnDataDialog::slot_udfAppendBurnDataCancel, Qt::UniqueConnection);
+    connect(m_discControl, &DiscControl::appendBurnDataUdfFinished, this,  &UdfAppendBurnDataDialog::slot_appendBurnDataFinished, Qt::UniqueConnection);
 }
 
-UdfFormatDialog::~UdfFormatDialog()
+UdfAppendBurnDataDialog::~UdfAppendBurnDataDialog()
 {
     if(m_discControl){
         m_discControl->deleteLater();
@@ -89,11 +89,35 @@ UdfFormatDialog::~UdfFormatDialog()
     }
 }
 
-void UdfFormatDialog::slot_udfFormat()
+void UdfAppendBurnDataDialog::slot_udfAppendBurnDataCancel()
 {
-    qDebug() << "begin slot_udformat";
+    this->close();
+}
+
+void UdfAppendBurnDataDialog::slot_udfAppendBurnData()
+{
+    qDebug() << "begin slot_udappendBurnData";
+
+    /* R类型光盘，讲缓存刻录数据的临时目录绝对路径传入刻录接口进行刻录操作 */
+    QString parentDirForBurnFiles = QDir::homePath()+"/.cache/KylinTransitBurner/";
+    m_urisOfBurningCachedData.clear();
+
+    Peony::FileEnumerator e;
+    e.setEnumerateDirectory(QString("file://").append(parentDirForBurnFiles));
+    e.enumerateSync();
+    if(e.getChildren().size() <= 0){
+        QMessageBox::warning(nullptr, tr("Warning"), tr("No burn data, please add!"), QMessageBox::Ok);
+        setButtonState(false);
+        m_urisOfBurningCachedData.clear();
+        this->close();
+        return;
+    }
+    for(auto &fileInfo : e.getChildren()){
+        m_urisOfBurningCachedData.append(fileInfo.get()->uri());
+    }
+
     setButtonState(true);
-    if (!udfFormatEnsureMsgBox()) {
+    if (!udfAppendBurnDataEnsureMsgBox()) {
         setButtonState(false);
         return;
     }
@@ -110,24 +134,19 @@ void UdfFormatDialog::slot_udfFormat()
     m_progress->setMaximum(0);
     b_canClose = false;
 
-    /* udf格式化线程 */
+    /* udf追加刻录线程 */
     m_thread = new QThread();
     m_discControl->moveToThread(m_thread);
     connect(m_thread, &QThread::started, m_discControl, [=](){
-         m_discControl->formatUdfSync(m_discNameEdit->text());
+        m_discControl->appendBurnDataUdfSync(m_discNameEdit->text(), parentDirForBurnFiles);
     }, Qt::UniqueConnection);
-    //connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
-    //connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
-    connect(m_thread, &QThread::finished, this, &UdfFormatDialog::slot_FreeMemory, Qt::UniqueConnection);
+    connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
+    connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
     m_thread->start();
 }
 
-void UdfFormatDialog::slot_udfCancel()
-{
-    this->close();
-}
-
-void UdfFormatDialog::slot_formatFinished(bool successful, QString errorInfo)
+#include "file-operation-utils.h"
+void UdfAppendBurnDataDialog::slot_appendBurnDataFinished(bool successful, QString errorInfo)
 {
     m_thread->quit();
 
@@ -136,59 +155,35 @@ void UdfFormatDialog::slot_formatFinished(bool successful, QString errorInfo)
     setButtonState(false);
 
     if (successful) {
-        QMessageBox::about(this, tr("Format"), tr("Format operation has been finished successfully."));
+        QMessageBox::about(this, tr("AppendBurnData"), tr("AppendBurnData operation has been finished successfully."));
+        /* 刻录操作完成后需要手动清空刻录缓存数据即'.cache/KylinTransitBurner/' */
+        Peony::FileOperationUtils::remove(m_urisOfBurningCachedData);
 
     } else {
-        b_failed = true;
         if(errorInfo.isEmpty())
-            errorInfo = tr("Sorry, the format operation is failed!");
+            errorInfo = tr("Sorry, the appendBurnData operation is failed!");
         QMessageBox::critical(this, tr("Failed"), errorInfo, QMessageBox::Ok);
     }
 
     this->close();
 }
 
-void UdfFormatDialog::slot_volumeDeviceRemove(const QString dev)
-{
-    qDebug() << __func__ << __LINE__ << QString("[%1] device has been removed").arg(dev);
-    QMutexLocker locker(&m_mutex);
-    if (m_check) {
-        qDebug() << __LINE__ << "m_check =  " << m_check;
-        return ;
-    }
-    if (dev == m_discControl->discDevice()) {
-        qDebug() << __func__ << __LINE__ << QString("[%1] prepare to kill the formatting process").arg(dev);
-        m_discControl->setRemoved(true);
-        m_discControl->killFormatProcess();
-    }
-}
-
-void UdfFormatDialog::slot_FreeMemory()
-{
-    qDebug() << __LINE__ << "UDF format thread Finshed";
-    QMutexLocker locker(&m_mutex);
-    this->m_check = true;
-    this->m_discControl->deleteLater();  // 这个在前
-    this->m_thread->deleteLater(); // 这个在后
-}
-
-
-void UdfFormatDialog::closeEvent(QCloseEvent *e)
+void UdfAppendBurnDataDialog::closeEvent(QCloseEvent *e)
 {
     if (!b_canClose) {
-        QMessageBox::warning(nullptr, tr("Formatting. Do not close this window"), tr("Formatting. Do not close this window"), QMessageBox::Ok);
+        QMessageBox::warning(nullptr, tr("Burning. Do not close this window"), tr("Burning. Do not close this window"), QMessageBox::Ok);
         e->ignore();
         return;
     }
 }
 
-bool UdfFormatDialog::udfFormatEnsureMsgBox()
+bool UdfAppendBurnDataDialog::udfAppendBurnDataEnsureMsgBox()
 {
     QMessageBox ensureMsgBox(this);
-    ensureMsgBox.setText(tr("Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?"));
-    ensureMsgBox.setWindowTitle(tr("Format"));
+    ensureMsgBox.setText(tr("Burning this disc will append datas on it. Do you want to continue ?"));
+    ensureMsgBox.setWindowTitle(tr("Burn"));
 
-    QPushButton* okBtn = ensureMsgBox.addButton(tr("Begin Format"), QMessageBox::YesRole);
+    QPushButton* okBtn = ensureMsgBox.addButton(tr("Begin Burning"), QMessageBox::YesRole);
     QPushButton* cancelBtn = ensureMsgBox.addButton(tr("Close"), QMessageBox::NoRole);
 
     ensureMsgBox.exec();
@@ -202,9 +197,11 @@ bool UdfFormatDialog::udfFormatEnsureMsgBox()
     return false;
 }
 
-void UdfFormatDialog::setButtonState(bool state)
+void UdfAppendBurnDataDialog::setButtonState(bool state)
 {
     m_okBtn->setDisabled(state);
     m_cancelBtn->setDisabled(state);
     m_discNameEdit->setDisabled(state);
 }
+
+#endif

@@ -200,6 +200,20 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
 
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(m_index);
+
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            p.setOpacity(0.5);
+        }else{
+            p.setOpacity(1.0);
+        }
+    }//end
+#endif
+
     auto opt = m_option;
     auto rawRect = m_option.rect;
     opt.rect = this->rect();
