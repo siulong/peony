@@ -479,12 +479,6 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
         Q_EMIT this->updateWindowLocationRequest(uri);
 }
 
-void NavigationSideBar::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
-}
-
 void NavigationSideBar::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Left||event->key()==Qt::Key_Right)
@@ -527,7 +521,6 @@ void NavigationSideBar::focusInEvent(QFocusEvent *event)
         }
     }
     GlobalSettings::getInstance()->setValue("LAST_FOCUS_PEONY_WINID", dynamic_cast<MainWindow *>(this->topLevelWidget())->winId());
-    setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void NavigationSideBar::wheelEvent(QWheelEvent *event)

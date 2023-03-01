@@ -575,7 +575,6 @@ void IconView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::startDrag(Qt::DropActions supportedActions)
@@ -628,12 +627,6 @@ void IconView::startDrag(Qt::DropActions supportedActions)
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
     }
-}
-
-void IconView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QListView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::slotRename()

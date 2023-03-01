@@ -658,7 +658,6 @@ void ListView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void ListView::startDrag(Qt::DropActions flags)
@@ -730,12 +729,6 @@ void ListView::startDrag(Qt::DropActions flags)
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
     }
-}
-
-void ListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void ListView::slotRename()

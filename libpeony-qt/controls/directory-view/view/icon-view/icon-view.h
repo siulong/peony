@@ -170,8 +170,6 @@ protected:
 
     void startDrag(Qt::DropActions supportedActions) override;
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
     bool getIgnore_mouse_move_event() const;
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
 

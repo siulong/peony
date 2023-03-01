@@ -154,8 +154,6 @@ protected:
 
     void startDrag(Qt::DropActions flags) override;
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
 private Q_SLOTS:
     void slotRename();
 
