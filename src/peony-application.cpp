@@ -151,6 +151,15 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
         QApplication::installTranslator(sdkTrans);
     }
 
+#ifdef KY_UDF_BURN
+    QTranslator *tUdfBrun = new QTranslator(this);
+    auto udfBurnTranslationFilePath = QString("/usr/share/kyudfburn/translations/kyudfburn_%1.qm").arg(QLocale::system().name());
+    bool ok = tUdfBrun->load(udfBurnTranslationFilePath);
+    if (!ok) {
+        qWarning()<<"can not load kyudfburn translation files, path is"<<udfBurnTranslationFilePath;
+    }
+#endif
+
     setApplicationName(tr("peony-qt"));
 
     parser.addOption(quitOption);
