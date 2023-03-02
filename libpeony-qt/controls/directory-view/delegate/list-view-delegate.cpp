@@ -23,6 +23,7 @@
 #include "list-view-delegate.h"
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-item-model.h"
 #include "file-item-proxy-filter-sort-model.h"
 #include "file-item.h"
@@ -463,7 +464,10 @@ void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
     }
 
     auto fileOpMgr = FileOperationManager::getInstance();
-    auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
+    QStringList list;
+    list.append(index.data(FileItemModel::UriRole).toString());
+    auto renameOp = new FileBatchRenameOperation(list, text);
+//    auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
 
     connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
         auto info = renameOp->getOperationInfo().get();

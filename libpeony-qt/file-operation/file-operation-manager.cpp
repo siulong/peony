@@ -35,6 +35,7 @@
 #include "file-link-operation.h"
 #include "file-move-operation.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-trash-operation.h"
 #include "file-untrash-operation.h"
 
@@ -882,6 +883,13 @@ void FileOperationInfo::RenameOppositeInfoConstruct()
     m_dest_uris<<src;
     m_src_dir_uri = m_dest_dir_uri;
 }
+
+void FileOperationInfo::BatchRenameOppositeInfoConstruct()
+{
+    m_dest_dir_uris = m_src_uris;
+    m_src_dir_uri = m_dest_dir_uri;
+}
+
 void FileOperationInfo::UntrashOppositeInfoConstruct()
 {
     m_dest_uris = m_dest_dir_uris;
@@ -912,6 +920,8 @@ std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperat
     oppositeInfo->m_node_map = oppsiteMap;
     oppositeInfo->m_newname = this->m_oldname;
     oppositeInfo->m_oldname = this->m_newname;
+    oppositeInfo->m_newnames = this->m_newnames;
+    oppositeInfo->m_oldnames = this->m_oldnames;
 
     return oppositeInfo;
 }

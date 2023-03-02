@@ -7,6 +7,7 @@ include(file-operation-dialog/file-operation-dialog.pri)
 PKGCONFIG += gio-unix-2.0
 
 HEADERS += \
+    $$PWD/file-batch-rename-operation.h \
     $$PWD/file-node.h                           \
     $$PWD/file-operation-helper.h \
     $$PWD/file-operation-internal-dialog.h \
@@ -32,6 +33,7 @@ HEADERS += \
     $$PWD/file-operation-error-dialog-base.h    \
 
 SOURCES += \
+    $$PWD/file-batch-rename-operation.cpp \
     $$PWD/file-node.cpp                         \
     $$PWD/file-operation-helper.cpp \
     $$PWD/file-operation-internal-dialog.cpp \

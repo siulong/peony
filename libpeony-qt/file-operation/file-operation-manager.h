@@ -176,6 +176,7 @@ public:
         Copy,//delete if no error in original copying
         Link,//delete...
         Rename,//rename
+        BatchRename,//batch rename
         Trash,//untrash
         Untrash,//trash
         Delete,//nothing to do
@@ -192,6 +193,7 @@ public:
     void commonOppositeInfoConstruct();
     void LinkOppositeInfoConstruct();
     void RenameOppositeInfoConstruct();
+    void BatchRenameOppositeInfoConstruct();
     void UntrashOppositeInfoConstruct();
     void trashOppositeInfoConstruct();
 
@@ -228,6 +230,9 @@ public:
     //Rename
     QString m_oldname = nullptr;
     QString m_newname = nullptr;
+
+    QStringList m_oldnames;
+    QStringList m_newnames;
 
     bool m_has_error = false;
 

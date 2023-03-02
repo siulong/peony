@@ -29,6 +29,7 @@
 
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 
 #include "emblem-provider.h"
 
@@ -529,8 +530,11 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
         auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
-
+        QStringList list;
+        list.append(index.data(FileItemModel::UriRole).toString());
+        list.append(QString("file:///home/lza/%E6%A1%8C%E9%9D%A2/daa.txt"));
+        auto renameOp = new FileBatchRenameOperation(list, newName);
+        //auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
         connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
             auto info = renameOp->getOperationInfo().get();
             auto uri = info->target();

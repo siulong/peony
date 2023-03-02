@@ -27,6 +27,7 @@
 #include "file-copy-operation.h"
 #include "file-trash-operation.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-delete-operation.h"
 #include "file-link-operation.h"
 
@@ -198,7 +199,9 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 FileOperation *FileOperationUtils::rename(const QString &uri, const QString &newName, bool addHistory)
 {
     auto fileOpMgr = FileOperationManager::getInstance();
-    auto renameOp = new FileRenameOperation(uri, newName);
+    QStringList list;
+    list.append(uri);
+    auto renameOp = new FileBatchRenameOperation(list, newName);
     fileOpMgr->startOperation(renameOp, addHistory);
     return renameOp;
 }
