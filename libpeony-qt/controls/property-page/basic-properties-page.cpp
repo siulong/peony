@@ -252,6 +252,7 @@ void BasicPropertiesPage::initFloorTwo()
     QFrame      *baseFrame  = new QFrame(this);
     QFormLayout *baseLayout = new QFormLayout(baseFrame);
 
+    baseLayout->setObjectName("floorTwoBaseLayout");
     baseLayout->setVerticalSpacing(16);
     baseLayout->setHorizontalSpacing(10);
     baseLayout->setContentsMargins(24, 16, 24, 16);
@@ -984,14 +985,29 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
                 m_timeCreated = g_file_info_get_attribute_uint64(info, "time::created");
 
                 // 客户需要必须显示创建时间，因此使用三个时间最小时间戳为创建时间
-                quint64 minTime = m_timeCreated != 0 ? m_timeCreated : m_timeModified;
-                minTime = qMin (minTime, m_timeModified);
-                if (m_timeAccess != 0)
-                    minTime = qMin (minTime, m_timeAccess);
-                m_timeCreated = minTime;
-                QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
-                QString createTime = createDate.toString(m_systemTimeFormat);
-                m_timeCreatedLabel->setText(createTime);
+//                quint64 minTime = m_timeCreated != 0 ? m_timeCreated : m_timeModified;
+//                minTime = qMin (minTime, m_timeModified);
+//                if (m_timeAccess != 0)
+//                    minTime = qMin (minTime, m_timeAccess);
+//                m_timeCreated = minTime;
+                if (m_timeCreated) {
+                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
+                    QString createTime = createDate.toString(m_systemTimeFormat);
+                    m_timeCreatedLabel->setText(createTime);
+                } else {
+                    QFormLayout *layout = this->findChild<QFormLayout*>("floorTwoBaseLayout");
+                    switch (m_fileType) {
+                    case BP_Folder:
+                        layout->removeRow(3);
+                        break;
+                    case BP_File:
+                    case BP_Application:
+                        layout->removeRow(4);
+                        break;
+                    default:
+                        break;
+                    }
+                }
 
 //                // FIXME:目前只是文件夹显示创建时间，当创建时间获取失败的时候，将修改时间作为创建时间
 //                QDateTime date1 = qFileInfo.birthTime();
