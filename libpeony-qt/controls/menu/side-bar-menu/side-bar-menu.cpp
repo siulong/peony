@@ -43,6 +43,7 @@
 #else
 #include <libkyudfburn/disccontrol.h>
 #include "ky-udf-format-dialog.h"
+#include "udfAppendBurnDataDialog.h"
 using namespace UdfBurn;
 #endif
 
@@ -266,6 +267,33 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             }
         }
     }
+
+#ifdef KY_UDF_BURN
+    /* udf刻录--R类型光盘 */
+    if(unixDevice.contains("/dev/sr")){
+        /* 光盘追加刻录 ( udf 追加刻录) */
+        qDebug() << "侧边栏： append udf format action.";
+        QAction *actionBurn = addAction(QIcon::fromTheme("preview-file"), tr("burndata"));
+        actionBurn->setEnabled(false);
+        l.append(actionBurn);
+
+        if(!FileUtils::isBusyDevice(m_item->getDevice())) {
+            /* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+            DiscControl *discControl = new DiscControl(unixDevice);
+            if(discControl->work()){
+                connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+                    connect(actionBurn, &QAction::triggered, [=](){
+                        UdfAppendBurnDataDialog *udfAppendBurnDataDlg = new UdfAppendBurnDataDialog(uri, discCtrl);
+                        udfAppendBurnDataDlg->show();
+                    });
+
+                    qDebug() << unixDevice << "侧边栏： supported Udf appendBurnData values : "<<discCtrl->discCanAppend();
+                    l.last()->setEnabled(discCtrl->discCanAppend() && discControl->isAllRType());
+                });
+            }
+        }
+    }
+#endif
 
     /* 属性 */
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
