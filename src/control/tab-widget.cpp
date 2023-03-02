@@ -846,7 +846,7 @@ void TabWidget::updateSearchBar(bool showSearch)
 {
     qDebug() << "updateSearchBar:" <<showSearch;
     m_show_search_bar = showSearch;
-    if (showSearch)
+    if (showSearch && !qApp->property("tabletMode").toBool())
     {
         m_search_title->show();
         m_search_bar->show();
