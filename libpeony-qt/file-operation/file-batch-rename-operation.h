@@ -30,7 +30,7 @@ private:
 
     QString getFileExtensionOfFile(const QString& file); /* 获取文件的文件扩展名 */
     ExceptionResponse prehandle(GError *err);
-
+    QString handleDuplicate(const QString uri);
 
 
 };

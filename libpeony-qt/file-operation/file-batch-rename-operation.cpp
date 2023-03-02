@@ -14,11 +14,6 @@ static QString set_desktop_name (QString file, QString& name, GError** error);
 
 using namespace Peony;
 
-static QString handleDuplicate(QString name)
-{
-    return FileUtils::handleDuplicateName(name);
-}
-
 FileBatchRenameOperation::FileBatchRenameOperation(QStringList uris, QString newName)
 {
     m_uris = uris;
@@ -81,15 +76,19 @@ void FileBatchRenameOperation::run()
         QString oldName = FileUtils::getFileDisplayName(uri);
         std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(uri);
         if(fileinfo && !fileinfo->isDir()){
-            bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
-                        Peony::GlobalSettings::getInstance()->getValue(SHOW_FILE_EXTENSION).toBool():true;
-            if(!showFileExtension){
-                QString oldSuffix = getFileExtensionOfFile(oldName);
-                QString newSuffix = getFileExtensionOfFile(m_new_name);
-                if((oldSuffix != newSuffix) && !oldSuffix.isEmpty())
-                {
-                    m_new_name = m_new_name.append(".").append(oldSuffix);
-                }
+//            bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
+//                        Peony::GlobalSettings::getInstance()->getValue(SHOW_FILE_EXTENSION).toBool():true;
+            QString oldSuffix = getFileExtensionOfFile(oldName);
+            QString newSuffix = getFileExtensionOfFile(m_new_name);
+            if (newSuffix.isEmpty()) {
+                m_new_name = m_new_name.append(".").append(oldSuffix);
+            } else if ((oldSuffix != newSuffix) && !oldSuffix.isEmpty()) {
+                m_new_name = m_new_name.replace(newSuffix, oldSuffix);
+            }
+        } else if (fileinfo->isDir()) {
+            QString newSuffix = getFileExtensionOfFile(m_new_name);
+            if (!newSuffix.isEmpty()) {
+                m_new_name.chop(newSuffix.length() + 1);
             }
         }
         auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
@@ -322,6 +321,69 @@ ExceptionResponse FileBatchRenameOperation::prehandle(GError *err)
     return Other;
 }
 
+QString FileBatchRenameOperation::handleDuplicate(QString uri)
+{
+    QString handledName = nullptr;
+    QString name = QUrl(uri).toDisplayString().split("/").last();
+
+    QRegExp regExpNum("\\(\\d+\\)");
+    QRegExp regExp (QString("\\(\\d+\\)(\\.[0-9a-zA-Z\\.]+|)$"));
+
+    QString dupReg = nullptr;
+
+    if (name.contains(regExp)) {
+        int num = 0;
+        QString numStr = "";
+
+        QString ext = regExp.cap(0);
+        if (ext.contains(regExpNum)) {
+            numStr = regExpNum.cap(0);
+        }
+
+        numStr.remove(0, 1);
+        numStr.chop(1);
+        num = numStr.toInt();
+        ++num;
+        handledName = name.replace(regExp, ext.replace(regExpNum, QString("(%1)").arg(num)));
+    } else {
+        if (name.contains(".")) {
+            auto list = name.split(".");
+            if (list.count() <= 1) {
+                handledName = name + QString("(1)");
+            } else {
+                int pos = list.count() - 1;
+                if (list.last() == "gz"
+                        || list.last() == "xz"
+                        || list.last() == "Z"
+                        || list.last() == "sit"
+                        || list.last() == "bz"
+                        || list.last() == "bz2") {
+                    --pos;
+                }
+                if (pos < 0) {
+                    pos = 0;
+                }
+                auto tmp = list;
+                QStringList suffixList;
+                for (int i = 0; i < list.count() - pos; i++) {
+                    suffixList.prepend(tmp.takeLast());
+                }
+                auto suffix = suffixList.join(".");
+
+                auto basename = tmp.join(".");
+                name = basename + QString("(1)") + "." + suffix;
+                if (name.endsWith(".")) {
+                    name.chop(1);
+                }
+                handledName = name;
+            }
+        } else {
+            handledName = name + QString("(1)");
+        }
+    }
+
+    return handledName;
+}
 
 static QString set_desktop_name (QString file, QString& name, GError** error)
 {
