@@ -988,11 +988,10 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
     data->dl->setProperty("password", QVariant());
     data->dl->mTimer->stop();
     data->dl->close();
+    data->dl->deleteLater();
 
     createformatfree(data);
     qDebug()<<"format cb end";
-
-    data->dl->deleteLater();
 };
 
 
