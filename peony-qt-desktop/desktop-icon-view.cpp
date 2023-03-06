@@ -659,6 +659,8 @@ void DesktopIconView::initShoutCut()
         auto selections = this->getSelections();
         if (selections.count() == 1) {
             this->editUri(selections.first());
+        } else if (selections.count() > 1) {
+            this->editUris(selections);
         }
     });
     addAction(editAction);
@@ -1251,7 +1253,11 @@ void DesktopIconView::editUri(const QString &uri)
 
 void DesktopIconView::editUris(const QStringList uris)
 {
-
+    clearAllIndexWidgets();
+    auto origin = FileUtils::getOriginalUri(uris.first());
+    QTimer::singleShot(100, this, [=]() {
+        edit(m_proxy_model->mapFromSource(m_model->indexFromUri(origin)));
+    });
 }
 
 

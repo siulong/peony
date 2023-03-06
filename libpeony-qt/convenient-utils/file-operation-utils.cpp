@@ -213,9 +213,7 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 FileOperation *FileOperationUtils::rename(const QString &uri, const QString &newName, bool addHistory)
 {
     auto fileOpMgr = FileOperationManager::getInstance();
-    QStringList list;
-    list.append(uri);
-    auto renameOp = new FileBatchRenameOperation(list, newName);
+    auto renameOp = new FileRenameOperation(uri, newName);
     fileOpMgr->startOperation(renameOp, addHistory);
     return renameOp;
 }

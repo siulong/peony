@@ -1039,7 +1039,7 @@ void ListView::editUri(const QString &uri)
     auto origin = FileUtils::getOriginalUri(uri);
     if(uri.startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
         origin = uri;
-    QModelIndex index =m_proxy_model->indexFromUri(origin);
+    QModelIndex index = m_proxy_model->indexFromUri(origin);
     setIndexWidget(index, nullptr);
     //注释该行以修复bug:#60474
 //    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
@@ -1062,6 +1062,19 @@ void ListView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
+    setState(QTreeView::NoState);
+    auto origin = FileUtils::getOriginalUri(uris.first());
+    if(uris.first().startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
+        origin = uris.first();
+    QModelIndex index = m_proxy_model->indexFromUri(origin);
+    setIndexWidget(index, nullptr);
+    //fix bug#70769, edit box overlapped with status bar issue
+    //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
+    if(index.row() >= m_proxy_model->rowCount()-1)
+       QTreeView::scrollToBottom();
+    //注释该行以修复bug:#60474
+//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
+    edit(index);
 }
 
 bool ListView::isEnableMultiSelect()

@@ -544,6 +544,11 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
                 connect(l.last(), &QAction::triggered, [=]() {
                     m_view->editUri(m_selections.first());
                 });
+            } else if (m_selections.count() > 1) {
+                l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
+                connect(l.last(), &QAction::triggered, [=]() {
+                    m_view->editUris(m_selections);
+                });
             }
         }
     } else {

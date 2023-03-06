@@ -529,29 +529,43 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        QStringList list;
-        list.append(index.data(FileItemModel::UriRole).toString());
-        list.append(QString("file:///home/lza/%E6%A1%8C%E9%9D%A2/daa.txt"));
-        auto renameOp = new FileBatchRenameOperation(list, newName);
-        //auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
-        connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, getView(), [=](){
-                auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
-                infoJob->setAutoDelete();
-                connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+        if (getView()->getSelections().count() == 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
+                    infoJob->setAutoDelete();
+                    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        getView()->setSelections(QStringList()<<uri);
+                        getView()->scrollToSelection(uri);
+                        //set focus to fix bug#54061
+                        getView()->setFocus();
+                    });
+                });
+            }, Qt::BlockingQueuedConnection);
+
+            fileOpMgr->startOperation(renameOp, true);
+        } else if (getView()->getSelections().count() > 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            QStringList uris = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(uris, newName);
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
                     getView()->setSelections(QStringList()<<uri);
                     getView()->scrollToSelection(uri);
                     //set focus to fix bug#54061
                     getView()->setFocus();
                 });
-                infoJob->queryAsync();
-            });
-        }, Qt::BlockingQueuedConnection);
+            }, Qt::BlockingQueuedConnection);
 
-        fileOpMgr->startOperation(renameOp, true);
+            fileOpMgr->startOperation(renameOp, true);
+        }
+
     }
     else if (newName == oldName)
     {

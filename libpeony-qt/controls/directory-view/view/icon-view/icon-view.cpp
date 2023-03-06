@@ -847,6 +847,15 @@ void IconView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
+    setState(QListView::NoState);
+    auto origin = FileUtils::getOriginalUri(uris.first());
+    if(uris.first().startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
+        origin = uris.first();
+    QModelIndex index = m_sort_filter_proxy_model->indexFromUri(origin);
+    setIndexWidget(index, nullptr);
+    qDebug() << "editUris:" << uris << origin;
+    QListView::scrollTo(index);
+    edit(index);
 }
 
 void IconView::selectAll()

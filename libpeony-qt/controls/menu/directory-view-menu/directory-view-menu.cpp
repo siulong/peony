@@ -875,13 +875,18 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 });
             }
 
-            if (m_selections.count() == 1 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe) {
+            if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
                 l.last()->setObjectName(RENAME_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
-                    m_view->editUri(m_selections.first());
+                    if (m_selections.count() == 1) {
+                        m_view->editUri(m_selections.first());
+                    } else if (m_selections.count() > 1) {
+                        m_view->editUris(m_selections);
+                    }
                 });
             }
+
         } else {
             if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd)
             {

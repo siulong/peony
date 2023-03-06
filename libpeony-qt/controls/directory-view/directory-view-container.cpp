@@ -433,6 +433,14 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
             //修复在选中文件不可见时，重命名操作不会跳转显示重命名文件问题，link to bug#160799
             m_view->scrollToSelection(selections.first());
             m_view->editUri(selections.first());
+        } else if (selections.count() > 1 && !hasStandardPath) {
+            for (auto uri : selections) {
+                QString one = uri;
+                if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {
+                    return ;
+                }
+            }
+            m_view->editUris(selections);
         }
     });
     this->addAction(editAction);

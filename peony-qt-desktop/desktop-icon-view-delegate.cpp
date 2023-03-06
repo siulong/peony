@@ -27,6 +27,7 @@
 
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-utils.h"
 
 #include "icon-view-delegate.h"
@@ -558,22 +559,42 @@ void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
-        getView()->setRenaming(true);
+        if (getView()->getSelections().count() == 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
+            getView()->setRenaming(true);
 
-        //select file when rename finished
-        connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, getView(), [=](){
-                getView()->setSelections(QStringList()<<uri);
-                getView()->scrollToSelection(uri);
-                getView()->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
+            //select file when rename finished
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    getView()->setSelections(QStringList()<<uri);
+                    getView()->scrollToSelection(uri);
+                    getView()->setFocus();
+                });
+            }, Qt::BlockingQueuedConnection);
 
-        fileOpMgr->startOperation(renameOp, true);
+            fileOpMgr->startOperation(renameOp, true);
+        } else if (getView()->getSelections().count() > 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+           QStringList lists = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(lists, newName);
+            getView()->setRenaming(true);
+
+            //select file when rename finished
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    getView()->setSelections(QStringList()<<uri);
+                    getView()->scrollToSelection(uri);
+                    getView()->setFocus();
+                });
+            }, Qt::BlockingQueuedConnection);
+
+            fileOpMgr->startOperation(renameOp, true);
+        }
     }
     else if (newName == oldName)
     {
