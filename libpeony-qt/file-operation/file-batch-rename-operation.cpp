@@ -74,21 +74,22 @@ void FileBatchRenameOperation::run()
     }
     for (QString uri :m_uris) {
         QString oldName = FileUtils::getFileDisplayName(uri);
+        QString newName = m_new_name;
         std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(uri);
         if(fileinfo && !fileinfo->isDir()){
 //            bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
 //                        Peony::GlobalSettings::getInstance()->getValue(SHOW_FILE_EXTENSION).toBool():true;
             QString oldSuffix = getFileExtensionOfFile(oldName);
-            QString newSuffix = getFileExtensionOfFile(m_new_name);
+            QString newSuffix = getFileExtensionOfFile(newName);
             if (newSuffix.isEmpty()) {
-                m_new_name = m_new_name.append(".").append(oldSuffix);
+                newName = newName.append(".").append(oldSuffix);
             } else if ((oldSuffix != newSuffix) && !oldSuffix.isEmpty()) {
-                m_new_name = m_new_name.replace(newSuffix, oldSuffix);
+                newName = newName.replace(newSuffix, oldSuffix);
             }
         } else if (fileinfo->isDir()) {
-            QString newSuffix = getFileExtensionOfFile(m_new_name);
+            QString newSuffix = getFileExtensionOfFile(newName);
             if (!newSuffix.isEmpty()) {
-                m_new_name.chop(newSuffix.length() + 1);
+                newName.chop(newSuffix.length() + 1);
             }
         }
         auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
@@ -108,7 +109,7 @@ void FileBatchRenameOperation::run()
                 is_local_desktop_file = is_executable;
                 if (is_executable) {
                     g_autoptr (GError) error = nullptr;
-                    oldDesktopName = set_desktop_name (url.path (), m_new_name, &error);
+                    oldDesktopName = set_desktop_name (url.path (), newName, &error);
                     if (error) {
                         qDebug() << "set_desktop_name error code: " << error->code << " msg:" << error->message;
                     }
@@ -123,21 +124,21 @@ void FileBatchRenameOperation::run()
             }
         }
 
-        QString targetName = m_new_name;
+        QString targetName = newName;
         if (is_local_desktop_file) {
-            targetName = m_new_name+".desktop";
+            targetName = newName+".desktop";
         }
 
         auto parent = FileUtils::getFileParent(file);
         auto newFile = FileUtils::resolveRelativePath(parent, targetName);
         while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
             QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
-            m_new_name = FileUtils::getUriBaseName(fileUri);
-            newFile = FileUtils::resolveRelativePath(parent, m_new_name);
+            newName = FileUtils::getUriBaseName(fileUri);
+            newFile = FileUtils::resolveRelativePath(parent, newName);
             getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
         }        
 //        getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
-        m_new_names.append(m_new_name);
+        m_new_names.append(newName);
         if (is_local_desktop_file) {
             GError *err = nullptr;
             g_file_move(file.get()->get(),
@@ -209,15 +210,16 @@ void FileBatchRenameOperation::run()
                     case BackupAll:
 //                        setAutoBackup();
                         break;
-                    case BackupOne:{
-                        while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
-                            QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
-                            m_new_name = FileUtils::getUriBaseName(fileUri);
-                            newFile = FileUtils::resolveRelativePath(parent, m_new_name);
-                            getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
-                        }
-                        goto retry;
-                    }
+                    case BackupOne:
+//                    {
+//                        while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
+//                            QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
+//                            m_new_name = FileUtils::getUriBaseName(fileUri);
+//                            newFile = FileUtils::resolveRelativePath(parent, m_new_name);
+//                            getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+//                        }
+//                        goto retry;
+//                    }
                     case OverWriteAll:
                         //setAutoOverwrite();
                         break;
@@ -281,7 +283,7 @@ void FileBatchRenameOperation::run()
             if (string)
                 g_free(string);
             m_info->m_node_map.insert(uri, destUri);
-            m_info->m_newname = m_new_name;
+            m_info->m_newname = newName;
             m_info->m_oldname = oldName;
         }
 
