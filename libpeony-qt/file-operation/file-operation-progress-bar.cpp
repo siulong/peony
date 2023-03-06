@@ -203,6 +203,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
     m_list_widget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     m_list_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    m_main_layout->setSpacing(2);
     m_main_layout->addWidget(m_main_progressbar);
     m_main_layout->addWidget(m_other_progressbar);
     m_main_layout->addWidget(m_list_widget);
@@ -254,10 +255,10 @@ void FileOperationProgressBar::showMore()
         if (m_show_more) {
             m_list_widget->show();
             m_other_progressbar->show();
-            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_list_widget->height());
+            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_list_widget->height() + m_main_layout->spacing()*2);
         } else {
             m_list_widget->hide();
-            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height());
+            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_main_layout->spacing());
         }
     } else {
         m_list_widget->hide();
