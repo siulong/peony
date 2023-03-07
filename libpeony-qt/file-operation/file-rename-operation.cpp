@@ -91,6 +91,16 @@ void FileRenameOperation::run()
             except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
 
             Q_EMIT errored(except);
+
+            //fix bug#161394, support cancel rename operation
+            if (except.respCode == Cancel) {
+                cancel();
+                setHasError(true);
+                //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+                getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+                Q_EMIT operationFinished();
+                return;
+            }
         }
     }
     std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(m_uri);
