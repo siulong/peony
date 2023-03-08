@@ -1475,6 +1475,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void MainWindow::validBorder()
 {
+    return;
+
     QPainterPath path;
     auto rect = this->rect();
     path.addRect(rect);
@@ -1485,6 +1487,8 @@ void MainWindow::validBorder()
 #include "file-utils.h"
 void MainWindow::initUI(const QString &uri)
 {
+    KWindowEffects::enableBlurBehind(this->winId(), true);
+
     auto size = sizeHint();
     resize(size);
 
