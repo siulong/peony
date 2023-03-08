@@ -433,6 +433,10 @@ void BasicPropertiesPage::loadPartOne()
         m_displayNameEdit->setReadOnly(true);
         m_locationEdit->setDisabled(true);
     }
+
+    if (uris.first() == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
+        disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
+    }
 }
 
 void BasicPropertiesPage::loadPartTwo()
