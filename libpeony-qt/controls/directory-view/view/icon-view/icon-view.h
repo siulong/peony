@@ -139,6 +139,8 @@ public Q_SLOTS:
     void setSearchKey(const QString &key);
     void doMultiSelect(bool isMultiSlelect);
 
+    void setItemsVisible(bool visible) override;
+
 protected:
     /*!
      * \brief changeZoomLevel

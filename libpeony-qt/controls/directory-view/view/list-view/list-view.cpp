@@ -971,6 +971,11 @@ bool ListView::getDelegateEditFlag()
     return m_delegate_editing;
 }
 
+void ListView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
+}
+
 int ListView::getSortType()
 {
     int type = m_proxy_model->expectedSortType();

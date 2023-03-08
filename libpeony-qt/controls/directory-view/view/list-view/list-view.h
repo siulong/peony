@@ -89,6 +89,8 @@ public:
     bool isEnableMultiSelect();
     bool getDelegateEditFlag();
 
+    void setItemsVisible(bool visible) override;
+
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
 

@@ -1837,6 +1837,13 @@ const QList<std::shared_ptr<Peony::FileInfo>> MainWindow::getCurrentSelectionFil
 
 void MainWindow::updateTabletModeValue(bool isTabletMode)
 {
+    Peony::DirectoryViewIface2 *iface2 = nullptr;
+    if (m_tab->currentPage() && m_tab->currentPage()->getView()) {
+        iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_tab->currentPage()->getView());
+        iface2->setItemsVisible(false);
+        qApp->processEvents();
+    }
+
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，切换模式
     qApp->setProperty("tabletMode", isTabletMode);
     if(isTabletMode) {
@@ -1849,4 +1856,8 @@ void MainWindow::updateTabletModeValue(bool isTabletMode)
     m_tab->menuWidget()->setVisible(!isTabletMode);
     m_header_bar->updateTabletModeValue(isTabletMode);
     Q_EMIT tabletModeChanged(isTabletMode);
+
+    if (iface2) {
+        iface2->setItemsVisible(true);
+    }
 }

@@ -900,6 +900,11 @@ void IconView::doMultiSelect(bool isMultiSlelect)
     }
 }
 
+void IconView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
+}
+
 bool IconView::isEnableMultiSelect()
 {
     return m_multi_select;
