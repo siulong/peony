@@ -465,6 +465,24 @@ void FileMoveOperation::move()
         m_info.get()->m_dest_uris<<file->destUri();
         delete file;
     }
+
+    for (auto node : nodes) {
+        if (!isCancelled()) {
+            m_burn_uris = m_src_uris;
+            switch (node->responseType()) {
+            case IgnoreOne:
+                m_burn_uris.removeOne(node->uri());
+                break;
+            case BackupOne:
+                m_burn_uris.replaceInStrings(node->uri(), node->destUri());
+                break;
+            default:
+                break;
+            }
+        }
+        delete node;
+    }
+
     nodes.clear();
 }
 
@@ -1258,8 +1276,8 @@ start:
 
 end:
 #ifdef KY_UDF_BURN
-    if (mHelper->isUnixDevice()) {
-        if(!mHelper->discWriteOperation(m_src_uris, m_dest_dir_uri)) {
+    if (mHelper->isUnixDevice() && !isCancelled()) {
+        if(!mHelper->discWriteOperation(m_burn_uris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
             except.op = FileOpMove;

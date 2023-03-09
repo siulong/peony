@@ -753,19 +753,29 @@ void FileCopyOperation::run()
     }
 
     setHasError(false);
-
+    QStringList burnUris = m_source_uris;
     for (auto node : nodes) {
-        if (!isCancelled())
+        if (!isCancelled()) {
             m_info->m_node_map.insert(node->uri(), node->destUri());
+            switch (node->responseType()) {
+            case IgnoreOne:
+                burnUris.removeOne(node->uri());
+                break;
+            case BackupOne:
+                burnUris.replaceInStrings(node->uri(), node->destUri());
+                break;
+            default:
+                break;
+            }
+        }
         delete node;
     }
 
     m_info->m_dest_uris = m_info->m_node_map.values();
     nodes.clear();
-
 #ifdef KY_UDF_BURN
-    if (mHelper->isUnixDevice()) {
-        if(!mHelper->discWriteOperation(m_source_uris, m_dest_dir_uri)) {
+    if (mHelper->isUnixDevice() && !isCancelled()) {
+        if(!mHelper->discWriteOperation(burnUris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
             except.op = FileOpCopy;

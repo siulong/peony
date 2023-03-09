@@ -196,6 +196,8 @@ private:
 
     FileNodeReporter *m_reporter = nullptr;
 
+    QStringList m_burn_uris;
+
     /*!
      * \brief m_prehandle_hash
      * \details

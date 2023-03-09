@@ -103,7 +103,7 @@ QString FileOperationHelper::dealDVDReduce()
 
 bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, const QString &destUri)
 {
-    if (!m_disc_media_type.isNull()) {
+    if (!m_disc_media_type.isNull() && !sourUrisList.isEmpty()) {
         if (m_disc_media_type.contains("DVD-RW") || m_disc_media_type.contains("CD-RW")) {
             bool right;
             char* errinfo = (char*)malloc(1024);
