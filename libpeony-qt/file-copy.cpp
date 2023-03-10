@@ -163,6 +163,15 @@ void FileCopy::run ()
         goto out;
     }
 
+    //fix copy special file stuck issue, will skip these type files: socket, fifo, blockdev, chardev
+    //fix bug#162130, 参照nautilus提示修改
+    if (G_FILE_TYPE_SPECIAL == srcFileType) {
+        //qWarning() << "skip G_FILE_TYPE_SPECIAL type file copy srcFile: " << mSrcUri;
+        error = g_error_new(1, G_IO_ERROR_NOT_REGULAR_FILE, "%s", tr("Error when copy file: %1, can not copy special files, skip this file and continue?").arg(mSrcUri.replace("file://", "")).toUtf8().constData());
+        detailError(&error);
+        goto out;
+    }
+
     destFileType = g_file_query_file_type(destFile, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr);
     if (G_FILE_TYPE_DIRECTORY == destFileType) {
         mDestUri = mDestUri + "/" + mSrcUri.split("/").last();
