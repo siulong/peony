@@ -460,29 +460,24 @@ void FileMoveOperation::move()
     //release node
     m_info.get()->m_src_uris.clear();
     m_info.get()->m_dest_uris.clear();
+    m_burn_uris = m_src_uris;
     for (auto file : nodes) {
         m_info.get()->m_src_uris<<file->uri();
         m_info.get()->m_dest_uris<<file->destUri();
-        delete file;
-    }
-
-    for (auto node : nodes) {
-        if (!isCancelled()) {
-            m_burn_uris = m_src_uris;
-            switch (node->responseType()) {
+        if (!isCancelled() && m_is_udf_burn_work) {
+            switch (file->responseType()) {
             case IgnoreOne:
-                m_burn_uris.removeOne(node->uri());
+                m_burn_uris.removeOne(file->uri());
                 break;
             case BackupOne:
-                m_burn_uris.replaceInStrings(node->uri(), node->destUri());
+                m_burn_uris.replaceInStrings(file->uri(), file->destUri());
                 break;
             default:
                 break;
             }
         }
-        delete node;
+        delete file;
     }
-
     nodes.clear();
 }
 
@@ -1225,7 +1220,8 @@ void FileMoveOperation::run()
 
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
-    if (mHelper->isUnixDevice()) {
+    if (mHelper->isUnixCDDevice()) {
+        m_is_udf_burn_work = true;
         mHelper->judgeSpecialDiscOperation();
         if (!mHelper->dealDVDReduce().isEmpty()) {
             m_dest_dir_uri = mHelper->dealDVDReduce();
@@ -1276,7 +1272,7 @@ start:
 
 end:
 #ifdef KY_UDF_BURN
-    if (mHelper->isUnixDevice() && !isCancelled()) {
+    if (mHelper->isUnixCDDevice() && !isCancelled()) {
         if(!mHelper->discWriteOperation(m_burn_uris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
@@ -1288,10 +1284,14 @@ end:
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);
         }
+        m_is_udf_burn_work = false;
+    } else {
+        if (m_is_udf_burn_work) {
+            m_is_udf_burn_work = false;
+        }
     }
-    Q_EMIT operationFinished();
 #endif
-
+    Q_EMIT operationFinished();
     sendSrcAndDestUrisOfCopyDspsFiles();
 }
 

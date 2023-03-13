@@ -28,12 +28,12 @@ QString FileOperationHelper::getDiscType()
     return m_disc_media_type;
 }
 
-bool FileOperationHelper::isUnixDevice()
+bool FileOperationHelper::isUnixCDDevice()
 {
-    if (m_unix_device.isEmpty()) {
-        return false;
-    } else {
+    if (!m_unix_device.isEmpty() && m_unix_device.startsWith("/dev/sr")) {
         return true;
+    } else {
+        return false;
     }
 }
 

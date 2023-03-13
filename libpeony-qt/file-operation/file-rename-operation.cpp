@@ -306,7 +306,7 @@ cancel:
 
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_uri);
-    if (mHelper->isUnixDevice()) {
+    if (mHelper->isUnixCDDevice()) {
         mHelper->judgeSpecialDiscOperation();
         QString oldNamePath = mHelper->getDestName(m_uri);
         mHelper->discRenameOperation(oldNamePath, m_new_name);

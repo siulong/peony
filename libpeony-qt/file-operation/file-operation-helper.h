@@ -19,7 +19,7 @@ public:
 
     QString dealDVDReduce();
 
-    bool isUnixDevice();
+    bool isUnixCDDevice();
 
     bool discWriteOperation(const QStringList &sourUrisList, const QString &destUri);
 

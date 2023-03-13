@@ -705,7 +705,8 @@ void FileCopyOperation::run()
 
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
-    if (mHelper->isUnixDevice()) {
+    if (mHelper->isUnixCDDevice()) {
+        m_is_udf_burn_work = true;
         mHelper->judgeSpecialDiscOperation();
         if (!mHelper->dealDVDReduce().isEmpty()) {
             m_dest_dir_uri = mHelper->dealDVDReduce();
@@ -757,15 +758,17 @@ void FileCopyOperation::run()
     for (auto node : nodes) {
         if (!isCancelled()) {
             m_info->m_node_map.insert(node->uri(), node->destUri());
-            switch (node->responseType()) {
-            case IgnoreOne:
-                burnUris.removeOne(node->uri());
-                break;
-            case BackupOne:
-                burnUris.replaceInStrings(node->uri(), node->destUri());
-                break;
-            default:
-                break;
+            if (m_is_udf_burn_work) {
+                switch (node->responseType()) {
+                case IgnoreOne:
+                    burnUris.removeOne(node->uri());
+                    break;
+                case BackupOne:
+                    burnUris.replaceInStrings(node->uri(), node->destUri());
+                    break;
+                default:
+                    break;
+                }
             }
         }
         delete node;
@@ -774,7 +777,7 @@ void FileCopyOperation::run()
     m_info->m_dest_uris = m_info->m_node_map.values();
     nodes.clear();
 #ifdef KY_UDF_BURN
-    if (mHelper->isUnixDevice() && !isCancelled()) {
+    if (mHelper->isUnixCDDevice() && !isCancelled()) {
         if(!mHelper->discWriteOperation(burnUris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
@@ -785,6 +788,11 @@ void FileCopyOperation::run()
             except.destDirUri = m_dest_dir_uri;
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);
+        }
+        m_is_udf_burn_work = false;
+    } else {
+        if (m_is_udf_burn_work) {
+            m_is_udf_burn_work = false;
         }
     }
 #endif

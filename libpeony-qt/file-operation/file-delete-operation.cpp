@@ -194,7 +194,7 @@ void FileDeleteOperation::run()
 
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_src_uris.first());
-    if (mHelper->isUnixDevice()) {
+    if (mHelper->isUnixCDDevice()) {
         mHelper->judgeSpecialDiscOperation();
         mHelper->discDeleteOperation(m_src_uris);
     }
