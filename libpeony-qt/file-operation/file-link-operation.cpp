@@ -64,8 +64,9 @@ retry:
     QUrl url = m_src_uri;
     const char* symlinkValue = url.path().toUtf8().constData();
     g_file_make_symbolic_link(destFile.get()->get(), symlinkValue, nullptr, &err);
-    qDebug() << err->message;
     if (err) {
+        //fix bug#162416, empty pointer err cause crash issue
+        qDebug() << "linkrun:" << err->message;
         setHasError(true);
         //forbid response actions except retry and cancel.
         FileOperationError except;
