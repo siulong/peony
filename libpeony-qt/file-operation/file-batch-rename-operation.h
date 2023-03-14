@@ -35,5 +35,21 @@ private:
 
 };
 
+class FileBatchRenameInternalOperation : public FileOperation
+{
+    Q_OBJECT
+public:
+    explicit FileBatchRenameInternalOperation(std::shared_ptr<FileOperationInfo> info);
+
+    void run() override;
+
+    std::shared_ptr<FileOperationInfo> getOperationInfo() override {
+        return m_info;
+    }
+
+private:
+    std::shared_ptr<FileOperationInfo> m_info = nullptr;
+};
+
 }
 #endif // FILEBATCHRENAMEOPERATION_H

@@ -176,13 +176,14 @@ public:
         Copy,//delete if no error in original copying
         Link,//delete...
         Rename,//rename
-        BatchRename,//batch rename
         Trash,//untrash
         Untrash,//trash
         Delete,//nothing to do
         CreateTxt,//delete
         CreateFolder,//delete
         CreateTemplate,//delete
+        BatchRename,//batch rename
+        BatchRenameInternal,
         Other//nothing to do
     };
 

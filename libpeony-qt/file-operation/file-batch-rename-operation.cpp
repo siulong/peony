@@ -407,3 +407,50 @@ static QString set_desktop_name (QString file, QString& name, GError** error)
 
     return oldName;
 }
+
+FileBatchRenameInternalOperation::FileBatchRenameInternalOperation(std::shared_ptr<FileOperationInfo> info)
+{
+    m_info = info;
+    m_info->m_src_uris = m_info->m_node_map.keys();
+}
+
+void FileBatchRenameInternalOperation::run()
+{
+    Q_EMIT operationStarted();
+
+    auto nodes = m_info->m_node_map;
+
+    for (auto uri : nodes) {
+        Q_EMIT operationPreparedOne(uri, 1);
+    }
+    Q_EMIT operationPrepared();
+
+    for (auto srcUri : nodes.keys()) {
+        auto destUri = nodes.value(srcUri);
+        g_autoptr (GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
+        g_autoptr (GFile) destFile = g_file_new_for_uri(destUri.toUtf8().constData());
+
+        // FIXME: 桌面配置文件undo不生效问题
+        bool is_local_desktop_file = false;
+        if (srcUri.startsWith("file:///") && srcUri.endsWith(".desktop")) {
+            g_autoptr (GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
+            g_autofree gchar* path = g_file_get_path(srcFile);
+            g_autoptr (GDesktopAppInfo) app_info = g_desktop_app_info_new_from_filename(path);
+            if (app_info) {
+                is_local_desktop_file = true;
+                QUrl destUrl = destUri;
+                auto destName = destUrl.fileName();
+                destName.remove(".desktop");
+                set_desktop_name(path, destName, 0);
+            }
+        }
+
+        if (!is_local_desktop_file) {
+            g_file_move(srcFile, destFile, GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA), 0, 0, 0, 0);
+        }
+
+        Q_EMIT operationProgressedOne(srcUri, destUri, 1);
+    }
+
+    Q_EMIT operationFinished();
+}

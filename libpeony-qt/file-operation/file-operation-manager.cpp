@@ -496,6 +496,9 @@ start:
            auto info = operation->getOperationInfo();
            if (!info)
                return;
+           if (info->m_type == FileOperationInfo::BatchRename) {
+               info->m_type = FileOperationInfo::BatchRenameInternal;
+           }
            if (info->operationType() != FileOperationInfo::Delete) {
                //fix bug#162024, play sound when operation finished
                if (info->operationType() == FileOperationInfo::Copy ||
@@ -588,6 +591,10 @@ void FileOperationManager::startUndoOrRedo(std::shared_ptr<FileOperationInfo> in
     }
     case FileOperationInfo::Untrash: {
         op = new FileUntrashOperation(info->m_src_uris);
+        break;
+    }
+    case FileOperationInfo::BatchRenameInternal: {
+        op = new FileBatchRenameInternalOperation(info);
         break;
     }
     default:
@@ -841,6 +848,11 @@ void FileOperationInfo::oppositeInfoConstruct(Type type)
         case CreateTemplate: {
             m_opposite_type = Delete;
             commonOppositeInfoConstruct();
+            break;
+        }
+        case BatchRenameInternal:
+        case BatchRename: {
+            m_opposite_type = BatchRenameInternal;
             break;
         }
         default: {
