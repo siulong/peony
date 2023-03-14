@@ -121,7 +121,7 @@ retry_create_template:
         GError *err = nullptr;
         g_file_copy(wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_src_uri).toUtf8())).get()->get(),
                     wrapGFile(g_file_new_for_uri(m_target_uri.toUtf8())).get()->get(),
-                    GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS),
+                    GFileCopyFlags(G_FILE_COPY_TARGET_DEFAULT_PERMS | G_FILE_COPY_NOFOLLOW_SYMLINKS),
                     nullptr,
                     nullptr,
                     nullptr,

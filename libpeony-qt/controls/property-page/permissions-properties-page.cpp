@@ -106,6 +106,8 @@ PermissionsPropertiesPage::PermissionsPropertiesPage(const QStringList &uris, QW
     connect(this, &PermissionsPropertiesPage::checkBoxChanged, this, &PermissionsPropertiesPage::changePermission);
 
     queryPermissionsAsync(nullptr, m_uri);
+
+    this->addAdvancedLayout();
 }
 
 PermissionsPropertiesPage::~PermissionsPropertiesPage()
@@ -466,10 +468,42 @@ void PermissionsPropertiesPage::savePermissions()
     job->querySync();
 }
 
+void PermissionsPropertiesPage::saveAclPermissions()
+{
+    if (!m_userInfoCache.isEmpty()) {
+        QStringList args;
+        QString tmpUserInfo = m_defaultAclCache;
+        QMap<QString, QString>::iterator iter;
+        for (iter = m_userInfoCache.begin(); iter != m_userInfoCache.end(); ++iter) {
+            QString tmp = QString("u:%1:%2,").arg(iter.key()).arg(iter.value());
+            tmpUserInfo.append(tmp);
+        }
+        bool retb;
+        bool retm;
+        auto info = FileInfo::fromUri(m_uri);
+        args << "setfacl" << "-b" << QString("\"%1\"").arg(info->filePath());
+        QString result = UserShareInfoManager::exectueSetAclCommand(args, &retb);
+        if (!retb && !result.isEmpty()) {
+            return;
+        }
+
+        args.clear();
+        args << "setfacl" << "-m" << tmpUserInfo << QString("\"%1\"").arg(info->filePath());
+        qDebug() << __func__ << tmpUserInfo;
+        result = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &retm);
+        if (!retm && !result.isEmpty()) {
+            return;
+        }
+    }
+}
+
 void PermissionsPropertiesPage::saveAllChange()
 {
-    if(this->m_thisPageChanged)
+    if(this->m_thisPageChanged) {
         this->savePermissions();
+        this->saveAclPermissions();
+    }
+
     qDebug() << "PermissionsPropertiesPage::saveAllChange()" << this->m_thisPageChanged;
 }
 
@@ -538,6 +572,40 @@ void PermissionsPropertiesPage::updateCheckBox()
     }
 }
 
+void PermissionsPropertiesPage::addAdvancedLayout()
+{
+    QHBoxLayout *hboxLayout = new QHBoxLayout();
+    hboxLayout->setContentsMargins(16, 16, 16, 16);
+    m_advancedBtn = new QPushButton(tr("Advanced Permissions"));
+    m_layout->addWidget(m_advancedBtn);
+    connect(m_advancedBtn, &QPushButton::clicked, this, [=](){
+
+        auto info = FileInfo::fromUri(m_uri);
+        auto displayname = info->displayName();
+        bool isAdvancedShare = UserShareInfoManager::getInstance()->checkDirAdvancedShare(displayname);
+        AdvancedPermissionsPage *page = new AdvancedPermissionsPage(m_uri, m_defaultAclCache, m_userInfoCache);
+        connect(page, &AdvancedPermissionsPage::aclInfoRequest, this, [=](QString defaultAcl, QMap<QString, QString>& userInfo){
+            m_defaultAclCache = defaultAcl;
+            m_userInfoCache = userInfo;
+            this->thisPageChanged();
+        });
+
+        if (isAdvancedShare) {
+            auto result = QMessageBox::question(nullptr, tr("Advanced Permissions"),
+                                                tr("The current directory has set advanced sharing. If you set advanced permissions again, you may not be able to use advanced sharing. Do you want to continue setting?"));
+            if (QMessageBox::Yes == result) {
+                page->show();
+            }
+        } else {
+            page->show();
+        }
+
+    });
+    hboxLayout->addWidget(m_advancedBtn);
+    hboxLayout->addStretch(2);
+    m_layout->addLayout(hboxLayout);
+}
+
 QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon, QString text)
 {
     QWidget *widget = new QWidget(parent);
@@ -581,3 +649,436 @@ QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon
 
     return widget;
 }
+
+AdvancedPermissionsPage::AdvancedPermissionsPage(const QString &uri, const QString &defaultAcl, const QMap<QString, QString> &userInfo, QWidget *parent)
+{
+    m_uri = uri;
+    m_defaultAcl = defaultAcl;
+    m_userInfo = userInfo;
+    this->init();
+}
+
+AdvancedPermissionsPage::~AdvancedPermissionsPage()
+{
+
+}
+
+void AdvancedPermissionsPage::init()
+{
+    this->setWindowTitle(tr("Advanced permissions"));
+    this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setFixedSize(460, 600);
+    this->setContentsMargins(0, 10, 0, 0);
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
+    this->setWindowModality(Qt::ApplicationModal);
+
+    m_layout = new QVBoxLayout(this);
+    m_layout->setMargin(0);
+    m_layout->setSpacing(0);
+
+    this->getUserInfo();
+
+    this->initFloorOne();
+    this->initFloorTwo();
+    this->addSeparate();
+    this->initFloorThree();
+    this->addSeparate();
+    this->initFloorFour();
+    this->initCheckState();
+
+    connect(m_tabWidget, &QTableWidget::cellEntered, this, &AdvancedPermissionsPage::updateDelAclBtn);
+    connect(m_tabWidget, &QTableWidget::cellClicked, this, &AdvancedPermissionsPage::updateDelAclBtn);
+    connect(m_tabWidget, &QTableWidget::itemClicked, this, [=](QTableWidgetItem *item){
+        if (nullptr != item) {
+            m_tabLabel->setText(item->text());
+        }
+    });
+
+    connect(m_listWidget, &QListWidget::currentTextChanged, this, [=](QString currentIndex){
+       if (!m_userInfo.contains(currentIndex)) {
+           m_addUserBtn->setEnabled(true);
+       } else {
+           m_addUserBtn->setEnabled(false);
+       }
+       m_listLabel->setText(currentIndex);
+    });
+
+    connect(m_addUserBtn, &QPushButton::clicked, this, [=](){
+        QListWidgetItem *item = m_listWidget->currentItem();
+        if (nullptr != item) {
+            QString name = item->text();
+            //增加用户默认acl
+            m_mutex.lock();
+            m_userInfo.insert(name, "rwx");
+            m_mutex.unlock();
+
+            m_addUserBtn->setEnabled(false);
+
+            int rowCount = m_tabWidget->rowCount();
+            m_tabWidget->insertRow(rowCount);
+            QTableWidgetItem* itemC = new QTableWidgetItem(name);
+            itemC->setFlags(itemC->flags() | Qt::ItemIsSelectable);
+            m_tabWidget->setItem(rowCount, 0, itemC);
+            for (int i = 1; i < 4; ++i) {
+                m_tabWidget->setCellWidget(rowCount, i, nullptr);
+                QWidget *w = new QWidget(m_tabWidget);
+                QHBoxLayout *l = new QHBoxLayout(w);
+                l->setMargin(0);
+                w->setLayout(l);
+                l->setAlignment(Qt::AlignCenter);
+                auto checkbox = new QCheckBox(w);
+                bool check = updateCheckBox(i, name);
+                checkbox->setChecked(check);
+                l->addWidget(checkbox);
+                m_tabWidget->setCellWidget(rowCount, i, w);
+            }
+        }
+    });
+
+    connect(m_delUserBtn, &QPushButton::clicked, this, [=](){
+        QTableWidgetItem *item = m_tabWidget->currentItem();
+        if (nullptr != item) {
+            QString name = item->text();
+
+            if (m_userInfo.contains(name)) {
+                m_mutex.lock();
+                m_userInfo.remove(name);
+                m_mutex.unlock();
+
+                int currentRow = m_tabWidget->currentRow();
+                m_tabWidget->removeRow(currentRow);
+                if (m_tabWidget->rowCount() <= 0) {
+                    m_delUserBtn->setEnabled(false);
+                    m_tabLabel->setText("");
+                }
+            }
+        }
+    });
+
+    connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
+        m_userInfo.clear();
+        m_defaultAcl.clear();
+        this->close();
+    });
+
+    connect(m_saveBtn, &QPushButton::clicked, this, [=](){
+        for (int row = 0; row < m_tabWidget->rowCount(); ++row) {
+            for (int col = 0; col < m_tabWidget->columnCount(); ++col) {
+                if (col == 0) {
+                    continue;
+                }
+                QWidget *w = m_tabWidget->cellWidget(row, col);
+                QCheckBox *box = w->findChild<QCheckBox*>();
+                updateUserInfo(row, col, box->isChecked());
+            }
+        }
+
+        this->checkInheritsBoxInfo();
+        if (!m_userInfo.isEmpty()) {
+            Q_EMIT aclInfoRequest(m_defaultAcl, m_userInfo);
+        }
+
+        qDebug() << __func__ << "userInfo" << m_userInfo;
+        this->close();
+
+    });
+}
+
+void AdvancedPermissionsPage::initTableWidget()
+{
+    m_tabWidget = new QTableWidget(this);
+    m_tabWidget->setColumnCount(4);
+    m_tabWidget->verticalHeader()->setVisible(false);
+    m_tabWidget->verticalHeader()->setMinimumSectionSize(12);
+    m_tabWidget->horizontalHeader()->setFrameShape(QFrame::NoFrame);
+    m_tabWidget->setFrameShape(QFrame::NoFrame);
+    m_tabWidget->horizontalHeader()->setSelectionMode(QTableWidget::NoSelection);
+    m_tabWidget->verticalHeader()->setSelectionMode(QTableWidget::NoSelection);
+    m_tabWidget->setSelectionMode(QTableWidget::SingleSelection);
+    m_tabWidget->setSelectionBehavior(QAbstractItemView::SelectItems);
+    m_tabWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_tabWidget->setShowGrid(false);
+
+    m_tabWidget->horizontalHeader()->setMinimumHeight(34);
+    m_tabWidget->rowHeight(34);
+
+    m_tabWidget->setAlternatingRowColors(true);
+    auto l = QStringList();
+    l<<tr("User")<<tr("Read")<<tr("Write")<<tr("Executable");
+    m_tabWidget->setHorizontalHeaderLabels(l);
+    m_tabWidget->setEditTriggers(QTableWidget::NoEditTriggers);
+    m_tabWidget->horizontalHeader()->setMinimumSectionSize(30);
+    m_tabWidget->horizontalHeader()->setMaximumSectionSize(400);
+
+    m_tabWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    m_tabWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    m_tabWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    m_tabWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
+    m_tabWidget->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
+
+    m_tabWidget->setColumnWidth(0, 100);
+    m_tabWidget->setColumnWidth(1, 75);
+    m_tabWidget->setColumnWidth(3, 115);
+
+    m_layout->addWidget(m_tabWidget);
+
+    int rowCount = m_userInfo.count();
+    m_tabWidget->setRowCount(rowCount);
+
+    //Add all user acl
+    QMap<QString, QString>::iterator iter;
+    int row = 0;
+    for (iter = m_userInfo.begin(); iter != m_userInfo.end(); iter++) {
+        QString key = iter.key();
+        QTableWidgetItem* itemC0 = new QTableWidgetItem(key);
+        itemC0->setFlags(itemC0->flags() | Qt::ItemIsSelectable);
+        m_tabWidget->setItem(row, 0, itemC0);
+        for (int j = 1; j < 4; j++) {
+            m_tabWidget->setCellWidget(row, j, nullptr);
+            QWidget *w = new QWidget(m_tabWidget);
+            QHBoxLayout *l = new QHBoxLayout(w);
+            l->setMargin(0);
+            w->setLayout(l);
+            l->setAlignment(Qt::AlignCenter);
+            auto checkbox = new QCheckBox(w);
+            bool check = updateCheckBox(j, key);
+            checkbox->setChecked(check);
+            l->addWidget(checkbox);
+            m_tabWidget->setCellWidget(row, j, w);
+        }
+        ++row;
+    }
+}
+
+void AdvancedPermissionsPage::initListWidget()
+{
+    QVBoxLayout *vBoxLayout = new QVBoxLayout;
+    vBoxLayout->setContentsMargins(22, 0, 22, 0);
+    m_listWidget = new QListWidget(this);
+    m_listWidget->setUniformItemSizes(true);
+    m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    m_sysAccounts = new SystemDbusAccounts(this);
+    QStringList m_userNames = m_sysAccounts->getAllUserNames();
+    QString loginName = qgetenv("USER");
+    if (!m_userNames.isEmpty()) {
+        for (QString user : m_userNames) {
+            if (0 != user.compare(loginName)) {
+                auto item = new QListWidgetItem(user, m_listWidget);
+                m_listWidget->addItem(item);
+            }
+        }
+    }
+    vBoxLayout->addWidget(m_listWidget);
+    m_layout->addLayout(vBoxLayout);
+}
+
+void AdvancedPermissionsPage::initFloorOne()
+{
+    m_label = new QLabel(tr("Advanced permission settings"), this);
+    m_label->setContentsMargins(22, 0, 22, 0);
+    m_layout->addWidget(m_label);
+}
+
+void AdvancedPermissionsPage::initFloorTwo()
+{
+    this->initTableWidget();
+    m_layout->addSpacing(10);
+    QHBoxLayout *hBoxLayout = new QHBoxLayout;
+    hBoxLayout->setContentsMargins(22, 0, 22, 0);
+    hBoxLayout->setSpacing(0);
+    m_delUserBtn = new QPushButton(tr("delete"));
+    m_tabLabel = new QLabel;
+    m_delUserBtn->setEnabled(false);
+    m_inheritsBox = new QCheckBox(tr("Inherit permission"));
+    hBoxLayout->addWidget(m_tabLabel, 2);
+    hBoxLayout->addSpacing(10);
+    hBoxLayout->addWidget(m_inheritsBox, 2);
+    hBoxLayout->addSpacing(10);
+    hBoxLayout->addWidget(m_delUserBtn, 1);
+    m_layout->addLayout(hBoxLayout);
+    m_layout->addSpacing(10);
+}
+
+void AdvancedPermissionsPage::initFloorThree()
+{
+    m_layout->addSpacing(10);
+    this->initListWidget();
+    QHBoxLayout *hBoxLayout = new QHBoxLayout;
+    hBoxLayout->setContentsMargins(22, 0, 22, 0);
+    hBoxLayout->setSpacing(0);
+    m_addUserBtn = new QPushButton(tr("Add"));
+    m_listLabel = new QLabel;
+    m_addUserBtn->setEnabled(false);
+    hBoxLayout->addWidget(m_listLabel, 3);
+    hBoxLayout->addSpacing(10);
+    hBoxLayout->addWidget(m_addUserBtn, 1);
+    m_layout->addSpacing(10);
+    m_layout->addLayout(hBoxLayout);
+    m_layout->addSpacing(10);
+}
+
+void AdvancedPermissionsPage::initFloorFour()
+{
+    m_layout->addSpacing(10);
+    QHBoxLayout *hBoxLayout2 = new QHBoxLayout;
+    hBoxLayout2->setContentsMargins(22, 0, 22, 0);
+    hBoxLayout2->setSpacing(0);
+    m_saveBtn = new QPushButton(tr("Save"));
+    m_cancelBtn = new QPushButton(tr("Cancel"));
+    hBoxLayout2->addStretch(1);
+    hBoxLayout2->addWidget(m_saveBtn);
+    hBoxLayout2->addSpacing(10);
+    hBoxLayout2->addWidget(m_cancelBtn);
+    m_layout->addLayout(hBoxLayout2);
+    m_layout->addSpacing(16);
+}
+
+void AdvancedPermissionsPage::addSeparate()
+{
+    QPushButton *separate = new QPushButton;
+    separate->setFixedHeight(1);
+    separate->setFocusPolicy(Qt::NoFocus);
+    separate->setEnabled(false);
+    m_layout->addWidget(separate);
+}
+
+void AdvancedPermissionsPage::getUserInfo()
+{
+    if (m_userInfo.isEmpty()) {
+        auto info = FileInfo::fromUri(m_uri);
+        QStringList args;
+        bool ret;
+        args << "getfacl" << "-p" << info->filePath();
+        QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
+        if (!ret && !acl.isEmpty()) {
+            this->close();
+            return;
+        }
+        parseUserInfoAcl(acl);
+    }
+}
+
+void AdvancedPermissionsPage::parseUserInfoAcl(QString strAcl)
+{
+    if (!strAcl.isEmpty()) {
+        QStringList lists = strAcl.split('\n');
+        for (int i = 0; i < lists.size();) {
+            QString list = lists.at(i);
+            if (list.startsWith("#")
+                    || list.isEmpty()
+                    || list.contains("user::")
+                    || list.contains("group::")
+                    || list.contains("mask::")
+                    || list.contains("other::")
+                    || list.startsWith("default:")) {
+                lists.removeOne(list);
+            } else if (list.contains("#effective:")) {
+                int ind = lists.indexOf(list);
+                int index = list.indexOf("\t");
+                int size = list.size();
+                QString tmp = list.remove(index, size);
+                lists.replace(ind, tmp);
+            } else {
+                i++;
+            }
+        }
+
+        for (QString l : lists) {
+            //当前格式为:user:kylin:rwx,user:kylin2:r-x
+            QStringList tmpLists = l.split(":");
+            QString name = tmpLists.at(1);
+            QString per = tmpLists.at(2);
+            m_mutex.lock();
+            m_userInfo.insert(name, per);
+            m_mutex.unlock();
+        }
+        qDebug() << __func__ << "init userInfo" << m_userInfo;
+    }
+}
+
+bool AdvancedPermissionsPage::updateCheckBox(int col, QString &name)
+{
+    bool ret = false;
+    if (name.isEmpty() || col < 0) {
+        return ret;
+    }
+
+    if (col == 1 && m_userInfo.value(name).contains("r")) {
+        ret = true;
+    } else if (col == 2 && m_userInfo.value(name).contains("w")) {
+        ret = true;
+    } else if (col == 3 && m_userInfo.value(name).contains("x")) {
+        ret = true;
+    }
+    return ret;
+}
+
+void AdvancedPermissionsPage::updateUserInfo(int row, int col, bool checked)
+{
+    if (checked && col >= 1 && col <= 3) {
+        QTableWidgetItem *item = m_tabWidget->item(row, 0);
+        if (nullptr != item && m_userInfo.contains(item->text())) {
+            QString name = item->text();
+            QString perm = m_userInfo.value(name);
+            if (col == 1) {
+                perm = perm.replace(col - 1, 1, "r");
+            } else if (col == 2) {
+                perm = perm.replace(col - 1, 1, "w");
+            } else if (col == 3) {
+                perm = perm.replace(col - 1, 1, "x");
+            }
+
+            m_userInfo.remove(name);
+            m_userInfo.insert(name, perm);
+        }
+    } else if (!checked && col >= 1 && col <= 3) {
+        QTableWidgetItem *item = m_tabWidget->item(row, 0);
+        if (nullptr != item && m_userInfo.contains(item->text())) {
+            QString name = item->text();
+            QString perm = m_userInfo.value(name);
+            perm = perm.replace(col - 1, 1, "-");
+            m_userInfo.remove(name);
+            m_userInfo.insert(name, perm);
+        }
+    }
+}
+
+void AdvancedPermissionsPage::checkInheritsBoxInfo()
+{
+    if (m_inheritsBox->isChecked()) {
+        m_defaultAcl.clear();
+        QMap<QString, QString>::iterator iter;
+        for (iter = m_userInfo.begin(); iter != m_userInfo.end(); ++iter) {
+            QString tmp = "d:u:" + iter.key() + ":" + iter.value() + ",";
+            m_defaultAcl.append(tmp);
+        }
+    } else {
+        m_defaultAcl.clear();
+    }
+}
+
+void AdvancedPermissionsPage::initCheckState()
+{
+    if (m_defaultAcl.isEmpty()) {
+        m_inheritsBox->setChecked(false);
+    } else {
+        m_inheritsBox->setChecked(true);
+    }
+}
+
+void AdvancedPermissionsPage::updateDelAclBtn(int row, int col)
+{
+    if (col >= 1) {
+        m_delUserBtn->setEnabled(false);
+    } else if (col == 0) {
+        m_delUserBtn->setEnabled(true);
+    }
+
+    if (col >= 1) {
+        m_tabLabel->setText("");
+    }
+}
+

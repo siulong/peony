@@ -374,6 +374,17 @@ QString UserShareInfoManager::parseUserShareAcl(QString &content)
     return acl;
 }
 
+bool UserShareInfoManager::checkDirAdvancedShare(QString &name)
+{
+    bool ret = true;
+    if (m_usershareAclMap[name].isEmpty()
+            || 11 == m_usershareAclMap[name].size()
+            || 10 == m_usershareAclMap[name].size()) {
+        ret = false;
+    }
+    return ret;
+}
+
 bool UserShareInfoManager::addShareInfo(ShareInfo* shareInfo)
 {
     if (nullptr == shareInfo

@@ -64,6 +64,7 @@ public:
     QString getUserShareAcl(QString& name);
     bool addUserShareAcl(QString &name, QString &acl);
     QString parseUserShareAcl(QString &content);
+    bool checkDirAdvancedShare(QString &name);
 
 private:
     explicit UserShareInfoManager (QObject* parent = nullptr) : QObject(parent) {};

@@ -25,9 +25,15 @@
 
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QPushButton>
+#include <QListWidget>
+#include <QMutex>
+#include <QMessageBox>
 
 #include "properties-window-tab-iface.h"
 #include "peony-core_global.h"
+#include "systemd-bus-accounts.h"
+#include "usershare-manager.h"
 
 #include <memory>
 #include <gio/gio.h>
@@ -64,7 +70,11 @@ public:
 
     void savePermissions();
 
+    void saveAclPermissions();
+
     void updateCheckBox();
+
+    void addAdvancedLayout();
 
 protected:
     static GAsyncReadyCallback async_query_permisson_callback(GObject *obj,
@@ -88,6 +98,7 @@ private:
     QLabel *m_label         = nullptr;
     QLabel *m_message       = nullptr;
     QTableWidget *m_table   = nullptr;
+    QPushButton *m_advancedBtn = nullptr;
 
     //防止错误修改权限
     bool m_enable = false;
@@ -97,12 +108,65 @@ private:
     //unixmode能力，标识修改权限是否可使用gio接口
     bool m_has_unix_mode = false;
 
+    //暂存acl权限
+    QString m_defaultAclCache;
+    QMap<QString, QString> m_userInfoCache;
+
 public:
     void thisPageChanged() override;
 
     // PropertiesWindowTabIface interface
 public:
     void saveAllChange();
+};
+
+class AdvancedPermissionsPage : public QWidget {
+    Q_OBJECT
+public:
+    explicit AdvancedPermissionsPage(const QString &uri, const QString &defaultAcl, const QMap<QString, QString> &userInfo, QWidget *parent = nullptr);
+    ~AdvancedPermissionsPage();
+
+    void init();
+    void initTableWidget();
+    void initListWidget();
+    void initFloorOne();
+    void initFloorTwo();
+    void initFloorThree();
+    void initFloorFour();
+    void addSeparate();
+
+    void getUserInfo();
+    void parseUserInfoAcl(QString strAcl);
+    bool updateCheckBox(int col, QString &name);
+    void updateUserInfo(int row, int col, bool checked);
+    void checkInheritsBoxInfo();
+    void initCheckState();
+
+protected Q_SLOTS:
+    void updateDelAclBtn(int row, int col);
+
+Q_SIGNALS:
+    void aclInfoRequest(QString &defaultAcl, QMap<QString, QString> &userInfo);
+
+private:
+    QString m_uri;
+    QString m_defaultAcl;
+    SystemDbusAccounts *m_sysAccounts = nullptr;
+    QMap<QString, QString>  m_userInfo;
+    QMutex m_mutex;
+    bool m_thisPageChanged = false;
+
+    QLabel *m_label = nullptr;
+    QLabel *m_tabLabel = nullptr;
+    QLabel *m_listLabel = nullptr;
+    QTableWidget *m_tabWidget = nullptr;
+    QListWidget *m_listWidget = nullptr;
+    QPushButton *m_saveBtn = nullptr;
+    QPushButton *m_cancelBtn = nullptr;
+    QPushButton *m_addUserBtn = nullptr;
+    QPushButton *m_delUserBtn = nullptr;
+    QCheckBox *m_inheritsBox = nullptr;
+    QVBoxLayout *m_layout = nullptr;
 };
 
 }
