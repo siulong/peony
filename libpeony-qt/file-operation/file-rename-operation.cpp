@@ -246,7 +246,14 @@ retry:
                             || !FileUtils::isFileExsit(except.destDirUri)) {
                         break;
                     }
-                    g_file_delete(newFile.get()->get(), nullptr, nullptr);
+                    g_clear_error(&err);
+                    g_file_delete(newFile.get()->get(), nullptr, &err);
+                    if (err) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = err->message;
+                        Q_EMIT errored(except);
+                        break;
+                    }
                     goto retry;
                 }
                 case IgnoreAll:
