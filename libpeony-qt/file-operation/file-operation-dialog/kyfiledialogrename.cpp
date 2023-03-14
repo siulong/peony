@@ -128,9 +128,20 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     // page2
     auto page2 = new QWidget(this);
     auto gridLayout2 = new QGridLayout;
-    labelIcon = new QLabel;
-    labelIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
-    gridLayout2->addWidget(labelIcon, 0, 0, Qt::AlignTop|Qt::AlignLeft);
+    auto renameIcon = new QLabel;
+    renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key){
+                labelIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
+                renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
+            }
+        });
+    }
+
+    gridLayout2->addWidget(renameIcon, 0, 0, Qt::AlignTop|Qt::AlignLeft);
     auto label2 = new QLabel;
     label2->setText(tr("Please enter a new name"));
     gridLayout2->addWidget(label2, 0, 1, Qt::AlignLeft);

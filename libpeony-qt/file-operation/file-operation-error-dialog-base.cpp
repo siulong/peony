@@ -32,6 +32,7 @@
 #include <QProxyStyle>
 #include <QPushButton>
 #include <QApplication>
+#include <QGSettings>
 
 #ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
@@ -95,6 +96,18 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_tipimage->setMinimumWidth(24);
     m_tipimage->setAlignment (Qt::AlignTop);
     m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (24, 24));
+
+    m_iconName = "dialog-warning";
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key){
+                m_tipimage->setPixmap(QIcon::fromTheme(m_iconName).pixmap(m_tipimage->size()));
+            }
+        });
+    }
+
     contentLayout->addWidget (m_tipimage);
 
     m_tipcontent = new QLabel(this);
@@ -181,6 +194,7 @@ void Peony::FileOperationErrorDialogBase::setText(QString text)
 
 void Peony::FileOperationErrorDialogBase::setIcon(QString iconName)
 {
+    m_iconName = iconName;
     if (!iconName.isNull () && !iconName.isEmpty ()) {
         int size = iconName.contains("dialog-warning") ? 24 : 64;
         m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (size, size));
