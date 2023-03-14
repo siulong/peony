@@ -109,22 +109,24 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setSectionsMovable(true);
     header()->setStretchLastSection(false);
 
-    connect(header(), &QHeaderView::sectionClicked, this, [=](){
-        //update sort policy
-        auto settings = GlobalSettings::getInstance();
-        if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            settings->setValue(SORT_COLUMN, getSortType());
-            settings->setValue(SORT_ORDER, getSortOrder());
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
-            if (metaInfo) {
-                metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
-                metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        connect(header(), &QHeaderView::sectionClicked, this, [=](){
+            //update sort policy
+            auto settings = GlobalSettings::getInstance();
+            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                settings->setValue(SORT_COLUMN, getSortType());
+                settings->setValue(SORT_ORDER, getSortOrder());
             } else {
-                qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
+                if (metaInfo) {
+                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
+                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+                } else {
+                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                }
             }
-        }
-    });
+        });
+    }
 
     connect(header(), &QHeaderView::sectionResized, this, [=]{
         m_header_section_resized_manually = true;
@@ -163,16 +165,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     {
         m_proxy_model->manualUpdateExpectedSortInfo(logicalIndex, order);
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
-        if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
-            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
-            if (!metaInfo) {
-                qWarning()<<"no meta info"<<m_current_uri;
+        if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+            if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
+                Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
             } else {
-                metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
-                metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
+                if (!metaInfo) {
+                    qWarning()<<"no meta info"<<m_current_uri;
+                } else {
+                    metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
+                    metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                }
             }
         }
     });
