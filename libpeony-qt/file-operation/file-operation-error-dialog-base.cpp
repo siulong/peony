@@ -92,19 +92,19 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
 
     m_tipimage = new QLabel(this);
     m_tipimage->setMargin (0);
-    m_tipimage->setFixedWidth(64);
+    m_tipimage->setMinimumWidth(24);
     m_tipimage->setAlignment (Qt::AlignTop);
-    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (64, 64));
+    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (24, 24));
     contentLayout->addWidget (m_tipimage);
 
     m_tipcontent = new QLabel(this);
     m_tipcontent->setWordWrap (true);
-    m_tipcontent->setFixedWidth(420);
+    m_tipcontent->setMinimumWidth(420);
+    m_tipcontent->setMaximumWidth(460);
     m_tipcontent->setAlignment (Qt::AlignLeft | Qt::AlignTop);
 
     QScrollArea* scroll = new QScrollArea(this);
-
-    scroll->setFixedWidth(440);
+    scroll->setMaximumWidth(480);
     scroll->setWidgetResizable (true);
     scroll->setFrameShape(QFrame::NoFrame);
 
@@ -165,8 +165,10 @@ void Peony::FileOperationErrorDialogBase::adjustTextContent()
     } else {
         topMargin = qMax(48 - fontMetrics().height(), 0);
     }
-
     m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
+    int pimageMargin = 0;
+    pimageMargin = qMax(topMargin - (m_tipimage->pixmap()->height()-fontMetrics().height())/2,  0);
+    m_tipimage->setContentsMargins(0, pimageMargin, 0, 0);
 }
 
 void Peony::FileOperationErrorDialogBase::setText(QString text)
@@ -180,8 +182,11 @@ void Peony::FileOperationErrorDialogBase::setText(QString text)
 void Peony::FileOperationErrorDialogBase::setIcon(QString iconName)
 {
     if (!iconName.isNull () && !iconName.isEmpty ()) {
-        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (64, 64));
+        int size = iconName.contains("dialog-warning") ? 24 : 64;
+        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (size, size));
     }
+    int pimageMargin = qMax(m_tipcontent->contentsMargins().top() - (m_tipimage->pixmap()->height()-fontMetrics().height())/2,  0);
+    m_tipimage->setContentsMargins(0, pimageMargin, 0, 0);
 }
 
 QPushButton *Peony::FileOperationErrorDialogBase::addButton(QString name)
