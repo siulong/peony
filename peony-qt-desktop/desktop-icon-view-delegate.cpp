@@ -559,13 +559,14 @@ void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        if (getView()->getSelections().count() == 1) {
+        if (getView()->getSelections().count() > 1) {
             auto fileOpMgr = FileOperationManager::getInstance();
-            auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
+           QStringList lists = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(lists, newName);
             getView()->setRenaming(true);
 
             //select file when rename finished
-            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
                 auto info = renameOp->getOperationInfo().get();
                 auto uri = info->target();
                 QTimer::singleShot(100, getView(), [=](){
@@ -576,14 +577,13 @@ void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *
             }, Qt::BlockingQueuedConnection);
 
             fileOpMgr->startOperation(renameOp, true);
-        } else if (getView()->getSelections().count() > 1) {
+        } else {
             auto fileOpMgr = FileOperationManager::getInstance();
-           QStringList lists = getView()->getSelections();
-            auto renameOp = new FileBatchRenameOperation(lists, newName);
+            auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
             getView()->setRenaming(true);
 
             //select file when rename finished
-            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
                 auto info = renameOp->getOperationInfo().get();
                 auto uri = info->target();
                 QTimer::singleShot(100, getView(), [=](){

@@ -463,23 +463,7 @@ void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         return;
     }
 
-    if (view->getSelections().count() == 1) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
-
-        connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, view, [=](){
-                view->setSelections(QStringList()<<uri);
-                //after rename will nor sort immediately, comment to fix bug#60482
-                //view->scrollToSelection(uri);
-                view->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
-
-        fileOpMgr->startOperation(renameOp, true);
-    } else if (view->getSelections().count() > 1) {
+    if (view->getSelections().count() > 1) {
         auto fileOpMgr = FileOperationManager::getInstance();
         QStringList lists = view->getSelections();
         auto renameOp = new FileBatchRenameOperation(lists, text);
@@ -496,8 +480,23 @@ void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         }, Qt::BlockingQueuedConnection);
 
         fileOpMgr->startOperation(renameOp, true);
-    }
+    } else {
+        auto fileOpMgr = FileOperationManager::getInstance();
+        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
 
+        connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
+            auto info = renameOp->getOperationInfo().get();
+            auto uri = info->target();
+            QTimer::singleShot(100, view, [=](){
+                view->setSelections(QStringList()<<uri);
+                //after rename will nor sort immediately, comment to fix bug#60482
+                //view->scrollToSelection(uri);
+                view->setFocus();
+            });
+        }, Qt::BlockingQueuedConnection);
+
+        fileOpMgr->startOperation(renameOp, true);
+    }
 }
 
 //not comment this bug to fix bug#93314

@@ -529,10 +529,11 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        if (getView()->getSelections().count() == 1) {
+        if (getView()->getSelections().count() > 1) {
             auto fileOpMgr = FileOperationManager::getInstance();
-            auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
-            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+            QStringList uris = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(uris, newName);
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
                 auto info = renameOp->getOperationInfo().get();
                 auto uri = info->target();
                 QTimer::singleShot(100, getView(), [=](){
@@ -548,11 +549,10 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
             }, Qt::BlockingQueuedConnection);
 
             fileOpMgr->startOperation(renameOp, true);
-        } else if (getView()->getSelections().count() > 1) {
+        } else {
             auto fileOpMgr = FileOperationManager::getInstance();
-            QStringList uris = getView()->getSelections();
-            auto renameOp = new FileBatchRenameOperation(uris, newName);
-            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+            auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
                 auto info = renameOp->getOperationInfo().get();
                 auto uri = info->target();
                 QTimer::singleShot(100, getView(), [=](){
@@ -565,7 +565,6 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
 
             fileOpMgr->startOperation(renameOp, true);
         }
-
     }
     else if (newName == oldName)
     {
