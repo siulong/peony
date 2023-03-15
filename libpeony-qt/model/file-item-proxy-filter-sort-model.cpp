@@ -221,6 +221,14 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
             }
             return leftItem->m_info->modifiedTime() > rightItem->m_info->modifiedTime();
         }
+        case FileItemModel::TrashOriginPath: {
+            auto leftString = leftItem->m_info->property("orig-path").toString();
+            auto rightString = rightItem->m_info->property("orig-path").toString();
+            if (leftString == rightString) {
+                goto default_sort;
+            }
+            return comparer.compare(leftString, rightString) > 0;
+        }
         default:
             break;
         }
