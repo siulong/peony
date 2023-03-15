@@ -106,11 +106,13 @@ void BookMarkManager::addBookMarkPrivate(const QString &uri)
     QString usersharePath = QString("favorite:///data/usershare?schema=file");
     QString kmrePath = QString("favorite:///?schema=kmre");
     QString recentPath = QString("favorite:///?schema=recent");
+    qDebug() << "url.path():"<<url.path();
+    //fix bug#163066, drag trash from desktop, uri not processed
     if (url.path() == desktopPath /*|| url.path() == videoPath
         || url.path() == picturePath || url.path() == downloadPath
         || url.path() == musicPath || url.path() == docPath*/
         || uri == trashPath || uri == usersharePath
-        || uri == kmrePath || uri == recentPath)
+        || uri == kmrePath || uri == recentPath || uri == "trash:///")
         return;
 
 
