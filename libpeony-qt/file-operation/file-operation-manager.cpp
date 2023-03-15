@@ -380,6 +380,12 @@ start:
            if (!info)
                return;
            if (info->operationType() != FileOperationInfo::Delete) {
+               //fix bug#162024, play sound when operation finished
+               if (info->operationType() == FileOperationInfo::Copy ||
+                   info->operationType() == FileOperationInfo::Move){
+                   SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+               }
+
                m_undo_stack.push(info);
                m_redo_stack.clear();
            } else {

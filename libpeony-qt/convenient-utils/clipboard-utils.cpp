@@ -303,8 +303,8 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
 
     auto fileOpMgr = FileOperationManager::getInstance();
     if (isClipboardFilesBeCut()) {
-
-        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //fix bug#162024, play sound when operation finished, comment this
+        //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug()<<uris;
         auto moveOp = new FileMoveOperation(uris, targetDirUri);
         moveOp->setAction(Qt::TargetMoveAction);
@@ -312,8 +312,8 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
         fileOpMgr->startOperation(moveOp, true);
         QApplication::clipboard()->clear();
     } else {
-
-        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //fix bug#162024, play sound when operation finished, comment this
+        //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         qDebug() << "clipboard:" << uris;
         auto copyOp = new FileCopyOperation(uris, targetDirUri);
         op = copyOp;
