@@ -712,6 +712,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
                 getIconView(qApp->primaryScreen())->updateView();
             } else if (m_bg_windows.count() == 2) {
                 singleScreenMode();
+                m_mode = 0;
             }
         }
         qDebug()<<"QScreen::destroyed screen name:"<<screen->name();
@@ -736,10 +737,12 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     //task#74174 更新扩展屏与镜像切换
     connect(window, &DesktopBackgroundWindow::updateWindow, this, [=](const QRect &geometry){
         int mode = checkScreenMode(geometry);
-        if (1 == mode) {
-            singleScreenMode();
-        } else if (2 == mode) {
-            multiscreenMode();
+        if (m_mode != mode) {
+            if (1 == mode) {
+                singleScreenMode();
+             } else if (2 == mode) {
+                multiscreenMode();
+            }
         }
         m_mode = mode;
         window->setWindowGeometry(geometry);

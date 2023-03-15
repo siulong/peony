@@ -97,6 +97,7 @@ static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect
 
 static bool refreshing = false;
 static bool g_isHighVersion = false;
+//static bool g_initialized = false;
 
 DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
@@ -795,7 +796,9 @@ void DesktopIconView::resolutionChange()
         qWarning()<<"screen size is not avaliable";
         return;
     }
-
+    if (m_item_rect_hash.isEmpty()) {
+        return;
+    }
     float iconWidth = 0;
     float iconHeigth = 0;
 
@@ -958,7 +961,7 @@ void DesktopIconView::resolutionChange()
         updateItemPosByUri(uri, rect.topLeft());
         setFileMetaInfoPos(uri, rect.topLeft());
     }
-
+    setAllRestoreInfo();
     this->saveAllItemPosistionInfos();
 }
 
