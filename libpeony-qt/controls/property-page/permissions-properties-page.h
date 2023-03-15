@@ -70,8 +70,6 @@ public:
 
     void savePermissions();
 
-    void saveAclPermissions();
-
     void updateCheckBox();
 
     void addAdvancedLayout();
@@ -108,10 +106,6 @@ private:
     //unixmode能力，标识修改权限是否可使用gio接口
     bool m_has_unix_mode = false;
 
-    //暂存acl权限
-    QString m_defaultAclCache;
-    QMap<QString, QString> m_userInfoCache;
-
 public:
     void thisPageChanged() override;
 
@@ -123,7 +117,7 @@ public:
 class AdvancedPermissionsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit AdvancedPermissionsPage(const QString &uri, const QString &defaultAcl, const QMap<QString, QString> &userInfo, QWidget *parent = nullptr);
+    explicit AdvancedPermissionsPage(const QString &uri, QWidget *parent = nullptr);
     ~AdvancedPermissionsPage();
 
     void init();
@@ -141,12 +135,10 @@ public:
     void updateUserInfo(int row, int col, bool checked);
     void checkInheritsBoxInfo();
     void initCheckState();
+    void saveAclPermissions();
 
 protected Q_SLOTS:
     void updateDelAclBtn(int row, int col);
-
-Q_SIGNALS:
-    void aclInfoRequest(QString &defaultAcl, QMap<QString, QString> &userInfo);
 
 private:
     QString m_uri;

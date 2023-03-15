@@ -468,41 +468,10 @@ void PermissionsPropertiesPage::savePermissions()
     job->querySync();
 }
 
-void PermissionsPropertiesPage::saveAclPermissions()
-{
-    if (!m_userInfoCache.isEmpty()) {
-        QStringList args;
-        QString tmpUserInfo = m_defaultAclCache;
-        QMap<QString, QString>::iterator iter;
-        for (iter = m_userInfoCache.begin(); iter != m_userInfoCache.end(); ++iter) {
-            QString tmp = QString("u:%1:%2,").arg(iter.key()).arg(iter.value());
-            tmpUserInfo.append(tmp);
-        }
-        bool retb;
-        bool retm;
-        auto info = FileInfo::fromUri(m_uri);
-        args << "setfacl" << "-b" << QString("\"%1\"").arg(info->filePath());
-        QString result = UserShareInfoManager::exectueSetAclCommand(args, &retb);
-        if (!retb && !result.isEmpty()) {
-            return;
-        }
-
-        args.clear();
-        args << "setfacl" << "-m" << tmpUserInfo << QString("\"%1\"").arg(info->filePath());
-        qDebug() << __func__ << tmpUserInfo;
-        result = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &retm);
-        if (!retm && !result.isEmpty()) {
-            return;
-        }
-    }
-}
-
 void PermissionsPropertiesPage::saveAllChange()
 {
-    if(this->m_thisPageChanged) {
+    if(this->m_thisPageChanged)
         this->savePermissions();
-        this->saveAclPermissions();
-    }
 
     qDebug() << "PermissionsPropertiesPage::saveAllChange()" << this->m_thisPageChanged;
 }
@@ -583,12 +552,7 @@ void PermissionsPropertiesPage::addAdvancedLayout()
         auto info = FileInfo::fromUri(m_uri);
         auto displayname = info->displayName();
         bool isAdvancedShare = UserShareInfoManager::getInstance()->checkDirAdvancedShare(displayname);
-        AdvancedPermissionsPage *page = new AdvancedPermissionsPage(m_uri, m_defaultAclCache, m_userInfoCache);
-        connect(page, &AdvancedPermissionsPage::aclInfoRequest, this, [=](QString defaultAcl, QMap<QString, QString>& userInfo){
-            m_defaultAclCache = defaultAcl;
-            m_userInfoCache = userInfo;
-            this->thisPageChanged();
-        });
+        AdvancedPermissionsPage *page = new AdvancedPermissionsPage(m_uri);
 
         if (isAdvancedShare) {
             auto result = QMessageBox::question(nullptr, tr("Advanced Permissions"),
@@ -650,11 +614,9 @@ QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon
     return widget;
 }
 
-AdvancedPermissionsPage::AdvancedPermissionsPage(const QString &uri, const QString &defaultAcl, const QMap<QString, QString> &userInfo, QWidget *parent)
+AdvancedPermissionsPage::AdvancedPermissionsPage(const QString &uri, QWidget *parent)
 {
     m_uri = uri;
-    m_defaultAcl = defaultAcl;
-    m_userInfo = userInfo;
     this->init();
 }
 
@@ -715,11 +677,13 @@ void AdvancedPermissionsPage::init()
             m_mutex.unlock();
 
             m_addUserBtn->setEnabled(false);
+            m_inheritsBox->setEnabled(true);
 
             int rowCount = m_tabWidget->rowCount();
             m_tabWidget->insertRow(rowCount);
             QTableWidgetItem* itemC = new QTableWidgetItem(name);
             itemC->setFlags(itemC->flags() | Qt::ItemIsSelectable);
+            itemC->setToolTip(name);
             m_tabWidget->setItem(rowCount, 0, itemC);
             for (int i = 1; i < 4; ++i) {
                 m_tabWidget->setCellWidget(rowCount, i, nullptr);
@@ -755,6 +719,10 @@ void AdvancedPermissionsPage::init()
                 }
             }
         }
+
+        if (m_tabWidget->rowCount() == 0) {
+            m_inheritsBox->setEnabled(false);
+        }
     });
 
     connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
@@ -776,10 +744,7 @@ void AdvancedPermissionsPage::init()
         }
 
         this->checkInheritsBoxInfo();
-        if (!m_userInfo.isEmpty()) {
-            Q_EMIT aclInfoRequest(m_defaultAcl, m_userInfo);
-        }
-
+        this->saveAclPermissions();
         qDebug() << __func__ << "userInfo" << m_userInfo;
         this->close();
 
@@ -974,6 +939,12 @@ void AdvancedPermissionsPage::parseUserInfoAcl(QString strAcl)
                     || list.contains("mask::")
                     || list.contains("other::")
                     || list.startsWith("default:")) {
+                if (list.startsWith("default:user:") && !list.contains("user::")) {
+                    QString tmp = list;
+                    tmp = tmp.remove(1, 6);
+                    m_defaultAcl.append(tmp);
+                    m_defaultAcl.append(",");
+                }
                 lists.removeOne(list);
             } else if (list.contains("#effective:")) {
                 int ind = lists.indexOf(list);
@@ -995,7 +966,7 @@ void AdvancedPermissionsPage::parseUserInfoAcl(QString strAcl)
             m_userInfo.insert(name, per);
             m_mutex.unlock();
         }
-        qDebug() << __func__ << "init userInfo" << m_userInfo;
+        qDebug() << __func__ << "init userInfo" << m_userInfo << m_defaultAcl;
     }
 }
 
@@ -1063,9 +1034,41 @@ void AdvancedPermissionsPage::checkInheritsBoxInfo()
 void AdvancedPermissionsPage::initCheckState()
 {
     if (m_defaultAcl.isEmpty()) {
+        m_inheritsBox->setEnabled(false);
         m_inheritsBox->setChecked(false);
     } else {
+        m_inheritsBox->setEnabled(true);
         m_inheritsBox->setChecked(true);
+    }
+}
+
+void AdvancedPermissionsPage::saveAclPermissions()
+{
+    bool retb;
+    QStringList args;
+    auto info = FileInfo::fromUri(m_uri);
+    args << "setfacl" << "-b" << QString("\"%1\"").arg(info->filePath());
+    QString result = UserShareInfoManager::exectueSetAclCommand(args, &retb);
+    if (!retb && !result.isEmpty()) {
+        return;
+    }
+
+    if (!m_userInfo.isEmpty()) {
+        QString tmpUserInfo = m_defaultAcl;
+        QMap<QString, QString>::iterator iter;
+        for (iter = m_userInfo.begin(); iter != m_userInfo.end(); ++iter) {
+            QString tmp = QString("u:%1:%2,").arg(iter.key()).arg(iter.value());
+            tmpUserInfo.append(tmp);
+        }
+
+        bool retm;
+        args.clear();
+        args << "setfacl" << "-m" << tmpUserInfo << QString("\"%1\"").arg(info->filePath());
+        qDebug() << __func__ << tmpUserInfo;
+        result = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &retm);
+        if (!retm && !result.isEmpty()) {
+            return;
+        }
     }
 }
 
@@ -1081,4 +1084,3 @@ void AdvancedPermissionsPage::updateDelAclBtn(int row, int col)
         m_tabLabel->setText("");
     }
 }
-

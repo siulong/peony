@@ -28,7 +28,11 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 
-class SystemDbusAccounts : public QObject
+#include "peony-core_global.h"
+
+namespace Peony {
+
+class PEONYCORESHARED_EXPORT SystemDbusAccounts : public QObject
 {
     Q_OBJECT
 public:
@@ -51,5 +55,5 @@ private:
     QDBusInterface *m_systemInterface = nullptr;
 
 };
-
+}
 #endif // SYSTEMDBUSACCOUNTS_H

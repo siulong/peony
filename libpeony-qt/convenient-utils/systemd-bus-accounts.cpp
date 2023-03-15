@@ -23,7 +23,7 @@
 #include "systemd-bus-accounts.h"
 #include <QDebug>
 
-SystemDbusAccounts::SystemDbusAccounts(QObject *parent) : QObject(parent)
+Peony::SystemDbusAccounts::SystemDbusAccounts(QObject *parent) : QObject(parent)
 {
     m_systemInterface = new QDBusInterface("org.freedesktop.Accounts",
                                            "/org/freedesktop/Accounts",
@@ -33,13 +33,13 @@ SystemDbusAccounts::SystemDbusAccounts(QObject *parent) : QObject(parent)
 //    connect(m_systemInterface, SIGNAL(UserDeleted(QDBusObjectPath)), this, SLOT(delete_user_success(QDBusObjectPath)));
 }
 
-SystemDbusAccounts::~SystemDbusAccounts()
+Peony::SystemDbusAccounts::~SystemDbusAccounts()
 {
     delete m_systemInterface;
     m_systemInterface = NULL;
 }
 
-QStringList SystemDbusAccounts::getListCachedUsers()
+QStringList Peony::SystemDbusAccounts::getListCachedUsers()
 {
     QStringList userLists;
     QDBusReply<QList<QDBusObjectPath>> reply = m_systemInterface->call("ListCachedUsers");
@@ -51,7 +51,7 @@ QStringList SystemDbusAccounts::getListCachedUsers()
     return userLists;
 }
 
-QStringList SystemDbusAccounts::getAllUserNames()
+QStringList Peony::SystemDbusAccounts::getAllUserNames()
 {
     QStringList userNames;
     QStringList objectPaths = getListCachedUsers();
@@ -63,7 +63,7 @@ QStringList SystemDbusAccounts::getAllUserNames()
     return userNames;
 }
 
-QString SystemDbusAccounts::getUserName(QString objectPath)
+QString Peony::SystemDbusAccounts::getUserName(QString objectPath)
 {
     QString userName;
     QDBusInterface *interFace = new QDBusInterface("org.freedesktop.Accounts",
@@ -79,12 +79,12 @@ QString SystemDbusAccounts::getUserName(QString objectPath)
     return userName;
 }
 
-void SystemDbusAccounts::createUserSuccess(QDBusObjectPath objectPath)
+void Peony::SystemDbusAccounts::createUserSuccess(QDBusObjectPath objectPath)
 {
     Q_EMIT createUserDone(objectPath.path());
 }
 
-void SystemDbusAccounts::deleteUserSuccess(QDBusObjectPath objectPath)
+void Peony::SystemDbusAccounts::deleteUserSuccess(QDBusObjectPath objectPath)
 {
     Q_EMIT deleteUserDone(objectPath.path());
 }
