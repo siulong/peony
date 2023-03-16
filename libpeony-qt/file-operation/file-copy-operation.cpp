@@ -55,7 +55,9 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
     QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
 
     if (destDirUrl.isParentOf(firstSrcUrl)) {
-        m_is_duplicated_copy = true;
+        if (1 == firstSrcUrl.path().split("/").count() - destDirUrl.path().split("/").count()) {
+            m_is_duplicated_copy = true;
+        }
     }/* else {
         // fix #83068
         // windows里的重复复制操作没有备份选项，但是会一直弹框提示，这里和windows的行为靠拢
