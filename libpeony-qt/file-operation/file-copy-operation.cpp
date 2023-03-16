@@ -707,8 +707,16 @@ void FileCopyOperation::run()
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
     if (mHelper->isUnixCDDevice()) {
         m_is_udf_burn_work = true;
+        bool isMountpoint = false;
         mHelper->judgeSpecialDiscOperation();
-        if (!mHelper->dealDVDReduce().isEmpty()) {
+        g_autoptr(GFile) file = g_file_new_for_uri (m_dest_dir_uri.toUtf8().constData());
+        if (file) {
+            g_autoptr(GFileInfo) fileInfo = g_file_query_info(file, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+            if (fileInfo) {
+                isMountpoint = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+            }
+        }
+        if (!mHelper->dealDVDReduce().isEmpty() && isMountpoint) {
             m_dest_dir_uri = mHelper->dealDVDReduce();
         }
     }
