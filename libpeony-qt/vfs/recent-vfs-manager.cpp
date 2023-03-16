@@ -73,8 +73,13 @@ RecentVFSManager::RecentVFSManager(QObject *parent) : QObject(parent)
 
     QFile file (m_recent_path);
     if (!file.exists()) {
+        if (m_recent_path.isEmpty()) {
+            m_recent_path = QStandardPaths::locate(QStandardPaths::HomeLocation, "/.local/share",QStandardPaths::LocateDirectory)
+                            + QString("/recently-used.xbel");
+        }
         clearAll();
     }
+    qDebug() << "recent path:" << m_recent_path;
 }
 
 bool RecentVFSManager::read()
