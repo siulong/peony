@@ -545,7 +545,7 @@ void PermissionsPropertiesPage::addAdvancedLayout()
 {
     QHBoxLayout *hboxLayout = new QHBoxLayout();
     hboxLayout->setContentsMargins(16, 16, 16, 16);
-    m_advancedBtn = new QPushButton(tr("Advanced Permissions"));
+    m_advancedBtn = new QPushButton(tr("Permission refinement settings"));
     m_layout->addWidget(m_advancedBtn);
     connect(m_advancedBtn, &QPushButton::clicked, this, [=](){
 
@@ -555,8 +555,8 @@ void PermissionsPropertiesPage::addAdvancedLayout()
         AdvancedPermissionsPage *page = new AdvancedPermissionsPage(m_uri);
 
         if (isAdvancedShare) {
-            auto result = QMessageBox::question(nullptr, tr("Advanced Permissions"),
-                                                tr("The current directory has set advanced sharing. If you set advanced permissions again, you may not be able to use advanced sharing. Do you want to continue setting?"));
+            auto result = QMessageBox::question(nullptr, tr("Permission refinement settings"),
+                                                tr("The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?"));
             if (QMessageBox::Yes == result) {
                 page->show();
             }
@@ -627,7 +627,7 @@ AdvancedPermissionsPage::~AdvancedPermissionsPage()
 
 void AdvancedPermissionsPage::init()
 {
-    this->setWindowTitle(tr("Advanced permissions"));
+    this->setWindowTitle(tr("Permission refinement settings"));
     this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setAttribute(Qt::WA_DeleteOnClose);
@@ -841,7 +841,7 @@ void AdvancedPermissionsPage::initListWidget()
 
 void AdvancedPermissionsPage::initFloorOne()
 {
-    m_label = new QLabel(tr("Advanced permission settings"), this);
+    m_label = new QLabel(tr("Permission refinement settings"), this);
     m_label->setContentsMargins(22, 0, 22, 0);
     m_layout->addWidget(m_label);
 }
