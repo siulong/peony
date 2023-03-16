@@ -652,11 +652,6 @@ void AdvancedPermissionsPage::init()
 
     connect(m_tabWidget, &QTableWidget::cellEntered, this, &AdvancedPermissionsPage::updateDelAclBtn);
     connect(m_tabWidget, &QTableWidget::cellClicked, this, &AdvancedPermissionsPage::updateDelAclBtn);
-    connect(m_tabWidget, &QTableWidget::itemClicked, this, [=](QTableWidgetItem *item){
-        if (nullptr != item) {
-            m_tabLabel->setText(item->text());
-        }
-    });
 
     connect(m_listWidget, &QListWidget::currentTextChanged, this, [=](QString currentIndex){
        if (!m_userInfo.contains(currentIndex)) {
@@ -664,7 +659,10 @@ void AdvancedPermissionsPage::init()
        } else {
            m_addUserBtn->setEnabled(false);
        }
-       m_listLabel->setText(currentIndex);
+       QFontMetrics fontWidth(m_listLabel->font());
+       QString elideNote = fontWidth.elidedText(currentIndex, Qt::ElideMiddle, 300);
+       m_listLabel->setText(elideNote);
+       m_listLabel->setToolTip(currentIndex);
     });
 
     connect(m_addUserBtn, &QPushButton::clicked, this, [=](){
@@ -715,7 +713,6 @@ void AdvancedPermissionsPage::init()
                 m_tabWidget->removeRow(currentRow);
                 if (m_tabWidget->rowCount() <= 0) {
                     m_delUserBtn->setEnabled(false);
-                    m_tabLabel->setText("");
                 }
             }
         }
@@ -785,7 +782,7 @@ void AdvancedPermissionsPage::initTableWidget()
 
     m_tabWidget->setColumnWidth(0, 100);
     m_tabWidget->setColumnWidth(1, 75);
-    m_tabWidget->setColumnWidth(3, 115);
+    m_tabWidget->setColumnWidth(3, 120);
 
     m_layout->addWidget(m_tabWidget);
 
@@ -799,6 +796,7 @@ void AdvancedPermissionsPage::initTableWidget()
         QString key = iter.key();
         QTableWidgetItem* itemC0 = new QTableWidgetItem(key);
         itemC0->setFlags(itemC0->flags() | Qt::ItemIsSelectable);
+        itemC0->setToolTip(key);
         m_tabWidget->setItem(row, 0, itemC0);
         for (int j = 1; j < 4; j++) {
             m_tabWidget->setCellWidget(row, j, nullptr);
@@ -832,6 +830,7 @@ void AdvancedPermissionsPage::initListWidget()
         for (QString user : m_userNames) {
             if (0 != user.compare(loginName)) {
                 auto item = new QListWidgetItem(user, m_listWidget);
+                item->setToolTip(user);
                 m_listWidget->addItem(item);
             }
         }
@@ -855,13 +854,10 @@ void AdvancedPermissionsPage::initFloorTwo()
     hBoxLayout->setContentsMargins(22, 0, 22, 0);
     hBoxLayout->setSpacing(0);
     m_delUserBtn = new QPushButton(tr("delete"));
-    m_tabLabel = new QLabel;
     m_delUserBtn->setEnabled(false);
     m_inheritsBox = new QCheckBox(tr("Inherit permission"));
-    hBoxLayout->addWidget(m_tabLabel, 2);
-    hBoxLayout->addSpacing(10);
     hBoxLayout->addWidget(m_inheritsBox, 2);
-    hBoxLayout->addSpacing(10);
+    hBoxLayout->addStretch(1);
     hBoxLayout->addWidget(m_delUserBtn, 1);
     m_layout->addLayout(hBoxLayout);
     m_layout->addSpacing(10);
@@ -1033,8 +1029,11 @@ void AdvancedPermissionsPage::checkInheritsBoxInfo()
 
 void AdvancedPermissionsPage::initCheckState()
 {
-    if (m_defaultAcl.isEmpty()) {
+    if (m_tabWidget->rowCount() == 0) {
         m_inheritsBox->setEnabled(false);
+        m_inheritsBox->setChecked(false);
+    } else if (m_defaultAcl.isEmpty() && m_tabWidget->rowCount() > 0) {
+        m_inheritsBox->setEnabled(true);
         m_inheritsBox->setChecked(false);
     } else {
         m_inheritsBox->setEnabled(true);
@@ -1078,9 +1077,5 @@ void AdvancedPermissionsPage::updateDelAclBtn(int row, int col)
         m_delUserBtn->setEnabled(false);
     } else if (col == 0) {
         m_delUserBtn->setEnabled(true);
-    }
-
-    if (col >= 1) {
-        m_tabLabel->setText("");
     }
 }

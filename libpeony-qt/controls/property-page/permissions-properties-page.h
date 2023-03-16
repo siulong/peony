@@ -149,7 +149,6 @@ private:
     bool m_thisPageChanged = false;
 
     QLabel *m_label = nullptr;
-    QLabel *m_tabLabel = nullptr;
     QLabel *m_listLabel = nullptr;
     QTableWidget *m_tabWidget = nullptr;
     QListWidget *m_listWidget = nullptr;
