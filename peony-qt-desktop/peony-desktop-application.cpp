@@ -725,6 +725,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         for (auto bgWindow : m_bg_windows) {
             if (bgWindow->getIconView()->zoomLevel() != level) {
                 bgWindow->getIconView()->setDefaultZoomLevel(level);
+                bgWindow->getIconView()->clearExtendItemPos(true);
             }
         }
     });

@@ -2759,7 +2759,7 @@ void DesktopIconView::clearItemRect()
     m_item_rect_hash.clear();
 }
 
-void DesktopIconView::clearExtendItemPos()
+void DesktopIconView::clearExtendItemPos(bool saveId)
 {
     if (!m_proxy_model)
         return;
@@ -2773,6 +2773,14 @@ void DesktopIconView::clearExtendItemPos()
             QStringList tmp;
             tmp<<"";
             metaInfo->setMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE, tmp);
+            if (saveId) {
+                metaInfo->setMetaInfoStringList(RESTORE_ITEM_POS_ATTRIBUTE, tmp);
+                QStringList extendPos = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
+                if (extendPos.count() == 3) {
+                    tmp.clear();
+                    tmp<<"-1"<<"-1"<<extendPos[2];
+                }
+            }
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, tmp);
         }
     }

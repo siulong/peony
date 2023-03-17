@@ -114,7 +114,7 @@ public:
     void resetExtendItemInfo();
     void clearItemRect();
     bool isFull();
-    void clearExtendItemPos();
+    void clearExtendItemPos(bool saveId = false);
 
 private:
     QRect getScreenArea(QScreen* screen);
