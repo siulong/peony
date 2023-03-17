@@ -85,6 +85,7 @@ public Q_SLOTS:
 
     void addBgWindow(QScreen *screen);
     void relocateIconView();
+    void raiseWid();
 
 private:
     void setupDesktop();

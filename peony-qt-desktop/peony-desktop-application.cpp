@@ -573,6 +573,12 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
         }
 
         if (parser.isSet(desktopOption)) {
+            if(!has_background) {
+                QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
+                watcher->setConnection(QDBusConnection::sessionBus());
+                watcher->addWatchedService("org.ukui.KWin");
+                connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, &PeonyDesktopApplication::raiseWid);
+            }
             setupBgAndDesktop();
         }
 
@@ -763,7 +769,7 @@ void PeonyDesktopApplication::setupDesktop()
     for (auto screen : qApp->screens()) {
         addBgWindow(screen);
     }
-    //relocateIconView();
+
     connect(qApp, &QApplication::screenAdded, this, &PeonyDesktopApplication::addBgWindow);
     connect(this, &PeonyDesktopApplication::primaryScreenChanged, this, &PeonyDesktopApplication::relocateIconView);
 }
@@ -957,6 +963,18 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
         }
     }
     return nullptr;
+}
+
+void PeonyDesktopApplication::raiseWid()
+{
+    QTimer::singleShot(2000, this, [=]() {
+        for (auto window : m_bg_windows) {
+            if (window->screen() == this->primaryScreen() && window->screen()) {
+                KWindowSystem::raiseWindow(window->winId());
+                return;
+            }
+        }
+    });
 }
 
 static void volume_mount_cb (GObject* source, GAsyncResult* res, gpointer udata)
