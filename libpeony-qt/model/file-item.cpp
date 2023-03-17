@@ -99,6 +99,9 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 }
                 */
             });
+
+            infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
             infoJob->queryAsync();
             m_waiting_update_queue.removeOne(uri);
         }
@@ -368,6 +371,8 @@ void FileItem::findChildrenAsync()
                         m_model->dataChanged(child->firstColumnIndex(), child->lastColumnIndex());
                     });
 
+                    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
                     job->queryAsync();
                 }
             } else {
@@ -468,6 +473,9 @@ void FileItem::findChildrenAsync()
                         Q_EMIT m_model->updated();
                     }
                 });
+
+                infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
                 infoJob->queryAsync();
             }
         });
@@ -625,6 +633,9 @@ void FileItem::onChildAdded(const QString &uri)
             qInfo()<<"file"<<uri<<"has arealy in file item model";
         }
     });
+
+    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
     infoJob->queryAsync();
 
 //    FileItem *newChild = new FileItem(FileInfo::fromUri(uri), this, m_model);
@@ -807,6 +818,9 @@ void FileItem::updateInfoAsync()
         m_model->updated();
         ThumbnailManager::getInstance()->createThumbnail(this->uri(), m_thumbnail_watcher, true);
     });
+
+    job->connect(this, &FileItem::cancelFindChildren, job, &FileInfoJob::cancel);
+
     job->queryAsync();
 }
 
@@ -893,6 +907,9 @@ void FileItem::showFilesForBurningOnRTypeDisc()
                        m_model->endInsertRows();
                        ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
                    });
+
+                   infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
                    infoJob->queryAsync();
                }
                /* 监听 */
