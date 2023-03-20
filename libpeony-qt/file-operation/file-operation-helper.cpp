@@ -132,20 +132,20 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
             memset(errinfo, 0, 1024);
             QStringList list;
             GFile* destGfile = g_file_new_for_uri(destUri.toUtf8().constData());
-            QString destName = g_file_get_path(destGfile);
+            QString destPath = g_file_get_path(destGfile);
             if (nullptr != destGfile) {
                 g_object_unref(destGfile);
             }
             for(QString sourUri : sourUrisList) {
                 GFile* sourGfile = g_file_new_for_uri(sourUri.toUtf8().constData());
                 sourUri = g_file_get_path(sourGfile);
-                sourUri = destName + "/" +sourUri.split("/").back();
+                sourUri = destPath + "/" +sourUri.split("/").back();
                 list << sourUri;
                 if (nullptr != sourGfile) {
                     g_object_unref(sourGfile);
                 }
             }
-            destName = getDestName(destUri);
+            QString destName = getDestName(destPath);
             //创建UdfReadWrite类
             std::shared_ptr<UdfReadWrite> udfwrite = std::make_shared<UdfReadWrite>(m_unix_device,nullptr);
             //开启udfclient的初始化
@@ -165,6 +165,7 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
             }
             //写单个数据
             //right = udfwrite->writeSingleData(&errinfo, m_source_uris);
+            qDebug() << "udf write list:" << list << "dest name" << destName;
             right = udfwrite->writeMultiData(&errinfo, list, destName);
             if (!right) {
                 m_disc_error_msg = errinfo;
