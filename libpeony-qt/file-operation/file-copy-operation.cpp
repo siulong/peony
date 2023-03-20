@@ -155,6 +155,27 @@ fallback_retry:
     m_current_src_uri = node->uri();
     m_current_dest_dir_uri = destFileUri;
 
+    //fix bug#163573, can not copy readonly folder issue
+    gboolean readonly_source_fs = FALSE;
+    GFile *source_dir;
+    QString srcParent;
+    srcParent = FileUtils::getParentUri(node->uri());
+    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+    /* Query the source dir, not the file because if its a symlink we'll follow it */
+    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+    if (source_dir) {
+        GFileInfo *inf;
+        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+        if (inf != NULL) {
+            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+            g_object_unref (inf);
+        }
+        g_object_unref (source_dir);
+    }
+
+    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+
     if (node->isFolder()) {
         GError *err = nullptr;
         GError *error = nullptr;
@@ -223,7 +244,7 @@ fallback_retry:
                 node->setErrorResponse(OverWriteOne);
                 g_file_copy_attributes(srcFile.get()->get(),
                                        destFile.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
+                                       GFileCopyFlags(flags),
                                        nullptr,
                                        &error);
                 if (error) {
@@ -239,7 +260,7 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 g_file_copy_attributes(srcFile.get()->get(),
                                        destFile.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
+                                       GFileCopyFlags(flags),
                                        nullptr,
                                        &error);
                 if (error) {
@@ -272,7 +293,7 @@ fallback_retry:
                 GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
                 g_file_copy_attributes(srcFile.get()->get(),
                                        destDir.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
+                                       GFileCopyFlags(flags),
                                        nullptr,
                                        &error);
                 if (error) {
@@ -292,7 +313,7 @@ fallback_retry:
                 GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
                 g_file_copy_attributes(srcFile.get()->get(),
                                        destDir.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
+                                       GFileCopyFlags(flags),
                                        nullptr,
                                        &error);
                 if (error) {
@@ -321,7 +342,7 @@ fallback_retry:
             node->setState(FileNode::Handled);
             g_file_copy_attributes(srcFile.get()->get(),
                                    destFile.get()->get(),
-                                   G_FILE_COPY_ALL_METADATA,
+                                   GFileCopyFlags(flags),
                                    nullptr,
                                    &error);
             if (error) {
