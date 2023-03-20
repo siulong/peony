@@ -161,11 +161,13 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 notEmptyRegion += rect;
             }
 
+            int isUpdateIconGeometry = false;
             if (!view->isRenaming()) {
                 view->setFileMetaInfoPos(uri, QPoint(-1, -1));
             } else {
                 m_items_need_relayout.removeOne(uri);
                 view->setRenaming(false);
+                isUpdateIconGeometry = true;
             }
 
             auto metaInfoPos = view->getFileMetaInfoPos(uri);
@@ -176,6 +178,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             } else {
                 iconSize = itemRectHash.values().first().size();
             }
+
             if (metaInfoPos.x() >= 0) {
                 // check if overlapped, it might happend whild drag out and in desktop view.
                 auto indexRect = QRect(metaInfoPos, iconSize);
@@ -207,6 +210,8 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                         // handle position locate in DesktopIconView::itemInserted().
                         view->setFileMetaInfoPos(info->uri(), next.topLeft());
                     }
+                } else if (isUpdateIconGeometry){
+                    FileInfo::fromUri(uri).get()->setProperty("iconGeometry", QRect(view->mapToGlobal(metaInfoPos), iconSize));
                 }
 
                 this->beginInsertRows(QModelIndex(), m_files.count(), m_files.count());
