@@ -242,15 +242,15 @@ fallback_retry:
             case OverWriteOne: {
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destFile.get()->get(),
-                                       GFileCopyFlags(flags),
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                }
-                g_error_free(error);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 //make dir has no overwrite
                 break;
             }
@@ -258,15 +258,15 @@ fallback_retry:
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destFile.get()->get(),
-                                       GFileCopyFlags(flags),
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                }
-                g_error_free(error);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 break;
             }
             case BackupOne: {
@@ -290,16 +290,16 @@ fallback_retry:
                 while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
                     handleDuplicate(node);
                 }
-                GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destDir.get()->get(),
-                                       GFileCopyFlags(flags),
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                }
-                g_error_free(error);
+//                GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destDir.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 goto fallback_retry;
             }
             case BackupAll: {
@@ -311,15 +311,15 @@ fallback_retry:
                 //make dir has no backup
                 m_prehandle_hash.insert(err->code, BackupOne);
                 GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destDir.get()->get(),
-                                       GFileCopyFlags(flags),
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                }
-                g_error_free(error);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destDir.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 goto fallback_retry;
             }
             case Retry: {
@@ -340,15 +340,6 @@ fallback_retry:
             }
         } else {
             node->setState(FileNode::Handled);
-            g_file_copy_attributes(srcFile.get()->get(),
-                                   destFile.get()->get(),
-                                   GFileCopyFlags(flags),
-                                   nullptr,
-                                   &error);
-            if (error) {
-                qDebug() << __func__ << error->code << error->message;
-            }
-            g_error_free(error);
         }
         //assume that make dir finished anyway
         m_current_offset += node->size();
@@ -356,6 +347,18 @@ fallback_retry:
         for (auto child : *(node->children())) {
             copyRecursively(child);
         }
+
+        //copy folder attributes after copy child, support copy readonly files
+        //related bug#163573
+        g_file_copy_attributes(srcFile.get()->get(),
+                               destFile.get()->get(),
+                               GFileCopyFlags(flags),
+                               nullptr,
+                               &error);
+        if (error) {
+            qDebug() << __func__ << error->code << error->message;
+        }
+        g_error_free(error);
     } else {
         GError *err = nullptr;
         QUrl url = node->uri();
