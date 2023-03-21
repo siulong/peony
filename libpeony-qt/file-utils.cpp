@@ -38,7 +38,7 @@
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
-
+#include <gio/gdesktopappinfo.h>
 
 using namespace Peony;
 
@@ -362,6 +362,27 @@ QString FileUtils::getFileDisplayName(const QString &uri)
         }
     }
     return fileInfo.get()->displayName();
+}
+
+QString FileUtils::getApplicationName(const QString &uri)
+{
+    QString displayName = getFileDisplayName(uri);
+    if (uri.endsWith(".desktop")){
+        g_autoptr(GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+        g_autofree gchar *desktop_file_path = g_file_get_path(gfile);
+        g_autoptr(GDesktopAppInfo) gdesktopappinfo = g_desktop_app_info_new_from_filename(desktop_file_path);
+        if (gdesktopappinfo) {
+            g_autofree gchar *desktop_name = g_desktop_app_info_get_locale_string(gdesktopappinfo, "Name");
+            if (!desktop_name) {
+                desktop_name = g_desktop_app_info_get_string(gdesktopappinfo, "Name");
+            }
+            if (desktop_name) {
+                displayName = desktop_name;
+            }
+        }
+    }
+
+    return displayName;
 }
 
 QString FileUtils::getFileIconName(const QString &uri, bool checkValid)

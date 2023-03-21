@@ -330,7 +330,18 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             return false;
         if (! checkFileSizeOrTypeFilter(item->m_info->size(), item->m_info->isDir()))
             return false;
-        if (! checkFileNameFilter(item->m_info->displayName()))
+
+        //fix bug162927, desktop file should consider file name
+        if (item->uri().endsWith(".desktop")){
+            QString originName = item->uri().split("/").last();
+            QString AppName = item->m_info->displayName();
+            //对性能有影响，暂时屏蔽，后续再考虑优化
+//           if (! item->info()->canExecute())
+//               AppName = FileUtils::getApplicationName(item->uri());
+           if (! checkFileNameFilter(AppName) && ! checkFileNameFilter(originName))
+               return false;
+        }
+        else if (! checkFileNameFilter(item->m_info->displayName()))
             return false;
 
         //check the file label filter conditions
