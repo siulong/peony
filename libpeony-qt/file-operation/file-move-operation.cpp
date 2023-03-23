@@ -198,6 +198,9 @@ void FileMoveOperation::move()
                     GFileProgressCallback(progress_callback), this, &err);
         if (err) {
             errNode << node;
+            //need free err info, fix bug#164662, drag file conflicts cause file lost issue
+            g_error_free(err);
+            err = nullptr;
         } else {
             node->setState(FileNode::Handled);
         }
@@ -207,12 +210,12 @@ void FileMoveOperation::move()
 
     // file copy-delete
     goffset *total_size = new goffset(0);
-    for (auto node : errNode) {
+    for (auto eNode : errNode) {
         if (isCancelled())
             return;
 
-        node->findChildrenRecursively();
-        node->computeTotalSize(total_size);
+        eNode->findChildrenRecursively();
+        eNode->computeTotalSize(total_size);
     }
     m_total_szie = *total_size;
     operationPreparedOne("", m_total_szie);
