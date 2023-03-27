@@ -250,7 +250,7 @@ bool VolumeManager::gpartedIsOpening(){
         drives = g_volume_monitor_get_connected_drives(m_volumeMonitor);
     }
 
-    m_gpartedIsOpening = true;
+   // m_gpartedIsOpening = true;  /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
 
     for(l = drives; l!=nullptr; l=l->next){
         drive = (GDrive*) l->data;
@@ -747,7 +747,7 @@ QList<GVolume*> VolumeManager::allGVolumes(){
     if(m_volumeMonitor)
         volumes = g_volume_monitor_get_volumes(m_volumeMonitor);
 
-    m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr
+    //m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
     for(l = volumes; l != nullptr; l = l->next){
         gvolume = (GVolume*)l->data;
         volumeList.push_back(gvolume);
