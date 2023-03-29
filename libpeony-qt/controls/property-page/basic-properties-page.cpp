@@ -434,7 +434,7 @@ void BasicPropertiesPage::loadPartOne()
         m_locationEdit->setDisabled(true);
     }
 
-    if (uris.first() == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
+    if (fileUri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
         disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
     }
 }
