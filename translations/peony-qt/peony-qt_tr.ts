@@ -23,14 +23,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="41"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="138"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="47"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="45"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="99"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="51"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39,15 +39,15 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Dosya Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="40"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="68"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="84"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="46"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="98"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="44"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="87"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="50"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="117"/>
         <source>Version number: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -110,7 +110,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sıralama Türü</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="750"/>
+        <location filename="../../src/control/header-bar.cpp" line="751"/>
         <source>Option</source>
         <translation>Seçenek</translation>
     </message>
@@ -162,8 +162,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="335"/>
-        <location filename="../../src/control/header-bar.cpp" line="835"/>
-        <location filename="../../src/control/header-bar.cpp" line="853"/>
+        <location filename="../../src/control/header-bar.cpp" line="836"/>
+        <location filename="../../src/control/header-bar.cpp" line="854"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -184,15 +184,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="613"/>
-        <location filename="../../src/control/header-bar.cpp" line="838"/>
-        <location filename="../../src/control/header-bar.cpp" line="844"/>
+        <location filename="../../src/control/header-bar.cpp" line="839"/>
+        <location filename="../../src/control/header-bar.cpp" line="845"/>
         <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="623"/>
         <location filename="../../src/control/header-bar.cpp" line="635"/>
-        <location filename="../../src/control/header-bar.cpp" line="805"/>
+        <location filename="../../src/control/header-bar.cpp" line="806"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,17 +227,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Sil</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="732"/>
+        <location filename="../../src/control/header-bar.cpp" line="733"/>
         <source>Select path</source>
         <translation type="unfinished">Yol seç</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="765"/>
+        <location filename="../../src/control/header-bar.cpp" line="766"/>
         <source>Minimize</source>
         <translation>Küçült</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="779"/>
+        <location filename="../../src/control/header-bar.cpp" line="780"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
@@ -289,34 +289,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="795"/>
+        <location filename="../../src/windows/main-window.cpp" line="802"/>
         <source>File Manager</source>
         <translation>Dosya Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="362"/>
+        <location filename="../../src/windows/main-window.cpp" line="369"/>
         <source>Undo</source>
         <translation>Geri</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="369"/>
+        <location filename="../../src/windows/main-window.cpp" line="376"/>
         <source>Redo</source>
         <translation>İleri</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="719"/>
-        <location filename="../../src/windows/main-window.cpp" line="760"/>
+        <location filename="../../src/windows/main-window.cpp" line="726"/>
+        <location filename="../../src/windows/main-window.cpp" line="767"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="719"/>
-        <location filename="../../src/windows/main-window.cpp" line="760"/>
+        <location filename="../../src/windows/main-window.cpp" line="726"/>
+        <location filename="../../src/windows/main-window.cpp" line="767"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="793"/>
+        <location filename="../../src/windows/main-window.cpp" line="800"/>
         <source>Search</source>
         <translation type="unfinished">Ara</translation>
     </message>
@@ -337,7 +337,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="808"/>
+        <location filename="../../src/windows/main-window.cpp" line="815"/>
         <source>New Folder</source>
         <translation>Yeni Klasör</translation>
     </message>
@@ -408,7 +408,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="632"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="625"/>
         <source>All tags...</source>
         <translation>Tüm etiketler...</translation>
     </message>
@@ -1189,7 +1189,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="755"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="748"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1197,17 +1197,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1006"/>
+        <location filename="../../src/control/header-bar.cpp" line="1007"/>
         <source>Option</source>
         <translation type="unfinished">Seçenek</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1019"/>
+        <location filename="../../src/control/header-bar.cpp" line="1020"/>
         <source>Minimize</source>
         <translation type="unfinished">Küçült</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1042"/>
+        <location filename="../../src/control/header-bar.cpp" line="1043"/>
         <source>Close</source>
         <translation type="unfinished">Kapat</translation>
     </message>

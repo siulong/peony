@@ -35,15 +35,15 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">服务与技术支持: </translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="41"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="138"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="47"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
         <translation>服务与支持团队: </translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="40"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="68"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="84"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="46"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="98"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>
@@ -52,8 +52,8 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="45"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="99"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="51"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
         <translation>文件管理器是一款帮助用户管理系统文件的图形化的软件，为用户提供常用的文件操作功能，比如文件查看，文件复制、粘贴、剪切、删除、重命名，文件打开方式选择，文件搜索，文件排序，文件预览等，方便用户在界面上直观地管理系统文件。</translation>
     </message>
@@ -66,8 +66,8 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/about-dialog.cpp" line="44"/>
-        <location filename="../../src/windows/about-dialog.cpp" line="87"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="50"/>
+        <location filename="../../src/windows/about-dialog.cpp" line="117"/>
         <source>Version number: %1</source>
         <translation>版本号: %1</translation>
     </message>
@@ -138,7 +138,7 @@ p, li { white-space: pre-wrap; }
         <translation>排序类型</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="750"/>
+        <location filename="../../src/control/header-bar.cpp" line="751"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
@@ -190,8 +190,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="335"/>
-        <location filename="../../src/control/header-bar.cpp" line="835"/>
-        <location filename="../../src/control/header-bar.cpp" line="853"/>
+        <location filename="../../src/control/header-bar.cpp" line="836"/>
+        <location filename="../../src/control/header-bar.cpp" line="854"/>
         <source>Deselect All</source>
         <translation>取消全选</translation>
     </message>
@@ -212,15 +212,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="613"/>
-        <location filename="../../src/control/header-bar.cpp" line="838"/>
-        <location filename="../../src/control/header-bar.cpp" line="844"/>
+        <location filename="../../src/control/header-bar.cpp" line="839"/>
+        <location filename="../../src/control/header-bar.cpp" line="845"/>
         <source>Select All Item</source>
         <translation>全部选择</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="623"/>
         <location filename="../../src/control/header-bar.cpp" line="635"/>
-        <location filename="../../src/control/header-bar.cpp" line="805"/>
+        <location filename="../../src/control/header-bar.cpp" line="806"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
@@ -255,17 +255,17 @@ p, li { white-space: pre-wrap; }
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="732"/>
+        <location filename="../../src/control/header-bar.cpp" line="733"/>
         <source>Select path</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="765"/>
+        <location filename="../../src/control/header-bar.cpp" line="766"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="779"/>
+        <location filename="../../src/control/header-bar.cpp" line="780"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -317,34 +317,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="795"/>
+        <location filename="../../src/windows/main-window.cpp" line="802"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="362"/>
+        <location filename="../../src/windows/main-window.cpp" line="369"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="369"/>
+        <location filename="../../src/windows/main-window.cpp" line="376"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="719"/>
-        <location filename="../../src/windows/main-window.cpp" line="760"/>
+        <location filename="../../src/windows/main-window.cpp" line="726"/>
+        <location filename="../../src/windows/main-window.cpp" line="767"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="719"/>
-        <location filename="../../src/windows/main-window.cpp" line="760"/>
+        <location filename="../../src/windows/main-window.cpp" line="726"/>
+        <location filename="../../src/windows/main-window.cpp" line="767"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="793"/>
+        <location filename="../../src/windows/main-window.cpp" line="800"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -373,7 +373,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="808"/>
+        <location filename="../../src/windows/main-window.cpp" line="815"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -444,7 +444,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="632"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="625"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -1266,7 +1266,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="755"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="748"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>
@@ -1274,17 +1274,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1006"/>
+        <location filename="../../src/control/header-bar.cpp" line="1007"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1019"/>
+        <location filename="../../src/control/header-bar.cpp" line="1020"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1042"/>
+        <location filename="../../src/control/header-bar.cpp" line="1043"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
