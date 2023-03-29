@@ -1323,8 +1323,8 @@ void MainWindow::resizeEvent(QResizeEvent *e)
     QMainWindow::resizeEvent(e);
     //may not need update? comment to try fix bug#77966
     //m_header_bar->updateMaximizeState();
-    validBorder();
-    update();
+    //validBorder();
+    //update();
 
     if (!isMaximized()) {
         // set save window size flag
@@ -1339,7 +1339,7 @@ void MainWindow::resizeEvent(QResizeEvent *e)
  */
 void MainWindow::paintEvent(QPaintEvent *e)
 {
-    validBorder();
+    //validBorder();
     QColor color = this->palette().window().color();
     QColor colorBase = this->palette().base().color();
 
@@ -1498,6 +1498,8 @@ void MainWindow::initUI(const QString &uri)
 
     auto size = sizeHint();
     resize(size);
+
+    KWindowEffects::enableBlurBehind(this->winId(), true);
 
     connect(this, &MainWindow::locationChangeStart, this, [=]() {
         //comment to fix bug 33527
