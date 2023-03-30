@@ -2416,8 +2416,10 @@ int DesktopIconView::updateBWList()
     /*
     * 重新按照既定规则排序，这样可以避免出现空缺和图标重叠的情况
     */
-    int sortType = GlobalSettings::getInstance()->getValue(LAST_DESKTOP_SORT_ORDER).toInt();
-    setSortType(sortType);
+//    int sortType = GlobalSettings::getInstance()->getValue(LAST_DESKTOP_SORT_ORDER).toInt();
+//    setSortType(sortType);
+    //不可重新排序，会丢失位置，只做检查调整空缺和重叠情况，相关bug#161875
+    resolutionChange();
     return 0;
 }
 
