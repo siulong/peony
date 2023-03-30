@@ -1995,7 +1995,8 @@ void DesktopIconView::dragEnterEvent(QDragEnterEvent *e)
         m_drag_indexes = selectedIndexes();
     } else {
         //task#74174 扩展模式下支持拖拽图标放置到扩展屏,获取选中项
-        auto view = static_cast<DesktopIconView*>(e->source());
+        //fix bug#165132, do nothing when in rename status
+        auto view = qobject_cast<DesktopIconView*>(e->source());
         if (view) {
             m_drag_indexes = view->selectedIndexes();
         }
