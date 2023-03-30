@@ -1,0 +1,95 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Wed, 7 Dec 2022 14:03:40 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/windows/properties-window.cpp               | 13 ++++++++-----
+ translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts |  6 +++---
+ translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts |  6 +++---
+ 3 files changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/libpeony-qt/windows/properties-window.cpp b/libpeony-qt/windows/properties-window.cpp
+index b433206..d887257 100644
+--- a/libpeony-qt/windows/properties-window.cpp
++++ b/libpeony-qt/windows/properties-window.cpp
+@@ -63,6 +63,8 @@
+ 
+ #include "file-info-job.h"
+ 
++#include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
++
+ using namespace Peony;
+ 
+ #define WINDOW_NOT_OPEN -1
+@@ -247,11 +249,12 @@ void PropertiesWindow::init()
+     this->setAttribute(Qt::WA_DeleteOnClose);
+     this->setContentsMargins(0, 0, 0, 0);
+     this->setAttribute(Qt::WA_TranslucentBackground);
+-    MotifWmHints hints;
+-    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+-    hints.functions = MWM_FUNC_ALL;
+-    hints.decorations = MWM_DECOR_BORDER;
+-    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
++    kdk::UkuiStyleHelper::self()->removeHeader(this);
++//    MotifWmHints hints;
++//    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
++//    hints.functions = MWM_FUNC_ALL;
++//    hints.decorations = MWM_DECOR_BORDER;
++//    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
+     //only show close button
+     //this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
+ 
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts b/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
+index 00ba7df..556254e 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
+@@ -175,15 +175,15 @@
+     </message>
+     <message>
+         <source>New</source>
+-        <translation type="unfinished"></translation>
++        <translation>གསར་འཛུགས།</translation>
+     </message>
+     <message>
+         <source>View Type</source>
+-        <translation type="unfinished"></translation>
++        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
+     </message>
+     <message>
+         <source>Sort By</source>
+-        <translation type="unfinished"></translation>
++        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
+     </message>
+ </context>
+ <context>
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts b/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts
+index 13f36e4..ff5cc2e 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts
+@@ -186,7 +186,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
+         <source>New</source>
+-        <translation type="unfinished"></translation>
++        <translation>新建</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="320"/>
+@@ -201,7 +201,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
+         <source>View Type</source>
+-        <translation type="unfinished"></translation>
++        <translation>视图类型</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
+@@ -226,7 +226,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="394"/>
+         <source>Sort By</source>
+-        <translation type="unfinished"></translation>
++        <translation>排序方式</translation>
+     </message>
+     <message>
+         <source>Sort By...</source>

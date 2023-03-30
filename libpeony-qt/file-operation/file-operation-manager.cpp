@@ -380,6 +380,12 @@ start:
            if (!info)
                return;
            if (info->operationType() != FileOperationInfo::Delete) {
+               //fix bug#162024, play sound when operation finished
+               if (info->operationType() == FileOperationInfo::Copy ||
+                   info->operationType() == FileOperationInfo::Move){
+                   SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+               }
+
                m_undo_stack.push(info);
                m_redo_stack.clear();
            } else {
@@ -597,7 +603,7 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
             auto firstUri = info->m_src_uris.first();
             
             //'file:///run/user/1000/gvfs/smb-share:server=xxx,share=xxx/' converted to 'smb://xxx'
-            GFile * file  = g_file_new_for_uri(destDir.toLatin1().data());
+            GFile * file  = g_file_new_for_uri(destDir.toUtf8().data());
             char *uri = g_file_get_uri(file);	
             if (uri) {
                 destDir = uri;

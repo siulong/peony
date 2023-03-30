@@ -160,6 +160,11 @@ void DirectoryViewMenu::fillActions()
         m_is_smb_file = true;
     }
 
+    QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
+    if(m_directory == boxpath) {
+        m_is_boxpath = true;
+    }
+
     auto dev = VolumeManager::getDriveFromUri(m_directory);
     if(dev != nullptr){
         bool canEject = g_drive_can_eject(dev.get()->getGDrive());
@@ -508,6 +513,9 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
         if (m_is_cd) {
             createAction->setEnabled(false);
         }
+        if (m_is_boxpath) {
+            createAction->setEnabled(false);
+        }
         //fix create folder fail issue in special path
         auto info = FileInfo::fromUri(m_directory);
         if (info.get()->isEmptyInfo()) {
@@ -795,12 +803,19 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe)
             {
-                l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
-                l.last()->setObjectName(CUT_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    ClipboardUtils::setClipboardFiles(m_selections, true);
-                    m_view->repaintView();
-                });
+                bool canCut = true;
+                auto info = FileInfo::fromUri(m_directory);
+                if (!info->canWrite()) {
+                    canCut = false;
+                }
+                if (canCut) {
+                    l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
+                    l.last()->setObjectName(CUT_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        ClipboardUtils::setClipboardFiles(m_selections, true);
+                        m_view->repaintView();
+                    });
+                }
             }
 
             bool hasDeleteForever = false;

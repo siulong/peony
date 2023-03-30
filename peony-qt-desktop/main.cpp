@@ -33,6 +33,7 @@
 #include <QThread>
 
 #include <QStandardPaths>
+#include <QProcess>
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -82,10 +83,23 @@ int main(int argc, char *argv[])
 {
     //qputenv("QT_QPA_PLATFORM", "wayland");
     PeonyDesktopApplication::peony_desktop_start_time = QDateTime::currentMSecsSinceEpoch();
+
+    QString xdgUserDirsUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/user-dirs.dirs";
+    if (!QFile::exists(xdgUserDirsUri)) {
+        if (QFile::exists("/usr/bin/xdg-user-dirs-update")) {
+            QProcess p;
+            p.setProgram("xdg-user-dirs-update");
+            p.start();
+            p.waitForFinished();
+        }
+    }
+
     initUkuiLog4qt("peony-desktop");
 //    qInstallMessageHandler(messageOutput);
     qDebug() << "desktop start time in main:" <<PeonyDesktopApplication::peony_desktop_start_time;
 
+    QGuiApplication::setFallbackSessionManagementEnabled(true);
+    QGuiApplication::setQuitOnLastWindowClosed(false);
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))

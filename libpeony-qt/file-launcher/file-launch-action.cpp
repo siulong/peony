@@ -416,8 +416,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         char *uri = g_strdup(m_uri.toUtf8().constData());
         l = g_list_prepend(l, uri);
 #if USE_STARTUP_INFO
-        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), l, nullptr,
-                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr,
+        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), l, nullptr, 
+                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr, 
                                                   pid_callback, (gpointer)startInfoId, nullptr);
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
 #elif GLIB_CHECK_VERSION(2, 60, 0)

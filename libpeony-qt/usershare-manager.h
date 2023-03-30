@@ -51,12 +51,19 @@ class PEONYCORESHARED_EXPORT UserShareInfoManager : public QObject
 public:
     static UserShareInfoManager* getInstance ();
     QString exectueCommand (QStringList& args, bool* ret /* out */, QString sharedPath="");
+    static QString exectueSetAclCommand(QStringList& args, bool* ret);
 
     bool hasSharedInfo (QString& name);
     void removeShareInfo (QString& name);
     bool addShareInfo (ShareInfo* shareInfo);
     bool updateShareInfo (ShareInfo& shareInfo);
     const ShareInfo* getShareInfo (QString& name);
+    bool updateShareInfo (ShareInfo& shareInfo, const QString usershareAcl);
+    void removeShareInfoAcl (QString& name);
+
+    QString getUserShareAcl(QString& name);
+    bool addUserShareAcl(QString &name, QString &acl);
+    QString parseUserShareAcl(QString &content);
 
 private:
     explicit UserShareInfoManager (QObject* parent = nullptr) : QObject(parent) {};
@@ -69,6 +76,7 @@ private:
     bool                            m_bInit = false;
     QMutex                          m_mutex;
     QMap <QString, ShareInfo*>      m_sharedInfoMap;
+    QMap <QString, QString>         m_usershareAclMap;
     static UserShareInfoManager*    g_shareInfo;
 };
 }

@@ -322,6 +322,7 @@ gboolean peony_search_vfs_file_enumerator_is_file_match(PeonySearchVFSFileEnumer
     g_free(file_display_name);
 
     // fix #83327
+    QString fileName = "";
     if (uri.endsWith(".desktop")) {
         g_autoptr(GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
         g_autofree gchar *desktop_file_path = g_file_get_path(gfile);
@@ -332,6 +333,7 @@ gboolean peony_search_vfs_file_enumerator_is_file_match(PeonySearchVFSFileEnumer
                 desktop_name = g_desktop_app_info_get_string(gdesktopappinfo, "Name");
             }
             if (desktop_name) {
+                fileName = displayName;
                 displayName = desktop_name;
             }
         } else if (uri.startsWith("trash:///")) {
@@ -356,12 +358,15 @@ gboolean peony_search_vfs_file_enumerator_is_file_match(PeonySearchVFSFileEnumer
     }
 
     if (details->name_regexp) {
+        //fix bug#162927, can use file name or app name search desktop file
         if (details->use_regexp && details->match_name_or_content
-                && displayName.contains(*enumerator->priv->name_regexp))
+                && (displayName.contains(*enumerator->priv->name_regexp)
+                    || fileName.contains(*enumerator->priv->name_regexp)))
         {
             return true;
         }
-        else if (displayName == details->name_regexp->pattern())
+        else if (displayName == details->name_regexp->pattern()
+                 || fileName == details->name_regexp->pattern())
         {
             //this is most used for querying files which might be duplicate.
             return true;

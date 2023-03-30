@@ -66,6 +66,8 @@
 
 #include <QApplication>
 
+#define DEBUG qDebug() << "[" << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << "]"
+
 using namespace Peony;
 
 static PushButtonStyle *global_instance = nullptr;
@@ -252,6 +254,7 @@ void BasicPropertiesPage::initFloorTwo()
     QFrame      *baseFrame  = new QFrame(this);
     QFormLayout *baseLayout = new QFormLayout(baseFrame);
 
+    baseLayout->setObjectName("floorTwoBaseLayout");
     baseLayout->setVerticalSpacing(16);
     baseLayout->setHorizontalSpacing(10);
     baseLayout->setContentsMargins(24, 16, 24, 16);
@@ -379,7 +382,7 @@ void BasicPropertiesPage::loadPartOne()
         connect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
         this->onSingleFileChanged(nullptr, m_uris.first());
     } else {
-        m_iconButton->setIcon(QIcon::fromTheme("text-x-generic"));
+        m_iconButton->setIcon(QIcon::fromTheme("unknown"));
     }
 
     //select multiplefiles
@@ -428,6 +431,11 @@ void BasicPropertiesPage::loadPartOne()
     if(fileUri.startsWith("filesafe:///") && (fileUri.remove("filesafe:///").indexOf("/") == -1)) {
         disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
         m_displayNameEdit->setReadOnly(true);
+        m_locationEdit->setDisabled(true);
+    }
+
+    if (fileUri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
+        disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
     }
 }
 
@@ -504,7 +512,6 @@ void BasicPropertiesPage::loadOptionalData()
     //fix bug#113890,hiden Desktop folder change desktop show
     m_hidden->setDisabled(!m_info->canRename() || isDesktop);
     m_isReadOnly = m_readOnly->isChecked();
-    m_isHidden = m_hidden->isChecked();
 
 
     //确认被修改
@@ -583,7 +590,7 @@ void BasicPropertiesPage::onSingleFileChanged(const QString &oldUri, const QStri
     this->getFIleInfo(newUri);
 
     ThumbnailManager::getInstance()->createThumbnail(m_info.get()->uri(), m_thumbnail_watcher);
-    auto icon = QIcon::fromTheme(m_info.get()->iconName(), QIcon::fromTheme("text-x-generic"));
+    auto icon = QIcon::fromTheme(m_info.get()->iconName(), QIcon::fromTheme("unknown"));
     auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(m_info.get()->uri());
 
     m_iconButton->setIcon(thumbnail.isNull() ? icon : thumbnail);
@@ -755,10 +762,6 @@ void BasicPropertiesPage::saveAllChange()
     if (!this->m_thisPageChanged)
         return;
 
-    if(m_isReadOnly == m_readOnly->isChecked() && m_isHidden == m_hidden->isChecked()){
-        return;
-    }
-
     //拒绝修改home目录
     if (m_info.get()->uri() == ("file://"+QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())) {
         return;
@@ -863,7 +866,7 @@ void BasicPropertiesPage::saveAllChange()
     //fix the problem that the thumbnails of desktop shortcut files need to be manually refreshed before they are updated after being changed.
     QString desktopPath = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
-    if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
+    //if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
         QProcess p;
         p.setProgram("touch");
         p.setArguments(QStringList()<<"-h"<<m_info->filePath());
@@ -873,7 +876,7 @@ void BasicPropertiesPage::saveAllChange()
         p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
     #endif
         p.waitForFinished(-1);
-    }
+    //}
 }
 
 void BasicPropertiesPage::chooseFileIcon()
@@ -988,14 +991,29 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
                 m_timeCreated = g_file_info_get_attribute_uint64(info, "time::created");
 
                 // 客户需要必须显示创建时间，因此使用三个时间最小时间戳为创建时间
-                quint64 minTime = m_timeCreated != 0 ? m_timeCreated : m_timeModified;
-                minTime = qMin (minTime, m_timeModified);
-                if (m_timeAccess != 0)
-                    minTime = qMin (minTime, m_timeAccess);
-                m_timeCreated = minTime;
-                QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
-                QString createTime = createDate.toString(m_systemTimeFormat);
-                m_timeCreatedLabel->setText(createTime);
+//                quint64 minTime = m_timeCreated != 0 ? m_timeCreated : m_timeModified;
+//                minTime = qMin (minTime, m_timeModified);
+//                if (m_timeAccess != 0)
+//                    minTime = qMin (minTime, m_timeAccess);
+//                m_timeCreated = minTime;
+                if (m_timeCreated) {
+                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
+                    QString createTime = createDate.toString(m_systemTimeFormat);
+                    m_timeCreatedLabel->setText(createTime);
+                } else {
+                    QFormLayout *layout = this->findChild<QFormLayout*>("floorTwoBaseLayout");
+                    switch (m_fileType) {
+                    case BP_Folder:
+                        layout->removeRow(3);
+                        break;
+                    case BP_File:
+                    case BP_Application:
+                        layout->removeRow(4);
+                        break;
+                    default:
+                        break;
+                    }
+                }
 
 //                // FIXME:目前只是文件夹显示创建时间，当创建时间获取失败的时候，将修改时间作为创建时间
 //                QDateTime date1 = qFileInfo.birthTime();

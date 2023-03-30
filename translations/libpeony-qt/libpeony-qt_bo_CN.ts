@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>is not properly formatted.</source>
-        <translation>ཡོངས་སུ་མ་པའི་རྣམ་གཞག་</translation>
+        <translation type="vanished">ཡོངས་སུ་མ་པའི་རྣམ་གཞག་</translation>
     </message>
     <message>
         <source>preparation failed before DVD-RW udf format.</source>
@@ -64,7 +64,11 @@
     </message>
     <message>
         <source>Can not found newfs_udf tool.</source>
-        <translation>newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
+        <translation type="vanished">newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
+    </message>
+    <message>
+        <source>DVD+RW udf format fail.</source>
+        <translation>DVD+RW udfརྣམ་གཞག་ཕམ་ཁ </translation>
     </message>
 </context>
 <context>
@@ -228,6 +232,18 @@
         <source>Device name cannot start with a decimal point, Please re-enter!</source>
         <translation>ཁུལ་དབྱེའི་མིང་ལ་བརྟེན་ནས་གྲངས་ཆུང་ཚེག་རྟགས་མགོ་བརྩམས་།ཡང་བསྐྱར་ནང་འཇུག་རོགས་།</translation>
     </message>
+    <message>
+        <source>%1/sec, %2 remaining.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>over one day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>getting progress...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>KyFileDialogRename</name>
@@ -329,6 +345,14 @@
     <message>
         <source>sync ...</source>
         <translation>གོམ་པ་མཉམ་སྤོ་བྱེད་བཞིན་པ།</translation>
+    </message>
+</context>
+<context>
+    <name>MessageDialog</name>
+    <message>
+        <source>Forcibly pulling out the device may cause data
+ loss or device exceptions!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -876,6 +900,13 @@
     </message>
 </context>
 <context>
+    <name>Peony::DefaultAcitonWidget</name>
+    <message>
+        <source>No default app</source>
+        <translation type="unfinished">没有设置默认打开方式</translation>
+    </message>
+</context>
+<context>
     <name>Peony::DefaultOpenWithWidget</name>
     <message>
         <source>No default app</source>
@@ -1326,6 +1357,10 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <source>File:%1 was not found.</source>
         <translation>ཡིག་ཆ་%1རྙེད་མ་བྱུང་།</translation>
     </message>
+    <message>
+        <source>Burn failed</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileDeleteOperation</name>
@@ -1491,10 +1526,6 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <translation type="vanished">ཉེར་སྤྱོད་ཞིག་གདམ་པ་དང་ཡིག་ཆ་འདི་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <source>No application is set to open file %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open application is used by default:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1536,6 +1567,26 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Desktop files(*.desktop)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Still using the last opened application:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The opening mode of the %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No application is set to open file &quot;%1 %2&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>known</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1659,6 +1710,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>File:%1 was not found.</source>
         <translation>ཡིག་ཆ་%1རྙེད་མ་བྱུང་།</translation>
+    </message>
+    <message>
+        <source>Burn failed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2442,6 +2497,14 @@ Do you want to delete the link file?</source>
         <source>KmreData</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Trash</source>
+        <translation type="unfinished">སྙིགས་སྒམ།</translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation type="unfinished">ཉེ་ཆར།</translation>
+    </message>
 </context>
 <context>
     <name>Peony::SideBarFileSystemItem</name>
@@ -2479,6 +2542,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>Delete Symbolic</source>
         <translation>སུབ་པ།</translation>
+    </message>
+    <message>
+        <source>burndata</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2986,6 +3053,140 @@ Do you want to unmount forcely?</source>
     <message>
         <source>Favorites</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UdfBurn::UdfAppendBurnDataDialog</name>
+    <message>
+        <source>AppendBurnData</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disc Type:</source>
+        <translation type="unfinished">འོད་སྡེར་རིགས་</translation>
+    </message>
+    <message>
+        <source>Device Name:</source>
+        <translation type="unfinished">སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>Unknow</source>
+        <translation type="unfinished">མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">ཐ་ཚིག་</translation>
+    </message>
+    <message>
+        <source>No burn data, please add!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The disc name cannot be set to empty, please re-enter it!</source>
+        <translation type="unfinished">འོད་སྡེར་གྱི་མིང་སྟོང་བ་ཡིན་མི་རུང་།ཡང་བསྐྱར་ནང་འཇུག་བྱོས།</translation>
+    </message>
+    <message>
+        <source>AppendBurnData operation has been finished successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorry, the appendBurnData operation is failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished">ཕམ་པ།</translation>
+    </message>
+    <message>
+        <source>Burning. Do not close this window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Burning this disc will append datas on it. Do you want to continue ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Burn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Begin Burning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">སྒོ་རྒྱག་པ་</translation>
+    </message>
+</context>
+<context>
+    <name>UdfBurn::UdfFormatDialog</name>
+    <message>
+        <source>Format</source>
+        <translation type="unfinished">རྣམ་གཞག་ཅན།</translation>
+    </message>
+    <message>
+        <source>Disc Type:</source>
+        <translation type="unfinished">འོད་སྡེར་རིགས་</translation>
+    </message>
+    <message>
+        <source>Device Name:</source>
+        <translation type="unfinished">སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>Unknow</source>
+        <translation type="unfinished">མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">ཐ་ཚིག་</translation>
+    </message>
+    <message>
+        <source>The disc name cannot be set to empty, please re-enter it!</source>
+        <translation type="unfinished">འོད་སྡེར་གྱི་མིང་སྟོང་བ་ཡིན་མི་རུང་།ཡང་བསྐྱར་ནང་འཇུག་བྱོས།</translation>
+    </message>
+    <message>
+        <source>Format operation has been finished successfully.</source>
+        <translation type="unfinished">རྣམ་བཞག་ཅན་་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
+    </message>
+    <message>
+        <source>Sorry, the format operation is failed!</source>
+        <translation type="unfinished">རྣམ་བཞག་བཟོ་བ་ཕམ་ཉེས་བྱུང་། ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད་རོགས།</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished">ཕམ་པ།</translation>
+    </message>
+    <message>
+        <source>Formatting. Do not close this window</source>
+        <translation type="unfinished">རྣམ་པ་ཅན་དུ་འགྱུར་བཞིན་ཡོད་།སྒེའུ་ཁུང་དེ་སྒོ་རྒྱག་མ་བྱེད་།</translation>
+    </message>
+    <message>
+        <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
+        <translation type="unfinished">ཚད་གཞི་ཅན་གྱི་འོད་སྡེར་འདིས་གཞི་གྲངས་ཚང་མ་མེད་པར་བཟོ་ངེས།ཁྱོད་ཀྱིས་ཚད་གཞི་ཅན་གྱི་སྔོན་ལ་གཞི་གྲངས་གལ་ཆེན་ཡོད་ཚད་གྲ་སྒྲིག་བྱེད་དགོས། མུ་མཐུད་ཡིན་ནམ།</translation>
+    </message>
+    <message>
+        <source>Begin Format</source>
+        <translation type="unfinished">མགོ་བརྩམས་།རྣམ་གཞག་</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">སྒོ་རྒྱག་པ་</translation>
     </message>
 </context>
 <context>

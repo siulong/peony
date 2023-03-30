@@ -824,8 +824,7 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
         {
             //all window accessed mount path should goto self top path，related to bug#104551
             if((Peony::GlobalSettings::getInstance()->getValue("LAST_FOCUS_PEONY_WINID") == dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()
-                ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId())
-                ||QApplication::topLevelWidgets().contains(this->topLevelWidget()))
+                ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()))
                     && index == currentIndex
                     && (decodedSrcUri == uri || Peony::FileUtils::isRemoteServerUri(decodedSrcUri))){/* 远程服务进入内部目录后卸载,link to bug#98623 */
                 qDebug()<<"sourceUri:"<<sourceUri<<"change to self top path"<<" index:"<<currentIndex;
@@ -847,7 +846,7 @@ void TabWidget::updateSearchBar(bool showSearch)
 {
     qDebug() << "updateSearchBar:" <<showSearch;
     m_show_search_bar = showSearch;
-    if (showSearch)
+    if (showSearch && !qApp->property("tabletMode").toBool())
     {
         m_search_title->show();
         m_search_bar->show();
@@ -973,6 +972,9 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     {
         int  charWidth = fontMetrics().averageCharWidth();
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+    }
+    if (displayName.contains("&")) {
+        displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
     m_current_search->setText(displayName);
 }

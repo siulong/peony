@@ -77,12 +77,19 @@ class TextEdit : public QTextEdit
     Q_OBJECT
 public:
     explicit TextEdit(QWidget *parent = nullptr);
+    void adjustText();
+    void setMaxLengthLimit(int length);
+    void setLimitBytes(bool limitBytes);
 
 Q_SIGNALS:
     void finishEditRequest();
 
 protected:
     void keyPressEvent(QKeyEvent *e);
+
+private:
+    int m_max_length_limit = 0;
+    bool m_limit_bytes = true;
 };
 
 }

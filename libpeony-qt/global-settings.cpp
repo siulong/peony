@@ -34,7 +34,9 @@
 #include <QPalette>
 #include <QScreen>
 
+#ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
+#endif
 
 using namespace Peony;
 
@@ -222,6 +224,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue (SORT_ORDER, 0);
     }
 
+#ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
         if (qstrcmp(machine, "none") == 0) {
@@ -233,6 +236,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     } else {
         m_cache.insert(IS_GUESTOS_MACHINE, false);
     }
+#endif
 }
 
 GlobalSettings::~GlobalSettings()
@@ -412,6 +416,7 @@ void GlobalSettings::setTimeFormat(const QString &value)
     else{
         m_time_format = tr("HH:mm:ss");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 void GlobalSettings::setDateFormat(const QString &value)
@@ -422,11 +427,12 @@ void GlobalSettings::setDateFormat(const QString &value)
     else{
         m_date_format = tr("yyyy-MM-dd");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 QString GlobalSettings::getSystemTimeFormat()
 {
-    m_system_time_format = m_date_format + " " + m_time_format;
+    //m_system_time_format = m_date_format + " " + m_time_format;
     return m_system_time_format;
 }
 void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)

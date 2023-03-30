@@ -47,9 +47,12 @@ public:
     void cancel() override;
 
 private:
+
     int m_current_count = 0;
     int m_total_count = 0;
     QString m_current_src_uri = nullptr;
+    QString m_disc_media_type = nullptr;
+    bool m_is_disk_work = false;
 
     goffset m_current_offset = 0;
     goffset m_total_szie = 0;

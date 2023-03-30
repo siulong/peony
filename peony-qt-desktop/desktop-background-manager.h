@@ -60,6 +60,8 @@ protected:
 
     QString m_current_bg_path;
     QString m_backgroundOption;
+
+    bool m_shouldSyncAccountBackground = true;
 };
 
 #endif // DESKTOPBACKGROUNDMANAGER_H

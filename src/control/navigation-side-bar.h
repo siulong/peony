@@ -57,8 +57,6 @@ public:
     QSize sizeHint() const;
     void JumpDirectory(const QString& uri);/* 跳转目录 */
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
     void labelButtonClicked(bool checked);

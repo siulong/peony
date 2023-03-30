@@ -27,7 +27,7 @@
 #include "file-info.h"
 
 #include "file-operation-manager.h"
-
+#include <QDir>
 #include <QProcess>
 #include <file-copy.h>
 
@@ -40,6 +40,12 @@ static void handleDuplicate(FileNode *node)
 
 FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    for (auto u : sourceUris) {
+        if (u.split("://").length() != 2) {
+            sourceUris.removeOne (u);
+        }
+    }
+
     m_src_uris = sourceUris;
 
     /* favorite://xxx特殊处理,例如本机共享，bug#83353 */
@@ -192,6 +198,9 @@ void FileMoveOperation::move()
                     GFileProgressCallback(progress_callback), this, &err);
         if (err) {
             errNode << node;
+            //need free err info, fix bug#164662, drag file conflicts cause file lost issue
+            g_error_free(err);
+            err = nullptr;
         } else {
             node->setState(FileNode::Handled);
         }
@@ -201,12 +210,12 @@ void FileMoveOperation::move()
 
     // file copy-delete
     goffset *total_size = new goffset(0);
-    for (auto node : errNode) {
+    for (auto eNode : errNode) {
         if (isCancelled())
             return;
 
-        node->findChildrenRecursively();
-        node->computeTotalSize(total_size);
+        eNode->findChildrenRecursively();
+        eNode->computeTotalSize(total_size);
     }
     m_total_szie = *total_size;
     operationPreparedOne("", m_total_szie);
@@ -454,9 +463,22 @@ void FileMoveOperation::move()
     //release node
     m_info.get()->m_src_uris.clear();
     m_info.get()->m_dest_uris.clear();
+    m_burn_uris = m_src_uris;
     for (auto file : nodes) {
         m_info.get()->m_src_uris<<file->uri();
         m_info.get()->m_dest_uris<<file->destUri();
+        if (!isCancelled() && m_is_udf_burn_work) {
+            switch (file->responseType()) {
+            case IgnoreOne:
+                m_burn_uris.removeOne(file->uri());
+                break;
+            case BackupOne:
+                m_burn_uris.replaceInStrings(file->uri(), file->destUri());
+                break;
+            default:
+                break;
+            }
+        }
         delete file;
     }
     nodes.clear();
@@ -636,20 +658,30 @@ void FileMoveOperation::copyRecursively(FileNode *node)
 
     char *dest_file_uri = g_file_get_uri(destFile.get()->get());
     node->setDestUri(dest_file_uri);
-    g_free(dest_file_uri);
     m_current_src_uri = node->uri();
-    GFile *dest_parent = g_file_get_parent(destFile.get()->get());
-    char *dest_dir_uri = g_file_get_uri(dest_parent);
-    m_current_dest_dir_uri = dest_dir_uri;
-    g_free(dest_dir_uri);
-    g_object_unref(dest_parent);
+    if (relativePath.isEmpty()) {
+        qDebug() << "node relative path is empty";
+        if (m_current_src_uri.startsWith("filesafe:///")) {
+            m_current_dest_dir_uri = dest_file_uri;
+            m_current_dest_dir_uri = FileUtils::urlEncode(m_current_dest_dir_uri);
+        }
+    } else {
+        GFile *dest_parent = g_file_get_parent(destFile.get()->get());
+        char *dest_dir_uri = g_file_get_uri(dest_parent);
+        m_current_dest_dir_uri = dest_dir_uri;
+        g_free(dest_dir_uri);
+        g_object_unref(dest_parent);
+    }
+    g_free(dest_file_uri);
     QString destName = "";
 
 fallback_retry:
     if (node->isFolder()) {
         auto realDestUri = node->resolveDestFileUri(m_dest_dir_uri);
         destFile = wrapGFile(g_file_new_for_uri(realDestUri.toUtf8().constData()));
+        GFileWrapperPtr srcFile = wrapGFile(g_file_new_for_uri(m_current_src_uri.toUtf8().constData()));
         GError *err = nullptr;
+        GError *error = nullptr;
         auto fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
         auto destFileName = FileUtils::isFileDirectory(m_current_dest_dir_uri) ? nullptr : m_current_dest_dir_uri;
         //NOTE: mkdir doesn't have a progress callback.
@@ -716,6 +748,16 @@ fallback_retry:
             case OverWriteOne: {
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 //make dir has no overwrite
                 break;
             }
@@ -723,6 +765,16 @@ fallback_retry:
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 break;
             }
             case BackupOne: {
@@ -752,6 +804,16 @@ fallback_retry:
                 }
                 g_object_unref(destFile.get());
                 destFile = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+                g_file_copy_attributes(srcFile.get()->get(),
+                                       destFile.get()->get(),
+                                       G_FILE_COPY_ALL_METADATA,
+                                       nullptr,
+                                       &error);
+                if (error) {
+                    qDebug() << __func__ << error->code << error->message;
+                }
+                g_error_free(error);
+
                 setHasError(false);
                 goto fallback_retry;
             }
@@ -778,6 +840,16 @@ fallback_retry:
             }
         } else {
             //node->setState(FileNode::Handled);
+            g_file_copy_attributes(srcFile.get()->get(),
+                                   destFile.get()->get(),
+                                   G_FILE_COPY_ALL_METADATA,
+                                   nullptr,
+                                   &error);
+            if (error) {
+                qDebug() << __func__ << error->code << error->message;
+            }
+            g_error_free(error);
+
         }
 
         fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
@@ -1139,6 +1211,42 @@ bool FileMoveOperation::isValid()
 void FileMoveOperation::run()
 {
     Q_EMIT operationStarted();
+
+    if (hook_check_operation_valid) {
+        if (!hook_check_operation_valid(m_src_uris, m_dest_dir_uri, FILE_OPERATION_MOVE)) {
+            setHasError(true);
+            cancel();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
+    if (mHelper->isUnixCDDevice()) {
+        m_is_udf_burn_work = true;
+        bool isMountpoint = false;
+        mHelper->judgeSpecialDiscOperation();
+        g_autoptr(GFile) file = g_file_new_for_uri (m_dest_dir_uri.toUtf8().constData());
+        if (file) {
+            g_autoptr(GFileInfo) fileInfo = g_file_query_info(file, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+            if (fileInfo) {
+                isMountpoint = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+            }
+        }
+        if (!mHelper->dealDVDReduce().isEmpty() && isMountpoint) {
+            m_dest_dir_uri = mHelper->dealDVDReduce();
+            if (isCancelled())
+               return;
+            //should block and wait for other object prepared.
+            setCopyMove(true);
+            setAction(Qt::CopyAction);
+            moveForceUseFallback();
+            goto end;
+        }
+    }
+#endif
+
 start:
     if (!isValid()) {
         FileOperationError except;
@@ -1174,8 +1282,27 @@ start:
 //    }
 
 end:
+#ifdef KY_UDF_BURN
+    if (mHelper->isUnixCDDevice() && !isCancelled()) {
+        if(!mHelper->discWriteOperation(m_burn_uris, m_dest_dir_uri)) {
+            FileOperationError except;
+            except.errorType = ET_CUSTOM;
+            except.op = FileOpMove;
+            except.title = tr("Move file error");
+            except.srcUri = m_src_uris.first();
+            except.errorStr = tr("Burn failed");
+            except.destDirUri = m_dest_dir_uri;
+            except.dlgType = ED_WARNING;
+            Q_EMIT errored(except);
+        }
+        m_is_udf_burn_work = false;
+    } else {
+        if (m_is_udf_burn_work) {
+            m_is_udf_burn_work = false;
+        }
+    }
+#endif
     Q_EMIT operationFinished();
-
     sendSrcAndDestUrisOfCopyDspsFiles();
 }
 

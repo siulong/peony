@@ -21,18 +21,17 @@
  */
 
 #include "file-copy-operation.h"
-
 #include "file-node-reporter.h"
 #include "file-node.h"
 #include "file-enumerator.h"
 #include "file-info.h"
 
 #include "file-utils.h"
-
 #include "file-operation-manager.h"
 #include "sound-effect.h"
 #include "clipboard-utils.h"
 #include <QProcess>
+#include <QDir>
 #include <QDebug>
 #include "file-copy.h"
 #include <gio/gdesktopappinfo.h>
@@ -46,11 +45,19 @@ static void handleDuplicate(FileNode *node)
 
 FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    for (auto u : sourceUris) {
+        if (u.split ("://").length () != 2) {
+            sourceUris.removeOne (u);
+        }
+    }
+
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
     QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
 
     if (destDirUrl.isParentOf(firstSrcUrl)) {
-        m_is_duplicated_copy = true;
+        if (1 == firstSrcUrl.path().split("/").count() - destDirUrl.path().split("/").count()) {
+            m_is_duplicated_copy = true;
+        }
     }/* else {
         // fix #83068
         // windows里的重复复制操作没有备份选项，但是会一直弹框提示，这里和windows的行为靠拢
@@ -66,7 +73,6 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
     m_dest_dir_uri = FileUtils::urlDecode(destDirUri);
     m_reporter = new FileNodeReporter;
     connect(m_reporter, &FileNodeReporter::nodeFound, this, &FileOperation::operationPreparedOne);
-
     m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Copy);
 }
 
@@ -144,12 +150,35 @@ fallback_retry:
     QString srcUri = node->uri();
 
     GFileWrapperPtr destFile = wrapGFile(g_file_new_for_uri(destFileUri.toUtf8().constData()));
+    GFileWrapperPtr srcFile = wrapGFile(g_file_new_for_uri(srcUri.toUtf8().constData()));
 
     m_current_src_uri = node->uri();
     m_current_dest_dir_uri = destFileUri;
 
+    //fix bug#163573, can not copy readonly folder issue
+    gboolean readonly_source_fs = FALSE;
+    GFile *source_dir;
+    QString srcParent;
+    srcParent = FileUtils::getParentUri(node->uri());
+    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+    /* Query the source dir, not the file because if its a symlink we'll follow it */
+    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+    if (source_dir) {
+        GFileInfo *inf;
+        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+        if (inf != NULL) {
+            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+            g_object_unref (inf);
+        }
+        g_object_unref (source_dir);
+    }
+
+    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+
     if (node->isFolder()) {
         GError *err = nullptr;
+        GError *error = nullptr;
 
         //NOTE: mkdir doesn't have a progress callback.
         g_file_make_directory(destFile.get()->get(),
@@ -213,6 +242,15 @@ fallback_retry:
             case OverWriteOne: {
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 //make dir has no overwrite
                 break;
             }
@@ -220,6 +258,15 @@ fallback_retry:
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 break;
             }
             case BackupOne: {
@@ -243,6 +290,16 @@ fallback_retry:
                 while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
                     handleDuplicate(node);
                 }
+//                GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destDir.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 goto fallback_retry;
             }
             case BackupAll: {
@@ -253,6 +310,16 @@ fallback_retry:
                 }
                 //make dir has no backup
                 m_prehandle_hash.insert(err->code, BackupOne);
+                GFileWrapperPtr destDir = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destDir.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
                 goto fallback_retry;
             }
             case Retry: {
@@ -280,6 +347,18 @@ fallback_retry:
         for (auto child : *(node->children())) {
             copyRecursively(child);
         }
+
+        //copy folder attributes after copy child, support copy readonly files
+        //related bug#163573
+        g_file_copy_attributes(srcFile.get()->get(),
+                               destFile.get()->get(),
+                               GFileCopyFlags(flags),
+                               nullptr,
+                               &error);
+        if (error) {
+            qDebug() << __func__ << error->code << error->message;
+        }
+        g_error_free(error);
     } else {
         GError *err = nullptr;
         QUrl url = node->uri();
@@ -617,7 +696,7 @@ void FileCopyOperation::rollbackNodeRecursively(FileNode *node)
                 g_file_delete(dest_file, nullptr, nullptr);
                 g_object_unref(dest_file);
             }
-        }    
+        }
         operationRollbackedOne(node->destUri(), node->uri());
         break;
     }
@@ -639,7 +718,35 @@ void FileCopyOperation::run()
     if (isCancelled())
         return;
 
+    if (hook_check_operation_valid) {
+        if (!hook_check_operation_valid(m_source_uris, m_dest_dir_uri, FILE_OPERATION_COPY)) {
+            setHasError(true);
+            cancel();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
     Q_EMIT operationStarted();
+
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
+    if (mHelper->isUnixCDDevice()) {
+        m_is_udf_burn_work = true;
+        bool isMountpoint = false;
+        mHelper->judgeSpecialDiscOperation();
+        g_autoptr(GFile) file = g_file_new_for_uri (m_dest_dir_uri.toUtf8().constData());
+        if (file) {
+            g_autoptr(GFileInfo) fileInfo = g_file_query_info(file, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+            if (fileInfo) {
+                isMountpoint = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+            }
+        }
+        if (!mHelper->dealDVDReduce().isEmpty() && isMountpoint) {
+            m_dest_dir_uri = mHelper->dealDVDReduce();
+        }
+    }
+#endif
 
     Q_EMIT operationRequestShowWizard();
 
@@ -681,16 +788,49 @@ void FileCopyOperation::run()
     }
 
     setHasError(false);
-
+    QStringList burnUris = m_source_uris;
     for (auto node : nodes) {
-        if (!isCancelled())
+        if (!isCancelled()) {
             m_info->m_node_map.insert(node->uri(), node->destUri());
+            if (m_is_udf_burn_work) {
+                switch (node->responseType()) {
+                case IgnoreOne:
+                    burnUris.removeOne(node->uri());
+                    break;
+                case BackupOne:
+                    burnUris.replaceInStrings(node->uri(), node->destUri());
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
         delete node;
     }
 
     m_info->m_dest_uris = m_info->m_node_map.values();
-
     nodes.clear();
+#ifdef KY_UDF_BURN
+    if (mHelper->isUnixCDDevice() && !isCancelled()) {
+        if(!mHelper->discWriteOperation(burnUris, m_dest_dir_uri)) {
+            FileOperationError except;
+            except.errorType = ET_CUSTOM;
+            except.op = FileOpCopy;
+            except.title = tr("File copy error");
+            except.srcUri = m_source_uris.first();
+            except.errorStr = tr("Burn failed");
+            except.destDirUri = m_dest_dir_uri;
+            except.dlgType = ED_WARNING;
+            Q_EMIT errored(except);
+        }
+        m_is_udf_burn_work = false;
+    } else {
+        if (m_is_udf_burn_work) {
+            m_is_udf_burn_work = false;
+        }
+    }
+#endif
+
     Q_EMIT operationFinished();
     sendSrcAndDestUrisOfCopyDspsFiles();
 }

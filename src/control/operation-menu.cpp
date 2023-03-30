@@ -31,6 +31,12 @@
 #include <QWidgetAction>
 #include <QStandardPaths>
 #include <KWindowSystem>
+#include <QDBusInterface>
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QVariant>
+#include <QMessageBox>
+#include <QInputDialog>
 
 #include "global-settings.h"
 #include "clipboard-utils.h"
@@ -115,6 +121,51 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     });
     allowFileOpParallel->setCheckable(true);
     allowFileOpParallel->setChecked(Peony::FileOperationManager::getInstance()->isAllowParallel());
+
+    addAction(tr("Set samba password"), this, [=]() {
+        QDBusInterface *interFace = new QDBusInterface("org.ukui.samba.share.config",
+                                                           "/org/ukui/samba/share",
+                                                           "org.ukui.samba.share.config",
+                                                           QDBusConnection::systemBus());
+        QString username = g_get_user_name();
+        int pid = getpid();
+        int uid = getuid();
+        QDBusReply<bool> initReply = interFace->call("init", username, pid, uid);
+        if (initReply.isValid()) {
+            if (initReply.value()) {
+                 QDBusReply<bool> hasPasswdReply = interFace->call("hasPasswd");
+                 if (hasPasswdReply.isValid()) {
+                    if (hasPasswdReply.value()) {
+                        auto result = QMessageBox::question(nullptr, tr("Tips"), tr("The user already has a samba password, do you need to reset the samba password?"));
+                        if (result == QMessageBox::Yes) {
+                              goto setPasswd;
+                        }
+                    } else {
+setPasswd:
+                        bool ok = false;
+                        QString text = QInputDialog::getText(nullptr, tr("Samba set user password"), tr("Samba password:"), QLineEdit::Password, "", &ok);
+                        if (ok && !text.isNull() && !text.isEmpty()) {
+                            QDBusReply<bool> setPasswdReply = interFace->call("setPasswd", text);
+                            if (setPasswdReply.isValid()) {
+                                if (!setPasswdReply.value()) {
+                                     QMessageBox::warning(nullptr, tr("Warning"), tr("Samba set password failed, Please re-enter!"));
+                                }
+                            } else {
+                                qDebug() << "setPasswd call failed!";
+                            }
+                        }
+                    }
+                 } else {
+                     qDebug() << "hasPasswd call failed!";
+                 }
+            } else {
+                 QMessageBox::warning(nullptr, tr("Warning"), tr("Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!"), QMessageBox::Ok);
+            }
+        } else {
+           qDebug() << "init call failed!";
+        }
+        interFace->call("finished");
+    });
 
     addSeparator();
 

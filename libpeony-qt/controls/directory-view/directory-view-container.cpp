@@ -389,7 +389,11 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
 
     //m_proxy->switchView(view);
     m_layout->addWidget(dynamic_cast<QWidget*>(view), Qt::AlignBottom);
-    DirectoryViewFactoryManager2::getInstance()->setDefaultViewId(viewId);
+
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        DirectoryViewFactoryManager2::getInstance()->setDefaultViewId(viewId);
+    }
+
     if (!selection.isEmpty()) {
         view->setSelections(selection);
     }
@@ -426,6 +430,8 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
             if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {
                 return ;
             }
+            //修复在选中文件不可见时，重命名操作不会跳转显示重命名文件问题，link to bug#160799
+            m_view->scrollToSelection(selections.first());
             m_view->editUri(selections.first());
         }
     });
@@ -515,16 +521,20 @@ void DirectoryViewContainer::setSortType(FileItemModel::ColumnType type)
 {
     if (!m_view)
         return;
-    if (Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-        Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, type);
-    } else {
-        auto metaInfo = FileMetaInfo::fromUri(getCurrentUri());
-        if (metaInfo) {
-            metaInfo->setMetaInfoVariant(SORT_COLUMN, type);
+
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        if (Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, type);
         } else {
-            qCritical()<<"can not set meta info";
+            auto metaInfo = FileMetaInfo::fromUri(getCurrentUri());
+            if (metaInfo) {
+                metaInfo->setMetaInfoVariant(SORT_COLUMN, type);
+            } else {
+                qCritical()<<"can not set meta info";
+            }
         }
     }
+
     m_view->setSortType(type);
     //Peony::GlobalSettings::getInstance()->setValue (SORT_TYPE, type);
 }
@@ -543,16 +553,20 @@ void DirectoryViewContainer::setSortOrder(Qt::SortOrder order)
         return;
     if (!m_view)
         return;
-    if (Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-        Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
-    } else {
-        auto metaInfo = FileMetaInfo::fromUri(getCurrentUri());
-        if (metaInfo) {
-            metaInfo->setMetaInfoVariant(SORT_ORDER, order);
+
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        if (Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
         } else {
-            qCritical()<<"can not set meta info";
+            auto metaInfo = FileMetaInfo::fromUri(getCurrentUri());
+            if (metaInfo) {
+                metaInfo->setMetaInfoVariant(SORT_ORDER, order);
+            } else {
+                qCritical()<<"can not set meta info";
+            }
         }
     }
+
     m_view->setSortOrder(order);
 }
 

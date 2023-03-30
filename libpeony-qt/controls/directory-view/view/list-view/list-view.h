@@ -89,6 +89,8 @@ public:
     bool isEnableMultiSelect();
     bool getDelegateEditFlag();
 
+    void setItemsVisible(bool visible) override;
+
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
 
@@ -154,8 +156,6 @@ protected:
 
     void startDrag(Qt::DropActions flags) override;
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
 private Q_SLOTS:
     void slotRename();
 
@@ -186,6 +186,7 @@ private:
     QTimer *m_touch_active_timer = nullptr;
     bool m_multi_select = false;
     bool m_mouse_release_unselect = false;
+    bool m_header_section_resized_manually = false;
 };
 
 //ListView2

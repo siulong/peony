@@ -121,15 +121,6 @@ static bool m_resident = false;
 
 PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicationName) : SingleApplication (argc, argv, applicationName, true)
 {
-    connect(this, &PeonyApplication::focusChanged, this, [=](QWidget *previous, QWidget *current){
-        Q_UNUSED(previous)
-        if (qobject_cast<QAbstractItemView *>(current)) {
-            this->inputMethod()->hide();
-        } else if (current && current->testAttribute(Qt::WA_InputMethodEnabled)) {
-            this->inputMethod()->show();
-        }
-    });
-
     bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
     setProperty("isWayland", isWayland);
 
@@ -155,6 +146,19 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
     t4->load("/usr/share/qt5/translations/qtbase_"+QLocale::system().name());
     QApplication::installTranslator(t4);
     //setStyle(Peony::ComplementaryStyle::getStyle());
+    QTranslator *sdkTrans = new QTranslator(this);
+    if (sdkTrans->load(":/translations/gui_" + QLocale::system().name() + ".qm")) {
+        QApplication::installTranslator(sdkTrans);
+    }
+
+#ifdef KY_UDF_BURN
+    QTranslator *tUdfBrun = new QTranslator(this);
+    auto udfBurnTranslationFilePath = QString("/usr/share/kyudfburn/translations/kyudfburn_%1.qm").arg(QLocale::system().name());
+    bool ok = tUdfBrun->load(udfBurnTranslationFilePath);
+    if (!ok) {
+        qWarning()<<"can not load kyudfburn translation files, path is"<<udfBurnTranslationFilePath;
+    }
+#endif
 
     setApplicationName(tr("peony-qt"));
 

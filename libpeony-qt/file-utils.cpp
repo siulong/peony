@@ -38,7 +38,7 @@
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
-
+#include <gio/gdesktopappinfo.h>
 
 using namespace Peony;
 
@@ -362,6 +362,27 @@ QString FileUtils::getFileDisplayName(const QString &uri)
         }
     }
     return fileInfo.get()->displayName();
+}
+
+QString FileUtils::getApplicationName(const QString &uri)
+{
+    QString displayName = getFileDisplayName(uri);
+    if (uri.endsWith(".desktop")){
+        g_autoptr(GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+        g_autofree gchar *desktop_file_path = g_file_get_path(gfile);
+        g_autoptr(GDesktopAppInfo) gdesktopappinfo = g_desktop_app_info_new_from_filename(desktop_file_path);
+        if (gdesktopappinfo) {
+            g_autofree gchar *desktop_name = g_desktop_app_info_get_locale_string(gdesktopappinfo, "Name");
+            if (!desktop_name) {
+                desktop_name = g_desktop_app_info_get_string(gdesktopappinfo, "Name");
+            }
+            if (desktop_name) {
+                displayName = desktop_name;
+            }
+        }
+    }
+
+    return displayName;
 }
 
 QString FileUtils::getFileIconName(const QString &uri, bool checkValid)
@@ -1190,6 +1211,51 @@ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
         }
     }
     return iconName;
+}
+
+QString FileUtils::handleSpecialSymbols(const QString &displayName)
+{
+    QString tmpStr = displayName;
+    if (displayName.contains("&")) {
+        tmpStr = tmpStr.replace("&", "&&");
+    }
+    return tmpStr;
+}
+
+QString FileUtils::getFsTypeFromFile(const QString &fileUri)
+{
+    QString fsType = "";
+
+    g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
+    g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
+    if (!mount)
+        return "ext";
+
+    g_autoptr (GVolume) volume = g_mount_get_volume(mount);
+    if (!volume)
+        return fsType;
+
+    g_autofree gchar* unix_file = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+    if (!unix_file)
+        return fsType;
+
+    QString unixDevice = unix_file;
+    QString dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
+    if (! QDBusConnection::systemBus().isConnected())
+        return fsType;
+    QDBusInterface blockInterface("org.freedesktop.UDisks2",
+                                  dbusPath,
+                                  "org.freedesktop.UDisks2.Block",
+                                  QDBusConnection::systemBus());
+
+    if(blockInterface.isValid())
+        fsType = blockInterface.property("IdType").toString();
+
+    //if need diff FAT16 and FAT32, should use IdVersion
+//    if(fsType == "" && blockInterface.isValid())
+//        fsType = blockInterface.property("IdVersion").toString();
+
+    return fsType;
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)

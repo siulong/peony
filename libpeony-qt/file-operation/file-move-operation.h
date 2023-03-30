@@ -196,6 +196,10 @@ private:
 
     FileNodeReporter *m_reporter = nullptr;
 
+    bool m_is_udf_burn_work = false;
+
+    QStringList m_burn_uris;
+
     /*!
      * \brief m_prehandle_hash
      * \details

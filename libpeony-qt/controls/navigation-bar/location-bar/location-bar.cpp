@@ -397,6 +397,9 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         int  charWidth = fontMetrics().averageCharWidth();
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
     }
+    if (displayName.contains("&")) {
+        displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+    }
     button->setText(displayName);
 
     //comment to fix UI improve bug, link to bug#125255
@@ -445,6 +448,9 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
                     icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri, false), QIcon::fromTheme("folder"));
                 }else{
                     icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri), QIcon::fromTheme("folder"));
+                }
+                if (displayName.contains("&")) {
+                    displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
                 }
                 QAction *action = new QAction(icon, displayName, this);
                 actions<<action;

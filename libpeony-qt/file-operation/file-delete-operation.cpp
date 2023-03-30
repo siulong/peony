@@ -128,7 +128,6 @@ void FileDeleteOperation::run()
         return;
 
     Q_EMIT operationStarted();
-
     for (auto src : m_src_uris) {
         // pre-check for delete special directory
         if (src == "file:///data/home" || src == "file:///data/usershare" ||
@@ -192,6 +191,14 @@ void FileDeleteOperation::run()
             p.waitForFinished(-1);
         }
     }
+
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_src_uris.first());
+    if (mHelper->isUnixCDDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        mHelper->discDeleteOperation(m_src_uris);
+    }
+#endif
 
     Q_EMIT operationFinished();
 

@@ -1,0 +1,67 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Wed, 4 Jan 2023 17:53:25 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/file-operation-progress-bar.cpp |  4 ++--
+ src/control/navigation-side-bar.cpp                        | 11 ++++++++---
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/libpeony-qt/file-operation/file-operation-progress-bar.cpp b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+index 569cea9..a04b7b4 100644
+--- a/libpeony-qt/file-operation/file-operation-progress-bar.cpp
++++ b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+@@ -109,6 +109,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
+ void FileOperationProgressBar::showProgress(ProgressBar &progress)
+ {
+     if (m_progress_size > 0) {
++        kdk::UkuiStyleHelper::self()->removeHeader(this);
+         progress.show();
+         show();
+     }
+@@ -163,8 +164,6 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
+     setAutoFillBackground (true);
+     setBackgroundRole (QPalette::Base);
+ 
+-    kdk::UkuiStyleHelper::self()->removeHeader(this);
+-
+     setWindowOpacity(0.9999);
+ 
+ #if 0
+@@ -367,6 +366,7 @@ void FileOperationProgressBar::showDelay(int msec)
+ {
+     QTimer::singleShot(msec, this, [=] () {
+         if (m_list_widget->count() > 0 && !m_error) {
++            kdk::UkuiStyleHelper::self()->removeHeader(this);
+             show();
+         }
+     });
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 0b80ea8..c15851d 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -96,8 +96,8 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+     setProperty("doNotBlur", true);
+     viewport()->setProperty("doNotBlur", true);
+ 
+-    //auto delegate = new NavigationSideBarItemDelegate(this);
+-    //setItemDelegate(delegate);
++    auto delegate = new NavigationSideBarItemDelegate(this);
++    setItemDelegate(delegate);
+ 
+     installEventFilter(this);
+ 
+@@ -540,7 +540,12 @@ QSize NavigationSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option
+ {
+     auto size = QStyledItemDelegate::sizeHint(option, index);
+     //task#106007 【文件管理器】文件管理器应用做平板UI适配，修改侧边栏项的高度--48px
+-    //size.setHeight(36);
++    if(qApp->property("tabletMode").toBool()) {
++        size.setHeight(48);
++    } else {
++        size.setHeight(36);
++    }
++
+     return size;
+ }
+ 

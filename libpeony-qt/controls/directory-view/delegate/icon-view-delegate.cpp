@@ -52,6 +52,7 @@
 #include <QPushButton>
 
 #include "clipboard-utils.h"
+#include "global-settings.h"
 
 #include <QTextLayout>
 #include <QFileInfo>
@@ -67,6 +68,7 @@ IconViewDelegate::IconViewDelegate(QObject *parent) : QStyledItemDelegate (paren
 {
     m_styled_button = new QPushButton;
     m_isStartDrag = false;
+    m_watcher = new QFileSystemWatcher;
 }
 
 IconViewDelegate::~IconViewDelegate()
@@ -82,7 +84,7 @@ QSize IconViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     auto view = qobject_cast<IconView*>(this->parent());
     auto iconSize = view->iconSize();
     auto fm = qApp->fontMetrics();
-    int width = iconSize.width() + 41;
+    int width = iconSize.width() + 41 - 4;
     int height = iconSize.height() + fm.ascent()*2 + 20 + 10;
     return QSize(width, height);
     /*
@@ -108,6 +110,25 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             painter->setOpacity(0.8);
         }
     }
+
+
+    //get file info from index
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(index);
+    //NOTE: item might be deleted when painting, because we might start a
+    //location change during the painting.
+    if (!item) {
+        return;
+    }
+
+#ifdef KY_UDF_BURN
+    /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+    if(item->property("isFileForBurning").toBool()){
+        painter->setOpacity(0.5);
+    }else{
+        painter->setOpacity(1.0);
+    }
+#endif
 
     //default painter
     //QStyledItemDelegate::paint(painter, option, index);
@@ -160,7 +181,17 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto text = opt.text;
     opt.text = nullptr;
+    auto state = opt.state;
+    //bug#99340,修改图标选中状态，会变暗
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected) && !m_isStartDrag)
+    {
+        opt.state &= ~QStyle::State_Selected;
+    }
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    painter->restore();
+    opt.state = state;
     opt.text = text;
 
     auto rect = view->visualRect(index);
@@ -188,6 +219,32 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+
+            auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+            auto item = model->itemFromIndex(index);
+            QString tmpUri = item->info().get()->uri();
+            connect(getView()->m_model, &FileItemModel::thumbnailUpdated, indexWidget, [=](QString uri){
+                if (getView()->getSelections().count() == 1
+                        && view->selectedIndexes().first() == index
+                        && tmpUri == uri) {
+                       Q_EMIT updateIndexWidget(option);
+                   }
+            });
+//            QString itemPath = item->info().get()->filePath();
+//            m_watcher->addPath(itemPath);
+//            connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(indexWidget, &IconViewIndexWidget::destroyed, this, [=](){
+//                m_watcher->removePath(itemPath);
+//            });
         }
     }
 
@@ -195,14 +252,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (bCutFile && !getView()->getDelegateEditFlag())/* Rename is index is not set to nullptr,link to bug#61119.modified by 2021/06/22 */
         view->setIndexWidget(index, nullptr);
 
-    //get file info from index
-    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
-    auto item = model->itemFromIndex(index);
-    //NOTE: item might be deleted when painting, because we might start a
-    //location change during the painting.
-    if (!item) {
-        return;
-    }
     auto info = item->info();
     // draw color symbols
     int yoffset = 0;
@@ -249,7 +298,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
-                painter->setRenderHint(QPainter::Antialiasing);
+                //fix bug#147348
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 painter->translate(opt.rect.topLeft());
                 painter->translate(0, iconRect.size().height() + 5);
                 painter->setPen(opt.palette.highlightedText().color());
@@ -281,7 +331,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
-
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
         emblemPoses.removeOne(3);
@@ -350,7 +401,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
     }
-
+    painter->restore();
 
     //single selection, we have to repaint the emblems.
 
@@ -370,7 +421,20 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setMinimumSize(sizeHint(option, index).width(), 54);
 
-    edit->setText(index.data(Qt::DisplayRole).toString());
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto displayName = index.data(Qt::UserRole + 1).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setMaxLengthLimit(255 - suffix.length());
+    }
+    edit->setText(displayString);
+    edit->blockSignals(false);
+
     edit->setAlignment(Qt::AlignCenter);
     //NOTE: if we directly call this method, there will be
     //nothing happen. add a very short delay will ensure that
@@ -581,10 +645,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     document.setPlainText(elidedText);
 
-    //painter->translate(option.rect.topLeft());
     painter->translate(horizalMargin, 0);
-   // painter->translate(0, iconRect.size().height() + 5);
-
 
     //设置关键字高亮
     QTextCursor highlightCursor(&document);
@@ -594,6 +655,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     QTextBlock textStyleBlock = cursor.block();
     QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
     textStyleFormat.setTextIndent(xOffset);
     cursor.setBlockFormat(textStyleFormat);
     QTextCharFormat plainFormat(highlightCursor.charFormat());
@@ -718,4 +780,3 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     painter->restore();
 }
-

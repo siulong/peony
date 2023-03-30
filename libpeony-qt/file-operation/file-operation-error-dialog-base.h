@@ -59,6 +59,7 @@ private:
     QLabel*                     m_tipcontent = nullptr;
     QHBoxLayout*                m_buttonLeft = nullptr;
     QHBoxLayout*                m_buttonRight = nullptr;
+    QString                     m_iconName;
 };
 };
 

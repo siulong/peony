@@ -123,8 +123,8 @@ void FileCopy::run ()
 {
     int                     syncTim = 0;
     GError*                 error = nullptr;
-    gssize                  readSize = 0;
-    gssize                  writeSize = 0;
+    gsize                  readSize = 0;
+    gsize                  writeSize = 0;
     GFileInputStream*       readIO = nullptr;
     GFileOutputStream*      writeIO = nullptr;
     GFile*                  srcFile = nullptr;
@@ -285,7 +285,8 @@ void FileCopy::run ()
 
             mPause.lock();
             // read data
-            readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
+            // readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
+            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, &readSize, mCancel ? mCancel : nullptr, &error);
             if (0 == readSize && nullptr == error) {
                 mStatus = FINISHED;
                 mPause.unlock();
@@ -299,7 +300,8 @@ void FileCopy::run ()
             mPause.unlock();
 
             // write data
-            writeSize = g_output_stream_write(G_OUTPUT_STREAM(writeIO), buf, readSize, mCancel ? mCancel : nullptr, &error);
+            // writeSize = g_output_stream_write(G_OUTPUT_STREAM(writeIO), buf, readSize, mCancel ? mCancel : nullptr, &error);
+            g_output_stream_write_all(G_OUTPUT_STREAM(writeIO), buf, readSize, &writeSize, mCancel ? mCancel : nullptr, &error);
             if (nullptr != error) {
                 qInfo() << "write destfile: " << mDestUri << " error: " << error->message;
                 detailError(&error);
@@ -357,7 +359,28 @@ out:
     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
         // copy file attribute
         // It is possible that some file systems do not support file attributes
-        g_file_copy_attributes(srcFile, destFile, G_FILE_COPY_ALL_METADATA, nullptr, &error);
+        gboolean readonly_source_fs = FALSE;
+        GFile *source_dir;
+        QString srcParent;
+
+        srcParent = FileUtils::getParentUri(mSrcUri);
+        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+        /* Query the source dir, not the file because if its a symlink we'll follow it */
+        if (source_dir) {
+            GFileInfo *inf;
+            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+            if (inf != NULL) {
+                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+                g_object_unref (inf);
+            }
+            g_object_unref (source_dir);
+        }
+
+        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+
+        //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
+        g_file_copy_attributes(srcFile, destFile, (GFileCopyFlags)flags, nullptr, &error);
         if (nullptr != error) {
             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;
             g_error_free(error);

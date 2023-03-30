@@ -116,10 +116,9 @@ private:
     QLabel*         m_tip                   = nullptr;
 
     QLabel*         m_usr_label             = nullptr;
-    QVBoxLayout*    m_usr_btn_group         = nullptr;
     QRadioButton*   m_usr_btn_guest         = nullptr;
     QRadioButton*   m_usr_btn_usr           = nullptr;
-    QHBoxLayout*    m_usr_layout            = nullptr;
+    QGridLayout*    m_usr_layout            = nullptr;
 
     QLabel*         m_reg_usr_name_label    = nullptr;
     QLabel*         m_reg_usr_passwd_label  = nullptr;

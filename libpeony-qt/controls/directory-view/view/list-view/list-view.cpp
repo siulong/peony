@@ -109,21 +109,27 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setSectionsMovable(true);
     header()->setStretchLastSection(false);
 
-    connect(header(), &QHeaderView::sectionClicked, this, [=](){
-        //update sort policy
-        auto settings = GlobalSettings::getInstance();
-        if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            settings->setValue(SORT_COLUMN, getSortType());
-            settings->setValue(SORT_ORDER, getSortOrder());
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
-            if (metaInfo) {
-                metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
-                metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        connect(header(), &QHeaderView::sectionClicked, this, [=](){
+            //update sort policy
+            auto settings = GlobalSettings::getInstance();
+            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                settings->setValue(SORT_COLUMN, getSortType());
+                settings->setValue(SORT_ORDER, getSortOrder());
             } else {
-                qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
+                if (metaInfo) {
+                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
+                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+                } else {
+                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                }
             }
-        }
+        });
+    }
+
+    connect(header(), &QHeaderView::sectionResized, this, [=]{
+        m_header_section_resized_manually = true;
     });
 
     setExpandsOnDoubleClick(false);
@@ -159,16 +165,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     {
         m_proxy_model->manualUpdateExpectedSortInfo(logicalIndex, order);
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
-        if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
-            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
-            if (!metaInfo) {
-                qWarning()<<"no meta info"<<m_current_uri;
+        if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+            if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
+                Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
             } else {
-                metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
-                metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
+                if (!metaInfo) {
+                    qWarning()<<"no meta info"<<m_current_uri;
+                } else {
+                    metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
+                    metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                }
             }
         }
     });
@@ -276,6 +284,16 @@ void ListView::keyPressEvent(QKeyEvent *e)
             } else {
                 QTreeView::scrollTo(selectedIndexes().first());
             }
+        }
+        break;
+    }
+    case Qt::Key_Home:
+    case Qt::Key_End:
+    case Qt::Key_PageUp:
+    case Qt::Key_PageDown: {
+        //fix bug#160799, can not update scrollBar to show selected file issue
+        if (!selectedIndexes().isEmpty()) {
+            QTreeView::scrollTo(selectedIndexes().first());
         }
         break;
     }
@@ -654,7 +672,6 @@ void ListView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void ListView::startDrag(Qt::DropActions flags)
@@ -728,12 +745,6 @@ void ListView::startDrag(Qt::DropActions flags)
     }
 }
 
-void ListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
-}
-
 void ListView::slotRename()
 {
     //special path like trash path not allow rename
@@ -790,6 +801,12 @@ void ListView::adjustColumnsSize()
     if (model()->columnCount() == 0)
         return;
 
+    // try fixing #155969, list view can not save columns' state while resizing.
+    if (m_header_section_resized_manually)
+        return;
+
+    // do not trigger header's sectionResized() signal. related to #155969.
+    header()->blockSignals(true);
     header()->resizeSections(QHeaderView::ResizeToContents);
 
     int rightPartsSize = 0;
@@ -811,11 +828,13 @@ void ListView::adjustColumnsSize()
         for (int column = 1; column < model()->columnCount(); column++) {
             setColumnWidth(column, size);
         }
+        header()->blockSignals(false);
         return;
     }
 
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
     header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+    header()->blockSignals(false);
 }
 
 void ListView::multiSelect()
@@ -964,6 +983,11 @@ void ListView::setCutFiles(const QStringList &uris)
 bool ListView::getDelegateEditFlag()
 {
     return m_delegate_editing;
+}
+
+void ListView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
 }
 
 int ListView::getSortType()

@@ -130,6 +130,29 @@ IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const
 
     m_option.rect.setHeight(fixedHeight - y_delta);
 
+    connect(m_delegate, &IconViewDelegate::updateIndexWidget, this, [=](const QStyleOptionViewItem &option){
+        m_option = option;
+        m_delegate->initStyleOption(&m_option, m_index);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+        m_option.features.setFlag(QStyleOptionViewItem::WrapText);
+#else
+        m_option.features |= QStyleOptionViewItem::WrapText;
+#endif
+        m_option.textElideMode = Qt::ElideNone;
+
+        auto opt = m_option;
+        opt.rect.moveTo(0, 0);
+
+        auto iconExpectedSize = m_delegate->getView()->iconSize();
+        QRect iconRect = QApplication::style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        auto y_delta = iconExpectedSize.height() - iconRect.height();
+        opt.rect.moveTo(opt.rect.x(), opt.rect.y() + y_delta);
+        m_option = opt;
+
+        m_option.rect.setHeight(fixedHeight - y_delta);
+        update();
+    });
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
     connect(qApp, &QApplication::fontChanged, this, [=]() {
         m_delegate->getView()->setIndexWidget(m_index, nullptr);
@@ -177,6 +200,20 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
 
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(m_index);
+
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            p.setOpacity(0.5);
+        }else{
+            p.setOpacity(1.0);
+        }
+    }//end
+#endif
+
     auto opt = m_option;
     auto rawRect = m_option.rect;
     opt.rect = this->rect();
@@ -209,7 +246,10 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected)) {
         opt.state &= ~QStyle::State_Selected;
     }
+    p.save();
+    p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &p, opt.widget);
+    p.restore();
     opt.state = state;
     if (b_elide_text)
     {
@@ -273,7 +313,8 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         for (int i = startIndex; i < colors.count(); ++i) {
             auto color = colors.at(i);
             p.save();
-            p.setRenderHint(QPainter::Antialiasing);
+            //fix bug#147348
+            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             p.translate(0, m_delegate->getView()->iconSize().height() + 5);
 
            // p.translate(2, 2);
@@ -309,7 +350,10 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //qDebug()<< "symbolic:" << info->symbolicIconName();
         //icon.paint(&p, this->width() - 30, 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        p.restore();
     }
     if(view->isEnableMultiSelect())
     {
@@ -327,12 +371,18 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if (!info->canRead()) {
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        p.restore();
     } else if (!info->canWrite()/* && !info->canExecute()*/) {
         //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-readonly");
+        p.save();
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        p.restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
@@ -345,6 +395,8 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
             if (!icon.isNull()) {
+                p.save();
+                p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
@@ -366,6 +418,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
                 default:
                     break;
                 }
+                p.restore();
             }
         }
 

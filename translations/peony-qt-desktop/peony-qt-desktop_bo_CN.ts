@@ -175,15 +175,15 @@
     </message>
     <message>
         <source>New</source>
-        <translation>གསར་འཛུགས།</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View Type</source>
-        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sort By</source>
-        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

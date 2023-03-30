@@ -43,7 +43,7 @@ static QString handleDuplicate(QString name)
 FileRenameOperation::FileRenameOperation(QString uri, QString newName)
 {
     m_uri = uri;
-    m_new_name = FileUtils::urlDecode(newName);
+    m_new_name = newName;
     m_old_name = FileUtils::getFileDisplayName(uri);
     QStringList srcUris;
     srcUris<<uri;
@@ -91,6 +91,16 @@ void FileRenameOperation::run()
             except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
 
             Q_EMIT errored(except);
+
+            //fix bug#161394, support cancel rename operation
+            if (except.respCode == Cancel) {
+                cancel();
+                setHasError(true);
+                //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+                getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+                Q_EMIT operationFinished();
+                return;
+            }
         }
     }
     std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(m_uri);
@@ -231,10 +241,19 @@ retry:
                 case OverWriteOne: {
                     // 避免重名替换
                     //fix bug#143435, use m_src_uris is null cause crash issue
-                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)) {
+                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)
+                            || !FileUtils::isFileExsit(except.srcUri)
+                            || !FileUtils::isFileExsit(except.destDirUri)) {
                         break;
                     }
-                    g_file_delete(newFile.get()->get(), nullptr, nullptr);
+                    g_clear_error(&err);
+                    g_file_delete(newFile.get()->get(), nullptr, &err);
+                    if (err) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = err->message;
+                        Q_EMIT errored(except);
+                        break;
+                    }
                     goto retry;
                 }
                 case IgnoreAll:
@@ -292,8 +311,18 @@ cancel:
 
     fileSync(m_uri, destUri);
 
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_uri);
+    if (mHelper->isUnixCDDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        QString oldNamePath = mHelper->getDestName(m_uri);
+        mHelper->discRenameOperation(oldNamePath, m_new_name);
+    }
+#endif
+
     Q_EMIT operationFinished();
     //notifyFileWatcherOperationFinished();
+
 }
 
 #include <QFileInfo>

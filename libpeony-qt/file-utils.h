@@ -105,6 +105,7 @@ public:
     static quint64 getFileSystemSize(QString uri);
     static QString getFileSystemType(QString uri);
     static QString getMobieDataPath();
+    static QString getApplicationName(const QString &uri);
     static bool isRemoteServerUri(const QString &uri);
     static bool isEmptyDisc(const QString &unixDevice);/* 判断是否是空光盘 */
     static bool isBusyDevice(const QString &unixDevice);/* 判断光盘是否正在使用 */
@@ -112,6 +113,8 @@ public:
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
     static void   saveCreateTime (const QString& url);
     static gint64 getCreateTimeOfMicro (const QString& url);
+    static QString handleSpecialSymbols(const QString &displayName);
+    BLOCKING static QString getFsTypeFromFile(const QString &fileUri);
 private:
     FileUtils();
 };

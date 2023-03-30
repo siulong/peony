@@ -148,6 +148,11 @@
     </key>
 
     <!--remote-server-->
+    <key type="b" name="show-network">
+      <default>true</default>
+      <summary>show network</summary>
+      <description>Whether to show my network neighbors</description>
+    </key>
 
     <!--status-bar-->
     <key type="b" name="zoom-slider-visible">
