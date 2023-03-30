@@ -1,3 +1,15 @@
+peony (4.0.0.0-ok1) yantze; urgency=medium
+
+  * new upstream release.
+  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
+  * close-cd #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
+  * close #I65YUO 手指触摸拖拽文件到桌面异常
+  * close#I64SM9 修复重命名U盘后文件管理器退出问题
+  * 修改debian/install文件，适配新用户手册资料路径
+  * close-cd#131094【wayland】【控制面板】【显示器】连接2个显示器，设置主屏不生效(必现)
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 30 Mar 2023 16:40:40 +0800
+
 peony (4.0.0.0-ok1~0330) yangtze; urgency=medium
 
   * new upstreame release.

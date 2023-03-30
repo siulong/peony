@@ -1,5 +1,5 @@
 data/peony-desktop.desktop /etc/xdg/autostart
-data/peony/* usr/share/kylin-user-guide/data/guide/peony
+data/system-file-manager/* usr/share/kylin-user-guide/data/guide/system-file-manager
 libpeony-qt/org.ukui.peony.settings.gschema.xml usr/share/glib-2.0/schemas
 peony-qt-desktop/.qm/* usr/share/peony-qt-desktop
 peony-qt-desktop/freedesktop-dbus-interfaces.xml usr/share/dbus-1/interfaces
