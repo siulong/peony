@@ -48,6 +48,12 @@ public:
 
     void setForbidThumbnailInView(bool forbid);
 
+    /*!
+     * \brief hasThumbnail
+     * \param uri
+     * \return
+     * \deprecated
+     */
     bool hasThumbnail(const QString &uri) {
         return !m_hash.values(uri).isEmpty();
     }
@@ -59,8 +65,12 @@ public:
     void updateDesktopFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher = nullptr);
     const QIcon tryGetThumbnail(const QString &uri);
 
+    bool hasThumbnailThreadSafety(const QString &uri);
+
 Q_SIGNALS:
     void updateFileThumbnail();
+    bool updateFileThemedIconFromThread(const QString &uri, const QString &themedIcon);
+
 public Q_SLOTS:
     void syncThumbnailPreferences();
 

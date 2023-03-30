@@ -58,6 +58,7 @@ QMap<QString, QString> VideoThumbnail::videoInfo()
 {
     QMap<QString, QString> map;
     QStringList list2;
+    list2<<"-hwaccel"<<"auto";
     list2<<"-i"<< m_url.path();
     QString ret="5.0";
     QString time=QString();
@@ -151,7 +152,8 @@ QIcon VideoThumbnail::generateThumbnail()
 
         //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
         QStringList list;
-        list<<"-i"<<m_url.path()     /*Input File Name*/
+        list<<"-hwaccel"<<"auto"    /*try using hardware accel*/
+           <<"-i"<<m_url.path()     /*Input File Name*/
            <<"-y"                    /*Overwrite*/
            <<"-ss"<<pos              /* seeks in this position*/
            <<"-vframes"<<"1"         /* Num Frames */

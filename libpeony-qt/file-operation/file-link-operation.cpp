@@ -55,16 +55,18 @@ FileLinkOperation::~FileLinkOperation()
 
 }
 
-void FileLinkOperation::run()
+void FileLinkOperation::linkrun()
 {
-    operationStarted();
     auto destFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_dest_uri).toUtf8().constData()));
     GError *err = nullptr;
 
 retry:
     QUrl url = m_src_uri;
-    g_file_make_symbolic_link(destFile.get()->get(), url.path().toUtf8().constData(), nullptr, &err);
+    const char* symlinkValue = url.path().toUtf8().constData();
+    g_file_make_symbolic_link(destFile.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
+        //fix bug#162416, empty pointer err cause crash issue
+        qDebug() << "linkrun:" << err->message;
         setHasError(true);
         //forbid response actions except retry and cancel.
         FileOperationError except;
@@ -103,9 +105,12 @@ end:
 
     // maybe not need sync ???
     fileSync(m_src_uri, m_dest_uri);
+}
 
-
-
+void FileLinkOperation::run()
+{
+    operationStarted();
+    linkrun();
     // judge if the operation should sync.
 //    bool needSync = false;
 //    GFile *src_first_file = g_file_new_for_uri(m_src_uri.toUtf8().constData());
@@ -144,3 +149,4 @@ end:
     operationFinished();
     //notifyFileWatcherOperationFinished();
 }
+

@@ -52,6 +52,7 @@
 #include <QStyleOptionTab>
 #include <QApplication>
 #include <KWindowSystem>
+#include <QGSettings>
 
 #include <QPainterPath>
 
@@ -60,7 +61,7 @@
 #include <pwd.h>
 
 #include <QApplication>
-
+#include <QGSettings>
 #include "file-info-job.h"
 
 using namespace Peony;
@@ -239,6 +240,18 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
             widget->setFont(font);
         }
     });
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key)
+            {
+                if (!m_uris.isEmpty()) {
+                    this->setWindowTitleTextAndIcon();
+                }
+            }
+        });
+    }
 }
 
 void PropertiesWindow::init()
@@ -256,6 +269,7 @@ void PropertiesWindow::init()
     //this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
 
     this->setWindowTitleTextAndIcon();
+    KWindowSystem::setState(this->winId(), NET::SkipTaskbar|NET::SkipPager);
 
     if (m_notDir) {
         //如果含有文件夹，那么高度是600，如果是其他文件，那么高度是652
@@ -336,8 +350,8 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                     windowTitle = tr("usershare");
                 } else {
                     windowTitle = m_fileInfo.get()->displayName();
-                }
-                iconName = m_fileInfo.get()->iconName();
+                }  
+                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
 
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
@@ -353,9 +367,17 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
         iconName = getIconName();
     }
 
-    QIcon fileIcon = QIcon::fromTheme(iconName, QIcon::fromTheme("text-x-generic"));
+    const QByteArray id("org.ukui.style");
+    if (QGSettings::isSchemaInstalled(id)) {
+        QGSettings *styleSettings = new QGSettings(id, QByteArray(), this);
+        connect(styleSettings, &QGSettings::changed, this, [=](const QString &key){
+            if (key == "iconThemeName") {
+                setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
+            }
+        });
+    }
 
-    this->setWindowIcon(fileIcon);
+    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
     this->setWindowTitle(windowTitle);
     headerBar->setIcon(iconName);
     headerBar->setTitle(windowTitle);
@@ -673,12 +695,15 @@ PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidge
     this->tabBar()->setAttribute(Qt::WA_Hover, true);
     auto manager = PropertiesWindowPluginManager::getInstance();
     auto names = manager->getFactoryNames();
+    int index = 0;
     for (auto name : names) {
         auto factory = manager->getFactory(name);
         if (factory->supportUris(uris)) {
             auto tabPage = factory->createTabPage(uris);
             tabPage->setParent(this);
             addTab(tabPage, factory->name());
+            setTabToolTip(index, factory->name());
+            ++index;
 
             (qobject_cast<PropertiesWindow *>(parent))->addTabPage(tabPage);
         }

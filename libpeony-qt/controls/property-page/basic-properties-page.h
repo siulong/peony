@@ -38,7 +38,6 @@
 #include "properties-window-tab-iface.h"
 #include "open-with-properties-page.h"
 
-#define DEBUG qDebug() << "[" << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << "]"
 #define CELL1K 1024
 #define CELL4K 4096
 #define CELL1M 1048576
@@ -203,7 +202,6 @@ private:
 
     QTimer *m_timer = nullptr;
     bool m_isReadOnly = false;
-    bool m_isHidden = false;
 };
 
 class PushButtonStyle : public QProxyStyle

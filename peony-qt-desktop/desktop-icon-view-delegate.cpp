@@ -102,7 +102,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     if (!view->indexWidget(index)) {
         //painter->setClipRect(opt.rect);
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         if (opt.state.testFlag(QStyle::State_MouseOver) && !opt.state.testFlag(QStyle::State_Selected)) {
             QColor color = m_styled_button->palette().highlight().color();
             color.setAlpha(255*0.3);//half transparent
@@ -147,7 +147,10 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     auto text = opt.text;
     opt.text = nullptr;
 
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    painter->restore();
 
     opt.text = text;
     opt.font = qApp->font();
@@ -261,14 +264,20 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         {
             emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+            painter->restore();
         }
         else if(! file->canWrite()/* && ! file->canExecute()*/)
         {
             //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-readonly");
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+            painter->restore();
         }
     }
 
@@ -309,7 +318,10 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
         auto linkRect = QRect(topLeft, symbolicIconSize);
         QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
+        painter->save();
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+        painter->restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
@@ -349,6 +361,8 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
         if (!icon.isNull()) {
             int pos = emblemPoses.takeFirst();
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             switch (pos) {
             case 1: {
                 icon.paint(painter,
@@ -389,6 +403,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             default:
                 break;
             }
+            painter->restore();
         }
     }
 
@@ -410,7 +425,8 @@ QSize DesktopIconViewDelegate::sizeHint(const QStyleOptionViewItem &option, cons
 
     auto view = qobject_cast<DesktopIconView*>(this->parent());
     auto iconSize = view->iconSize();
-    auto font = view->font();
+    QFont font = view->font();
+    font.setFamily(view->font().defaultFamily());
     // asume max text size.
     font.setPointSize(15);
     auto fm = QFontMetrics(font);

@@ -129,6 +129,9 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 //            int  charWidth = fontMetrics().averageCharWidth();
 //            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
 //        }
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabData(index, uri);
@@ -148,6 +151,9 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
     if (!uri.isNull()) {
         //FIXME: replace BLOCKING api in ui thread.
         auto displayName = Peony::FileUtils::getFileDisplayName(uri);
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         addTab(displayName);        
         setTabData(count() - 1, uri);
         if (jumpToNewTab)
@@ -404,7 +410,7 @@ void TabBarStyle::drawComplexControl(QStyle::ComplexControl control, const QStyl
 {
     if (widget && (widget->objectName() == "addPageButton" || widget->objectName() == "toolButton")) {
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         QPainterPath path;
         if (!m_need_adjust) {
             path.addEllipse(QRect(option->rect.adjusted(4, 4, -4, -4)));

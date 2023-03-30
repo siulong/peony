@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QString>
 #include <QHash>
+#include <QMutex>
 
 #undef slots
 #undef signals
@@ -60,7 +61,14 @@ public:
         return m_occupiedAppsInfoThread;
     }
 
+    Volume* getOccupiedVolume(){
+        return m_occupiedVolume;
+    }
+    QMutex* getMutex(){
+        return &m_mutex;
+    };
     bool isEmptyDrive(const Volume &volume);/* 判断是否为空光驱 */
+
 
 private:
     explicit VolumeManager(QObject *parent = nullptr);
@@ -83,8 +91,10 @@ private:
     static void mountRemoveCallback(GVolumeMonitor*,GMount*,VolumeManager*);
     static void driveConnectCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
     static void driveDisconnectCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
+    static void driveChangedCallback(GVolumeMonitor*,GDrive*,VolumeManager*);
     static void volumeChangeCallback(GVolumeMonitor*,GVolume*,VolumeManager*);
     static void mountChangedCallback(GMount *mount, VolumeManager *pThis);
+    static void mountPreUnmountCallback(GVolumeMonitor*, GMount*,VolumeManager*);
 
 private:
     GVolumeMonitor* m_volumeMonitor = nullptr;
@@ -95,10 +105,14 @@ private:
     quint64 m_mountRemoveHandle;
     quint64 m_driveConnectHandle;
     quint64 m_driveDisconnectHandle;
+    quint64 m_driveChangedHandle;
     quint64 m_mountOpreationHandle;
+    quint64 m_mountPreUnmountHandle;
     bool m_gpartedIsOpening = false;
     QHash<QString,Volume*>* m_volumeList = nullptr;
     GetOccupiedAppsInfoThread* m_occupiedAppsInfoThread = nullptr;
+    Volume *m_occupiedVolume = nullptr; /* 被占用的volume，当前用于只有ffmpeg占用时强制弹出,link to bug#117263 */
+    QMutex m_mutex;
 
     //我应该在检测到信号时更新卷设备列表？还是在用到时重新全部get一次？感觉前者好点?
 Q_SIGNALS:
@@ -184,6 +198,7 @@ public:
     QString mountPoint() const;
     GVolume* getGVolume() const;
     GDrive* getGDrive() const;
+    GMount* getGMount() const;
     //property-to-set
     void setLabel(const QString& label);
     void setDevice(const QString &device);

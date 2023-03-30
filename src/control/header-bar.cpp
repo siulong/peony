@@ -682,7 +682,8 @@ void HeaderBar::addTabletMenu()
 void HeaderBar::updateTabletModeValue(bool isTabletMode)
 {
     setStyle(HeaderBarStyle::getStyle());
-    m_searchWidget->updateTabletModeValue(isTabletMode);
+    m_searchWidget->closeSearch();
+    m_searchWidget->updateSearchRequest(false);
     m_tablet_mode = isTabletMode;
     bool noComputer = false;
     auto url = m_window->getCurrentUri();

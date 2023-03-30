@@ -91,6 +91,7 @@ private:
     bool m_is_filebox_file = false;     //filesafe path files operation flag
     bool m_is_smb_file = false;
     bool m_is_mobile_file = false;
+    bool m_is_boxpath = false;
 
     const int ELIDE_TEXT_LENGTH = 16;
 

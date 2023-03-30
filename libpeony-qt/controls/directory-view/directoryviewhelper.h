@@ -16,6 +16,8 @@ public:
 
     virtual void doMultiSelect(bool) = 0;
     virtual bool isEnableMultiSelect() = 0;
+
+    virtual void setItemsVisible(bool visible) = 0;
 };
 
 class PEONYCORESHARED_EXPORT DirectoryViewHelper : public QObject

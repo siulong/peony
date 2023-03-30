@@ -25,6 +25,7 @@
 
 #include <QStyledItemDelegate>
 #include <peony-core_global.h>
+#include <QFileSystemWatcher>
 
 class QPushButton;
 
@@ -63,6 +64,7 @@ public:
 Q_SIGNALS:
     void isEditing(bool editing) const;
     void requestDone(QWidget *editor);
+    void updateIndexWidget(const QStyleOptionViewItem &option) const;
 
 public Q_SLOTS:
     void setCutFiles(const QModelIndexList &indexes);
@@ -92,6 +94,7 @@ private:
     bool m_isStartDrag = false; ;  //是否是拖拽item
 
     QString m_regFindKeyWords;
+    QFileSystemWatcher *m_watcher = nullptr;
 };
 
 class PEONYCORESHARED_EXPORT IconViewTextHelper

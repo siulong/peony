@@ -263,7 +263,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             if (!thumbnail.isNull()) {
                 return thumbnail;
             }
-            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("text-x-generic"));
+            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
             return QVariant(icon);
         }
         case Qt::ToolTipRole: {
@@ -274,6 +274,9 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 return QVariant(displayName);
             }
             return QVariant(item->m_info->displayName());
+        }
+        case Qt::UserRole + 1: {
+            return item->m_info->displayName();
         }
         default:
             return QVariant();
@@ -628,8 +631,9 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         }
     }
     //drag from trash to another place, return false
-    if (b_trash_item && destDirUri != "trash:///")
-        return false;
+    //comment to fix can not drag to copy trash file,link to bug#117741
+//    if (b_trash_item && destDirUri != "trash:///")
+//        return false;
 
     //fix drag file to trash issue, #42328
     if (destDirUri.startsWith("trash:///"))

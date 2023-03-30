@@ -12,7 +12,12 @@
 
 #include <QRegion>
 
+#include <QX11Info>
+#include <X11/Xlib.h>
+
 static QTimeLine *gTimeLine = nullptr;
+
+static bool startup = false;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent) : QMainWindow(parent)
 {
@@ -37,6 +42,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
     move(screen->geometry().topLeft());
     setFixedSize(screen->geometry().size());
     setContentsMargins(0, 0, 0, 0);
+    m_desktopIconView->resize(screen->geometry().size());
     connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
     auto manager = DesktopBackgroundManager::globalInstance();
@@ -231,6 +237,16 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
             }
         }
         p.restore();
+    }
+
+    if (!startup) {
+        startup = true;
+        QTimer::singleShot(1000, []{
+            if (QX11Info::isPlatformX11()) {
+                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+                XSync(QX11Info::display(), false);
+            }
+        });
     }
 }
 

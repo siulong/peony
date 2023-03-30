@@ -846,7 +846,7 @@ void TabWidget::updateSearchBar(bool showSearch)
 {
     qDebug() << "updateSearchBar:" <<showSearch;
     m_show_search_bar = showSearch;
-    if (showSearch)
+    if (showSearch && !qApp->property("tabletMode").toBool())
     {
         m_search_title->show();
         m_search_bar->show();
@@ -972,6 +972,9 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     {
         int  charWidth = fontMetrics().averageCharWidth();
         displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+    }
+    if (displayName.contains("&")) {
+        displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
     m_current_search->setText(displayName);
 }

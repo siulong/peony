@@ -35,7 +35,12 @@
 
 #include <QVector4D>
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
+#else
+#include <QX11Info>
+#include "xatom-helper.h"
+#endif
 
 QPushButton* btn;
 
@@ -163,7 +168,18 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
     setAutoFillBackground (true);
     setBackgroundRole (QPalette::Base);
 
+#ifdef KY_SDK_WAYLANDHELPER
     kdk::UkuiStyleHelper::self()->removeHeader(this);
+#else
+    if (QX11Info::isPlatformX11()) {
+        XAtomHelper::getInstance()->setUKUIDecoraiontHint(this->winId(), true);
+        MotifWmHints hints;
+        hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+        hints.functions = MWM_FUNC_ALL;
+        hints.decorations = MWM_DECOR_BORDER;
+        XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+    }
+#endif
 
     setWindowOpacity(0.9999);
 
@@ -187,6 +203,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
     m_list_widget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     m_list_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    m_main_layout->setSpacing(2);
     m_main_layout->addWidget(m_main_progressbar);
     m_main_layout->addWidget(m_other_progressbar);
     m_main_layout->addWidget(m_list_widget);
@@ -238,10 +255,10 @@ void FileOperationProgressBar::showMore()
         if (m_show_more) {
             m_list_widget->show();
             m_other_progressbar->show();
-            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_list_widget->height());
+            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_list_widget->height() + m_main_layout->spacing()*2);
         } else {
             m_list_widget->hide();
-            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height());
+            setFixedSize(m_main_progressbar->width(), m_main_progressbar->height() + m_other_progressbar->height() + m_main_layout->spacing());
         }
     } else {
         m_list_widget->hide();
@@ -575,7 +592,11 @@ void MainProgressBar::paintHeader(QPainter &painter)
     painter.drawPixmap (iconArea, QIcon::fromTheme("system-file-manager").pixmap (iconSize, iconSize)); //(textArea, Qt::Ali | Qt::AlignHCenter, m_title);
 
     // paint title
+    if("bo_CN" == QLocale::system().name()){
+       m_header_height = 30 + 15;
+    }
     QRect textArea (m_text_area_x + iconSize, 0, m_title_width, m_header_height);
+
     QFont font = painter.font();
 //    font.setPixelSize(14);
     painter.setFont(font);
@@ -620,7 +641,10 @@ void MainProgressBar::paintContent(QPainter &painter)
             this->setToolTip(m_file_name);
             QString display_name;
             display_name = elideText(this->font(),400,m_file_name);
-            painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
+            int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
+            int fileNameHeight = qMax(m_file_name_height, fontHeight);
+            int textY = m_fix_height / 2 - fileNameHeight / 2;
+            painter.drawText(m_file_name_x, textY, m_file_name_w, fileNameHeight, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap | Qt::TextWrapAnywhere, display_name);
             if (m_pause) {
                 painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-start-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
             } else {
@@ -852,7 +876,10 @@ void ProgressBar::paintEvent(QPaintEvent *event)
         this->setToolTip(m_dest_uri);
         QString display_name;
         display_name = elideText(this->font(),335,m_dest_uri);
-        painter.drawText(m_text_x, m_text_y, m_text_w, m_text_height, Qt::AlignLeft | Qt::AlignVCenter, display_name);
+        int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
+        int fileNameHeight = qMax(m_text_height, fontHeight);
+        int textY = (m_fix_height - m_margin_ud * 2 - fileNameHeight) / 2 + m_margin_ud;
+        painter.drawText(m_text_x, textY, m_text_w, fileNameHeight, Qt::AlignLeft | Qt::AlignVCenter, display_name);
     }
 
     // paint progress

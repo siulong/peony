@@ -228,11 +228,12 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
         setText(htmlString);
     }
 
-    if (m_error->op && FileOpRenameToHideFile == m_error->op) {
-        if (m_cancel_btn) {
-            delete m_cancel_btn;
-        }
-    }
+    //fix bug#161394, support cancel rename operation
+//    if (m_error->op && FileOpRenameToHideFile == m_error->op) {
+//        if (m_cancel_btn) {
+//            delete m_cancel_btn;
+//        }
+//    }
 
     int ret = exec();
 

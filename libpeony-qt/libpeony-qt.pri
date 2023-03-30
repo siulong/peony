@@ -21,6 +21,11 @@ include(windows/windows.pri)
 # preview
 include(thumbnail/thumbnail.pri)
 
+# kyudfburn
+contains(DEFINES, "KY_UDF_BURN") {
+    PKGCONFIG += kyudfburn
+}
+
 HEADERS += \
     $$PWD/file-copy.h               \
     $$PWD/peony-log.h               \

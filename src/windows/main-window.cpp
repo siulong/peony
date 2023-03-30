@@ -113,7 +113,9 @@
 //#include "xatom-helper.h"
 #include "trash-warn-dialog.h"
 
+#ifdef KY_SDK_WAYLANDHELPER
 #include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
+#endif
 
 #define FONT_SETTINGS "org.ukui.style"
 
@@ -121,6 +123,9 @@ static MainWindow *last_resize_window = nullptr;
 
 MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent)
 {
+    // try fix #162452, filedialog changes peony main windows view type and sort options.
+    setObjectName("_peony_mainwindow");
+
     setContextMenuPolicy(Qt::CustomContextMenu);
     installEventFilter(this);
 
@@ -184,7 +189,9 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
         hints.decorations = MWM_DECOR_BORDER;
         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
     } else {
+#ifdef KY_SDK_WAYLANDHELPER
         kdk::UkuiStyleHelper::self()->removeHeader(this);
+#endif
     }
 
     startMonitorThumbnailForbidStatus();
@@ -512,7 +519,14 @@ void MainWindow::setShortCuts()
 
         auto newFolderAction = new QAction(this);
         newFolderAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
-        connect(newFolderAction, &QAction::triggered, this, &MainWindow::createFolderOperation);
+        connect(newFolderAction, &QAction::triggered, this, [=](){
+            QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
+            if (boxpath == getCurrentUri()) {
+                return;
+            }
+
+            createFolderOperation();
+        });
         addAction(newFolderAction);
 
         //show selected item's properties
@@ -751,6 +765,11 @@ void MainWindow::setShortCuts()
                     || currentUri.startsWith("search://") || currentUri == "filesafe:///") {
                     /* Add hint information,link to bug#107640. */
                     QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
+                    return;
+                }
+
+                auto info = Peony::FileInfo::fromUri(currentUri);
+                if (!info->canWrite()) {
                     return;
                 }
 
@@ -1304,8 +1323,8 @@ void MainWindow::resizeEvent(QResizeEvent *e)
     QMainWindow::resizeEvent(e);
     //may not need update? comment to try fix bug#77966
     //m_header_bar->updateMaximizeState();
-    validBorder();
-    update();
+    //validBorder();
+    //update();
 
     if (!isMaximized()) {
         // set save window size flag
@@ -1320,7 +1339,7 @@ void MainWindow::resizeEvent(QResizeEvent *e)
  */
 void MainWindow::paintEvent(QPaintEvent *e)
 {
-    validBorder();
+    //validBorder();
     QColor color = this->palette().window().color();
     QColor colorBase = this->palette().base().color();
 
@@ -1463,6 +1482,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void MainWindow::validBorder()
 {
+    return;
+
     QPainterPath path;
     auto rect = this->rect();
     path.addRect(rect);
@@ -1473,8 +1494,12 @@ void MainWindow::validBorder()
 #include "file-utils.h"
 void MainWindow::initUI(const QString &uri)
 {
+    KWindowEffects::enableBlurBehind(this->winId(), true);
+
     auto size = sizeHint();
     resize(size);
+
+    KWindowEffects::enableBlurBehind(this->winId(), true);
 
     connect(this, &MainWindow::locationChangeStart, this, [=]() {
         //comment to fix bug 33527
@@ -1825,6 +1850,13 @@ const QList<std::shared_ptr<Peony::FileInfo>> MainWindow::getCurrentSelectionFil
 
 void MainWindow::updateTabletModeValue(bool isTabletMode)
 {
+    Peony::DirectoryViewIface2 *iface2 = nullptr;
+    if (m_tab->currentPage() && m_tab->currentPage()->getView()) {
+        iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_tab->currentPage()->getView());
+        iface2->setItemsVisible(false);
+        qApp->processEvents();
+    }
+
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，切换模式
     qApp->setProperty("tabletMode", isTabletMode);
     if(isTabletMode) {
@@ -1837,4 +1869,8 @@ void MainWindow::updateTabletModeValue(bool isTabletMode)
     m_tab->menuWidget()->setVisible(!isTabletMode);
     m_header_bar->updateTabletModeValue(isTabletMode);
     Q_EMIT tabletModeChanged(isTabletMode);
+
+    if (iface2) {
+        iface2->setItemsVisible(true);
+    }
 }

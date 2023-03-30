@@ -28,13 +28,20 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QGSettings>
+
+#ifdef KY_SDK_QT_WIDGETS
 #include <kaboutdialog.h>
+#endif
 
 namespace Ui {
 class AboutDialog;
 }
 
+#ifdef KY_SDK_QT_WIDGETS
 class AboutDialog : public kdk::KAboutDialog
+#else
+class AboutDialog : public QDialog
+#endif
 {
     Q_OBJECT
 

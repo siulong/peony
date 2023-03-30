@@ -66,7 +66,10 @@
 #include <QScreen>
 #include <QTimeLine>
 
+#include <QSessionManager>
 #include <KWindowSystem>
+#include <QX11Info>
+#include <X11/Xlib.h>
 
 #define KYLIN_USER_GUIDE_PATH "/"
 #define KYLIN_USER_GUIDE_SERVICE QString("com.kylinUserGuide.hotel_%1").arg(getuid())
@@ -184,6 +187,21 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
     //added for session call interactive
     QGuiApplication::setFallbackSessionManagementEnabled(true);
     QGuiApplication::setQuitOnLastWindowClosed(false);
+    // fix #145378, logout background displayment issue.
+    QObject::connect(this, &QGuiApplication::saveStateRequest, this, [=](QSessionManager &manager){
+        if (KWindowSystem::isPlatformX11()) {
+            if (manager.allowsErrorInteraction()) {
+                qInfo()<<"session about to logout, clear the root window background";
+//                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+//                XSync(QX11Info::display(), false);
+                manager.release();
+            } else {
+                qInfo()<<"session not support interaction or not x11 platform";
+//                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+//                XSync(QX11Info::display(), false);
+            }
+        }
+    });
 
     // global settings
     if (QGSettings::isSchemaInstalled (FONT_SETTINGS)) {
@@ -442,6 +460,7 @@ void PeonyDesktopApplication::relocateIconView()
             break;
         }
     }
+    qDebug()<<"primary screen id:"<<id;
     if (0 < id) {
         for (auto window : m_bg_windows) {
             if (0 == window->id()) {
@@ -453,6 +472,9 @@ void PeonyDesktopApplication::relocateIconView()
                 primaryWindow->getIconView()->clearItemRect();
                 Q_EMIT window->getIconView()->updateView();
                 Q_EMIT primaryWindow->getIconView()->updateView();
+                window->getIconView()->resolutionChange();
+                primaryWindow->getIconView()->resolutionChange();
+                KWindowSystem::raiseWindow(primaryWindow->winId());
                 return;
             }
         }
@@ -464,9 +486,6 @@ void PeonyDesktopApplication::relocateIconView()
         window->setCentralWidget(window->getIconView());
         if (window->screen() != qApp->primaryScreen()) {
             KWindowSystem::raiseWindow(window->winId());
-        }
-        if (0 < id) {
-            window->getIconView()->resolutionChange();
         }
     }
     if(primaryWindow) {
@@ -554,6 +573,12 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
         }
 
         if (parser.isSet(desktopOption)) {
+            if(!has_background) {
+                QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
+                watcher->setConnection(QDBusConnection::sessionBus());
+                watcher->addWatchedService("org.ukui.KWin");
+                connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, &PeonyDesktopApplication::raiseWid);
+            }
             setupBgAndDesktop();
         }
 
@@ -686,11 +711,17 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
     window->show();
     connect(screen, &QScreen::destroyed, this, [=](){
-        if (!isPrimaryScreen(screen)) {
-            //task#74174 销毁时保存扩展屏元素的坐标点
-            getIconView(screen)->saveExtendItemInfo();
-            getIconView(qApp->primaryScreen())->updateView();
+        if (m_mode == 2) {
+            if (m_bg_windows.count() > 2) {
+                //task#74174 销毁时保存扩展屏元素的坐标点
+                getIconView(screen)->saveExtendItemInfo();
+                getIconView(qApp->primaryScreen())->updateView();
+            } else if (m_bg_windows.count() == 2) {
+                singleScreenMode();
+                m_mode = 0;
+            }
         }
+        qDebug()<<"QScreen::destroyed screen name:"<<screen->name();
         Q_EMIT window->destroyed();
         m_bg_windows.removeOne(window);
         window->deleteLater();
@@ -700,6 +731,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         for (auto bgWindow : m_bg_windows) {
             if (bgWindow->getIconView()->zoomLevel() != level) {
                 bgWindow->getIconView()->setDefaultZoomLevel(level);
+                bgWindow->getIconView()->clearExtendItemPos(true);
             }
         }
     });
@@ -712,31 +744,20 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     //task#74174 更新扩展屏与镜像切换
     connect(window, &DesktopBackgroundWindow::updateWindow, this, [=](const QRect &geometry){
         int mode = checkScreenMode(geometry);
-        if (1 == mode) {
-            for (auto bgWindow : m_bg_windows) {
-                if (!isPrimaryScreen(bgWindow->screen())) {
-                    bgWindow->getIconView()->saveExtendItemInfo();
-                   // Q_EMIT bgWindow->getIconView()->updateView();
-                }
-            }
-            getIconView(qApp->primaryScreen())->updateView();
-        } else if (2 == mode) {
-            for (auto bgWindow : m_bg_windows) {
-                if (!isPrimaryScreen(bgWindow->screen())) {
-                    bgWindow->getIconView()->resetExtendItemInfo();
-                }
-            }
-
-            for (auto bgWindow : m_bg_windows) {
-                Q_EMIT bgWindow->getIconView()->updateView();
+        if (m_mode != mode) {
+            if (1 == mode) {
+                singleScreenMode();
+             } else if (2 == mode) {
+                multiscreenMode();
             }
         }
+        m_mode = mode;
         window->setWindowGeometry(geometry);
     });
     //task#74174 恢复扩展屏
-    int mode = checkScreenMode(screen->geometry());
-    if (2 == mode) {
-        window->getIconView()->resetExtendItemInfo();
+    m_mode = checkScreenMode(screen->geometry());
+    if (2 == m_mode) {
+        multiscreenMode();
     }
 
     relocateIconView();
@@ -748,7 +769,7 @@ void PeonyDesktopApplication::setupDesktop()
     for (auto screen : qApp->screens()) {
         addBgWindow(screen);
     }
-    //relocateIconView();
+
     connect(qApp, &QApplication::screenAdded, this, &PeonyDesktopApplication::addBgWindow);
     connect(this, &PeonyDesktopApplication::primaryScreenChanged, this, &PeonyDesktopApplication::relocateIconView);
 }
@@ -777,6 +798,36 @@ int PeonyDesktopApplication::getDesktopWindowId()
         }
     }
     return desktopWindowId;
+}
+
+void PeonyDesktopApplication::singleScreenMode()
+{
+    auto primayView = getIconView(0);
+    qDebug() << "primay view item" << primayView->model()->rowCount() << "total item:" << getModel()->rowCount();
+    if ( 2 == m_mode  && primayView->model()->rowCount() == getModel()->rowCount()) {
+        primayView->clearExtendItemPos();
+        return;
+    }
+    for (auto bgWindow : m_bg_windows) {
+        auto view = bgWindow->getIconView();
+        view->clearItemRect();
+        view->saveExtendItemInfo();
+    }
+
+    primayView->updateView();
+}
+
+void PeonyDesktopApplication::multiscreenMode()
+{
+    for (auto bgWindow : m_bg_windows) {
+        auto view = bgWindow->getIconView();
+        view->clearItemRect();
+        view->resetExtendItemInfo();
+    }
+    for (auto bgWindow : m_bg_windows) {
+        auto view = bgWindow->getIconView();
+        view->updateView();
+    }
 }
 
 void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
@@ -812,6 +863,8 @@ void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
         if(guessType && g_strv_length(guessType) > 0){
             int n;
             for(n = 0; guessType[n]; ++n){
+                if(g_content_type_is_a(guessType[n],"x-content/image-dcf"))
+                    openFolder = false;
                 if(g_content_type_is_a(guessType[n],"x-content/win32-software"))
                     openFolder = false;
                 if(unixDevice && !strcmp(guessType[n],"x-content/bootable-media") && !strstr(unixDevice,"/dev/sr"))
@@ -910,6 +963,18 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
         }
     }
     return nullptr;
+}
+
+void PeonyDesktopApplication::raiseWid()
+{
+    QTimer::singleShot(2000, this, [=]() {
+        for (auto window : m_bg_windows) {
+            if (window->screen() == this->primaryScreen() && window->screen()) {
+                KWindowSystem::raiseWindow(window->winId());
+                return;
+            }
+        }
+    });
 }
 
 static void volume_mount_cb (GObject* source, GAsyncResult* res, gpointer udata)

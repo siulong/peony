@@ -79,6 +79,7 @@
 #include <QMimeData>
 #include <QPixmap>
 #include <QPainter>
+#include <QClipboard>
 
 #include <QtX11Extras/QX11Info>
 #include <kstartupinfo.h>
@@ -90,10 +91,13 @@ using namespace Peony;
 #define UKUI_STYLE_SETTINGS "org.ukui.style"
 #define RESTORE_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-item-position"
 #define RESTORE_EXTEND_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-extend-item-position"
+#define RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-singlescreen-item-position"
 
 static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect, QString> &p2);
 
 static bool refreshing = false;
+static bool g_isHighVersion = false;
+//static bool g_initialized = false;
 
 DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
@@ -148,7 +152,13 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 
     m_proxy_model->setSourceModel(m_model);
     m_proxy_model->setId(m_id);
-
+    QString version = qVersion();
+    if (version >= QString("5.14.0")) {
+        g_isHighVersion = true;
+    } else {
+        g_isHighVersion = false;
+    }
+    qDebug() << "qt version: " << version <<  g_isHighVersion;
     connect(m_model, &QAbstractItemModel::rowsRemoved, this, [=](){
         for (auto uri : getAllFileUris()) {
             auto pos = getFileMetaInfoPos(uri);
@@ -182,9 +192,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 ensureItemPosByUri(uri);
             }
         }
-        if (isItemsOverlapped()) {
-            relayoutExsitingItems(m_model->m_items_need_relayout);
-        }
+        checkItemsOver();
     });
 
     connect(m_model, &DesktopItemModel::refreshed, this, [=]() {
@@ -552,9 +560,13 @@ void DesktopIconView::initShoutCut()
     QAction *pasteAction = new QAction(this);
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
-        auto clipUris = ClipboardUtils::getClipboardFilesUris();
-        if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
+        if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
             ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+        } else {
+            //auto clipUris = ClipboardUtils::getClipboardFilesUris();
+            if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
+                ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            }
         }
     });
     addAction(pasteAction);
@@ -784,7 +796,9 @@ void DesktopIconView::resolutionChange()
         qWarning()<<"screen size is not avaliable";
         return;
     }
-
+    if (m_item_rect_hash.isEmpty()) {
+        return;
+    }
     float iconWidth = 0;
     float iconHeigth = 0;
 
@@ -947,7 +961,7 @@ void DesktopIconView::resolutionChange()
         updateItemPosByUri(uri, rect.topLeft());
         setFileMetaInfoPos(uri, rect.topLeft());
     }
-
+    setAllRestoreInfo();
     this->saveAllItemPosistionInfos();
 }
 
@@ -1347,13 +1361,13 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 setIndexWidget(upIndex, indexWidget);
                 indexWidget->move(visualRect(upIndex).topLeft());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                           updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1374,13 +1388,13 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 setIndexWidget(downIndex, indexWidget);
                 indexWidget->move(visualRect(downIndex).topLeft());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1400,13 +1414,14 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 auto indexWidget = new DesktopIndexWidget(delegate, viewOptions(), leftIndex, this);
                 setIndexWidget(leftIndex, indexWidget);
                 indexWidget->move(visualRect(leftIndex).topLeft());
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1425,13 +1440,14 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
                 auto delegate = qobject_cast<DesktopIconViewDelegate *>(itemDelegate());
                 auto indexWidget = new DesktopIndexWidget(delegate, viewOptions(), rightIndex, this);
                 setIndexWidget(rightIndex, indexWidget);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-                for (auto uri : getAllFileUris()) {
-                    auto pos = getFileMetaInfoPos(uri);
-                    if (pos.x() >= 0)
-                        updateItemPosByUri(uri, pos);
+
+                if (g_isHighVersion) {
+                    for (auto uri : getAllFileUris()) {
+                        auto pos = getFileMetaInfoPos(uri);
+                        if (pos.x() >= 0)
+                            updateItemPosByUri(uri, pos);
+                    }
                 }
-#endif
             }
         }
         return;
@@ -1496,13 +1512,13 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
     }
     // try fix item overrlapped sometimes, link to #58739
     //task#74174 扩展模式下支持拖拽图标放置到扩展屏,当扩展屏没有时会崩溃
-    if (start == end && m_item_rect_hash.count() != 1) {
+    if (start == end && m_item_rect_hash.count() > 1) {
         auto index = model()->index(start, 0);
         auto uri = index.data(Qt::UserRole).toString();
         auto itemRectHash = m_item_rect_hash;
         itemRectHash.remove(uri);
         QRegion notEmptyRegion;
-        QSize itemRectSize = itemRectHash.first().size();
+        QSize itemRectSize = m_item_rect_hash.first().size();
         for (auto rect : itemRectHash.values()) {
             notEmptyRegion += rect;
         }
@@ -1609,7 +1625,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
     auto viewRect = this->viewport()->rect();
 
     // aligin exsited rect
-    int marginTop = notEmptyRegion.boundingRect().top();
+    int marginTop = notEmptyRegion.isEmpty()? getViewRect().top() : notEmptyRegion.boundingRect().top();
     while (marginTop - grid.height() >= 0) {
         marginTop -= grid.height();
     }
@@ -1668,20 +1684,23 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
     }
 }
 
-void DesktopIconView::relayoutExsitingItems()
+void DesktopIconView::checkItemsOver()
 {
     QStringList needRelayoutItems;
     QRegion notEmptyRegion;
-    for (auto value : m_item_rect_hash.values()) {
-        auto keys = m_item_rect_hash.keys(value);
-        if (keys.count() > 1) {
-            keys.pop_front();
-            for (auto key : keys) {
-                needRelayoutItems.append(key);
-                m_item_rect_hash.remove(key);
+    if (model()) {
+        for (int i = 0; i < model()->rowCount(); i++) {
+            auto index = model()->index(i, 0);
+            auto rect = QListView::visualRect(index);
+            if (notEmptyRegion.intersects(rect)) {
+                needRelayoutItems.append(index.data(Qt::UserRole).toString());
+            } else {
+                notEmptyRegion += rect;
             }
         }
-        notEmptyRegion += value;
+    }
+    if (0 == needRelayoutItems.size()) {
+        return;
     }
 
     int gridWidth = gridSize().width();
@@ -1699,20 +1718,24 @@ void DesktopIconView::relayoutExsitingItems()
     marginTop = marginTop < 0? 0: marginTop;
     int posX = marginLeft;
     int posY = marginTop;
-    qDebug()<<"DesktopIconView::relayoutExsitingItems"<<needRelayoutItems;
+    qDebug()<<"need relayout items:"<<needRelayoutItems;
+    bool isFull = false;
     for (auto item : needRelayoutItems) {
         QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
-        while (notEmptyRegion.contains(itemRect.center())) {
+        while (notEmptyRegion.contains(itemRect.center()) && !isFull) {
             if (posY + 2*gridHeight > this->viewport()->height()) {
                 posY = marginTop;
                 posX += gridWidth;
             } else {
                 posY += gridHeight;
             }
-            if (this->viewport()->geometry().contains(itemRect.topLeft())) {
-                itemRect.moveTo(posX, posY);
-            } else {
+            itemRect.moveTo(posX, posY);
+            if (itemRect.right() > this->viewport()->rect().right()) {
                 itemRect.moveTo(0, 0);
+                posX = 0;
+                posY = 0;
+                isFull = true;
+                qDebug() << "满屏 " << item << " point:" <<itemRect.topLeft();
                 break;
             }
         }
@@ -1902,13 +1925,13 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
                 indexWidget->move(visualRect(m_last_index).topLeft());
             }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-            for (auto uri : getAllFileUris()) {
-                auto pos = getFileMetaInfoPos(uri);
-                if (pos.x() >= 0)
-                    updateItemPosByUri(uri, pos);
+            if (g_isHighVersion) {
+                for (auto uri : getAllFileUris()) {
+                    auto pos = getFileMetaInfoPos(uri);
+                    if (pos.x() >= 0)
+                        updateItemPosByUri(uri, pos);
+                }
             }
-#endif
         }
     }
 
@@ -2561,7 +2584,7 @@ void DesktopIconView::fileCreated(const QString &uri)
     if (geo.width() != 0 && geo.height() != 0) {
         QModelIndex index = m_proxy_model->mapToSource(m_model->indexFromUri(uri));
         if (index.isValid()) {
-            QRect indexRect = QListView::visualRect(index);
+            QRect indexRect = visualRect(index);
             if (!geo.contains(indexRect)) {
                 resolutionChange();
             }
@@ -2651,7 +2674,7 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
 
 void DesktopIconView::saveExtendItemInfo()
 {
-    if (!m_proxy_model || m_id == 0)
+    if (!m_proxy_model)
         return;
     //task#74174 扩展屏的元素记录到metInfo,以便以后恢复
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
@@ -2664,14 +2687,21 @@ void DesktopIconView::saveExtendItemInfo()
         topLeft<<QString::number(m_id);
         QString uri = index.data(Qt::UserRole).toString();
         auto metaInfo = FileMetaInfo::fromUri(uri);
-        if (metaInfo && !m_model->m_items_need_relayout.contains(uri)) {
-            qDebug() << "[DesktopIconView::saveExtendItemInfo] uri:"<<str<<" topLeft:"<<topLeft;
+        if (metaInfo) {
+            qDebug() << "uri:"<<str<<" topLeft:"<<topLeft;
+            QStringList extendPos = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
+            if (extendPos.count() == 3) {
+                continue;
+            }
+            QStringList pos = metaInfo->getMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE);
+            if (pos.count() == 2) {
+                metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, pos);
+                QStringList tmp;
+                tmp<<"";
+                metaInfo->setMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE, tmp);
+            }
             metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, topLeft);
             metaInfo->setMetaInfoInt("peony-qt-desktop-id", 0);
-            QStringList tmp;
-            tmp<<"-1"<<"-1";
-            metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, tmp);
-            m_model->m_items_need_relayout.append(uri);
         }
     }
 }
@@ -2681,6 +2711,7 @@ bool DesktopIconView::isFull()
     //bug#123045 主屏桌面空间不足，新建的文件未放置到扩展屏桌面上
     int colNum = viewport()->width()/gridSize().width();
     int rowNum = viewport()->height()/gridSize().height();
+    qDebug() << "colNum:" <<colNum << "rowNum:"<< rowNum << "total:" << m_proxy_model->rowCount();
     if (colNum * rowNum <= m_proxy_model->rowCount()) {
         return true;
     }
@@ -2693,7 +2724,6 @@ void DesktopIconView::resetExtendItemInfo()
         return;
 
     //bug#108126 一开始加载将上一次超出屏幕的元素恢复
-    int aa = m_model->rowCount();
     for (int i = 0; i < m_model->rowCount(); i++) {
         auto index = m_model->index(i, 0);
         QString uri = index.data(Qt::UserRole).toString();
@@ -2701,6 +2731,7 @@ void DesktopIconView::resetExtendItemInfo()
         auto str = index.data(Qt::UserRole).toString();
         if (metaInfo) {
             QStringList list = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
+            QStringList pos = metaInfo->getMetaInfoStringList(ITEM_POS_ATTRIBUTE);
             if (list.count() == 3) {
                 QString id = list.takeLast();
                 qDebug() << "[DesktopIconView::resetExtendItemInfo] uri:"<<str<<" peony-qt-desktop-restore-extend-item-position:"<<list<<" id:"<<m_id;
@@ -2712,9 +2743,11 @@ void DesktopIconView::resetExtendItemInfo()
                 QStringList tmp;
                 tmp<<"";
                 metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, tmp);
-                m_model->m_items_need_relayout.removeOne(uri);
                 qDebug() << "[DesktopIconView::resetExtendItemInfo] need relayout:"<<m_model->m_items_need_relayout;
-
+            }
+            QStringList screenlist = metaInfo->getMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE);
+            if (screenlist.count() != 2) {
+                metaInfo->setMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE, pos);
             }
         }
     }
@@ -2724,6 +2757,33 @@ void DesktopIconView::clearItemRect()
 {
     m_resolution_item_rect.clear();
     m_item_rect_hash.clear();
+}
+
+void DesktopIconView::clearExtendItemPos(bool saveId)
+{
+    if (!m_proxy_model)
+        return;
+    //重置扩展屏和单屏坐标
+    qDebug() << "primary screen id:" << m_id ;
+    for (int i = 0; i < m_proxy_model->rowCount(); i++) {
+        auto index = m_proxy_model->index(i, 0);
+        QString uri = index.data(Qt::UserRole).toString();
+        auto metaInfo = FileMetaInfo::fromUri(uri);
+        if (metaInfo) {
+            QStringList tmp;
+            tmp<<"";
+            metaInfo->setMetaInfoStringList(RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE, tmp);
+            if (saveId) {
+                metaInfo->setMetaInfoStringList(RESTORE_ITEM_POS_ATTRIBUTE, tmp);
+                QStringList extendPos = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
+                if (extendPos.count() == 3) {
+                    tmp.clear();
+                    tmp<<"-1"<<"-1"<<extendPos[2];
+                }
+            }
+            metaInfo->setMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE, tmp);
+        }
+    }
 }
 
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)

@@ -109,6 +109,8 @@
 #define PERSONAL_EFFECT_ENABLE       "effect"
 #define PERSONAL_EFFECT_TRANSPARENCY "transparency"
 
+#define SHOW_NETWORK                "showNetwork"
+
 //intel 个性化设置，透明度...
 //schema
 #define UKUI_CONTROL_CENTER_PERSONALISE             "org.ukui.control-center.personalise"

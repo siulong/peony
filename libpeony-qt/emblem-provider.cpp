@@ -96,6 +96,8 @@ void EmblemProviderManager::querySync(const QString &uri)
         auto emblems = provider->getFileEmblemIcons(uri);
         if (!emblems.isEmpty()) {
             info->setProperty(provider->emblemKey().toUtf8().constData(), emblems);
+        } else {
+            info->setProperty(provider->emblemKey().toUtf8().constData(), QVariant());
         }
     }
     requestUpdateFile(uri);

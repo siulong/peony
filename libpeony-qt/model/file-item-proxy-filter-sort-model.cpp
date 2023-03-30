@@ -88,6 +88,14 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
         qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
         return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
     });
+
+    m_show_hidden = settings->isExist(SHOW_HIDDEN_PREFERENCE)? settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
+        if (SHOW_HIDDEN_PREFERENCE == key) {
+            m_show_hidden= GlobalSettings::getInstance()->getValue(key).toBool();
+            invalidateFilter();
+        }
+    });
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -213,6 +221,14 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
             }
             return leftItem->m_info->modifiedTime() > rightItem->m_info->modifiedTime();
         }
+        case FileItemModel::TrashOriginPath: {
+            auto leftString = leftItem->m_info->property("orig-path").toString();
+            auto rightString = rightItem->m_info->property("orig-path").toString();
+            if (leftString == rightString) {
+                goto default_sort;
+            }
+            return comparer.compare(leftString, rightString) > 0;
+        }
         default:
             break;
         }
@@ -314,7 +330,18 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             return false;
         if (! checkFileSizeOrTypeFilter(item->m_info->size(), item->m_info->isDir()))
             return false;
-        if (! checkFileNameFilter(item->m_info->displayName()))
+
+        //fix bug162927, desktop file should consider file name
+        if (item->uri().endsWith(".desktop")){
+            QString originName = item->uri().split("/").last();
+            QString AppName = item->m_info->displayName();
+            //对性能有影响，暂时屏蔽，后续再考虑优化
+//           if (! item->info()->canExecute())
+//               AppName = FileUtils::getApplicationName(item->uri());
+           if (! checkFileNameFilter(AppName) && ! checkFileNameFilter(originName))
+               return false;
+        }
+        else if (! checkFileNameFilter(item->m_info->displayName()))
             return false;
 
         //check the file label filter conditions
@@ -546,7 +573,7 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
         }
         case AUDIO:
         {
-            if (type.contains(Audio_Type))
+            if (type.contains(Audio_Type) || type.contains("application/x-smaf"))
                 return true;
             break;
         }
@@ -554,7 +581,7 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
         {
             //exclude classfied types, show the rest other types
             if (type != Folder_Type && ! type.contains(Image_Type) && ! type.contains(Video_Type)
-                    && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type))
+                    && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type) && !type.contains("application/x-smaf"))
                 return true;
             break;
         }

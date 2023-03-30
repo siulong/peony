@@ -36,8 +36,17 @@
 #include <QAction>
 #include <QModelIndex>
 #include "format_dialog.h"
+
+#ifndef KY_UDF_BURN
 #include "disccontrol.h"
 #include "udfFormatDialog.h"
+#else
+#include <libkyudfburn/disccontrol.h>
+#include "ky-udf-format-dialog.h"
+#include "udfAppendBurnDataDialog.h"
+using namespace UdfBurn;
+#endif
+
 #include <QDebug>
 #include <volume-manager.h>
 
@@ -198,6 +207,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
             action->setEnabled(false);
             l.append(action);
+#ifndef KY_UDF_BURN
             if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
                 DiscControl *discControl = new DiscControl(unixDevice);
                 if(discControl->work()){
@@ -211,6 +221,21 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                    });
                 }
             }
+#else
+            if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+                UdfBurn::DiscControl *discControl = new UdfBurn::DiscControl(unixDevice);
+                if(discControl->work()){
+                   connect(discControl, &UdfBurn::DiscControl::workFinished, [=](UdfBurn::DiscControl *discCtrl){
+                       connect(action, &QAction::triggered, [=](){
+                           UdfBurn::UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                           udfFormatDlg->show();
+                       });
+                       qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
+                       l.last()->setEnabled(discCtrl->supportUdf());
+                   });
+                }
+            }
+#endif
         }else{/* 其它格式化 */
             l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
                 auto info = FileInfo::fromUri(uri);
@@ -242,6 +267,33 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             }
         }
     }
+
+#ifdef KY_UDF_BURN
+    /* udf刻录--R类型光盘 */
+    if(unixDevice.contains("/dev/sr")){
+        /* 光盘追加刻录 ( udf 追加刻录) */
+        qDebug() << "侧边栏： append udf format action.";
+        QAction *actionBurn = addAction(QIcon::fromTheme("preview-file"), tr("burndata"));
+        actionBurn->setEnabled(false);
+        l.append(actionBurn);
+
+        if(!FileUtils::isBusyDevice(m_item->getDevice())) {
+            /* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+            DiscControl *discControl = new DiscControl(unixDevice);
+            if(discControl->work()){
+                connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+                    connect(actionBurn, &QAction::triggered, [=](){
+                        UdfAppendBurnDataDialog *udfAppendBurnDataDlg = new UdfAppendBurnDataDialog(uri, discCtrl);
+                        udfAppendBurnDataDlg->show();
+                    });
+
+                    qDebug() << unixDevice << "侧边栏： supported Udf appendBurnData values : "<<discCtrl->discCanAppend();
+                    l.last()->setEnabled(discCtrl->discCanAppend() && discControl->isAllRType());
+                });
+            }
+        }
+    }
+#endif
 
     /* 属性 */
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
@@ -290,7 +342,7 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
     if (!m_uri.startsWith("file://")) {
         l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
             m_item->unmount();
-        });       
+        });
         l.last()->setEnabled(m_item->isMounted());
     }
     if(netWorkUri != m_uri){
@@ -348,6 +400,3 @@ QString SideBarMenu::getComputerUriFromUnixDevice(const QString &unixDevice){
     }
     return uri;
 }
-
-
-

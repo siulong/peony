@@ -44,11 +44,11 @@
 
 using namespace Peony;
 
+ActionGlobalData *FileLauchDialog::actionGlobalData = nullptr;
+
 FileLauchDialog::FileLauchDialog(const QString &uri, QWidget *parent) : QDialog(parent)
 {
     this->getFIleInfo(uri);
-    QString fileName = m_info->displayName();
-    setWindowFilePath(fileName);
     QIcon windowicon = QIcon::fromTheme(m_info->iconName());
     setWindowIcon(windowicon);
     this->setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint );
@@ -65,11 +65,11 @@ void FileLauchDialog::getFIleInfo(QString uri)
 
 void FileLauchDialog::saveChange()
 {
-    if (!OpenWithPropertiesPage::openWithGlobalData) {
+    if (!FileLauchDialog::actionGlobalData) {
         return;
     }
 
-    FileLaunchAction* newAction = OpenWithPropertiesPage::openWithGlobalData->getActionByUri(m_info->uri());
+    FileLaunchAction* newAction = FileLauchDialog::actionGlobalData->getActionByUri(m_info->uri());
     if (newAction) {
         QString newAppId(g_app_info_get_id(newAction->gAppInfo()));
         QString oldAppId(g_app_info_get_id(FileLaunchManager::getDefaultAction(m_info->uri())->gAppInfo()));
@@ -78,7 +78,7 @@ void FileLauchDialog::saveChange()
         }
     }
 
-    OpenWithPropertiesPage::openWithGlobalData->removeAction(m_info->uri());
+    FileLauchDialog::actionGlobalData->removeAction(m_info->uri());
 }
 
 void FileLauchDialog::init(const QString &uri)
@@ -93,7 +93,7 @@ void FileLauchDialog::init(const QString &uri)
     this->addSeparator();
 
     this->initFloorThree();
-    this->addSeparator();
+//    this->addSeparator();
 
     this->initFloorFour();
     this->setLayout(m_layout);
@@ -103,57 +103,74 @@ void FileLauchDialog::initFloorOne()
 {
     QFrame      *floor1  = new QFrame(this);
     QVBoxLayout *layout1 = new QVBoxLayout(this);
-    layout1->setContentsMargins(22,0,22,0);
+    layout1->setContentsMargins(0,0,22,0);
 
     floor1->setLayout(layout1);
     floor1->setMaximumHeight(142);
 
     QLabel *targetTypeMsgLabel = new QLabel(floor1);
     targetTypeMsgLabel->setMinimumHeight(60);
-    qDebug() << "targetTypeMsgLabel :" << targetTypeMsgLabel->height();
 
+    QFileInfo fi(m_info.get()->displayName());
+    QString suffix;
+    if (!fi.suffix().isEmpty() && !m_info.get()->isDir()) {
+        suffix = fi.suffix().prepend(".");
+    }
+    QString title ;
     if(m_info.get()->displayName().contains(".")||m_info.get()->isDir() || m_info.get()->isDesktopFile()){
         QString appname = FileLaunchManager::getDefaultAction(m_info.get()->uri())->getAppInfoDisplayName();
         if("" == appname)
         {
-            targetTypeMsgLabel->setText(tr("No application is set to open file %1").arg(m_info.get()->displayName()));
+            title = QString (tr("The opening mode of the %1 %2")).arg(tr("unknown")).arg(suffix);
+            targetTypeMsgLabel->setText(tr("No application is set to open file \"%1 %2\"").arg(tr("unknown")).arg(suffix));
             layout1->addWidget(targetTypeMsgLabel);
+            this->setFixedHeight(680);
+            QLabel *defaultOpenLabel = new QLabel(floor1);
+            defaultOpenLabel->setMinimumHeight(55);
+            defaultOpenLabel->setText(tr("Still using the last opened application:"));
+            defaultOpenLabel->setContentsMargins(10,0,0,0);
+            layout1->addWidget(defaultOpenLabel);
 
+            m_defaultOpenWithWidget = FileLauchDialog::createDefaultAcitonWidget(m_info->uri(), floor1);
+            m_defaultOpenWithWidget->setMinimumHeight(30);
+            m_defaultOpenWithWidget->setContentsMargins(10,0,0,0);
+            layout1->addWidget(m_defaultOpenWithWidget);
         }
         else{
-//            if(m_info.get()->isDir() || m_info.get()->isDesktopFile()){
-//                targetTypeMsgLabel->setText(tr("How do you want to open %1 files ?").arg(m_info.get()->displayName()));
-//            }else{
-//                targetTypeMsgLabel->setText(tr("How do you want to open %1%2 files ?").arg(".").arg(m_info.get()->displayName().split(".").last()));
-//            }
-
-//            layout1->addWidget(targetTypeMsgLabel);
+            title = QString (tr("The opening mode of the %1 %2")).arg(tr("known")).arg(suffix);
             QLabel *defaultOpenLabel = new QLabel(floor1);
             defaultOpenLabel->setMinimumHeight(55);
             defaultOpenLabel->setText(tr("Open application is used by default:"));
+            defaultOpenLabel->setContentsMargins(10,0,0,0);
             layout1->addWidget(defaultOpenLabel);
-
-
             auto action = FileLaunchManager::getDefaultAction(m_info->uri());
-            OpenWithPropertiesPage::setNewLaunchAction(action,false);
-            m_defaultOpenWithWidget = OpenWithPropertiesPage::createDefaultOpenWithWidget(m_info->uri(), floor1);
+            FileLauchDialog::setNewLaunchAction(action,false);
 
-            m_defaultOpenWithWidget->setMinimumHeight(45);
+            m_defaultOpenWithWidget = FileLauchDialog::createDefaultAcitonWidget(m_info->uri(), floor1);
+            m_defaultOpenWithWidget->setMinimumHeight(40);
+            m_defaultOpenWithWidget->setContentsMargins(10,0,0,0);
             layout1->addWidget(m_defaultOpenWithWidget);
         }
     }else{
-        targetTypeMsgLabel->setText(tr("No application is set to open file %1").arg(m_info.get()->displayName()));
+        title = QString (tr("The opening mode of the %1 %2")).arg(tr("unknown")).arg(suffix);
+        targetTypeMsgLabel->setText(tr("No application is set to open file \"%1 %2\"").arg(tr("unknown")).arg(suffix));
+        targetTypeMsgLabel->setContentsMargins(10,0,0,0);
 
         layout1->addWidget(targetTypeMsgLabel);
         QLabel *tipsLabel = new QLabel(floor1);
         tipsLabel->setMinimumHeight(35);
         tipsLabel->setMaximumWidth(546);
         tipsLabel->setWordWrap(true);
-        tipsLabel->setText(tr("You can search in the Software Center for an application that can open this file, or select an existing application on your computer."));
+        tipsLabel->setText(tr("You can search in the Software Center for an application "
+                              "that can open this file, or select an existing application on your computer."));
+        tipsLabel->setContentsMargins(10,0,0,0);
         layout1->addWidget(tipsLabel);
 
     }
-        m_layout->addWidget(floor1);
+
+    setWindowFilePath(title);
+    m_layout->addWidget(floor1);
+    layout1->addStretch(1);
 }
 
 void FileLauchDialog::initFloorTwo(const QString &uri)
@@ -170,13 +187,11 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
     }else{
         otherOpenLabel->setText(tr("Select application:"));
     }
-
-    otherOpenLabel->setContentsMargins(22,0,0,0);
+    otherOpenLabel->setContentsMargins(10,-20,0,-20);
     layout2->addWidget(otherOpenLabel);
     otherOpenLabel->setFixedHeight(30);
 
     m_view = new QListWidget(this);
-
     auto actions = FileLaunchManager::getAllActions(uri);
     for (auto action : actions) {
         if (action->icon().isNull() ||
@@ -190,13 +205,14 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
         auto item = new QListWidgetItem(!action->icon().isNull()? action->icon(): QIcon::fromTheme("application-x-desktop"),
                                         action->text(),
                                         m_view);
+        item->setSizeHint(QSize(60, 48));
         m_view->addItem(item);
         m_hash.insert(item, action);
     }
     //自定义列表属性
     m_view->setFrameShape(QListWidget::NoFrame);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_view->setFixedHeight(180);
+    m_view->setFixedHeight(300);
     m_view->setAlternatingRowColors(true);
     m_view->setIconSize(QSize(40, 40));
     m_view->setStyleSheet("QListWidget::Item{margin-left:22px;}");
@@ -208,7 +224,8 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
         if (action == FileLaunchManager::getDefaultAction(m_info.get()->uri()))
             return ;
 
-        OpenWithPropertiesPage::setNewLaunchAction(action, false);
+//        OpenWithPropertiesPage::setNewLaunchAction(action, false);
+        FileLauchDialog::setNewLaunchAction(action, false);
     });
 
     layout2->addWidget(m_view);
@@ -225,6 +242,8 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
     if (info->isDir() || info->isDesktopFile()) {
         m_check_box->setEnabled(false);
     }
+
+    layout2->addStretch(1);
 }
 
 void FileLauchDialog::initFloorThree()
@@ -233,10 +252,10 @@ void FileLauchDialog::initFloorThree()
     QVBoxLayout *layout3 = new QVBoxLayout(this);
     floor3->setLayout(layout3);
     floor3->setMaximumHeight(60);
-    layout3->setContentsMargins(22,0,0,0);
+    layout3->setContentsMargins(10,0,0,0);
 
     QString str1;
-    str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
+    str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
           + tr("Choose other application")
           + "</a>";
     QLabel *allOpenLabel = new QLabel(str1, floor3);
@@ -249,7 +268,7 @@ void FileLauchDialog::initFloorThree()
     layout3->addWidget(allOpenLabel);
 
     QString str2;
-    str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
+    str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
           + tr("Go to application center")
           + "</a>";
     QLabel *otherOpenLabel = new QLabel(str2, floor3);
@@ -286,7 +305,6 @@ void FileLauchDialog::initFloorThree()
     layout3->addStretch(1);
 
     this->m_layout->addWidget(floor3);
-
 }
 
 void FileLauchDialog::initFloorFour()
@@ -431,3 +449,177 @@ void FileLauchDialog::moreAction()
     g_key_file_free(keyfile);
     return;
 }
+
+DefaultAcitonWidget* FileLauchDialog::createDefaultAcitonWidget(const QString &uri, QWidget *parent)
+{
+    if (!FileLauchDialog::actionGlobalData) {
+        FileLauchDialog::actionGlobalData = new ActionGlobalData;
+    }
+
+    return FileLauchDialog::actionGlobalData->createWidgetForUri(uri, parent);
+}
+
+void FileLauchDialog::setNewLaunchAction(FileLaunchAction *newAction, bool needUpdate)
+{
+    if (!FileLauchDialog::actionGlobalData) {
+        return;
+    }
+
+    FileLauchDialog::actionGlobalData->setActionForUri(newAction, needUpdate);
+}
+
+DefaultAcitonWidget::DefaultAcitonWidget(QWidget *parent) : QWidget(parent)
+{
+    m_appIconLabel = new QLabel(this);
+    m_appNameLabel = new QLabel(this);
+
+    //设置绝对宽度解决在一定概率下因为图标过大导致appName只剩 ‘...’ 问题
+    m_appIconLabel->setFixedWidth(48);
+
+    m_layout = new QHBoxLayout(this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setAlignment(Qt::AlignVCenter);
+
+    m_layout->addWidget(m_appIconLabel, 1);
+    m_layout->addWidget(m_appNameLabel, 9);
+    this->setFixedHeight(48);
+}
+
+void DefaultAcitonWidget::setAppName(QString appName)
+{
+    if (appName.isNull()) {
+        this->m_appNameLabel->setText(tr("No default app"));
+        this->m_appIconLabel->setFixedWidth(0);
+        this->m_layout->setSpacing(0);
+    } else {
+        this->m_appNameLabel->setText(appName);
+        this->m_appNameLabel->setToolTip(appName);
+    }
+}
+
+void DefaultAcitonWidget::setAppIcon(QIcon appIcon)
+{
+    if (appIcon.isNull()) {
+        this->m_appIconLabel->setPixmap(QIcon::fromTheme("application-x-desktop").pixmap(40,40));
+    } else {
+        this->m_appIconLabel->setPixmap(appIcon.pixmap(40, 40));
+    }
+}
+
+void DefaultAcitonWidget::resizeEvent(QResizeEvent *event)
+{
+    //m_appIconLabel->maximumWidth() = 32px;
+    int width = this->width() - m_appIconLabel->maximumWidth();
+
+    if (m_appNameLabel->fontMetrics().width(m_appNameLabel->text()) > width) {
+        m_appNameLabel->setText(m_appNameLabel->fontMetrics().elidedText(m_appNameLabel->text(), Qt::ElideRight, width));
+    }
+
+    QWidget::resizeEvent(event);
+}
+
+void DefaultAcitonWidget::setLaunchAction(FileLaunchAction* launchAction)
+{
+    if (launchAction) {
+        this->setAppIcon(launchAction->icon());
+        this->setAppName(launchAction->text());
+    } else {
+        this->setAppIcon(QIcon());
+        this->setAppName(QString());
+    }
+}
+
+DefaultAcitonWidget::~DefaultAcitonWidget()
+{
+
+}
+
+ActionGlobalData::ActionGlobalData(QObject *parent) : QObject(parent)
+{}
+
+DefaultAcitonWidget *ActionGlobalData::createWidgetForUri(const QString &uri, QWidget *parent)
+{
+    DefaultAcitonWidget* defaultOpenWithWidget = new DefaultAcitonWidget(parent);
+    QList<DefaultAcitonWidget*> *list = nullptr;
+
+    if (m_openWithWidgetMap.keys().contains(uri)) {
+        list = m_openWithWidgetMap.value(uri);
+    } else {
+        list = new QList<DefaultAcitonWidget*>;
+        m_openWithWidgetMap.insert(uri, list);
+    }
+    list->append(defaultOpenWithWidget);
+
+    if (!m_newActionMap.keys().contains(uri)) {
+        m_newActionMap.insert(uri, FileLaunchManager::getDefaultAction(uri));
+    }
+
+    defaultOpenWithWidget->setLaunchAction(m_newActionMap.value(uri));
+
+    return defaultOpenWithWidget;
+}
+
+void ActionGlobalData::setActionForUri(FileLaunchAction *newAction, bool needUpdate)
+{
+    if (!newAction) {
+        return;
+    }
+    FileLaunchAction* oldAction = nullptr;
+    if (m_newActionMap.keys().contains(newAction->getUri())) {
+        oldAction = m_newActionMap.value(newAction->getUri());
+
+        QString newAppId(g_app_info_get_id(newAction->gAppInfo()));
+        QString oldAppId(g_app_info_get_id(oldAction->gAppInfo()));
+        if (newAppId == oldAppId) {
+            return;
+        }
+    }
+
+    GAppInfo *appInfo = (GAppInfo*)g_desktop_app_info_new(g_app_info_get_id(newAction->gAppInfo()));
+    auto launchAction = new FileLaunchAction(newAction->getUri(), appInfo);
+
+    m_newActionMap.remove(newAction->getUri());
+    m_newActionMap.insert(newAction->getUri(), launchAction);
+    g_object_unref(appInfo);
+
+    if (needUpdate) {
+        auto widgetList = m_openWithWidgetMap.value(newAction->getUri());
+        for (DefaultAcitonWidget *openWithWidget : *widgetList) {
+            openWithWidget->setLaunchAction(launchAction);
+        }
+    }
+
+    if (oldAction) {
+        delete oldAction;
+    }
+}
+
+FileLaunchAction *ActionGlobalData::getActionByUri(const QString &uri)
+{
+    if (m_newActionMap.keys().contains(uri)) {
+        return m_newActionMap.value(uri);
+    }
+    return nullptr;
+}
+
+void ActionGlobalData::removeAction(const QString &uri)
+{
+    if (m_newActionMap.keys().contains(uri)) {
+        auto action = m_newActionMap.value(uri);
+        m_newActionMap.remove(uri);
+        delete action;
+    }
+
+    if (m_openWithWidgetMap.keys().contains(uri)) {
+        auto list = m_openWithWidgetMap.value(uri);
+        m_openWithWidgetMap.remove(uri);
+        list->clear();
+        delete list;
+    }
+
+    if ((m_newActionMap.count() == 0) && (m_openWithWidgetMap.count() == 0)) {
+        FileLauchDialog::actionGlobalData = nullptr;
+        this->deleteLater();
+    }
+}
+

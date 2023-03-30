@@ -115,7 +115,7 @@ IconView::IconView(QWidget *parent) : QListView(parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    setGridSize(QSize(136, 136));
+    setIconSize(QSize(86, 86));
     setGridSize(itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));
 
     m_renameTimer = new QTimer(this);
@@ -575,7 +575,6 @@ void IconView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::startDrag(Qt::DropActions supportedActions)
@@ -628,12 +627,6 @@ void IconView::startDrag(Qt::DropActions supportedActions)
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
     }
-}
-
-void IconView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QListView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::slotRename()
@@ -905,6 +898,11 @@ void IconView::doMultiSelect(bool isMultiSlelect)
     } else {
         disableMultiSelect();
     }
+}
+
+void IconView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
 }
 
 bool IconView::isEnableMultiSelect()

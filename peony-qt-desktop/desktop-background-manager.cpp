@@ -12,6 +12,8 @@
 #include <QFile>
 #include <global-settings.h>
 
+#include <gio/gio.h>
+
 #include <QDebug>
 
 static DesktopBackgroundManager *global_instance = nullptr;
@@ -47,6 +49,12 @@ void DesktopBackgroundManager::initGSettings()
     if (QGSettings::isSchemaInstalled(BACKGROUND_SETTINGS)) {
         m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+
+        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+        if (settings) {
+            bool writable = g_settings_is_writable(settings, "picture-filename");
+            m_shouldSyncAccountBackground = writable;
+        }
     } else {
         m_backgroundOption = "scaled";
     }
@@ -111,6 +119,13 @@ void DesktopBackgroundManager::setBackground()
 
 QString DesktopBackgroundManager::getAccountBackground()
 {
+    if (!m_shouldSyncAccountBackground) {
+        if (m_backgroundSettings) {
+            return m_backgroundSettings->get("pictureFilename").toString();
+        }
+        return nullptr;
+    }
+
     uid_t uid = getuid();
     QDBusInterface iface("org.freedesktop.Accounts", "/org/freedesktop/Accounts",
                          "org.freedesktop.Accounts",QDBusConnection::systemBus());
@@ -130,6 +145,10 @@ QString DesktopBackgroundManager::getAccountBackground()
 
 void DesktopBackgroundManager::setAccountBackground()
 {
+    if (!m_shouldSyncAccountBackground) {
+        return;
+    }
+
     QDBusInterface * interface = new QDBusInterface("org.freedesktop.Accounts",
                                      "/org/freedesktop/Accounts",
                                      "org.freedesktop.Accounts",

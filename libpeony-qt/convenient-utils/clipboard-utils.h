@@ -24,6 +24,7 @@
 #define CLIPBOARDUTILS_H
 
 #include <QObject>
+#include <QThread>
 #include "peony-core_global.h"
 
 namespace Peony {
@@ -76,12 +77,45 @@ public:
 
     const QString getLastTargetDirectoryUri();
 
+public Q_SLOTS:
+    void onClipboardDataChanged ();
+
 Q_SIGNALS:
     void clipboardChanged();
 
 private:
     explicit ClipboardUtils(QObject *parent = nullptr);
     ~ClipboardUtils();
+};
+
+// 针对云桌面进行定制
+// 临时解决方案
+class ClipboardThread : public QThread
+{
+    Q_OBJECT
+public:
+    void run () override;
+    void setTargetUri (const QString& u);
+
+    QString getTargetUri ();
+    static ClipboardThread* getInstance ();
+
+Q_SIGNALS:
+    void startOp (QStringList& str, bool isMove);
+
+private:
+    explicit ClipboardThread ();
+    ~ClipboardThread ();
+    QStringList getUrlsByX11 ();
+    explicit ClipboardThread (ClipboardThread&) = delete;
+
+private:
+    bool mIsMove = false; // false 表示Copy true 表示 Move
+
+    QString mTargetUri;
+    QStringList mUris;
+
+    static ClipboardThread* gInstance;
 };
 
 }

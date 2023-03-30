@@ -155,6 +155,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         /*!
           \bug can not expanded? enumerator can not get prepared signal, why?
           */
+        bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                    Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+        if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+            this->setRowHidden(index.row(), index.parent(), true);
+            return;
+        }
         item->findChildrenAsync();
     });
 
@@ -315,6 +321,25 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         m_proxy_model->invalidate();
     });
 
+    connect(Peony::GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString& key){
+        if (SHOW_NETWORK == key) {
+            for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+                auto index = m_proxy_model->index(i, 0);
+                auto item = m_proxy_model->itemFromIndex(index);
+                bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                            Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+                if (item->type() == SideBarAbstractItem::NetWorkItem) {
+                    this->setRowHidden(index.row(), index.parent(), !isShowNetwork);
+                    if (!isShowNetwork) {
+                        item->findChildrenAsync();
+                    }
+                    return;
+                }
+            }
+            this->viewport()->update();
+        }
+    });
+
     connect(m_model, &SideBarModel::signal_collapsedChildren, this, [=](const QModelIndex &index){
         QModelIndex modelIndex = m_proxy_model->mapFromSource(index);
         collapse(modelIndex);
@@ -443,16 +468,15 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
         return;
     }
 
+    // try fixing #133429.
+    if (m_currSelectedItem->getDevice().startsWith("/dev/sr") && uri.startsWith("computer://")) {
+        return;
+    }
+
     //some side bar item doesn't have a uri.
     //do not emit signal with a null uri to window.
     if (!uri.isNull())
         Q_EMIT this->updateWindowLocationRequest(uri);
-}
-
-void NavigationSideBar::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void NavigationSideBar::keyPressEvent(QKeyEvent *event)
@@ -497,7 +521,6 @@ void NavigationSideBar::focusInEvent(QFocusEvent *event)
         }
     }
     GlobalSettings::getInstance()->setValue("LAST_FOCUS_PEONY_WINID", dynamic_cast<MainWindow *>(this->topLevelWidget())->winId());
-    setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void NavigationSideBar::wheelEvent(QWheelEvent *event)
@@ -560,7 +583,7 @@ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionV
 //        //painter->setClipPath(rightRoundedRegion);
 //    }
 
-    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QStyledItemDelegate::paint(painter, option, index);
     painter->restore();
 }
@@ -642,7 +665,7 @@ void NavigationSideBarStyle::drawPrimitive(QStyle::PrimitiveElement element, con
     switch (element) {
     case QStyle::PE_IndicatorItemViewItemDrop: {
         /* hotfixbug#99344：拖拽文件到侧边栏，出现黑框 */
-        painter->setRenderHint(QPainter::Antialiasing, true);/* 反锯齿 */
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);/* 反锯齿 */
         /* 按设计要求，边框颜色为调色板highlight值，圆角为6px */
         QColor color = option->palette.color(QPalette::Highlight);
         painter->setPen(color);
