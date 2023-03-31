@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0331) yangtze; urgency=medium
+
+  * 更新桌面翻译文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 31 Mar 2023 13:37:40 +0800
+
 peony (4.0.0.0-ok1) yantze; urgency=medium
 
   * new upstream release.
