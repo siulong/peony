@@ -444,7 +444,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="625"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="630"/>
         <source>All tags...</source>
         <translation>所有标记...</translation>
     </message>
@@ -1069,12 +1069,12 @@ Do you want to unmount forcely?</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1546"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1547"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1547"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1548"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
@@ -1266,7 +1266,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="748"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="753"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>

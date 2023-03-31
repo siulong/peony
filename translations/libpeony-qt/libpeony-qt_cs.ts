@@ -2069,40 +2069,40 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="150"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="303"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="423"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="697"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1288"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="306"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="426"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="700"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1291"/>
         <source>Move file error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="906"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="909"/>
         <source>Create file error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="912"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="915"/>
         <source>Cannot opening file, permission denied!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="914"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="917"/>
         <source>File:%1 was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1204"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1207"/>
         <source>Invalid Operation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1255"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1258"/>
         <source>File delete error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1290"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1293"/>
         <source>Burn failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2111,7 +2111,7 @@ Do you want to delete the link file?</source>
         <translation type="obsolete">Dosya silme</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1257"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1260"/>
         <source>Invalid Operation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2615,17 +2615,17 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::HeaderBar</name>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="898"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="901"/>
         <source>Spread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="899"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="902"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="900"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="903"/>
         <source>Close</source>
         <translation type="unfinished">Kapat</translation>
     </message>
@@ -2821,52 +2821,52 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::PropertiesWindow</name>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="332"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="335"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="336"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="339"/>
         <source>Recent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="344"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="347"/>
         <source>Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="344"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="347"/>
         <source> %1 Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="350"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="353"/>
         <source>usershare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="357"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="360"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="364"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="367"/>
         <source>Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="464"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="467"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="465"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="468"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="473"/>
+        <location filename="../../libpeony-qt/windows/properties-window.cpp" line="476"/>
         <source>Restore</source>
         <translation type="unfinished"></translation>
     </message>

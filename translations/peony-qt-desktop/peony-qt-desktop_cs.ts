@@ -9,32 +9,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="668"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="667"/>
         <source>New Folder</source>
         <translation type="unfinished">Yeni Klasör</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="760"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="759"/>
         <source>set background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="979"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="978"/>
         <source>Open Link failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="980"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="979"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="995"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="994"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="996"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="995"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -285,27 +285,27 @@
         <translation type="vanished">Masaüstü</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="500"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="508"/>
         <source>Close the peony desktop window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="503"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="511"/>
         <source>Take over the dbus service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="506"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="514"/>
         <source>Take over the desktop displaying</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="509"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="517"/>
         <source>Setup backgrounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="512"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="520"/>
         <source>Clear standard icons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -313,12 +313,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="76"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="74"/>
         <source>set background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="81"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="79"/>
         <source>display settings</source>
         <translation type="unfinished"></translation>
     </message>

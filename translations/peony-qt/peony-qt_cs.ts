@@ -368,7 +368,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="625"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="630"/>
         <source>All tags...</source>
         <translation type="unfinished">Tüm etiketler...</translation>
     </message>
@@ -940,12 +940,12 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1546"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1547"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1547"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1548"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1085,7 +1085,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="748"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="753"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>
