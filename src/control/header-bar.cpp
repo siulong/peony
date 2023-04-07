@@ -217,6 +217,14 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         m_view_type_menu->insertAction(0,m_preview_action);
     });
 
+    //fix bug#128963, QToolButton not update status issue
+    connect(m_view_type_menu, &QMenu::aboutToHide, this, [=](){
+        viewType->setAttribute(Qt::WA_UnderMouse, false);
+        viewType->setDown(false);
+        viewType->releaseMouse();
+        viewType->update();
+    });
+
     m_preview_action->setCheckable(true);
 
     a->setMenu(m_view_type_menu);
@@ -282,6 +290,14 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         m_sort_type_menu->setOriginPathVisible(originPathVisible);
         m_sort_type_menu->setSortType(m_window->getCurrentSortColumn());
         m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
+    });
+
+    //fix bug#128963, QToolButton not update status issue
+    connect(m_sort_type_menu, &QMenu::aboutToHide, this, [=](){
+        sortType->setAttribute(Qt::WA_UnderMouse, false);
+        sortType->setDown(false);
+        sortType->releaseMouse();
+        sortType->update();
     });
 
     addSpacing(3);
