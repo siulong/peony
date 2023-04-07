@@ -317,6 +317,22 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             }
         }
     });
+
+    //fix bug#166060, 将监听字体变化的处理放在构造函数中，避免重复调用或者闪退等问题
+    //监听字体大小改变
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+            double fontSize = fontSetting->get("systemFontSize").toDouble();
+            for(int index=0;index<m_classify_list.length();index++){
+                if(fontSize < 12){
+                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+                }else{
+                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 +45);
+                }
+            }
+        });
+    }
 }
 
 void TabWidget::initAdvanceSearch()
@@ -485,18 +501,6 @@ void TabWidget::addNewConditionBar()
     }
     else{
         classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
-    }
-    //监听字体大小改变
-    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
-        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
-            double fontSize = fontSetting->get("systemFontSize").toDouble();
-            if(fontSize < 12){
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-            }else{
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
-            }
-        });
     }
 
     auto classifyModel = new QStringListModel(optionBar);
