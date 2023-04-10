@@ -186,6 +186,7 @@ retry:
                             except.dlgType = ED_WARNING;
                             except.errorStr = tr("An unmanageable conflict exists. Please check the recycle bin.");
                             Q_EMIT errored(except);
+                            g_error_free(error);
                         }
                         g_file_set_attribute_string(dest_file, "metadata::orig-path", orig_path, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
                         g_object_unref(dest_file);
