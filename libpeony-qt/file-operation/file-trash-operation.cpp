@@ -173,13 +173,20 @@ retry:
 //                            g_free(fileName);
 //                        }
                     } else if (err->code == G_IO_ERROR_FILENAME_TOO_LONG) {
+                        GError *error = nullptr;
                         char *orig_path = g_file_get_path(srcFile.get()->get());
                         char *basename = g_file_get_basename(srcFile.get()->get());
                         QString trashDir = QString(g_get_user_data_dir()) + "/Trash/files";
                         GFile *trash = g_file_new_for_path(trashDir.toUtf8().constData());
                         GFile *dest_file = g_file_resolve_relative_path(trash, basename);
                         g_object_unref(trash);
-                        g_file_move(srcFile.get()->get(), dest_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, nullptr, nullptr, nullptr, nullptr);
+                        g_file_move(srcFile.get()->get(), dest_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, nullptr, nullptr, nullptr, &error);
+                        if (error->code == G_IO_ERROR_EXISTS) {
+                            except.errorCode = error->code;
+                            except.dlgType = ED_WARNING;
+                            except.errorStr = tr("An unmanageable conflict exists. Please check the recycle bin.");
+                            Q_EMIT errored(except);
+                        }
                         g_file_set_attribute_string(dest_file, "metadata::orig-path", orig_path, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
                         g_object_unref(dest_file);
                         if (orig_path) {
