@@ -887,7 +887,7 @@ void AdvancedPermissionsPage::initFloorFour()
     QHBoxLayout *hBoxLayout2 = new QHBoxLayout;
     hBoxLayout2->setContentsMargins(22, 0, 22, 0);
     hBoxLayout2->setSpacing(0);
-    m_saveBtn = new QPushButton(tr("Save"));
+    m_saveBtn = new QPushButton(tr("Apply"));
     m_cancelBtn = new QPushButton(tr("Cancel"));
     hBoxLayout2->addStretch(1);
     hBoxLayout2->addWidget(m_saveBtn);
