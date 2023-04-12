@@ -769,7 +769,16 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
             //未选中时文字颜色 - Text color when not selected
             painter->setPen(palette.color(QPalette::ButtonText));
 
-            if (tab->state & QStyle::State_Selected) {
+            if (tab->state & QStyle::State_Sunken) {
+                painter->save();
+                QColor color = palette.color(QPalette::Button).lighter(70);
+                painter->setPen(Qt::NoPen);
+                painter->setBrush(color);
+
+                painter->setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+                painter->drawPath(path);
+                painter->restore();
+            } else if (tab->state & QStyle::State_Selected) {
                 painter->save();
                 painter->setPen(Qt::NoPen);
                 painter->setBrush(palette.brush(QPalette::Highlight));
@@ -782,7 +791,8 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
                 painter->setPen(palette.color(QPalette::BrightText));
             } else if (tab->state & QStyle::State_MouseOver) {
                 painter->save();
-                QColor color = palette.color(QPalette::Highlight).lighter(140);
+                //QColor color = palette.color(QPalette::Highlight).lighter(140);
+                QColor color = palette.color(QPalette::Button).lighter(90);
                 painter->setPen(Qt::NoPen);
                 painter->setBrush(color);
 
