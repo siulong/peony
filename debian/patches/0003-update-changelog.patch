@@ -1,0 +1,42 @@
+From: Yue-Lan <lanyue@ubuntukylin.com>
+Date: Wed, 12 Apr 2023 09:52:31 +0800
+Subject: update changelog.
+
+---
+ src/control/header-bar.cpp | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/src/control/header-bar.cpp b/src/control/header-bar.cpp
+index 6a6f9d4..8db89a1 100644
+--- a/src/control/header-bar.cpp
++++ b/src/control/header-bar.cpp
+@@ -217,6 +217,14 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
+         m_view_type_menu->insertAction(0,m_preview_action);
+     });
+ 
++    //fix bug#128963, QToolButton not update status issue
++    connect(m_view_type_menu, &QMenu::aboutToHide, this, [=](){
++        viewType->setAttribute(Qt::WA_UnderMouse, false);
++        viewType->setDown(false);
++        viewType->releaseMouse();
++        viewType->update();
++    });
++
+     m_preview_action->setCheckable(true);
+ 
+     a->setMenu(m_view_type_menu);
+@@ -284,6 +292,14 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
+         m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
+     });
+ 
++    //fix bug#128963, QToolButton not update status issue
++    connect(m_sort_type_menu, &QMenu::aboutToHide, this, [=](){
++        sortType->setAttribute(Qt::WA_UnderMouse, false);
++        sortType->setDown(false);
++        sortType->releaseMouse();
++        sortType->update();
++    });
++
+     addSpacing(3);
+ 
+     // Add by wnn, add tool button when select item
