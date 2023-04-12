@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0412) yangtze; urgency=medium
+
+  * close-cd #128963 按钮悬停效果异常问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 12 Apr 2023 09:51:32 +0800
+
 peony (4.0.0.0-ok2~0331) yangtze; urgency=medium
 
   * 更新桌面翻译文件
