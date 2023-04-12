@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0413) yangtze; urgency=medium
+
+  * colse-cd #130425 【文件管理器】插拔手机后未退出手机目录
+
+ -- yangling <yangling@kylinos-src>  Wed, 12 Apr 2023 14:25:25 +0800
+
 peony (4.0.0.0-ok2~0412) yangtze; urgency=medium
 
   * close-cd #128963 按钮悬停效果异常问题

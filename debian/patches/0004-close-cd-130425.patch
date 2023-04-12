@@ -1,0 +1,98 @@
+From: yangling <yangling@kylinos.cn>
+Date: Wed, 12 Apr 2023 14:32:39 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgIzEzMDQyNSDjgJDmlofku7bnrqHnkIblmajjgJHmj5I=?=
+ =?utf-8?b?5ouU5omL5py65ZCO5pyq6YCA5Ye65omL5py655uu5b2V?=
+
+---
+ libpeony-qt/model/file-item.cpp           |  7 +++++--
+ libpeony-qt/volumeManager.cpp             |  1 +
+ libpeony-qt/windows/properties-window.cpp | 14 ++++++++++++--
+ src/control/tab-widget.cpp                |  6 ++----
+ 4 files changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/libpeony-qt/model/file-item.cpp b/libpeony-qt/model/file-item.cpp
+index 34384a3..abb2042 100644
+--- a/libpeony-qt/model/file-item.cpp
++++ b/libpeony-qt/model/file-item.cpp
+@@ -689,10 +689,13 @@ void FileItem::onDeleted(const QString &thisUri)
+             tmpItem = tmpItem->m_parent;
+         }
+         if (!tmpUri.isNull()) {
+-            if(tmpUri.startsWith("file:///media"))
++            if(tmpUri.startsWith("file:///media")){
+                 m_model->sendPathChangeRequest("computer:///", tmpItem->uri());
+-            else
++            }else if(tmpUri.startsWith("file:///run/user")){
++                m_model->sendPathChangeRequest("computer:///", thisUri);
++            }else{
+                 m_model->setRootUri(tmpUri);
++            }
+         } else {
+             //! \note Fix direct setRootUri() prevents view switch error
+             // m_model->setRootUri("file:///");
+diff --git a/libpeony-qt/volumeManager.cpp b/libpeony-qt/volumeManager.cpp
+index a796bed..5ac6fda 100644
+--- a/libpeony-qt/volumeManager.cpp
++++ b/libpeony-qt/volumeManager.cpp
+@@ -604,6 +604,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
+     }
+     else{
+         Q_EMIT pThis->mountRemove(mountPoint);/* 发出更新item的moun属性的信号,手机卸载时 */
++        Q_EMIT pThis->signal_unmountFinished(mountPoint);
+     }
+ 
+     delete mountItem;
+diff --git a/libpeony-qt/windows/properties-window.cpp b/libpeony-qt/windows/properties-window.cpp
+index a6e674e..c217ec6 100644
+--- a/libpeony-qt/windows/properties-window.cpp
++++ b/libpeony-qt/windows/properties-window.cpp
+@@ -765,7 +765,16 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
+             //未选中时文字颜色 - Text color when not selected
+             painter->setPen(palette.color(QPalette::ButtonText));
+ 
+-            if (tab->state & QStyle::State_Selected) {
++            if (tab->state & QStyle::State_Sunken) {
++                painter->save();
++                QColor color = palette.color(QPalette::Button).lighter(70);
++                painter->setPen(Qt::NoPen);
++                painter->setBrush(color);
++
++                painter->setRenderHint(QPainter::Antialiasing);  // 反锯齿;
++                painter->drawPath(path);
++                painter->restore();
++            } else if (tab->state & QStyle::State_Selected) {
+                 painter->save();
+                 painter->setPen(Qt::NoPen);
+                 painter->setBrush(palette.brush(QPalette::Highlight));
+@@ -778,7 +787,8 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
+                 painter->setPen(palette.color(QPalette::BrightText));
+             } else if (tab->state & QStyle::State_MouseOver) {
+                 painter->save();
+-                QColor color = palette.color(QPalette::Highlight).lighter(140);
++                //QColor color = palette.color(QPalette::Highlight).lighter(140);
++                QColor color = palette.color(QPalette::Button).lighter(90);
+                 painter->setPen(Qt::NoPen);
+                 painter->setBrush(color);
+ 
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index 0fe6088..9bbb480 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -819,15 +819,13 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
+         uri = Peony::FileUtils::urlDecode(uri);
+         qDebug()<<"decodedSrcUri:"<<decodedSrcUri<<" uri:"<<uri<<" total count: "<<m_stack->count()<<" index:"<<index<<" currentIndex:"<<currentIndex;
+         /* 不属于该设备的tab页不处理；属于该设备：文件管理器的当前标签页跳转到计算机页，其余标签页均关闭 */
+-        bool bRemoteServerHandleCond = (Peony::FileUtils::isRemoteServerUri(decodedSrcUri) && uri.contains(decodedSrcUri));/* smb服务进入内部目录后卸载,link to bug#98623 */
+-        if((decodedSrcUri.contains(uri) || bRemoteServerHandleCond) && uri != "file:///" && uri!= "filesafe:///")
++        if(!decodedSrcUri.isEmpty() && uri.contains(decodedSrcUri) && uri != "file:///" && uri!= "filesafe:///")
+         {
+             //all window accessed mount path should goto self top path，related to bug#104551
+             if((Peony::GlobalSettings::getInstance()->getValue("LAST_FOCUS_PEONY_WINID") == dynamic_cast<MainWindow *>(this->topLevelWidget())->winId()
+                 ||KWindowSystem::hasWId(dynamic_cast<MainWindow *>(this->topLevelWidget())->winId())
+                 ||QApplication::topLevelWidgets().contains(this->topLevelWidget()))
+-                    && index == currentIndex
+-                    && (decodedSrcUri == uri || Peony::FileUtils::isRemoteServerUri(decodedSrcUri))){/* 远程服务进入内部目录后卸载,link to bug#98623 */
++                    && index == currentIndex){
+                 qDebug()<<"sourceUri:"<<sourceUri<<"change to self top path"<<" index:"<<currentIndex;
+                 if (uri.startsWith("filesafe:///"))
+                     this->goToUri("filesafe:///", true, true);  /* 跳转到文件保护箱路径 */
