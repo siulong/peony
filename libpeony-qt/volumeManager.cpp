@@ -604,6 +604,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     }
     else{
         Q_EMIT pThis->mountRemove(mountPoint);/* 发出更新item的moun属性的信号,手机卸载时 */
+        Q_EMIT pThis->signal_unmountFinished(mountPoint);
     }
 
     delete mountItem;
