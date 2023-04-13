@@ -344,7 +344,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
         this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1) {
+    if(getSelections().count()>1) {
         multiSelect();
     }
 
@@ -364,8 +364,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
 
     //if click left button at blank space, it should select nothing
     //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid();
-    bool isClearSelection = !(qApp->property("tabletMode").toBool() && isEnableMultiSelect());
-    if(isClearSelection && (!indexAt(e->pos()).isValid()) )
+    if(!indexAt(e->pos()).isValid())
     {
         this->clearSelection();
         disableMultiSelect();
@@ -456,7 +455,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         doAutoScroll();
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
 }
 
@@ -839,18 +838,26 @@ void ListView::adjustColumnsSize()
 
 void ListView::multiSelect()
 {
+    if (selectionMode() == MultiSelection) {
+        return;
+    }
     if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
         m_multi_select = true;
     }
     setSelectionMode(MultiSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void ListView::disableMultiSelect()
 {
+    if (selectionMode() == ExtendedSelection) {
+        return;
+    }
     m_multi_select = false;
     setSelectionMode(ExtendedSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void ListView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -1108,7 +1115,9 @@ ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
     setAutoFillBackground(true);
     m_view = new ListView(this);
 
-    DirectoryViewHelper::globalInstance()->addListViewWithDirectoryViewWidget(m_view, this);
+    DirectoryViewHelper * viewHelper = DirectoryViewHelper::globalInstance();
+    viewHelper->addListViewWithDirectoryViewWidget(m_view, this);
+    connect(m_view, &ListView::updateSelectStatus, viewHelper, &DirectoryViewHelper::updateSelectStatus);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())

@@ -355,7 +355,7 @@ void IconView::mouseMoveEvent(QMouseEvent *e)
         doAutoScroll();
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
     viewport()->update(viewport()->rect());
 }
@@ -388,12 +388,12 @@ void IconView::mousePressEvent(QMouseEvent *e)
         selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
 
     viewport()->update(viewport()->rect());
 
-    if (!qApp->property("tabletMode").toBool() && !itemIndex.isValid()) {
+    if (!itemIndex.isValid()) {
         disableMultiSelect();
     }
     //FIXME: Modify the icon style, only click on the text to respond, click on the icon to not respond
@@ -871,18 +871,26 @@ void IconView::clearIndexWidget()
 
 void IconView::multiSelect()
 {
+    if (selectionMode() == MultiSelection) {
+        return;
+    }
     if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
         m_multi_select = true;
     }
     setSelectionMode(MultiSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void IconView::disableMultiSelect()
 {
+    if (selectionMode() == ExtendedSelection) {
+        return;
+    }
     m_multi_select = false;
     setSelectionMode(ExtendedSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void IconView::setSearchKey(const QString &key)
@@ -918,7 +926,10 @@ IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
     layout->setMargin(0);
     layout->setSpacing(0);
     m_view = new IconView(this);
-    DirectoryViewHelper::globalInstance()->addIconViewWithDirectoryViewWidget(m_view, this);
+
+    DirectoryViewHelper * viewHelper = DirectoryViewHelper::globalInstance();
+    viewHelper->addIconViewWithDirectoryViewWidget(m_view, this);
+    connect(m_view, &IconView::updateSelectStatus, viewHelper, &DirectoryViewHelper::updateSelectStatus);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())

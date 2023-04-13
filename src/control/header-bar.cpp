@@ -452,20 +452,11 @@ void HeaderBar::switchSelectStatus(bool select)
     if (m_tablet_mode) {
         // fixme: 没有实现directoryviewiface2接口的view不应该显示全选之类的选项
         //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加多选模式
-        if (select) {
-            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(true);
-            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(true);
-            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(true);
-        } else {
-            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
-            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
-            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
-        }
-        updateSelectAllStatus(true);
+        updateSelectStatus(true);
         return;
     }
 
-    if (select) {
+    if (m_is_intel && select) {
         m_actions.find(HeaderBarAction::SortType).value()->setVisible(false);
         m_actions.find(HeaderBarAction::ViewType).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Copy).value()->setVisible(true);
@@ -633,7 +624,7 @@ void HeaderBar::addTabletMenu()
 
     tabletAction->setVisible(false);
     connect(tabletAction, &QAction::triggered, [=]() {
-        updateSelectAllStatus(false);
+        updateSelectStatus(false);
     });
 
     tabletAction = addAction(tr("Select"));
@@ -646,18 +637,19 @@ void HeaderBar::addTabletMenu()
         auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
         if (iface2) {
             if (iface2->isEnableMultiSelect()) {
-                iface2->doMultiSelect(false);
-                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
-                selectDone->setText(tr("Select"));
                 quitMultiSelect();
             } else {
                 iface2->doMultiSelect(true);
-                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(true);
-                updateSelectAllStatus(true);
-                selectDone->setText(tr("Select Done"));
+                updateSelectStatus(true);
             }
          }
         m_window->getCurrentPage()->getView()->repaintView();
+    });
+
+    connect(Peony::DirectoryViewHelper::globalInstance(), &Peony::DirectoryViewHelper::updateSelectStatus, this, [=](bool status){
+        if (m_tablet_mode) {
+            updateSelectStatus(true);
+        }
     });
 
     addSpacing(2);
@@ -692,6 +684,7 @@ void HeaderBar::addTabletMenu()
         } else {
             Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
         }
+        updateSelectStatus(true);
     });
 }
 
@@ -720,6 +713,8 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(false);
         }
+        updateSelectStatus(true);
+
     } else {
         m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
@@ -821,11 +816,8 @@ void HeaderBar::quitMultiSelect()
         auto select = qobject_cast<QToolButton *>(widgetForAction(action));
         select->setText(tr("Select"));
 
-        if (view->getAllFileUris().count() == 0) {
-            action->setVisible(false);
-        } else {
-            action->setVisible(true);
-        }
+        bool status = view->getAllFileUris().count() > 0 ? true : false;
+        action->setVisible(status);
 
         auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
         if (iface2 && iface2->isEnableMultiSelect()) {
@@ -838,10 +830,31 @@ void HeaderBar::quitMultiSelect()
     }
 }
 
-void HeaderBar::updateSelectAllStatus(bool autoUpdate)
+void HeaderBar::updateSelectStatus(bool autoUpdate)
 {
+    QAction *action = m_actions.find(HeaderBarAction::TabletSelectDone).value();
+    auto selectDone = qobject_cast<QToolButton *>(widgetForAction(action));
+    if(!m_window->getCurrentPage())
+        return;
     auto view = m_window->getCurrentPage()->getView();
-    auto action = m_actions.find(HeaderBarAction::TabletSelectAll).value();
+    auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
+    if (!iface2)
+        return ;
+
+    if (!iface2->isEnableMultiSelect()) {
+        m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+        bool status = view->getAllFileUris().count() > 0? true : false;
+        m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(status);
+        selectDone->setText(tr("Select"));
+        return;
+    }
+    selectDone->setText(tr("Select Done"));
+
+    action = m_actions.find(HeaderBarAction::TabletSelectAll).value();
+    action->setVisible(true);
     auto selectAll = qobject_cast<QToolButton *>(widgetForAction(action));
 
     if (autoUpdate) {
@@ -854,15 +867,15 @@ void HeaderBar::updateSelectAllStatus(bool autoUpdate)
             m_isSelectAll = false;
             selectAll->setText(tr("Select All Item"));
         }
+        bool status = num > 0? true : false;
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(status);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(status);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(status);
     } else {
         if (m_isSelectAll) {
             view->invertSelections();
             m_isSelectAll = false;
             selectAll->setText(tr("Select All Item"));
-            auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
-            if (iface2 && iface2->isEnableMultiSelect()) {
-               iface2->doMultiSelect(true);
-            }
         } else {
             view->setSelections(QStringList());
             view->invertSelections();

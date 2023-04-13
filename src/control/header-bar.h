@@ -120,7 +120,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *e);
     void addTabletMenu();
     void addTopMenu();
-    void updateSelectAllStatus(bool autoUpdate);
+    void updateSelectStatus(bool autoUpdate);
 
 private Q_SLOTS:
     void updateIcons();
