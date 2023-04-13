@@ -224,8 +224,9 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo, const QString u
     m_sharedInfoMap[sharedInfo->name] = sharedInfo;
     if (m_usershareAclMap.contains(sharedInfo->name) && !usershareAcl.isEmpty()) {
         m_usershareAclMap.remove(sharedInfo->name);
-        m_usershareAclMap.insert(sharedInfo->name, usershareAcl);
     }
+    m_usershareAclMap.insert(sharedInfo->name, usershareAcl);
+
     m_mutex.unlock();
 
     args << "usershare" << "add";
