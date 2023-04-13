@@ -103,6 +103,7 @@ public:
 
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
+    void updateSelectStatus(bool status);
 
 public Q_SLOTS:
     //location

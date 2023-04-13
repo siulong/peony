@@ -51,6 +51,9 @@ public:
     void addListViewWithDirectoryViewWidget(DirectoryViewIface2 *listView, DirectoryViewWidget *widget);
     DirectoryViewIface2 *getViewIface2ByDirectoryViewWidget(DirectoryViewWidget *widget);
 
+Q_SIGNALS:
+   void updateSelectStatus(bool status);
+
 private:
     explicit DirectoryViewHelper(QObject *parent = nullptr);
 
