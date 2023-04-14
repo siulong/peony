@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0414) yangtze; urgency=medium
+
+  * close-cd #130104 属性tabs标签页悬停和点击的颜色显示非灰色系
+
+ -- xiangwenjie <xiangwenjie@kylinos.cn>  Fri, 14 Apr 2023 09:52:11 +0800
+
 peony (4.0.0.0-ok2~0413) yangtze; urgency=medium
 
   * colse-cd #130425 【文件管理器】插拔手机后未退出手机目录
