@@ -358,12 +358,13 @@ void FileLauchDialog::paintEvent(QPaintEvent *event)
 bool FileLauchDialog::event(QEvent *event)
 {
     //失去焦点即关闭窗口
-    if (event->type() == QEvent::ActivationChange) {
-        if (QApplication::activeWindow() != this) {
-            this->close();
-            return false;
-        }
-    }
+    //comment this code, fix bug#164644, open other app auto close issue
+//    if (event->type() == QEvent::ActivationChange) {
+//        if (QApplication::activeWindow() != this) {
+//            this->close();
+//            return false;
+//        }
+//    }
     return QWidget::event(event);
 }
 
