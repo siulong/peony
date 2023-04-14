@@ -689,10 +689,13 @@ void FileItem::onDeleted(const QString &thisUri)
             tmpItem = tmpItem->m_parent;
         }
         if (!tmpUri.isNull()) {
-            if(tmpUri.startsWith("file:///media"))
+            if(tmpUri.startsWith("file:///media")){
                 m_model->sendPathChangeRequest("computer:///", tmpItem->uri());
-            else
+            }else if(tmpUri.startsWith("file:///run/user")){
+                m_model->sendPathChangeRequest("computer:///", thisUri);
+            }else{
                 m_model->setRootUri(tmpUri);
+            }
         } else {
             //! \note Fix direct setRootUri() prevents view switch error
             // m_model->setRootUri("file:///");
