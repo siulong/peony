@@ -365,8 +365,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
             Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
         }
     });
-    //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加关闭控件
-    addTopMenu();
 
     for (auto action : actions()) {
         auto w = widgetForAction(action);
@@ -707,9 +705,6 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
         m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(true);
-        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(true);
-        m_actions.find(HeaderBarAction::Option).value()->setVisible(true);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(false);
         }
@@ -721,9 +716,6 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::Option).value()->setVisible(false);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(true);
         }
@@ -753,56 +745,6 @@ bool HeaderBar::CopyOrMoveTo(bool isCut)
         Peony::ClipboardUtils::pasteClipboardFiles(targetPath);
     }
     return true;
-}
-
-void HeaderBar::addTopMenu()
-{
-    QToolButton *optionButton = new QToolButton(this);
-    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
-    optionButton->setToolTip(tr("Option"));
-    optionButton->setAutoRaise(true);
-    optionButton->setFixedSize(QSize(48, 48));
-    optionButton->setIconSize(QSize(16, 16));
-    optionButton->setPopupMode(QToolButton::InstantPopup);
-    optionButton->setProperty("isOptionButton", true);
-    optionButton->setProperty("isWindowButton", 1);
-
-    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
-    optionButton->setMenu(operationMenu);
-    QAction *a = addWidget(optionButton);
-    m_actions.insert(HeaderBarAction::Option, a);
-
-    QToolButton *minimize = new QToolButton(this);
-    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
-    minimize->setToolTip(tr("Minimize"));
-    minimize->setAutoRaise(true);
-    minimize->setFixedSize(QSize(48, 48));
-    minimize->setIconSize(QSize(16, 16));
-    minimize->setProperty("isWindowButton", 1);
-    a = addWidget(minimize);
-    m_actions.insert(HeaderBarAction::TabletMin, a);
-    connect(minimize, &QToolButton::clicked, this, [=]() {
-        KWindowSystem::minimizeWindow(m_window->winId());
-        m_window->showMinimized();
-    });
-
-    QToolButton *close = new QToolButton(this);
-    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
-    close->setToolTip(tr("Close"));
-    close->setAutoRaise(true);
-    close->setFixedSize(QSize(48, 48));
-    close->setIconSize(QSize(16, 16));
-
-    //fix bug#143507, button color is not red issue
-    close->setProperty("isWindowButton", 2);
-    close->setProperty("useIconHighlightEffect", 0x8);
-
-    a = addWidget(close);
-    m_actions.insert(HeaderBarAction::TabletClose, a);
-    a->setVisible(false);
-    connect(close, &QToolButton::clicked, this, [=]() {
-        m_window->close();
-    });
 }
 
 void HeaderBar::quitMultiSelect()
@@ -1214,13 +1156,62 @@ void HeaderBarContainer::addHeaderBar(HeaderBar *headerBar)
 
     headerBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addWidget(headerBar);
-
     m_internal_widget->setLayout(m_layout);
     addWidget(m_internal_widget);
 
 //    m_header_bar->m_window->installEventFilter(this);
 }
+void HeaderBarContainer::addMenu(MainWindow *m_window)
+{
+    m_topMenu = new QWidget(this);
+    QHBoxLayout *layout = new QHBoxLayout(m_topMenu);
 
+    QToolButton *optionButton = new QToolButton(this);
+    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
+    optionButton->setToolTip(tr("Option"));
+    optionButton->setAutoRaise(true);
+    optionButton->setFixedSize(QSize(48, 48));
+    optionButton->setIconSize(QSize(16, 16));
+    optionButton->setPopupMode(QToolButton::InstantPopup);
+    optionButton->setProperty("isOptionButton", true);
+    optionButton->setProperty("isWindowButton", 1);
+
+    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
+    optionButton->setMenu(operationMenu);
+
+    QToolButton *minimize = new QToolButton(this);
+    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
+    minimize->setToolTip(tr("Minimize"));
+    minimize->setAutoRaise(true);
+    minimize->setFixedSize(QSize(48, 48));
+    minimize->setIconSize(QSize(16, 16));
+    minimize->setProperty("isWindowButton", 1);
+    connect(minimize, &QToolButton::clicked, this, [=]() {
+        KWindowSystem::minimizeWindow(m_window->winId());
+        m_window->showMinimized();
+    });
+
+    QToolButton *close = new QToolButton(this);
+    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
+    close->setToolTip(tr("Close"));
+    close->setAutoRaise(true);
+    close->setFixedSize(QSize(48, 48));
+    close->setIconSize(QSize(16, 16));
+
+    //fix bug#143507, button color is not red issue
+    close->setProperty("isWindowButton", 2);
+    close->setProperty("useIconHighlightEffect", 0x8);
+    connect(close, &QToolButton::clicked, this, [=]() {
+        m_window->close();
+    });
+    layout->addWidget(optionButton);
+    layout->addWidget(minimize);
+    layout->addWidget(close);
+    m_topMenu->setLayout(layout);
+    m_topMenu->hide();
+    m_layout->addWidget(m_topMenu);
+
+}
 void HeaderBarContainer::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
