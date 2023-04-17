@@ -173,7 +173,10 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 FileItem::~FileItem()
 {
     //qDebug()<<"~FileItem"<<m_info->uri();
-    Q_EMIT cancelFindChildren();
+    // try fix #164883, error cusor while searching
+    if (!property("isCancelled").toBool()) {
+        Q_EMIT cancelFindChildren();
+    }
     //disconnect();
 
     for (auto child : *m_children) {
@@ -236,6 +239,10 @@ void FileItem::findChildrenAsync()
     //the root item will be delete, so we should cancel the previous enumeration.
     enumerator->connect(this, &FileItem::cancelFindChildren, enumerator, &FileEnumerator::cancel);
     enumerator->connect(enumerator, &FileEnumerator::cancelled, m_model, [=](){
+        if (enumerator->getEnumerateUri() != this->uri()) {
+            // try fix #164883, error cusor while searching
+            return;
+        }
         m_model->findChildrenFinished();
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {

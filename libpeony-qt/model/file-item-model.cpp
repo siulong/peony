@@ -476,6 +476,8 @@ void FileItemModel::onItemRemoved(FileItem *item)
 void FileItemModel::cancelFindChildren()
 {
     qDebug()<<"cancel";
+    // try fix #164883, error cusor while searching
+    m_root_item->setProperty("isCancelled", true);
     m_root_item->cancelFindChildren();
 }
 
