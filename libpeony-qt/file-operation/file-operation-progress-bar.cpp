@@ -73,6 +73,7 @@ void FileOperationProgressBar::removeAllProgressbar()
     m_widget_list->clear();
     m_list_widget->clear();
     m_progress_list->clear();
+    m_pro_list->clear();
     m_progress_size = 0;
 
     uninhibit();
@@ -88,6 +89,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
     m_list_widget->setItemWidget(li, proc);
     (*m_progress_list)[proc] = li;
     (*m_widget_list)[li] = proc;
+    m_pro_list->append(proc);
     li->setSizeHint(QSize(m_list_widget->width(), m_progress_item_height));
     li->setFlags(Qt::NoItemFlags);
 
@@ -127,6 +129,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
     m_list_widget->removeItemWidget(li);
     m_progress_list->remove(progress);
     m_widget_list->remove(li);
+    m_pro_list->removeOne(progress);
 
     --m_progress_size;
 
@@ -134,7 +137,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
     if (m_current_main == progress) {
         // check other progress
         if (m_progress_size > 0) {
-            QListWidgetItem* pg = m_progress_list->first();
+            QListWidgetItem* pg = m_progress_list->value(m_pro_list->first());
             m_current_main = (*m_widget_list)[pg];
             mainProgressChange(pg);
         }
@@ -210,6 +213,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
 
     m_progress_list = new QMap<ProgressBar*, QListWidgetItem*>;
     m_widget_list = new QMap<QListWidgetItem*, ProgressBar*>;
+    m_pro_list = new QList<ProgressBar*>;
 
     showWidgetList(false);
 
@@ -240,6 +244,18 @@ FileOperationProgressBar::~FileOperationProgressBar()
 {
     delete btn;
     if (m_dbus_connection) g_object_unref(m_dbus_connection);
+    if (!m_pro_list->isEmpty()) {
+        delete m_pro_list;
+        m_pro_list = nullptr;
+    }
+    if (!m_progress_list->isEmpty()) {
+        delete m_progress_list;
+        m_progress_list = nullptr;
+    }
+    if (!m_widget_list->isEmpty()) {
+        delete m_widget_list;
+        m_widget_list = nullptr;
+    }
 }
 
 void FileOperationProgressBar::showMore()
