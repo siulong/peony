@@ -50,6 +50,8 @@ public:
     bool eventFilter(QObject *obj, QEvent *e);
 
     void addHeaderBar(HeaderBar *headerBar);
+    void addMenu(MainWindow *m_window);
+    QWidget *m_topMenu = nullptr;
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -61,6 +63,7 @@ private:
     HeaderBar *m_header_bar = nullptr;
 
     QToolButton *m_max_or_restore = nullptr;
+
 };
 
 class HeaderBar : public QToolBar
@@ -119,7 +122,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *e);
     void mouseDoubleClickEvent(QMouseEvent *e);
     void addTabletMenu();
-    void addTopMenu();
     void updateSelectStatus(bool autoUpdate);
 
 private Q_SLOTS:

@@ -1536,7 +1536,7 @@ void MainWindow::initUI(const QString &uri)
     m_header_bar = new HeaderBar(this);
     m_headerBarContainer = new HeaderBarContainer(this);
     m_headerBarContainer->addHeaderBar(m_header_bar);
-
+    m_headerBarContainer->addMenu(this);
     TopMenuBar *top = new TopMenuBar(m_header_bar, this);
     m_tab->setMenuBar(top);
 //    m_tab->m_header_bar_layout->insertWidget(0,headerBarContainer);
@@ -1861,8 +1861,10 @@ void MainWindow::updateTabletModeValue(bool isTabletMode)
     qApp->setProperty("tabletMode", isTabletMode);
     if(isTabletMode) {
         m_headerBarContainer->setFixedHeight(72);
+        m_headerBarContainer->m_topMenu->show();
     } else {
         m_headerBarContainer->setFixedHeight(60);
+        m_headerBarContainer->m_topMenu->hide();
     }
 
     m_tab->updateTabletModeValue(isTabletMode);
