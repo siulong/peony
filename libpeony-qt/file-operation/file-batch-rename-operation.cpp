@@ -72,9 +72,17 @@ void FileBatchRenameOperation::run()
             Q_EMIT errored(except);
         }
     }
+    m_total_size = m_uris.count();
+    for (auto uri : m_uris) {
+        if (isCancelled())
+            break;
+        Q_EMIT operationPreparedOne (uri, 0);
+    }
+
     for (QString uri :m_uris) {
         QString oldName = FileUtils::getFileDisplayName(uri);
         QString newName = m_new_name;
+        auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(uri));
         std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(uri);
         if(fileinfo && !fileinfo->isDir()){
 //            bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
@@ -288,6 +296,7 @@ void FileBatchRenameOperation::run()
         }
 
         fileSync(uri, destUri);
+        Q_EMIT FileProgressCallback(uri, destUri, fileIconName, m_current_offset, m_total_size);
     }
     m_info->m_newnames = m_new_names;
     m_info->m_oldnames = m_old_names;

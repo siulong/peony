@@ -28,6 +28,9 @@ private:
 
     ExceptionResponse m_apply_all = Other;
 
+    goffset m_current_offset = 0;
+    goffset m_total_size = 0 ;
+
     QString getFileExtensionOfFile(const QString& file); /* 获取文件的文件扩展名 */
     ExceptionResponse prehandle(GError *err);
     QString handleDuplicate(const QString uri);
