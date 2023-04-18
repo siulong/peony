@@ -4546,7 +4546,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="158"/>
         <source>AppendBurnData operation has been finished successfully.</source>
-        <translation>追加刻录操作已完成.</translation>
+        <translation>追加刻录操作已完成。</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="164"/>
