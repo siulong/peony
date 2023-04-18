@@ -74,6 +74,8 @@ public:
 
     void addAdvancedLayout();
 
+    void checkAclPermissions();
+
 protected:
     static GAsyncReadyCallback async_query_permisson_callback(GObject *obj,
             GAsyncResult *res,
@@ -105,6 +107,8 @@ private:
 
     //unixmode能力，标识修改权限是否可使用gio接口
     bool m_has_unix_mode = false;
+
+    bool m_isShow = false;
 
 public:
     void thisPageChanged() override;

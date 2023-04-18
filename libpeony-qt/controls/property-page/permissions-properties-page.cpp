@@ -537,6 +537,9 @@ void PermissionsPropertiesPage::updateCheckBox()
         connect(permissionsBtGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
             [=](int id){
             this->checkBoxChanged(i, id, permissionsBtGroup->button(id)->isChecked());
+            if (i == 1) {
+                this->checkAclPermissions();
+            }
         });
     }
 }
@@ -568,6 +571,23 @@ void PermissionsPropertiesPage::addAdvancedLayout()
     hboxLayout->addWidget(m_advancedBtn);
     hboxLayout->addStretch(2);
     m_layout->addLayout(hboxLayout);
+}
+
+void PermissionsPropertiesPage::checkAclPermissions()
+{
+    auto info = FileInfo::fromUri(m_uri);
+    QStringList args;
+    bool ret;
+    args << "getfacl" << "-p" << info->filePath();
+    QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
+    if (!ret && !acl.isEmpty()) {
+        this->close();
+        return;
+    }
+    if (acl.count("user:") >= 2 && !m_isShow) {
+        m_isShow = true;
+        QMessageBox::information(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already been set with ACL permissions. Modifying user group permissions may result in the ACL permissions being unusable!"));
+    }
 }
 
 QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon, QString text)
