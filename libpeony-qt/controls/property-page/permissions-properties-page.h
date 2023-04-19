@@ -74,8 +74,6 @@ public:
 
     void addAdvancedLayout();
 
-    void checkAclPermissions();
-
 protected:
     static GAsyncReadyCallback async_query_permisson_callback(GObject *obj,
             GAsyncResult *res,
@@ -140,6 +138,9 @@ public:
     void checkInheritsBoxInfo();
     void initCheckState();
     void saveAclPermissions();
+
+Q_SIGNALS:
+    void updatePermissions();
 
 protected Q_SLOTS:
     void updateDelAclBtn(int row, int col);

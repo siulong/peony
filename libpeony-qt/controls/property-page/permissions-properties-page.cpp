@@ -536,10 +536,26 @@ void PermissionsPropertiesPage::updateCheckBox()
         }
         connect(permissionsBtGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
             [=](int id){
-            this->checkBoxChanged(i, id, permissionsBtGroup->button(id)->isChecked());
             if (i == 1) {
-                this->checkAclPermissions();
+                auto info = FileInfo::fromUri(m_uri);
+                QStringList args;
+                bool ret;
+                args << "getfacl" << "-p" << info->filePath();
+                QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
+                if (!ret && !acl.isEmpty()) {
+                    this->close();
+                    return;
+                }
+                if (acl.count("user:") >= 2 && !m_isShow) {
+                    m_isShow = true;
+                    auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already been set with ACL permissions. Modifying user group permissions may result in the ACL permissions being unusable!"));
+                    if (QMessageBox::No == res) {
+                        checkbox->setChecked(!checkbox->isChecked());
+                        return;
+                    }
+                }
             }
+            this->checkBoxChanged(i, id, permissionsBtGroup->button(id)->isChecked());
         });
     }
 }
@@ -556,7 +572,9 @@ void PermissionsPropertiesPage::addAdvancedLayout()
         auto displayname = info->displayName();
         bool isAdvancedShare = UserShareInfoManager::getInstance()->checkDirAdvancedShare(displayname);
         AdvancedPermissionsPage *page = new AdvancedPermissionsPage(m_uri);
-
+        connect(page, &AdvancedPermissionsPage::updatePermissions, this, [=](){
+            queryPermissionsAsync(nullptr, m_uri);
+        });
         if (isAdvancedShare) {
             auto result = QMessageBox::question(nullptr, tr("Permission refinement settings"),
                                                 tr("The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?"));
@@ -571,23 +589,6 @@ void PermissionsPropertiesPage::addAdvancedLayout()
     hboxLayout->addWidget(m_advancedBtn);
     hboxLayout->addStretch(2);
     m_layout->addLayout(hboxLayout);
-}
-
-void PermissionsPropertiesPage::checkAclPermissions()
-{
-    auto info = FileInfo::fromUri(m_uri);
-    QStringList args;
-    bool ret;
-    args << "getfacl" << "-p" << info->filePath();
-    QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
-    if (!ret && !acl.isEmpty()) {
-        this->close();
-        return;
-    }
-    if (acl.count("user:") >= 2 && !m_isShow) {
-        m_isShow = true;
-        QMessageBox::information(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already been set with ACL permissions. Modifying user group permissions may result in the ACL permissions being unusable!"));
-    }
 }
 
 QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon, QString text)
@@ -760,11 +761,14 @@ void AdvancedPermissionsPage::init()
             }
         }
 
-        this->checkInheritsBoxInfo();
-        this->saveAclPermissions();
-        qDebug() << __func__ << "userInfo" << m_userInfo;
-        this->close();
-
+        auto result = QMessageBox::question(nullptr, tr("Permission refinement settings tip"), tr("Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?"));
+        if (result == QMessageBox::Yes) {
+            this->checkInheritsBoxInfo();
+            this->saveAclPermissions();
+            qDebug() << __func__ << "userInfo" << m_userInfo;
+            Q_EMIT this->updatePermissions();
+            this->close();
+        }
     });
 }
 
