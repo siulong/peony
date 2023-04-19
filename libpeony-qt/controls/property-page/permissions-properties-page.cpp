@@ -548,7 +548,7 @@ void PermissionsPropertiesPage::updateCheckBox()
                 }
                 if (acl.count("user:") >= 2 && !m_isShow) {
                     m_isShow = true;
-                    auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already been set with ACL permissions. Modifying user group permissions may result in the ACL permissions being unusable!"));
+                    auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"));
                     if (QMessageBox::No == res) {
                         checkbox->setChecked(!checkbox->isChecked());
                         return;
