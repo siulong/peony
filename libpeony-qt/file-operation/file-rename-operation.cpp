@@ -106,7 +106,9 @@ void FileRenameOperation::run()
 
     //task#144488, support cancel rename operation when change file type
     //修改了文件类型后缀名，提示用户改变文件类型可能导致文件不可用
-    if (m_new_name.split(".").last() != m_old_name.split(".").last()){
+    //修复新建文件夹改名错误弹框提示问题，无后缀名的文件不处理
+    if (m_old_name.split(".").length() >1 &&
+        m_new_name.split(".").last() != m_old_name.split(".").last()){
         FileOperationError except;
         except.srcUri = m_uri;
         except.errorType = ET_GIO;
