@@ -84,6 +84,7 @@ typedef enum{
     FileOpCount,    //file or dir file count
     FileOpCreateTemp, //create file or dir
     FileOpRenameToHideFile, // file or dir rename to a hide file
+    FileOpRenameChangeType, // change file suffix cause type change
     FileOpNum,
 }FileOpsType;
 

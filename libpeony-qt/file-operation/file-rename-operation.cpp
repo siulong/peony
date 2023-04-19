@@ -103,6 +103,32 @@ void FileRenameOperation::run()
             }
         }
     }
+
+    //task#144488, support cancel rename operation when change file type
+    //修改了文件类型后缀名，提示用户改变文件类型可能导致文件不可用
+    if (m_new_name.split(".").last() != m_old_name.split(".").last()){
+        FileOperationError except;
+        except.srcUri = m_uri;
+        except.errorType = ET_GIO;
+        except.op = FileOpRenameChangeType;
+        except.dlgType = ED_WARNING;
+        except.title = tr("File Rename warning");
+        except.errorStr = tr("When change the file suffix, the file may be invalid. "
+                             "Are you sure to change it ?");
+
+        Q_EMIT errored(except);
+
+        //support cancel rename operation when change file type
+        if (except.respCode == Cancel) {
+            cancel();
+            setHasError(true);
+            //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+            getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
     std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(m_uri);
     if(fileinfo && !fileinfo->isDir()){
         bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
