@@ -73,6 +73,13 @@ void EmblemProviderManager::registerProvider(EmblemProvider *provider)
     connect(this, &EmblemProviderManager::queueQueryFinished, this, &EmblemProviderManager::requestUpdateAllFiles);
 }
 
+void EmblemProviderManager::unregisterProvider(EmblemProvider *provider)
+{
+    if (m_providers.contains(provider)) {
+        m_providers.removeOne(provider);
+    }
+}
+
 QStringList EmblemProviderManager::getAllEmblemsForUri(const QString &uri)
 {
     auto info = FileInfo::fromUri(uri);

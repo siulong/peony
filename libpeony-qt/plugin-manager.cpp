@@ -67,6 +67,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 //    if (COMMERCIAL_VERSION)
 //        pluginsDir = QDir("/usr/lib/peony-qt-extensions");
     pluginsDir.setFilter(QDir::Files);
+    QStringList disabledExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
 
     qDebug()<<pluginsDir.entryList().count();
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
@@ -87,6 +88,14 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         PluginInterface *piface = dynamic_cast<PluginInterface*>(plugin);
         if (!piface)
             continue;
+
+        QFileInfo fileInfo(pluginLoader.fileName());
+        if (fileInfo.exists()) {
+            if (disabledExtensions.contains(fileInfo.fileName())) {
+                continue;
+            }
+        }
+
         m_hash.insert(piface->name(), piface);
         switch (piface->pluginType()) {
         case PluginInterface::MenuPlugin: {
@@ -151,6 +160,139 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             break;
         }
     }
+
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString &key){
+       if (DISABLED_EXTENSIONS == key) {
+           QStringList disExtensions = GlobalSettings::getInstance()->getValue(key).toStringList();
+           QDir pluginsDir(PLUGIN_INSTALL_DIRS);
+       //    if (COMMERCIAL_VERSION)
+       //        pluginsDir = QDir("/usr/lib/peony-qt-extensions");
+           pluginsDir.setFilter(QDir::Files);
+
+           qDebug()<<pluginsDir.entryList().count();
+           Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
+               qDebug()<<fileName;
+               QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+               qDebug()<<pluginLoader.fileName();
+               qDebug()<<pluginLoader.metaData();
+               qDebug()<<pluginLoader.load();
+
+               // version check
+               if (pluginLoader.metaData().value("MetaData").toObject().value("version").toString() != VERSION)
+                   continue;
+
+               QObject *plugin = pluginLoader.instance();
+               if (!plugin)
+                   continue;
+               qDebug()<<"test start";
+               PluginInterface *piface = dynamic_cast<PluginInterface*>(plugin);
+               if (!piface)
+                   continue;
+
+               QFileInfo fileInfo(pluginLoader.fileName());
+               if (fileInfo.exists()) {
+                   if (disExtensions.contains(fileInfo.fileName()) && m_hash.keys().contains(piface->name())) {
+                       m_hash.remove(piface->name());
+                       switch (piface->pluginType()) {
+                       case PluginInterface::MenuPlugin: {
+                           MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
+                           //MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
+                           MenuPluginManager::getInstance()->unregisterPlugin(menuPlugin);
+                           break;
+                       }
+                       case PluginInterface::PreviewPagePlugin: {
+                           PreviewPagePluginIface *previewPageFactory = dynamic_cast<PreviewPagePluginIface*>(plugin);
+                           //PreviewPageFactoryManager::getInstance()->registerFactory(previewPageFactory->name(), previewPageFactory);
+                           PreviewPageFactoryManager::getInstance()->unregisterFactory(previewPageFactory->name(), previewPageFactory);
+                           break;
+                       }
+                       case PluginInterface::PropertiesWindowPlugin: {
+                           PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
+                           //PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+                           PropertiesWindowPluginManager::getInstance()->unregisterFactory(propertiesWindowTabPageFactory);
+                           break;
+                       }
+                       case PluginInterface::ColumnProviderPlugin: {
+                           //FIXME:
+                           break;
+                       }
+                       case PluginInterface::DirectoryViewPlugin2: {
+                           auto p = dynamic_cast<DirectoryViewPluginIface2*>(plugin);
+                           //DirectoryViewFactoryManager2::getInstance()->registerFactory(p->viewIdentity(), p);
+                           DirectoryViewFactoryManager2::getInstance()->unregisterFactory(p->viewIdentity(), p);
+                           break;
+                       }
+                       case PluginInterface::VFSPlugin: {
+                           auto p = dynamic_cast<VFSPluginIface *>(plugin);
+                           //VFSPluginManager::getInstance()->registerPlugin(p);
+                           VFSPluginManager::getInstance()->unregisterPlugin(p);
+                           VFSPluginManager::getInstance()->updateVFSPlugin(p, false);
+                           break;
+                       }
+                       case PluginInterface::EmblemPlugin: {
+                           auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
+                           //EmblemProviderManager::getInstance()->registerProvider(p->create());
+                           EmblemProviderManager::getInstance()->unregisterProvider(p->create());
+                           break;
+                       }
+                       default:
+                           break;
+                       }
+                   } else if (!disExtensions.contains(fileInfo.fileName()) && !m_hash.keys().contains(piface->name())) {
+                       m_hash.insert(piface->name(), piface);
+                       switch (piface->pluginType()) {
+                       case PluginInterface::MenuPlugin: {
+                           MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
+                           MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
+                           break;
+                       }
+                       case PluginInterface::PreviewPagePlugin: {
+                           PreviewPagePluginIface *previewPageFactory = dynamic_cast<PreviewPagePluginIface*>(plugin);
+                           PreviewPageFactoryManager::getInstance()->registerFactory(previewPageFactory->name(), previewPageFactory);
+                           break;
+                       }
+                       case PluginInterface::PropertiesWindowPlugin: {
+                           PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
+                           PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+                           break;
+                       }
+                       case PluginInterface::ColumnProviderPlugin: {
+                           //FIXME:
+                           break;
+                       }
+                       case  PluginInterface::StylePlugin: {
+                           /*!
+                             \todo
+                             manage the style plugin
+                             */
+                           auto styleProvider = dynamic_cast<StylePluginIface*>(plugin);
+                           QApplication::setStyle(styleProvider->getStyle());
+                           break;
+                       }
+                       case PluginInterface::DirectoryViewPlugin2: {
+                           auto p = dynamic_cast<DirectoryViewPluginIface2*>(plugin);
+                           DirectoryViewFactoryManager2::getInstance()->registerFactory(p->viewIdentity(), p);
+                           break;
+                       }
+                       case PluginInterface::VFSPlugin: {
+                           auto p = dynamic_cast<VFSPluginIface *>(plugin);
+                           VFSPluginManager::getInstance()->registerPlugin(p);
+                           VFSPluginManager::getInstance()->updateVFSPlugin(p, true);
+                           break;
+                       }
+                       case PluginInterface::EmblemPlugin: {
+                           auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
+                           EmblemProviderManager::getInstance()->registerProvider(p->create());
+                           break;
+                       }
+                       default:
+                           break;
+                       }
+                   }
+               }
+           }
+       }
+     });
 }
 
 PluginManager::~PluginManager()

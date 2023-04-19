@@ -72,6 +72,14 @@ void DirectoryViewFactoryManager2::registerFactory(const QString &name, Director
     m_hash->insert(name, factory);
 }
 
+void DirectoryViewFactoryManager2::unregisterFactory(const QString &name, DirectoryViewPluginIface2 *factory)
+{
+    if (m_hash->value(name)) {
+        auto value = m_hash->take(name);
+        delete value;
+    }
+}
+
 QStringList DirectoryViewFactoryManager2::getFactoryNames()
 {
     return m_hash->keys();

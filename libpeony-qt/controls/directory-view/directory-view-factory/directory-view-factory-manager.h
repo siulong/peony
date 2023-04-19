@@ -45,6 +45,7 @@ public:
     static DirectoryViewFactoryManager2 *getInstance();
 
     void registerFactory(const QString &name, DirectoryViewPluginIface2 *factory);
+    void unregisterFactory(const QString &name, DirectoryViewPluginIface2 *factory);
     QStringList getFactoryNames();
     DirectoryViewPluginIface2 *getFactory(const QString &name);
 
