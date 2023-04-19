@@ -34,6 +34,7 @@
 #include <QDir>
 #include <QIcon>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -1004,7 +1005,6 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     UDisksObject *object, *crypto_backing_object;
     UDisksBlock *block;
     UDisksClient *client =udisks_client_new_sync (NULL,NULL);
-
     object = NULL;
     if (stat (device_name, &statbuf) != 0)
     {
@@ -1037,6 +1037,19 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     g_object_unref(block);
 
     return volume_size;
+}
+
+quint64 FileUtils::getDiskFreeSpace(const gchar * path)
+{
+    struct statvfs vfs;
+    quint64 freeSize = 0;
+    auto state = statvfs(path, &vfs);
+    if(0 > state) {
+        qDebug() << "read statvfs error";
+    } else {
+        freeSize = vfs.f_bavail * vfs.f_bsize;
+    }
+    return freeSize;
 }
 
 quint64 FileUtils::getFileSystemSize(QString uri)

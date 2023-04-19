@@ -793,6 +793,11 @@ void FileCopyOperation::run()
     m_total_szie = *total_size;
     delete total_size;
 
+    auto destGfile = g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData());
+    auto destPath = g_file_get_path(destGfile);
+    Peony::FileUtils::getDiskFreeSpace(destPath);
+    Q_EMIT operationTotalFileSize(m_total_szie);
+
     m_srcUrisOfCopyDspsFiles.clear();
     m_destUrisOfCopyDspsFiles.clear();
 

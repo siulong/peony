@@ -145,6 +145,8 @@ private:
     FileOperationProgressBar *m_progressbar = nullptr;
     QStack<std::shared_ptr<FileOperationInfo>> m_undo_stack;
     QStack<std::shared_ptr<FileOperationInfo>> m_redo_stack;
+    qint64 m_current_total_file_size = 0;
+    QMap<FileOperation*, qint64> *m_operation_use_list = nullptr;
 };
 
 class FileOperationInfo : public QObject

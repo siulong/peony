@@ -336,6 +336,8 @@ Q_SIGNALS:
      */
     void operationCancel();
 
+    void operationTotalFileSize(const qint64& total_file_size);
+
 public Q_SLOTS:
     virtual void cancel();
 

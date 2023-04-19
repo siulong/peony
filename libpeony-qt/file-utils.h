@@ -110,6 +110,7 @@ public:
     static bool isRemoteServerUri(const QString &uri);
     static bool isEmptyDisc(const QString &unixDevice);/* 判断是否是空光盘 */
     static bool isBusyDevice(const QString &unixDevice);/* 判断光盘是否正在使用 */
+    static quint64 getDiskFreeSpace(const gchar *path);
 
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
     static void   saveCreateTime (const QString& url);

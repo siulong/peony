@@ -65,7 +65,8 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<Peony::GErrorWrapperPtr>("Peony::GErrorWrapperPtr&");
     m_thread_pool = new QThreadPool(this);
     m_progressbar = FileOperationProgressBar::getInstance();
-
+    m_operation_use_list = new QMap<FileOperation*, qint64>;
+    m_current_total_file_size = 0;
     if (!m_allow_parallel) {
         //Imitating queue execution.
         m_thread_pool->setMaxThreadCount(1);
@@ -308,6 +309,30 @@ start:
 
     bool allowParallel = m_allow_parallel;
 
+
+    connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
+        auto info = operation->getOperationInfo();
+        if (!info || info->operationType() != FileOperationInfo::Copy
+                && info->operationType() != FileOperationInfo::Move) {
+            return;
+        }
+        if (m_operation_use_list->contains(operation)) {
+            return;
+        }
+        m_current_total_file_size += total_file_size;
+        auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
+        auto destPath = g_file_get_path(destGfile);
+        if(m_current_total_file_size > Peony::FileUtils::getDiskFreeSpace(destPath)) {
+            QMessageBox::critical(nullptr,
+                                  tr("Insufficient storage space"),
+                                  tr("there is not enough space left"));
+            m_current_total_file_size -= total_file_size;
+            operation->cancel();
+            return;
+        }
+        m_operation_use_list->insert(operation, total_file_size);
+    }, Qt::BlockingQueuedConnection);
+
     auto opType = operationInfo->operationType();
     switch (opType) {
     case FileOperationInfo::Trash:
@@ -369,6 +394,10 @@ start:
 
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
+       if (m_operation_use_list->contains(operation)) {
+           m_current_total_file_size -= m_operation_use_list->value(operation);
+           m_operation_use_list->remove(operation);
+       }
        Q_EMIT this->operationFinished(operation->getOperationInfo(), !operation->hasError());
        if (operation->hasError()) {
            this->clearHistory();
