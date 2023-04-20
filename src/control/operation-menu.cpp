@@ -143,7 +143,13 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                     } else {
 setPasswd:
                         bool ok = false;
-                        QString text = QInputDialog::getText(nullptr, tr("Samba set user password"), tr("Samba password:"), QLineEdit::Password, "", &ok);
+                        QInputDialog dlg;
+                        dlg.setLabelText(tr("Samba password:"));
+                        dlg.setTextEchoMode(QLineEdit::Password);
+                        dlg.setWindowTitle(tr("Samba set user password"));
+                        dlg.setFixedSize(470,150);
+                        ok = dlg.exec();
+                        QString text = dlg.textValue();
                         if (ok && !text.isNull() && !text.isEmpty()) {
                             QDBusReply<bool> setPasswdReply = interFace->call("setPasswd", text);
                             if (setPasswdReply.isValid()) {
