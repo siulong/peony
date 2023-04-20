@@ -336,6 +336,10 @@ start:
             return;
         }
         quint64 diskFreeSpace = storage.bytesAvailable();
+        if (-1 == diskFreeSpace) {
+            qWarning() << "get disk free space error!";
+            return;
+        }
         QString mountName = storage.rootPath();
 
         qint64 currentTotalSize = 0;
