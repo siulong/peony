@@ -65,8 +65,8 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<Peony::GErrorWrapperPtr>("Peony::GErrorWrapperPtr&");
     m_thread_pool = new QThreadPool(this);
     m_progressbar = FileOperationProgressBar::getInstance();
-    m_operation_use_list = new QMap<FileOperation*, qint64>;
-    m_current_total_file_size = 0;
+    m_mount_operation_list = new QHash<QString, qint64>;
+    m_operation_use_list = new QHash<FileOperation*, currentOpertionInfo>;
     if (!m_allow_parallel) {
         //Imitating queue execution.
         m_thread_pool->setMaxThreadCount(1);
@@ -311,26 +311,54 @@ start:
 
 
     connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
+        //story 19796 空间不足时预处理
         auto info = operation->getOperationInfo();
         if (!info || info->operationType() != FileOperationInfo::Copy
                 && info->operationType() != FileOperationInfo::Move) {
             return;
         }
         if (m_operation_use_list->contains(operation)) {
+            qWarning() << "this operation already exist";
             return;
         }
-        m_current_total_file_size += total_file_size;
         auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
         auto destPath = g_file_get_path(destGfile);
-        if(m_current_total_file_size > Peony::FileUtils::getDiskFreeSpace(destPath)) {
+        bool isState = true;
+//      调用底层接口获取剩余空间
+//        auto diskFreeSpace = Peony::FileUtils::getDiskFreeSpace(destPath, isState);
+//        if (!isState) {
+//            return;
+//        }
+//      使用QStorageInfo的接口进行处理
+        QStorageInfo storage(destPath);
+        if (!storage.isValid()) {
+            qWarning() << "The file path is not mounted correctly";
+            return;
+        }
+        quint64 diskFreeSpace = storage.bytesAvailable();
+        QString mountName = storage.rootPath();
+
+        qint64 currentTotalSize = 0;
+        if (m_mount_operation_list->contains(mountName)) {
+            qint64 currentUseSize = m_mount_operation_list->value(mountName);
+            currentTotalSize = currentUseSize + total_file_size;
+        } else {
+            currentTotalSize = total_file_size;
+        }
+        if(currentTotalSize > diskFreeSpace) {
             QMessageBox::critical(nullptr,
                                   tr("Insufficient storage space"),
-                                  tr("there is not enough space left"));
-            m_current_total_file_size -= total_file_size;
+                                  tr("no space left on device"));
             operation->cancel();
             return;
         }
-        m_operation_use_list->insert(operation, total_file_size);
+
+//      记录处理数值
+        currentOpertionInfo opertionInfo;
+        opertionInfo.mountRootName = mountName;
+        opertionInfo.total_size = total_file_size;
+        m_mount_operation_list->insert(mountName, currentTotalSize);
+        m_operation_use_list->insert(operation, opertionInfo);
     }, Qt::BlockingQueuedConnection);
 
     auto opType = operationInfo->operationType();
@@ -395,7 +423,16 @@ start:
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
        if (m_operation_use_list->contains(operation)) {
-           m_current_total_file_size -= m_operation_use_list->value(operation);
+//         story 19796,需求后续数据处理
+           currentOpertionInfo operationInfo = m_operation_use_list->value(operation);
+           QString name = operationInfo.mountRootName;
+           quint64 size = operationInfo.total_size;
+           size = m_mount_operation_list->value(name) - size;
+           if (size == 0){
+               m_mount_operation_list->remove(name);
+           } else {
+               m_mount_operation_list->insert(name, size);
+           }
            m_operation_use_list->remove(operation);
        }
        Q_EMIT this->operationFinished(operation->getOperationInfo(), !operation->hasError());

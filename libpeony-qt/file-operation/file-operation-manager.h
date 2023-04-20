@@ -138,6 +138,12 @@ private:
     static void systemSleep (GDBusConnection* connection, const gchar* senderName, const gchar* objectPath, const gchar* interfaceName, const gchar* signalName, GVariant* parameters, gpointer udata);
 
 private:
+    struct currentOpertionInfo
+    {
+        QString mountRootName;
+        quint64 total_size;
+    };
+
     QThreadPool *m_thread_pool;
     bool m_allow_parallel = false;
     QVector<FileWatcher *> m_watchers;
@@ -145,8 +151,8 @@ private:
     FileOperationProgressBar *m_progressbar = nullptr;
     QStack<std::shared_ptr<FileOperationInfo>> m_undo_stack;
     QStack<std::shared_ptr<FileOperationInfo>> m_redo_stack;
-    qint64 m_current_total_file_size = 0;
-    QMap<FileOperation*, qint64> *m_operation_use_list = nullptr;
+    QHash<QString, qint64> *m_mount_operation_list = nullptr;
+    QHash<FileOperation*, currentOpertionInfo> *m_operation_use_list = nullptr;
 };
 
 class FileOperationInfo : public QObject

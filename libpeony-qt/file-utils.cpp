@@ -1039,13 +1039,14 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     return volume_size;
 }
 
-quint64 FileUtils::getDiskFreeSpace(const gchar * path)
+quint64 FileUtils::getDiskFreeSpace(const gchar * path, bool &isState)
 {
     struct statvfs vfs;
     quint64 freeSize = 0;
     auto state = statvfs(path, &vfs);
     if(0 > state) {
-        qDebug() << "read statvfs error";
+        isState = false;
+        qWarning() << "read statvfs error";
     } else {
         freeSize = vfs.f_bavail * vfs.f_bsize;
     }
