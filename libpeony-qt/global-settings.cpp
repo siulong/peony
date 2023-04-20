@@ -65,6 +65,36 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         m_cache.insert(key, m_settings->value(key));
     }
 
+    m_cache.insert(DISPLAY_STANDARD_ICONS, true);
+    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
+        m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+            Q_EMIT this->valueChanged(key);
+        });
+
+        for (auto key : m_peonyGSettings->keys()) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+        }
+    }
+
+    m_cache.insert(TRASH_MOBILE_FILES, false);
+    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
+        m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+            Q_EMIT this->valueChanged(key);
+        });
+
+        for (auto key : m_peonyGSettings->keys()) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+        }
+    }
+
     m_date_format = tr("yyyy/MM/dd");
     m_time_format = tr("HH:mm:ss");
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
@@ -359,7 +389,7 @@ void GlobalSettings::resetAll()
 
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
-    if (key == REMOTE_SERVER_REMOTE_IP || key == DEFAULT_WINDOW_SIZE) {
+    if (key == REMOTE_SERVER_REMOTE_IP || key == DEFAULT_WINDOW_SIZE || !m_peonyGSettings->keys().contains(key)) {
         m_cache.remove(key);
         m_cache.insert(key, value);
         QtConcurrent::run([=]() {

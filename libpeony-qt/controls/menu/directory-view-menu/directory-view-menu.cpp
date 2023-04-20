@@ -181,6 +181,12 @@ void DirectoryViewMenu::fillActions()
         qDebug() << "canEject :" << canEject;
     }
 
+    //task#147972 【删除回收站】选项需求
+    //如果是长城的机器并且带了9215控制器，不再区分移动设备，统一右键删除到回收站
+    bool trashSettings = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+    if (trashSettings)
+       m_is_mobile_file = false;
+
     QString homeUri = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString musicUri = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
     QString desktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);

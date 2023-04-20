@@ -41,6 +41,7 @@
 
 #include "file-operation-internal-dialog.h"
 #include "sound-effect.h"
+#include "global-settings.h"
 
 #include <QUrl>
 #include <QFileInfo>
@@ -153,6 +154,12 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 //                break;
 //            }
 //            qDebug() <<"total_size:" <<total_size<<ONE_GIB_SIZE<<canNotTrash<<isBigFile;
+
+            //task#147972 【删除回收站】选项需求
+            //如果是长城的机器并且带了9215控制器，不再区分移动设备，统一右键删除到回收站
+            bool trashSettings = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+            if (trashSettings)
+                break;
 
             //file total size more than 10G, not trash but delete, task#56444
             //FIXME 判断是否是移动设备文件，可能不准确, 目前暂未找到好的判断方法

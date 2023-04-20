@@ -144,6 +144,39 @@ void trySetDefaultFolderUrlHandler() {
     });
 }
 
+//task#147972, story#21858, GreatWall svn and SE9215 controler, all file provide trash option
+void greatWallDeviceInit()
+{
+    QtConcurrent::run([=]() {
+        QProcess process;
+        process.start("lspci | grep -c 88SE9215");
+        process.waitForFinished();
+        QString result = process.readAllStandardOutput();
+        qDebug() << "greatWallDeviceInit lspci:"<<result;
+        //not SE9215 controler
+        if (result == "0")
+            return;
+
+        QProcess process1;
+        process1.start("cat /sys/class/dmi/id/modalias");
+        process1.waitForFinished();
+        QString ret = process1.readAllStandardOutput();
+        QStringList infoList = ret.split(":");
+        for(QString info:infoList){
+            if (info.startsWith("cvn", Qt::CaseInsensitive)){
+                QString manufacturer = info.replace("cvn", "", Qt::CaseInsensitive);
+                qDebug() << "greatWallDeviceInit manufacturer:"<<manufacturer;
+                if (manufacturer.toUpper() == "GREATWALL")
+                {
+                    //setGsetting value
+                    GlobalSettings::getInstance()->setValue(TRASH_MOBILE_FILES, true);
+                }
+                break;
+            }
+        }
+    });
+}
+
 QRect caculateVirtualDesktopGeometry() {
     QRegion screensRegion;
     for (auto screen : qApp->screens()) {
@@ -308,6 +341,9 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
     qDebug()<<"parse cmd";
     auto message = this->arguments().join(' ').toUtf8();
     parseCmd(message, !isRunning());
+
+    //check if is great wall device and init settings
+    greatWallDeviceInit();
 
     qDebug()<<"monitor volumes change";
     auto volumeManager = Peony::VolumeManager::getInstance();
