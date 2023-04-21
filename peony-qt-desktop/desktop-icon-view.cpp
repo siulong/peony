@@ -2361,6 +2361,16 @@ int DesktopIconView::updateBWList()
     return 0;
 }
 
+QString DesktopIconView::getBlackAndWhiteModel()
+{
+    return m_proxy_model->getBlackAndWhiteModel();
+}
+
+bool DesktopIconView::getBlackAndWhiteListExist(QString name)
+{
+   return m_proxy_model->getBlackAndWhiteListExist(name);
+}
+
 void DesktopIconView::setRestoreInfo(QString &uri, QPoint &itemPos)
 {
     //bug#108126 根据url重新记录要恢复的元素的位置

@@ -30,9 +30,14 @@
 #include <QDir>
 #include <QAbstractItemView>
 #include <QTimer>
+#include <QDBusInterface>
 
 
 #include "peony-core_global.h"
+
+#define BW_LIST_NORMAL  "normal"
+#define BW_LIST_BLACK   "blacklist"
+#define BW_LIST_WHITE   "whitelist"
 
 namespace Peony {
 
@@ -174,6 +179,8 @@ private:
     QTimer *m_sortTimer = nullptr;
     int m_sortType = 0;
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
+
+    QDBusInterface *mDbusPeonyServer = nullptr;
 };
 
 }

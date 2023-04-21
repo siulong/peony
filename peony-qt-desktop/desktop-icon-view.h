@@ -101,6 +101,8 @@ public:
     QRect getViewRect();
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
+    QString getBlackAndWhiteModel();
+    bool getBlackAndWhiteListExist(QString name);
 
     void setRestoreInfo(QString &uri, QPoint &itemPos);
     void setAllRestoreInfo();

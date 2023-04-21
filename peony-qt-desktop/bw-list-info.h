@@ -52,6 +52,8 @@ public:
     bool isWriteListMode();
     bool isNormalMode();
 
+    QString getMode(){return m_workModel;}
+
 private:
     QSet<QString> m_bwListInfo;
     QString m_workModel;

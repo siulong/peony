@@ -52,6 +52,9 @@ public:
 
     void setShowHidden(bool showHidden);
     int updateBlackAndWriteLists();
+    QString getBlackAndWhiteModel();
+    bool getBlackAndWhiteListExist(QString name);
+
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
     bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const;
