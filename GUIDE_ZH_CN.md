@@ -1,6 +1,6 @@
 # 项目指南
 
-## [Wiki](https://github.com/ukui/peony/wiki)
+## [Wiki](https://gitee.com/openkylin/peony/wiki)
 
 ## 项目之外的相关资源（重要）
 
@@ -31,7 +31,7 @@
 
 目前的Peony项目已经接近初次提测，大家请关注github和launchpad平台上的动向：
 
-> [GitHub源码仓库](https://github.com/ukui/peony)
+> [Gitee源码仓库](https://gitee.com/openkylin/peony)
 
 > [Launchpad PPA](https://launchpad.net/~ubuntukylin-members/+archive/ubuntu/ukui3.0
 )
@@ -48,7 +48,7 @@
 
 ### 步骤(以优麒麟为例)
 
-> git clone https://github.com/ukui/peony.git
+> git clone https://gitee.com/openkylin/peony.git
 
 > cd peony && mkdir build && cd build
 
