@@ -233,69 +233,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 resolutionChange();
                 setAllRestoreInfo();
             }
-
-            if (isItemsOverlapped()) {
-                // refresh again?
-                //this->refresh();
-                QStringList needRelayoutItems;
-                QRegion notEmptyRegion;
-                for (auto value : m_item_rect_hash.values()) {
-                    auto keys = m_item_rect_hash.keys(value);
-                    if (keys.count() > 1) {
-                        keys.pop_front();
-                        for (auto key : keys) {
-                            needRelayoutItems.append(key);
-                            m_item_rect_hash.remove(key);
-                        }
-                    }
-                    notEmptyRegion += value;
-                }
-
-                int gridWidth = gridSize().width();
-                int gridHeight = gridSize().height();
-                // aligin exsited rect
-                int marginTop = notEmptyRegion.boundingRect().top();
-                while (marginTop - gridHeight >= 0) {
-                    marginTop -= gridHeight;
-                }
-                int marginLeft = notEmptyRegion.boundingRect().left();
-                while (marginLeft - gridWidth >= 0) {
-                    marginLeft -= gridWidth;
-                }
-                marginLeft = marginLeft < 0? 0: marginLeft;
-                marginTop = marginTop < 0? 0: marginTop;
-                int posX = marginLeft;
-                int posY = marginTop;
-                for (auto item : needRelayoutItems) {
-                    QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
-                    while (notEmptyRegion.intersects(itemRect)) {
-                        // 到下一个位置
-                        if (posY + 2*gridHeight > this->viewport()->height()) {
-                            posY = marginTop;
-                            posX += gridWidth;
-                        } else {
-                            posY += gridHeight;
-                        }
-                        if (this->viewport()->geometry().contains(itemRect)) {
-                            // 进行下一次判断
-                            itemRect.moveTo(posX, posY);
-                        } else {
-                            // 跳出while循环，并且设置坐标为（0，0）
-                            itemRect.moveTo(0, 0);
-                            break;
-                        }
-                    }
-
-                    notEmptyRegion += itemRect;
-                    m_item_rect_hash.insert(item, itemRect);
-                }
-                for (auto uri : m_item_rect_hash.keys()) {
-                    auto rect = m_item_rect_hash.value(uri);
-                    updateItemPosByUri(uri, rect.topLeft());
-                    setFileMetaInfoPos(uri, rect.topLeft());
-                }
-                this->saveAllItemPosistionInfos();
-            }
+            checkItemsOver();
 
             // check icon is out of screen
             auto geo = viewport()->rect();
@@ -1722,7 +1660,7 @@ void DesktopIconView::checkItemsOver()
     bool isFull = false;
     for (auto item : needRelayoutItems) {
         QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
-        while (notEmptyRegion.contains(itemRect.center()) && !isFull) {
+        while (notEmptyRegion.contains(itemRect) && !isFull) {
             if (posY + 2*gridHeight > this->viewport()->height()) {
                 posY = marginTop;
                 posX += gridWidth;
