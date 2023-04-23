@@ -31,6 +31,7 @@
 #include "sound-effect.h"
 #include "clipboard-utils.h"
 #include <QProcess>
+#include <QStorageInfo>
 #include <QDir>
 #include <QDebug>
 #include "file-copy.h"
@@ -792,8 +793,32 @@ void FileCopyOperation::run()
 
     m_total_szie = *total_size;
     delete total_size;
-
-    Q_EMIT operationTotalFileSize(m_total_szie);
+    //判断剩余空间是否满足拷贝所需空间
+    auto destGfile = g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData());
+    auto destPath = g_file_get_path(destGfile);
+    QStorageInfo storage(destPath);
+    if (!storage.isValid()) {
+        qWarning() << "The file path is not mounted correctly";
+    } else {
+        // If the storage is valid, get the available disk space
+        quint64 diskFreeSpace = storage.bytesAvailable();
+        if(m_total_szie > diskFreeSpace) {
+            // If there is not enough space, create a new FileOperationError object
+            FileOperationError except;
+            except.errorType = ET_CUSTOM;
+            except.op = FileOpCopy;
+            except.title = tr("File copy error");
+            except.srcUri = m_source_uris.first();
+            except.errorStr = tr("no space left on device");
+            except.destDirUri = m_dest_dir_uri;
+            except.dlgType = ED_WARNING;
+            Q_EMIT errored(except);
+            Q_EMIT operationFinished();
+            return;
+        }
+        // If there is enough space, emit the operationTotalFileSize signal with the total size of the files to be copied
+        Q_EMIT operationTotalFileSize(m_total_szie);
+    }
 
     m_srcUrisOfCopyDspsFiles.clear();
     m_destUrisOfCopyDspsFiles.clear();

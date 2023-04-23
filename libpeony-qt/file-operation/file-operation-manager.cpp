@@ -312,24 +312,22 @@ start:
 
     connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
         //story 19796 空间不足时预处理
+        // Check if the operation is a copy or move operation
         auto info = operation->getOperationInfo();
         if (!info || info->operationType() != FileOperationInfo::Copy
                 && info->operationType() != FileOperationInfo::Move) {
             return;
         }
+        // Check if the operation is already in the list of operations
         if (m_operation_use_list->contains(operation)) {
             qWarning() << "this operation already exist";
             return;
         }
+        // Get the destination path of the operation
         auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
         auto destPath = g_file_get_path(destGfile);
-        bool isState = true;
-//      调用底层接口获取剩余空间
-//        auto diskFreeSpace = Peony::FileUtils::getDiskFreeSpace(destPath, isState);
-//        if (!isState) {
-//            return;
-//        }
-//      使用QStorageInfo的接口进行处理
+
+        //Get the available disk space using QStorageInfo
         QStorageInfo storage(destPath);
         if (!storage.isValid()) {
             qWarning() << "The file path is not mounted correctly";
@@ -342,6 +340,7 @@ start:
         }
         QString mountName = storage.rootPath();
 
+        // Calculate the total size of the operation
         qint64 currentTotalSize = 0;
         if (m_mount_operation_list->contains(mountName)) {
             qint64 currentUseSize = m_mount_operation_list->value(mountName);
@@ -349,6 +348,7 @@ start:
         } else {
             currentTotalSize = total_file_size;
         }
+        // Check if there is enough disk space for the operation
         if(currentTotalSize > diskFreeSpace) {
             QMessageBox::critical(nullptr,
                                   tr("Insufficient storage space"),
@@ -357,7 +357,7 @@ start:
             return;
         }
 
-//      记录处理数值
+        // Record the operation information
         currentOpertionInfo opertionInfo;
         opertionInfo.mountRootName = mountName;
         opertionInfo.total_size = total_file_size;
@@ -426,17 +426,23 @@ start:
 
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
+       //story 19796,后续数据处理
        if (m_operation_use_list->contains(operation)) {
-//         story 19796,需求后续数据处理
+           // Get the operation info
            currentOpertionInfo operationInfo = m_operation_use_list->value(operation);
+           // Get the mount root name and total size of the operation
            QString name = operationInfo.mountRootName;
            quint64 size = operationInfo.total_size;
+           // Calculate the new size of the mount operation list
            size = m_mount_operation_list->value(name) - size;
+           // If the new size is 0, remove the mount operation from the list
            if (size == 0){
                m_mount_operation_list->remove(name);
            } else {
+               // Otherwise, update the size of the mount operation in the list
                m_mount_operation_list->insert(name, size);
            }
+           // Remove the operation from the use list
            m_operation_use_list->remove(operation);
        }
        Q_EMIT this->operationFinished(operation->getOperationInfo(), !operation->hasError());
