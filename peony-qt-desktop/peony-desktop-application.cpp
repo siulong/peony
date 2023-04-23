@@ -149,12 +149,24 @@ void greatWallDeviceInit()
 {
     QtConcurrent::run([=]() {
         QProcess process;
-        process.start("lspci | grep -c 88SE9215");
+        //process 中管道命令不生效，需要自己对读取的字符串进行处理
+        //process.start("lspci | grep -c 88SE9215");
+        process.start("lspci");
         process.waitForFinished();
         QString result = process.readAllStandardOutput();
+        QStringList retList = result.split("\n");
         qDebug() << "greatWallDeviceInit lspci:"<<result;
+        bool isTargetController = false;
+        for(QString match : retList){
+            if (match.indexOf("88SE9215") >=0){
+                qDebug() << "match info:"<<match.indexOf("88SE9215")<<match;
+                isTargetController = true;
+                break;
+            }
+        }
+
         //not SE9215 controler
-        if (result == "0")
+        if (! isTargetController)
             return;
 
         QProcess process1;
