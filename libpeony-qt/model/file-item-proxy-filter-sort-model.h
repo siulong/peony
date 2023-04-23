@@ -131,6 +131,8 @@ public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);
     void checkSortSettings();
+    void syncBlackAndWhiteData();
+    void updateBlackAndWhiteList();
 
     void setSelectionModeHint(QAbstractItemView::SelectionMode mode);
 
@@ -162,6 +164,8 @@ private:
     bool m_case_sensitive = false;
     QString m_blur_name = "";
     QString m_label_name = "";
+    QString m_bw_list_model = BW_LIST_NORMAL;
+    QStringList m_bwListInfo;
     QColor m_label_color = Qt::transparent;
     const int ALL_FILE = 0;
     const quint64 K_BASE = 1000;

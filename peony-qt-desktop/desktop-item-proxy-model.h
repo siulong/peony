@@ -53,6 +53,7 @@ public:
     void setShowHidden(bool showHidden);
     int updateBlackAndWriteLists();
     QString getBlackAndWhiteModel();
+    QSet<QString> getBWListInfo();
     bool getBlackAndWhiteListExist(QString name);
 
 

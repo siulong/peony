@@ -282,3 +282,8 @@ bool DesktopItemProxyModel::getBlackAndWhiteListExist(QString name)
 {
     return m_bwListInfo->desktopNameExist(name);
 }
+
+QSet<QString> DesktopItemProxyModel::getBWListInfo()
+{
+    return m_bwListInfo->getBWListInfo();
+}

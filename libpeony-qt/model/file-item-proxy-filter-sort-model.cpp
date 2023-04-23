@@ -117,13 +117,16 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
         return;
     }
 
+    //同步黑白名单数据
+    syncBlackAndWhiteData();
+
     //接收到black_and_white_update信号则进行更新
     QDBusConnection::sessionBus().connect("org.ukui.peony",
                                           "/org/ukui/peony",
                                           "org.ukui.peony",
                                           "black_and_white_update",
                                           this,
-                                          SLOT(update()));
+                                          SLOT(updateBlackAndWhiteList()));
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -483,35 +486,17 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
 
         //黑白名单处理
         if (item->m_info->isDesktopFile() && nullptr != item->m_info->desktopName()){
-            QDBusMessage msg = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
-                             "org.ukui.peony", "getBlackAndWhiteModel");
-            QDBusMessage response = QDBusConnection::sessionBus().call(msg);
-            QString model = BW_LIST_NORMAL;
-            if (response.type() == QDBusMessage::ReplyMessage){
-                model = response.arguments().takeFirst().toString();
-                qDebug() << "getBlackAndWhiteModel:"<<model;
-            }
-
-            if (model != BW_LIST_NORMAL){
-                QDBusMessage interface = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
-                                 "org.ukui.peony", "getBlackAndWhiteListExist");
-                QList<QVariant> args;
-                args.append(QVariant(item->m_info->desktopName()));
-                interface.setArguments(args);
-                QDBusMessage resp = QDBusConnection::sessionBus().call(interface);
-                bool exist = false;
-                if (resp.type() == QDBusMessage::ReplyMessage){
-                    exist = resp.arguments().takeFirst().toBool();
-                    qDebug() << "getBlackAndWhiteListExist:"<<exist;
-                }
-                if (model == BW_LIST_BLACK){
+            if (m_bw_list_model != BW_LIST_NORMAL){
+                bool exist = m_bwListInfo.contains(item->m_info->desktopName());
+                if (m_bw_list_model == BW_LIST_BLACK){
                    return ! exist;
-                }else if (model == BW_LIST_WHITE){
+                }else if (m_bw_list_model == BW_LIST_WHITE){
                    return exist;
                 }
             }
         }
     }
+
     return true;
 }
 
@@ -551,6 +536,32 @@ void FileItemProxyFilterSortModel::checkSortSettings()
             m_folder_first = true;
         }
     }
+}
+
+void FileItemProxyFilterSortModel::syncBlackAndWhiteData()
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
+                     "org.ukui.peony", "getBlackAndWhiteModel");
+    QDBusMessage response = QDBusConnection::sessionBus().call(msg);
+    m_bw_list_model = BW_LIST_NORMAL;
+    if (response.type() == QDBusMessage::ReplyMessage){
+        m_bw_list_model = response.arguments().takeFirst().toString();
+        qDebug() << "getBlackAndWhiteModel:"<<m_bw_list_model;
+    }
+
+    QDBusMessage interface = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
+                     "org.ukui.peony", "getBWListInfo");
+    QDBusMessage resp = QDBusConnection::sessionBus().call(interface);
+    if (resp.type() == QDBusMessage::ReplyMessage){
+        m_bwListInfo = resp.arguments().takeFirst().toStringList();
+        qDebug() << "syncBlackAndWhiteData:"<<resp.arguments().length()<<m_bwListInfo;
+    }
+}
+
+void FileItemProxyFilterSortModel::updateBlackAndWhiteList()
+{
+    syncBlackAndWhiteData();
+    update();
 }
 
 void FileItemProxyFilterSortModel::setSelectionModeHint(QAbstractItemView::SelectionMode mode)

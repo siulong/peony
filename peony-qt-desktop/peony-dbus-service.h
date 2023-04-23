@@ -63,6 +63,7 @@ public Q_SLOTS:
     void receiveSrcAndDestUrisOfCopy(const QStringList& sourceUris, const QStringList& destUris);
     QString getBlackAndWhiteModel();
     bool getBlackAndWhiteListExist(QString name);
+    QStringList getBWListInfo();
 
 private:
     DesktopIconView *m_desktopIconView = nullptr;

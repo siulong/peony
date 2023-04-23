@@ -53,6 +53,7 @@ public:
     bool isNormalMode();
 
     QString getMode(){return m_workModel;}
+    QSet<QString> getBWListInfo() {return m_bwListInfo;}
 
 private:
     QSet<QString> m_bwListInfo;

@@ -102,6 +102,7 @@ public:
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
     QString getBlackAndWhiteModel();
+    QSet<QString> getBWListInfo();
     bool getBlackAndWhiteListExist(QString name);
 
     void setRestoreInfo(QString &uri, QPoint &itemPos);

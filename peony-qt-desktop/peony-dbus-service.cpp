@@ -70,7 +70,7 @@ QString PeonyDbusService::getBlackAndWhiteModel()
     if (!m_desktopIconView)
         return "";
 
-    return m_desktopIconView->getBlackAndWhiteModel();;
+    return m_desktopIconView->getBlackAndWhiteModel();
 }
 
 bool PeonyDbusService::getBlackAndWhiteListExist(QString name)
@@ -79,4 +79,15 @@ bool PeonyDbusService::getBlackAndWhiteListExist(QString name)
         return false;
 
     return m_desktopIconView->getBlackAndWhiteListExist(name);
+}
+
+QStringList PeonyDbusService::getBWListInfo()
+{
+    QSet<QString> info;
+    if (!m_desktopIconView)
+        return info.toList();
+
+    info = m_desktopIconView->getBWListInfo();
+    qDebug() << "getBWListInfo in service:"<<info;
+    return info.toList();
 }

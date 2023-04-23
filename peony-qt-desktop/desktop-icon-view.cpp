@@ -2366,6 +2366,11 @@ QString DesktopIconView::getBlackAndWhiteModel()
     return m_proxy_model->getBlackAndWhiteModel();
 }
 
+QSet<QString> DesktopIconView::getBWListInfo()
+{
+    return m_proxy_model->getBWListInfo();
+}
+
 bool DesktopIconView::getBlackAndWhiteListExist(QString name)
 {
    return m_proxy_model->getBlackAndWhiteListExist(name);
