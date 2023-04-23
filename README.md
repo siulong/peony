@@ -1,16 +1,12 @@
 # peony
 
-[![build](https://github.com/ukui/peony/workflows/Check%20build/badge.svg?branch=master)](https://github.com/ukui/peony)
-
 peony is the filemanager application of UKUI3.0.
 
 # About this project
 
-- [Wiki on GitHub](https://github.com/ukui/peony/wiki)
+- [Wiki on Gitee](https://gitee.com/openkylin/peony/wiki)
 
 - [zh_CN](GUIDE_ZH_CN.md)
-
-- [project preview](https://github.com/orgs/explorer-cs/projects/3?fullscreen=true)
 
 # Description
 Peony is intent to be the default FileManager application in UKUI3.0.
@@ -70,7 +66,7 @@ If there are some problems during porting peony to other distros, commit an issu
 
 ## build from source and test
 
-> git clone https://github.com/ukui/peony.git
+> git clone https://gitee.com/openkylin/peony.git
 
 > cd peony && mkdir build && cd build
 
