@@ -30,6 +30,7 @@
 #include <QUrl>
 
 #include <QProcess>
+#include <QFileInfo>
 
 static QString set_desktop_name (QString file, QString& name, GError** error);
 
@@ -107,7 +108,8 @@ void FileRenameOperation::run()
     //task#144488, support cancel rename operation when change file type
     //修改了文件类型后缀名，提示用户改变文件类型可能导致文件不可用
     //修复新建文件夹改名错误弹框提示问题，无后缀名的文件不处理
-    if (m_old_name.split(".").length() >1 &&
+    bool isFolder = FileUtils::getFileIsFolder(m_uri);
+    if (! isFolder && (m_new_name.split(".").length() >1 || m_old_name.split(".").length() >1) &&
         m_new_name.split(".").last() != m_old_name.split(".").last()){
         FileOperationError except;
         except.srcUri = m_uri;
@@ -353,7 +355,6 @@ cancel:
 
 }
 
-#include <QFileInfo>
 QString FileRenameOperation::getFileExtensionOfFile(const QString& file)
 {   
     /* 一些常见扩展名处理，特殊情况以后待完善 */
