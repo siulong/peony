@@ -195,9 +195,8 @@ void NavigationTabBar::dragEnterEvent(QDragEnterEvent *e)
         if (index >= 0) {
             setCurrentIndex(index);
         }
-    } else {
-        e->accept();
     }
+    e->accept();
     return;
 }
 
