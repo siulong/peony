@@ -533,6 +533,57 @@
     </message>
 </context>
 <context>
+    <name>Peony::AdvancedPermissionsPage</name>
+    <message>
+        <source>Permission refinement settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permission refinement settings tip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation type="unfinished">སྤྱོད་མཁན།</translation>
+    </message>
+    <message>
+        <source>Read</source>
+        <translation type="unfinished">ཚགས་ཚུད།</translation>
+    </message>
+    <message>
+        <source>Write</source>
+        <translation type="unfinished">འབྲི་བ།</translation>
+    </message>
+    <message>
+        <source>Executable</source>
+        <translation type="unfinished">ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
+    </message>
+    <message>
+        <source>delete</source>
+        <translation type="unfinished">འདོར་བ།</translation>
+    </message>
+    <message>
+        <source>Inherit permission</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+    </message>
+</context>
+<context>
     <name>Peony::AllFileLaunchDialog</name>
     <message>
         <source>OK</source>
@@ -2102,6 +2153,10 @@ Do you want to delete the link file?</source>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
         <translation>10GBལས་ཆེ་བའི་ཡིག་ཆ་ཕྱིར་བསྡུ་མི་ཐུབ་པས།ཇི་སྲིད་བར་དུ་བསུབ་སྲིད་དམ།</translation>
     </message>
+    <message>
+        <source>An unmanageable conflict exists. Please check the recycle bin.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileUntrashOperation</name>
@@ -2342,6 +2397,22 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Current User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissions modify tip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permission refinement settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

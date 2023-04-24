@@ -71,7 +71,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Option</source>
-        <translation>འདེམས་ཚན།</translation>
+        <translation type="vanished">འདེམས་ཚན།</translation>
     </message>
     <message>
         <source>Search</source>
@@ -167,11 +167,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation type="obsolete">ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">ཁ་རྒྱག་པ།</translation>
+        <translation type="obsolete">ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Deselect All</source>
@@ -190,15 +190,19 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>HeaderBarContainer</name>
     <message>
         <source>Close</source>
-        <translation type="vanished">ཁ་རྒྱག་པ།</translation>
+        <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="vanished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation>ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
         <translation type="vanished">ཆེས་ཆེ་བ/སླར་གསོ།</translation>
+    </message>
+    <message>
+        <source>Option</source>
+        <translation type="unfinished">འདེམས་ཚན།</translation>
     </message>
 </context>
 <context>
