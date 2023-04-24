@@ -189,7 +189,15 @@ void NavigationTabBar::tabInserted(int index)
 
 void NavigationTabBar::dragEnterEvent(QDragEnterEvent *e)
 {
-    e->accept();
+    if (e->source() != this) {
+        QPoint pos = e->pos();
+        int index = tabAt(pos);
+        if (index >= 0) {
+            setCurrentIndex(index);
+        }
+    } else {
+        e->accept();
+    }
     return;
 }
 
