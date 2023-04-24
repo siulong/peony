@@ -41,6 +41,7 @@
 #include <QButtonGroup>
 #include <QProcess>
 #include <QPushButton>
+#include <QCheckBox>
 
 #include <QUrl>
 #include <QStandardPaths>
@@ -550,7 +551,9 @@ void PermissionsPropertiesPage::updateCheckBox()
                     m_isShow = true;
                     auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"));
                     if (QMessageBox::No == res) {
-                        checkbox->setChecked(!checkbox->isChecked());
+                        // FIXME:
+                        //checkbox->setChecked(!checkbox->isChecked());
+                        updateCheckBox();
                         return;
                     }
                 }
