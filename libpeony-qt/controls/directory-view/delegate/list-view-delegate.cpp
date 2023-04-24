@@ -503,7 +503,11 @@ void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 //TextEdit
 TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
 {
-    this->setContentsMargins(0,0,0,0);
+    // fix #164278, icon view text editor doesn't cover view item.
+    // note on ukui platform theme, style panel frame is not visible.
+    setFrameShape(QFrame::NoFrame);
+    setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    setViewportMargins(1, 2, 1, 2);
 }
 
 void TextEdit::adjustText()

@@ -38,6 +38,10 @@ IconViewEditor::IconViewEditor(QWidget *parent) : QTextEdit(parent)
     m_styled_edit = new QLineEdit;
     setContentsMargins(0, 0, 0, 0);
     setAlignment(Qt::AlignCenter);
+    // fix #164278, icon view text editor doesn't cover view item.
+    // note on ukui platform theme, style panel frame is not visible,
+    // we have to draw a frame by ourselves.
+    setFrameShape(QFrame::NoFrame);
 
 //    setStyleSheet("padding: 0px;"
 //                  "background-color: white;");
@@ -55,11 +59,11 @@ void IconViewEditor::paintEvent(QPaintEvent *e)
     QPainter p(this->viewport());
     p.fillRect(this->viewport()->rect(), m_styled_edit->palette().base());
     QPen pen;
-    pen.setWidth(2);
+    pen.setWidth(3);
     pen.setColor(this->palette().highlight().color());
-    QPolygon polygon = this->viewport()->rect();
+    pen.setJoinStyle(Qt::RoundJoin);
     p.setPen(pen);
-    p.drawPolygon(polygon);
+    p.drawRect(this->viewport()->rect());
     QTextEdit::paintEvent(e);
 }
 
