@@ -155,6 +155,8 @@ LocationBar::~LocationBar()
 
 void LocationBar::setRootUri(const QString &uri)
 {
+    m_indicator->setFixedSize(this->height() - 2, this->height() - 2);
+
     Q_EMIT aboutToSetRootUri();
 
     //when is the same uri and has buttons return
