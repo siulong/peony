@@ -1290,7 +1290,7 @@ end:
             except.op = FileOpMove;
             except.title = tr("Move file error");
             except.srcUri = m_src_uris.first();
-            except.errorStr = tr("Burn failed");
+            except.errorStr = mHelper->getDiscError();
             except.destDirUri = m_dest_dir_uri;
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);

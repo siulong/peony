@@ -835,7 +835,7 @@ void FileCopyOperation::run()
             except.op = FileOpCopy;
             except.title = tr("File copy error");
             except.srcUri = m_source_uris.first();
-            except.errorStr = tr("Burn failed");
+            except.errorStr = mHelper->getDiscError();
             except.destDirUri = m_dest_dir_uri;
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);
