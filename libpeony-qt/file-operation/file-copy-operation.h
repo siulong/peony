@@ -101,7 +101,7 @@ private:
     QString m_current_dest_dir_uri = nullptr;
 
     goffset m_current_offset = 0;
-    goffset m_total_szie = 0;
+    goffset m_total_size = 0;
 
     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS);
 

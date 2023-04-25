@@ -224,6 +224,8 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
     SoundEffect::getInstance()->copyOrMoveFailedMusic();
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
+        auto errorText = m_error->errorStr;
+        errorText.replace("\n", "<br>");
         QString htmlString = QString("<p>%1</p>")
                                  .arg(opt.fontMetrics.elidedText(m_error->errorStr/*.toHtmlEscaped()*/, Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);

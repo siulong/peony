@@ -166,7 +166,7 @@ private:
     QString m_current_dest_dir_uri = nullptr;
 
     goffset m_current_offset = 0;
-    goffset m_total_szie = 0;
+    goffset m_total_size = 0;
 
     /*!
      * \brief m_force_use_callback

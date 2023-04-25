@@ -128,7 +128,7 @@ void FileCopyOperation::progress_callback(goffset current_num_bytes,
 
     QUrl url(Peony::FileUtils::urlEncode(p_this->m_current_src_uri));
     auto currnet = p_this->m_current_offset + current_num_bytes;
-    auto total = p_this->m_total_szie;
+    auto total = p_this->m_total_size;
     auto fileIconName = FileUtilsPrivate::getFileIconName(p_this->m_current_src_uri);
     auto destFileName = FileUtils::isFileDirectory(p_this->m_current_dest_dir_uri) ?
                 p_this->m_current_dest_dir_uri + "/" + url.fileName() : p_this->m_current_dest_dir_uri;
@@ -791,8 +791,14 @@ void FileCopyOperation::run()
 
     Q_EMIT operationPrepared();
 
-    m_total_szie = *total_size;
+    m_total_size = *total_size;
     delete total_size;
+    Q_EMIT operationTotalFileSize(m_total_size);
+    if (isCancelled()) {
+        Q_EMIT operationFinished();
+        return;
+    }
+
     //判断剩余空间是否满足拷贝所需空间
     auto destGfile = g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData());
     auto destPath = g_file_get_path(destGfile);
@@ -802,22 +808,30 @@ void FileCopyOperation::run()
     } else {
         // If the storage is valid, get the available disk space
         quint64 diskFreeSpace = storage.bytesAvailable();
-        if(m_total_szie > diskFreeSpace) {
+        if(m_total_size > diskFreeSpace) {
             // If there is not enough space, create a new FileOperationError object
             FileOperationError except;
-            except.errorType = ET_CUSTOM;
+            QString name;
+            if (storage.rootPath() == "/") {
+                name = tr("File System");
+            } else if (storage.rootPath() == "/data") {
+                name = tr("Data");
+            } else {
+                name = storage.name();
+            }
+            double total_file_size_gb = (double)m_total_size / (1024 * 1024 * 1024);
+            double need_total_size_gb = (double)(m_total_size - diskFreeSpace) / (1024 * 1024 * 1024);
+            except.errorStr = tr("%1 no space left on device. "
+                                 "Copy file size: %2 GB, "
+                                 "Space needed: %3 GB.").arg(name).arg(QString::number(total_file_size_gb, 'f', 3))
+                    .arg(QString::number(need_total_size_gb, 'f', 3));
             except.op = FileOpCopy;
             except.title = tr("File copy error");
-            except.srcUri = m_source_uris.first();
-            except.errorStr = tr("no space left on device");
-            except.destDirUri = m_dest_dir_uri;
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);
             Q_EMIT operationFinished();
             return;
         }
-        // If there is enough space, emit the operationTotalFileSize signal with the total size of the files to be copied
-        Q_EMIT operationTotalFileSize(m_total_szie);
     }
 
     m_srcUrisOfCopyDspsFiles.clear();

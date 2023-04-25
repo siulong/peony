@@ -65,7 +65,7 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<Peony::GErrorWrapperPtr>("Peony::GErrorWrapperPtr&");
     m_thread_pool = new QThreadPool(this);
     m_progressbar = FileOperationProgressBar::getInstance();
-    m_mount_operation_list = new QHash<QString, qint64>;
+    m_mount_operation_list = new QHash<QString, totalOperationInfo>;
     m_operation_use_list = new QHash<FileOperation*, currentOpertionInfo>;
     if (!m_allow_parallel) {
         //Imitating queue execution.
@@ -314,8 +314,8 @@ start:
         //story 19796 空间不足时预处理
         // Check if the operation is a copy or move operation
         auto info = operation->getOperationInfo();
-        if (!info || info->operationType() != FileOperationInfo::Copy
-                && info->operationType() != FileOperationInfo::Move) {
+        if (!info || (info->operationType() != FileOperationInfo::Copy
+                && info->operationType() != FileOperationInfo::Move)) {
             return;
         }
         // Check if the operation is already in the list of operations
@@ -323,45 +323,82 @@ start:
             qWarning() << "this operation already exist";
             return;
         }
+
         // Get the destination path of the operation
         auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
         auto destPath = g_file_get_path(destGfile);
 
         //Get the available disk space using QStorageInfo
         QStorageInfo storage(destPath);
+
+        // Check if the file path is mounted correctly
         if (!storage.isValid()) {
             qWarning() << "The file path is not mounted correctly";
             return;
         }
+
         quint64 diskFreeSpace = storage.bytesAvailable();
+
+        // Check if there is an error getting the disk free space
         if (-1 == diskFreeSpace) {
             qWarning() << "get disk free space error!";
             return;
         }
-        QString mountName = storage.rootPath();
+
+        QString mountRootName = storage.rootPath();
 
         // Calculate the total size of the operation
         qint64 currentTotalSize = 0;
-        if (m_mount_operation_list->contains(mountName)) {
-            qint64 currentUseSize = m_mount_operation_list->value(mountName);
+        totalOperationInfo totalInfo;
+
+        // Check if the mount root name is already in the list of mount operations
+        if (m_mount_operation_list->contains(mountRootName)) {
+            qint64 currentUseSize = m_mount_operation_list->value(mountRootName).totalSize;
             currentTotalSize = currentUseSize + total_file_size;
+            totalInfo.totalSize = currentTotalSize;
+            totalInfo.preoccupationSize = m_mount_operation_list->value(mountRootName).preoccupationSize;
         } else {
             currentTotalSize = total_file_size;
+            totalInfo.totalSize = currentTotalSize;
+            totalInfo.preoccupationSize = diskFreeSpace;
         }
+
         // Check if there is enough disk space for the operation
         if(currentTotalSize > diskFreeSpace) {
-            QMessageBox::critical(nullptr,
-                                  tr("Insufficient storage space"),
-                                  tr("no space left on device"));
+            // Cancel the operation
             operation->cancel();
+
+            // Create an error message
+            FileOperationError except;
+            FileOperationErrorDialogWarning dialog;
+            QString name;
+
+            if (mountRootName == "/") {
+                name = tr("File System");
+            } else if (mountRootName == "/data") {
+                name = tr("Data");
+            } else {
+                name = storage.name();
+            }
+            except.title = tr("Insufficient storage space");
+            double total_file_size_gb = (double)total_file_size / (1024 * 1024 * 1024);
+            double need_total_size_gb = (double)(total_file_size - totalInfo.preoccupationSize) / (1024 * 1024 * 1024);
+            except.errorStr = tr("%1 no space left on device. "
+                                 "Copy file size: %2 GB, "
+                                 "Space needed: %3 GB.").arg(name).arg(QString::number(total_file_size_gb, 'f', 3))
+                    .arg(QString::number(need_total_size_gb, 'f', 3));
+
+            // Display the error message
+            dialog.handle(except);
             return;
         }
 
         // Record the operation information
         currentOpertionInfo opertionInfo;
-        opertionInfo.mountRootName = mountName;
-        opertionInfo.total_size = total_file_size;
-        m_mount_operation_list->insert(mountName, currentTotalSize);
+        opertionInfo.mountRootName = mountRootName;
+        opertionInfo.opertionFileSize = total_file_size;
+        totalInfo.preoccupationSize -= total_file_size;
+        m_mount_operation_list->insert(mountRootName, totalInfo);
         m_operation_use_list->insert(operation, opertionInfo);
     }, Qt::BlockingQueuedConnection);
 
@@ -432,17 +469,20 @@ start:
            currentOpertionInfo operationInfo = m_operation_use_list->value(operation);
            // Get the mount root name and total size of the operation
            QString name = operationInfo.mountRootName;
-           quint64 size = operationInfo.total_size;
+           quint64 size = operationInfo.opertionFileSize;
            // Calculate the new size of the mount operation list
-           size = m_mount_operation_list->value(name) - size;
-           // If the new size is 0, remove the mount operation from the list
+           size = m_mount_operation_list->value(name).totalSize - size;
            if (size == 0){
                m_mount_operation_list->remove(name);
            } else {
-               // Otherwise, update the size of the mount operation in the list
-               m_mount_operation_list->insert(name, size);
+               totalOperationInfo info;
+               info.totalSize = size;
+               info.preoccupationSize = m_mount_operation_list->value(name).preoccupationSize;
+               if (operation->isCancelled()) {
+                   info.preoccupationSize += operationInfo.opertionFileSize;
+               }
+               m_mount_operation_list->insert(name, info);
            }
-           // Remove the operation from the use list
            m_operation_use_list->remove(operation);
        }
        Q_EMIT this->operationFinished(operation->getOperationInfo(), !operation->hasError());

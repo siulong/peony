@@ -106,7 +106,7 @@ void FileMoveOperation::progress_callback(goffset current_num_bytes,
 
     QUrl url(p_this->m_current_src_uri);
     auto currnet = p_this->m_current_offset + current_num_bytes;
-    auto total = p_this->m_total_szie;
+    auto total = p_this->m_total_size;
     auto fileIconName = FileUtilsPrivate::getFileIconName(p_this->m_current_src_uri);
     auto destFileName = FileUtils::isFileDirectory(p_this->m_current_dest_dir_uri) ?
                 p_this->m_current_dest_dir_uri + "/" + url.fileName() : p_this->m_current_dest_dir_uri;
@@ -228,8 +228,8 @@ void FileMoveOperation::move()
         if(eNode->isFolder())
             hasFolder = true;
     }
-    m_total_szie = *total_size;
-    operationPreparedOne("", m_total_szie);
+    m_total_size = *total_size;
+    operationPreparedOne("", m_total_size);
     delete total_size;
 
     //判断剩余空间是否满足拷贝所需空间
@@ -241,22 +241,32 @@ void FileMoveOperation::move()
     } else {
         // If the storage is valid, get the available disk space
         quint64 diskFreeSpace = storage.bytesAvailable();
-        if(m_total_szie > diskFreeSpace) {
+        if(m_total_size > diskFreeSpace) {
             // If there is not enough space, create a new FileOperationError object
             FileOperationError except;
-            except.errorType = ET_CUSTOM;
+            QString name;
+            if (storage.rootPath() == "/") {
+                name = tr("File System");
+            } else if (storage.rootPath() == "/data") {
+                name = tr("Data");
+            } else {
+                name = storage.name();
+            }
+            double total_file_size_gb = (double)m_total_size / (1024 * 1024 * 1024);
+            double need_total_size_gb = (double)(m_total_size - diskFreeSpace) / (1024 * 1024 * 1024);
+            except.errorStr = tr("%1 no space left on device. "
+                                 "Copy file size: %2 GB, "
+                                 "Space needed: %3 GB.").arg(name).arg(QString::number(total_file_size_gb, 'f', 3))
+                    .arg(QString::number(need_total_size_gb, 'f', 3));
             except.op = FileOpMove;
             except.title = tr("File move error");
-            except.srcUri = m_src_uris.first();
-            except.errorStr = tr("no space left on device");
-            except.destDirUri = m_dest_dir_uri;
             except.dlgType = ED_WARNING;
             Q_EMIT errored(except);
             Q_EMIT operationFinished();
             return;
         }
         // If there is enough space, emit the operationTotalFileSize signal with the total size of the files to be copied
-        Q_EMIT operationTotalFileSize(m_total_szie);
+        Q_EMIT operationTotalFileSize(m_total_size);
     }
 
     operationPrepared();
@@ -946,7 +956,7 @@ fallback_retry:
         destFileName = FileUtils::isFileDirectory(m_current_dest_dir_uri) ? nullptr : m_current_dest_dir_uri;
         //assume that make dir finished anyway
         m_current_offset += node->size();
-        Q_EMIT FileProgressCallback(m_current_src_uri, destFileName, fileIconName, m_current_offset, m_total_szie);
+        Q_EMIT FileProgressCallback(m_current_src_uri, destFileName, fileIconName, m_current_offset, m_total_size);
         Q_EMIT operationProgressedOne(node->uri(), node->destUri(), node->size());
         for (auto child : *(node->children())) {
             copyRecursively(child);
@@ -1178,7 +1188,7 @@ fallback_retry:
         m_current_offset += node->size();
         auto fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
         auto destFileName = FileUtils::isFileDirectory(node->destUri()) ? nullptr : node->destUri();
-        Q_EMIT FileProgressCallback(node->uri(), destFileName, fileIconName, m_current_offset, m_total_szie);
+        Q_EMIT FileProgressCallback(node->uri(), destFileName, fileIconName, m_current_offset, m_total_size);
         Q_EMIT operationProgressedOne(node->uri(), node->destUri(), node->size());
     }
     destFile.reset();
@@ -1233,7 +1243,7 @@ void FileMoveOperation::moveForceUseFallback()
     }
     operationPrepared();
 
-    m_total_szie = *total_size;
+    m_total_size = *total_size;
     delete total_size;
 
     m_srcUrisOfCopyDspsFiles.clear();

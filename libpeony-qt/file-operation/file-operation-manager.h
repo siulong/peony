@@ -82,6 +82,8 @@ Q_SIGNALS:
     void operationStarted(std::shared_ptr<FileOperationInfo> info);
     void operationFinished(std::shared_ptr<FileOperationInfo> info, bool successed);
 
+    void errored(FileOperationError& error);
+
 public Q_SLOTS:
     void startOperation(FileOperation *operation, bool addToHistory = true);
     void startUndoOrRedo(std::shared_ptr<FileOperationInfo> info);
@@ -141,7 +143,12 @@ private:
     struct currentOpertionInfo
     {
         QString mountRootName;
-        quint64 total_size;
+        quint64 opertionFileSize;
+    };
+    struct totalOperationInfo
+    {
+        quint64 preoccupationSize;
+        quint64 totalSize;
     };
 
     QThreadPool *m_thread_pool;
@@ -151,7 +158,7 @@ private:
     FileOperationProgressBar *m_progressbar = nullptr;
     QStack<std::shared_ptr<FileOperationInfo>> m_undo_stack;
     QStack<std::shared_ptr<FileOperationInfo>> m_redo_stack;
-    QHash<QString, qint64> *m_mount_operation_list = nullptr;
+    QHash<QString, totalOperationInfo> *m_mount_operation_list = nullptr;
     QHash<FileOperation*, currentOpertionInfo> *m_operation_use_list = nullptr;
 };
 
