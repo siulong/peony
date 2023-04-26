@@ -75,6 +75,11 @@ void FileCopy::cancel()
     mPause.unlock();
 }
 
+FileCopy::Status FileCopy::getStatus()
+{
+    return mStatus;
+}
+
 void FileCopy::detailError (GError** error)
 {
     if (nullptr == error || nullptr == *error || nullptr == mError) {
@@ -172,6 +177,14 @@ void FileCopy::run ()
 
     // check file status
     if (FileUtils::isFileExsit(mDestUri)) {
+        bool src_file_exists = g_file_query_exists(srcFile, mCancel);
+        if (!src_file_exists) {
+            qWarning()<<__FUNCTION__<<"query src file doesn't exist"<<mSrcUri;
+            g_clear_error(&error);
+            error = g_error_new_literal(g_io_error_quark(), G_IO_ERROR_NOT_FOUND, tr("Can not copy %1, file doesn't exist. Has the file been renamed or moved?").arg(mSrcUri).toUtf8().constData());
+            detailError(&error);
+            return;
+        }
         if (mCopyFlags & G_FILE_COPY_OVERWRITE) {
             g_file_delete(destFile,  nullptr, &error);
             if (nullptr != error) {
@@ -338,7 +351,8 @@ void FileCopy::run ()
             g_file_delete (destFile, nullptr, nullptr);
             break;
         } else if (ERROR == mStatus) {
-            g_file_delete (destFile, nullptr, nullptr);
+            // 在一些特殊场景下可能会导致数据丢失问题，所以屏蔽
+            //g_file_delete (destFile, nullptr, nullptr);
             break;
         } else if (FINISHED == mStatus) {
             break;

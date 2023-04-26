@@ -73,6 +73,8 @@ public Q_SLOTS:
      */
     void cancel();
 
+    Status getStatus();
+
 private Q_SLOTS:
 
 private:

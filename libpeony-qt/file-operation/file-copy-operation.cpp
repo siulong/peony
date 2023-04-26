@@ -524,8 +524,14 @@ fallback_retry:
                 fileCopy.connect(this, &FileOperation::operationCancel, &fileOverWriteOneCopy, &FileCopy::cancel, Qt::DirectConnection);
                 if (m_is_pause) fileOverWriteOneCopy.pause();
                 fileOverWriteOneCopy.run();
-                node->setState(FileNode::Handled);
-                node->setErrorResponse(OverWriteOne);
+                if (fileCopy.getStatus() == FileCopy::FINISHED) {
+                    node->setState(FileNode::Handled);
+                    node->setErrorResponse(OverWriteOne);
+                } else {
+                    setHasError(true);
+                    node->setState(FileNode::Unhandled);
+                    node->setErrorResponse(OverWriteOne);
+                }
                 m_is_duplicated_copy = false;
                 break;
             }
@@ -541,8 +547,14 @@ fallback_retry:
                 fileCopy.connect(this, &FileOperation::operationCancel, &fileOverWriteOneCopy, &FileCopy::cancel, Qt::DirectConnection);
                 if (m_is_pause) fileOverWriteOneCopy.pause();
                 fileOverWriteOneCopy.run();
-                node->setState(FileNode::Handled);
-                node->setErrorResponse(OverWriteOne);
+                if (fileCopy.getStatus() == FileCopy::FINISHED) {
+                    node->setState(FileNode::Handled);
+                    node->setErrorResponse(OverWriteOne);
+                } else {
+                    setHasError(true);
+                    node->setState(FileNode::Unhandled);
+                    node->setErrorResponse(OverWriteOne);
+                }
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 m_is_duplicated_copy = false;
                 break;
@@ -791,6 +803,11 @@ void FileCopyOperation::run()
     QStringList burnUris = m_source_uris;
     for (auto node : nodes) {
         if (!isCancelled()) {
+            if (node->state() != FileNode::Handled) {
+                // 如果出现了不可处理的文件操作异常，则不允许用户进行此操作的undo/redo
+                // FIXME: 对于多级自文件的场景，这么处理是有问题的，也许判断是否有不可回滚的异常处理机制需要再优化
+                setHasError(true);
+            }
             m_info->m_node_map.insert(node->uri(), node->destUri());
             if (m_is_udf_burn_work) {
                 switch (node->responseType()) {
