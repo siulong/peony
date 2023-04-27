@@ -128,10 +128,6 @@ public:
         return false;
     }
 
-    virtual void pause();
-
-    virtual void resume ();
-
 Q_SIGNALS:
     /*!
      * \brief invalidOperation
@@ -364,7 +360,7 @@ protected:
     void sendSrcAndDestUrisOfCopyDspsFiles();
 
 protected:
-    bool                        m_is_pause = false;
+    QAtomicInteger<bool>        m_is_pause = false;
     QStringList                 m_src_uris;
 
     QStringList                 m_srcUrisOfCopyDspsFiles;/* 复制dsps文件的源路径列表 */

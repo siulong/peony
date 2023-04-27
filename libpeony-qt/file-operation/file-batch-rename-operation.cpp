@@ -39,22 +39,9 @@ FileBatchRenameOperation::~FileBatchRenameOperation()
 
 }
 
-void FileBatchRenameOperation::pause ()
-{
-    m_status = PAUSE;
-    m_pause.tryLock();
-}
-
-void FileBatchRenameOperation::resume ()
-{
-    m_status = RESUME;
-    m_pause.unlock();
-}
-
 void FileBatchRenameOperation::run()
 {
     QString destUri;
-    m_status = RUNNING;
     Q_EMIT operationStarted();
 
     if (m_new_name == "/" || m_new_name == "." || !nameIsValid(m_new_name)) {
@@ -95,7 +82,7 @@ void FileBatchRenameOperation::run()
     for (QString uri :m_uris) {
         if (isCancelled())
             break;
-        threadStateDelection();
+        threadFunc();
         QString oldName = FileUtils::getFileDisplayName(uri);
         QString newName = m_new_name;
         auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(uri));
@@ -330,20 +317,16 @@ void FileBatchRenameOperation::rollback(std::shared_ptr<FileOperationInfo> info)
     }
 }
 
-void FileBatchRenameOperation::threadStateDelection()
+void FileBatchRenameOperation::threadFunc()
 {
-    while (m_status == PAUSE) {
+    m_mutex.lock();
+    while (m_is_pause) {
+        m_mutex.tryLock(2000);
         if (isCancelled()) {
-            m_pause.unlock();
             break;
         }
-        if (m_pause.tryLock(3000)) {
-            if (RESUME == m_status) {
-                m_pause.unlock();
-            }
-            m_status = RUNNING;
-        }
     }
+    m_mutex.unlock();
 }
 
 QString FileBatchRenameOperation::getFileExtensionOfFile(const QString& file)
