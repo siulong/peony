@@ -430,6 +430,14 @@ start:
         }
         break;
     }
+    case FileOperationInfo::BatchRename: {
+        operation->connect(operation, &FileOperation::operationPause, this, [=]() {
+            operation->pause();
+        });
+        operation->connect(operation, &FileOperation::operationResume, this, [=]() {
+            operation->resume();
+        });
+    }
     default:
         break;
     }

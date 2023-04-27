@@ -128,6 +128,10 @@ public:
         return false;
     }
 
+    virtual void pause();
+
+    virtual void resume ();
+
 Q_SIGNALS:
     /*!
      * \brief invalidOperation

@@ -56,6 +56,16 @@ void FileOperation::run()
 
 }
 
+void FileOperation::pause()
+{
+
+}
+
+void FileOperation::resume()
+{
+
+}
+
 void FileOperation::setHasError(bool hasError)
 {
     m_has_error = hasError;

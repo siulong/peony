@@ -3,6 +3,7 @@
 
 #include "peony-core_global.h"
 #include "file-operation.h"
+#include <QMutex>
 
 namespace Peony {
 
@@ -13,7 +14,23 @@ public:
     explicit FileBatchRenameOperation(QStringList uris, QString newName);
     ~FileBatchRenameOperation();
 
+    enum Status
+    {
+        INVALID,
+        PAUSE,
+        RESTART,
+        CANCEL,
+        RUNNING,
+        RESUME,
+        FINISHED,
+        ERROR
+    };
+
     void run() override;
+
+    void pause() override;
+
+    void resume () override;
     std::shared_ptr<FileOperationInfo> getOperationInfo() override {
         return m_info;
     }
@@ -26,6 +43,8 @@ private:
     QStringList m_new_names;
     std::shared_ptr<FileOperationInfo> m_info = nullptr;
 
+    enum Status m_status = INVALID;
+    QMutex m_pause;
     ExceptionResponse m_apply_all = Other;
 
     goffset m_current_offset = 0;
@@ -34,7 +53,8 @@ private:
     QString getFileExtensionOfFile(const QString& file); /* 获取文件的文件扩展名 */
     ExceptionResponse prehandle(GError *err);
     QString handleDuplicate(const QString uri);
-
+    void threadStateDelection();
+    void rollback(std::shared_ptr<FileOperationInfo> info);
 
 };
 

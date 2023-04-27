@@ -39,9 +39,22 @@ FileBatchRenameOperation::~FileBatchRenameOperation()
 
 }
 
+void FileBatchRenameOperation::pause ()
+{
+    m_status = PAUSE;
+    m_pause.tryLock();
+}
+
+void FileBatchRenameOperation::resume ()
+{
+    m_status = RESUME;
+    m_pause.unlock();
+}
+
 void FileBatchRenameOperation::run()
 {
     QString destUri;
+    m_status = RUNNING;
     Q_EMIT operationStarted();
 
     if (m_new_name == "/" || m_new_name == "." || !nameIsValid(m_new_name)) {
@@ -80,6 +93,9 @@ void FileBatchRenameOperation::run()
     }
 
     for (QString uri :m_uris) {
+        if (isCancelled())
+            break;
+        threadStateDelection();
         QString oldName = FileUtils::getFileDisplayName(uri);
         QString newName = m_new_name;
         auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(uri));
@@ -188,19 +204,19 @@ void FileBatchRenameOperation::run()
         } else {
     retry:
             GError* err = nullptr;
-            FileOperationError except;
-            except.srcUri = uri;
-            except.errorType = ET_GIO;
-            except.op = FileOpRename;
-            except.dlgType = ED_WARNING;
-            except.title = tr("Rename file error");
-            except.destDirUri = FileUtils::getFileUri(newFile);
-            qDebug() << "rename: " << g_file_get_uri(newFile.get()->get());
             g_autofree char* newName = g_file_get_basename(newFile.get()->get());
 
-            g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
+            g_file_set_display_name(file.get()->get(), newName, getCancellable().get()->get(), &err);
 
             if (err) {
+                FileOperationError except;
+                except.srcUri = uri;
+                except.errorType = ET_GIO;
+                except.op = FileOpRename;
+                except.dlgType = ED_WARNING;
+                except.title = tr("Rename file error");
+                except.destDirUri = FileUtils::getFileUri(newFile);
+                qDebug() << "rename: " << g_file_get_uri(newFile.get()->get());
                 except.dlgType = g_error_matches(err, g_io_error_quark(), G_IO_ERROR_FILENAME_TOO_LONG)? ED_RENAME: ED_WARNING;
                 except.errorCode = err->code;
                 except.errorStr = err->message;
@@ -216,20 +232,8 @@ void FileBatchRenameOperation::run()
                     resp = except.respCode;
                     switch (resp) {
                     case BackupAll:
-//                        setAutoBackup();
-                        break;
                     case BackupOne:
-//                    {
-//                        while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
-//                            QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
-//                            m_new_name = FileUtils::getUriBaseName(fileUri);
-//                            newFile = FileUtils::resolveRelativePath(parent, m_new_name);
-//                            getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
-//                        }
-//                        goto retry;
-//                    }
                     case OverWriteAll:
-                        //setAutoOverwrite();
                         break;
                     case OverWriteOne: {
                         // 避免重名替换
@@ -243,7 +247,6 @@ void FileBatchRenameOperation::run()
                         goto retry;
                     }
                     case IgnoreAll:
-                        //setAutoIgnore();
                     case IgnoreOne:
                         break;
                     case Cancel:
@@ -260,7 +263,9 @@ void FileBatchRenameOperation::run()
                         break;
                     }
                 } else {
-                    Q_EMIT errored(except);
+                    if (!G_IO_ERROR_CANCELLED == err->code) {
+                        Q_EMIT errored(except);
+                    }
                     switch (except.respCode) {
                     case Retry:
                         goto retry;
@@ -300,8 +305,45 @@ void FileBatchRenameOperation::run()
     }
     m_info->m_newnames = m_new_names;
     m_info->m_oldnames = m_old_names;
+    if (isCancelled()) {
+        Q_EMIT operationStartRollbacked();
+        rollback(m_info);
+    }
+
     Q_EMIT operationFinished();
     //notifyFileWatcherOperationFinished();
+}
+
+void FileBatchRenameOperation::rollback(std::shared_ptr<FileOperationInfo> info)
+{
+    m_info->m_src_uris = info->m_node_map.keys();
+    auto nodes = info->m_node_map;
+
+    for (auto srcUri : nodes.keys()) {
+        auto destUri = nodes.value(srcUri);
+        g_autoptr (GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
+        g_autoptr (GFile) destFile = g_file_new_for_uri(destUri.toUtf8().constData());
+        auto name = g_file_get_basename(srcFile);
+
+        g_file_set_display_name(destFile, name, 0, 0);
+
+    }
+}
+
+void FileBatchRenameOperation::threadStateDelection()
+{
+    while (m_status == PAUSE) {
+        if (isCancelled()) {
+            m_pause.unlock();
+            break;
+        }
+        if (m_pause.tryLock(3000)) {
+            if (RESUME == m_status) {
+                m_pause.unlock();
+            }
+            m_status = RUNNING;
+        }
+    }
 }
 
 QString FileBatchRenameOperation::getFileExtensionOfFile(const QString& file)
@@ -440,23 +482,23 @@ void FileBatchRenameInternalOperation::run()
         g_autoptr (GFile) destFile = g_file_new_for_uri(destUri.toUtf8().constData());
 
         // FIXME: 桌面配置文件undo不生效问题
-        bool is_local_desktop_file = false;
-        if (srcUri.startsWith("file:///") && srcUri.endsWith(".desktop")) {
-            g_autoptr (GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
-            g_autofree gchar* path = g_file_get_path(srcFile);
-            g_autoptr (GDesktopAppInfo) app_info = g_desktop_app_info_new_from_filename(path);
-            if (app_info) {
-                is_local_desktop_file = true;
-                QUrl destUrl = destUri;
-                auto destName = destUrl.fileName();
-                destName.remove(".desktop");
-                set_desktop_name(path, destName, 0);
-            }
-        }
+//        bool is_local_desktop_file = false;
+//        if (srcUri.startsWith("file:///") && srcUri.endsWith(".desktop")) {
+//            g_autoptr (GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
+//            g_autofree gchar* path = g_file_get_path(srcFile);
+//            g_autoptr (GDesktopAppInfo) app_info = g_desktop_app_info_new_from_filename(path);
+//            if (app_info) {
+//                is_local_desktop_file = true;
+//                QUrl destUrl = destUri;
+//                auto destName = destUrl.fileName();
+//                destName.remove(".desktop");
+//                set_desktop_name(path, destName, 0);
+//            }
+//        }
 
-        if (!is_local_desktop_file) {
-            g_file_move(srcFile, destFile, GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA), 0, 0, 0, 0);
-        }
+//        if (!is_local_desktop_file) {
+          g_file_move(srcFile, destFile, GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA), 0, 0, 0, 0);
+//        }
 
         Q_EMIT operationProgressedOne(srcUri, destUri, 1);
     }
