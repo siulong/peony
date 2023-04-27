@@ -67,6 +67,9 @@ public:
     void singleScreenMode();
     void multiscreenMode();
 
+    // only used in model refresh.
+    void clearViewCache();
+
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
 

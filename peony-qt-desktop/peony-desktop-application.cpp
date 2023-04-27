@@ -823,6 +823,14 @@ void PeonyDesktopApplication::multiscreenMode()
     }
 }
 
+void PeonyDesktopApplication::clearViewCache()
+{
+    for (auto bgWindow : m_bg_windows) {
+        auto view = bgWindow->getIconView();
+        view->clearCache();
+    }
+}
+
 void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
 {
     char **guessType;

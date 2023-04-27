@@ -635,6 +635,11 @@ void DesktopItemModel::onEnumerateFinished(bool successed)
         return;
     }
 
+    // check if there is info querying, if true, wait querying finished.
+    while (!m_querying_files.isEmpty()) {
+        qApp->processEvents();
+    }
+
     //beginResetModel();
     beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
     m_files.clear();
@@ -658,12 +663,21 @@ void DesktopItemModel::onEnumerateFinished(bool successed)
     //this->endResetModel();
     for (auto info : infos) {
         auto asyncJob = new FileInfoJob(info);
-        connect(this, &DesktopItemModel::prepareRefresh, asyncJob, &FileInfoJob::cancel, Qt::DirectConnection);
+        connect(this, &DesktopItemModel::prepareRefresh, asyncJob, [=]{
+            asyncJob->cancel();
+            asyncJob->setProperty("isCancelled", true);
+        }, Qt::DirectConnection);
         connect(asyncJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
             m_querying_files.removeOne(info);
             if (!successed) {
                 m_files.removeOne(info);
             }
+
+            if (asyncJob->property("isCancelled").toBool()) {
+                // quit loop to avoid invalid data inserted;
+                return;
+            }
+
             if (m_querying_files.isEmpty()) {
                 if (!m_files.isEmpty()) {
                     beginInsertRows(QModelIndex(), 0, m_files.count() - 1);
@@ -965,6 +979,13 @@ Qt::DropActions DesktopItemModel::supportedDragActions() const
 void DesktopItemModel::refresh()
 {
     Q_EMIT prepareRefresh();
+
+    beginResetModel();
+    m_files.clear();
+    m_items_need_relayout.clear();
+    auto app = static_cast<PeonyDesktopApplication *>(qApp);
+    app->clearViewCache();
+    endResetModel();
 
     m_desktop_info = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     auto infoJob = new FileInfoJob(m_desktop_info);

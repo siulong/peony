@@ -116,6 +116,9 @@ public:
     bool isFull();
     void clearExtendItemPos(bool saveId = false);
 
+    // only used in model refresh.
+    void clearCache();
+
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);
