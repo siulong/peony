@@ -82,7 +82,7 @@ void FileBatchRenameOperation::run()
     for (QString uri :m_uris) {
         if (isCancelled())
             break;
-        threadFunc();
+        OperatorThreadPause();
         QString oldName = FileUtils::getFileDisplayName(uri);
         QString newName = m_new_name;
         auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(uri));
@@ -315,18 +315,6 @@ void FileBatchRenameOperation::rollback(std::shared_ptr<FileOperationInfo> info)
         g_file_set_display_name(destFile, name, 0, 0);
 
     }
-}
-
-void FileBatchRenameOperation::threadFunc()
-{
-    m_mutex.lock();
-    while (m_is_pause) {
-        m_mutex.tryLock(2000);
-        if (isCancelled()) {
-            break;
-        }
-    }
-    m_mutex.unlock();
 }
 
 QString FileBatchRenameOperation::getFileExtensionOfFile(const QString& file)

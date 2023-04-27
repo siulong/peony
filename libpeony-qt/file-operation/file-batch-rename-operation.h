@@ -27,8 +27,6 @@ private:
     QStringList m_old_names;
     QStringList m_new_names;
     std::shared_ptr<FileOperationInfo> m_info = nullptr;
-
-    QMutex m_mutex;
     ExceptionResponse m_apply_all = Other;
 
     goffset m_current_offset = 0;
@@ -37,7 +35,6 @@ private:
     QString getFileExtensionOfFile(const QString& file); /* 获取文件的文件扩展名 */
     ExceptionResponse prehandle(GError *err);
     QString handleDuplicate(const QString uri);
-    void threadFunc();
     void rollback(std::shared_ptr<FileOperationInfo> info);
 
 };

@@ -43,6 +43,11 @@ FileOperation::FileOperation(QObject *parent) : QObject (parent)
     });
     connect(this, &FileOperation::operationResume, this, [=] () {
         m_is_pause.store(false);
+        m_wait_condition.wakeOne();
+    });
+    connect(this, &FileOperation::operationCancel, this, [=] () {
+        m_is_pause.store(false);
+        m_wait_condition.wakeOne();
     });
 }
 
@@ -68,6 +73,14 @@ void FileOperation::cancel()
     m_is_cancelled = true;
 }
 
+void FileOperation::OperatorThreadPause()
+{
+    m_mutex.lock();
+    while (m_is_pause) {
+        m_wait_condition.wait(&m_mutex);
+    }
+    m_mutex.unlock();
+}
 
 bool FileOperation::nameIsValid (QString& name)
 {
