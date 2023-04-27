@@ -147,11 +147,17 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     auto text = opt.text;
     opt.text = nullptr;
 
+    auto state = opt.state;
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected))
+    {
+        opt.state &= ~QStyle::State_Selected;
+    }
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
     painter->restore();
 
+    opt.state = state;
     opt.text = text;
     opt.font = qApp->font();
     opt.fontMetrics = qApp->fontMetrics();
