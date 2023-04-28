@@ -38,6 +38,8 @@ static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
 static QString formatGerrorString (const Peony::FileOperationError* error);
 
+static const int ELIDE_TEXT_LENGTH = 960;
+
 
 Peony::FileOperationErrorDialogConflict::FileOperationErrorDialogConflict(FileOperationErrorDialogBase *parent)
     : FileOperationErrorDialogBase(parent)
@@ -220,11 +222,11 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr/*.toHtmlEscaped()*/, Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr/*.toHtmlEscaped()*/, Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     } else {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     }
 
@@ -332,11 +334,11 @@ void Peony::FileOperationErrorDialogNotSupported::handle(Peony::FileOperationErr
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr.toHtmlEscaped(), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr.toHtmlEscaped(), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     } else {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     }
 
