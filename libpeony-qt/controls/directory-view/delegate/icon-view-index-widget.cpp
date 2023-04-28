@@ -259,9 +259,6 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     opt.text = std::move(tmp);
 
     //extra emblems
-    if (!m_info.lock()) {
-        return;
-    }
     auto info = m_info.lock();
 
     // draw color symbols
