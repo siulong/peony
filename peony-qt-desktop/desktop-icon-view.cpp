@@ -274,6 +274,12 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
         });
     });
 
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
+        if (SHOW_HIDDEN_PREFERENCE == key) {
+            m_show_hidden= GlobalSettings::getInstance()->getValue(key).toBool();
+        }
+    });
+
     connect(this, &QListView::iconSizeChanged, this, [=]() {
         //qDebug()<<"save=============";
         this->setSortType(GlobalSettings::getInstance()->getValue(LAST_DESKTOP_SORT_ORDER).toInt());
