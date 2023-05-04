@@ -135,6 +135,7 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabData(index, uri);
+        setTabToolTip(index, displayName);
 
         Q_EMIT this->locationUpdated(uri);
     });
