@@ -58,6 +58,13 @@ FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri,
 
     m_dest_dir_uri = FileUtils::urlEncode(destDirUri);
     m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Move);
+
+    QString srcId = FileUtils::getFileSystemId(m_src_uris.first());
+    QString destId = FileUtils::getFileSystemId(m_dest_dir_uri);
+    if (srcId.length() > 0 && srcId == destId)
+        m_is_same_fs = true;
+    else
+        m_is_same_fs = false;
 }
 
 FileMoveOperation::~FileMoveOperation()
@@ -209,6 +216,7 @@ void FileMoveOperation::move()
     }
 
     // file copy-delete
+    bool hasFolder = false;
     goffset *total_size = new goffset(0);
     for (auto eNode : errNode) {
         if (isCancelled())
@@ -216,6 +224,8 @@ void FileMoveOperation::move()
 
         eNode->findChildrenRecursively();
         eNode->computeTotalSize(total_size);
+        if(eNode->isFolder())
+            hasFolder = true;
     }
     m_total_szie = *total_size;
     operationPreparedOne("", m_total_szie);
@@ -226,7 +236,14 @@ void FileMoveOperation::move()
     if (!errNode.isEmpty()) {
         if (m_move_action == Qt::TargetMoveAction) {
             m_info.get()->m_type = FileOperationInfo::Move;
-        } else {
+        } else if(m_move_action == Qt::MoveAction){
+            //only when action is copy can delete when ctrl+z
+            //当前文件夹替换其实做的是合并操作，撤销操作不能删除文件夹，有丢失文件的风险
+            if (m_is_same_fs && ! hasFolder){
+                m_info.get()->m_type = FileOperationInfo::Copy;
+                m_info.get()->m_opposite_type = FileOperationInfo::Delete;
+            }
+        } else{
             m_info.get()->m_type = FileOperationInfo::Copy;
             m_info.get()->m_opposite_type = FileOperationInfo::Delete;
         }
@@ -755,6 +772,9 @@ fallback_retry:
                                        &error);
                 if (error) {
                     qDebug() << __func__ << error->code << error->message;
+                    setHasError(true);
+                }else{
+                    setHasError(false);
                 }
                 g_error_free(error);
 
@@ -772,6 +792,9 @@ fallback_retry:
                                        &error);
                 if (error) {
                     qDebug() << __func__ << error->code << error->message;
+                    setHasError(true);
+                }else{
+                    setHasError(false);
                 }
                 g_error_free(error);
 
@@ -942,6 +965,8 @@ fallback_retry:
                 }
                 handle_type = typeData;
             }
+
+            GError *nodeErr = nullptr;
             //handle.
             switch (handle_type) {
             case IgnoreOne: {
@@ -960,13 +985,19 @@ fallback_retry:
                                    getCancellable().get()->get(),
                                    GFileProgressCallback(progress_callback),
                                    this,
-                                   &err);
+                                   &nodeErr);
                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
                 if (m_is_pause) fileCopy.pause();
                 fileCopy.run();
                 node->setErrorResponse(OverWriteOne);
+                if (nodeErr){
+                    setHasError(true);
+                    g_error_free(nodeErr);
+                }else{
+                    setHasError(false);
+                }
                 break;
             }
             case OverWriteAll: {
@@ -981,15 +1012,21 @@ fallback_retry:
                                    getCancellable().get()->get(),
                                    GFileProgressCallback(progress_callback),
                                    this,
-                                   &err);
+                                   &nodeErr);
                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
                 if (m_is_pause) fileCopy.pause();
                 fileCopy.run();
                 //node->setState(FileNode::Handled);
-                node->setErrorResponse(OverWriteOne);
-                m_prehandle_hash.insert(err->code, OverWriteOne);
+                node->setErrorResponse(OverWriteAll);
+                m_prehandle_hash.insert(err->code, OverWriteAll);
+                if (nodeErr){
+                    setHasError(true);
+                    g_error_free(nodeErr);
+                }else{
+                    setHasError(false);
+                }
                 break;
             }
             case BackupOne: {
@@ -1051,7 +1088,10 @@ fallback_retry:
             default:
                 break;
             }
+        }else{
+            setHasError(false);
         }
+
         fileSync(node->uri(), realDestUri);
         if(node->uri().endsWith(".dsps") && realDestUri.endsWith(".dsps")){
             m_srcUrisOfCopyDspsFiles.append(FileUtils::urlDecode(node->uri()));
@@ -1069,6 +1109,7 @@ fallback_retry:
 
 void FileMoveOperation::deleteRecursively(FileNode *node)
 {
+    qDebug() << "deleteRecursively:"<<node->uri()<<isCancelled()<<hasError();
     if (isCancelled() || hasError())
         return;
 
@@ -1103,11 +1144,14 @@ void FileMoveOperation::moveForceUseFallback()
     goffset *total_size = new goffset(0);
 
     QList<FileNode*> nodes;
+    bool hasFolder = false;
     for (auto uri : m_src_uris) {
         FileNode *node = new FileNode(uri, nullptr, m_reporter);
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
         nodes<<node;
+        if (node->isFolder())
+            hasFolder = true;
     }
     operationPrepared();
 
@@ -1127,7 +1171,14 @@ void FileMoveOperation::moveForceUseFallback()
         for (auto node : nodes) {
             deleteRecursively(node);
         }
-    } else {
+    } else if(m_move_action == Qt::MoveAction){
+        //only when action is copy can delete when ctrl+z
+        //当前文件夹替换其实做的是合并操作，撤销操作不能删除文件夹，有丢失文件的风险
+        if (m_is_same_fs && ! hasFolder){
+            m_info.get()->m_type = FileOperationInfo::Copy;
+            m_info.get()->m_opposite_type = FileOperationInfo::Delete;
+        }
+    } else{
         m_info.get()->m_type = FileOperationInfo::Copy;
         m_info.get()->m_opposite_type = FileOperationInfo::Delete;
     }
@@ -1163,6 +1214,12 @@ void FileMoveOperation::moveForceUseFallback(FileNode* node)
 
     if (isCancelled()) {
         Q_EMIT operationStartRollbacked();
+    }
+
+    //如果是同一个文件系统的文件，直接做移动操作
+    //related change with bug#164742
+    if (m_is_same_fs && m_move_action == Qt::MoveAction){
+        m_move_action = Qt::TargetMoveAction;
     }
 
     if (m_move_action == Qt::TargetMoveAction) {

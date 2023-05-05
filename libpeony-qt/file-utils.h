@@ -105,6 +105,7 @@ public:
     static quint64 getFileSystemSize(QString uri);
     static QString getFileSystemType(QString uri);
     static QString getMobieDataPath();
+    static QString getFileSystemId(QString uri);
     static QString getApplicationName(const QString &uri);
     static bool isRemoteServerUri(const QString &uri);
     static bool isEmptyDisc(const QString &unixDevice);/* 判断是否是空光盘 */

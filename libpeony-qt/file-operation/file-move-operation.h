@@ -185,6 +185,8 @@ private:
      */
     bool m_copy_move = false;
 
+    bool m_is_same_fs = false;
+
     /*!
      * \brief m_move_action
      * replacing m_copy_move flag.

@@ -1113,6 +1113,27 @@ QString FileUtils::getMobieDataPath()
         return "";
 }
 
+QString FileUtils::getFileSystemId(QString uri)
+{
+    if (nullptr == uri) return "";
+
+    QString systemId = "";
+    auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
+    auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
+        G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+        G_FILE_QUERY_INFO_NONE,
+        nullptr,
+        nullptr));
+    if (!G_IS_FILE_INFO (info.get()->get()))
+        return systemId;
+
+    if (info) {
+        systemId = g_file_info_get_attribute_string(info.get()->get(), G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+    }
+
+    return systemId;
+}
+
 bool FileUtils::isRemoteServerUri(const QString &uri)
 {
     if(uri.startsWith("smb://") || uri.startsWith("ftp://") || uri.startsWith("sftp://"))
