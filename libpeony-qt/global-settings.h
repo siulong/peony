@@ -34,6 +34,7 @@
 #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
 #define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
+#define SHOW_IN_NEW_WINDOW          "showInNewWindow"
 
 //视图 - View
 #define DEFAULT_VIEW_ID             "defaultViewId"

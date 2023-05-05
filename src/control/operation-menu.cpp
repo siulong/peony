@@ -174,6 +174,13 @@ setPasswd:
         interFace->call("finished");
     });
 
+    //task#147390  设置是否新建窗口打开文件夹
+    auto showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
+        Peony::GlobalSettings::getInstance()->setValue(SHOW_IN_NEW_WINDOW, checked);
+    });
+    showFoldersInNewWindow->setCheckable(true);
+    showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
+
     addSeparator();
 
     //comment icon to design request

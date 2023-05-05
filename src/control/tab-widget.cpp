@@ -1568,7 +1568,16 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
                                   tr("Open directory failed, you have no permission!"));
             return;
         }
-        Q_EMIT this->updateWindowLocationRequest(uri, true);
+
+        bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
+        if (check && info->isDir()) {
+            //task#147390  新建窗口来打开文件夹
+            auto window = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
+            auto newWindow = dynamic_cast<QWidget *>(window->create(uri));
+            newWindow->show();
+        } else {
+            Q_EMIT this->updateWindowLocationRequest(uri, true);
+        }
     } else {
         Peony::FileLaunchManager::openAsync(uri, false, false);
     }
