@@ -180,8 +180,8 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
                                       "Are you sure doing that?");
         if (isBigFile)
            message = QObject::tr("Can not trash files more than 10GB, would you like to delete it permanently?");
-
-        auto result = QMessageBox::question(nullptr, QObject::tr("Can not trash"), message);
+        auto result = QMessageBox::question(nullptr, QObject::tr("Can not trash"), message,
+                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (result == QMessageBox::Yes) {
             op = FileOperationUtils::remove(uris);
         }
@@ -337,9 +337,11 @@ void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
     int result = 0;
     if (uris.count() == 1) {
         QUrl url = uris.first();
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."));
+        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."),
+                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
     } else {
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."));
+        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."),
+                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
     }
 
     if (result == QMessageBox::Yes) {

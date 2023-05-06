@@ -549,7 +549,7 @@ void PermissionsPropertiesPage::updateCheckBox()
                 }
                 if (acl.count("user:") >= 2 && !m_isShow) {
                     m_isShow = true;
-                    auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"));
+                    auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (QMessageBox::No == res) {
                         // FIXME:
                         //checkbox->setChecked(!checkbox->isChecked());
@@ -580,7 +580,8 @@ void PermissionsPropertiesPage::addAdvancedLayout()
         });
         if (isAdvancedShare) {
             auto result = QMessageBox::question(nullptr, tr("Permission refinement settings"),
-                                                tr("The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?"));
+                                                tr("The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?"),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
             if (QMessageBox::Yes == result) {
                 page->show();
             }
@@ -764,7 +765,8 @@ void AdvancedPermissionsPage::init()
             }
         }
 
-        auto result = QMessageBox::question(nullptr, tr("Permission refinement settings tip"), tr("Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?"));
+        auto result = QMessageBox::question(nullptr, tr("Permission refinement settings tip"), tr("Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?"),
+                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
         if (result == QMessageBox::Yes) {
             this->checkInheritsBoxInfo();
             this->saveAclPermissions();

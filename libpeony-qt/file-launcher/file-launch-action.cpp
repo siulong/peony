@@ -320,7 +320,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
             if (fileInfo->isSymbolLink())
             {
                 auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
-                                      tr("File not exist, do you want to delete the link file?"));
+                                      tr("File not exist, do you want to delete the link file?"),
+                                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (result == QMessageBox::Yes) {
                     qDebug() << "Delete unused symbollink.";
                     QStringList selections;
@@ -336,7 +337,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         {
             auto result = QMessageBox::question(nullptr, tr("Open App failed"),
                                   tr("The linked app is changed or uninstalled, so it can not work correctly. \n"
-                                     "Do you want to delete the link file?"));
+                                     "Do you want to delete the link file?"),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if (result == QMessageBox::Yes) {
                 qDebug() << "Delete unused desktop file";
                 QStringList selections;
@@ -353,7 +355,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
                 return;
             }
 
-            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri));
+            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes));
             if (result == QMessageBox::Yes) {
                 GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
                 GList *l = nullptr;
@@ -539,7 +541,8 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
             if (fileInfo->isSymbolLink())
             {
                 auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
-                                      tr("File not exist, do you want to delete the link file?"));
+                                      tr("File not exist, do you want to delete the link file?"),
+                                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (result == QMessageBox::Yes) {
                     qDebug() << "Delete unused symbollink.";
                     QStringList selections;
@@ -549,13 +552,15 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
             }
             else
                 QMessageBox::critical(nullptr, tr("Open Failed"),
-                                  tr("Can not open %1, Please confirm you have the right authority.").arg(m_uri));
+                                  tr("Can not open %1, Please confirm you have the right authority.").arg(m_uri),
+                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
         }
         else if (fileInfo->isDesktopFile() && GlobalSettings::getInstance()->getProjectName() != V10_SP1_EDU)
         {
             auto result = QMessageBox::question(nullptr, tr("Open App failed"),
                                   tr("The linked app is changed or uninstalled, so it can not work correctly. \n"
-                                     "Do you want to delete the link file?"));
+                                     "Do you want to delete the link file?"),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if (result == QMessageBox::Yes) {
                 qDebug() << "Delete unused desktop file";
                 QStringList selections;
@@ -564,7 +569,8 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
             }
         }
         else {
-            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri));
+            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if (result == QMessageBox::Yes) {
                 GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
                 GList *l = nullptr;
