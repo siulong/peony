@@ -92,12 +92,14 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
             }
             menu.exec(mapToGlobal(pos));
             auto urisToEdit = menu.urisToEdit();
-            if (urisToEdit.count() == 1) {
-                QTimer::singleShot(
-                            100, this, [=]() {
-                    m_desktopIconView->editUri(urisToEdit.first());
-                });
-            }
+            m_desktopIconView->UpdateToEditUris(urisToEdit);
+//            if (urisToEdit.count() >= 1) {
+//                QTimer::singleShot(
+//                            100, this, [=]() {
+//                    m_desktopIconView->editUri(urisToEdit.first());
+//                    qDebug() << "editUri count >=1:"<<urisToEdit.first();
+//                });
+//            }
         });
     });
 }

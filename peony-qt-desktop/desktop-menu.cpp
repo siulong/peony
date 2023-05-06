@@ -302,6 +302,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
                         CreateTemplateOperation op(m_directory, CreateTemplateOperation::Template, t);
                         op.run();
                         auto target = op.target();
+                        //clear old data,fix bug#164160, not enter edit new file issue
+                        m_uris_to_edit.clear();
                         m_uris_to_edit<<target;
                     });
                     subMenu->addAction(action);
@@ -325,6 +327,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
             op.run();
             auto targetUri = op.target();
             qDebug()<<"target:"<<targetUri;
+            //clear old data,fix bug#164160, not enter edit new file issue
+            m_uris_to_edit.clear();
             m_uris_to_edit<<targetUri;
         });
         auto createFolderActions = new QAction(QIcon::fromTheme("folder-new-symbolic"), tr("Folder"), this);
@@ -335,6 +339,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
             op.run();
             auto targetUri = op.target();
             qDebug()<<"target:"<<targetUri;
+            //clear old data,fix bug#164160, not enter edit new file issue
+            m_uris_to_edit.clear();
             m_uris_to_edit<<targetUri;
         });
         subMenu->addActions(actions);

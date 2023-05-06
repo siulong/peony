@@ -1227,15 +1227,25 @@ void DesktopIconView::setSortOrder(int sortOrder)
 void DesktopIconView::editUri(const QString &uri)
 {
     clearAllIndexWidgets();
+    qDebug() << "editUri clearAllIndexWidgets";
     auto origin = FileUtils::getOriginalUri(uri);
     QTimer::singleShot(100, this, [=]() {
         edit(m_proxy_model->mapFromSource(m_model->indexFromUri(origin)));
+        auto index = m_proxy_model->mapFromSource(m_model->indexFromUri(origin));
+        edit(index);
+        qDebug() << "editUri index:"<<index<<uri;
     });
 }
 
 void DesktopIconView::editUris(const QStringList uris)
 {
 
+}
+
+
+void DesktopIconView::UpdateToEditUris(QStringList uris)
+{
+    m_uris_to_edit = uris;
 }
 
 void DesktopIconView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -1810,7 +1820,10 @@ DesktopIconView::ZoomLevel DesktopIconView::zoomLevel() const
 
 void DesktopIconView::setEditFlag(bool edit)
 {
+    qDebug() << "setEditFlag:" <<edit;
     m_is_edit = edit;
+    if (! m_is_edit)
+        m_edit_uri = "";
 }
 
 bool DesktopIconView::getEditFlag()
@@ -2274,11 +2287,19 @@ void DesktopIconView::clearAllIndexWidgets(const QStringList &uris)
     if (!model())
         return;
 
+    //fix bug#164160, when edit new file, infoUpdate call clearAllIndexWidgets issue
+    if (m_is_edit && uris.length()>0 && m_edit_uri == uris.first())
+        return;
+
+    if(uris.length()>0 )
+       qDebug() << "clearAllIndexWidgets uris:"<<uris.first()<<uris.length();
+
     int row = 0;
     auto index = model()->index(row, 0);
     while (index.isValid()) {
         if (uris.isEmpty() || uris.contains(index.data(Qt::UserRole).toString())) {
             setIndexWidget(index, nullptr);
+            qDebug() << "clearAllIndexWidgets setIndexWidget"<<index;
         }
         row++;
         index = model()->index(row, 0);
@@ -2526,13 +2547,20 @@ DesktopItemProxyModel *DesktopIconView::getProxyModel()
 
 void DesktopIconView::fileCreated(const QString &uri)
 {
+
     qDebug()<<"DesktopIconView::fileCreated,view:" << this;
+    qDebug()<<"DesktopIconView::fileCreated,view:" << this <<m_new_files_to_be_selected.length();
     if (m_new_files_to_be_selected.isEmpty()) {
         m_new_files_to_be_selected<<uri;
 
         QTimer::singleShot(500, this, [=]() {
+            qDebug() << "m_new_files_to_be_selected isEmpty:"<<this->state();
             if (this->state() & QAbstractItemView::EditingState)
                 return;
+
+            if (! this->m_uris_to_edit.isEmpty())
+                return;
+            qDebug() << "fileCreated setSelections"<<m_new_files_to_be_selected.length();
             this->setSelections(m_new_files_to_be_selected);
             m_new_files_to_be_selected.clear();
         });
@@ -2554,6 +2582,22 @@ void DesktopIconView::fileCreated(const QString &uri)
             qWarning()<<"file is created but not valid in proxy model now";
         }
     }
+
+    /* 新建文件/文件夹，可编辑文件名，copy时不能编辑 */
+    //fix bug#164160, use same way as mainwindow
+    if(this->m_uris_to_edit.isEmpty())
+        return;
+
+    QString editUri = Peony::FileUtils::urlDecode(this->m_uris_to_edit.first());
+    QString infoUri = Peony::FileUtils::urlDecode(uri);
+    qDebug() << "fileCreated editUri:"<<editUri<<infoUri;
+    if (editUri == infoUri ) {
+        QTimer::singleShot(100, this, [=]() {
+            this->editUri(uri);
+            m_edit_uri = uri;
+        });
+    }
+    this->m_uris_to_edit.clear();
 }
 
 void DesktopIconView::dragToOtherScreen(QDropEvent *e)
