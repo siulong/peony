@@ -40,31 +40,31 @@
     <name>DiscControl</name>
     <message>
         <source> is busy!</source>
-        <translation>བྲེལ་བ་ཆེ།</translation>
+        <translation> བྲེལ་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <source>is busy!</source>
-        <translation>བྲེལ་བ་ཆེ།</translation>
+        <translation>བྲེལ་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <source> not support udf at present.</source>
-        <translation>མིག་སྔར་UDFརྣམ་པ་ལ་རྒྱབ་སྐྱོར་མི་བྱེད་པ་།</translation>
+        <translation> མིག་སྔར་udfརྣམ་གཞག་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
         <source>unmount disc failed before udf format.</source>
-        <translation>བཏོན་པའི་UDFསྡེར་ཕམ་དང་།ཚད་གཞི་ཅན་གྱི་UDFསྡེར་གོང་།</translation>
+        <translation>udfའོད་སྡེར་རྣམ་པར་འཇོག་པའི་སྔོན་ལ་ཕྱིར་ལེན་ཕམ་པ།</translation>
     </message>
     <message>
         <source>is not properly formatted.</source>
-        <translation type="vanished">ཡོངས་སུ་མ་པའི་རྣམ་གཞག་</translation>
-    </message>
-    <message>
-        <source>preparation failed before DVD-RW udf format.</source>
-        <translation>DVD-RWསྡེར་UDFརྣམ་གཞག་གྲ་སྒྲིག་ཕམ་པ།</translation>
+        <translation type="vanished">ཆ་ཚང་རྣམ་པར་འཇོག་མ་ཐུབ།</translation>
     </message>
     <message>
         <source>Can not found newfs_udf tool.</source>
-        <translation type="vanished">newfs_udfལག་ཆ་རྙེད་མ་ཐུབ་།</translation>
+        <translation type="vanished">newfs_udfལག་ཆ་རྙེད་ཐབས་བྲེལ།</translation>
+    </message>
+    <message>
+        <source>preparation failed before DVD-RW udf format.</source>
+        <translation>DVD-RWཡི་འོད་སྡེར་udfརྣམ་གཞག་ཏུ་གྱུར་བར་གྲ་སྒྲིག་ཕམ་ཉེས་བྱུང་བ།</translation>
     </message>
     <message>
         <source>DVD+RW udf format fail.</source>
@@ -111,6 +111,13 @@
     </message>
 </context>
 <context>
+    <name>FileOperationHelper</name>
+    <message>
+        <source>Burn failed</source>
+        <translation>ཕམ་ཉེས་བྱུང་བར་བརྐོས་པ།</translation>
+    </message>
+</context>
+<context>
     <name>Format_Dialog</name>
     <message>
         <source>ok</source>
@@ -118,7 +125,7 @@
     </message>
     <message>
         <source>ext4</source>
-        <translation>Ext4</translation>
+        <translation>ext4</translation>
     </message>
     <message>
         <source>ntfs</source>
@@ -134,7 +141,7 @@
     </message>
     <message>
         <source>Dialog</source>
-        <translation>གླེང་སྒྲོམ།</translation>
+        <translation>རྣམ་བཞག་ཅན།</translation>
     </message>
     <message>
         <source>clean it total</source>
@@ -146,7 +153,7 @@
     </message>
     <message>
         <source>system</source>
-        <translation>རྒྱུད་ཁོངས།</translation>
+        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
         <source>device_name</source>
@@ -154,51 +161,51 @@
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>ཡིག་རྐྱང་ཕྲེང་བ།</translation>
+        <translation>ཤོང་ཚད།</translation>
     </message>
     <message>
         <source>vfat/fat32</source>
-        <translation></translation>
+        <translation>vfat/fat32</translation>
     </message>
     <message>
         <source>exfat</source>
-        <translation></translation>
+        <translation>exfat</translation>
     </message>
     <message>
         <source>Formatting. Do not close this window</source>
-        <translation>རྣམ་པ་ཅན་དུ་འགྱུར་བཞིན་ཡོད་།སྒེའུ་ཁུང་དེ་སྒོ་རྒྱག་མ་བྱེད་།</translation>
+        <translation>རྣམ་གཞག་བཟོ་བ།ཞིན་ཡོད་པས་ཁ་རྒྱག་མི་རུང་།</translation>
     </message>
     <message>
         <source>Format</source>
-        <translation>རྣམ་གཞག་ཅན།</translation>
+        <translation>རྣམ་གཞག</translation>
     </message>
     <message>
         <source>Rom size:</source>
-        <translation>ཤོང་ཚད་ཆེ་ཆུང་</translation>
+        <translation>ཤོང་ཚད་ཆེ་ཆུང་ནི།</translation>
     </message>
     <message>
         <source>Filesystem:</source>
-        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
+        <translation>ཡིག་ཚགས་མ་ལག་ནི།</translation>
     </message>
     <message>
         <source>Disk name:</source>
-        <translation>ཁུལ་ལག་མིང་།</translation>
+        <translation>སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
     </message>
     <message>
         <source>Completely erase(Time is longer, please confirm!)</source>
-        <translation>ཡོངས་སུ་ཕྱིས་དང་།དུས་ཚོད་ཅུང་རིང་བ་དང་།གཏན་འཁེལ་བྱེད་རོགས་།</translation>
+        <translation>རྦད་དེ་མེད་པར་བཟོ་དགོས། (དུས་ཚོད་ཅུང་རིང་བས་ཁྱེད་ཀྱིས་གཏན་འཁེལ་གནང་རོགས། )</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>Error</source>
@@ -206,98 +213,98 @@
     </message>
     <message>
         <source>Block not existed!</source>
-        <translation>སྒྲིག་ཆས་མི་འདུག</translation>
+        <translation>བཀག་སྡོམ་བྱས་མེད་པ་རེད།</translation>
     </message>
     <message>
         <source>Set password</source>
-        <translation>གསང་ཨང་འགོད་པ་</translation>
+        <translation>གསང་གྲངས་གཏན་འཁེལ་བྱ་དགོས།</translation>
     </message>
     <message>
         <source>Set password for volume based on LUKS (only ext4)</source>
-        <translation>ནི་ext4ཁུལ་ཁག་གི་སྒྲིག་འགོད་ལ་གཞིགས་ནས་LUKSགསང་ཨང་།</translation>
+        <translation>LUKS(ext4)རྨང་གཞིར་བྱས་པའི་གྲངས་འབོར་གྱི་གསང་གྲངས་གཏན་འཁེལ་བྱ་དགོས།</translation>
     </message>
     <message>
         <source>Enter Password:</source>
-        <translation>གསང་ཨང་ནང་འཇུག་</translation>
+        <translation>གསང་གྲངས་ནང་འཇུག་བྱ་རྒྱུ་སྟེ།</translation>
     </message>
     <message>
         <source>Password too short, please retype a password more than 6 characters</source>
-        <translation>གསང་གྲངས་ཐུང་དྲག་པ་དང་།རོགས་།ཡང་བསྐྱར་ནང་འཇུག་6ལས་བརྒལ་གྱི་གསང་ཨང་།</translation>
+        <translation>གསང་གྲངས་ཐུང་དྲགས་པས་ཡི་གེ་6ལས་བརྒལ་བའི་གསང་གྲངས་བསྐྱར་དུ་པར་རྒྱག་རོགས།</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>Device name cannot start with a decimal point, Please re-enter!</source>
-        <translation>ཁུལ་དབྱེའི་མིང་ལ་བརྟེན་ནས་གྲངས་ཆུང་ཚེག་རྟགས་མགོ་བརྩམས་།ཡང་བསྐྱར་ནང་འཇུག་རོགས་།</translation>
-    </message>
-    <message>
-        <source>%1/sec, %2 remaining.</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒྲིག་ཆས་ཀྱི་མིང་སིལ་གྲངས་ཚེག་གིས་འགོ་འཛུགས་མི་རུང་། བསྐྱར་དུ་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
     <message>
         <source>over one day</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉིན་གཅིག་ལས་བརྒལ་བ།</translation>
+    </message>
+    <message>
+        <source>%1/sec, %2 remaining.</source>
+        <translation>དུས་ཚོད་སྐར་ཆ་རེ་རེ%1，དུས་ཚོད་ལྷག་མ།%2.</translation>
     </message>
     <message>
         <source>getting progress...</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡར་རྒྱས་ཡོང་ཐབས་བྱེད་དགོས།...</translation>
     </message>
 </context>
 <context>
     <name>KyFileDialogRename</name>
     <message>
         <source>Renaming &quot;%1&quot;</source>
-        <translation>&quot;%1&quot;བསྐྱར་དུ་བཏགས་བཞིན་ཡོད་།</translation>
+        <translation>མིང་བསྐྱར་འདོགས་བྱེད་བཞིན་ཡོད། &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Renaming failed, the reason is: %1</source>
-        <translation>བསྐྱར་དུ་མིང་བཏགས་པ་ཕམ་དང་།རྒྱུ་རྐྱེན་%1།</translation>
+        <translation>མིང་བསྐྱར་དུ་བཏགས་པ་ཕམ་སོང་།རྒྱུ་མཚན་ནི།: %1</translation>
     </message>
     <message>
         <source>Filename too long</source>
-        <translation>ཡིག་ཆའི་མིང་རིང་དྲགས་པ་</translation>
+        <translation>ཡིག་ཆའི་མིང་རིང་དྲགས་པ།</translation>
     </message>
     <message>
         <source>Copying &quot;%1&quot;</source>
-        <translation>&quot;%1&quot;འདྲ་བཟོ་བྱེད་བཞིན་ཡོད་།</translation>
+        <translation>འདྲ་ཕམ་བྱེད་བཞིན་ཡོད། &quot;%1&quot;</translation>
     </message>
     <message>
         <source>To &quot;%1&quot;</source>
-        <translation>ནས་&quot;%1&quot;།</translation>
+        <translation>&quot;%1&quot;ལ་སླེབས་པ།</translation>
     </message>
     <message>
         <source>Copying failed, the reason is: %1</source>
-        <translation>འདྲ་བཟོ་ཕམ་དང་།རྒྱུ་མཚན་ནི་%1།</translation>
+        <translation>འདྲ་ཕབ་ཕམ་སོང་།རྒྱུ་མཚན་ནི།: %1</translation>
     </message>
     <message>
         <source>Moving &quot;%1&quot;</source>
-        <translation>&quot;%1&quot;སྤོ་བཞིན་ཡོད་།</translation>
+        <translation>སྤོ་འགུལ་བྱེད་བཞིནཡོད། &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Moving failed, the reason is: %1</source>
-        <translation>སྒུལ་བདེའི་ཕམ་ཁ་དང་།རྒྱུ་རྐྱེན་ནི་%1།</translation>
+        <translation>སྤོ་འགུལ་ཕམ་སོང་།རྒྱུ་མཚན་ནི: %1</translation>
     </message>
     <message>
         <source>File operation error:</source>
-        <translation>ཡིག་ཆ་བཀོལ་སྤྱོད་བྱེད་སྟངས་ནོར་བ།</translation>
+        <translation>ཡིག་ཆ་བཀོལ་སྤྱོད་ནོར་འཁྲུལ།:</translation>
     </message>
     <message>
         <source>The reason is: %1</source>
-        <translation>དེའི་རྒྱུ་མཚན་ནི།</translation>
+        <translation>རྒྱུ་མཚན་ནི།: %1</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>དོར་བ།</translation>
     </message>
     <message>
         <source>Skip</source>
-        <translation>མཆོང་།</translation>
+        <translation>མཆོངས་པ།</translation>
     </message>
     <message>
         <source>Skip All</source>
-        <translation>ཚང་མ་མཆོང་།</translation>
+        <translation>མ་ཚང་མཆོངས་པ།</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -305,22 +312,22 @@
     </message>
     <message>
         <source>Please enter a new name</source>
-        <translation>ཡིག་ཆ་གསར་པའི་མིང་འབྲི་རོགས།</translation>
+        <translation>ཡིག་ཆ་གསར་བའི་མིང་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
 </context>
 <context>
     <name>MainProgressBar</name>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>དོར་བ།</translation>
     </message>
     <message>
         <source>Are you sure want to cancel all file operations</source>
@@ -344,7 +351,7 @@
     </message>
     <message>
         <source>sync ...</source>
-        <translation>གོམ་པ་མཉམ་སྤོ་བྱེད་བཞིན་པ།</translation>
+        <translation>དུས་མཉམ་ ...</translation>
     </message>
 </context>
 <context>
@@ -352,7 +359,7 @@
     <message>
         <source>Forcibly pulling out the device may cause data
  loss or device exceptions!</source>
-        <translation type="unfinished"></translation>
+        <translation>བཙན་ཤེད་ཀྱིས་སྒྲིག་ཆས་འཐེན་ན་གཞི་གྲངས་བོར་བརླག་གམ་སྒྲིག་ཆས་རྒྱུན་ལྡན་མིན་པར་འགྱུར་སྲིད།!</translation>
     </message>
 </context>
 <context>
@@ -370,7 +377,7 @@
     </message>
     <message>
         <source>start search</source>
-        <translation>འཚོལ་བཤེར་འགོ་བརྩམ།</translation>
+        <translation>འཚོལ་བཤེར་འགོ་བརྩམས།</translation>
     </message>
     <message>
         <source>this year</source>
@@ -406,7 +413,7 @@
     </message>
     <message>
         <source>file name</source>
-        <translation>ཡིག་ཆ་མིང་།:</translation>
+        <translation>ཡིག་ཆའི་མིང་།</translation>
     </message>
     <message>
         <source>show hidden file</source>
@@ -422,31 +429,31 @@
     </message>
     <message>
         <source>Choose file size</source>
-        <translation> ཡིག་ཆ་འདེམ་པ།</translation>
+        <translation>ཡིག་ཆའིཆེ་ཆུང་འདེམ་པ།</translation>
     </message>
     <message>
         <source>Choose File Type</source>
-        <translation> ཡིག་ཆ་འདེམ་པ།</translation>
+        <translation>ཡིག་ཆའི་རིགས་འདེམ་པ།</translation>
     </message>
     <message>
         <source>medium(1M-100M)</source>
-        <translation>འབྲིང(1M-100M)</translation>
+        <translation type="vanished">འབྲིང(1M-100M)</translation>
     </message>
     <message>
         <source>this month</source>
-        <translation>ཟླ་འདི།</translation>
+        <translation type="vanished">ཟླ་འདི།</translation>
     </message>
     <message>
         <source>big(100M-1G)</source>
-        <translation>ཅུང་ཆེ(100M-1G)</translation>
+        <translation type="vanished">ཅུང་ཆེ(100M-1G)</translation>
     </message>
     <message>
         <source>browse</source>
-        <translation>རགས་ལྟ།</translation>
+        <translation>མིག་བཤར།</translation>
     </message>
     <message>
         <source>file folder</source>
-        <translation>ཡིག་ཁུག</translation>
+        <translation type="vanished">ཡིག་ཁུག</translation>
     </message>
     <message>
         <source>hidden advance search page</source>
@@ -454,11 +461,11 @@
     </message>
     <message>
         <source>wps file</source>
-        <translation>WPSཡིག་ཆ།</translation>
+        <translation type="vanished">WPSཡིག་ཆ།</translation>
     </message>
     <message>
         <source>others</source>
-        <translation>གཞན་དག</translation>
+        <translation type="vanished">གཞན་དག</translation>
     </message>
     <message>
         <source>search</source>
@@ -498,7 +505,7 @@
     </message>
     <message>
         <source>Modify Time</source>
-        <translation>修改时间</translation>
+        <translation>དུས་ཚོད་བཟོ་བཅོས།</translation>
     </message>
     <message>
         <source>go back</source>
@@ -536,51 +543,51 @@
     <name>Peony::AdvancedPermissionsPage</name>
     <message>
         <source>Permission refinement settings</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་ཞིབ་ཕྲ་བཟོ་དགོས།</translation>
     </message>
     <message>
         <source>Permission refinement settings tip</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་ཞིབ་ཕྲའི་སྒོ་ནས་སྣེ་སྟོན་བྱ་དགོས།</translation>
     </message>
     <message>
         <source>Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?</source>
-        <translation type="unfinished"></translation>
+        <translation>ACLཁྲིམས་ཚད་ཀྱིས་གཞི་རྩའི་དབང་ཚད་བཟོ་སྲིད་པའི་སྤྱོད་མཁན་ཚོ་ཆུང་གི་དབང་ཚད་ལ་འགྱུར་ལྡོག་འབྱུང་སྲིད་པས། མུ་མཐུད་དུ་ACLཡི་དབང་ཚད་འཛུགས་དགོས་སམ།？</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished">སྤྱོད་མཁན།</translation>
+        <translation>སྤྱོད་མཁན།</translation>
     </message>
     <message>
         <source>Read</source>
-        <translation type="unfinished">ཚགས་ཚུད།</translation>
+        <translation>ཀློག་ཐུབ་པ།</translation>
     </message>
     <message>
         <source>Write</source>
-        <translation type="unfinished">འབྲི་བ།</translation>
+        <translation>འབྲི་བ།</translation>
     </message>
     <message>
         <source>Executable</source>
-        <translation type="unfinished">ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
+        <translation>ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>delete</source>
-        <translation type="unfinished">འདོར་བ།</translation>
+        <translation>འདོར་བ།</translation>
     </message>
     <message>
         <source>Inherit permission</source>
-        <translation type="unfinished"></translation>
+        <translation>ཤུལ་འཛིན་གྱི་དབང་ཚད།</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁ་སྣོན་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉེར་སྤྱོད།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+        <translation>མེད་པར་བཟོ་དགོས།</translation>
     </message>
 </context>
 <context>
@@ -595,7 +602,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>apply now</source>
@@ -614,19 +621,19 @@
     </message>
     <message>
         <source>move</source>
-        <translation type="vanished">སྤོ་བ།</translation>
+        <translation>སྤོ་བ།</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">ནོར་འཁྲུལ།</translation>
+        <translation>ནོར་འཁྲུལ།</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation>ཆེ་ཆུང་།：</translation>
+        <translation>ཡིག་ཆའི་ཆེ་ཆུང་།</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>རིགས་གྲས།:</translation>
+        <translation>རིགས་གྲས།</translation>
     </message>
     <message>
         <source>Open with:</source>
@@ -634,7 +641,7 @@
     </message>
     <message>
         <source>Choose a new folder:</source>
-        <translation type="vanished">ཡིག་ཁུག་གསར་པ་ཞིག་འདེམ།</translation>
+        <translation>ཡིག་ཁུག་གསར་པ་ཞིག་འདེམ།</translation>
     </message>
     <message>
         <source>Time Access:</source>
@@ -646,7 +653,7 @@
     </message>
     <message>
         <source>Change</source>
-        <translation type="vanished">བཟོ་བཅོས།</translation>
+        <translation>བཟོ་བཅོས།</translation>
     </message>
     <message>
         <source>Include:</source>
@@ -662,7 +669,7 @@
     </message>
     <message>
         <source>cannot move a folder to itself !</source>
-        <translation type="vanished">ཡིག་ཁུག་གཅིག་ནས་ནང་ཁུལ་དུ་སྤོ་འགུལ་མི་ཐུབ།</translation>
+        <translation>ཡིག་ཁུག་གཅིག་ནས་ནང་ཁུལ་དུ་སྤོ་འགུལ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Hidden</source>
@@ -678,11 +685,11 @@
     </message>
     <message>
         <source>Space Useage:</source>
-        <translation type="vanished">བར་སྟོངས་ཆ་ཆུང་།</translation>
+        <translation>བར་སྟོངས་ཆེ་ཆུང་།</translation>
     </message>
     <message>
         <source>symbolLink</source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མྱུར་ལམ་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Choose a custom icon</source>
@@ -698,7 +705,7 @@
     </message>
     <message>
         <source>Readonly</source>
-        <translation>ཀློག་ཙམ།</translation>
+        <translation>ཀློག་པ་ཁོ་ན།</translation>
     </message>
     <message>
         <source>%1 files, %2 folders</source>
@@ -718,26 +725,26 @@
     </message>
     <message>
         <source>Folder</source>
-        <translation>ཡིག་ཁུག</translation>
+        <translation>ཡིག་སྣོད།</translation>
     </message>
     <message>
         <source>usershare</source>
-        <translation>རང་སའི་རྩིས་འཁོར་མཉམ་སྤྱོད་</translation>
+        <translation>སྤྱོད་མཁན་གྱིས་མཉམ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Space Usage:</source>
-        <translation type="unfinished"></translation>
+        <translation>བར་སྟོངས་ཆ་ཆུང་།</translation>
     </message>
     <message>
         <source>Time Create:</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་བཟོའི་དུས་ཚོད།</translation>
     </message>
 </context>
 <context>
     <name>Peony::ComputerPropertiesPage</name>
     <message>
         <source>Total Space: </source>
-        <translation>ཤོང་ཚད་ཡོངས།</translation>
+        <translation>ཤོང་ཚད་ཡོངས། </translation>
     </message>
     <message>
         <source>Kylin Burner</source>
@@ -749,15 +756,15 @@
     </message>
     <message>
         <source>User Name: </source>
-        <translation>སྤྱོད་མཁན་གྱི་མིང་། ：</translation>
+        <translation>སྤྱོད་མཁན་གྱི་མིང་། </translation>
     </message>
     <message>
         <source>Name: </source>
-        <translation>མིང་། (&amp;N)</translation>
+        <translation>དབྱེ་ཁུལ་གྱི་མིང་། </translation>
     </message>
     <message>
         <source>Type: </source>
-        <translation>རིགས་གྲས།:</translation>
+        <translation>རིགས་གྲས།: </translation>
     </message>
     <message>
         <source>File System</source>
@@ -773,15 +780,15 @@
     </message>
     <message>
         <source>Open with: 	</source>
-        <translation>ཁ་འབྱེད་སྟངས།</translation>
+        <translation>ཁ་འབྱེད་སྟངས། 	</translation>
     </message>
     <message>
         <source>Desktop: </source>
-        <translation>ཅོག་ངོས།</translation>
+        <translation>ཅོག་ངོས་ཀྱི་ཁོར་ཡུག </translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>མི་ཤེས།</translation>
+        <translation>མི་ཤེས་པའི་དབྱེ་ཁུལ།</translation>
     </message>
     <message>
         <source>Memory Size:</source>
@@ -789,15 +796,15 @@
     </message>
     <message>
         <source>Free Space: </source>
-        <translation>བར་སྟོང་ལྷག་མ།：</translation>
+        <translation>བར་སྟོང་ལྷག་མ། </translation>
     </message>
     <message>
         <source>Used Space: </source>
-        <translation>བཀོལ་གསྤྱོད་བར་སྟོངས།</translation>
+        <translation>བཀོལ་སྤྱོད་བར་སྟོངས། </translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
 </context>
 <context>
@@ -816,7 +823,7 @@
     </message>
     <message>
         <source>type</source>
-        <translation> རིགས་རྣམ།</translation>
+        <translation>རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>delete</source>
@@ -836,15 +843,15 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>ip input error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>ipནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
     <message>
         <source>port input error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>མཐུད་སྣེའི་ཨང་རྟགས་ནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
 </context>
 <context>
@@ -855,7 +862,7 @@
     </message>
     <message>
         <source>name</source>
-        <translation>མིང་།</translation>
+        <translation>སྤྱོད་མཁན་གྱི་མིང་།</translation>
     </message>
     <message>
         <source>guest</source>
@@ -867,7 +874,7 @@
     </message>
     <message>
         <source>cancel</source>
-        <translation>ལེན་པ།</translation>
+        <translation>འདོར་བ།</translation>
     </message>
     <message>
         <source>Registered users</source>
@@ -906,18 +913,18 @@
     </message>
     <message>
         <source>Create Link Menu Extension.</source>
-        <translation>སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
+        <translation type="vanished">སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
     </message>
     <message>
         <source>Peony-Qt Create Link Extension</source>
-        <translation>སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
+        <translation type="vanished">སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
     </message>
 </context>
 <context>
     <name>Peony::CreateSharedFileLinkMenuPlugin</name>
     <message>
         <source>Create Link to Desktop</source>
-        <translation>སྒྲོག་ངོས་ཀྱི་མྱུར་ལམ་རི་མོར་བསྐུར་བ།</translation>
+        <translation>ཅོག་ངོས་སུ་བསྐུར་ན་སྟབས་བདེ་རེད།</translation>
     </message>
     <message>
         <source>Peony-Qt Share File menu Extension</source>
@@ -951,11 +958,11 @@
     <name>Peony::CustomErrorHandler</name>
     <message>
         <source>Is Error Handled?</source>
-        <translation></translation>
+        <translation>ནོར་འཁྲུལ་ཐག་གཅོད་བྱས་ཡོད་དམ།</translation>
     </message>
     <message>
         <source>Error not be handled correctly</source>
-        <translation></translation>
+        <translation>ནོར་འཁྲུལ་ཐག་གཅོད་ཡང་དག་མ་བྱས་པ།</translation>
     </message>
 </context>
 <context>
@@ -969,7 +976,7 @@
     <name>Peony::DefaultOpenWithWidget</name>
     <message>
         <source>No default app</source>
-        <translation>没有设置默认打开方式</translation>
+        <translation>ཐོག་མའི་ཁ་འབྱེད་ཐབས་བཀོད་སྒྲིག་བྱས་མེད།</translation>
     </message>
 </context>
 <context>
@@ -991,7 +998,7 @@
     </message>
     <message>
         <source>Default Preview</source>
-        <translation>ཞིབ་ཕྲའི་ཆ་འཕྲིན། </translation>
+        <translation>ཞིབ་ཕྲའི་ཆ་འཕྲིན།</translation>
     </message>
 </context>
 <context>
@@ -1002,7 +1009,7 @@
     </message>
     <message>
         <source>Name:</source>
-        <translation>བྱ་རིམ་གྱི་མིང་།</translation>
+        <translation>མིང་།</translation>
     </message>
     <message>
         <source>Owner</source>
@@ -1042,7 +1049,7 @@
     </message>
     <message>
         <source>Location:</source>
-        <translation>གནས་ས།:</translation>
+        <translation>གནས་ས།</translation>
     </message>
     <message>
         <source>%1 (this computer)</source>
@@ -1050,15 +1057,15 @@
     </message>
     <message>
         <source>yyyy-MM-dd, HH:mm:ss</source>
-        <translation>yyyyལོMMཟླddཉིན, HH:mm:ss</translation>
+        <translation>yyyyལོའི་ཟླMMཚེས་ddཉིན། HH:mm:ss</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>མི་ཤེས།</translation>
+        <translation>མི་ཤེས་པའི་དབྱེ་ཁུལ།</translation>
     </message>
     <message>
         <source>yyyy-MM-dd, hh:mm:ss AP</source>
-        <translation>yyyyལོMMཟླddཉིན, hh:mm:ss AP</translation>
+        <translation>yyyyལོའི་ཟླMMཚེས་ddཉིན། hh:mm:ss AP</translation>
     </message>
     <message>
         <source>Modify time:</source>
@@ -1073,30 +1080,30 @@
     <name>Peony::DirectoryView::IconView</name>
     <message>
         <source>Icon View</source>
-        <translation>རིས་རྟགས་མཐོང་རིས།</translation>
+        <translation type="vanished">རིས་རྟགས་མཐོང་རིས།</translation>
     </message>
     <message>
         <source>warn</source>
-        <translation>ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation>བཀོལ་སྤྱོད་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད་པ་།</translation>
+        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
     <name>Peony::DirectoryView::ListView</name>
     <message>
         <source>List View</source>
-        <translation>རེའུ་མིག་གི་མཐོང་རིས།</translation>
+        <translation type="vanished">རེའུ་མིག་གི་མཐོང་རིས།</translation>
     </message>
     <message>
         <source>warn</source>
-        <translation>ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation>བཀོལ་སྤྱོད་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད་པ་།</translation>
+        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
@@ -1111,7 +1118,7 @@
     </message>
     <message>
         <source>Name</source>
-        <translation>མིང་།</translation>
+        <translation>ཡིག་ཆའི་མིང་།</translation>
     </message>
     <message>
         <source>Open</source>
@@ -1139,11 +1146,11 @@
     </message>
     <message>
         <source>Folder First</source>
-        <translation>ཡིག་ཁུག་སྔོན་དུ།</translation>
+        <translation>ཡིག་ཆ་སྔོན་ལ།</translation>
     </message>
     <message>
         <source>File:&quot;%1&quot; is not exist, did you moved or deleted it?</source>
-        <translation>ཡིག་ཆ ”%s“མི་འདུག  ཁྱེད་ཀྱིས་གསུབས་པའམ་གཞན་དུ་སྤོ་རྒྱུ་ཡིན་ནམ།</translation>
+        <translation>ཡིག་ཆའི་%1་མི་འདུག་ཁྱོད་ཀྱིས་གསུབ་པའམ་ཡང་ན་གནས་གཞན་ལ་སྤོར་བ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>Delete forever</source>
@@ -1219,7 +1226,7 @@
     </message>
     <message>
         <source>Refresh</source>
-        <translation>/གསར་སྒྱུར།</translation>
+        <translation>གསར་སྒྱུར།</translation>
     </message>
     <message>
         <source>Restore</source>
@@ -1235,7 +1242,7 @@
     </message>
     <message>
         <source>Open with...</source>
-        <translation>&apos;ཁ་འབྱེད་སྟངས་...&apos;</translation>
+        <translation>ཁ་འབྱེད་སྟངས་...</translation>
     </message>
     <message>
         <source>Open %1 selected files</source>
@@ -1251,7 +1258,7 @@
     </message>
     <message>
         <source>Empty File</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཚགས།།</translation>
+        <translation>ཡིག་ཆ་སྟོང་བ།</translation>
     </message>
     <message>
         <source>&amp;Clean the Trash</source>
@@ -1279,39 +1286,31 @@
     </message>
     <message>
         <source>Peony-Qt filesafe menu Extension</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Peony File Labels Menu Extension</source>
-        <translation>ཡིག་ཆའི་མཚོན་རྟགས།</translation>
+        <translation>ཡིག་ཆ་སྲུང་སྐྱོབ་སྒམ་རྒྱ་བསྐྱེད་པ།</translation>
     </message>
     <message>
         <source>Orignal Path</source>
-        <translation>གདོད་མའི་འགྲོ་ལམ་</translation>
-    </message>
-    <message>
-        <source>MultiSelect</source>
-        <translation type="unfinished"></translation>
+        <translation>གདོད་མའི་འགྲོ་ལམ།</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་འཛུགས།</translation>
     </message>
     <message>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation>མཐོང་རིས་རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Sort By</source>
-        <translation type="unfinished"></translation>
+        <translation>རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>Sort Order</source>
-        <translation type="unfinished"></translation>
+        <translation>གོ་རིམ་སྒྲིག་པ།</translation>
     </message>
     <message>
         <source>Sort Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>རིམ་སྒྲིག་ལེགས།</translation>
     </message>
 </context>
 <context>
@@ -1330,9 +1329,10 @@
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source>
-        <translation>རྩོམ་པ་པོ།  Yue Lan &lt;lanyue@kylinos.cn&gt;
+        <translation>རྩོམ་པ་པོ།  
+Yue Lan &lt;lanyue@kylinos.cn&gt;
  Meihong He &lt;hemeihong@kylinos.cn&gt;
-པར་དབང་ཡོད་ཚད (C): 2019-2020ཆི་ལིན་ཆ་འཕྲིན་ལག་རྩལ་ཚད་ཡོད་ཀུང་ཟི།</translation>
+པར་དབང་ཡོད་ཚད (C): 2019-2020ཐེན་ཅིན་ཆི་ལིན་ཆ་འཕྲིན་ལག་རྩལ་ཚད་ཡོད་ཀུང་སི།</translation>
     </message>
     <message>
         <source>clear record</source>
@@ -1363,7 +1363,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <name>Peony::FileCopy</name>
     <message>
         <source>The dest file &quot;%1&quot; has existed!</source>
-        <translation>དམིགས་བཟུང་ཡིག་ཆ་%1ཡོད།</translation>
+        <translation>དམིགས་བཟུང་ཡིག་ཆ་%1གནས་ཡོད།</translation>
     </message>
     <message>
         <source>Error in source or destination file path!</source>
@@ -1383,27 +1383,27 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!</source>
-        <translation>vfat/fat32ཡིག་ཆའི་མ་ལག་གིས་ཡིག་ཆ་རེ་རེའི་ཆེ་ཆུང་4 GBལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
+        <translation>vfat/fat32ཡིག་ཆའི་མ་ལག་གིས་ཡིག་ཆ་རྐྱང་བས་བཟུང་བའི་བར་སྟོང4gལས་ཆེ་བར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
         <source>Please check whether the device has been removed!</source>
-        <translation>སྒྲིག་ཆས་གཞན་གྱིས་སྤོས་ཡོད་མེད་ལ་ཞིབ་བཤེར་བྱེད་རོགས་།</translation>
+        <translation>སྒྲིག་ཆས་འདི་མེད་པར་བཟོས་ཡོད་མེད་ལ་ཞིབ་བཤེར་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>File opening failure</source>
-        <translation>ཡིག་ཆ་ཁ་འབྱེད་ཕམ་</translation>
+        <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ་པ།</translation>
     </message>
     <message>
         <source>Write file error: There is no avaliable disk space for device!</source>
-        <translation>ཡིག་ཆ་འབྲི་ནོར་ཤོར་བ་དང་།སྒྲིག་ཆས་ཐོག་བར་སྟོང་འདང་ངེས་ཤིག་མེད་།</translation>
+        <translation>ཡིག་ཆ་འབྲི་ནོར་ཤོར་བ་སྟེ། སྒྲིག་ཆས་ལ་གོ་མི་སྲིད་པའི་ཁབ་ལེན་གྱི་བར་སྟོང་མེད།</translation>
     </message>
     <message>
         <source>Error when copy file: %1, can not copy special files, skip this file and continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>པར་ལེན་ཡིག་ཆ་ %1，ལ་ནོར་འཁྲུལ་བྱུང་བ་སྟེ། འགྲོན་བུའི་རིགས་དབྱིབས་དམིགས་བསལ་ཅན་གྱི་ཡིག་ཆ་འདྲ་བཤུ་བྱེད་མི་རུང་བ་དང་ཡིག་ཆ་དེ་ལས་བརྒལ་བ་མ་ཟད་མུ་མཐུད་དུ་？</translation>
     </message>
     <message>
         <source>Can not copy %1, file doesn&apos;t exist. Has the file been renamed or moved?</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྒྱ་ཆ་%1，གི་ཡིག་ཆ་མེད་པ། མིང་ལ་གཙིགས་ཆེན་བྱེད་པ་འམ་ཡང་ན་སྤོ་འགུལ་བྱས་པ？</translation>
     </message>
 </context>
 <context>
@@ -1414,34 +1414,30 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>File copy error</source>
-        <translation>ཡིག་ཆ་པར་སློག་ནིར་འཁྲུལ།</translation>
+        <translation>ཡིག་ཆ་པར་སློག་ནོར་འཁྲུལ།</translation>
     </message>
     <message>
         <source>Create folder %1 failed: %2</source>
-        <translation>ཡིག་ཁུག་%1ནོར་འཁྲུལ།%2</translation>
+        <translation>ཡིག་ཁུག་ %1 གསར་བཟོ་ཕམ་སོང་།: %2</translation>
     </message>
     <message>
         <source>File:%1 was not found.</source>
-        <translation>ཡིག་ཆ་%1རྙེད་མ་བྱུང་།</translation>
-    </message>
-    <message>
-        <source>Burn failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ།: %1 རྙེད་མ་སོང་།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileDeleteOperation</name>
     <message>
         <source>File delete error</source>
-        <translation>ཡིག་ཆ་གསུབས་པ་ནོར་བ།</translation>
+        <translation>ཡིག་ཆ་བསུབ་པ་ནོར་བ།</translation>
     </message>
     <message>
         <source>Delete file error</source>
-        <translation>ཡིག་ཆའི་ནོར་འཁྲུལ་སུབ་པ་</translation>
+        <translation>ཡིག་ཆའི་ནོར་འཁྲུལ་མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Invalid Operation! Can not delete &quot;%1&quot;.</source>
-        <translation>ཁྲིམས་འགལ་གྱི་བཀོལ་སྤྱོད། &quot;%1&quot;བསུབ་མི་རུང་།</translation>
+        <translation>གོ་མི་ཆོད་པའི་བྱ་སྤྱོད་ཅིག་རེད། &quot;%1&quot;བསུབ་མི་རུང་།</translation>
     </message>
 </context>
 <context>
@@ -1452,41 +1448,41 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>The password dialog box is canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>གསང་བའི་གླེང་མོལ་གྱི་སྒྲོམ་གཞི་མེད་པར་བཟོས།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileInfo</name>
     <message>
         <source>data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>folder</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཁུག</translation>
     </message>
     <message>
         <source>file</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>text file</source>
-        <translation type="unfinished">ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileInfoJob</name>
     <message>
         <source>Trash</source>
-        <translation>སྙིགས་སྒམ།</translation>
+        <translation>གད་སྙིགས་བླུགས་སྣོད།</translation>
     </message>
     <message>
         <source>Computer</source>
-        <translation>རྩིས་ཆས།</translation>
+        <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Network</source>
-        <translation>དྲ་བ།</translation>
+        <translation>དྲ་རྒྱ།</translation>
     </message>
     <message>
         <source>Recent</source>
@@ -1505,7 +1501,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Open Link failed</source>
-        <translation>མྱུར་ལམ་རི་མོ་ཁ་ཕྱེ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+        <translation>སྦྲེལ་མཐུད་ཁ་ཕྱེ་ནས་ཕམ་སོང་།</translation>
     </message>
     <message>
         <source>File not exist, do you want to delete the link file?</source>
@@ -1520,7 +1516,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <name>Peony::FileItemModel</name>
     <message>
         <source>Symbol Link, </source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མགྱོགས་མྱུར་བྱེད་སྟངས། </translation>
     </message>
     <message>
         <source>child(ren)</source>
@@ -1540,7 +1536,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Delete Date</source>
-        <translation>ཟླ་ཚེས་གསུབས་པ།</translation>
+        <translation>ཟླ་ཚེས་བསུབ་པ།</translation>
     </message>
     <message>
         <source>Modified Date</source>
@@ -1548,18 +1544,18 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Original Path</source>
-        <translation>གདོད་མའི་འགྲོ་ལམ་</translation>
+        <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileLabelInternalMenuPlugin</name>
     <message>
         <source>Tag a File with Menu.</source>
-        <translation>འདེམ་བྱང་ཁྲོད་ནུས་པའི་མཚོན་རྟགས་སྣོན་པ།</translation>
+        <translation type="vanished">འདེམ་བྱང་ཁྲོད་ནུས་པའི་མཚོན་རྟགས་སྣོན་པ།</translation>
     </message>
     <message>
         <source>Delete All Label</source>
-        <translation type="vanished">མཚོན་རྟགས་ཆ་ཚང་གསུབས་པ།</translation>
+        <translation>མཚོན་རྟགས་ཆ་ཚང་བསུབ་པ།</translation>
     </message>
     <message>
         <source>Add File Label...</source>
@@ -1574,23 +1570,23 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <name>Peony::FileLauchDialog</name>
     <message>
         <source>OK</source>
-        <translation type="vanished">གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Set as Default</source>
-        <translation type="vanished">སོར་བཞག་རྩིས་ཐོ་ལ་བཀོད།</translation>
+        <translation>སོར་བཞག་རྩིས་ཐོ་ལ་བཀོད།</translation>
     </message>
     <message>
         <source>Applications</source>
-        <translation type="vanished">ཉེར་སྤྱོད་བྱ་རིམ།</translation>
+        <translation>ཉེར་སྤྱོད་བྱ་རིམ།</translation>
     </message>
     <message>
         <source>Choose an Application to open this file</source>
-        <translation type="vanished">ཉེར་སྤྱོད་ཞིག་གདམ་པ་དང་ཡིག་ཆ་འདི་ཁ་ཕྱེ་བ།</translation>
+        <translation>ཉེར་སྤྱོད་ཞིག་གདམ་པ་དང་ཡིག་ཆ་འདི་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
         <source>Open application is used by default:</source>
@@ -1614,15 +1610,15 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     </message>
     <message>
         <source>Choose other application</source>
-        <translation type="unfinished">ཉེར་སྤྱོད་གཞན་འདེམ་པ།</translation>
+        <translation>ཉེར་སྤྱོད་གཞན་འདེམ་པ།</translation>
     </message>
     <message>
         <source>Go to application center</source>
-        <translation type="unfinished">མཉེན་ཆས་ལྟེ་བར་འགྲོ་བ།</translation>
+        <translation>མཉེན་ཆས་ལྟེ་བར་འགྲོ་བ།</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Select Open Action</source>
@@ -1666,7 +1662,8 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <source>The linked app is changed or uninstalled, so it can not work correctly. 
 Do you want to delete the link file?</source>
-        <translation>སྦྲེལ་མཐུད་འདིས་བསྟན་པའི་ཉེར་སྤྱོད་བསྱུར་བཅོས་སམ་བཤིག་འདོན་བྱས་ཚར། དེའི་རྐྱེན་གྱིས་མྱུར་ལམ་རི་མོ་རྒྱུན་ལྡན་ལས་ཀ་བྱེད་ཐབས་བྲལ། མྱུར་ལམ་རི་མོ་འདི་སུབ་རྒྱུ་ཡིན་ནམ།</translation>
+        <translation>སྦྲེལ་མཐུད་འདིས་བསྟན་པའི་ཉེར་སྤྱོད་བསྱུར་བཅོས་སམ་བཤིག་འདོན་བྱས་ཚར། དེའི་རྐྱེན་གྱིས་མྱུར་ལམ་རི་མོ་རྒྱུན་ལྡན་ལས་ཀ་བྱེད་ཐབས་བྲལ། 
+མྱུར་ལམ་རི་མོ་འདི་སུབ་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>By Default App</source>
@@ -1706,7 +1703,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Open App failed</source>
-        <translation>མྱུར་ལམ་རི་མོའི་གནད་དོན།</translation>
+        <translation>མགྱོགས་མྱུར་བྱེད་ཐབས་ལ་གནད་དོན་ཡོད།</translation>
     </message>
     <message>
         <source>File not exist, do you want to delete the link file?</source>
@@ -1745,14 +1742,14 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Symbolic Link</source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མགྱོགས་མྱུར་བྱེད་ཐབས།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileMoveOperation</name>
     <message>
         <source>File delete error</source>
-        <translation>ཡིག་ཆ་གསུབས་པ་ནོར་བ།</translation>
+        <translation>ཡིག་ཆ་བསུབ་པ་ནོར་བ།</translation>
     </message>
     <message>
         <source>Invalid Operation.</source>
@@ -1776,7 +1773,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File:%1 was not found.</source>
-        <translation>ཡིག་ཆ་%1རྙེད་མ་བྱུང་།</translation>
+        <translation>ཡིག་ཆ།: %1རྙེད་མ་སོང་།</translation>
     </message>
     <message>
         <source>Burn failed</source>
@@ -1798,7 +1795,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>&amp;Retry</source>
-        <translation>ཡང་བསྐྱར་ཚོད་ལེན།</translation>
+        <translation>ཡང་བསྐྱར་ཚོད་ལེན།(&amp;R)</translation>
     </message>
     <message>
         <source>Backup All</source>
@@ -1806,7 +1803,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Source File:</source>
-        <translation>ཁུངས་ཡིག་ཆ།：</translation>
+        <translation>ཁུངས་ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>Backup</source>
@@ -1818,7 +1815,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Error message:</source>
-        <translation> ནོར་འཁྲུལ་བརྡ་འཕྲིན།</translation>
+        <translation>ནོར་འཁྲུལ་བརྡ་འཕྲིན།</translation>
     </message>
     <message>
         <source>Dest File:</source>
@@ -1826,7 +1823,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Overwrite All</source>
-        <translation>འགེབས་པ།</translation>
+        <translation>ཚང་ཁེབས།</translation>
     </message>
     <message>
         <source>Ignore All</source>
@@ -1834,11 +1831,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>unkwon</source>
-        <translation>མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
+        <translation>རྒྱུ་རྐྱེན་མི་ཤེས།</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation>ལེན་པ།(&amp;C)</translation>
+        <translation>ཕྱིར་འདོན།(&amp;C)</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -1881,7 +1878,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Unexpected error from %1 to %2</source>
-        <translation>&quot;%1&quot;ནས་&quot;%2&quot;བར་རྒྱུན་མིན་ནོར་འཁྲུལ་བྱུང་།</translation>
+        <translation>%1%ནས་%2བར་གྱི་བསམ་ཡུལ་ལས་འདས་པའི་ནོར་འཁྲུལ།</translation>
     </message>
 </context>
 <context>
@@ -1892,7 +1889,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">མེད་པར་བཟོ་བ</translation>
+        <translation type="vanished">མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Do the same</source>
@@ -1904,7 +1901,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>No</source>
-        <translation>ཡོད་མེད་</translation>
+        <translation>མིན།</translation>
     </message>
 </context>
 <context>
@@ -1915,18 +1912,18 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Make sure the disk is not full or write protected and that the file is not protected</source>
-        <translation>སྡུད་སྡེར་ཁ་མ་གང་བའམ་སྲུང་སྐྱོབ་མ་བྱས་པར་ཡིག་ཆ་བེད་སྤྱོད་མ་བཏང་བ་ཨེ་ཡིན་ལྟོས།</translation>
+        <translation>སྡུད་སྡེར་ཁ་གང་མེད་པའམ་ཡང་ན་སྲུང་སྐྱོབ་བྲིས་མེད་པ་མ་ཟད་ཡིག་ཆ་བཀོལ་སྤྱོད་བྱས་མེད་པ་གཏན་འཁེལ་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileOperationInfo</name>
     <message>
         <source>Symbolic Link</source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མྱུར་ཐབས།</translation>
     </message>
 </context>
 <context>
@@ -1937,15 +1934,15 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Can&apos;t delete.</source>
-        <translation>གསུབ་མི་རུང་།</translation>
+        <translation>བསུབ་མི་རུང་།</translation>
     </message>
     <message>
         <source>No, go to settings</source>
-        <translation type="vanished">མིན། ཇུས་བཀོད་དུ་འཕར་མཆོང་བྱེད།</translation>
+        <translation type="vanished">མིན། མཆོང་ནས་སྒྲིག་བཀོད་ལ་བསྒྱུར།</translation>
     </message>
     <message>
         <source>You can&apos;t delete a file whenthe file is doing another operation</source>
-        <translation>གཞན་ནས་སྤྱོད་བཞིན་པའི་ཡིག་ཆ་ཞིག་གསུབས་མི་ཐུབ།</translation>
+        <translation>གཞན་ནས་སྤྱོད་བཞིན་པའི་ཡིག་ཆ་ཞིག་བསུབ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>There have been one or more fileoperation(s) executing before. Youroperation will wait for executinguntil it/them done. If you really want to execute file operations parallelly anyway, you can change the default option &quot;Allow Parallel&quot; in option menu.</source>
@@ -1957,11 +1954,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Warn</source>
-        <translation>ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>&apos;%1&apos; is occupied，you cannot operate!</source>
-        <translation>&quot;%1&quot;བསྐྱར་ཟློས།བཀོལ་སྤྱོད་བྱེད་ཐབས་མེད།</translation>
+        <translation>&apos;%1&apos;བཟུང་ཡོད་པས་ཁྱེད་ཚོས་འཁོར་སྐྱོད་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>OK</source>
@@ -1969,11 +1966,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>དོར་བ།</translation>
     </message>
     <message>
         <source>Do not show again</source>
-        <translation>མི་འཆར་བ་</translation>
+        <translation>མངོན་འཆར་མི་བྱེད་པ།</translation>
     </message>
 </context>
 <context>
@@ -1991,7 +1988,7 @@ Do you want to delete the link file?</source>
     <name>Peony::FileOperationProgressPage</name>
     <message>
         <source>To:</source>
-        <translation>འབྱོར་མཁན།</translation>
+        <translation>སླེབས་བྱུང་།</translation>
     </message>
     <message>
         <source>From:</source>
@@ -2006,7 +2003,7 @@ Do you want to delete the link file?</source>
     <name>Peony::FileOperationProgressWizard</name>
     <message>
         <source>copying...</source>
-        <translation>པར་སློག་བྱེད་སྒང་ཡིན།</translation>
+        <translation>བསྐྱར་དཔར་ཁྲོད་དུ།</translation>
     </message>
     <message>
         <source>%1 files, %2</source>
@@ -2018,7 +2015,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Handling...</source>
-        <translation>ཐག་གཅོད་སྒང་ཡིན།</translation>
+        <translation>ཐག་གཅོད་བཞིན་པ།</translation>
     </message>
     <message>
         <source>%1 done, %2 total, %3 of %4.</source>
@@ -2065,7 +2062,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Size:</source>
-        <translation>ཆེ་ཆུང་།：</translation>
+        <translation>ཡིག་ཆའི་ཆེ་ཆུང་།</translation>
     </message>
     <message>
         <source>color model:</source>
@@ -2085,7 +2082,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="vanished">ཡིག་ཆ་མིང་།:</translation>
+        <translation>ཡིག་ཆ་མིང་།</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -2101,22 +2098,22 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>usershare</source>
-        <translation>རང་སའི་རྩིས་འཁོར་མཉམ་སྤྱོད་</translation>
+        <translation>སྤྱོད་མཁན་གྱིས་མཉམ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Time Created:</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་བཟོའི་དུས་ཚོད།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileRenameOperation</name>
     <message>
         <source>File Rename error</source>
-        <translation>སྦྲེལ་མཐུད་གསར་སྐྲུན །</translation>
+        <translation>ཡིག་ཆའི་མིང་བསྐྱར་དུ་བཏགས་པ་ནོར་འདུག</translation>
     </message>
     <message>
         <source>Rename file error</source>
-        <translation>མིང་བསྐྱར་འདོགས་ནོར་བ།</translation>
+        <translation>ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ནོར་བ།</translation>
     </message>
     <message>
         <source>Invalid file name &quot;%1&quot; </source>
@@ -2132,11 +2129,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Invalid file name %1%2%3 .</source>
-        <translation>ཁྲིམས་འགལ་གྱི་ཡིག་ཆའི་མིང་ལ་&quot;%1&quot; &quot;%2&quot; &quot;%3&quot;།</translation>
+        <translation>ཁྲིམས་འགལ་གྱི་ཡིག་ཆའི་མིང་།%1%2%3 .</translation>
     </message>
     <message>
         <source>The file %1%2%3 will be hidden when you refresh or change directory!</source>
-        <translation>ཡིག་ཆ&quot;%1&quot; &quot;%2&quot; &quot;%3&quot;ནི་དཀར་ཆག་གསར་བཀོད་བྱས་རྗེས་སྦས་ཡོད།</translation>
+        <translation>ཁྱོད་ཀྱིས་དཀར་ཆག་གསར་བཟོ་བྱེད་པའམ་ཡང་ན་བརྗེ་བའི་སྐབས་སུ་ཡིག་ཆ་1%2%3སྦས་སྐུང་བྱེད་སྲིད།</translation>
     </message>
 </context>
 <context>
@@ -2147,7 +2144,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Can not trash this file, would you like to delete it permanently?</source>
-        <translation>ཡིག་ཆ་འདི་ཕྱིར་ལེན་མི་ཐུབ། གཏན་དུ་གསུབས་རྒྱུ་ཡིན་ནམ།</translation>
+        <translation>ཡིག་ཆ་འདི་ཕྱིར་བསྡུ་མི་རུང་། ཡུན་རིང་ལ་གསུབ་དགོས་སམ།</translation>
     </message>
     <message>
         <source>The user does not have read and write rights to the file &apos;%1&apos; and cannot delete it to the Recycle Bin.</source>
@@ -2159,19 +2156,19 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Invalid Operation! Can not trash &quot;%1&quot;.</source>
-        <translation>ཁྲིམས་འགལ་གྱི་བཀོལ་སྤྱོད་བྱེད་སྟངས་ལ།&quot;%1&quot;ཕྱིར་བསྡུ་བྱེད་ཐབས་མེད།</translation>
+        <translation>གོ་མི་ཆོད་པའི་བྱ་སྤྱོད་ཅིག་རེད། &quot;%1&quot;གད་སྙིགས་བླུགས་མི་རུང་།</translation>
     </message>
     <message>
         <source>Can not trash</source>
-        <translation>སླར་བསྡུ་མི་ཐུབ།</translation>
+        <translation>གད་སྙིགས་བླུགས་མི་ཆོག</translation>
     </message>
     <message>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
-        <translation>10GBལས་ཆེ་བའི་ཡིག་ཆ་ཕྱིར་བསྡུ་མི་ཐུབ་པས།ཇི་སྲིད་བར་དུ་བསུབ་སྲིད་དམ།</translation>
+        <translation>གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
     </message>
     <message>
         <source>An unmanageable conflict exists. Please check the recycle bin.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐག་གཅོད་བྱེད་ཐབས་བྲལ་བའི་འགལ་བ་བྱུང་ན་ཚུར་བསྡུའིས་ཚིགས་ལ་ཞིབ་བཤེར་གནང་རོགས།。</translation>
     </message>
 </context>
 <context>
@@ -2185,7 +2182,7 @@ Do you want to delete the link file?</source>
     <name>Peony::GlobalSettings</name>
     <message>
         <source>HH:mm:ss</source>
-        <translation></translation>
+        <translation>HH:mm:ss</translation>
     </message>
     <message>
         <source>yyyy-MM-dd</source>
@@ -2212,7 +2209,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">སྒོ་རྒྱག་པ་</translation>
+        <translation>སྒོ་རྒྱག་པ་</translation>
     </message>
 </context>
 <context>
@@ -2227,7 +2224,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Open In New Tab</source>
-        <translation>དོང་འཛར་གསར་པའི་ཁ་འབྱེད་པ།</translation>
+        <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ།</translation>
     </message>
     <message>
         <source>Open In New Window</source>
@@ -2246,18 +2243,18 @@ Do you want to delete the link file?</source>
     <name>Peony::MountOperation</name>
     <message>
         <source>Operation Cancelled</source>
-        <translation>བཀོལ་སྤྱོད་དོར་བ།</translation>
+        <translation>བཀོལ་སྤྱོད་མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Login failed, unknown username or password error, please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོ་འགོད་ཕམ་ཉེས་བྱུང་བ་དང་། མི་ཤེས་པའི་སྤྱོད་མཁན་གྱི་མིང་ངམ་གསང་ཨང་ནོར་འཁྲུལ་བྱུང་བས་བསྐྱར་དུ་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
 </context>
 <context>
     <name>Peony::NavigationToolBar</name>
     <message>
         <source>Cd Up</source>
-        <translation>གྱེན་ཕྱོགས།</translation>
+        <translation>སྟེང་ཕྱོགས།</translation>
     </message>
     <message>
         <source>Clear History</source>
@@ -2265,7 +2262,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>/གསར་སྒྱུར།</translation>
+        <translation>གསར་སྒྱུར།</translation>
     </message>
     <message>
         <source>Go Forward</source>
@@ -2292,7 +2289,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>apply now</source>
@@ -2311,7 +2308,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>How do you want to open %1%2 files ?</source>
-        <translation>ཁྱོད་ཀྱི་རེ་བར་ཡིག་ཆ%1%2ཁ་འབྱེད་ཐབས་གང་ཡིན</translation>
+        <translation>ཁྱོད་ཀྱི་རེ་བར་ཡིག་ཆ%1%2ཁ་འབྱེད་ཐབས་གང་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>Default open with:</source>
@@ -2330,46 +2327,46 @@ Do you want to delete the link file?</source>
     <name>Peony::PathEdit</name>
     <message>
         <source>Go To</source>
-        <translation>བསྒྱུར་བ།</translation>
+        <translation>མཆོང་བ།</translation>
     </message>
 </context>
 <context>
     <name>Peony::PermissionsPropertiesPage</name>
     <message>
         <source>Me</source>
-        <translation type="vanished">ང</translation>
+        <translation>ང་།</translation>
     </message>
     <message>
         <source>(Me)</source>
-        <translation type="vanished">(ང)</translation>
+        <translation>(ང)</translation>
     </message>
     <message>
         <source>Read</source>
-        <translation type="vanished">ཚགས་ཚུད།</translation>
+        <translation>ཀློག་ཐུབ་པ།</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="vanished">རིགས་གྲས་</translation>
+        <translation>རིགས་གྲས།</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="vanished">སྤྱོད་མཁན།</translation>
+        <translation>སྤྱོད་མཁན།</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="vanished">ཚོགས་པ།</translation>
+        <translation>སྤྱོད་མཁན་ཚོགས་པ།</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="vanished">གཞན་དག</translation>
+        <translation>གཞན་དག</translation>
     </message>
     <message>
         <source>Owner</source>
-        <translation type="vanished">བདག་པོ།</translation>
+        <translation>བདག་པོ།</translation>
     </message>
     <message>
         <source>Write</source>
-        <translation type="vanished">འབྲི་བ།</translation>
+        <translation>འབྲི་བ།</translation>
     </message>
     <message>
         <source>Can not get the permission info.</source>
@@ -2385,51 +2382,31 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>User or Group</source>
-        <translation type="vanished">སྤྱོད་མཁན་ནམ་ཚོ།</translation>
+        <translation>སྤྱོད་མཁན་ནམ་ཚོ།</translation>
     </message>
     <message>
         <source>Executable</source>
-        <translation type="vanished">ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
+        <translation>ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>Target: %1</source>
-        <translation>དམིགས་འབེན།:</translation>
-    </message>
-    <message>
-        <source>Group or User</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Read and Write</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Readonly</source>
-        <translation type="unfinished">ཀློག་ཙམ།</translation>
-    </message>
-    <message>
-        <source>(Current User)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current User</source>
-        <translation type="unfinished"></translation>
+        <translation>བྱ་ཡུལ་གྱི་མིང་།%1</translation>
     </message>
     <message>
         <source>Permissions modify tip</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་བཟོ་བཅོས་རྒྱག་རྒྱུའི་བླང་བྱ་འདོན་རྒྱུ།</translation>
     </message>
     <message>
         <source>The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?</source>
-        <translation type="unfinished"></translation>
+        <translation>དེང་སྐབས་ཡིག་ཆའམ་ཡིག་ཁུག་ACLཁྲིམས་ཚད་བཟོས་ཟིན་པ་དང་། སྤྱོད་མཁན་ཚོ་ཆུང་གི་དབང་ཚད་ལ་བཟོ་བཅོས་བརྒྱབ་ནས་ACLལ་བཙུགས་པའི་དབང་ཚད་བཀོལ་སྤྱོད་བྱེད་ཐབས་བྲལ་བས།མུ་མཐུད་དུ་སྤྱོད་མཁན་ཚོ་ཆུང་གི་དབང་ཚད་ལ་བཟོ་བཅོས་རྒྱག་དགོས་སམ།？</translation>
     </message>
     <message>
         <source>Permission refinement settings</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་ཞིབ་ཕྲ་བཟོ་དགོས།</translation>
     </message>
     <message>
         <source>The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?</source>
-        <translation type="unfinished"></translation>
+        <translation>དེང་སྐབས་སྤྱོད་མཁན་གྱིས་མཐོ་རིམ་མཉམ་སྤྱོད་བྱ་རྒྱུ་བཀོད་སྒྲིག་བྱས་ཡོད་ཅིང་། གལ་ཏེ་བཟོ་བཅོས་རྒྱག་པའི་དབང་ཚད་ཀྱིས་མཐོ་རིམ་མཉམ་སྤྱོད་བྱེད་མི་ཐུབ་པ་བཟོ་སྲིད་པས་？</translation>
     </message>
 </context>
 <context>
@@ -2444,11 +2421,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source> %1 Files</source>
-        <translation>%1ཡིག་ཆ།</translation>
+        <translation> %1ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>དོར་བ།</translation>
     </message>
     <message>
         <source>Recent</source>
@@ -2464,11 +2441,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>usershare</source>
-        <translation>རང་སའི་རྩིས་འཁོར་མཉམ་སྤྱོད་</translation>
+        <translation>སྤྱོད་མཁན་གྱིས་མཉམ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>Restore</source>
@@ -2479,19 +2456,19 @@ Do you want to delete the link file?</source>
     <name>Peony::RecentAndTrashPropertiesPage</name>
     <message>
         <source>Origin Path: </source>
-        <translation>མ་རྒྱུ་ལམ།</translation>
+        <translation>སྔར་གྱི་རྒྱུ་ལམ། </translation>
     </message>
     <message>
         <source>Size: </source>
-        <translation>ཆེ་ཆུང་།：</translation>
+        <translation>ཡིག་ཆའི་ཆེ་ཆུང་། </translation>
     </message>
     <message>
         <source>Deletion Date: </source>
-        <translation>སུབ་པའི་ཟླ་ཚེས།</translation>
+        <translation>སུབ་པའི་ཟླ་ཚེས། </translation>
     </message>
     <message>
         <source>Original Location: </source>
-        <translation>ཐོག་མའི་གནས་ས།</translation>
+        <translation>ཐོག་མའི་གནས་ས། </translation>
     </message>
     <message>
         <source>Show confirm dialog while trashing.</source>
@@ -2533,7 +2510,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>image</source>
-        <translation>པར་རིས།།</translation>
+        <translation>པར་རིས།</translation>
     </message>
     <message>
         <source>video</source>
@@ -2553,14 +2530,14 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>text file</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+        <translation>ཡིག་དེབ།</translation>
     </message>
 </context>
 <context>
     <name>Peony::SharedFileLinkOperation</name>
     <message>
         <source>Symbolic Link</source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མྱུར་ཐབས།</translation>
     </message>
 </context>
 <context>
@@ -2578,7 +2555,7 @@ Do you want to delete the link file?</source>
     <name>Peony::SideBarFavoriteItem</name>
     <message>
         <source>Favorite</source>
-        <translation>མཉེན་ཆས།</translation>
+        <translation>མགྱོགས་མྱུར་འཚམས་འདྲི།</translation>
     </message>
     <message>
         <source>KmreData</source>
@@ -2586,11 +2563,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished">སྙིགས་སྒམ།</translation>
+        <translation>གད་སྙིགས་བླུགས་སྣོད།</translation>
     </message>
     <message>
         <source>Recent</source>
-        <translation type="unfinished">ཉེ་ཆར།</translation>
+        <translation>ཉེ་ཆར།</translation>
     </message>
 </context>
 <context>
@@ -2605,7 +2582,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
 </context>
 <context>
@@ -2624,7 +2601,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Unmount</source>
-        <translation>བཤིག་དོར།</translation>
+        <translation>ལེན་པ།</translation>
     </message>
     <message>
         <source>Delete Symbolic</source>
@@ -2632,7 +2609,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>burndata</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྐོས་པ།</translation>
     </message>
 </context>
 <context>
@@ -2660,19 +2637,19 @@ Do you want to delete the link file?</source>
     <name>Peony::StatusBar</name>
     <message>
         <source>; %1 folders</source>
-        <translation>；%1ཡིག་ཁུག</translation>
+        <translation>%1ཡིག་ཁུག</translation>
     </message>
     <message>
         <source>; %1 file, %2</source>
-        <translation>；%1ཡིག་ཁུག  %2</translation>
+        <translation>%1ཡིག་ཁུག  %2</translation>
     </message>
     <message>
         <source>; %1 files, %2 total</source>
-        <translation>；%1 ཡིག་ཁུག  སྡོམ %2</translation>
+        <translation>%1 ཡིག་ཁུག  སྡོམ %2</translation>
     </message>
     <message>
         <source>; %1 folder</source>
-        <translation>；%1 ཡིག་ཁུག    </translation>
+        <translation>%1 ཡིག་ཁུག</translation>
     </message>
     <message>
         <source>%1 selected</source>
@@ -2683,7 +2660,7 @@ Do you want to delete the link file?</source>
     <name>Peony::SyncThread</name>
     <message>
         <source>notify</source>
-        <translation>བརྡ་ཐོ་</translation>
+        <translation>དྲན་སྐུལ་གསལ་བརྡ།</translation>
     </message>
 </context>
 <context>
@@ -2710,7 +2687,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Trash</source>
-        <translation>སྙིགས་སྒམ།</translation>
+        <translation>བསུབ་པ།</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -2803,7 +2780,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <name>Peony::UserShareInfoManager</name>
     <message>
         <source>Warning</source>
-        <translation>ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
 </context>
 <context>
@@ -2825,14 +2802,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>sync ...</source>
-        <translation>གོམ་པ་མཉམ་སྤོ་བྱེད་བཞིན་པ།</translation>
+        <translation>དུས་མཉམ་ ...</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>YES</source>
-        <translation>ཡིན།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Mark</source>
@@ -2888,7 +2865,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Format operation has been finished successfully.</source>
-        <translation>རྣམ་བཞག་ཅན་་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
+        <translation>རྣམ་བཞག་ཅན་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
     </message>
     <message>
         <source>Unmount failed</source>
@@ -2908,7 +2885,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Symbolic Link</source>
-        <translation>མྱུར་ལམ་རི་མོ།</translation>
+        <translation>མྱུར་ཐབས།</translation>
     </message>
     <message>
         <source>Force unmount failed</source>
@@ -2933,7 +2910,8 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <source>Error: %1
 </source>
-        <translation>ནོར་འཁྲུལ།：</translation>
+        <translation>ནོར་འཁྲུལ།%1
+</translation>
     </message>
     <message>
         <source>permission denied</source>
@@ -2949,7 +2927,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>duplicate</source>
-        <translation>འདྲ་ཕབ།</translation>
+        <translation>བུ་དཔེ།</translation>
     </message>
     <message>
         <source>File Manager</source>
@@ -2965,7 +2943,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>favorite</source>
-        <translation>མཉེན་ཆས།</translation>
+        <translation>མགྱོགས་མྱུར་འཚམས་འདྲི།</translation>
     </message>
     <message>
         <source>Show the folder children as rows in a list.</source>
@@ -3005,7 +2983,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Trash and Recent</source>
-        <translation>སྙིགས་སྣོད    ཉེ་ཆར</translation>
+        <translation>སྙིགས་སྣོད། /ཉེ་ཆར།</translation>
     </message>
     <message>
         <source>Show the file properties or items in trash or recent.</source>
@@ -3013,11 +2991,11 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation>ཁྱེད་ཀྱིས་ཡིག་ཆ་འདི་དག་བསུབ་རྒྱུ་ཡིན་ནམ་།བསུབ་མགོ་བརྩམས་མ་ཐག་ཡིག་ཆ་འདི་དག་སླར་གསོ་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>mark this file.</source>
-        <translation>ཡིག་ཆ་འདིར་རྟགས་རྒྱག་་པ།</translation>
+        <translation>ཡིག་ཆ་འདིར་རྟགས་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>PeonyNotify</source>
@@ -3029,7 +3007,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>It need to synchronize before operating the device,place wait!</source>
-        <translation>་སྒྲིག་ཆས་བཀོལ་སྤྱོད་སྔོན་ལ་་གཞི་གྲངས་མཉམ་སྤོ་བྱ་དགོས། ཁྱུག་ཙམ་སྒུག་དང་།</translation>
+        <translation>སྒྲིག་ཆས་བཀོལ་སྤྱོད་སྔོན་ལ་གཞི་གྲངས་མཉམ་སྤོ་བྱ་དགོས། ཁྱུག་ཙམ་སྒུག་དང་།</translation>
     </message>
     <message>
         <source>Default favorite vfs of peony</source>
@@ -3053,77 +3031,77 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
-        <translation>10GBལས་ཆེ་བའི་ཡིག་ཆ་ཕྱིར་བསྡུ་མི་ཐུབ་པས།ཇི་སྲིད་བར་དུ་བསུབ་སྲིད་དམ།</translation>
+        <translation>གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
     </message>
     <message>
         <source>Failed to open file &quot;%1&quot;: insufficient permissions.</source>
-        <translation>ཡིག་ཆ་ཁ་ཕྱེ་མི་ཐུབ་།&quot;%1&quot;སྟེ་།དབང་ཚད་མི་འདང་བ་།</translation>
+        <translation>%1དབང་ཚད་མ་འདང་བའི་ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ་པ་རེད།</translation>
     </message>
     <message>
         <source>File “%1” does not exist. Please check whether the file has been deleted.</source>
-        <translation>ཡིག་ཆ་&quot;%1&quot;མི་གནས་པ་དང་།བསུབ་ཡོད་མེད་གཏན་འཁེལ་བྱེད་རོགས་།</translation>
+        <translation>&quot;%1&quot;ཡིག་ཆ་མེད། ཁྱོད་ཀྱིས་ཡིག་ཆ་དེ་བསུབ་ཡོད་མེད་ལ་ཞིབ་བཤེར་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>Computer</source>
-        <translation>རྩིས་ཆས།</translation>
+        <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>File System</source>
-        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
+        <translation>ཡིག་ཆའི་མ་ལག</translation>
     </message>
     <message>
         <source>The device has been mount successfully!</source>
-        <translation>སྒྲིག་ཆས་བཀལ་ནས་གྲུབ་འབྲས་ཐོབ་པའི་ངང་།</translation>
+        <translation>སྒྲིག་ཆས་འདི་བདེ་བླག་ངང་སྒྲིག་སྦྱོར་བྱས་པ་རེད།</translation>
     </message>
     <message>
         <source>Not authorized to perform operation.</source>
-        <translation>ལག་བསྟར་བཀོལ་སྤྱོད་ར་སྤྲོད་མེད་པ་</translation>
+        <translation>གཉེར་སྐྱོང་བྱེད་དབང་མེད་པ།</translation>
     </message>
     <message>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation>ནོར་འཁྲུལ་ནི།%1 
-བཙན་ཤེད་ཀྱིས་ཕབ་འཇུག་བྱ་དགོས་སམ།</translation>
+        <translation>ནོར་འཁྲུལ། %1
+ཁྱོད་ཀྱིས་ནུས་ཤུགས་ཡོད་རྒུ་བཏོན་ནས་ནུས་ཤུགས་ཡོད་རྒུ་བཏོན་ན་འདོད་དམ།</translation>
     </message>
     <message>
         <source>Formatting successful! But failed to set the device name.</source>
-        <translation>རྣམ་གཞག་བཅའ་ཐུབ་མིན་དང་།སྒྲིག་ཆས་བསྐྱར་དུ་མིང་བཏགས་པ་ཕམ་།</translation>
+        <translation>རྣམ་གཞག་ལེགས་འགྲུབ་བྱུང་བ་རེད། འོན་ཀྱང་སྒྲིག་ཆས་ཀྱི་མིང་གཏན་འཁེལ་བྱེད་མ་ཐུབ་པ་རེད།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>གཞི་གྲངས་སྡེར་མ།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>File is not existed.</source>
-        <translation>ཡིག་ཆ་མི་གནས་པ་</translation>
+        <translation>ཡིག་ཆ་མེད་པ།</translation>
     </message>
     <message>
         <source>Can not add a file to favorite directory.</source>
-        <translation>ཡིག་ཆ་ཁ་སྣོན་བྱེད་མི་ཐུབ་ནས་མགྱོགས་མྱུར་འཚམས་འདྲི་།</translation>
+        <translation>ཆེས་དགའ་བའི་དཀར་ཆག་ནང་དུ་ཡིག་ཆ་ཞིག་ཁ་སྣོན་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>burn operation has been cancelled</source>
-        <translation>རྐོ་ཕབ་བཀོལ་སྤྱོད་མེད་པར་བཟོས་།</translation>
+        <translation>བརྐོས་ཕབ་བཀོལ་སྤྱོད་མེད་པར་བཟོས་པ།</translation>
     </message>
     <message>
         <source> is busy!</source>
-        <translation>བྲེལ་བ་ཆེ།</translation>
+        <translation> བྲེལ་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
+        <translation>དོར་བ།</translation>
     </message>
     <message>
         <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
-        <translation>གཙང་གཙང་གཙང་ཕྱིར་བསྡུའི་ས་ཚིགས་དང་ཕྱིར་བསྡུའི་ས་ཚིགས་ཚང་མའི་ནང་གི་ཡིག་ཆ་བསུབ་དགོས་སམ། གལ་ཏེ་མགོ་བརྩམས་།སླར་གསོ་བྱེད་ཐབས་བྲལ་།</translation>
+        <translation>ཁྱོད་ཀྱིས་སྙིགས་སྒམ་གྱི་ནང་གི་ཡིག་ཆ་ཚང་མ་བསུབ་རྒྱུའི་རེ་བ་བྱེད་ཀྱི་ཡོད་དམ། འགོ་བརྩམས་མ་ཐག་སླར་གསོ་བྱེད་ཐབས་བྲལ་བ།</translation>
     </message>
     <message>
         <source>Failed to activate device: Incorrect passphrase</source>
@@ -3139,180 +3117,121 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>མཉེན་ཆས།</translation>
+    </message>
+    <message>
+        <source>Failed to activate device: Incorrect passphrase</source>
+        <translation>གསང་ཨང་ནོར་བས་སྒྲིག་ཆས་ཀྱི་ཁ་ཕྱེ་ཐབས་བྲལ་བ།</translation>
     </message>
 </context>
 <context>
     <name>UdfBurn::UdfAppendBurnDataDialog</name>
     <message>
         <source>AppendBurnData</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁ་སྣོན་བརྒྱབ་ནས་བརྐོས་པ།</translation>
     </message>
     <message>
         <source>Disc Type:</source>
-        <translation type="unfinished">འོད་སྡེར་རིགས་</translation>
+        <translation>འོད་སྡེར་གྱི་རིགས།:</translation>
     </message>
     <message>
         <source>Device Name:</source>
-        <translation type="unfinished">སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
+        <translation>སྒྲིག་ཆས་མིང་།:</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+        <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Unknow</source>
-        <translation type="unfinished">མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
+        <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>No burn data, please add!</source>
-        <translation type="unfinished"></translation>
+        <translation>གྲངས་གཞི་བརྐོས་མེད་ན་ཁ་སྣོན་གནང་རོགས།！</translation>
     </message>
     <message>
         <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation type="unfinished">འོད་སྡེར་གྱི་མིང་སྟོང་བ་ཡིན་མི་རུང་།ཡང་བསྐྱར་ནང་འཇུག་བྱོས།</translation>
+        <translation>འོད་སྡེར་གྱི་མིང་དེ་སྟོང་པར་བཀོད་སྒྲིག་བྱེད་ཐབས་བྲལ་བས་བསྐྱར་དུ་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
     <message>
         <source>AppendBurnData operation has been finished successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྐོས་ཕབ་བཀོལ་སྤྱོད་ལེགས་འགྲུབ་ཡོང་བར་བྱ་དགོས།。</translation>
     </message>
     <message>
         <source>Sorry, the appendBurnData operation is failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>དགོངས་པ་མ་ཚོམ། ཁ་སྣོན་བརྒྱབ་ནས་བཀོལ་སྤྱོད་བྱེད་པར་ཕམ་ཉེས་བྱུང་།！</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation type="unfinished">ཕམ་པ།</translation>
+        <translation>ཕམ་པ།</translation>
     </message>
     <message>
         <source>Burning. Do not close this window</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྐོས་པའི་ནང་དུ་སྒེའུ་ཁུང་འདི་རྒྱག་མི་རུང་།</translation>
     </message>
     <message>
         <source>Burning this disc will append datas on it. Do you want to continue ?</source>
-        <translation type="unfinished"></translation>
+        <translation>འོད་སྡེར་འདི་ཕབ་ནས་གཞི་གྲངས་དེ་དག་འོད་སྡེར་འདི་དག་མུ་མཐུད་དུ་ཁ་སྣོན་བྱེད་རྒྱུ་ཡིན་ནམ།？</translation>
     </message>
     <message>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྐོས་པ།</translation>
     </message>
     <message>
         <source>Begin Burning</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྐོས་མ་བརྐོས་པ།</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">སྒོ་རྒྱག་པ་</translation>
+        <translation>ཁ་རྒྱག</translation>
     </message>
 </context>
 <context>
     <name>UdfBurn::UdfFormatDialog</name>
     <message>
         <source>Format</source>
-        <translation type="unfinished">རྣམ་གཞག་ཅན།</translation>
+        <translation>རྣམ་གཞག</translation>
     </message>
     <message>
         <source>Disc Type:</source>
-        <translation type="unfinished">འོད་སྡེར་རིགས་</translation>
+        <translation>འོད་སྡེར་གྱི་རིགས།:</translation>
     </message>
     <message>
         <source>Device Name:</source>
-        <translation type="unfinished">སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
+        <translation>སྒྲིག་ཆས་མིང་།:</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation>གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">མེད་པར་བཟོ་བ</translation>
+        <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Unknow</source>
-        <translation type="unfinished">མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
+        <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation type="unfinished">འོད་སྡེར་གྱི་མིང་སྟོང་བ་ཡིན་མི་རུང་།ཡང་བསྐྱར་ནང་འཇུག་བྱོས།</translation>
+        <translation>འོད་སྡེར་གྱི་མིང་དེ་སྟོང་པར་བཀོད་སྒྲིག་བྱེད་ཐབས་བྲལ་བས་བསྐྱར་དུ་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
     <message>
         <source>Format operation has been finished successfully.</source>
-        <translation type="unfinished">རྣམ་བཞག་ཅན་་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
-    </message>
-    <message>
-        <source>Sorry, the format operation is failed!</source>
-        <translation type="unfinished">རྣམ་བཞག་བཟོ་བ་ཕམ་ཉེས་བྱུང་། ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད་རོགས།</translation>
-    </message>
-    <message>
-        <source>Failed</source>
-        <translation type="unfinished">ཕམ་པ།</translation>
-    </message>
-    <message>
-        <source>Formatting. Do not close this window</source>
-        <translation type="unfinished">རྣམ་པ་ཅན་དུ་འགྱུར་བཞིན་ཡོད་།སྒེའུ་ཁུང་དེ་སྒོ་རྒྱག་མ་བྱེད་།</translation>
-    </message>
-    <message>
-        <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
-        <translation type="unfinished">ཚད་གཞི་ཅན་གྱི་འོད་སྡེར་འདིས་གཞི་གྲངས་ཚང་མ་མེད་པར་བཟོ་ངེས།ཁྱོད་ཀྱིས་ཚད་གཞི་ཅན་གྱི་སྔོན་ལ་གཞི་གྲངས་གལ་ཆེན་ཡོད་ཚད་གྲ་སྒྲིག་བྱེད་དགོས། མུ་མཐུད་ཡིན་ནམ།</translation>
-    </message>
-    <message>
-        <source>Begin Format</source>
-        <translation type="unfinished">མགོ་བརྩམས་།རྣམ་གཞག་</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">སྒོ་རྒྱག་པ་</translation>
-    </message>
-</context>
-<context>
-    <name>UdfFormatDialog</name>
-    <message>
-        <source>Format</source>
-        <translation>རྣམ་གཞག་ཅན།</translation>
-    </message>
-    <message>
-        <source>Disc Type:</source>
-        <translation>འོད་སྡེར་རིགས་</translation>
-    </message>
-    <message>
-        <source>Device Name:</source>
-        <translation>སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>མེད་པར་བཟོ་བ</translation>
-    </message>
-    <message>
-        <source>Unknow</source>
-        <translation>མ་རྟོགས་པའི་རྒྱུ་རྐྱེན།</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>ཐ་ཚིག་</translation>
-    </message>
-    <message>
-        <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation>འོད་སྡེར་གྱི་མིང་སྟོང་བ་ཡིན་མི་རུང་།ཡང་བསྐྱར་ནང་འཇུག་བྱོས།</translation>
-    </message>
-    <message>
-        <source>Format operation has been finished successfully.</source>
-        <translation>རྣམ་བཞག་ཅན་་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
+        <translation>རྣམ་བཞག་ཅན་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
     </message>
     <message>
         <source>Sorry, the format operation is failed!</source>
@@ -3324,19 +3243,82 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Formatting. Do not close this window</source>
-        <translation>རྣམ་པ་ཅན་དུ་འགྱུར་བཞིན་ཡོད་།སྒེའུ་ཁུང་དེ་སྒོ་རྒྱག་མ་བྱེད་།</translation>
+        <translation>རྣམ་གཞག་བཟོ་བ།ཞིན་ཡོད་པས་ཁ་རྒྱག་མི་རུང་།</translation>
     </message>
     <message>
         <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
-        <translation>ཚད་གཞི་ཅན་གྱི་འོད་སྡེར་འདིས་གཞི་གྲངས་ཚང་མ་མེད་པར་བཟོ་ངེས།ཁྱོད་ཀྱིས་ཚད་གཞི་ཅན་གྱི་སྔོན་ལ་གཞི་གྲངས་གལ་ཆེན་ཡོད་ཚད་གྲ་སྒྲིག་བྱེད་དགོས། མུ་མཐུད་ཡིན་ནམ།</translation>
+        <translation>འོད་སྡེར་རྣམ་པར་གཞག་ན་དེ་སྟེང་གི་གཞི་གྲངས་ཡོད་ཚད་གཙང་དག་བཟོ་བས། རྣམ་པར་འཇོག་པའི་སྔོན་ལ་གྲབས་ཉར་བྱེད་དགོས།མུ་མཐུད་དུ་བྱེད་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>Begin Format</source>
-        <translation>མགོ་བརྩམས་།རྣམ་གཞག་</translation>
+        <translation>རྣམ་པར་འཇོག་འགོ་བརྩམས་པ།</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>སྒོ་རྒྱག་པ་</translation>
+        <translation>ཁ་རྒྱག</translation>
+    </message>
+</context>
+<context>
+    <name>UdfFormatDialog</name>
+    <message>
+        <source>Format</source>
+        <translation>རྣམ་གཞག</translation>
+    </message>
+    <message>
+        <source>Disc Type:</source>
+        <translation>འོད་སྡེར་གྱི་རིགས།:</translation>
+    </message>
+    <message>
+        <source>Device Name:</source>
+        <translation>སྒྲིག་ཆས་མིང་།:</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>གཏན་འཁེལ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>དོར་བ།</translation>
+    </message>
+    <message>
+        <source>Unknow</source>
+        <translation>མ་ཤེས་པའི་རིགས།</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>ཐ་ཚིག</translation>
+    </message>
+    <message>
+        <source>The disc name cannot be set to empty, please re-enter it!</source>
+        <translation>འོད་སྡེར་གྱི་མིང་དེ་སྟོང་པར་བཀོད་སྒྲིག་བྱེད་ཐབས་བྲལ་བས་བསྐྱར་དུ་ནང་འཇུག་གནང་རོགས།</translation>
+    </message>
+    <message>
+        <source>Format operation has been finished successfully.</source>
+        <translation>རྣམ་བཞག་ཅན་གྱི་བཀོལ་སྤྱོད་ལེགས་གྲུབ་བྱུང་།</translation>
+    </message>
+    <message>
+        <source>Sorry, the format operation is failed!</source>
+        <translation>རྣམ་བཞག་བཟོ་བ་ཕམ་ཉེས་བྱུང་བས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད་རོགས།</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>ཕམ་པ།</translation>
+    </message>
+    <message>
+        <source>Formatting. Do not close this window</source>
+        <translation>རྣམ་གཞག་བཟོ་བཞིན་ཡོད་པས་ཁ་རྒྱག་མི་རུང་།</translation>
+    </message>
+    <message>
+        <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
+        <translation>འོད་སྡེར་རྣམ་པར་གཞག་ན་དེ་སྟེང་གི་གཞི་གྲངས་ཡོད་ཚད་གཙང་དག་བཟོ་བས། རྣམ་པར་འཇོག་པའི་སྔོན་ལ་གྲབས་ཉར་བྱེད་དགོས།མུ་མཐུད་དུ་བྱེད་རྒྱུ་ཡིན་ནམ།</translation>
+    </message>
+    <message>
+        <source>Begin Format</source>
+        <translation>རྣམ་པར་འཇོག་འགོ་བརྩམས་པ།</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ཁ་རྒྱག</translation>
     </message>
 </context>
 </TS>
