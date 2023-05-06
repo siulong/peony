@@ -976,7 +976,8 @@ void DesktopIconView::openFileByUri(QString uri)
             {
                 Peony::AudioPlayManager::getInstance()->playWarningAudio();
                 auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
-                                      tr("File not exist, do you want to delete the link file?"));
+                                      tr("File not exist, do you want to delete the link file?"),
+                                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (result == QMessageBox::Yes) {
                     qDebug() << "Delete unused symbollink in desktop.";
                     QStringList selections;

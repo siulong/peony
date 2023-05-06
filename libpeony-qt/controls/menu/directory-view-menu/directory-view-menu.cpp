@@ -1145,7 +1145,8 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 AudioPlayManager::getInstance()->playWarningAudio();
                 auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
                                                                                           "Once you start a deletion, the files deleting will never be "
-                                                                                          "restored again."));
+                                                                                          "restored again."),
+                                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
                 if (result == QMessageBox::Yes) {
 //                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
