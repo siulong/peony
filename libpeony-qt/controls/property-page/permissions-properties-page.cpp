@@ -541,7 +541,7 @@ void PermissionsPropertiesPage::updateCheckBox()
                 auto info = FileInfo::fromUri(m_uri);
                 QStringList args;
                 bool ret;
-                args << "getfacl" << "-p" << info->filePath();
+                args << "getfacl" << "-p" << QString("\"%1\"").arg(info->filePath());
                 QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
                 if (!ret && !acl.isEmpty()) {
                     this->close();
@@ -941,7 +941,7 @@ void AdvancedPermissionsPage::getUserInfo()
         auto info = FileInfo::fromUri(m_uri);
         QStringList args;
         bool ret;
-        args << "getfacl" << "-p" << info->filePath();
+        args << "getfacl" << "-p" << QString("\"%1\"").arg(info->filePath());
         QString acl = UserShareInfoManager::getInstance()->exectueSetAclCommand(args, &ret);
         if (!ret && !acl.isEmpty()) {
             this->close();
