@@ -473,6 +473,9 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
     auto displayName = info->displayName();
     auto suffix = displayName.remove(displayString);
     auto fsType = FileUtils::getFsTypeFromFile(uri);
+    if (info->isDesktopFile()) {
+        suffix = ".desktop";
+    }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {

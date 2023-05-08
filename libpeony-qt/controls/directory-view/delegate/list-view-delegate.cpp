@@ -363,6 +363,10 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto uri = index.data(Qt::UserRole).toString();
     auto suffix = displayName.remove(displayString);
     auto fsType = FileUtils::getFsTypeFromFile(uri);
+    auto info = FileInfo::fromUri(uri);
+    if (info->isDesktopFile()) {
+        suffix = ".desktop";
+    }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
