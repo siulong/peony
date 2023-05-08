@@ -918,6 +918,11 @@ bool IconView::isEnableMultiSelect()
     return m_multi_select;
 }
 
+void IconView::releaseUnselect(bool select)
+{
+    m_mouse_release_unselect = select;
+}
+
 //Icon View 2
 IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
 {

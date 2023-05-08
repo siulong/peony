@@ -440,6 +440,12 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
             view->m_editValid = false;
             return QWidget::mousePressEvent(e);
         }
+        if (view->isEnableMultiSelect()) {
+            //选中后再次点击会调用widget的mousePressEvent而不走iconview的mousePressEvent，导致m_mouse_release_unselect是false
+            view->releaseUnselect(true);
+            return;
+        }
+
         //FIXME: Modify the icon style, only click on the text to respond, click on the icon to not respond
         QRect rect =  m_option.rect;
         QSize iconExpectedSize = m_delegate->getView()->iconSize();

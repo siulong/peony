@@ -175,6 +175,7 @@ protected:
 
     bool getIgnore_mouse_move_event() const;
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
+    void releaseUnselect(bool select);
 
 private Q_SLOTS:
     void slotRename();
