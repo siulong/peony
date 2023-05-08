@@ -466,7 +466,20 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setMinimumSize(sizeHint(option, index).width(), 54);
 
-    edit->setText(index.data(Qt::DisplayRole).toString());
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto info = FileInfo::fromUri(uri);
+    auto displayName = info->displayName();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setMaxLengthLimit(255 - suffix.length());
+    }
+    edit->setText(displayString);
+    edit->blockSignals(false);
     edit->setAlignment(Qt::AlignCenter);
     //NOTE: if we directly call this method, there will be
     //nothing happen. add a very short delay will ensure that
