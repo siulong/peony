@@ -476,6 +476,7 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
+        edit->setLimitBytes(false);
         edit->setMaxLengthLimit(255 - suffix.length());
     }
     edit->setText(displayString);
