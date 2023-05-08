@@ -132,10 +132,10 @@ bool DefaultPreviewPage::eventFilter(QObject *obj, QEvent *ev)
         if (ev->type() == QEvent::Resize) {
             auto e = static_cast<QResizeEvent*>(ev);
             auto page = qobject_cast<FilePreviewPage*>(m_preview_tab_widget);
-            int width = e->size().width() - 50;
+            int width = e->size().width();
             width = qMax(width, 96);
             width = qMin(width, 256);
-            page->resizeIcon(QSize(width, width * 2/3));
+            page->resizeIcon(QSize(width* 2/3, width* 3/4));
             page->updateForm(e->size());
         }
     }
