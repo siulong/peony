@@ -1326,16 +1326,19 @@ void TabWidget::goToUri(const QString &uri, bool addHistory, bool forceUpdate)
 void TabWidget::updateTabPageTitle()
 {
     qDebug() << "updateTabPageTitle:" <<getCurrentUri();
-    //fix error for glib2 signal: G_FILE_MONITOR_EVENT_DELETED
-    if("trash:///" == getCurrentUri()){
-        Peony::VolumeManager* vm = Peony::VolumeManager::getInstance();
-        connect(vm,&Peony::VolumeManager::volumeRemoved,this,[=](const std::shared_ptr<Peony::Volume> &volume){
-            refresh();
-        });
-        connect(vm,&Peony::VolumeManager::volumeAdded,this,[=](const std::shared_ptr<Peony::Volume> &volume){
-            refresh();
-        });
-    }
+
+/* hotfix bug#169196 【文件管理器】插入/弹出U盘，文件管理器当前界面显示异常 */
+//    //fix error for glib2 signal: G_FILE_MONITOR_EVENT_DELETED
+//    if("trash:///" == getCurrentUri()){
+//        Peony::VolumeManager* vm = Peony::VolumeManager::getInstance();
+//        connect(vm,&Peony::VolumeManager::volumeRemoved,this,[=](const std::shared_ptr<Peony::Volume> &volume){
+//            refresh();
+//        });
+//        connect(vm,&Peony::VolumeManager::volumeAdded,this,[=](const std::shared_ptr<Peony::Volume> &volume){
+//            refresh();
+//        });
+//    }
+
     m_tab_bar->updateLocation(m_tab_bar->currentIndex(), getCurrentUri().toLocal8Bit());
     //m_tab_bar->updateLocation(m_tab_bar->currentIndex(), QUrl::fromPercentEncoding(getCurrentUri().toLocal8Bit()));
     updateTrashBarVisible(getCurrentUri());
