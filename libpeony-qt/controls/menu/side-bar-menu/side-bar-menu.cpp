@@ -288,7 +288,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                     });
 
                     qDebug() << unixDevice << "侧边栏： supported Udf appendBurnData values : "<<discCtrl->discCanAppend();
-                    l.last()->setEnabled(discCtrl->discCanAppend() && discControl->isAllRType());
+                    l.last()->setEnabled(discCtrl->discCanAppend() && discControl->isAllRType()&& discControl->discIsUDF());
                 });
             }
         }
