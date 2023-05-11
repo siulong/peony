@@ -1857,3 +1857,25 @@ GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const
 {
     return m_mountOp;
 }
+
+#ifdef KY_UDF_BURN
+#include <libkyudfburn/disccontrol.h>
+#include "ky-udf-format-dialog.h"
+#include "udfAppendBurnDataDialog.h"
+
+UdfBurn::UdfFormatDialogWrapper::UdfFormatDialogWrapper(const QString &uri, UdfBurn::DiscControl *discControl, QWidget *parent)
+{
+    m_dialog = new UdfFormatDialog(uri, discControl, parent);
+}
+
+UdfBurn::UdfFormatDialogWrapper::~UdfFormatDialogWrapper()
+{
+    delete m_dialog;
+}
+
+void UdfBurn::UdfFormatDialogWrapper::show()
+{
+    m_dialog->show();
+}
+
+#endif

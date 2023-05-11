@@ -280,4 +280,25 @@ private:
     GMountOperation *m_mountOp = nullptr;
 };
 
+
+#ifdef KY_UDF_BURN
+#include "peony-core_global.h"
+namespace UdfBurn {
+class UdfFormatDialog;
+class DiscControl;
+class PEONYCORESHARED_EXPORT UdfFormatDialogWrapper : public QObject{
+    Q_OBJECT
+public:
+    explicit UdfFormatDialogWrapper(const QString &uri, DiscControl *discControl, QWidget *parent = nullptr);
+    ~UdfFormatDialogWrapper();
+
+    void show();
+
+private:
+    UdfFormatDialog * m_dialog = nullptr;
+};
+}
+
+#endif
+
 #endif // VOLUMEMANAGER_H
