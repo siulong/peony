@@ -740,6 +740,9 @@ fallback_retry:
                     except.dlgType = ED_WARNING;
                     Q_EMIT errored(except);
                     typeData = except.respCode;
+                    if (typeData != Cancel) {
+                        return;
+                    }
                     break;
                 }
                 }
