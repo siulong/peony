@@ -342,7 +342,8 @@ void TabBarStyle::polish(QWidget *widget)
     QProxyStyle::polish(widget);
     if (widget && qobject_cast<QToolButton *>(widget)) {
         widget->setProperty("isWindowButton", 0x1);
-        widget->setProperty("useIconHighlightEffect", 0x2);
+        //bug#167146 useIconHighlightEffect=2 导致打开预览框的图标不反白
+        //widget->setProperty("useIconHighlightEffect", 0x2);
     }
 }
 

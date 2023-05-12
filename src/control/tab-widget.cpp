@@ -530,7 +530,7 @@ void TabWidget::addNewConditionBar()
     inputBox->setLayout(clearlayout);
     clearButton->setIcon(QIcon::fromTheme("edit-clear-symbolic"));
     clearButton->setProperty("isWindowButton", 1);
-    clearButton->setProperty("useIconHighlightEffect", 0x2);
+    //clearButton->setProperty("useIconHighlightEffect", 0x2);
     //clearButton->setAutoRaise(true);
     clearButton->hide();
 
@@ -555,7 +555,7 @@ void TabWidget::addNewConditionBar()
     addButton->setFixedWidth(20);
     addButton->setFlat(true);
     addButton->setProperty("isWindowButton", 1);
-    addButton->setProperty("useIconHighlightEffect", 2);
+    //addButton->setProperty("useIconHighlightEffect", 2);
     addButton->setProperty("isIcon", true);
     connect(addButton, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
 
@@ -565,7 +565,7 @@ void TabWidget::addNewConditionBar()
     removeButton->setFixedWidth(20);
     removeButton->setFlat(true);
     removeButton->setProperty("isWindowButton", 1);
-    removeButton->setProperty("useIconHighlightEffect", 2);
+    //removeButton->setProperty("useIconHighlightEffect", 2);
     removeButton->setProperty("isIcon", true);
     //mapper for button clicked parse index
     auto signalMapper = new QSignalMapper(this);
