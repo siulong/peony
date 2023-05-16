@@ -122,6 +122,11 @@ public:
     }
 Q_SIGNALS:
     void open(FileLaunchAction *action);
+
+public Q_SLOTS:
+    void chooseOtherApp();
+    void openAppCenter();
+
 protected:
     void init(const QString &uri);
     void initFloorOne();
