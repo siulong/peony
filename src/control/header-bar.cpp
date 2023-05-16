@@ -891,9 +891,9 @@ void HeaderBarStyle::drawComplexControl(QStyle::ComplexControl control, const QS
             return qApp->style()->drawComplexControl(control, &button, painter, widget);
         } else {
             if (0x01 == widget->property("textColor").toInt()) {
-                button.palette.setColor(QPalette::ButtonText, QColor(55, 144, 250));
+                button.palette.setColor(QPalette::Text, QColor(55, 144, 250));
             } else if (0x02 == widget->property("textColor").toInt()) {
-                button.palette.setColor(QPalette::ButtonText, QColor(243, 34, 45));
+                button.palette.setColor(QPalette::Text, QColor(243, 34, 45));
             }
             return qApp->style()->drawComplexControl(control, &button, painter, widget);
         }
