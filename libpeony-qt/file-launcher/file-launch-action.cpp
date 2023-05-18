@@ -355,7 +355,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
                 return;
             }
 
-            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes));
+            auto result = QMessageBox::question(nullptr, tr("Error"), tr("Can not get a default application for opening %1, do you want open it with text format?").arg(m_uri), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if (result == QMessageBox::Yes) {
                 GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
                 GList *l = nullptr;
