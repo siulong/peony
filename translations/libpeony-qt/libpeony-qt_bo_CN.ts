@@ -373,7 +373,7 @@
     <name>Peony::AdvanceSearchBar</name>
     <message>
         <source>all</source>
-        <translation>ཚང་མ།</translation>
+        <translation type="vanished">ཚང་མ།</translation>
     </message>
     <message>
         <source>start search</source>
@@ -381,27 +381,27 @@
     </message>
     <message>
         <source>this year</source>
-        <translation>ད་ལོ།</translation>
+        <translation type="vanished">ད་ལོ།</translation>
     </message>
     <message>
         <source>this week</source>
-        <translation>གཟའ་འདི།</translation>
+        <translation type="vanished">གཟའ་འདི།</translation>
     </message>
     <message>
         <source>audio</source>
-        <translation>སྒྲ་ཟློས།</translation>
+        <translation type="vanished">སྒྲ་ཟློས།</translation>
     </message>
     <message>
         <source>image</source>
-        <translation>པར་རིས།།</translation>
+        <translation type="vanished">པར་རིས།།</translation>
     </message>
     <message>
         <source>today</source>
-        <translation>དེ་རིང་།</translation>
+        <translation type="vanished">དེ་རིང་།</translation>
     </message>
     <message>
         <source>video</source>
-        <translation>བརྙན་ལམ།</translation>
+        <translation type="vanished">བརྙན་ལམ།</translation>
     </message>
     <message>
         <source>File Size</source>
@@ -489,11 +489,11 @@
     </message>
     <message>
         <source>tiny(0-16K)</source>
-        <translation>ཆེས་ཆུང(0-16K)</translation>
+        <translation type="vanished">ཆེས་ཆུང(0-16K)</translation>
     </message>
     <message>
         <source>year ago</source>
-        <translation>ལོ་གཅིག་གི་སྔོན།</translation>
+        <translation type="vanished">ལོ་གཅིག་གི་སྔོན།</translation>
     </message>
     <message>
         <source>Search Location</source>
@@ -501,7 +501,7 @@
     </message>
     <message>
         <source>large(&gt;1G)</source>
-        <translation>ཆེས་ཆེ(&gt;1G)</translation>
+        <translation type="vanished">ཆེས་ཆེ(&gt;1G)</translation>
     </message>
     <message>
         <source>Modify Time</source>
@@ -517,7 +517,7 @@
     </message>
     <message>
         <source>small(16k-1M)</source>
-        <translation>ཆུང་ཆུང་(16k-1M</translation>
+        <translation type="vanished">ཆུང་ཆུང་(16k-1M</translation>
     </message>
     <message>
         <source>Operate Tips</source>
@@ -529,7 +529,7 @@
     </message>
     <message>
         <source>text file</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+        <translation type="vanished">ཡིག་རྐྱང་ཡིག་ཆ།</translation>
     </message>
 </context>
 <context>
@@ -621,11 +621,11 @@
     </message>
     <message>
         <source>move</source>
-        <translation>སྤོ་བ།</translation>
+        <translation type="vanished">སྤོ་བ།</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>ནོར་འཁྲུལ།</translation>
+        <translation type="vanished">ནོར་འཁྲུལ།</translation>
     </message>
     <message>
         <source>Size:</source>
@@ -641,7 +641,7 @@
     </message>
     <message>
         <source>Choose a new folder:</source>
-        <translation>ཡིག་ཁུག་གསར་པ་ཞིག་འདེམ།</translation>
+        <translation type="vanished">ཡིག་ཁུག་གསར་པ་ཞིག་འདེམ།</translation>
     </message>
     <message>
         <source>Time Access:</source>
@@ -653,7 +653,7 @@
     </message>
     <message>
         <source>Change</source>
-        <translation>བཟོ་བཅོས།</translation>
+        <translation type="vanished">བཟོ་བཅོས།</translation>
     </message>
     <message>
         <source>Include:</source>
@@ -669,7 +669,7 @@
     </message>
     <message>
         <source>cannot move a folder to itself !</source>
-        <translation>ཡིག་ཁུག་གཅིག་ནས་ནང་ཁུལ་དུ་སྤོ་འགུལ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཡིག་ཁུག་གཅིག་ནས་ནང་ཁུལ་དུ་སྤོ་འགུལ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Hidden</source>
@@ -685,7 +685,7 @@
     </message>
     <message>
         <source>Space Useage:</source>
-        <translation>བར་སྟོངས་ཆེ་ཆུང་།</translation>
+        <translation type="vanished">བར་སྟོངས་ཆེ་ཆུང་།</translation>
     </message>
     <message>
         <source>symbolLink</source>
@@ -926,14 +926,6 @@
         <source>Create Link to Desktop</source>
         <translation>ཅོག་ངོས་སུ་བསྐུར་ན་སྟབས་བདེ་རེད།</translation>
     </message>
-    <message>
-        <source>Peony-Qt Share File menu Extension</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tag  with Menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Peony::CreateTemplateOperation</name>
@@ -969,7 +961,7 @@
     <name>Peony::DefaultAcitonWidget</name>
     <message>
         <source>No default app</source>
-        <translation type="unfinished">没有设置默认打开方式</translation>
+        <translation>ཐོག་མའི་ཁ་འབྱེད་ཐབས་བཀོད་སྒྲིག་བྱས་མེད།</translation>
     </message>
 </context>
 <context>
@@ -1312,6 +1304,14 @@
         <source>Sort Preferences</source>
         <translation>རིམ་སྒྲིག་ལེགས།</translation>
     </message>
+    <message>
+        <source>Peony File Labels Menu Extension</source>
+        <translation>ཡིག་ཆའི་མཚོན་རྟགས།</translation>
+    </message>
+    <message>
+        <source>MultiSelect</source>
+        <translation>ཡིག་ཆ་མང་པོ་འདེམ་པ།</translation>
+    </message>
 </context>
 <context>
     <name>Peony::FMWindow</name>
@@ -1555,7 +1555,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Delete All Label</source>
-        <translation>མཚོན་རྟགས་ཆ་ཚང་བསུབ་པ།</translation>
+        <translation type="vanished">མཚོན་རྟགས་ཆ་ཚང་བསུབ་པ།</translation>
     </message>
     <message>
         <source>Add File Label...</source>
@@ -1563,14 +1563,14 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Peony File Labels Menu Extension</source>
-        <translation>ཡིག་ཆའི་མཚོན་རྟགས།</translation>
+        <translation type="vanished">ཡིག་ཆའི་མཚོན་རྟགས།</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileLauchDialog</name>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
+        <translation type="vanished">གཏན་འཁེལ་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1578,15 +1578,15 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Set as Default</source>
-        <translation>སོར་བཞག་རྩིས་ཐོ་ལ་བཀོད།</translation>
+        <translation type="vanished">སོར་བཞག་རྩིས་ཐོ་ལ་བཀོད།</translation>
     </message>
     <message>
         <source>Applications</source>
-        <translation>ཉེར་སྤྱོད་བྱ་རིམ།</translation>
+        <translation type="vanished">ཉེར་སྤྱོད་བྱ་རིམ།</translation>
     </message>
     <message>
         <source>Choose an Application to open this file</source>
-        <translation>ཉེར་སྤྱོད་ཞིག་གདམ་པ་དང་ཡིག་ཆ་འདི་ཁ་ཕྱེ་བ།</translation>
+        <translation type="vanished">ཉེར་སྤྱོད་ཞིག་གདམ་པ་དང་ཡིག་ཆ་འདི་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
         <source>Open application is used by default:</source>
@@ -1642,7 +1642,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>མི་ཤེས་པའི་དབྱེ་ཁུལ།</translation>
     </message>
     <message>
         <source>No application is set to open file &quot;%1 %2&quot;</source>
@@ -1715,7 +1715,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>No Permission</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་འགོག་པ།</translation>
     </message>
     <message>
         <source>File is not readable. Please check if file has read permisson.</source>
@@ -1727,7 +1727,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་</translation>
+        <translation>ཉེན་བརྡ་བཏང་བ།</translation>
     </message>
     <message>
         <source>Can not open the file, application is disabled</source>
@@ -1774,10 +1774,6 @@ Do you want to delete the link file?</source>
     <message>
         <source>File:%1 was not found.</source>
         <translation>ཡིག་ཆ།: %1རྙེད་མ་སོང་།</translation>
-    </message>
-    <message>
-        <source>Burn failed</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2082,7 +2078,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File Name:</source>
-        <translation>ཡིག་ཆ་མིང་།</translation>
+        <translation type="vanished">ཡིག་ཆ་མིང་།</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -2334,39 +2330,39 @@ Do you want to delete the link file?</source>
     <name>Peony::PermissionsPropertiesPage</name>
     <message>
         <source>Me</source>
-        <translation>ང་།</translation>
+        <translation type="vanished">ང་།</translation>
     </message>
     <message>
         <source>(Me)</source>
-        <translation>(ང)</translation>
+        <translation type="vanished">(ང)</translation>
     </message>
     <message>
         <source>Read</source>
-        <translation>ཀློག་ཐུབ་པ།</translation>
+        <translation type="vanished">ཀློག་ཐུབ་པ།</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>རིགས་གྲས།</translation>
+        <translation type="vanished">རིགས་གྲས།</translation>
     </message>
     <message>
         <source>User</source>
-        <translation>སྤྱོད་མཁན།</translation>
+        <translation type="vanished">སྤྱོད་མཁན།</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation>སྤྱོད་མཁན་ཚོགས་པ།</translation>
+        <translation type="vanished">སྤྱོད་མཁན་ཚོགས་པ།</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>གཞན་དག</translation>
+        <translation type="vanished">གཞན་དག</translation>
     </message>
     <message>
         <source>Owner</source>
-        <translation>བདག་པོ།</translation>
+        <translation type="vanished">བདག་པོ།</translation>
     </message>
     <message>
         <source>Write</source>
-        <translation>འབྲི་བ།</translation>
+        <translation type="vanished">འབྲི་བ།</translation>
     </message>
     <message>
         <source>Can not get the permission info.</source>
@@ -2382,11 +2378,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>User or Group</source>
-        <translation>སྤྱོད་མཁན་ནམ་ཚོ།</translation>
+        <translation type="vanished">སྤྱོད་མཁན་ནམ་ཚོ།</translation>
     </message>
     <message>
         <source>Executable</source>
-        <translation>ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
+        <translation type="vanished">ལག་བསྟར་ཐུབ་པའི་ཡིག་ཆ།</translation>
     </message>
     <message>
         <source>Target: %1</source>
@@ -2407,6 +2403,26 @@ Do you want to delete the link file?</source>
     <message>
         <source>The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?</source>
         <translation>དེང་སྐབས་སྤྱོད་མཁན་གྱིས་མཐོ་རིམ་མཉམ་སྤྱོད་བྱ་རྒྱུ་བཀོད་སྒྲིག་བྱས་ཡོད་ཅིང་། གལ་ཏེ་བཟོ་བཅོས་རྒྱག་པའི་དབང་ཚད་ཀྱིས་མཐོ་རིམ་མཉམ་སྤྱོད་བྱེད་མི་ཐུབ་པ་བཟོ་སྲིད་པས་？</translation>
+    </message>
+    <message>
+        <source>Group or User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read and Write</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Readonly</source>
+        <translation>ཀློག་པ་ཁོ་ན།</translation>
+    </message>
+    <message>
+        <source>(Current User)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current User</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2955,7 +2971,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Default search vfs of peony</source>
-        <translation>སོར་བཞག་ཡིག་ཆ་འཚོལ་བཤེར།</translation>
+        <translation type="vanished">སོར་བཞག་ཡིག་ཆ་འཚོལ་བཤེར།</translation>
     </message>
     <message>
         <source>Details</source>
@@ -3118,10 +3134,6 @@ Do you want to unmount forcely?</source>
     <message>
         <source>Favorites</source>
         <translation>མཉེན་ཆས།</translation>
-    </message>
-    <message>
-        <source>Failed to activate device: Incorrect passphrase</source>
-        <translation>གསང་ཨང་ནོར་བས་སྒྲིག་ཆས་ཀྱི་ཁ་ཕྱེ་ཐབས་བྲལ་བ།</translation>
     </message>
 </context>
 <context>

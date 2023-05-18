@@ -433,38 +433,38 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="149"/>
+        <location filename="../../src/control/operation-menu.cpp" line="150"/>
         <source>Samba set user password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="148"/>
         <source>Samba password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="157"/>
-        <location filename="../../src/control/operation-menu.cpp" line="168"/>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <location filename="../../src/control/operation-menu.cpp" line="169"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="157"/>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="168"/>
+        <location filename="../../src/control/operation-menu.cpp" line="169"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="179"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="183"/>
+        <location filename="../../src/control/operation-menu.cpp" line="184"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -472,27 +472,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="233"/>
+        <location filename="../../src/control/operation-menu.cpp" line="234"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="244"/>
+        <location filename="../../src/control/operation-menu.cpp" line="245"/>
         <source>copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="253"/>
+        <location filename="../../src/control/operation-menu.cpp" line="254"/>
         <source>paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="262"/>
+        <location filename="../../src/control/operation-menu.cpp" line="263"/>
         <source>cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="271"/>
+        <location filename="../../src/control/operation-menu.cpp" line="272"/>
         <source>trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -940,12 +940,12 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1548"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1551"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1549"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1552"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>

@@ -517,38 +517,38 @@ p, li { white-space: pre-wrap; }
         <translation>用户已经设置了samba共享密码, 是否希望重新设置?</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="149"/>
+        <location filename="../../src/control/operation-menu.cpp" line="150"/>
         <source>Samba set user password</source>
         <translation>设置samba共享密码</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="148"/>
         <source>Samba password:</source>
         <translation>Samba密码:</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="157"/>
-        <location filename="../../src/control/operation-menu.cpp" line="168"/>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <location filename="../../src/control/operation-menu.cpp" line="169"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="157"/>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation>设置Samba密码失败, 请重新输入!</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="168"/>
+        <location filename="../../src/control/operation-menu.cpp" line="169"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation>共享配置服务异常, 请确认是否有已经存在的共享设置操作, 或者重新设置共享!</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="179"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="183"/>
+        <location filename="../../src/control/operation-menu.cpp" line="184"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -556,27 +556,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="233"/>
+        <location filename="../../src/control/operation-menu.cpp" line="234"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="244"/>
+        <location filename="../../src/control/operation-menu.cpp" line="245"/>
         <source>copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="253"/>
+        <location filename="../../src/control/operation-menu.cpp" line="254"/>
         <source>paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="262"/>
+        <location filename="../../src/control/operation-menu.cpp" line="263"/>
         <source>cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="271"/>
+        <location filename="../../src/control/operation-menu.cpp" line="272"/>
         <source>trash</source>
         <translation>删除</translation>
     </message>
@@ -1073,12 +1073,12 @@ Do you want to unmount forcely?</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1548"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1551"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1549"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1552"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>

@@ -9,12 +9,12 @@
         <translation>桌面图标视图</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="668"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="612"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="760"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="704"/>
         <source>set background</source>
         <translation>设置背景</translation>
     </message>
@@ -23,22 +23,22 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="995"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="940"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="996"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="941"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="979"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="923"/>
         <source>Open Link failed</source>
         <translation>打开快捷方式失败</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="980"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="924"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>目标文件夹不存在，是否删除该无效快捷方式？</translation>
     </message>
@@ -120,7 +120,7 @@
         <translation type="vanished">文件夹(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="334"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="338"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -189,42 +189,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="320"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="322"/>
         <source>Empty File</source>
         <translation>空文本</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="330"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="334"/>
         <source>Folder</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
         <source>View Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="363"/>
         <source>Small</source>
         <translation>小图标</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="360"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="366"/>
         <source>Normal</source>
         <translation>中图标</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="363"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="369"/>
         <source>Large</source>
         <translation>大图标</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="366"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="372"/>
         <source>Huge</source>
         <translation>超大图标</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="394"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="400"/>
         <source>Sort By</source>
         <translation type="unfinished"></translation>
     </message>
@@ -233,32 +233,32 @@
         <translation type="vanished">排序方式...</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="399"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="405"/>
         <source>Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="401"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="407"/>
         <source>File Type</source>
         <translation>文件类型</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="402"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="408"/>
         <source>File Size</source>
         <translation>文件大小</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="474"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="480"/>
         <source>Clean the trash</source>
         <translation>清空回收站</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="495"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="501"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="520"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="526"/>
         <source>Delete to trash</source>
         <translation>删除到回收站</translation>
     </message>
@@ -271,7 +271,7 @@
         <translation type="vanished">不能将回收站与其他文件一起查看属性!</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="400"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="406"/>
         <source>Modified Date</source>
         <translation>修改日期</translation>
     </message>
@@ -280,7 +280,7 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="499"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="505"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
@@ -289,27 +289,27 @@
         <translation type="vanished">删除到回收站(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="529"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="535"/>
         <source>Delete forever</source>
         <translation>永久删除</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="537"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="543"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="544"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="550"/>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="550"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="556"/>
         <source>Refresh</source>
         <translation>刷新</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="564"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="570"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
