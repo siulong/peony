@@ -1427,14 +1427,16 @@ void Drive::eject(GMountUnmountFlags ejectFlag)
     // drive will do operation without user interaction.
     auto mount_op = VolumeManager::getInstance()->getOccupiedInfoThread()->getMountOp();
     QString *targetUri = new QString(VolumeManager::getInstance()->getTargetUriFromUnixDevice(m_device));
-    qDebug()<<"eject flag: "<<ejectFlag<<m_device;
+    qDebug()<<"eject flag: "<<ejectFlag<<m_device<<m_canEject<<g_drive_can_stop(m_drive)<<g_drive_is_removable(m_drive);
     if(m_canEject && !m_device.startsWith("/dev/sd")){ /* U盘使用安全移除 */
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-    else if(g_drive_can_stop(m_drive) || g_drive_is_removable(m_drive)){//for mobile harddisk.
+    else if(g_drive_can_stop(m_drive)/* || g_drive_is_removable(m_drive)*/){//for mobile harddisk.
         g_drive_stop(m_drive, ejectFlag, mount_op, NULL, GAsyncReadyCallback(ejectDevicebyDrive), targetUri);
+    }else if(g_drive_is_removable(m_drive)){
+        //fix bug#141782, SD card eject can not recgonize issue
+        g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-
 }
 
 void Drive::setMountPath(const QString &mountPath)
