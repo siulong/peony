@@ -158,7 +158,8 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
     setProperty("useStyleWindowManager", false);
 
     //set minimum width by design request
-    setMinimumWidth(WINDOW_MINIMUM_WIDTH);
+    //打开预览框后拉动侧边栏会导致关闭控件被遮盖
+    //setMinimumWidth(WINDOW_MINIMUM_WIDTH);
     //short cut settings
     setShortCuts();
 

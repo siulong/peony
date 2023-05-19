@@ -192,7 +192,6 @@ void SearchWidget::updateCloseSearch(QString icon)
 void SearchWidget::updateTabletModeValue(bool isTabletMode)
 {
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，去掉搜索
-    m_searchButton->setVisible(!isTabletMode);
     int height = isTabletMode? 48:36;
     m_locationBar->setFixedHeight(height);
 }

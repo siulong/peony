@@ -691,6 +691,7 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
     setStyle(HeaderBarStyle::getStyle());
     m_searchWidget->closeSearch();
     m_searchWidget->updateSearchRequest(false);
+    m_searchWidget->updateTabletModeValue(isTabletMode);
     m_tablet_mode = isTabletMode;
     bool noComputer = false;
     auto url = m_window->getCurrentUri();
@@ -1106,7 +1107,6 @@ HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)
 //                  "border: 0px solid transparent"
 //                  "}");
 
-    setFixedHeight(54);
     setMovable(false);
 
     m_layout = new QHBoxLayout;
