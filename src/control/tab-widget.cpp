@@ -279,6 +279,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     m_preview_splitter->setStretchFactor(1, 2);
     m_preview_splitter->addWidget(m_preview_page_container);
     m_preview_page_container->hide();
+
     vbox->addWidget(m_preview_splitter);
     w->setLayout(vbox);
     setCentralWidget(w);
@@ -1254,7 +1255,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             } else {
                 viewContainer->switchViewType(Peony::GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ID).toString());
             }
-            viewContainer->setMinimumWidth(350);
+            viewContainer->setMinimumWidth(520);
             m_stack->addWidget(viewContainer);
             if (jumpTo) {
                 m_stack->setCurrentWidget(viewContainer);

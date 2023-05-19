@@ -130,16 +130,13 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 //    openTerminal->setFixedSize(QSize(40, 40));
 //    openTerminal->setIconSize(QSize(16, 16));
 
-
     auto goBack = new QToolButton(this);
     m_go_back = goBack;
     goBack->setEnabled(false);
     goBack->setToolTip(tr("Go Back"));
     goBack->setIcon(QIcon::fromTheme("go-previous-symbolic"));
-
     auto a = addWidget(goBack);
     m_actions.insert(HeaderBarAction::GoBack, a);
-
 
     auto goForward = new QToolButton(this);
     m_go_forward = goForward;
@@ -301,6 +298,18 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     });
 
     addSpacing(3);
+
+    a = addAction(QIcon::fromTheme("open-menu-symbolic"), tr("Option"));
+    m_actions.insert(HeaderBarAction::Option, a);
+    QToolButton *optionButton = qobject_cast<QToolButton *>(widgetForAction(a));
+    optionButton->setAutoRaise(false);
+    optionButton->setIconSize(QSize(16, 16));
+    optionButton->setPopupMode(QToolButton::InstantPopup);
+    optionButton->setProperty("isOptionButton", true);
+    optionButton->setProperty("isWindowButton", 1);
+
+    OperationMenu *operationMenu = new OperationMenu(m_window,m_window);
+    a->setMenu(operationMenu);
 
     // Add by wnn, add tool button when select item
     a = addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("&Copy"));
@@ -706,6 +715,7 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
         m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Option).value()->setVisible(true);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(false);
         }
@@ -717,6 +727,7 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::Option).value()->setVisible(false);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(true);
         }
@@ -1155,6 +1166,7 @@ void HeaderBarContainer::addHeaderBar(HeaderBar *headerBar)
     m_header_bar = headerBar;
 
     headerBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     m_layout->addWidget(headerBar);
     m_internal_widget->setLayout(m_layout);
     addWidget(m_internal_widget);
@@ -1165,19 +1177,6 @@ void HeaderBarContainer::addMenu(MainWindow *m_window)
 {
     m_topMenu = new QWidget(this);
     QHBoxLayout *layout = new QHBoxLayout(m_topMenu);
-
-    QToolButton *optionButton = new QToolButton(this);
-    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
-    optionButton->setToolTip(tr("Option"));
-    optionButton->setAutoRaise(true);
-    optionButton->setFixedSize(QSize(48, 48));
-    optionButton->setIconSize(QSize(16, 16));
-    optionButton->setPopupMode(QToolButton::InstantPopup);
-    optionButton->setProperty("isOptionButton", true);
-    optionButton->setProperty("isWindowButton", 1);
-
-    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
-    optionButton->setMenu(operationMenu);
 
     QToolButton *minimize = new QToolButton(this);
     minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
@@ -1204,7 +1203,7 @@ void HeaderBarContainer::addMenu(MainWindow *m_window)
     connect(close, &QToolButton::clicked, this, [=]() {
         m_window->close();
     });
-    layout->addWidget(optionButton);
+
     layout->addWidget(minimize);
     layout->addWidget(close);
     m_topMenu->setLayout(layout);
