@@ -216,6 +216,11 @@ void OperationMenu::updateMenu()
 
     bool tablet = qApp->property("tabletMode").toBool();
     m_editWidgetContainer->setVisible(!tablet);
+    if (tablet) {
+        m_edit_widget->hide();
+    } else {
+        m_edit_widget->show();
+    }
 }
 
 OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *parent) : QWidget(parent)
