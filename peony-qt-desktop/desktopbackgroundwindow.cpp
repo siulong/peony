@@ -37,8 +37,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
     m_desktopIconView = new Peony::DesktopIconView(this);
     m_desktopIconView->setId(desktopWindowId);
     m_id = desktopWindowId;
-    move(m_output->geometry().topLeft());
-    setFixedSize(m_output->geometry().size());
+    move(getLogicalGeometryFromScreen().topLeft());
+    setFixedSize(getLogicalGeometryFromScreen().size());
     setContentsMargins(0, 0, 0, 0);
 
     auto manager = DesktopBackgroundManager::globalInstance();
@@ -99,25 +99,25 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
     connect(m_output.data(), &KScreen::Output::posChanged,
             this, [=](){
         qDebug() << "output posChanged:" << output.data()->name()<< output->id() << output->geometry();
-         setWindowGeometry(m_output->geometry());
+        setWindowGeometry(getLogicalGeometryFromScreen());
     });
 
     connect(m_output.data(), &KScreen::Output::currentModeIdChanged,
             this, [=](){
         qDebug() << "output currentModeIdChanged:" << output.data()->name()<< output->id() << output->geometry();
-        setWindowGeometry(m_output->geometry());
+        setWindowGeometry(getLogicalGeometryFromScreen());
     });
 
     connect(m_output.data(), &KScreen::Output::rotationChanged,
             this, [=](){
         qDebug() << "output rotationChanged:" << output.data()->name()<< output->id() << output->geometry();
-        setWindowGeometry(m_output->geometry());
+        setWindowGeometry(getLogicalGeometryFromScreen());
     });
 
     connect(m_output.data(), &KScreen::Output::sizeChanged,
             this, [=](){
         qDebug() << "output sizeChanged:" << output.data()->name()<< output->id() << output->geometry();
-        setWindowGeometry(m_output->geometry());
+        setWindowGeometry(getLogicalGeometryFromScreen());
     });
 }
 
@@ -144,7 +144,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
         p.setRenderHint(QPainter::SmoothPixmapTransform);
         auto animation = manager->getAnimation();
         QPixmap frontPixmap = manager->getFrontPixmap();
-        QSize screenSize = m_output->geometry().size();
+        QSize screenSize = getLogicalGeometryFromScreen().size();
         if (animation->state() == QVariantAnimation::Running) {
             auto opacity = animation->currentValue().toReal();
             QPixmap backPixmap = manager->getBackPixmap();
@@ -210,7 +210,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
                 //跨区
-                auto geometry = m_output->geometry();
+                auto geometry = getLogicalGeometryFromScreen();
                 p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
@@ -249,7 +249,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
             } else if (manager->getBackgroundOption() == "zoom") {
                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
             } else if (manager->getBackgroundOption() == "spanned") {
-                auto geometry = m_output->geometry();
+                auto geometry = getLogicalGeometryFromScreen();
                 p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
             } else {
                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
@@ -274,6 +274,20 @@ KScreen::OutputPtr DesktopBackgroundWindow::screen() const
     return m_output;
 }
 
+QRect DesktopBackgroundWindow::getLogicalGeometryFromScreen()
+{
+    if (!m_output.isNull() && m_output->isEnabled()) {
+        if (QApplication::platformName().toLower().contains("wayland")) {
+            return m_output->geometry();
+        }
+        qreal ratio = this->windowHandle()->devicePixelRatio();
+        QRect rect = QRect(m_output->geometry().topLeft()/ratio, m_output->geometry().size()/ratio);
+        return rect;
+    } else {
+        return this->geometry();
+    }
+}
+
 void DesktopBackgroundWindow::invaidScreen()
 {
     m_output = nullptr;
@@ -292,7 +306,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
                 m_shellSurface->setSkipTaskbar(true);
                 // wayland中构造函数的move只能在这里生效
                 if (!m_output.isNull()) {
-                    m_shellSurface->setPosition(m_output->geometry().topLeft());
+                    m_shellSurface->setPosition(getLogicalGeometryFromScreen().topLeft());
                 }
             }
             break;
@@ -328,7 +342,7 @@ void DesktopBackgroundWindow::updateWindowGeometry()
     }
     int mode = ((PeonyDesktopApplication*)qApp)->checkScreenMode(m_output->geometry());
     ((PeonyDesktopApplication*)qApp)->changeMode(mode);
-    auto geometry = m_output->geometry();
+    auto geometry = getLogicalGeometryFromScreen();
     move(geometry.topLeft());
     if (m_shellSurface) {
         m_shellSurface->setPosition(geometry.topLeft());

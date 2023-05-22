@@ -22,6 +22,7 @@ public:
     int id() const;
 
     KScreen::OutputPtr screen() const;
+    QRect getLogicalGeometryFromScreen();
 
     Peony::DesktopIconView *getIconView();
     void setId(int id);

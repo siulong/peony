@@ -340,7 +340,7 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
     };
 
     for (auto window : m_bg_windows) {
-        QRegion screenRegion(window->screen()->geometry());
+        QRegion screenRegion(window->getLogicalGeometryFromScreen());
         if (screenRegion.contains(pos)) {
             desktopIconView = window->getIconView();
             break;
