@@ -1083,6 +1083,10 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
         }
     }
 
+    //Fix bug#132638, special # character use in symbolic link open fail issue
+    if (realUri.contains("\#"))
+        realUri = Peony::FileUtils::urlEncode(realUri);
+
     //if in search mode and key is not null, need quit search mode, bug#93528
     //清空搜索关键字时，不应该退出搜索状态，其他情况下，跳转非搜索路径，需要退出搜索
     if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
