@@ -119,6 +119,12 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
         qDebug() << "output sizeChanged:" << output.data()->name()<< output->id() << output->geometry();
         setWindowGeometry(getLogicalGeometryFromScreen());
     });
+
+    connect(m_output.data(), &KScreen::Output::scaleChanged,
+            this, [=](){
+        qDebug() << "output scaleChanged:" << m_output.data()->name()<< m_output->id() << m_output->geometry();
+        setWindowGeometry(m_output->geometry());
+    });
 }
 
 DesktopBackgroundWindow::~DesktopBackgroundWindow()
