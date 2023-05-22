@@ -1,0 +1,215 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Mon, 22 May 2023 17:46:32 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0k2WUZGUOOAkOaWh+S7tueuoeeQhuWZqOOAkeahjA==?=
+ =?utf-8?b?6Z2i5paH5Lu26KKr6YGu5oyh?=
+
+---
+ GUIDE_ZH_CN.md                                 |  6 ++--
+ README.md                                      |  8 ++----
+ peony-qt-desktop/desktopbackgroundwindow.cpp   | 40 +++++++++++++++++++-------
+ peony-qt-desktop/desktopbackgroundwindow.h     |  1 +
+ peony-qt-desktop/peony-desktop-application.cpp |  2 +-
+ 5 files changed, 37 insertions(+), 20 deletions(-)
+
+diff --git a/GUIDE_ZH_CN.md b/GUIDE_ZH_CN.md
+index c4ab019..fa0e7ff 100644
+--- a/GUIDE_ZH_CN.md
++++ b/GUIDE_ZH_CN.md
+@@ -1,6 +1,6 @@
+ # 项目指南
+ 
+-## [Wiki](https://github.com/ukui/peony/wiki)
++## [Wiki](https://gitee.com/openkylin/peony/wiki)
+ 
+ ## 项目之外的相关资源（重要）
+ 
+@@ -31,7 +31,7 @@
+ 
+ 目前的Peony项目已经接近初次提测，大家请关注github和launchpad平台上的动向：
+ 
+-> [GitHub源码仓库](https://github.com/ukui/peony)
++> [Gitee源码仓库](https://gitee.com/openkylin/peony)
+ 
+ > [Launchpad PPA](https://launchpad.net/~ubuntukylin-members/+archive/ubuntu/ukui3.0
+ )
+@@ -48,7 +48,7 @@
+ 
+ ### 步骤(以优麒麟为例)
+ 
+-> git clone https://github.com/ukui/peony.git
++> git clone https://gitee.com/openkylin/peony.git
+ 
+ > cd peony && mkdir build && cd build
+ 
+diff --git a/README.md b/README.md
+index b5effb0..41ab095 100644
+--- a/README.md
++++ b/README.md
+@@ -1,17 +1,13 @@
+ # peony
+ 
+-[![build](https://github.com/ukui/peony/workflows/Check%20build/badge.svg?branch=master)](https://github.com/ukui/peony)
+-
+ peony is the filemanager application of UKUI3.0.
+ 
+ # About this project
+ 
+-- [Wiki on GitHub](https://github.com/ukui/peony/wiki)
++- [Wiki on Gitee](https://gitee.com/openkylin/peony/wiki)
+ 
+ - [zh_CN](GUIDE_ZH_CN.md)
+ 
+-- [project preview](https://github.com/orgs/explorer-cs/projects/3?fullscreen=true)
+-
+ # Description
+ Peony is intent to be the default FileManager application in UKUI3.0.
+ 
+@@ -70,7 +66,7 @@ If there are some problems during porting peony to other distros, commit an issu
+ 
+ ## build from source and test
+ 
+-> git clone https://github.com/ukui/peony.git
++> git clone https://gitee.com/openkylin/peony.git
+ 
+ > cd peony && mkdir build && cd build
+ 
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index 0b5a19d..ee90214 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -37,8 +37,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
+     m_desktopIconView = new Peony::DesktopIconView(this);
+     m_desktopIconView->setId(desktopWindowId);
+     m_id = desktopWindowId;
+-    move(m_output->geometry().topLeft());
+-    setFixedSize(m_output->geometry().size());
++    move(getLogicalGeometryFromScreen().topLeft());
++    setFixedSize(getLogicalGeometryFromScreen().size());
+     setContentsMargins(0, 0, 0, 0);
+ 
+     auto manager = DesktopBackgroundManager::globalInstance();
+@@ -99,24 +99,30 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
+     connect(m_output.data(), &KScreen::Output::posChanged,
+             this, [=](){
+         qDebug() << "output posChanged:" << output.data()->name()<< output->id() << output->geometry();
+-         setWindowGeometry(m_output->geometry());
++        setWindowGeometry(getLogicalGeometryFromScreen());
+     });
+ 
+     connect(m_output.data(), &KScreen::Output::currentModeIdChanged,
+             this, [=](){
+         qDebug() << "output currentModeIdChanged:" << output.data()->name()<< output->id() << output->geometry();
+-        setWindowGeometry(m_output->geometry());
++        setWindowGeometry(getLogicalGeometryFromScreen());
+     });
+ 
+     connect(m_output.data(), &KScreen::Output::rotationChanged,
+             this, [=](){
+         qDebug() << "output rotationChanged:" << output.data()->name()<< output->id() << output->geometry();
+-        setWindowGeometry(m_output->geometry());
++        setWindowGeometry(getLogicalGeometryFromScreen());
+     });
+ 
+     connect(m_output.data(), &KScreen::Output::sizeChanged,
+             this, [=](){
+         qDebug() << "output sizeChanged:" << output.data()->name()<< output->id() << output->geometry();
++        setWindowGeometry(getLogicalGeometryFromScreen());
++    });
++
++    connect(m_output.data(), &KScreen::Output::scaleChanged,
++            this, [=](){
++        qDebug() << "output scaleChanged:" << m_output.data()->name()<< m_output->id() << m_output->geometry();
+         setWindowGeometry(m_output->geometry());
+     });
+ }
+@@ -144,7 +150,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+         p.setRenderHint(QPainter::SmoothPixmapTransform);
+         auto animation = manager->getAnimation();
+         QPixmap frontPixmap = manager->getFrontPixmap();
+-        QSize screenSize = m_output->geometry().size();
++        QSize screenSize = getLogicalGeometryFromScreen().size();
+         if (animation->state() == QVariantAnimation::Running) {
+             auto opacity = animation->currentValue().toReal();
+             QPixmap backPixmap = manager->getBackPixmap();
+@@ -210,7 +216,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
+             } else if (manager->getBackgroundOption() == "spanned") {
+                 //跨区
+-                auto geometry = m_output->geometry();
++                auto geometry = getLogicalGeometryFromScreen();
+                 p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+             } else {
+                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
+@@ -249,7 +255,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+             } else if (manager->getBackgroundOption() == "zoom") {
+                 p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
+             } else if (manager->getBackgroundOption() == "spanned") {
+-                auto geometry = m_output->geometry();
++                auto geometry = getLogicalGeometryFromScreen();
+                 p.drawPixmap(this->rect(), frontPixmap, getSourceRect(frontPixmap, geometry));
+             } else {
+                 p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
+@@ -274,6 +280,20 @@ KScreen::OutputPtr DesktopBackgroundWindow::screen() const
+     return m_output;
+ }
+ 
++QRect DesktopBackgroundWindow::getLogicalGeometryFromScreen()
++{
++    if (!m_output.isNull() && m_output->isEnabled()) {
++        if (QApplication::platformName().toLower().contains("wayland")) {
++            return m_output->geometry();
++        }
++        qreal ratio = this->windowHandle()->devicePixelRatio();
++        QRect rect = QRect(m_output->geometry().topLeft()/ratio, m_output->geometry().size()/ratio);
++        return rect;
++    } else {
++        return this->geometry();
++    }
++}
++
+ void DesktopBackgroundWindow::invaidScreen()
+ {
+     m_output = nullptr;
+@@ -292,7 +312,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
+                 m_shellSurface->setSkipTaskbar(true);
+                 // wayland中构造函数的move只能在这里生效
+                 if (!m_output.isNull()) {
+-                    m_shellSurface->setPosition(m_output->geometry().topLeft());
++                    m_shellSurface->setPosition(getLogicalGeometryFromScreen().topLeft());
+                 }
+             }
+             break;
+@@ -328,7 +348,7 @@ void DesktopBackgroundWindow::updateWindowGeometry()
+     }
+     int mode = ((PeonyDesktopApplication*)qApp)->checkScreenMode(m_output->geometry());
+     ((PeonyDesktopApplication*)qApp)->changeMode(mode);
+-    auto geometry = m_output->geometry();
++    auto geometry = getLogicalGeometryFromScreen();
+     move(geometry.topLeft());
+     if (m_shellSurface) {
+         m_shellSurface->setPosition(geometry.topLeft());
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.h b/peony-qt-desktop/desktopbackgroundwindow.h
+index 9ec41dd..3ae7689 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.h
++++ b/peony-qt-desktop/desktopbackgroundwindow.h
+@@ -22,6 +22,7 @@ public:
+     int id() const;
+ 
+     KScreen::OutputPtr screen() const;
++    QRect getLogicalGeometryFromScreen();
+ 
+     Peony::DesktopIconView *getIconView();
+     void setId(int id);
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index 66fc5eb..785712f 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -340,7 +340,7 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
+     };
+ 
+     for (auto window : m_bg_windows) {
+-        QRegion screenRegion(window->screen()->geometry());
++        QRegion screenRegion(window->getLogicalGeometryFromScreen());
+         if (screenRegion.contains(pos)) {
+             desktopIconView = window->getIconView();
+             break;
