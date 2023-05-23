@@ -274,7 +274,7 @@ GAsyncReadyCallback PermissionsPropertiesPage::async_query_permisson_callback(GO
                     QFileInfo file("/usr/sbin/security-switch");
                     if(file.exists() == true) {
                         QProcess shProcess;
-                        shProcess.start("security-switch --get");
+                        shProcess.start("/usr/sbin/security-switch --get");
                         if (!shProcess.waitForStarted()) {
                             qDebug()<<"wait get security state start timeout";
                         } else {

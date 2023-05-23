@@ -399,6 +399,7 @@ void HeaderBar::findDefaultTerminal()
             if (tmp.contains("terminal")) {
                 terminal_cmd = tmp;
                 if (tmp == "mate-terminal") {
+                    terminal_cmd = "/usr/bin/mate-terminal";
                     break;
                 }
             }

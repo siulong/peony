@@ -259,7 +259,7 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
                 auto pushbutton = new QPushButton(tr("Kylin Burner"));
                 connect(pushbutton, &QPushButton::clicked, pushbutton, [=](){
                     QProcess p;
-                    p.startDetached("kylin-burner");
+                    p.startDetached("/usr/bin/kylin-burner");
                     p.waitForStarted();
                 });
                 m_layout->addRow(new QLabel(tr("Open with: \t")), pushbutton);

@@ -974,7 +974,7 @@ void DesktopIconView::openFileByUri(QString uri)
                 }
             }
 
-            p.startDetached("peony", QStringList()<<strq<<"%U&");
+            p.startDetached("/usr/bin/peony", QStringList()<<strq<<"%U&");
 #endif
         } else {
             if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
@@ -2524,7 +2524,7 @@ bool DesktopIconView::execSharedFileLink(const QString uri)
                             strq += uri[i];
                         }
                     }
-                    p.startDetached("peony", QStringList()<<strq<<"%U&");
+                    p.startDetached("/usr/bin/peony", QStringList()<<strq<<"%U&");
 #endif
                     return true;
                 }

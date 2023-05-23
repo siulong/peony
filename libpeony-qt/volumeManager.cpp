@@ -1803,7 +1803,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
     {
         GPid pid = g_array_index(processes, GPid ,i);
         QProcess *process =new QProcess();
-        QString cmd =QString("ps -p %1 o comm=").arg(pid);
+        QString cmd =QString("/usr/bin/ps -p %1 o comm=").arg(pid);
         process->start(cmd);
         process->waitForFinished();
         QString application = QString(process->readAll()).replace("\n","");
@@ -1839,7 +1839,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
 
         if (application == "ffmpeg") {
             QProcess p;
-            p.start(QString("kill -9 %1").arg(pid));
+            p.start(QString("/usr/bin/kill -9 %1").arg(pid));
             p.waitForFinished(-1);
             p.close();
         }

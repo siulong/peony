@@ -648,7 +648,7 @@ void MainWindow::setShortCuts()
         quitAllAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
         connect(quitAllAction, &QAction::triggered, this, [=]() {
             QProcess p(0);
-            p.start("peony", QStringList()<<"-q");
+            p.start("/usr/bin/peony", QStringList()<<"-q");
             p.waitForStarted();
             p.waitForFinished();
         });

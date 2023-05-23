@@ -105,7 +105,7 @@ QIcon OfficeThumbnail::generateThumbnail()
         qDebug()<<"the libreoffice cmd: " << list;
 
         QProcess p;
-        p.start("libreoffice",list);
+        p.start("/usr/bin/libreoffice",list);
 
         /*
         * 等待30s超时，30s是默认时间，可以修改

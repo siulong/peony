@@ -44,7 +44,7 @@ void SyncThread::parentStartedSlot()
 
     notifyUser(mHint);
 
-    syncProcess.start("sync");
+    syncProcess.start("/usr/bin/sync");
     syncProcess.waitForFinished(-1);
 
     Q_EMIT this->syncFinished();

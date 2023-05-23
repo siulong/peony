@@ -90,7 +90,7 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
 
     // Shared folder
     args.prepend ("net");
-    proc.start("bash");
+    proc.start("/usr/bin/bash");
 //    args.prepend("pkexec");
     proc.waitForStarted();
     QString cmd = args.join(" ");
@@ -123,7 +123,7 @@ QString UserShareInfoManager::exectueSetAclCommand(QStringList &args, bool *ret)
     QProcess proc;
     proc.open();
 
-    proc.start("bash");
+    proc.start("/usr/bin/bash");
     proc.waitForStarted();
     QString cmd = args.join(" ");
     QString error;

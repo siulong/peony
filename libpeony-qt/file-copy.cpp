@@ -108,7 +108,7 @@ void FileCopy::sync(const GFile* destFile)
 
     // execute sync
     QProcess p;
-    p.setProgram("sync");
+    p.setProgram("/usr/bin/sync");
     p.setArguments(QStringList() << "-f" << path);
     p.start();
     p.waitForFinished(-1);

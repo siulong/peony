@@ -187,7 +187,7 @@ void FileDeleteOperation::run()
         if (! path.isEmpty()) {
             operationStartSnyc();
             QProcess p;
-            p.start(QString("sync -f '%1'").arg(path));
+            p.start(QString("/usr/bin/sync -f '%1'").arg(path));
             p.waitForFinished(-1);
         }
     }

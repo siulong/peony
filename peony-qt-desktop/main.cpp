@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     if (!QFile::exists(xdgUserDirsUri)) {
         if (QFile::exists("/usr/bin/xdg-user-dirs-update")) {
             QProcess p;
-            p.setProgram("xdg-user-dirs-update");
+            p.setProgram("/usr/bin/xdg-user-dirs-update");
             p.start();
             p.waitForFinished();
         }

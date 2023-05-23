@@ -422,13 +422,13 @@ void PeonyDesktopApplication::showGuide(const QString &appName)
 void PeonyDesktopApplication::gotoSetBackground()
 {
     QProcess p;
-    p.setProgram("ukui-control-center");
+    p.setProgram("/usr/bin/ukui-control-center");
     //old version use -b, new version use -m Wallpaper as para
     p.setArguments(QStringList()<<"-m" <<"Wallpaper");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("ukui-control-center", QStringList()<<"-m" <<"Wallpaper");
+    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" <<"Wallpaper");
 #endif
     p.waitForFinished(-1);
 }
@@ -436,12 +436,12 @@ void PeonyDesktopApplication::gotoSetBackground()
 void PeonyDesktopApplication::gotoSetResolution()
 {
     QProcess p;
-    p.setProgram("ukui-control-center");
+    p.setProgram("/usr/bin/ukui-control-center");
     p.setArguments(QStringList()<<"-m" <<"display");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("ukui-control-center", QStringList()<<"-m" <<"display");
+    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" <<"display");
 #endif
     p.waitForFinished(-1);
 
@@ -541,31 +541,31 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
                 connect(service, &Peony::FMDBusService::showItemsRequest, [=](const QStringList &urisList) {
                     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-                    p.setProgram("peony");
+                    p.setProgram("/usr/bin/peony");
                     p.setArguments(QStringList()<<"--show-items"<<urisList);
                     p.startDetached();
 #else
-                    p.startDetached("peony", QStringList()<<"--show-items"<<urisList, nullptr);
+                    p.startDetached("/usr/bin/peony", QStringList()<<"--show-items"<<urisList, nullptr);
 #endif
                 });
                 connect(service, &Peony::FMDBusService::showFolderRequest, [=](const QStringList &urisList) {
                     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-                    p.setProgram("peony");
+                    p.setProgram("/usr/bin/peony");
                     p.setArguments(QStringList()<<"--show-folders"<<urisList);
                     p.startDetached();
 #else
-                    p.startDetached("peony", QStringList()<<"--show-folders"<<urisList, nullptr);
+                    p.startDetached("/usr/bin/peony", QStringList()<<"--show-folders"<<urisList, nullptr);
 #endif
                 });
                 connect(service, &Peony::FMDBusService::showItemPropertiesRequest, [=](const QStringList &urisList) {
                     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-                    p.setProgram("peony");
+                    p.setProgram("/usr/bin/peony");
                     p.setArguments(QStringList()<<"--show-properties"<<urisList);
                     p.startDetached();
 #else
-                    p.startDetached("peony", QStringList()<<"--show-properties"<<urisList, nullptr);
+                    p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<urisList, nullptr);
 #endif
                 });
             }
@@ -846,7 +846,7 @@ void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
     root = g_mount_get_default_location(G_MOUNT(object));
     mountUri = g_file_get_uri(root);
 
-    openFolderCmd = "peony " + QString(mountUri);
+    openFolderCmd = "/usr/bin/peony " + QString(mountUri);
     guessType = g_mount_guess_content_type_finish(G_MOUNT(object),res,&error);
 
     if (error) {

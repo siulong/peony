@@ -534,7 +534,7 @@ void DataCDROM::DVDRWCapacity()
     QStringList deviceName;
     deviceName<<m_oBlockName;
 
-    process.start("dvd+rw-mediainfo", deviceName);
+    process.start("/usr/bin/dvd+rw-mediainfo", deviceName);
     process.waitForFinished(10000);
     QString result = process.readAllStandardOutput();
     QStringList ss = result.split("\n");

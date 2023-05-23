@@ -149,7 +149,7 @@ void FileOperation::fileSync(QString srcFile, QString destDir)
             QProcess p;
             auto shellPath = g_shell_quote(path);
             qDebug() << "DJ- start execute: " << QString("sync -f %1").arg(shellPath);
-            p.start(QString("sync -f %1").arg(shellPath));
+            p.start(QString("/usr/bin/sync -f %1").arg(shellPath));
             qDebug() << "DJ- execute: " << QString("sync -f %1  ok!!!").arg(shellPath);
             g_free(path);
             g_free(shellPath);

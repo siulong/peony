@@ -585,11 +585,11 @@ void DesktopMenu::openWindow(const QString &uri)
     QUrl url = uri;
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-folders"<<url.toEncoded());
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-folders"<<uri);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-folders"<<uri);
 #endif
 }
 
@@ -630,11 +630,11 @@ void DesktopMenu::openWindow(const QStringList &uris)
     }
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-folders"<<args);
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-folders"<<args);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-folders"<<args);
 #endif
 }
 
@@ -650,11 +650,11 @@ void DesktopMenu::showProperties(const QString &uri)
     QUrl url = uri;
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-properties"<<url.toEncoded());
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-properties"<<url.toEncoded());
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<url.toEncoded());
 #endif
 }
 
@@ -681,35 +681,35 @@ void DesktopMenu::showProperties(const QStringList &uris)
         QtConcurrent::run([=]() {
             QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-            p.setProgram("peony");
+            p.setProgram("/usr/bin/peony");
             p.setArguments(QStringList() << "--show-properties" << "trash:///");
             p.startDetached();
 #else
-            p.startDetached("peony", QStringList()<<"--show-properties"<<args);
+            p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<args);
 #endif
         });
     }
 
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList() << "--show-properties" << args);
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-properties"<<args);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<args);
 #endif
 }
 
 void DesktopMenu::gotoAboutComputer()
 {
     QProcess p;
-    p.setProgram("ukui-control-center");
+    p.setProgram("/usr/bin/ukui-control-center");
     //-m About para to show about computer infos, related to bug#88258
     p.setArguments(QStringList()<<"-m" << "About");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("ukui-control-center", QStringList()<<"-m" << "About");
+    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" << "About");
 #endif
     p.waitForFinished(-1);
 }

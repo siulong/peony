@@ -125,7 +125,7 @@ QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
     QStringList occupiedFiles;
 
     QProcess process;
-    QString cmd = QString("lsof -c %1").arg(procName);
+    QString cmd = QString("/usr/bin/lsof -c %1").arg(procName);
     process.start(cmd);
     process.waitForFinished();
     QString infos = QString(process.readAll());

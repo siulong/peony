@@ -66,7 +66,7 @@ QMap<QString, QString> VideoThumbnail::videoInfo()
     map["Time"]=time;
     QProcess p;
 
-    p.start("ffmpeg",list2);
+    p.start("/usr/bin/ffmpeg",list2);
     if (!p.waitForStarted()) {
         return map ;
     }
@@ -164,7 +164,7 @@ QIcon VideoThumbnail::generateThumbnail()
         qDebug()<<"the ffmpeg cmd: " << list;
 
         QProcess p;
-        p.start("ffmpeg",list);
+        p.start("/usr/bin/ffmpeg",list);
 
         if (!p.waitForStarted()) {
             qWarning()<<"start get video image failed.";

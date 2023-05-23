@@ -688,7 +688,7 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
             }
 
             QProcess process;
-            process.start("du -s " + path);
+            process.start("/usr/bin/du -s " + path);
             process.waitForFinished();
             QString result = process.readAllStandardOutput();
             //du -s xxx 输出格式：4	xxx  (大小单位为KB)
@@ -868,12 +868,12 @@ void BasicPropertiesPage::saveAllChange()
     QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
     //if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
         QProcess p;
-        p.setProgram("touch");
+        p.setProgram("/usr/bin/touch");
         p.setArguments(QStringList()<<"-h"<<m_info->filePath());
     #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         p.startDetached();
     #else
-        p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
+        p.startDetached("/usr/bin/touch", QStringList()<<"-h"<<m_info->filePath());
     #endif
         p.waitForFinished(-1);
     //}

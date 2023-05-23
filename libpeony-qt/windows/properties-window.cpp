@@ -429,13 +429,13 @@ void PropertiesWindow::show()
 void PropertiesWindow::gotoAboutComputer()
 {
     QProcess p;
-    p.setProgram("ukui-control-center");
+    p.setProgram("/usr/bin/ukui-control-center");
     //-m About para to show about computer infos, related to bug#88258
     p.setArguments(QStringList()<<"-m" << "About");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("ukui-control-center", QStringList()<<"-m" << "About");
+    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" << "About");
 #endif
     p.waitForFinished(-1);
 }

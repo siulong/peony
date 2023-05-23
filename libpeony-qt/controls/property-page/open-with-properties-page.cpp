@@ -222,17 +222,17 @@ void OpenWithPropertiesPage::openAppCenter()
     QtConcurrent::run([=]() {
         QProcess p;
         if (COMMERCIAL_VERSION)
-            p.setProgram("kylin-software-center");
+            p.setProgram("/usr/bin/kylin-software-center");
         else
-            p.setProgram("ubuntu-kylin-software-center");
+            p.setProgram("/usr/bin/ubuntu-kylin-software-center");
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         p.startDetached();
 #else
         if (COMMERCIAL_VERSION)
-            p.startDetached("kylin-software-center");
+            p.startDetached("/usr/bin/kylin-software-center");
         else
-            p.startDetached("ubuntu-kylin-software-center");
+            p.startDetached("/usr/bin/ubuntu-kylin-software-center");
 
 #endif
     });
