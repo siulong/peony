@@ -73,6 +73,8 @@ protected:
      */
     void rollbackNodeRecursively(FileNode *node);
 
+    bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
+
 private:
     /*!
      * \brief m_is_duplicated_copy
