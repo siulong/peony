@@ -328,8 +328,13 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             for(int index=0;index<m_classify_list.length();index++){
                 if(fontSize < 12){
                     m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+                    //fix bug#166969, Tibetan language not show complete issue
+                    if ("bo_CN" == QLocale::system().name())
+                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
                 }else{
                     m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 +45);
+                    if ("bo_CN" == QLocale::system().name())
+                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
                 }
             }
         });
@@ -472,6 +477,8 @@ void TabWidget::addNewConditionBar()
     m_conditions_list.append(conditionCombox);
     conditionCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
     conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+    if ("bo_CN" == QLocale::system().name())
+        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
     auto conditionModel = new QStringListModel(optionBar);
     conditionModel->setStringList(m_option_list);
     conditionCombox->setModel(conditionModel);
@@ -495,9 +502,13 @@ void TabWidget::addNewConditionBar()
         double fontSize = fontSetting->get("systemFontSize").toDouble();
         if(fontSize < 12){
             classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+            if ("bo_CN" == QLocale::system().name())
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
         }else{
             //最大字体最长字符串所需宽度
             classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+            if ("bo_CN" == QLocale::system().name())
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
         }
     }
     else{
