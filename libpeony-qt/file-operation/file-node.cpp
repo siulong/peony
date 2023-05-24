@@ -50,6 +50,9 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
                                         nullptr);
     g_object_unref(file);
     m_size = g_file_info_get_size(info);
+    if (0 == m_size) {
+        m_size = 1024;
+    }
     if (uri == "file:///proc/kcore")
         m_size = 0;
     g_object_unref(info);

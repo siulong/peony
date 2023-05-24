@@ -1038,10 +1038,10 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
 
     double currentPercent = current * 1.0 / total;
     //fix bug#133624,133380, delete all empty files, not update progress bar
-    if (m_total_size <= 0 || 16 * m_total_count <= m_total_size){
-        m_update_count++;
-        currentPercent = m_update_count * 1.0 /m_total_count;
-    }
+//    if (m_total_size <= 0 || 16 * m_total_count <= m_total_size){
+//        m_update_count++;
+//        currentPercent = m_update_count * 1.0 /m_total_count;
+//    }
 
     qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
 
