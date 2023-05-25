@@ -569,6 +569,15 @@ void PermissionsPropertiesPage::addAdvancedLayout()
     hboxLayout->setContentsMargins(16, 16, 16, 16);
     m_advancedBtn = new QPushButton(tr("Permission refinement settings"));
     m_layout->addWidget(m_advancedBtn);
+
+    if (m_uri.startsWith("filesafe://")
+            || m_uri.startsWith("smb://")
+            || m_uri.startsWith("sftp://")
+            || m_uri.startsWith("ftp://")
+            || m_uri.startsWith("kmre://")) {
+        m_advancedBtn->setVisible(false);
+    }
+
     connect(m_advancedBtn, &QPushButton::clicked, this, [=](){
 
         auto info = FileInfo::fromUri(m_uri);
