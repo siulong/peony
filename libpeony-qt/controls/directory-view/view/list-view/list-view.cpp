@@ -585,6 +585,13 @@ void ListView::dropEvent(QDropEvent *e)
         return;
     }
 
+    auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
+    auto validRect = QRect(visualRect(proxy_index).topLeft(), sizeHint);
+    if (!validRect.contains(e->pos())) {
+        //拖拽到在空白处，就移动到当前目录下
+        m_model->dropMimeData(e->mimeData(), action, 0, 0, QModelIndex());
+        return;
+    }
     m_model->dropMimeData(e->mimeData(), action, 0, 0, index);
 }
 
