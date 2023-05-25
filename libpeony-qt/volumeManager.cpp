@@ -1755,7 +1755,7 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
     QVBoxLayout *layout = new QVBoxLayout();
     QFont font;
     font.setBold(true);
-    QLabel* massageLabel = new QLabel(tr(message.toStdString().data()));
+    QLabel* massageLabel = new QLabel(message.toStdString().data());
     massageLabel->setFont(font);
     massageLabel->setContentsMargins(40,10,0,0);
 

@@ -1424,6 +1424,10 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <source>File:%1 was not found.</source>
         <translation>ཡིག་ཆ།: %1 རྙེད་མ་སོང་།</translation>
     </message>
+    <message>
+        <source>Link file error</source>
+        <translation>ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileDeleteOperation</name>
