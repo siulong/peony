@@ -1614,7 +1614,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     //put item to next column first row
                     next.moveTo(next.x() + grid.width(), top);
                     //如果满了，就放到（0，0） 位置
-                    if (next.right() > viewRect.right()) {
+                    if (next.left()+grid.width() > viewRect.right()) {
                         next.moveTo(0, 0);
                         isEmptyPos = true;
                         m_item_rect_hash.insert(uri, next);
@@ -1685,7 +1685,7 @@ void DesktopIconView::checkItemsOver()
                 posY += gridHeight;
             }
             itemRect.moveTo(posX, posY);
-            if (itemRect.right() > this->viewport()->rect().right()) {
+            if (itemRect.left()+gridWidth  > this->viewport()->rect().right()) {
                 itemRect.moveTo(0, 0);
                 posX = 0;
                 posY = 0;
