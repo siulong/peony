@@ -157,6 +157,8 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
     bool ok = tUdfBrun->load(udfBurnTranslationFilePath);
     if (!ok) {
         qWarning()<<"can not load kyudfburn translation files, path is"<<udfBurnTranslationFilePath;
+    } else {
+        QApplication::installTranslator(tUdfBrun);
     }
 #endif
 
