@@ -1,3 +1,14 @@
+peony (4.0.0.0-ok2~0526) yangtze; urgency=medium
+
+  * close-cd #I64KVD【平板模式】【文件管理器】【次要】选项下拉菜单里仍存在复制，粘贴，剪切，删除的图标按钮
+  *【文件管理器】平板 & PC模式退出多选模式的交互不一致
+  *【文件管理器】竖屏下文件管理器显示界面不完全
+  *【文件管理器】多选情况下，多次点击取消不了
+  * 修改由于主题框架改动导致字体颜色消失
+  * 修改打开预览框拉动侧边栏关闭按钮被遮盖以及headerbar缩略图标显示不全
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 26 May 2023 15:54:37 +0800
+
 peony (4.0.0.0-ok2~0522) yangtze; urgency=medium
 
   * close-cd #I6YFFP【文件管理器】桌面文件被遮挡
