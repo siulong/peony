@@ -1372,9 +1372,14 @@ static GAsyncReadyCallback eject_cb(GDrive *gDrive, GAsyncResult *result, QStrin
             //QMessageBox::warning(nullptr,QObject::tr("Eject failed"),QObject::tr("Not authorized to perform operation."), QMessageBox::Ok);
             return nullptr;
         }
-        QMessageBox warningBox(QMessageBox::Warning,QObject::tr("Eject failed"), QString(error->message), QMessageBox::Ok);
-        warningBox.exec();        
 
+        //fix bug#104482, pull device immediately when eject it, error message not translated issue
+        QString errMessage = error->message;
+        if (error->code == G_IO_ERROR_FAILED){
+            errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
+        }
+        QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
+        warningBox.exec();
     } else {
         /* 弹出完成信息提示 */
         QString ejectNotify = QObject::tr("Data synchronization is complete and the device can be safely unplugged!");
@@ -1405,9 +1410,14 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
             if(! strcmp(error->message,"Not authorized to perform operation")){/* gmountOperation会弹出授权框，防止二次弹框 */
                 return;
             }
-            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), error->message, QMessageBox::Ok);
-            warningBox.exec();
 
+            //fix bug#104482, pull device immediately when eject it, error message not translated issue
+            QString errMessage = error->message;
+            if (error->code == G_IO_ERROR_FAILED){
+                errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
+            }
+            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
+            warningBox.exec();
         }
     }else {
         /* 弹出完成信息提示 */
