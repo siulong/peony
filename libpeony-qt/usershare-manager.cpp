@@ -202,13 +202,20 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo, const QString u
         return false;
     }
 
+    bool readOnly = shareInfo.readOnly;
+    if (!usershareAcl.isEmpty()
+            && (usershareAcl.compare("Everyone:F", Qt::CaseInsensitive) == 0
+                || usershareAcl.compare("Everyone:D", Qt::CaseInsensitive) == 0)) {
+        readOnly = false;
+    }
+
     bool ret = false;
     QStringList args;
     ShareInfo* sharedInfo = new ShareInfo;
     sharedInfo->name = shareInfo.name;
     sharedInfo->comment = shareInfo.comment;
     sharedInfo->isShared = shareInfo.isShared;
-    sharedInfo->readOnly = shareInfo.readOnly;
+    sharedInfo->readOnly = readOnly;
     sharedInfo->allowGuest = shareInfo.allowGuest;
     sharedInfo->originalPath = shareInfo.originalPath;
 
