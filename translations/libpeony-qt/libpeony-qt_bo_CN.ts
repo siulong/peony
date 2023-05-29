@@ -3139,6 +3139,10 @@ Do you want to unmount forcely?</source>
         <source>Favorites</source>
         <translation>མཉེན་ཆས།</translation>
     </message>
+    <message>
+        <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
+        <translation>སྒྲིག་ཆས་ཕྱིར་གཏོང་མ་ཐུབ་པ་ནི་སྒྲིག་ཆས་སྤོ་བསྒྱུར་བྱས་པ་སོགས་ཀྱི་རྒྱུ་རྐྱེན་རེད།</translation>
+    </message>
 </context>
 <context>
     <name>UdfBurn::UdfAppendBurnDataDialog</name>
