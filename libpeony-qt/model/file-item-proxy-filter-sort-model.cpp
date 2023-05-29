@@ -205,9 +205,9 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
                     return lesser;
                 return !lesser;
             }
-        }else if (sortColumn() != FileItemModel::ModifiedDate){
+        }/*else if (sortColumn() != FileItemModel::ModifiedDate){
             goto default_sort;
-        }
+        }*/
 
         //fix bug#97408,change indicator meanings
         //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
