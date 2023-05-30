@@ -415,6 +415,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
             QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.button(QMessageBox::Ok)->setText(tr("OK"));
         msgBox.button(QMessageBox::Cancel)->setText(tr("Cancel"));
+        msgBox.setDefaultButton(QMessageBox::Ok);
         if (QMessageBox::Ok == msgBox.exec()) {
             Q_EMIT closeWindow();
         }
@@ -543,6 +544,7 @@ void MainProgressBar::mouseReleaseEvent(QMouseEvent *event)
                            QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.button(QMessageBox::Ok)->setText(tr("OK"));
         msgBox.button(QMessageBox::Cancel)->setText(tr("Cancel"));
+        msgBox.setDefaultButton(QMessageBox::Ok);
         if (QMessageBox::Ok == msgBox.exec()) {
             Q_EMIT closeWindow();
         }
