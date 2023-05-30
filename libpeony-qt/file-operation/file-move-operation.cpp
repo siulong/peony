@@ -693,6 +693,27 @@ void FileMoveOperation::copyRecursively(FileNode *node)
     QString destName = "";
 
 fallback_retry:
+
+    //fix bug#172512, can not copy readonly folder issue
+    gboolean readonly_source_fs = FALSE;
+    GFile *source_dir;
+    QString srcParent;
+    srcParent = FileUtils::getParentUri(node->uri());
+    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+    /* Query the source dir, not the file because if its a symlink we'll follow it */
+    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+    if (source_dir) {
+        GFileInfo *inf;
+        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+        if (inf != NULL) {
+            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+            g_object_unref (inf);
+        }
+        g_object_unref (source_dir);
+    }
+
+    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
     if (node->isFolder()) {
         auto realDestUri = node->resolveDestFileUri(m_dest_dir_uri);
         destFile = wrapGFile(g_file_new_for_uri(realDestUri.toUtf8().constData()));
@@ -768,18 +789,18 @@ fallback_retry:
             case OverWriteOne: {
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destFile.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                    setHasError(true);
-                }else{
-                    setHasError(false);
-                }
-                g_error_free(error);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                    setHasError(true);
+//                }else{
+//                    setHasError(false);
+//                }
+//                g_error_free(error);
 
                 //make dir has no overwrite
                 break;
@@ -788,18 +809,18 @@ fallback_retry:
                 //node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destFile.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                    setHasError(true);
-                }else{
-                    setHasError(false);
-                }
-                g_error_free(error);
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                    setHasError(true);
+//                }else{
+//                    setHasError(false);
+//                }
+//                g_error_free(error);
 
                 break;
             }
@@ -829,16 +850,16 @@ fallback_retry:
                     node->resolveDestFileUri(m_dest_dir_uri);
                 }
                 g_object_unref(destFile.get());
-                destFile = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
-                g_file_copy_attributes(srcFile.get()->get(),
-                                       destFile.get()->get(),
-                                       G_FILE_COPY_ALL_METADATA,
-                                       nullptr,
-                                       &error);
-                if (error) {
-                    qDebug() << __func__ << error->code << error->message;
-                }
-                g_error_free(error);
+//                destFile = wrapGFile(g_file_new_for_uri(node->destUri().toUtf8().constData()));
+//                g_file_copy_attributes(srcFile.get()->get(),
+//                                       destFile.get()->get(),
+//                                       GFileCopyFlags(flags),
+//                                       nullptr,
+//                                       &error);
+//                if (error) {
+//                    qDebug() << __func__ << error->code << error->message;
+//                }
+//                g_error_free(error);
 
                 setHasError(false);
                 goto fallback_retry;
@@ -866,15 +887,16 @@ fallback_retry:
             }
         } else {
             //node->setState(FileNode::Handled);
-            g_file_copy_attributes(srcFile.get()->get(),
-                                   destFile.get()->get(),
-                                   G_FILE_COPY_ALL_METADATA,
-                                   nullptr,
-                                   &error);
-            if (error) {
-                qDebug() << __func__ << error->code << error->message;
-            }
-            g_error_free(error);
+            //related bug#172512
+            //g_file_copy_attributes(srcFile.get()->get(),
+            //                       destFile.get()->get(),
+            //                       G_FILE_COPY_ALL_METADATA,
+            //                       nullptr,
+            //                       &error);
+            //if (error) {
+            //    qDebug() << __func__ << error->code << error->message;
+            //}
+            //g_error_free(error);
 
         }
 
@@ -887,6 +909,17 @@ fallback_retry:
         for (auto child : *(node->children())) {
             copyRecursively(child);
         }
+
+        //related bug#172512
+        g_file_copy_attributes(srcFile.get()->get(),
+                               destFile.get()->get(),
+                               GFileCopyFlags(flags),
+                               nullptr,
+                               &error);
+        if (error) {
+            qDebug() << __func__ << error->code << error->message;
+        }
+        g_error_free(error);
     } else {
         GError *err = nullptr;
         GFileWrapperPtr sourceFile = wrapGFile(g_file_new_for_uri(node->uri().toUtf8().constData()));
