@@ -353,6 +353,14 @@
         <source>sync ...</source>
         <translation>དུས་མཉམ་ ...</translation>
     </message>
+    <message>
+        <source>Minimize</source>
+        <translation>ཆེས་ཆུང་འགྱུར།</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ཁ་རྒྱག</translation>
+    </message>
 </context>
 <context>
     <name>MessageDialog</name>
