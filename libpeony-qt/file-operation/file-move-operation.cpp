@@ -1262,7 +1262,8 @@ void FileMoveOperation::moveForceUseFallback(FileNode* node)
         deleteRecursively(node);
     }
 
-    node->setState(FileNode::Handled);
+//    fix bux 172591,此处若是设置Handel，后续无法区分rollback场景
+//    node->setState(FileNode::Handled);
 
     if (isCancelled()) {
         rollbackNodeRecursively(node);
