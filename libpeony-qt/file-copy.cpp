@@ -290,6 +290,9 @@ void FileCopy::run ()
             if (0 == readSize && nullptr == error) {
                 mStatus = FINISHED;
                 mPause.unlock();
+                mTotalSize = 1024;
+                mOffset = mTotalSize;
+                updateProgress ();
                 continue;
             } else if (nullptr != error) {
                 detailError(&error);
