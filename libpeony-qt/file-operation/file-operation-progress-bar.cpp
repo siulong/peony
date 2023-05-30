@@ -418,6 +418,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     m_btn_mini->setFlat (true);
     m_btn_mini->setProperty ("isWindowButton", 0x01);
     m_btn_mini->setIcon (QIcon::fromTheme("window-minimize-symbolic"));
+    m_btn_mini->setToolTip(tr("Minimize"));
     connect (m_btn_mini, &QPushButton::clicked, this, [=] () {
         Q_EMIT minimized();
     });
@@ -425,6 +426,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     m_btn_close->setFlat (true);
     m_btn_close->setProperty ("isWindowButton", 0x02);
     m_btn_close->setIcon (QIcon::fromTheme("window-close-symbolic"));
+    m_btn_close->setToolTip(tr("Close"));
     connect (m_btn_close, &QPushButton::clicked, this, [=] () {
         QMessageBox msgBox(QMessageBox::Warning, tr("cancel all file operations"),
             tr("Are you sure want to cancel all file operations"),
