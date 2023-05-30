@@ -70,6 +70,7 @@ Peony::FileOperationErrorDialogConflict::FileOperationErrorDialogConflict(FileOp
         m_replace = false;
         done(QDialog::Accepted);
     });
+    b->setDefault(true);
 
     QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
     connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
@@ -200,6 +201,7 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = false;
         done(QDialog::Accepted);
     });
+    b->setDefault(true);
 
     m_cancel_btn = b = addButton (tr("Cancel"));
     b->setBackgroundRole(QPalette::Button);
@@ -208,6 +210,7 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = true;
         done(QDialog::Rejected);
     });
+
 }
 
 Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
@@ -308,7 +311,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         m_cancel = false;
         done(QDialog::Accepted);
     });
-
+    b->setDefault(true);
 //    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
 //    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
 //        switch (chose) {
