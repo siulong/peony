@@ -42,6 +42,8 @@
 #include "global-settings.h"
 #include "sound-effect.h"
 #include "desktop-icon-view-delegate.h"
+#include "desktop-menu-plugin-manager.h"
+#include "emblem-provider.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -508,6 +510,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             beginResetModel();
             endResetModel();
         }
+    });
+
+    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, [=](){
+       QTimer::singleShot(1000, this, [=]{
+           for (auto file : m_files) {
+               EmblemProviderManager::getInstance()->queryAsync(file->uri());
+           }
+       });
     });
 }
 

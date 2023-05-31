@@ -113,7 +113,9 @@ void DesktopMenuPluginManager::loadAsync()
                 m_map.insert(piface->name(), piface);
             m_is_loaded = true;
         }
+        Q_EMIT pluginLoadFinished();
     });
+
 }
 
 DesktopMenuPluginManager *DesktopMenuPluginManager::getInstance()
