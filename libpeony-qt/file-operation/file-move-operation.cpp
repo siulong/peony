@@ -691,8 +691,22 @@ void FileMoveOperation::copyRecursively(FileNode *node)
     }
     g_free(dest_file_uri);
     QString destName = "";
-
+    g_autoptr(GFileInfo) srcFileInfo = nullptr;
+    g_autoptr(GFile) srcFile = g_file_new_for_uri(m_current_src_uri.toUtf8().constData());
+    srcFileInfo = g_file_query_info(srcFile, G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                    , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
 fallback_retry:
+    if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(srcFileInfo)) {
+        QString destFileUri = node->resolveDestFileUri(m_dest_dir_uri);
+        destFileUri = FileUtils::urlEncode(destFileUri);
+        node->setDestUri(destFileUri);
+        GFileWrapperPtr destFileWrap = wrapGFile(g_file_new_for_uri(destFileUri.toUtf8().constData()));
+        if (!copyLinkedFile(node, srcFileInfo, destFileWrap)) {
+            goto fallback_retry;
+        } else {
+            return;
+        }
+    }
 
     //fix bug#172512, can not copy readonly folder issue
     gboolean readonly_source_fs = FALSE;
@@ -1398,6 +1412,135 @@ end:
 #endif
     Q_EMIT operationFinished();
     sendSrcAndDestUrisOfCopyDspsFiles();
+}
+
+bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file)
+{
+    g_autoptr(GError) err = nullptr;
+    QString target = g_file_info_get_symlink_target(info);
+    if (!target.startsWith("/"))
+    {
+        QString parentUri = FileUtils::getParentUri(m_current_src_uri);
+        target = QUrl(parentUri).path() + "/" + target;
+    }
+    QUrl url = "file://" + target;
+    const char* symlinkValue = url.path().toUtf8().constData();
+    g_file_make_symbolic_link(file.get()->get(), symlinkValue, nullptr, &err);
+    if (err) {
+        qDebug() << "linkrun:" << err->message;
+        setHasError(true);
+        FileOperationError except;
+        except.srcUri = m_current_src_uri;
+        except.errorType = ET_GIO;
+        except.isCritical = true;
+        except.errorStr = err->message;
+        except.errorCode = err->code;
+        except.op = FileOpMove;
+        except.title = tr("Link file error");
+        except.destDirUri = m_current_dest_dir_uri;
+        auto handle_type = prehandle(err);
+
+        if (handle_type == Other) {
+            switch (err->code) {
+            case G_IO_ERROR_EXISTS: {
+                except.dlgType = ED_CONFLICT;
+                Q_EMIT errored(except);
+                auto typeData = except.respCode;
+                handle_type = typeData;
+                break;
+            }
+            case G_IO_ERROR_FILENAME_TOO_LONG: {
+                except.dlgType = ED_RENAME;
+                Q_EMIT errored(except);
+                auto typeData = except.respCode;
+                handle_type = typeData;
+                break;
+            }
+            default: {
+                except.dlgType = ED_WARNING;
+                Q_EMIT errored(except);
+                auto typeData = except.respCode;
+                handle_type = typeData;
+                break;
+            }
+            }
+        }
+
+        switch (handle_type) {
+        case IgnoreOne: {
+            node->setState(FileNode::Unhandled);
+            node->setErrorResponse(IgnoreOne);
+            break;
+        }
+        case IgnoreAll: {
+            node->setState(FileNode::Unhandled);
+            node->setErrorResponse(IgnoreOne);
+            m_prehandle_hash.insert(err->code, IgnoreOne);
+            break;
+        }
+        case OverWriteOne: {
+            g_file_delete(file.get()->get(),  nullptr, nullptr);
+            node->setState(FileNode::Handled);
+            node->setErrorResponse(OverWriteOne);
+            return false;
+        }
+        case OverWriteAll: {
+            g_file_delete(file.get()->get(),  nullptr, nullptr);
+            node->setState(FileNode::Handled);
+            node->setErrorResponse(OverWriteOne);
+            m_prehandle_hash.insert(err->code, OverWriteOne);
+            break;
+        }
+        case BackupOne: {
+            node->setState(FileNode::Handled);
+            node->setErrorResponse(BackupOne);
+            QString name = "";
+            QStringList extendStr = node->destBaseName().split(".");
+            if (extendStr.length() > 0) {
+                extendStr.removeAt(0);
+            }
+            QString endStr = extendStr.join(".");
+            if (except.respValue.contains("name")) {
+                name = except.respValue["name"].toString();
+                if (endStr != "" && name.endsWith(endStr)) {
+                    node->setDestFileName(name);
+                } else if ("" != endStr && "" != name) {
+                    node->setDestFileName(name + "." + endStr);
+                }
+            }
+
+            while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
+                handleDuplicate(node);
+            }
+            return false;
+        }
+        case BackupAll: {
+            node->setState(FileNode::Handled);
+            node->setErrorResponse(BackupOne);
+            while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
+                handleDuplicate(node);
+            }
+            m_prehandle_hash.insert(err->code, BackupOne);
+            return false;
+        }
+        case Retry: {
+            return false;
+        }
+        case RenameOne: {
+            node->setDestFileName(except.respValue.value("newName").toString());
+            setHasError(false);
+            return false;
+        }
+        case Cancel: {
+            node->setState(FileNode::Unhandled);
+            cancel();
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return true;
 }
 
 void FileMoveOperation::cancel()

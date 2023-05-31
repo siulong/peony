@@ -126,6 +126,7 @@ protected:
     void move();
     void moveForceUseFallback();
     void moveForceUseFallback(FileNode* node);
+    bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
 
     /*!
      * \brief prehandle
