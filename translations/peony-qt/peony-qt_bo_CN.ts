@@ -71,7 +71,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Option</source>
-        <translation type="vanished">འདེམས་ཚན།</translation>
+        <translation>འདེམས་ཚན།</translation>
     </message>
     <message>
         <source>Search</source>
@@ -202,7 +202,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Option</source>
-        <translation type="unfinished">འདེམས་ཚན།</translation>
+        <translation type="obsolete">འདེམས་ཚན།</translation>
     </message>
 </context>
 <context>

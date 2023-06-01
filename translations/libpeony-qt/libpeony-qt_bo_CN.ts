@@ -2213,7 +2213,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Close</source>
