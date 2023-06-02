@@ -122,6 +122,8 @@
 
 static MainWindow *last_resize_window = nullptr;
 
+static QWidgetList blur_window_list;
+
 MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent)
 {
     // try fix #162452, filedialog changes peony main windows view type and sort options.
@@ -208,10 +210,18 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
             this->setCurrentSortOrder(this->getCurrentSortOrder());
         }
     });
+
+    if (blur_window_list.count() < 5) {
+        blur_window_list.append(this);
+        m_is_blur_window = true;
+        KWindowEffects::enableBlurBehind(winId(), true);
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    blur_window_list.removeOne(this);
+
     //fix bug 40913, when window is maximazed, not update size
     if (last_resize_window == this && !isMaximized()) {
         auto settings = Peony::GlobalSettings::getInstance();
@@ -1388,7 +1398,9 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
     auto sidebarOpacity = Peony::GlobalSettings::getInstance()->getValue(SIDEBAR_BG_OPACITY).toInt();
 
-    colorBase.setAlphaF(sidebarOpacity/100.0);
+    if (m_is_blur_window) {
+        colorBase.setAlphaF(sidebarOpacity/100.0);
+    }
 
     QPainterPath sidebarPath;
     sidebarPath.setFillRule(Qt::FillRule::WindingFill);
@@ -1517,13 +1529,9 @@ void MainWindow::validBorder()
 #include "file-utils.h"
 void MainWindow::initUI(const QString &uri)
 {
-    KWindowEffects::enableBlurBehind(this->winId(), true);
-
     auto size = sizeHint();
     resize(size);
     m_searching = false;
-
-    KWindowEffects::enableBlurBehind(this->winId(), true);
 
     connect(this, &MainWindow::locationChangeStart, this, [=]() {
         //comment to fix bug 33527

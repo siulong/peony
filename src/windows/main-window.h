@@ -216,6 +216,7 @@ private:
     QStringList m_uris_to_edit;/* 新建文件/文件夹，可编辑文件名list */
 
     QDBusInterface *m_statusManagerDBus = nullptr;
+    bool m_is_blur_window = false;
 };
 
 #endif // MAINWINDOW_H
