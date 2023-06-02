@@ -138,6 +138,15 @@ std::shared_ptr<FileInfo> FileInfo::fromUri(QString uri)
     }
 }
 
+std::vector<std::shared_ptr<FileInfo> > FileInfo::fromUris(QStringList uris)
+{
+    std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
+    for (auto uri : uris) {
+        fileInfoVec.push_back(fromUri(uri));
+    }
+    return fileInfoVec;
+}
+
 std::shared_ptr<FileInfo> FileInfo::fromPath(QString path)
 {
     QString uri = "file://" + path;

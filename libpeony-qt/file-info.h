@@ -127,6 +127,7 @@ public:
      * \deprecated
      */
     static std::shared_ptr<FileInfo> fromUri(QString uri);
+    static std::vector<std::shared_ptr<FileInfo> > fromUris(QStringList uris);
     /*!
      * \brief fromPath
      * \param path

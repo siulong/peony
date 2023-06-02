@@ -61,6 +61,11 @@ FileInfoJob::FileInfoJob(const QString &uri, QObject *parent) : QObject (parent)
     m_fs_cancellable = g_cancellable_new();
 }
 
+FileInfoJob::FileInfoJob(std::vector<std::shared_ptr<FileInfo> > infos, QObject *parent)
+{
+    m_infos = infos;
+}
+
 FileInfoJob::~FileInfoJob()
 {
     g_object_unref(m_cancellable);
@@ -127,6 +132,62 @@ bool FileInfoJob::querySync()
         deleteLater();
 
     return true;
+}
+
+std::vector<std::shared_ptr<FileInfo> > FileInfoJob::batchQuerySync()
+{
+    std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
+    for (auto& fileInfo : m_infos) {
+        FileInfo *info = nullptr;
+        if (auto data = fileInfo.get()) {
+            info = data;
+            m_info = fileInfo;
+        } else {
+            if (m_auto_delete)
+                deleteLater();
+            continue;
+        }
+
+        GError *err = nullptr;
+        auto _info = g_file_query_info(info->m_file,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       nullptr,
+                                       &err);
+
+        if (err) {
+            qDebug()<<err->code<<err->message;
+            g_error_free(err);
+            if (m_auto_delete)
+                deleteLater();
+            continue;
+        }
+
+        GCancellable *fs_cancellable = g_cancellable_new();
+        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", fs_cancellable, &err);
+
+        if (err) {
+            qDebug()<<err->code<<err->message;
+            g_error_free(err);
+            g_object_unref(fs_cancellable);
+            if (m_auto_delete)
+                deleteLater();
+            continue;
+        }
+
+        refreshInfoContents(_info);
+        refreshFileSystemInfo(_fs_info);
+        g_object_unref(_info);
+
+        EmblemProviderManager::getInstance()->querySync(info->uri());
+
+        infoUpdated();
+        fileInfoVec.push_back(m_info);
+        if (m_auto_delete)
+            deleteLater();
+        g_object_unref(fs_cancellable);
+    }
+    return fileInfoVec;
 }
 
 GAsyncReadyCallback FileInfoJob::query_info_async_callback(GFile *file, GAsyncResult *res, FileInfoJob *thisJob)

@@ -67,12 +67,14 @@ public:
      */
     explicit FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent = nullptr);
     explicit FileInfoJob(const QString &uri, QObject *parent = nullptr);
+    explicit FileInfoJob(std::vector<std::shared_ptr<FileInfo> >infos, QObject *parent = nullptr);
 
     std::shared_ptr<FileInfo> getInfo() {
         return m_info;
     }
     ~FileInfoJob();
     bool querySync();
+    std::vector<std::shared_ptr<FileInfo> > batchQuerySync();
 
     void setAutoDelete(bool deleteWhenJobFinished = true) {
         m_auto_delete = deleteWhenJobFinished;
@@ -128,6 +130,7 @@ private:
     void refreshFileSystemInfo (GFileInfo* new_info);
     void refreshInfoContents (GFileInfo *new_info);
     std::shared_ptr<FileInfo> m_info;
+    std::vector<std::shared_ptr<FileInfo> >m_infos;
 
     quint64 m_file_size_uint = 0;
     quint64 m_file_modify_uint = 0;
