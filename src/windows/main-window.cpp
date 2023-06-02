@@ -727,6 +727,7 @@ void MainWindow::setShortCuts()
                 QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
                 return;
             }
+            Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
                 //FIXME: how about duplicated copy?
                 //FIXME: how to deal with a failed move?

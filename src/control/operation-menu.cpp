@@ -355,6 +355,7 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer);
     m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer);
 
+    Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
     m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox);
 }

@@ -888,6 +888,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
                 l.last()->setObjectName(PASTE_ACTION);
+                ClipboardUtils::getInstance()->updateClipboardManually();
                 pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto op = ClipboardUtils::pasteClipboardFiles(m_directory);

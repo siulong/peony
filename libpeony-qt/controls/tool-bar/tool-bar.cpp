@@ -250,6 +250,7 @@ void ToolBar::init()
     });
 
     connect(pasteAction, &QAction::triggered, [=]() {
+        ClipboardUtils::getInstance()->updateClipboardManually();
         if (ClipboardUtils::isClipboardHasFiles()) {
             //FIXME: how about duplicated copy?
             //FIXME: how to deal with a failed move?

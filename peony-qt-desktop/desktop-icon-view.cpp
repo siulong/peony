@@ -504,6 +504,7 @@ void DesktopIconView::initShoutCut()
     QAction *pasteAction = new QAction(this);
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
+        ClipboardUtils::getInstance()->updateClipboardManually();
         if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
             ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
         } else {
