@@ -65,6 +65,11 @@ static bool m_is_peony_cut = false;
 
 static QList<QString> m_target_directory_uri;
 
+static const QMimeData *clipboardData = nullptr;
+static bool is_clipboard_has_files = false;
+static bool is_clipboard_files_be_cut = false;
+static QStringList clipboard_file_uris;
+
 ClipboardUtils *ClipboardUtils::getInstance()
 {
     if (!global_instance) {
@@ -75,12 +80,57 @@ ClipboardUtils *ClipboardUtils::getInstance()
 
 ClipboardUtils::ClipboardUtils(QObject *parent) : QObject(parent)
 {
-    connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &ClipboardUtils::clipboardChanged);
+    //connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &ClipboardUtils::clipboardChanged);
     connect(QApplication::clipboard(), &QClipboard::dataChanged, [=]() {
         auto data = QApplication::clipboard()->mimeData();
         if (!data->hasFormat("peony-qt/is-cut")) {
             m_clipboard_parent_uri = nullptr;
         }
+
+        clipboardData = data;
+        if (clipboardData) {
+            is_clipboard_has_files = clipboardData->hasUrls() || clipboardData->hasFormat("uos/remote-copy");
+            if (is_clipboard_has_files) {
+                is_clipboard_files_be_cut = clipboardData->hasFormat("peony-qt/is-cut");
+                QStringList l;
+                auto mimeData = clipboardData;
+                //auto text = mimeData->text();
+                auto peonyText = mimeData->data("peony-qt/encoded-uris");
+                if (!peonyText.isEmpty()) {
+                    qDebug() << "peony text:" << peonyText;
+                    auto byteArrays = peonyText.split(' ');
+                    for (auto byteArray : byteArrays) {
+                        l<<byteArray;
+                    }
+                } else {
+                    auto urls = mimeData->urls();
+                    for (auto url : urls) {
+                        // fix #144280, shenxinfu virual machine copy failed
+                        if (url.toString().count() < 5) {
+                            qWarning()<<url<<"is not standard uri, skip...";
+                            continue;
+                        }
+                        g_autofree gchar* uri = g_uri_unescape_string(url.toString().toUtf8().constData(), nullptr);
+                        if (uri) {
+                           l<<QString(uri);
+                        } else {
+                            qWarning()<<"can not unescape uri:"<<url.toString().toUtf8().constData();
+                            l<<url.toString().toUtf8().constData();
+                        }
+                    }
+                }
+                clipboard_file_uris = l;
+            } else {
+                is_clipboard_files_be_cut = false;
+                clipboard_file_uris = QStringList();
+            }
+        } else {
+            is_clipboard_files_be_cut = false;
+            is_clipboard_has_files = false;
+            clipboard_file_uris = QStringList();
+        }
+
+        Q_EMIT clipboardChanged();
     });
 
     connect (ClipboardThread::getInstance (), &ClipboardThread::startOp, this, [=] (QStringList& str, bool mIsMove) {
@@ -135,6 +185,7 @@ void ClipboardUtils::onClipboardDataChanged()
     gClipboardFileUrls.clear();
 
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
+    clipboardData = mimeData;
     if (!mimeData || mimeData->formats().isEmpty()) {
         qWarning() << "get null mimeData from QClipBoard or remote formats is null!";
         return;
@@ -199,7 +250,7 @@ void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut)
 
 bool ClipboardUtils::isClipboardHasFiles()
 {
-    return QApplication::clipboard()->mimeData()->hasUrls()|| qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy");
+    return is_clipboard_has_files;
 }
 
 bool ClipboardUtils::isDesktopFilesBeCut()
@@ -214,53 +265,12 @@ bool ClipboardUtils::isPeonyFilesBeCut()
 
 bool ClipboardUtils::isClipboardFilesBeCut()
 {
-    if (isClipboardHasFiles()) {
-        auto data = QApplication::clipboard()->mimeData();
-        if (data->hasFormat("peony-qt/is-cut")) {
-            QVariant var(data->data("peony-qt/is-cut"));
-            return var.toBool();
-        }
-    }
-    return false;
+    return is_clipboard_files_be_cut;
 }
 
 QStringList ClipboardUtils::getClipboardFilesUris()
 {
-    QStringList l;
-
-    if (!isClipboardHasFiles()) {
-        return l;
-    }
-
-    auto mimeData = QApplication::clipboard()->mimeData();
-    //auto text = mimeData->text();
-    auto peonyText = mimeData->data("peony-qt/encoded-uris");
-
-    if (!peonyText.isEmpty()) {
-        qDebug() << "peony text:" << peonyText;
-        auto byteArrays = peonyText.split(' ');
-        for (auto byteArray : byteArrays) {
-            l<<byteArray;
-        }
-    } else {
-        auto urls = mimeData->urls();
-        for (auto url : urls) {
-            // fix #144280, shenxinfu virual machine copy failed
-            if (url.toString().count() < 5) {
-                qWarning()<<url<<"is not standard uri, skip...";
-                continue;
-            }
-            g_autofree gchar* uri = g_uri_unescape_string(url.toString().toUtf8().constData(), nullptr);
-            if (uri) {
-               l<<QString(uri);
-            } else {
-                qWarning()<<"can not unescape uri:"<<url.toString().toUtf8().constData();
-                l<<url.toString().toUtf8().constData();
-            }
-        }
-    }
-
-    return l;
+    return clipboard_file_uris;
 }
 
 FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
@@ -359,7 +369,7 @@ ClipboardThread::~ClipboardThread()
 QStringList ClipboardThread::getUrlsByX11()
 {
     QAtomicInt currentCount = gRemoteCurrentCount;
-    const QMimeData *mimedata = qApp->clipboard()->mimeData();
+    const QMimeData *mimedata = clipboardData;
     if (!mimedata) {
         qWarning() << "the clipboard mimedata is invalid!";
         return QStringList ();
