@@ -168,6 +168,9 @@ QRect caculateVirtualDesktopGeometry() {
 
 PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const QString &applicationName) : QtSingleApplication (applicationName, argc, argv)
 {
+    // fix #172774
+    QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths()<<"/usr/share/pixmaps");
+
     qDebug()<<"peony desktop constructor start";
     setApplicationVersion(QString("v%1").arg(VERSION));
     //setApplicationDisplayName(tr("Peony-Qt Desktop"));

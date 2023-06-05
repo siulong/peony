@@ -121,6 +121,9 @@ static bool m_resident = false;
 
 PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicationName) : SingleApplication (argc, argv, applicationName, true)
 {
+    // fix #172774
+    QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths()<<"/usr/share/pixmaps");
+
     bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
     setProperty("isWayland", isWayland);
 
