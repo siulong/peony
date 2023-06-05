@@ -636,6 +636,16 @@ bool ConnectServerLogin::savePassword()
     return m_reg_usr_combox->isChecked();
 }
 
+void ConnectServerLogin::setCurrentUserName(QString &name)
+{
+    m_reg_usr_name_editor->setCurrentText(name);
+}
+
+void ConnectServerLogin::setCurrentPasswd(QString &passwd)
+{
+    m_reg_usr_passwd_editor->setText(passwd);
+}
+
 void ConnectServerLogin::syncRemoteServer(const QUrl& url)
 {
     if (GlobalSettings::getInstance()->isExist(REMOTE_SERVER_REMOTE_IP)) {

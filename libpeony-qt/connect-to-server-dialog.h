@@ -103,6 +103,8 @@ public:
     QString password();
     bool anonymous();
     bool savePassword();
+    void setCurrentUserName(QString &name);
+    void setCurrentPasswd(QString &passwd);
 
     void syncRemoteServer(const QUrl& url);
     QString getPassWordProperty();
