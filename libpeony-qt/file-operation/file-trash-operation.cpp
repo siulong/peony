@@ -173,11 +173,15 @@ retry:
                 } else {
                     if (err->code == G_IO_ERROR_NOT_SUPPORTED) {
                         except.dlgType = ED_NOT_SUPPORTED;
-                        //auto fileName = g_file_get_basename(srcFile.get()->get());
-                        except.errorStr = tr("Can not trash this file, would you like to delete it permanently?");
-//                        if (fileName) {
-//                            g_free(fileName);
-//                        }
+                        //task #155670,155671 improve delete file permanently message
+                        except.errorStr = QObject::tr("Are you sure you want to permanently delete this file?"
+                                                      " Once deletion begins, "
+                                                      "the file will not be recoverable.");
+                        if (m_total_count >1){
+                            except.errorStr = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                                                          " Once deletion begins, "
+                                                          "these file will not be recoverable.").arg(m_total_count);
+                        }
                     } else if (err->code == G_IO_ERROR_FILENAME_TOO_LONG) {
                         GError *error = nullptr;
                         char *orig_path = g_file_get_path(srcFile.get()->get());
