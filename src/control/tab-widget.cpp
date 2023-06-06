@@ -1280,6 +1280,10 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 realUri = Peony::FileUtils::getParentUri(uri);
             }
 
+            //Fix bug#132638, special # character use in symbolic link open fail issue
+            if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
+                realUri = Peony::FileUtils::urlEncode(realUri);
+
             //m_stack->addWidget(viewContainer);
             viewContainer->goToUri(realUri, false, true);
 
