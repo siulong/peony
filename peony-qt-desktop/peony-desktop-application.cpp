@@ -750,7 +750,9 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
     connect(output.data(), &KScreen::Output::isEnabledChanged,
             this, [=](){
         if(output->isEnabled()) {
-            addBgWindow(output);
+            QTimer::singleShot(1, output.data() , [=]() {
+                addBgWindow(output);
+            });
         } else {
             outputRemoved(output->id());
         }
