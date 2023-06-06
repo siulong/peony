@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0606) yangtze; urgency=medium
+
+  * close-cd#I6YEV4【显示器】扩展模式副屏壁纸截断, 在x模式下，刚接入时获取的kscreen大小不对
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 06 Jun 2023 18:17:55 +0800
+
 peony (4.0.0.0-ok2~0526) yangtze; urgency=medium
 
   * close-cd #I64KVD【平板模式】【文件管理器】【次要】选项下拉菜单里仍存在复制，粘贴，剪切，删除的图标按钮

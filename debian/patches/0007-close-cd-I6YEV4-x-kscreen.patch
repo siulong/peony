@@ -1,0 +1,75 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Tue, 6 Jun 2023 18:20:35 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QjSTZZRVY044CQ5pi+56S65Zmo44CR5omp5bGV5qih5byP?=
+ =?utf-8?b?5Ymv5bGP5aOB57q45oiq5patLCDlnKh45qih5byP5LiL77yM5Yia5o6l5YWl5pe2?=
+ =?utf-8?b?6I635Y+W55qEa3NjcmVlbuWkp+Wwj+S4jeWvuQ==?=
+
+---
+ libpeony-qt/file-copy.cpp                                  | 3 +++
+ libpeony-qt/file-operation/file-node.cpp                   | 3 +++
+ libpeony-qt/file-operation/file-operation-progress-bar.cpp | 8 ++++----
+ peony-qt-desktop/peony-desktop-application.cpp             | 4 +++-
+ 4 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/libpeony-qt/file-copy.cpp b/libpeony-qt/file-copy.cpp
+index e04e41a..8bfaf8f 100644
+--- a/libpeony-qt/file-copy.cpp
++++ b/libpeony-qt/file-copy.cpp
+@@ -290,6 +290,9 @@ void FileCopy::run ()
+             if (0 == readSize && nullptr == error) {
+                 mStatus = FINISHED;
+                 mPause.unlock();
++                mTotalSize = 1024;
++                mOffset = mTotalSize;
++                updateProgress ();
+                 continue;
+             } else if (nullptr != error) {
+                 detailError(&error);
+diff --git a/libpeony-qt/file-operation/file-node.cpp b/libpeony-qt/file-operation/file-node.cpp
+index a1c6cab..a01d9c0 100644
+--- a/libpeony-qt/file-operation/file-node.cpp
++++ b/libpeony-qt/file-operation/file-node.cpp
+@@ -50,6 +50,9 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
+                                         nullptr);
+     g_object_unref(file);
+     m_size = g_file_info_get_size(info);
++    if (0 == m_size) {
++        m_size = 1024;
++    }
+     if (uri == "file:///proc/kcore")
+         m_size = 0;
+     g_object_unref(info);
+diff --git a/libpeony-qt/file-operation/file-operation-progress-bar.cpp b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+index f20adec..b55e280 100644
+--- a/libpeony-qt/file-operation/file-operation-progress-bar.cpp
++++ b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+@@ -1022,10 +1022,10 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri,
+ 
+     double currentPercent = current * 1.0 / total;
+     //fix bug#133624,133380, delete all empty files, not update progress bar
+-    if (m_total_size <= 0){
+-        m_update_count++;
+-        currentPercent = m_update_count * 1.0 /m_total_count;
+-    }
++//    if (m_total_size <= 0){
++//        m_update_count++;
++//        currentPercent = m_update_count * 1.0 /m_total_count;
++//    }
+ 
+     qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
+ 
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index 785712f..79523c5 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -750,7 +750,9 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
+     connect(output.data(), &KScreen::Output::isEnabledChanged,
+             this, [=](){
+         if(output->isEnabled()) {
+-            addBgWindow(output);
++            QTimer::singleShot(1, output.data() , [=]() {
++                addBgWindow(output);
++            });
+         } else {
+             outputRemoved(output->id());
+         }
