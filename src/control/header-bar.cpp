@@ -148,8 +148,12 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(goForward, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goForward();
     });
-
+#ifdef KYLIN_COMMON
     m_is_intel = (QString::compare("V10SP1-edu", QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
+#else
+    m_is_intel = false;
+#endif // KYLIN_COMMON
+
     if (! m_is_intel)
     {
         //non intel project, show go up button

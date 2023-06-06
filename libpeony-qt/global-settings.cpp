@@ -453,5 +453,9 @@ void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
 
 QString GlobalSettings::getProjectName()
 {
+#ifdef KYLIN_COMMON
     return QString::fromStdString(KDKGetPrjCodeName());
+#else
+    return "unknown-project-name";
+#endif // KYLIN_COMMON
 }

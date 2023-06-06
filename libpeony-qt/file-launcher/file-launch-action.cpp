@@ -707,6 +707,7 @@ void FileLaunchAction::preCheck()
 
 bool FileLaunchAction::launchAppWithDBus()
 {
+#ifdef KYLIN_COMMON
     //mavis不通过session而通过AppMgr
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
 
@@ -732,6 +733,7 @@ bool FileLaunchAction::launchAppWithDBus()
             return launchDefaultAppWithUrl();
         }
     }
+#endif // KYLIN_COMMON
 
     return false;
 }
@@ -874,6 +876,7 @@ bool FileLaunchAction::launchAppWithSession()
 
 bool FileLaunchAction::checkAppDisabled()
 {
+#ifdef KYLIN_COMMON
     bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
     if (intel) {
         preCheck();
@@ -884,12 +887,14 @@ bool FileLaunchAction::checkAppDisabled()
             return true;
         }
     }
+#endif // KYLIN_COMMON
 
     return false;
 }
 
 bool launchAppWithArguments(QString desktopFile, QStringList args)
 {
+#ifdef KYLIN_COMMON
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
     int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
     if (features == 2 || features == 3 || mavis) {
@@ -907,5 +912,6 @@ bool launchAppWithArguments(QString desktopFile, QStringList args)
         }
         return true;
     }
+#endif // KYLIN_COMMON
     return false;
 }
