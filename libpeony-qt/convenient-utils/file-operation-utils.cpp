@@ -176,13 +176,27 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 
     if (canNotTrash) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
-        QString message = QObject::tr("Can not trash these files. "
-                                      "You can delete them permanently. "
-                                      "Are you sure doing that?");
-        if (isBigFile)
-           message = QObject::tr("Can not trash files more than 10GB, would you like to delete it permanently?");
-        auto result = QMessageBox::question(nullptr, QObject::tr("Can not trash"), message,
-                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        //task #155670,155671 improve delete file permanently message
+        QString message;
+        if (isBigFile){
+            message = QObject::tr("The file is too large to be moved to the recycle bin. "
+                                  "Do you want to permanently delete it?");
+
+            if (uris.length() > 1)
+                message = QObject::tr("These files are too large to be moved to the recycle bin. "
+                                      "Do you want to permanently delete these %1 files?").arg(uris.length());
+        }
+        else if (uris.length() == 1){
+            message = QObject::tr("Are you sure you want to permanently delete this file?"
+                                  " Once deletion begins, "
+                                  "the file will not be recoverable.");
+        }else{
+            message = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                                  " Once deletion begins, "
+                                  "these file will not be recoverable.").arg(uris.length());
+        }
+
+        auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (result == QMessageBox::Yes) {
             op = FileOperationUtils::remove(uris);
         }
@@ -338,14 +352,16 @@ void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
 
     Peony::AudioPlayManager::getInstance()->playWarningAudio();
     int result = 0;
-    if (uris.count() == 1) {
-        QUrl url = uris.first();
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."),
-                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
-    } else {
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."),
-                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
+    QString message = QObject::tr("Are you sure you want to permanently delete this file?"
+                          " Once deletion begins, "
+                          "the file will not be recoverable.");
+    if (uris.count() > 1) {
+        message = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                              " Once deletion begins, "
+                              "these file will not be recoverable.").arg(uris.length());
     }
+
+    result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
     if (result == QMessageBox::Yes) {
         FileOperationUtils::remove(uris);

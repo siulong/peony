@@ -99,8 +99,14 @@ void FileTrashOperation::run()
     if (total_size/10 > ONE_GIB_SIZE){
         except.dlgType = ED_NOT_SUPPORTED;
         except.errorCode = G_IO_ERROR_NOT_SUPPORTED;
-        except.title = tr("Can not trash");
-        except.errorStr = tr("Can not trash files more than 10GB, would you like to delete it permanently?");
+        except.title = "";
+        //task #155670,155671 improve delete file permanently message
+        except.errorStr = QObject::tr("The file is too large to be moved to the recycle bin. "
+                                      "Do you want to permanently delete it?");
+        if (m_total_count >1){
+            except.errorStr = QObject::tr("These files are too large to be moved to the recycle bin. "
+                                          "Do you want to permanently delete these %1 files?").arg(m_total_count);
+        }
 
         Q_EMIT errored(except);
 
