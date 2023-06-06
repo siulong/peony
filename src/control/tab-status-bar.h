@@ -31,6 +31,7 @@ class QToolBar;
 class TabWidget;
 class ElidedLabel;
 class QSlider;
+class QVariantAnimation;
 
 class TabStatusBar : public QStatusBar
 {
@@ -54,6 +55,8 @@ public Q_SLOTS:
     void onZoomRequest(bool zoomIn);
     //显示隐藏文件，更新项目个数
     void updateItemsNum();
+    void updateSearchProgress(bool searching);
+
 protected:
     void paintEvent(QPaintEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
@@ -65,6 +68,8 @@ private:
     ElidedLabel *m_label = nullptr;
     QToolBar *m_styled_toolbar = nullptr;
     QSlider *m_slider;
+    bool m_searching = false;
+    QVariantAnimation* m_animation;
 };
 
 class ElidedLabel : public QWidget
@@ -74,12 +79,17 @@ public:
     explicit ElidedLabel(QWidget *parent);
 
     void setText(const QString &text);
+    void setSearch(bool searching);
+    void setValue(double value);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
     QString m_text;
+    QPixmap m_disc;
+    bool m_searching = false;
+    double m_val = 0.0;
 };
 
 #endif // TABSTATUSBAR_H

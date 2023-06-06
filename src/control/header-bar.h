@@ -116,6 +116,7 @@ Q_SIGNALS:
     void cancelEdit();
     void startEdit(bool bSearch = false);
     void finishEdit();
+    void updateSearchProgress(bool searching);
 
 protected:
     void addSpacing(int pixel);

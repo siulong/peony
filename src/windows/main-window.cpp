@@ -1504,6 +1504,7 @@ void MainWindow::initUI(const QString &uri)
 
     auto size = sizeHint();
     resize(size);
+    m_searching = false;
 
     KWindowEffects::enableBlurBehind(this->winId(), true);
 
@@ -1517,6 +1518,8 @@ void MainWindow::initUI(const QString &uri)
         m_tab->setCursor(c);
         m_side_bar->setCursor(c);
         //m_status_bar->update();
+        m_tab->m_status_bar->updateSearchProgress(true);
+        m_searching = true;
     });
 
     connect(this, &MainWindow::locationChangeEnd, this, [=]() {
@@ -1533,6 +1536,11 @@ void MainWindow::initUI(const QString &uri)
         //updateWindowIcon();
         //m_status_bar->update();
 
+        if (m_searching) {
+            m_tab->m_status_bar->updateSearchProgress(false);
+            Q_EMIT m_header_bar->updateSearchProgress(false);
+            m_searching = false;
+        }
         setShortCuts();
     });
 
@@ -1743,12 +1751,16 @@ void MainWindow::initUI(const QString &uri)
 
 }
 
-//void MainWindow::updateSearchStatus(bool showSearch)
-//{
-//    m_tab->updateSearchBar(showSearch);
-//    m_header_bar->setSearchMode(showSearch);
-//    m_is_search = showSearch;
-//}
+void MainWindow::updateSearchStatus(bool showSearch)
+{
+    m_tab->updateSearchBar(showSearch);
+    m_header_bar->setSearchMode(showSearch);
+    m_is_search = showSearch;
+    if (!showSearch) {
+        m_tab->m_status_bar->updateSearchProgress(false);
+        Q_EMIT m_header_bar->updateSearchProgress(false);
+    }
+}
 
 void MainWindow::cleanTrash()
 {

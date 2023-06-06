@@ -37,6 +37,60 @@
 
 using namespace Peony;
 static ToolButtonStyle *global_instance = nullptr;
+
+ProgressLineEdit::ProgressLineEdit(QWidget *parent)
+    : QLineEdit(parent),
+      m_value(0)
+{
+    m_animation = new QVariantAnimation(this);
+    m_animation->setDuration(1000);
+    m_animation->setEasingCurve(QEasingCurve::InQuad);
+
+    connect(m_animation, &QVariantAnimation::valueChanged, this, [=](){
+        if (m_animation->state() == QVariantAnimation::Running) {
+            m_value = m_animation->currentValue().toReal();
+            if (m_searching && 0.7 < m_value/m_animation->endValue().toReal()*1.0)
+               m_animation->pause();
+            update();
+        }
+    });
+    connect(m_animation, &QVariantAnimation::finished, this, [=](){
+        m_value = 0;
+    });
+}
+
+void ProgressLineEdit::updateSearchProgress(bool searching)
+{
+    bool tmp = m_searching;
+    m_searching = searching;
+    if(searching) {
+        if((m_animation->state() == QVariantAnimation::Stopped)) {
+            m_animation->setStartValue(qreal(0));
+            m_animation->setEndValue(qreal(this->width()));
+            m_animation->start();
+            m_value = 0;
+        }
+    } else if(tmp && !searching) {
+       m_animation->resume();
+    }
+    update();
+}
+
+void ProgressLineEdit::paintEvent(QPaintEvent *e)
+{
+    QLineEdit::paintEvent(e);
+    if (0 == m_value)
+        return;
+
+    QPainter p(this);
+    p.setOpacity(0.25);
+    QBrush b;
+    QRect backgroundRect = this->rect();
+    backgroundRect.setWidth(m_value);
+    backgroundRect.adjust(2, 2,-2, -2);
+    p.fillRect(backgroundRect, this->palette().highlight().color());
+}
+
 SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -54,7 +108,7 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
 //    filter->setFixedHeight(parent->height());
 //    AdvancedLocationBar * a = qobject_cast<AdvancedLocationBar *>(parent);
 
-    QLineEdit *edit = new QLineEdit(this);
+    ProgressLineEdit *edit = new ProgressLineEdit(this);
     m_search_box = edit;
 
     QAction *searchAction = new QAction(m_search_box);
@@ -179,7 +233,7 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
             searchButton->hide();
         }
     });
-
+    connect(this, &Peony::SearchBarContainer::updateSearchProgress, edit, &ProgressLineEdit::updateSearchProgress);
     connect(m_list_view, SIGNAL(clicked(const QModelIndex &)), this, SLOT(onTableClicked(const QModelIndex &)));
 }
 

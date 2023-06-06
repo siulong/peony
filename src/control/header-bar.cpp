@@ -175,6 +175,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     a = addWidget(m_searchWidget);
     m_actions.insert(HeaderBarAction::LocationBar, a);
 
+    connect(this, &HeaderBar::updateSearchProgress, m_location_bar, &Peony::AdvancedLocationBar::updateSearchProgress);
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
         Q_EMIT m_searchWidget->clearSearchBox();
