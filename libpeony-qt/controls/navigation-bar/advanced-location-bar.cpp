@@ -96,7 +96,11 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         {
             Q_EMIT searchRequest(m_last_non_search_path, key);
             m_last_key = key;
-            m_search_bar->updateSearchProgress(true);
+            if (key == "") {
+                m_search_bar->updateSearchProgress(false);
+            } else {
+                m_search_bar->updateSearchProgress(true);
+            }
         }
     });
 

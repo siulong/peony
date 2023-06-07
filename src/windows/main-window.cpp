@@ -1138,6 +1138,8 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             m_is_clear_serach = true;
             goToUri(m_last_search_path, true);
             m_is_clear_serach = false;
+            m_tab->m_status_bar->updateSearchProgress(false);
+            m_searching = false;
         }
         else
         {
@@ -1145,6 +1147,8 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
                                                          m_last_key, true, false, "", true);
             //qDebug() << "updateSearch targetUri:" <<targetUri;
             goToUri(targetUri, true);
+            m_tab->m_status_bar->updateSearchProgress(true);
+            m_searching = true;
         }
     }
 }
@@ -1518,8 +1522,6 @@ void MainWindow::initUI(const QString &uri)
         m_tab->setCursor(c);
         m_side_bar->setCursor(c);
         //m_status_bar->update();
-        m_tab->m_status_bar->updateSearchProgress(true);
-        m_searching = true;
     });
 
     connect(this, &MainWindow::locationChangeEnd, this, [=]() {
@@ -1756,10 +1758,6 @@ void MainWindow::updateSearchStatus(bool showSearch)
     m_tab->updateSearchBar(showSearch);
     m_header_bar->setSearchMode(showSearch);
     m_is_search = showSearch;
-    if (!showSearch) {
-        m_tab->m_status_bar->updateSearchProgress(false);
-        Q_EMIT m_header_bar->updateSearchProgress(false);
-    }
 }
 
 void MainWindow::cleanTrash()
