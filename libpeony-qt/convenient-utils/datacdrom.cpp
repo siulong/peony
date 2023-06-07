@@ -529,49 +529,56 @@ int DataCDROM::cdRomGetTrackNum()
 */
 void DataCDROM::DVDRWCapacity()
 {
-    int i = 0;
-    QProcess process;
     QStringList deviceName;
     deviceName<<m_oBlockName;
 
-    process.start("/usr/bin/dvd+rw-mediainfo", deviceName);
-    process.waitForFinished(10000);
-    QString result = process.readAllStandardOutput();
-    QStringList ss = result.split("\n");
-    QStringList sss;
+    DvdMediaInfoFetcher* fetcher = new DvdMediaInfoFetcher(deviceName);
+    QThread* thread = new QThread;
+    fetcher->moveToThread(thread);
+    connect(fetcher, &DvdMediaInfoFetcher::resultReady, [=](const QString& result) {
+        QString data = result;
+        QStringList ss = data.split("\n");
+        QStringList sss;
+        int i = 0;
 
-    for (i = ss.size() - 1; i > 0; --i)
-    {
-        if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
-    }
+        for (i = ss.size() - 1; i > 0; --i)
+        {
+            if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
+        }
 
-    if (m_oMediumType.contains("DVD+RW") && ss.size() >= i+1)
-    {
-        ss = ss.takeAt(i + 1).split("=");
-        //ss = ss.last().split("=");
-        m_u64Capacity = ss.last().toULong();
-    }
-    if (m_oMediumType.contains("DVD-RW") && ss.size() >= i+2)
-    {
-        //解决bug:70940和83628擦除后总容量显示错误
-#if 0
-        sss = ss.takeAt(i + 1).split("=");
-        t = 0;
-        u = 0;
-        u = sss.last().toULong();//unformatted的容量
-        sss = ss.takeAt(i + 2).split("=");
-        t = sss.last().toULong();//00h(800h)的容量
-        if (t > u) m_u64Size = t - u;
-        else m_u64Size = u;
-        //出现下面这种情况导致bug出现
-        //no media:		4101552*2048=8399978496
-        //00h(800):		2297888*2048=4706074624
-#else
-        sss = ss.takeAt(i + 2).split("=");
-        auto t = sss.last().toULong();
-        m_u64Capacity = t;
-#endif
-    }
+        if (m_oMediumType.contains("DVD+RW") && ss.size() >= i+1)
+        {
+            ss = ss.takeAt(i + 1).split("=");
+            //ss = ss.last().split("=");
+            m_u64Capacity = ss.last().toULong();
+        }
+        if (m_oMediumType.contains("DVD-RW") && ss.size() >= i+2)
+        {
+            //解决bug:70940和83628擦除后总容量显示错误
+    #if 0
+            sss = ss.takeAt(i + 1).split("=");
+            t = 0;
+            u = 0;
+            u = sss.last().toULong();//unformatted的容量
+            sss = ss.takeAt(i + 2).split("=");
+            t = sss.last().toULong();//00h(800h)的容量
+            if (t > u) m_u64Size = t - u;
+            else m_u64Size = u;
+            //出现下面这种情况导致bug出现
+            //no media:		4101552*2048=8399978496
+            //00h(800):		2297888*2048=4706074624
+    #else
+            sss = ss.takeAt(i + 2).split("=");
+            auto t = sss.last().toULong();
+            m_u64Capacity = t;
+    #endif
+        }
+    });
+    connect(thread, &QThread::started, fetcher, &DvdMediaInfoFetcher::fetch);
+    connect(fetcher, &DvdMediaInfoFetcher::finished, thread, &QThread::quit);
+    connect(fetcher, &DvdMediaInfoFetcher::finished, fetcher, &DvdMediaInfoFetcher::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->start();
 
 //    for (index = dvdInfo.size() - 1; index > 0; --index){
 //        if (dvdInfo.at(index).startsWith("READ FORMAT CAPACITIES:")) {
@@ -644,4 +651,14 @@ void DataCDROM::cdRomCapacity()
              << "used capacity:"<<m_u64UsedCapacity
              << "free capacity:"<<m_u64FreeCapacity;
     return;
+}
+
+void DvdMediaInfoFetcher::fetch()
+{
+    QProcess process;
+    process.start("/usr/bin/dvd+rw-mediainfo", m_deviceName);
+    process.waitForFinished(-1); // Wait indefinitely for the process to finish.
+    QString result = process.readAllStandardOutput();
+    Q_EMIT resultReady(result);
+    Q_EMIT finished();
 }

@@ -120,4 +120,21 @@ private:
 
 }
 
+class DvdMediaInfoFetcher : public QObject {
+    Q_OBJECT
+public:
+    explicit DvdMediaInfoFetcher(const QStringList& deviceName, QObject* parent = nullptr)
+        : QObject(parent), m_deviceName(deviceName) {}
+
+Q_SIGNALS:
+    void resultReady(const QString& result);
+    void finished();
+
+public Q_SLOTS:
+    void fetch();
+
+private:
+    QStringList m_deviceName;
+};
+
 #endif // DATACDROM_H
