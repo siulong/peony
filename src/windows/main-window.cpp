@@ -1143,8 +1143,20 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
         }
         else
         {
+            bool isSearchEngine = true;
+            const QByteArray id(UKUI_SEARCH_SCHEMAS);
+            if (QGSettings::isSchemaInstalled(id)) {
+                QGSettings *searchSettings = new QGSettings(id, QByteArray(), this);
+                if (!searchSettings || !searchSettings->keys().contains(SEARCH_METHOD_KEY)) {
+                    isSearchEngine = false;
+                }
+            } else {
+                isSearchEngine = false;
+            }
+
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
                                                          m_last_key, true, false, "", true);
+            targetUri = Peony::SearchVFSUriParser::addSearchKey(targetUri, isSearchEngine);
             //qDebug() << "updateSearch targetUri:" <<targetUri;
             goToUri(targetUri, true);
             m_tab->m_status_bar->updateSearchProgress(true);

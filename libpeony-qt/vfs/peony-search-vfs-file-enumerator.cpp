@@ -28,11 +28,11 @@
 #include <QFile>
 #include <QUrl>
 #include <QTextStream>
+#include <QThread>
 
 #include <gio/gdesktopappinfo.h>
 
 //G_DEFINE_TYPE(PeonySearchVFSFileEnumerator, peony_search_vfs_file_enumerator, G_TYPE_FILE_ENUMERATOR)
-
 G_DEFINE_TYPE_WITH_PRIVATE(PeonySearchVFSFileEnumerator,
                            peony_search_vfs_file_enumerator,
                            G_TYPE_FILE_ENUMERATOR)
@@ -89,6 +89,12 @@ static void peony_search_vfs_file_enumerator_init(PeonySearchVFSFileEnumerator *
     self->priv->use_regexp = true;
     self->priv->case_sensitive = false;
     self->priv->match_name_or_content = true;
+#ifdef KY_UKUI_SEARCH
+    self->priv->m_search = new UkuiSearch::UkuiSearchTask();
+    self->priv->m_queue = self->priv->m_search->init();
+    self->priv->search_engine = false;
+    self->priv->search_first = true;
+#endif
 }
 
 static void enumerator_dispose(GObject *object);
@@ -148,6 +154,12 @@ void enumerator_dispose(GObject *object)
         delete self->priv->name_regexp_extend_list->at(i);
     }
     delete self->priv->name_regexp_extend_list;
+#ifdef KY_UKUI_SEARCH
+    if (self->priv->m_search->isSearching(UkuiSearch::SearchProperty::SearchType::File)) {
+        self->priv->m_search->stop();
+    }
+    delete self->priv->m_search;
+#endif
 }
 
 static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
@@ -161,6 +173,12 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
         if (g_cancellable_is_cancelled(cancellable)) {
             //FIXME: how to add translation here? do i have to use gettext?
             *error = g_error_new_literal(G_IO_ERROR, G_IO_ERROR_CANCELLED, "search is cancelled");
+#ifdef KY_UKUI_SEARCH
+            auto file_enumerator = PEONY_SEARCH_VFS_FILE_ENUMERATOR(enumerator);
+            if (file_enumerator->priv->m_search->isSearching(UkuiSearch::SearchProperty::SearchType::File)) {
+                file_enumerator->priv->m_search->stop();
+            }
+#endif
             return nullptr;
         }
     }
@@ -178,7 +196,40 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
         return nullptr;
     }
 
-    while (!enumerate_queue->isEmpty()) {
+    bool search_engine = false;
+#ifdef KY_UKUI_SEARCH
+    search_engine = search_enumerator->priv->search_engine;
+    if (search_enumerator->priv->search_first) {
+        search_enumerator->priv->m_search->startSearch(UkuiSearch::SearchProperty::SearchType::File);
+        search_enumerator->priv->search_first = false;
+    }
+
+    while (true) {
+        if (!search_enumerator->priv->m_search->isSearching(UkuiSearch::SearchProperty::SearchType::File)
+                || !search_enumerator->priv->m_queue->isEmpty()) {
+            break;
+        }
+    }
+
+    while (!search_enumerator->priv->m_queue->isEmpty() && search_engine) {
+        UkuiSearch::ResultItem resultItem = search_enumerator->priv->m_queue->dequeue();
+        //qDebug() << "resultItem-->" << resultItem.getItemKey();
+        QString uri = "file://" + resultItem.getItemKey();
+        auto search_vfs_info = g_file_info_new();
+        QString realUriSuffix = "real-uri:" + uri;
+        g_file_info_set_name(search_vfs_info, realUriSuffix.toUtf8().constData());
+
+        if (search_enumerator->priv->save_result) {
+            auto historyResults = manager->getHistroyResults(*search_enumerator->priv->search_vfs_directory_uri);
+            //FIXME: add lock?
+            historyResults<<realUriSuffix;
+        }
+        //search_enumerator->priv->m_count++;
+        return search_vfs_info;
+    }
+#endif
+
+    while (!enumerate_queue->isEmpty() && !search_engine) {
         //BFS enumeration
         auto uri = enumerate_queue->dequeue();
         GFile *tmp = g_file_new_for_uri(uri.toUtf8().constData());

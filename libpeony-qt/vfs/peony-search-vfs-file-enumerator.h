@@ -26,7 +26,14 @@
 #include <gio/gio.h>
 #include <QQueue>
 #include <QRegExp>
+#include <QObject>
+#include <QEventLoop>
 #include "file-info.h"
+#ifdef KY_UKUI_SEARCH
+#include "ukui-search/ukui-search-task.h"
+#include "ukui-search/data-queue.h"
+#include "ukui-search/result-item.h"
+#endif
 
 G_BEGIN_DECLS
 
@@ -54,6 +61,12 @@ typedef struct {
     QList<QRegExp*> *name_regexp_extend_list;
     gboolean match_name_or_content;
     QQueue<QString> *enumerate_queue;
+#ifdef KY_UKUI_SEARCH
+    UkuiSearch::UkuiSearchTask *m_search;
+    UkuiSearch::DataQueue<UkuiSearch::ResultItem> *m_queue;
+    gboolean search_engine;
+    gboolean search_first;
+#endif
 } PeonySearchVFSFileEnumeratorPrivate;
 
 struct _PeonySearchVFSFileEnumerator

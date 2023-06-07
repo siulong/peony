@@ -36,3 +36,7 @@ exists(/usr/include/kysdk/applications/ukuistylehelper/ukuistylehelper.h) {
 exists("/usr/include/libkyudfburn/udfburn_global.h") {
     DEFINES += KY_UDF_BURN
 }
+
+exists("/usr/include/ukui-search/libsearch_global.h") {
+    DEFINES += KY_UKUI_SEARCH
+}
