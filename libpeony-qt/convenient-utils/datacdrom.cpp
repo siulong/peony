@@ -368,7 +368,9 @@ int DataCDROM::checkMediumType()
                               0};
     unsigned char result[65536] = {0};
 
-    m_oMediumType.clear();
+    if (!m_oMediumType.isEmpty()) {
+        m_oMediumType.clear();
+    }
 
     if (!execSCSI(cdb, 12, result, 12)) {
         qWarning()<<"scsi get medium type failed";
@@ -532,10 +534,10 @@ void DataCDROM::DVDRWCapacity()
     QStringList deviceName;
     deviceName<<m_oBlockName;
 
-    DvdMediaInfoFetcher* fetcher = new DvdMediaInfoFetcher(deviceName);
+    DvdMediaInfoFetcher* fetcher = new DvdMediaInfoFetcher(deviceName, m_oMediumType);
     QThread* thread = new QThread;
     fetcher->moveToThread(thread);
-    connect(fetcher, &DvdMediaInfoFetcher::resultReady, [=](const QString& result) {
+    connect(fetcher, &DvdMediaInfoFetcher::resultReady, [=](const QString& result, const QString& type) {
         QString data = result;
         QStringList ss = data.split("\n");
         QStringList sss;
@@ -546,13 +548,13 @@ void DataCDROM::DVDRWCapacity()
             if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
         }
 
-        if (m_oMediumType.contains("DVD+RW") && ss.size() >= i+1)
+        if (type.contains("DVD+RW") && ss.size() >= i+1)
         {
             ss = ss.takeAt(i + 1).split("=");
             //ss = ss.last().split("=");
             m_u64Capacity = ss.last().toULong();
         }
-        if (m_oMediumType.contains("DVD-RW") && ss.size() >= i+2)
+        if (type.contains("DVD-RW") && ss.size() >= i+2)
         {
             //解决bug:70940和83628擦除后总容量显示错误
     #if 0
@@ -572,6 +574,7 @@ void DataCDROM::DVDRWCapacity()
             auto t = sss.last().toULong();
             m_u64Capacity = t;
     #endif
+            Q_EMIT getInfoFinished(t);
         }
     });
     connect(thread, &QThread::started, fetcher, &DvdMediaInfoFetcher::fetch);
@@ -659,6 +662,6 @@ void DvdMediaInfoFetcher::fetch()
     process.start("/usr/bin/dvd+rw-mediainfo", m_deviceName);
     process.waitForFinished(-1); // Wait indefinitely for the process to finish.
     QString result = process.readAllStandardOutput();
-    Q_EMIT resultReady(result);
+    Q_EMIT resultReady(result, m_deviceType);
     Q_EMIT finished();
 }
