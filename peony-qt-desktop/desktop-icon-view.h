@@ -119,6 +119,7 @@ public:
     bool isFull();
     void clearExtendItemPos(bool saveId = false);
     void UpdateToEditUris(QStringList uris);
+    QRect getDataRect(const QModelIndex &index);
 
 private:
     QRect getScreenArea(QScreen* screen);

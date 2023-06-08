@@ -1646,8 +1646,8 @@ void DesktopIconView::checkItemsOver()
     QRegion notEmptyRegion;
     if (model()) {
         for (int i = 0; i < model()->rowCount(); i++) {
-            auto index = model()->index(i, 0);
-            auto rect = QListView::visualRect(index);
+            QModelIndex index = model()->index(i, 0);
+            QRect rect = getDataRect(index);
             if (notEmptyRegion.intersects(rect)) {
                 needRelayoutItems.append(index.data(Qt::UserRole).toString());
             } else {
@@ -2068,11 +2068,13 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
         QRegion dirtyRegion;
         QHash<QModelIndex, QRect> currentIndexesRects;
+
         for (int i = 0; i < m_proxy_model->rowCount(); i++) {
             auto tmp = m_proxy_model->index(i, 0);
-            currentIndexesRects.insert(tmp, QListView::visualRect(tmp));
+            QRect rect = getDataRect(tmp);
+            currentIndexesRects.insert(tmp, rect);
             if (!m_drag_indexes.contains(tmp)) {
-                dirtyRegion += QListView::visualRect(tmp);
+                dirtyRegion += rect;
             }
         }
 
@@ -2090,7 +2092,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             QModelIndexList unoverlappedIndexes = m_drag_indexes;
 
             for (auto index : unoverlappedIndexes) {
-                QRect visualRect = QListView::visualRect(index);
+                QRect visualRect = getDataRect(index);
                 if (dirtyRegion.intersects(visualRect)) {
                     unoverlappedIndexes.removeOne(index);
                     overlappedIndexes.append(index);
@@ -2794,6 +2796,22 @@ void DesktopIconView::clearExtendItemPos(bool saveId)
     }
 }
 
+QRect DesktopIconView::getDataRect(const QModelIndex &index)
+{
+    DesktopIconViewDelegate *delegate = qobject_cast<DesktopIconViewDelegate *>(itemDelegate());
+    QStyleOptionViewItem opt = viewOptions();
+    delegate->initStyleOption(&opt, index);
+    opt.rect = QListView::visualRect(index);
+    QWidget *widget = indexWidget(index);
+    QFont font = qApp->font();
+    auto fm = QFontMetrics(font);
+    int lineSpacing = fm.lineSpacing();
+    int textHeight = lineSpacing*2 + 5;
+    QRect iconRect = style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, widget);
+    QRect rect = iconRect;
+    rect.setHeight(iconRect.height() + textHeight);
+    return rect;
+}
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)
 {
     if (p1.first.x() > p2.first.x())
