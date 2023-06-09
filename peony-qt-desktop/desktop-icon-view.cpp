@@ -294,7 +294,10 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 updateItemPosByUri(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
 
                 if (geo.width() != 0 && geo.height() != 0) {
-                    if (!geo.contains(QListView::visualRect(index))) {
+                    QRect itemRect = QListView::visualRect(index);
+                    QSize icon = gridSize();
+                    itemRect.setSize(icon);
+                    if (!geo.contains(itemRect)) {
                         isFull = true;
                     }
                 }
@@ -780,7 +783,9 @@ void DesktopIconView::resolutionChange()
         QRegion notEmptyRegion;
         QList<QPair<QRect, QString>> needChanged;
         for (auto pair : newPosition) {
-            if (!screenRect.contains(pair.first)) {
+            QRect itemRect = pair.first;
+            itemRect.setSize(icon);
+            if (!screenRect.contains(itemRect)) {
                 needChanged.append(pair);
                 if (!m_resolution_item_rect.contains(pair.second)) {
                     // remember item position before resolution changed.
@@ -835,7 +840,9 @@ void DesktopIconView::resolutionChange()
             qInfo()<<"尝试恢复超过屏幕范围的元素" <<m_resolution_item_rect;
             for (auto uri : m_resolution_item_rect.keys()) {
                 auto originalRect = m_resolution_item_rect.value(uri);
-                if (screenRect.contains(originalRect)) {
+                QRect itemRect = originalRect;
+                itemRect.setSize(icon);
+                if (screenRect.contains(itemRect)) {
                     m_item_rect_hash.insert(uri, originalRect);
                     m_resolution_item_rect.remove(uri);
                 } else {
@@ -1205,7 +1212,10 @@ void DesktopIconView::setSortType(int sortType)
             auto index = m_proxy_model->index(i, 0);
             m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), QListView::visualRect(index));
             updateItemPosByUri(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
-            if (!geo.contains(QListView::visualRect(index))) {
+            QRect itemRect = QListView::visualRect(index);
+            QSize icon = gridSize();
+            itemRect.setSize(icon);
+            if (!geo.contains(itemRect)) {
                 isFull = true;
             }
         }
@@ -2116,7 +2126,8 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             for (auto dragedIndex : overlappedIndexes) {
                 auto indexRect = QListView::visualRect(dragedIndex);
-                if (notEmptyRegion.intersects(indexRect)) {
+                auto dataRect = getDataRect(dragedIndex);
+                if (notEmptyRegion.intersects(dataRect)) {
                     // move index to closest empty grid.
                     auto next = indexRect;
                     bool isEmptyPos = false;
@@ -2132,7 +2143,17 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                             }
                             //put item to next column first column
                             next.moveTo(next.x() + grid.width(), top);
+                            //如果满了，就放到（0，0） 位置
+                            if (next.left()+grid.width() > viewRect.right()) {
+                                next.moveTo(0, 0);
+                                isEmptyPos = true;
+                                setPositionForIndex(next.topLeft(), dragedIndex);
+                                setFileMetaInfoPos(dragedIndex.data(Qt::UserRole).toString(), next.topLeft());
+                                qDebug() << "满屏 " << dragedIndex.data(Qt::UserRole).toString() << " point:" <<next.topLeft();
+                                break;
+                            }
                         }
+
                         if (notEmptyRegion.intersects(next)) {
                             continue;
                         }
@@ -2149,6 +2170,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             // check if there is any item out of view
             for (auto index : m_drag_indexes) {
                 auto indexRect = QListView::visualRect(index);
+                indexRect.setSize(grid);
                 if (this->viewport()->rect().contains(indexRect)) {
                     continue;
                 }
@@ -2172,7 +2194,8 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                 while (next.translated(0, -grid.height()).top() >= 0) {
                     next.translate(0, -grid.height());
                 }
-
+                QRect dataRect = getDataRect(index);
+                next.setSize(dataRect.size());
                 while (notEmptyRegion.intersects(next)) {
                     next.translate(0, grid.height());
                     if (next.bottom() > viewRect.bottom()) {
@@ -2185,6 +2208,12 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                         }
                         //put item to next column first column
                         next.moveTo(next.x() + grid.width(), top);
+                        //如果满了，就放到（0，0） 位置
+                        if (next.left()+grid.width() > viewRect.right()) {
+                            next.moveTo(0, 0);
+                            qDebug() << "满屏 " << index.data(Qt::UserRole).toString() << " point:" <<next.topLeft();
+                            break;
+                        }
                     }
                 }
 
@@ -2808,7 +2837,7 @@ QRect DesktopIconView::getDataRect(const QModelIndex &index)
     int lineSpacing = fm.lineSpacing();
     int textHeight = lineSpacing*2 + 5;
     QRect iconRect = style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, widget);
-    QRect rect = iconRect;
+    QRect rect = opt.rect;
     rect.setHeight(iconRect.height() + textHeight);
     return rect;
 }
