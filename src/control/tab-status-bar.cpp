@@ -65,7 +65,7 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
     m_animation->setDuration(1000);
     m_animation->setStartValue(0.0);
     m_animation->setEndValue(360.0);
-    connect(m_animation,&QVariantAnimation::valueChanged,[=](){
+    connect(m_animation,&QVariantAnimation::valueChanged, m_label, [=](){
         m_label->setValue(m_animation->currentValue().toDouble());
     });
     connect(m_animation, &QVariantAnimation::finished, this, [=](){
