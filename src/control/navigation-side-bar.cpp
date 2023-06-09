@@ -451,10 +451,15 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
     }
 
     auto info = FileInfo::fromUri(uri);
-    if (info.get()->isEmptyInfo()) {
-        FileInfoJob j(info);
-        j.querySync();
+
+    // try fix #174128, peony stucked when click sidebar network item sometimes.
+    if (!uri.startsWith("network:///")) {
+        if (info.get()->isEmptyInfo()) {
+            FileInfoJob j(info);
+            j.querySync();
+        }
     }
+
     auto targetUri = FileUtils::getTargetUri(uri);
     if (targetUri == "" && uri== "burn://")
     {
