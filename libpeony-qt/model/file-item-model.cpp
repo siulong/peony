@@ -61,6 +61,10 @@ FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
 {
     setPositiveResponse(true);
 
+    m_fileManagerThread = new FileManagerThread();
+    m_fileManagerThread->moveToThread(m_fileManagerThread);
+    connect(this, &FileItemModel::setUrisForBatchQueryInfos, m_fileManagerThread,&FileManagerThread::batchQueryFileInfos);
+    m_fileManagerThread->start();
 
     connect(EmblemProviderManager::getInstance(), &EmblemProviderManager::requestUpdateFile, this, &FileItemModel::updated);
     connect(EmblemProviderManager::getInstance(), &EmblemProviderManager::requestUpdateAllFiles, this, &FileItemModel::updated);
@@ -83,6 +87,12 @@ FileItemModel::~FileItemModel()
     disconnect();
     if (m_root_item)
         delete m_root_item;
+
+    if(m_fileManagerThread){
+        m_fileManagerThread->quit();
+        m_fileManagerThread->wait();
+        m_fileManagerThread->deleteLater();
+    }
 }
 
 const QString FileItemModel::getRootUri()
@@ -111,6 +121,7 @@ void FileItemModel::setRootItem(FileItem *item)
     m_root_item->deleteLater();
 
     m_root_item = item;
+    m_root_item->connectFunc();
     m_root_item->findChildrenAsync();
 
     endResetModel();
@@ -140,42 +151,44 @@ QModelIndex FileItemModel::firstColumnIndex(FileItem *item)
 {
     //root children
     if (item->m_parent == nullptr) {
-        for (int i = 0; i < m_root_item->m_children->count(); i++) {
-            //qDebug()<<i<<item->m_info->uri()<<m_root_item->m_children->at(i)->m_info->uri();
-            if (item == m_root_item->m_children->at(i)) {
-                //qDebug()<<i<<item->m_info->uri();
-                return createIndex(i, 0, item);
-            }
+        int index = m_root_item->m_children->indexOf(item);
+        if (index == -1) {
+            return QModelIndex();
+        } else {
+            return createIndex(index, 0, item);
         }
-        return QModelIndex();
     } else {
         //has parent item
-        for (int i = 0; i < item->m_parent->m_children->count(); i++) {
-            if (item == item->m_parent->m_children->at(i))
-                return createIndex(i, 0, item);
+        int index = item->m_parent->m_children->indexOf(item);
+        if (index == -1) {
+            return QModelIndex();
+        } else {
+            return createIndex(index, 0, item);
         }
-        return QModelIndex();
     }
 }
 
 QModelIndex FileItemModel::lastColumnIndex(FileItem *item)
 {
     if (!item->m_parent) {
-        for (int i = 0; i < m_root_item->m_children->count(); i++) {
-            //qDebug()<<i<<item->m_info->uri()<<m_root_item->m_children->at(i)->m_info->uri();
-            if (item == m_root_item->m_children->at(i)) {
-                //qDebug()<<i<<item->m_info->uri();
-                return createIndex(i, Other, item);
-            }
+        int index = m_root_item->m_children->indexOf(item);
+        if (index == -1) {
+            //qDebug()<< "item uri:" << item->uri()<< "is not in the QVector";
+            return QModelIndex();
+        } else {
+            //qDebug() << "item uri:" << item->uri() << "is at index" << index;
+            return createIndex(index, Other, item);
         }
-        return QModelIndex();
     } else {
         //has parent item
-        for (int i = 0; i < item->m_parent->m_children->count(); i++) {
-            if (item == item->m_parent->m_children->at(i))
-                return createIndex(i, Other, item);
+        int index = item->m_parent->m_children->indexOf(item);
+        if (index == -1) {
+            //qDebug()<< "item uri:" << item->uri()<< "is not in the QVector";
+            return QModelIndex();
+        } else {
+            //qDebug() << "item uri:" << item->uri() << "is at index" << index;
+            return createIndex(index, Other, item);
         }
-        return QModelIndex();
     }
 }
 
@@ -754,4 +767,45 @@ const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QStri
         return item->firstColumnIndex();
     }
     return QModelIndex();
+}
+
+FileManagerThread::FileManagerThread()
+{
+}
+
+FileManagerThread::~FileManagerThread()
+{
+}
+
+void FileManagerThread::batchQueryFileInfos(const QStringList& uris)
+{
+    QStringList originalList = uris; // 原始列表
+    int chunkSize = 2000; // 每个列表的大小
+
+    QList<QStringList> splitLists;
+    int numChunks = originalList.count() / chunkSize;
+    if (originalList.count() % chunkSize)
+        numChunks++;
+
+    for (int i = 0; i < numChunks; i++) {
+        QStringList chunkList;
+        for (int j = 0; j < chunkSize && ((i * chunkSize) + j) < originalList.count(); j++) {
+            chunkList.append(originalList.at((i * chunkSize) + j));
+        }
+        splitLists.append(chunkList);
+    }
+
+    for(auto &queryUris : splitLists){
+        auto infos = FileInfo::fromUris(queryUris);
+        auto infoJob = new FileInfoJob(infos);
+        infoJob->setAutoDelete();
+        auto retFileInfos = infoJob->batchQuerySync();
+        //qDebug()<<"22222222222222222"<<uris.size()<<queryUris.size()<<retFileInfos.size();
+        Q_EMIT finishQueryFileInfos(retFileInfos);
+    }
+}
+
+void FileManagerThread::run()
+{
+    exec();
 }

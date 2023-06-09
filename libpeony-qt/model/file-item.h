@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QVector>
 #include <QHash>
+
 class QTimer;
 
 namespace Peony {
@@ -40,6 +41,7 @@ class FileWatcher;
 class FileItemProxyFilterSortModel;
 class FileEnumerator;
 class BatchProcessItems;
+class FileManagerThread;
 
 /*!
  * \brief The FileItem class
@@ -149,6 +151,9 @@ protected:
     void batchRemoveItems();
 
     void showFilesForBurningOnRTypeDisc();/* udf刻录与文管适配，R类型光盘遍历家目录下的“.cache/KylinTransitBurner/”获取缓冲数据;将缓冲数据显示在光盘挂载目录下 */
+
+private:
+    void connectFunc();
 
 private:
     FileItem *m_parent = nullptr;

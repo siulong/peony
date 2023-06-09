@@ -25,11 +25,14 @@
 
 #include <QAbstractItemModel>
 #include "peony-core_global.h"
+#include <QThread>
 
 namespace Peony {
 
 class FileItem;
 class FileItemProxyFilterSortModel;
+class FileInfo;
+class FileManagerThread;
 
 /*!
  * \brief The FileItemModel class
@@ -250,6 +253,8 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void thumbnailUpdated(const QString& uri);
 
+    void setUrisForBatchQueryInfos(const QStringList& uris);
+
 public Q_SLOTS:
     /*!
      * \brief onFoundChildren
@@ -280,7 +285,26 @@ private:
     bool m_can_expand = false;
     QString m_root_uri = "file:///";
     bool m_showFileExtension = true;
+
+    FileManagerThread *m_fileManagerThread = nullptr;
 };
+
+class PEONYCORESHARED_EXPORT FileManagerThread : public QThread{
+Q_OBJECT
+public:
+    explicit FileManagerThread();
+    ~FileManagerThread();
+
+    void batchQueryFileInfos(const QStringList& uris);
+
+protected:
+    void run() override;
+
+
+Q_SIGNALS:
+    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos);
+};
+
 
 }
 
