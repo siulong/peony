@@ -530,21 +530,15 @@ void IconView::updateGeometries()
         return;
     }
 
-    if (model()->columnCount() == 0 || model()->rowCount() == 0)
-        return;
-    //bug#120710 文件未占满一屏时，不需要展示滑动条
-    int itemCount = model()->rowCount();
-    QRegion itemRegion;
-    for (int row = 0; row < itemCount; row++) {
-        auto index = model()->index(row, 0);
-        itemRegion += visualRect(index);
-    }
-    if (itemRegion.boundingRect().bottom() + gridSize().height() < viewport()->height()) {
+    int itemRowCount = model()->rowCount();
+    auto index = model()->index(0, 0);
+    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+
+    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         int vertiacalMax = verticalScrollBar()->maximum();
-        verticalScrollBar()->setMaximum(vertiacalMax + BOTTOM_STATUS_MARGIN);
-        int verticalValue = verticalOffset();
+        verticalScrollBar()->setMaximum(vertiacalMax + gridSize().height());
         verticalScrollBar()->setValue(verticalValue);
     }
 #else
@@ -559,18 +553,16 @@ void IconView::updateGeometries()
         return;
     }
 
-    int itemCount = model()->rowCount();
-    QRegion itemRegion;
-    for (int row = 0; row < itemCount; row++) {
-        auto index = model()->index(row, 0);
-        itemRegion += visualRect(index);
-    }
-    if (itemRegion.boundingRect().bottom() + gridSize().height() < viewport()->height()) {
+    int itemRowCount = model()->rowCount();
+    auto index = model()->index(0, 0);
+    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+
+    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         verticalScrollBar()->setSingleStep(gridSize().height()/2);
         verticalScrollBar()->setPageStep(viewport()->height());
-        verticalScrollBar()->setRange(0, itemRegion.boundingRect().bottom() - viewport()->height() + gridSize().height());
+        verticalScrollBar()->setRange(0, itemRowsHeight - viewport()->height() + gridSize().height());
     }
 #endif
 }
