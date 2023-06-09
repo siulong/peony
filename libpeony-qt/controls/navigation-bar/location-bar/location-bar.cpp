@@ -651,9 +651,9 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
         if (widget && widget->objectName() == "peony_location_bar_indicator") {
             opt.features.setFlag(QStyleOptionToolButton::HasMenu, false);
             return qApp->style()->drawComplexControl(control, &opt, painter);
-        } /*else {
-            opt.rect.adjust(1, 1, -1, -1); //bug#165286 地址栏中“计算机”文字显示不完整
-        }*/
+        } else {
+            opt.rect.adjust(0, 1, 0, -1); //bug#165286 地址栏中“计算机”文字显示不完整，高度减小2，宽度不变
+        }
         return qApp->style()->drawComplexControl(control, &opt, painter, widget);
     }
     return qApp->style()->drawComplexControl(control, option, painter, widget);
