@@ -552,7 +552,9 @@ void DataCDROM::DVDRWCapacity()
         {
             ss = ss.takeAt(i + 1).split("=");
             //ss = ss.last().split("=");
-            m_u64Capacity = ss.last().toULong();
+            auto t = ss.last().toULong();
+            m_u64Capacity = t;
+            Q_EMIT getInfoFinished(t);
         }
         if (type.contains("DVD-RW") && ss.size() >= i+2)
         {
