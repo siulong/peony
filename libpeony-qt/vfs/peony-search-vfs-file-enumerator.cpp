@@ -214,7 +214,10 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
     while (!search_enumerator->priv->m_queue->isEmpty() && search_engine) {
         UkuiSearch::ResultItem resultItem = search_enumerator->priv->m_queue->dequeue();
         //qDebug() << "resultItem-->" << resultItem.getItemKey();
-        QString uri = "file://" + resultItem.getItemKey();
+        QString path = resultItem.getItemKey();
+        g_autofree gchar* encoded_path = g_uri_escape_string(path.toUtf8().constData(), ":/", false);
+        path = encoded_path;
+        QString uri = "file://" + path;
         auto search_vfs_info = g_file_info_new();
         QString realUriSuffix = "real-uri:" + uri;
         g_file_info_set_name(search_vfs_info, realUriSuffix.toUtf8().constData());
