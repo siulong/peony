@@ -84,31 +84,33 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 
     m_batchProcessThread = new QThread();
 
+    m_addChildTimer = new QTimer(this);
+    m_addChildTimer->setSingleShot(true);
+
     m_idle = new QTimer(this);
     m_idle->setInterval(30);
     m_idle->setSingleShot(true);
     connect(m_idle, &QTimer::timeout, this, [=]{
-        m_waiting_update_queue.removeDuplicates(); /* 去重 */
-        for (auto uri : m_waiting_update_queue) {
-            auto infoJob = new FileInfoJob(FileInfo::fromUri(uri));
-            infoJob->setAutoDelete();
-            connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=]() {
-                m_model->updated();
-                //auto info = FileInfo::fromUri(uri);
-                ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
-                /*
-                if (info->isDesktopFile()) {
-                    ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
-                }
-                */
-            });
+//        m_waiting_update_queue.removeDuplicates(); /* 去重 */
+//        for (auto uri : m_waiting_update_queue) {
+//            auto infoJob = new FileInfoJob(FileInfo::fromUri(uri));
+//            infoJob->setAutoDelete();
+//            connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=]() {
+//                m_model->updated();
+//                //auto info = FileInfo::fromUri(uri);
+//                ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
+//                /*
+//                if (info->isDesktopFile()) {
+//                    ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
+//                }
+//                */
+//            });
 
-            infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+//            infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
 
-            infoJob->queryAsync();
-            m_waiting_update_queue.removeOne(uri);
-        }
-
+//            infoJob->queryAsync();
+//            m_waiting_update_queue.removeOne(uri);
+//        }
         if (m_uris_to_be_removed.isEmpty())
             return;
 
@@ -526,7 +528,7 @@ void FileItem::findChildrenAsync()
                 Q_EMIT this->childAdded(uri);
                 //qDebug() << "positive onChildAdded:" <<uri;
                 //file changed, force create thubnail, link tobug#83108
-                ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
+                //ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
             });
             connect(m_watcher.get(), &FileWatcher::fileDeleted, this, [=](QString uri) {
                 this->onChildRemoved(uri);
@@ -619,56 +621,15 @@ void FileItem::onChildAdded(const QString &uri)
     }
 
     //add waiting queue to fix show item duplicated issue
-    if (m_waiting_add_queue.contains(uri))
-    {
-        qDebug()<<"is in m_waiting_add_queue, return";
-        return;
-    }
+//    if (m_waiting_add_queue.contains(uri))
+//    {
+//        qDebug()<<"is in m_waiting_add_queue, return";
+//        return;
+//    }
 
-    auto info = FileInfo::fromUri(uri);
-    auto infoJob = new FileInfoJob(info);
-    infoJob->setAutoDelete();
     m_waiting_add_queue.append(uri);
-    infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
-        m_waiting_add_queue.removeOne(uri);
-        auto item = getChildFromUri(uri);
-        // add exsited checkment. link to: #66999
-        if (!item) {
-            item = new FileItem(info, this, m_model);
-#ifdef KY_UDF_BURN
-            if(m_isRTypeDisc){
-                item->setProperty("isFileForBurning", true);
-            }
-#endif
-            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
-            m_children->append(item);
-            m_uri_item_hash.insert(item->uri(), item);
-            m_model->endInsertRows();
-            qDebug() <<"successfully added child:" <<uri;
-
-            /* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
-            Q_EMIT m_model->signal_itemAdded(uri);//end
-
-            QTimer::singleShot(1000, this, [=](){
-                ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
-            });
-
-        } else {
-            qInfo()<<"file"<<uri<<"has arealy in file item model";
-        }
-    });
-
-    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
-
-    infoJob->queryAsync();
-
-//    FileItem *newChild = new FileItem(FileInfo::fromUri(uri), this, m_model);
-//    m_model->beginInsertRows(this->firstColumnIndex(), m_children->count(), m_children->count());
-//    m_children->append(newChild);
-//    m_model->endInsertRows();
-//    //use sync update here.
-//    newChild->updateInfoAsync();
-//    //m_model->updated();
+    m_addChildTimer->start();
+    return;
 }
 
 void FileItem::onChildRemoved(const QString &uri)
@@ -980,6 +941,90 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 
     }
 #endif
+}
+
+void FileItem::connectFunc()
+{
+    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos){
+        qDebug()<<"333333333333333333"<<retFileInfos.size()<<this;
+        m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+        for (auto info : retFileInfos) {
+            auto item = new FileItem(info, this, m_model);
+            m_children->append(item);
+            m_uri_item_hash.insert(item->uri(), item);
+            m_ending_uris.removeOne(item->uri());
+            ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+            Q_EMIT m_model->updated();/* 更新状态栏 */
+        }
+        m_model->endInsertRows();
+
+        if (m_ending_uris.isEmpty()) {
+            Q_EMIT m_model->findChildrenFinished();
+        }
+    },Qt::UniqueConnection);
+
+
+    connect(m_addChildTimer, &QTimer::timeout, this, [=]{
+        m_waiting_add_queue.removeDuplicates(); /* 去重 */
+        qDebug()<<"zzzzzzzzzzzzzzzzzzz"<<m_waiting_add_queue.count();
+        if(m_waiting_add_queue.count() < maxNumberOfDeletesByOne){
+            for (auto uri : m_waiting_add_queue) {
+                m_waiting_add_queue.removeOne(uri);
+                auto info = FileInfo::fromUri(uri);
+                auto infoJob = new FileInfoJob(info);
+                infoJob->setAutoDelete();
+                infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
+                    auto item = getChildFromUri(uri);
+                    // add exsited checkment. link to: #66999
+                    if (!item) {
+                        item = new FileItem(info, this, m_model);
+            #ifdef KY_UDF_BURN
+                        if(m_isRTypeDisc){
+                            item->setProperty("isFileForBurning", true);
+                        }
+            #endif
+                        m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+                        m_children->append(item);
+                        m_uri_item_hash.insert(item->uri(), item);
+                        m_model->endInsertRows();
+
+                        qDebug() <<"successfully added child:" <<uri;
+
+                        /* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
+                        Q_EMIT m_model->signal_itemAdded(uri);//end
+
+                        QTimer::singleShot(1000, this, [=](){
+                            ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                        });
+                    } else {
+                        qInfo()<<"file"<<uri<<"has arealy in file item model";
+                    }
+                });
+
+                infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
+                infoJob->queryAsync();
+            }
+
+        }else{
+            QStringList list;
+            if(m_waiting_add_queue.size() >= 2000){/* 每次批量处理最多数量 */
+                for(int i = 0; i < 2000; i++){
+                    QString uri = m_waiting_add_queue.takeFirst();
+                    list.append(uri);
+                }
+            }else{
+                list.swap(m_waiting_add_queue);
+            }
+            qDebug()<<"aaaaaaaaaaaaaa"<<m_waiting_add_queue.size()<<this;
+            Q_EMIT m_model->setUrisForBatchQueryInfos(list);
+            if (m_waiting_add_queue.size()>0 && !m_addChildTimer->isActive()) {
+                m_addChildTimer->start();
+            }
+        }
+    });
+
+
 }
 
 void FileItem::clearChildren()

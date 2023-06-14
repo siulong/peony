@@ -29,14 +29,14 @@
 using namespace Peony;
 
 static FileInfoManager* global_file_info_manager = nullptr;
-static QMap<QString, std::weak_ptr<FileInfo>> *global_info_list = nullptr;
+static QHash<QString, std::weak_ptr<FileInfo>> *global_info_list = nullptr;
 static bool g_is_auto_parted = false;
 
 static QMutex m_op_lock;
 
 FileInfoManager::FileInfoManager()
 {
-    global_info_list = new QMap<QString, std::weak_ptr<FileInfo>>();
+    global_info_list = new QHash<QString, std::weak_ptr<FileInfo>>();
     GFile *file = g_file_new_for_uri("file:///data/usershare");
     g_is_auto_parted = g_file_query_exists(file, nullptr);
     g_object_unref(file);
