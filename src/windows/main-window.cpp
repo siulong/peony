@@ -1512,7 +1512,7 @@ void MainWindow::initUI(const QString &uri)
         //m_side_bar->blockSignals(true);
         m_header_bar->blockSignals(true);
         QCursor c;
-        c.setShape(Qt::WaitCursor);
+        c.setShape(Qt::BusyCursor);
         this->setCursor(c);
         m_tab->setCursor(c);
         m_side_bar->setCursor(c);
