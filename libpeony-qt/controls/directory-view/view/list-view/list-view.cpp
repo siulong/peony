@@ -630,14 +630,10 @@ void ListView::reUpdateScrollBar()
     if (model()->rowCount() == 0) {
         return;
     }
-    int totalHeight = 0;
+
     int rowCount = model()->rowCount();
-    int rowHeight = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()).height();
-    totalHeight = rowCount * rowHeight;
-//    for (int row = 0; row < rowCount; row++) {
-//        auto index = model()->index(row, 0);
-//        totalHeight += sizeHintForIndex(index).height();
-//    }
+    auto index = model()->index(0, 0);
+    int totalHeight = sizeHintForIndex(index).height()*rowCount;
 
     int currentScrollBarValue = verticalScrollBar()->value();
     verticalScrollBar()->setSingleStep(iconSize().height());
