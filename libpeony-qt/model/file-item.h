@@ -176,6 +176,7 @@ private:
     QStringList m_uris_to_be_removed;
     QTimer *m_idle = nullptr;
     QTimer *m_addChildTimer = nullptr;
+    QTimer *m_changeChildTimer = nullptr;
 
     QThread *m_batchProcessThread = nullptr;
     BatchProcessItems *m_batchProcessItems = nullptr;

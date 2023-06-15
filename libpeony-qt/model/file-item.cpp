@@ -73,6 +73,8 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 {
     qRegisterMetaType<QVector<FileItem*>* >("QVector<FileItem*>*");
     qRegisterMetaType<QHash<QString, FileItem*>>("QHash<QString, FileItem*>");
+    qRegisterMetaType<std::vector<std::shared_ptr<FileInfo> >>("std::vector<std::shared_ptr<FileInfo> >&");
+
     m_parent = parentItem;
     m_info = info;
     m_children = new QVector<FileItem*>();
@@ -86,31 +88,13 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 
     m_addChildTimer = new QTimer(this);
     m_addChildTimer->setSingleShot(true);
+    m_changeChildTimer = new QTimer(this);
+    m_changeChildTimer->setSingleShot(true);
 
     m_idle = new QTimer(this);
     m_idle->setInterval(30);
     m_idle->setSingleShot(true);
     connect(m_idle, &QTimer::timeout, this, [=]{
-//        m_waiting_update_queue.removeDuplicates(); /* 去重 */
-//        for (auto uri : m_waiting_update_queue) {
-//            auto infoJob = new FileInfoJob(FileInfo::fromUri(uri));
-//            infoJob->setAutoDelete();
-//            connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=]() {
-//                m_model->updated();
-//                //auto info = FileInfo::fromUri(uri);
-//                ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
-//                /*
-//                if (info->isDesktopFile()) {
-//                    ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
-//                }
-//                */
-//            });
-
-//            infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
-
-//            infoJob->queryAsync();
-//            m_waiting_update_queue.removeOne(uri);
-//        }
         if (m_uris_to_be_removed.isEmpty())
             return;
 
@@ -467,42 +451,9 @@ void FileItem::findChildrenAsync()
                 m_ending_uris = uris;
             }
             uris.toSet().toList();/* 去重 */
-            for (auto uri : uris) {
-                auto info = FileInfo::fromUri(uri);
-                auto infoJob = new FileInfoJob(info);
-                infoJob->setAutoDelete();
-                infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
-                    auto item = new FileItem(info, this, m_model);
-                    m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
-                    m_children->append(item);
-                    m_uri_item_hash.insert(item->uri(), item);
-                    m_model->endInsertRows();
 
-                    /* 解决：升级上来的版本点击标记以后无法显示原来已有的标记文件（兼容性问题） */
-                    if(!item->uri().startsWith("label://")){
-                        QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(item->uri());
-                        for(auto &labelId: labelIds){
-                            if(labelId <= 0)
-                                continue;
-                            FileLabelModel::getGlobalModel()->addLabelToFile(item->uri(), labelId);
-                        }
-                    }//end
-                    //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
-                    //Q_EMIT m_model->updated();
-                    ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
-
-                    m_ending_uris.removeOne(uri);
-                    if (isEnding && m_ending_uris.isEmpty()) {
-                        //qApp->processEvents();
-                        Q_EMIT m_model->findChildrenFinished();
-                        Q_EMIT m_model->updated();
-                    }
-                });
-
-                infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
-
-                infoJob->queryAsync();
-            }
+            qDebug()<<"11111111111111111"<<uris.size()<<this;
+            Q_EMIT m_model->setUrisForBatchQueryInfos(uris, FileItemModel::OperateType::Add);
         });
 
         enumerator->connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed) {
@@ -619,13 +570,6 @@ void FileItem::onChildAdded(const QString &uri)
         //m_model->updated();
         return;
     }
-
-    //add waiting queue to fix show item duplicated issue
-//    if (m_waiting_add_queue.contains(uri))
-//    {
-//        qDebug()<<"is in m_waiting_add_queue, return";
-//        return;
-//    }
 
     m_waiting_add_queue.append(uri);
     m_addChildTimer->start();
@@ -745,8 +689,8 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
 void FileItem::onChanged(const QString &uri)
 {
     m_waiting_update_queue.append(uri);
-    if (!m_idle->isActive()) {
-        m_idle->start();
+    if (!m_changeChildTimer->isActive()) {
+        m_changeChildTimer->start(30);
     }
 }
 
@@ -903,6 +847,15 @@ void FileItem::showFilesForBurningOnRTypeDisc()
                        m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                        m_children->append(item);
                        m_uri_item_hash.insert(item->uri(), item);
+                       /* 解决：升级上来的版本点击标记以后无法显示原来已有的标记文件（兼容性问题） */
+                       if(!item->uri().startsWith("label://")){
+                           QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(item->uri());
+                           for(auto &labelId: labelIds){
+                               if(labelId <= 0)
+                                   continue;
+                               FileLabelModel::getGlobalModel()->addLabelToFile(item->uri(), labelId);
+                           }
+                       }//end
                        m_model->endInsertRows();
                        ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
                    });
@@ -945,21 +898,28 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 
 void FileItem::connectFunc()
 {
-    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos){
+    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operate){
         qDebug()<<"333333333333333333"<<retFileInfos.size()<<this;
-        m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
-        for (auto info : retFileInfos) {
-            auto item = new FileItem(info, this, m_model);
-            m_children->append(item);
-            m_uri_item_hash.insert(item->uri(), item);
-            m_ending_uris.removeOne(item->uri());
-            ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
-            Q_EMIT m_model->updated();/* 更新状态栏 */
-        }
-        m_model->endInsertRows();
+        if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operate)){
+            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+            for (auto info : retFileInfos) {
+                auto item = new FileItem(info, this, m_model);
+                m_children->append(item);
+                m_uri_item_hash.insert(item->uri(), item);
+                m_ending_uris.removeOne(item->uri());
+                ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                Q_EMIT m_model->updated();/* 更新状态栏 */
+            }
+            m_model->endInsertRows();
 
-        if (m_ending_uris.isEmpty()) {
-            Q_EMIT m_model->findChildrenFinished();
+            if (m_ending_uris.isEmpty()) {
+                Q_EMIT m_model->findChildrenFinished();
+            }
+        }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operate)){
+            m_model->updated();
+            for (auto info : retFileInfos) {
+                ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
+            }
         }
     },Qt::UniqueConnection);
 
@@ -1017,14 +977,29 @@ void FileItem::connectFunc()
                 list.swap(m_waiting_add_queue);
             }
             qDebug()<<"aaaaaaaaaaaaaa"<<m_waiting_add_queue.size()<<this;
-            Q_EMIT m_model->setUrisForBatchQueryInfos(list);
+            Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Add);
             if (m_waiting_add_queue.size()>0 && !m_addChildTimer->isActive()) {
                 m_addChildTimer->start();
             }
         }
     });
 
-
+    connect(m_changeChildTimer, &QTimer::timeout, this, [=]{
+        m_waiting_update_queue.removeDuplicates(); /* 去重 */
+        QStringList list;
+        if(m_waiting_update_queue.size() >= 2000){/* 每次批量处理最多数量 */
+            for(int i = 0; i < 2000; i++){
+                QString uri = m_waiting_update_queue.takeFirst();
+                list.append(uri);
+            }
+        }else{
+            list.swap(m_waiting_update_queue);
+        }
+        Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Change);
+        if (m_waiting_update_queue.size()>0 && !m_changeChildTimer->isActive()) {
+            m_changeChildTimer->start();
+        }
+    });
 }
 
 void FileItem::clearChildren()

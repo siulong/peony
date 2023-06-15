@@ -27,8 +27,10 @@
 #include "peony-core_global.h"
 #include <QThread>
 
-namespace Peony {
 
+
+namespace Peony {
+class GlobalSettings;
 class FileItem;
 class FileItemProxyFilterSortModel;
 class FileInfo;
@@ -70,6 +72,12 @@ public:
         UriRole = Qt::UserRole
     };
     Q_ENUM(ItemRole)
+
+    enum OperateType {
+        Add,
+        Change
+    };
+    Q_ENUM(OperateType)
 
     explicit FileItemModel(QObject *parent = nullptr);
     ~FileItemModel() override;
@@ -253,7 +261,7 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void thumbnailUpdated(const QString& uri);
 
-    void setUrisForBatchQueryInfos(const QStringList& uris);
+    void setUrisForBatchQueryInfos(const QStringList& uris, /*OperateType*/int operate);
 
 public Q_SLOTS:
     /*!
@@ -295,14 +303,14 @@ public:
     explicit FileManagerThread();
     ~FileManagerThread();
 
-    void batchQueryFileInfos(const QStringList& uris);
+    void batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/ int operateType);
 
 protected:
     void run() override;
 
 
 Q_SIGNALS:
-    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos);
+    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos, /*FileItemModel::OperateType*/int operateType);
 };
 
 

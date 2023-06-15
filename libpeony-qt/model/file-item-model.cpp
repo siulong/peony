@@ -777,7 +777,7 @@ FileManagerThread::~FileManagerThread()
 {
 }
 
-void FileManagerThread::batchQueryFileInfos(const QStringList& uris)
+void FileManagerThread::batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/int operateType)
 {
     QStringList originalList = uris; // 原始列表
     int chunkSize = 2000; // 每个列表的大小
@@ -801,7 +801,7 @@ void FileManagerThread::batchQueryFileInfos(const QStringList& uris)
         infoJob->setAutoDelete();
         auto retFileInfos = infoJob->batchQuerySync();
         //qDebug()<<"22222222222222222"<<uris.size()<<queryUris.size()<<retFileInfos.size();
-        Q_EMIT finishQueryFileInfos(retFileInfos);
+        Q_EMIT finishQueryFileInfos(retFileInfos, operateType);
     }
 }
 
