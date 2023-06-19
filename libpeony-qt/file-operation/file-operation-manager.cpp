@@ -312,6 +312,11 @@ start:
 
 
     connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
+        // fix #171449
+        if (m_progressbar->isHidden()) {
+            m_progressbar->m_error = true;
+        }
+
         //story 19796 空间不足时预处理
         // Check if the operation is a copy or move operation
         auto info = operation->getOperationInfo();
@@ -401,6 +406,9 @@ start:
         totalInfo.preoccupationSize -= total_file_size;
         m_mount_operation_list->insert(mountRootName, totalInfo);
         m_operation_use_list->insert(operation, opertionInfo);
+
+        m_progressbar->m_error = false;
+        m_progressbar->showDelay(300);
     }, Qt::BlockingQueuedConnection);
 
     auto opType = operationInfo->operationType();
