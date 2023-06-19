@@ -92,6 +92,8 @@ void RecentAndTrashPropertiesPage::init()
         iconName = getIconName();
     }
     auto icon = new QPushButton(QIcon::fromTheme(iconName), nullptr, this);
+    icon->setFocusPolicy(Qt::NoFocus);
+    icon->setAttribute(Qt::WA_TransparentForMouseEvents);
     icon->setIconSize(QSize(48, 48));
     icon->setProperty("isIcon", true);
 

@@ -436,6 +436,8 @@ void BasicPropertiesPage::loadPartOne()
 
     if (fileUri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
         disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
+        m_iconButton->setFocusPolicy(Qt::NoFocus);
+        m_iconButton->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 }
 
