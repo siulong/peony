@@ -2649,35 +2649,46 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
             }
         }
 
-        QHash<QString, QRect> dragItem;
         if (bDropToOtherScreen) {
             QRegion notEmptyRegion;
             for (int i = 0; i < m_proxy_model->rowCount(); i++) {
                 auto tmp = m_proxy_model->index(i, 0);
-                notEmptyRegion += QListView::visualRect(tmp);
+                QRect rect = getDataRect(tmp);
+                notEmptyRegion += rect;
             }
+
             auto grid = this->gridSize();
             QRect viewRect = getViewRect();
             QPoint startPos = view->visualRect(m_drag_indexes[0]).topLeft();
             for (QModelIndex index : m_drag_indexes) {
+                bool isOverRect = false;
+                QRect dataRect = view->getDataRect(index);
                 QRect rect = view->visualRect(index);
                 QPoint relativePos = QPoint(rect.topLeft().x() - startPos.x(),rect.topLeft().y() - startPos.y());
                 QPoint currentPos = e->pos() + relativePos;
                 int x = currentPos.x()/grid.width()*grid.width();
                 int y = currentPos.y()/grid.height()*grid.height()+viewRect.topLeft().y();
                 rect.moveTo(QPoint(x,y));
-                dragItem.insert(index.data(Qt::UserRole).toString(),rect);
-            }
-            QHashIterator<QString, QRect> i(dragItem);
-            while (i.hasNext()) {
-                i.next();
-                QRect rect3 = i.value();
-                if (notEmptyRegion.contains(rect3.center())) {
-                    auto  next= i.value();
+                dataRect.moveTo(QPoint(x,y));
+                QRect gridRect = rect;
+                gridRect.setSize(grid);
+                if (!this->viewport()->rect().contains(gridRect)) {
+                    if (isFull()) {
+                        rect.moveTo(0, 0);
+                        setFileMetaInfoPos(index.data(Qt::UserRole).toString(), rect.topLeft());
+                        continue;
+                    } else {
+                        rect.moveTo(0, viewRect.topLeft().y());
+                        isOverRect = true;
+                    }
+                }
+
+                if (notEmptyRegion.contains(dataRect)) {
+                    auto next = rect;
                     bool isEmptyPos = false;
                     while (!isEmptyPos) {
                         next.translate(0, grid.height());
-                        if (next.bottom() > viewRect.bottom()) {
+                        if (next.top() + gridSize().height() > viewRect.bottom()) {
                             int top = next.y();
                             while (true) {
                                 if (top < gridSize().height()) {
@@ -2687,6 +2698,17 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
                             }
                             //put item to next column first column
                             next.moveTo(next.x() + grid.width(), top);
+                            if (next.left()+grid.width() > this->viewport()->rect().right()) {
+                                if (isFull() || isOverRect) {
+                                    next.moveTo(0, 0);
+                                    isEmptyPos = true;
+                                    setFileMetaInfoPos(index.data(Qt::UserRole).toString(), next.topLeft());
+                                    continue;
+                                } else {
+                                    next.moveTo(0, top);
+                                    isOverRect = true;
+                                }
+                            }
                         }
                         if (notEmptyRegion.contains(next.center())) {
                             continue;
@@ -2694,13 +2716,13 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
 
                         isEmptyPos = true;
 
-                        setFileMetaInfoPos(i.key(), next.topLeft());
+                        setFileMetaInfoPos(index.data(Qt::UserRole).toString(), next.topLeft());
                         notEmptyRegion += next;
                     }
                 }
                 else{
-                    setFileMetaInfoPos(i.key(), i.value().topLeft());
-                    notEmptyRegion += i.value();
+                     setFileMetaInfoPos(index.data(Qt::UserRole).toString(), rect.topLeft());
+                     notEmptyRegion += rect;
                 }
             }
 
