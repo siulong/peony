@@ -162,6 +162,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
                 auto widget = qobject_cast<QWidget *>(watched);
                 auto topLevel = widget->topLevelWidget();
                 topLevel->windowHandle()->startSystemMove();
+                m_is_draging = false;
 #else
                 //auto me = static_cast<QMouseEvent *>(event);
                 auto widget = qobject_cast<QWidget *>(watched);
