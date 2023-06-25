@@ -153,25 +153,17 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     auto renameIcon = new QLabel;
     renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
 
-    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
-        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-            if("iconThemeName" == key){
-                labelIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
-                renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
-            }
-        });
-    }
-
-    gridLayout2->addWidget(renameIcon, 0, 0, Qt::AlignTop|Qt::AlignLeft);
+    gridLayout2->addWidget(renameIcon, 0, 0, Qt::AlignVCenter|Qt::AlignLeft);
     auto label2 = new QLabel;
     label2->setText(tr("Please enter a new name"));
-    gridLayout2->addWidget(label2, 0, 1, Qt::AlignLeft);
+    gridLayout2->addWidget(label2, 0, 1, Qt::AlignVCenter|Qt::AlignLeft);
     auto textEdit = new RenameEditor;
     textEdit->setBackgroundRole(QPalette::Button);
     textEdit->setAutoFillBackground(true);
     textEdit->viewport()->setBackgroundRole(QPalette::Button);
     textEdit->viewport()->setAutoFillBackground(true);
+    int height = qApp->fontMetrics().height() * 3 + 1;
+    textEdit->setFixedHeight(height);
     gridLayout2->addWidget(textEdit, 1, 1, Qt::AlignTop);
     auto buttonBox2 = new QDialogButtonBox;
     buttonBox2->setStandardButtons(QDialogButtonBox::NoButton);
@@ -210,6 +202,23 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     //textEdit->setFocus();
 
     stack->setCurrentWidget(page1);
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key){
+                labelIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
+                renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
+            } else if ("systemFont" == key || "systemFontSize" == key) {
+                QFontMetrics font = qApp->fontMetrics();
+                int leading = qAbs(font.leading());
+                int height = (font.boundingRect(textEdit->toPlainText()).height() + leading) * 3;
+                textEdit->setFixedHeight(height);
+                textEdit->setTextCursor(cursor);
+                this->repaint();
+
+            }
+        });
+    }
     connect(rename, &QPushButton::clicked, this, [=]{
         setFixedHeight(300);
         stack->setCurrentWidget(page2);
@@ -237,6 +246,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     if (!exec()) {
         error.respCode = responseCode;
     }
+
 }
 
 #endif
