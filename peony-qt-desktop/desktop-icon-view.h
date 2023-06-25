@@ -121,6 +121,9 @@ public:
     void UpdateToEditUris(QStringList uris);
     QRect getDataRect(const QModelIndex &index);
 
+    // only used in model refresh.
+    void clearCache();
+
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);

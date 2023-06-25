@@ -557,6 +557,7 @@ void DesktopItemModel::refreshInternal()
     }
     m_files.clear();
     m_enumerator = new FileEnumerator(this);
+    connect(this, &DesktopItemModel::prepareRefresh, m_enumerator, &FileEnumerator::cancel, Qt::DirectConnection);
     m_enumerator->setAutoDelete();
     QString desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     m_enumerator->setEnumerateDirectory(desktopUri);
@@ -634,8 +635,21 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void DesktopItemModel::onEnumerateFinished()
+void DesktopItemModel::onEnumerateFinished(bool successed)
 {
+    if (!successed) {
+        qWarning()<<"failed to enumerate desktop";
+        beginResetModel();
+        m_files.clear();
+        endResetModel();
+        return;
+    }
+
+    // check if there is info querying, if true, wait querying finished.
+    while (!m_querying_files.isEmpty()) {
+        qApp->processEvents();
+    }
+
     //beginResetModel();
     beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
     m_files.clear();
@@ -659,11 +673,25 @@ void DesktopItemModel::onEnumerateFinished()
     //this->endResetModel();
     for (auto info : infos) {
         auto asyncJob = new FileInfoJob(info);
-        connect(asyncJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+        connect(this, &DesktopItemModel::prepareRefresh, asyncJob, [=]{
+            asyncJob->cancel();
+            asyncJob->setProperty("isCancelled", true);
+        }, Qt::DirectConnection);
+        connect(asyncJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
             m_querying_files.removeOne(info);
+            if (!successed) {
+                m_files.removeOne(info);
+            }
+
+            if (asyncJob->property("isCancelled").toBool()) {
+                // quit loop to avoid invalid data inserted;
+                return;
+            }
+
             if (m_querying_files.isEmpty()) {
-                beginInsertRows(QModelIndex(), 0, m_files.count() - 1);
-                endInsertRows();
+                if (!m_files.isEmpty()) {
+                    beginInsertRows(QModelIndex(), 0, m_files.count() - 1);
+                    endInsertRows();
 
                 for (auto info : m_files) {
                     auto uri = info->uri();
@@ -675,10 +703,11 @@ void DesktopItemModel::onEnumerateFinished()
                         view->ensureItemPosByUri(uri);
                     }
 
-                    if (info->isDesktopFile()) {
-                        ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
-                    } else {
-                        ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                        if (info->isDesktopFile()) {
+                            ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
+                        } else {
+                            ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                        }
                     }
                 }
 
@@ -950,12 +979,26 @@ Qt::DropActions DesktopItemModel::supportedDragActions() const
 
 void DesktopItemModel::refresh()
 {
+    Q_EMIT prepareRefresh();
+
+    beginResetModel();
+    m_files.clear();
+    m_items_need_relayout.clear();
+    auto app = static_cast<PeonyDesktopApplication *>(qApp);
+    app->clearViewCache();
+    endResetModel();
+
     m_desktop_info = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     auto infoJob = new FileInfoJob(m_desktop_info);
     infoJob->setAutoDelete();
-    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
-        refreshInternal();
+    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+        if (successed) {
+            refreshInternal();
+        } else {
+            qWarning()<<"desktop model refreshs: can not query desktop info"<<m_desktop_info->uri();
+        }
     });
+    connect(this, &DesktopItemModel::prepareRefresh, infoJob, &FileInfoJob::cancel, Qt::DirectConnection);
     infoJob->queryAsync();
 }
 

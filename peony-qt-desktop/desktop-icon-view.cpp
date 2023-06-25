@@ -2502,6 +2502,12 @@ void DesktopIconView::clearAllRestoreInfo()
     m_resolution_item_rect.clear();
 }
 
+void DesktopIconView::clearCache()
+{
+    m_item_rect_hash.clear();
+    m_resolution_item_rect.clear();
+}
+
 bool DesktopIconView::execSharedFileLink(const QString uri)
 {
     auto info = FileInfo::fromUri(uri);

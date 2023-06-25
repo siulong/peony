@@ -89,11 +89,13 @@ Q_SIGNALS:
 
    // void fileCreated(const QString &uri);
 
+    void prepareRefresh();
+
 public Q_SLOTS:
     void refresh();
 
 protected Q_SLOTS:
-    void onEnumerateFinished();
+    void onEnumerateFinished(bool successed);
     void clearFloatItems();
 
 private:
