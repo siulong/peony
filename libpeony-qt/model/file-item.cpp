@@ -239,7 +239,7 @@ void FileItem::findChildrenAsync()
     //the root item will be delete, so we should cancel the previous enumeration.
     enumerator->connect(this, &FileItem::cancelFindChildren, enumerator, &FileEnumerator::cancel);
     enumerator->connect(enumerator, &FileEnumerator::cancelled, m_model, [=](){
-        if (enumerator->getEnumerateUri() != this->uri()) {
+        if (enumerator->getEnumerateUri() != m_model->getRootUri()) {
             // try fix #164883, error cusor while searching
             return;
         }
