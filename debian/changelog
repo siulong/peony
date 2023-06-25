@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0625) yangtze; urgency=medium
+
+  * 尝试修复wayland下窗管窗口移动处理异常问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Sun, 25 Jun 2023 11:25:22 +0800
+
 peony (4.0.0.0-ok2~0606) yangtze; urgency=medium
 
   * close-cd#I6YEV4【显示器】扩展模式副屏壁纸截断, 在x模式下，刚接入时获取的kscreen大小不对
