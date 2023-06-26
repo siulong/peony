@@ -38,6 +38,9 @@
 
 #include "emblem-provider.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include <QIcon>
 #include <QMimeData>
@@ -49,6 +52,9 @@
 #include <QGSettings>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
 {
@@ -669,7 +675,11 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
     connect(op, &FileOperation::operationFinished, this, [=](){
-        Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+        kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
         auto opInfo = op->getOperationInfo();
         auto targetUris = opInfo.get()->dests();
         Q_EMIT this->selectRequest(targetUris);

@@ -42,6 +42,9 @@
 #include "file-untrash-operation.h"
 #include "file-delete-operation.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include "file-utils.h"
 #include "bookmark-manager.h"
@@ -76,6 +79,9 @@
 #include <QDebug>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 DirectoryViewMenu::DirectoryViewMenu(DirectoryViewWidget *directoryView, QWidget *parent) : QMenu(parent)
 {
@@ -1128,15 +1134,23 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 if (m_selections.count() == 1) {
                     auto untrashop = FileOperationUtils::restore(m_selections.first());
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+                            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
                         });
                     }
                 } else {
                     auto untrashop = FileOperationUtils::restore(m_selections);
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+                            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
                         });
                     }
                 }

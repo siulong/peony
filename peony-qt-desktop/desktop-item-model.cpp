@@ -41,6 +41,9 @@
 #include "desktop-icon-view.h"
 #include "global-settings.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 #include "desktop-icon-view-delegate.h"
 #include "desktop-menu-plugin-manager.h"
 #include "emblem-provider.h"
@@ -58,6 +61,9 @@
 #include <QDebug>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 DesktopItemModel::DesktopItemModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -956,7 +962,11 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
         auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
         op->connect(op, &FileOperation::operationFinished, this, [=](){
-            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
         });
     }
 

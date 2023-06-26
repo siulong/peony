@@ -48,6 +48,9 @@
 
 #include "properties-window.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include <QVector4D>
 
@@ -55,6 +58,9 @@
 #include <unistd.h>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 static FileOperationManager *global_instance = nullptr;
 
@@ -511,7 +517,11 @@ start:
                //fix bug#162024, play sound when operation finished
                if (info->operationType() == FileOperationInfo::Copy ||
                    info->operationType() == FileOperationInfo::Move){
-                   SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                   //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                   //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+                   kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
                }
 
                m_undo_stack.push(info);

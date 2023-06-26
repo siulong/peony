@@ -25,11 +25,17 @@
 
 #include "gerror-wrapper.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include <QUrl>
 #include <QProcess>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 FileLinkOperation::FileLinkOperation(QString srcUri, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
@@ -96,7 +102,11 @@ retry:
         }
     }
     else{
-        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+        kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
     }
 
     g_file_set_display_name(destFile.get()->get(), QUrl::fromPercentEncoding(m_dest_uri.split("/").last().toUtf8()).toUtf8().constData(), nullptr, nullptr);

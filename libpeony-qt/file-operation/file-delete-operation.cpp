@@ -25,11 +25,17 @@
 #include "file-node.h"
 #include "file-node-reporter.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 #include <QApplication>
 #include <QStandardPaths>
 #include <QProcess>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 FileDeleteOperation::FileDeleteOperation(QStringList sourceUris, QObject *parent) : FileOperation(parent)
 {
@@ -204,7 +210,11 @@ void FileDeleteOperation::run()
 
     qApp->property("clearTrash");
     if(true == qApp->property("clearTrash").toBool()){
-        Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+        //Peony::SoundEffect::getInstance()->recycleBinClearMusic();
+        //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+        kdk::KSoundEffects::playSound(SoundType::TRASH_EMPTY);
+#endif
     }
 }
 

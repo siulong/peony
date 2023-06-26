@@ -31,8 +31,15 @@
 #include <file-utils.h>
 #include <QStyleOptionViewItem>
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include "file-operation-dialog/kyfiledialogrename.h"
+
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
@@ -221,7 +228,11 @@ Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
 void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &error)
 {
     m_error = &error;
-    SoundEffect::getInstance()->copyOrMoveFailedMusic();
+    //SoundEffect::getInstance()->copyOrMoveFailedMusic();
+    //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::OPERATION_UNSUPPORTED);
+#endif
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         auto errorText = m_error->errorStr;
