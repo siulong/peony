@@ -31,7 +31,7 @@
 #include <QAbstractItemView>
 #include <QTimer>
 #include <QDBusInterface>
-
+#include <QThread>
 
 #include "peony-core_global.h"
 
@@ -45,6 +45,7 @@ class GlobalSettings;
 
 class FileItem;
 class FileItemModel;
+class FilesSortThread;
 
 class PEONYCORESHARED_EXPORT FileItemProxyFilterSortModel : public QSortFilterProxyModel
 {
@@ -90,6 +91,8 @@ public:
     const QString Audio_Type = "audio/";
 
     explicit FileItemProxyFilterSortModel(QObject *parent = nullptr);
+    virtual ~FileItemProxyFilterSortModel();
+
     void setSourceModel(QAbstractItemModel *model) override;
     void setShowHidden(bool showHidden);
     void setUseDefaultNameSortOrder(bool use);
@@ -121,6 +124,7 @@ public:
     QAbstractItemView::SelectionMode getSelectionModeHint();
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+    void sortAsync(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
     int expectedSortType();
     Qt::SortOrder expectedSortOrder();
@@ -138,6 +142,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void setSelectionModeChanged();
+    void setOrderParam(int column, Qt::SortOrder order);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
@@ -185,6 +190,28 @@ private:
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
 
     QDBusInterface *mDbusPeonyServer = nullptr;
+    FilesSortThread* m_sortThread = nullptr;
+};
+
+/* 创建一个自定义的后台排序线程类 */
+class FilesSortThread : public QThread {
+    Q_OBJECT
+
+public:
+    FilesSortThread(FileItemProxyFilterSortModel* model);
+
+    void run() override;
+
+public Q_SLOTS:
+    void executeSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);
+
+Q_SIGNALS:
+    void sortingFinished();
+
+private:
+    FileItemProxyFilterSortModel* m_model;
+    int m_sortColumn;
+    Qt::SortOrder m_sortOrder;
 };
 
 }
