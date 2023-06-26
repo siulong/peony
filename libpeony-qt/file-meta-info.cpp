@@ -171,10 +171,15 @@ const QVariant FileMetaInfo::getMetaInfoVariant(const QString &key)
     QString realKey = key;
     if (!key.startsWith("metadata::"))
         realKey = "metadata::" + key;
-    QMutexLocker l(&m_mutex);
-    if (m_meta_hash.contains(realKey) && m_meta_hash.value(realKey).isValid())
-        return m_meta_hash.value(realKey);
+    //QMutexLocker l(&m_mutex);
+    m_mutex.lock();
+    if (m_meta_hash.contains(realKey) && m_meta_hash.value(realKey).isValid()){
+        QVariant value = m_meta_hash.value(realKey);
+        m_mutex.unlock();
+        return value;
+    }
     //FIXME: should i use gio query meta here?
+    m_mutex.unlock();
     return QVariant();
 }
 
