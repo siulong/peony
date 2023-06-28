@@ -74,10 +74,15 @@ void DirectoryViewFactoryManager2::registerFactory(const QString &name, Director
 
 void DirectoryViewFactoryManager2::unregisterFactory(const QString &name, DirectoryViewPluginIface2 *factory)
 {
-    if (m_hash->value(name)) {
-        auto value = m_hash->take(name);
-        delete value;
+//    if (m_hash->value(name)) {
+//        auto value = m_hash->take(name);
+//        delete value;
+//    }
+    if (!m_hash->contains(name)) {
+        return;
     }
+    auto value = m_hash->take(name);
+    delete value;
 }
 
 QStringList DirectoryViewFactoryManager2::getFactoryNames()
@@ -87,6 +92,9 @@ QStringList DirectoryViewFactoryManager2::getFactoryNames()
 
 DirectoryViewPluginIface2 *DirectoryViewFactoryManager2::getFactory(const QString &name)
 {
+    if (m_hash->value(name) == nullptr) {
+        return nullptr;
+    }
     return m_hash->value(name);
 }
 
