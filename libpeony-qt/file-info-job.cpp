@@ -291,6 +291,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
     }
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
+    info->m_finalDisplayName = info->getFinalDisplayName();
     if (info->isDesktopFile()) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
@@ -333,6 +334,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
 
             info->m_display_name = name;
         }
+        info->m_finalDisplayName = info->getFinalDisplayName();
 
         g_key_file_free(desktop_key_file);
 
@@ -530,6 +532,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         auto targetInfo = FileInfo::fromUri(info->m_target_uri);
         FileInfoJob j(targetInfo);
         j.querySync();
+        info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
         info->m_display_name = targetInfo.get()->displayName();
     }
 

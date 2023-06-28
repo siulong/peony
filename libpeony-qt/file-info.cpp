@@ -271,6 +271,47 @@ quint64 FileInfo::getDeletionDateUInt64()
     return m_deletion_date_uint64;
 }
 
+const QString FileInfo::getFinalDisplayName()
+{
+    if (isEmptyInfo())
+        return nullptr;
+
+    bool isMountPoint;
+    QString unixDevice,deviceName;
+
+    unixDevice = unixDeviceFile();
+    isMountPoint = FileUtils::isMountPoint(m_uri);
+
+    QString targetUri = FileUtils::getTargetUri(m_uri);
+    if(m_uri == "file:///DATA"
+            || m_uri == "file:///data"
+            || targetUri == "file:///data")
+    {
+        return tr("data");
+    }
+
+    if((nullptr != m_display_name)
+            && (!isMountPoint
+                || unixDevice.isEmpty()  /*@m_uri is like "computer:///xxx"*/
+                || !unixDevice.contains("/dev")  /*audio-cd*/
+                || unixDevice.contains("/dev/sr"))) { /*blank-cd or blank-dvd*/
+         return m_display_name;
+    }
+
+    if (m_uri.endsWith("/")) {
+        QString uri = m_uri;
+        if (!m_uri.endsWith(":///") && !m_uri.endsWith("://")) {
+            uri.chop(1);
+        }
+        return uri.split("/").last();
+    }
+
+    //@deviceName transcoding
+    deviceName = m_display_name;
+    FileUtils::handleVolumeLabelForFat32(deviceName,unixDevice);
+    return deviceName;
+}
+
 const QString FileInfo::unixDeviceFile()
 {
     GFile* file;
@@ -312,42 +353,7 @@ const QString FileInfo::unixDeviceFile()
 
 const QString FileInfo::displayName()
 {
-    if (isEmptyInfo())
-        return nullptr;
-    bool isMountPoint;
-    QString unixDevice,deviceName;
-
-    unixDevice = unixDeviceFile();
-    isMountPoint = FileUtils::isMountPoint(m_uri);
-
-    QString targetUri = FileUtils::getTargetUri(m_uri);
-    if(m_uri == "file:///DATA"
-            || m_uri == "file:///data"
-            || targetUri == "file:///data")
-    {
-        return tr("data");
-    }
-
-    if((nullptr != m_display_name)
-            && (!isMountPoint
-                || unixDevice.isEmpty()  /*@m_uri is like "computer:///xxx"*/
-                || !unixDevice.contains("/dev")  /*audio-cd*/
-                || unixDevice.contains("/dev/sr"))) { /*blank-cd or blank-dvd*/
-         return m_display_name;
-    }
-
-    if (m_uri.endsWith("/")) {
-        QString uri = m_uri;
-        if (!m_uri.endsWith(":///") && !m_uri.endsWith("://")) {
-            uri.chop(1);
-        }
-        return uri.split("/").last();
-    }
-
-    //@deviceName transcoding
-    deviceName = m_display_name;
-    FileUtils::handleVolumeLabelForFat32(deviceName,unixDevice);
-    return deviceName;
+    return m_finalDisplayName;
 }
 
 QString FileInfo::displayFileType()
