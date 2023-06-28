@@ -47,6 +47,7 @@
 #include "directory-view-container.h"
 #include "file-meta-info.h"
 #include "file-utils.h"
+#include "extensions-manager-widget.h"
 
 OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent)
 {
@@ -181,6 +182,11 @@ setPasswd:
     });
     showFoldersInNewWindow->setCheckable(true);
     showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
+
+    addAction(tr("Plugin manager Settings"), this, [=](){
+        Peony::ExtensionsManagerWidget *widget = new Peony::ExtensionsManagerWidget;
+        widget->show();
+    });
 
     addSeparator();
 
