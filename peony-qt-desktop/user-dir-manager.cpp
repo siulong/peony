@@ -51,9 +51,7 @@ UserdirManager::UserdirManager(QObject *parent) : QObject(parent)
     m_showTrashDialog = m_settings->value(SHOW_TRASH_DIALOG).toBool();
     m_user_dir_watcher = new QFileSystemWatcher(this);
 
-    m_user_path = "/home/"+m_user_name;
-    if (m_user_name == "root")
-        m_user_path = "/root";
+    m_user_path = g_get_home_dir();
     QString path0 = QString(m_user_path +"/.config/user-dirs.dirs");
     QString path1 = QString(m_user_path +"/.config/org.ukui/peony-qt-preferences.conf");
 
