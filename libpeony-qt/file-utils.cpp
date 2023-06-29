@@ -1259,7 +1259,7 @@ QString FileUtils::handleSpecialSymbols(const QString &displayName)
 
 QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 {
-    QString fsType = "";
+    QString fsType = "ext";
 
     g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
     g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
@@ -1275,6 +1275,12 @@ QString FileUtils::getFsTypeFromFile(const QString &fileUri)
         return fsType;
 
     QString unixDevice = unix_file;
+
+    // try fix #179725
+    if (unixDevice.startsWith("/dev/dm")) {
+        return "ext";
+    }
+
     QString dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
     if (! QDBusConnection::systemBus().isConnected())
         return fsType;
