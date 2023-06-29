@@ -293,9 +293,10 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
             //trash files show delete Date
             if (m_root_uri.startsWith("trash://") && !item->m_info->deletionDate().isNull()) {
-                QDateTime deleteTime = QDateTime::fromMSecsSinceEpoch(item->m_info->deletionTime (), Qt::LocalTime);
-                QString format = GlobalSettings::getInstance()->getSystemTimeFormat();
-                return QVariant(deleteTime.toString(format));
+//                QDateTime deleteTime = QDateTime::fromMSecsSinceEpoch(item->m_info->deletionTime (), Qt::LocalTime);
+//                QString format = GlobalSettings::getInstance()->getSystemTimeFormat();
+                //use sdk interface to get time format
+                return QVariant(item->m_info->deletionDate());
             }
             return QVariant(item->m_info->modifiedDate());
         default:

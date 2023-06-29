@@ -176,24 +176,39 @@ void RecentAndTrashPropertiesPage::init()
                                      nullptr,
                                      nullptr);
 
+            //use sdk interface to get time format
             QString deletion_date = m_fileInfo->deletionDate();
             quint64 delete_width = FIXED_ROW_WIDTH - delete_label->fontMetrics().width(tr("Deletion Date: "));
             delete_label->setText(label->fontMetrics().elidedText(deletion_date, Qt::ElideMiddle, delete_width));
             delete_label->setWordWrap(true);
 
-            if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
-                QGSettings *settings = new QGSettings("org.ukui.control-center.panel.plugins", "", this);
-                connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-                    if(key == "date" || "hoursystem" == key) {
-                        QDateTime deleteTime = QDateTime::fromMSecsSinceEpoch(m_fileInfo->deletionTime (), Qt::LocalTime);
-                        QString format = GlobalSettings::getInstance()->getSystemTimeFormat();
-                        QString deletion_date = deleteTime.toString(format);
-                        quint64 delete_width = FIXED_ROW_WIDTH - delete_label->fontMetrics().width(tr("Deletion Date: "));
-                        delete_label->setText(label->fontMetrics().elidedText(deletion_date, Qt::ElideMiddle, delete_width));
-                        delete_label->setWordWrap(true);
-                    }
-                });
-            }
+            //no need of old way
+//            if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
+//                QGSettings *settings = new QGSettings("org.ukui.control-center.panel.plugins", "", this);
+//                connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+//                    if(key == "date") {
+//                        QString current_text = delete_label->text();
+//                        QString new_date_type = settings->get("date").toString();
+//                        //cn : 1999/11/11
+//                        //en : 1999-11-11
+//                        if ((new_date_type == "cn") && current_text.contains("-")) {
+//                            delete_label->setText(current_text.replace("-", "/"));
+
+//                        } else if ((new_date_type == "en") && current_text.contains("/")) {
+//                            delete_label->setText(current_text.replace("/", "-"));
+//                        }
+//                    }
+//                });
+
+//                QString current_text = delete_label->text();
+//                QString new_date_type = settings->get("date").toString();
+//                if ((new_date_type == "cn") && current_text.contains("-")) {
+//                    delete_label->setText(current_text.replace("-", "/"));
+
+//                } else if ((new_date_type == "en") && current_text.contains("/")) {
+//                    delete_label->setText(current_text.replace("/", "-"));
+//                }
+//            }
 
             g_object_unref(info);
             g_object_unref(file);

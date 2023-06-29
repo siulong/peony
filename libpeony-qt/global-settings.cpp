@@ -33,6 +33,9 @@
 #include <QApplication>
 #include <QPalette>
 #include <QScreen>
+#ifdef KY_SDK_DATE
+#include <kysdk/kysdk-system/libkydate.h>
+#endif
 
 #ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
@@ -465,6 +468,55 @@ QString GlobalSettings::getSystemTimeFormat()
     //m_system_time_format = m_date_format + " " + m_time_format;
     return m_system_time_format;
 }
+
+QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
+{
+    QDateTime dateTime = QDateTime::fromMSecsSinceEpoch(mtime *1000);
+    QString systemTimeFormat = GlobalSettings::getInstance()->getSystemTimeFormat();
+
+#ifdef KY_SDK_DATE
+    struct tm *m_tm;
+    time_t lt;
+    lt = time(NULL);
+    m_tm = localtime(&lt);
+
+    QDate date = dateTime.date();
+    QTime qtime = dateTime.time();
+
+    m_tm->tm_year = date.year();
+    m_tm->tm_mon = date.month();
+    m_tm->tm_mday = date.day();
+
+    m_tm->tm_hour = qtime.hour();
+    m_tm->tm_min = qtime.minute();
+    m_tm->tm_sec = qtime.second();
+    qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
+    //set date and time show format, task #101605
+    auto ret = kdk_system_timeformat_transform(m_tm);
+    auto formatDate = kdk_system_shortformat_transform(m_tm);
+    //sdk接口会改变结构体数据，需要重初始化要使用的日期数据
+    //属于接口缺陷，已跟SDK接口负责人沟通，先使用此方式
+    m_tm->tm_year = date.year();
+    m_tm->tm_mon = date.month();
+    m_tm->tm_mday = date.day();
+    if (longFormat)
+        formatDate = kdk_system_longformat_transform(m_tm);
+    if (ret && formatDate){
+        QString dateStr = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
+        //释放结构体
+        kdk_free_timeinfo(ret);
+
+        //use sdk interface
+        if (dateStr.trimmed().length() > 0)
+            return dateStr;
+    }
+#endif
+
+    //old way of date, processed by self
+    return dateTime.toString(systemTimeFormat);
+}
+
 void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
 {
     if (!m_peony_gsettings)

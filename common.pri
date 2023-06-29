@@ -45,3 +45,8 @@ exists("/usr/include/kysdk/desktop/kysdk-soundeffects_global.h") {
     DEFINES += KY_SDK_SOUND_EFFECTS
     PKGCONFIG += kysdk-soundeffects
 }
+
+exists("/usr/include/kysdk/kysdk-system/libkydate.h") {
+    DEFINES += KY_SDK_DATE
+    PKGCONFIG += kysdk-systime
+}

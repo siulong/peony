@@ -33,6 +33,7 @@
 #include "linux-pwd-helper.h"
 #include "global-settings.h"
 #include "file-watcher.h"
+#include "global-settings.h"
 
 using namespace Peony;
 
@@ -206,14 +207,39 @@ void DetailsPropertiesPage::initDetailsPropertiesPage()
     // set time
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
         if (UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME == key) {
-            if ("12" == GlobalSettings::getInstance()->getValue(key)) {
-                setSystemTimeFormat(tr("yyyy-MM-dd, hh:mm:ss AP"));
-            } else if ("24" == GlobalSettings::getInstance()->getValue(key)) {
-                setSystemTimeFormat(tr("yyyy-MM-dd, HH:mm:ss"));
-            }
+//            if ("12" == GlobalSettings::getInstance()->getValue(key)) {
+//                setSystemTimeFormat(tr("yyyy-MM-dd, hh:mm:ss AP"));
+//            } else if ("24" == GlobalSettings::getInstance()->getValue(key)) {
+//                setSystemTimeFormat(tr("yyyy-MM-dd, HH:mm:ss"));
+//            }
             updateFileInfo(m_fileInfo.get()->uri());
         }
     });
+
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "LongDateSignal",
+                                          this,
+                                          SLOT(updateDateFormat(QString)));
+#endif
 
     //size
     this->addRow(tr("File size:"),m_fileInfo->fileSize());
@@ -265,6 +291,16 @@ void DetailsPropertiesPage::setSystemTimeFormat(QString format)
     this->m_systemTimeFormat = format;
 }
 
+void DetailsPropertiesPage::updateDateFormat(QString dateFormat)
+{
+    //update date and time show format, task #101605
+    qDebug() << "sdk format signal:"<<dateFormat;
+    if (m_date_format != dateFormat){
+        updateFileInfo(m_fileInfo.get()->uri());
+        m_date_format = dateFormat;
+    }
+}
+
 void DetailsPropertiesPage::updateFileInfo(const QString &uri)
 {
     this->getFIleInfo();
@@ -311,8 +347,9 @@ void DetailsPropertiesPage::updateFileInfo(const QString &uri)
         g_object_unref(file);
 
         quint64 timeNum2 = g_file_info_get_attribute_uint64(info,"time::modified");
-        QDateTime date2 = QDateTime::fromMSecsSinceEpoch(timeNum2*1000);
-        QString time2 = date2.toString(m_systemTimeFormat);
+//        QDateTime date2 = QDateTime::fromMSecsSinceEpoch(timeNum2*1000);
+//        QString time2 = date2.toString(m_systemTimeFormat);
+        QString time2 = GlobalSettings::getInstance()->transToSystemTimeFormat(timeNum2, true);
         m_modifyDateLabel->setText(time2);
 
         g_object_unref(info);

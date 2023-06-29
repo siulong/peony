@@ -120,6 +120,9 @@
 
 #define FONT_SETTINGS "org.ukui.style"
 
+#include <QDBusConnection>
+#include <QDBusReply>
+
 static MainWindow *last_resize_window = nullptr;
 
 static QWidgetList blur_window_list;
@@ -216,6 +219,31 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
         m_is_blur_window = true;
         KWindowEffects::enableBlurBehind(winId(), true);
     }
+
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "ShortDateSignal",
+                                          this,
+                                          SLOT(updateDateFormat(QString)));
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -228,6 +256,16 @@ MainWindow::~MainWindow()
         settings->setValue(DEFAULT_WINDOW_WIDTH, this->size().width());
         settings->setValue(DEFAULT_WINDOW_HEIGHT, this->size().height());
         last_resize_window = nullptr;
+    }
+}
+
+void MainWindow::updateDateFormat(QString dateFormat)
+{
+    //update date and time show format, task #101605
+    qDebug() << "sdk format signal:"<<dateFormat;
+    if (m_date_format != dateFormat){
+        this->refresh();
+        m_date_format = dateFormat;
     }
 }
 

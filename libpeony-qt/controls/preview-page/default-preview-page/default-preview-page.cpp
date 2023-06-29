@@ -47,6 +47,8 @@
 
 #include <QPainter>
 #include <QGSettings>
+#include <QDBusConnection>
+#include <QDBusReply>
 
 #include "icon-container.h"
 
@@ -119,11 +121,55 @@ DefaultPreviewPage::DefaultPreviewPage(QWidget *parent) : QStackedWidget (parent
             }
         });
     }
+
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "LongDateSignal",
+                                          this,
+                                          SLOT(updateDateFormat(QString)));
+#endif
 }
 
 DefaultPreviewPage::~DefaultPreviewPage()
 {
     cancel();
+}
+
+void DefaultPreviewPage::updateDateFormat(QString dateFormat)
+{
+    //update date and time show format, task #101605
+    qDebug() << "sdk format signal:"<<dateFormat;
+    if (m_date_format != dateFormat){
+        if (m_support && m_preview_tab_widget) {
+            if (m_info) {
+                FileInfoJob* infoJob = new FileInfoJob(m_info, this);
+                infoJob->setAutoDelete(true);
+                connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=] {
+                    m_preview_tab_widget->updateInfo(m_info.get());
+                });
+                infoJob->queryAsync();
+            }
+        }
+        m_date_format = dateFormat;
+    }
 }
 
 bool DefaultPreviewPage::eventFilter(QObject *obj, QEvent *ev)
@@ -346,6 +392,14 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     if (QRegExp("^file:///data/usershare(/{,1})$").exactMatch(info->uri())) {
         displayName = tr("usershare");
     }
+
+    QString accessDate = info->accessDate();
+    QString modifyDate = info->modifiedDate();
+#ifdef KY_SDK_DATE
+    accessDate = GlobalSettings::getInstance()->transToSystemTimeFormat(info->accessTime(), true);
+    modifyDate = GlobalSettings::getInstance()->transToSystemTimeFormat(info->modifiedTime(), true);
+#endif
+
     wrapData(m_display_name_label, displayName);
     m_form_label_map[m_display_name_label] = displayName;
 
@@ -365,11 +419,11 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     wrapData(m_time_create_label, createTime);
     m_form_label_map[m_time_create_label] = createTime;
 
-    wrapData(m_time_access_label, info->accessDate());
-    m_form_label_map[m_time_access_label] = info->accessDate();
+    wrapData(m_time_access_label, accessDate);
+    m_form_label_map[m_time_access_label] = accessDate;
 
-    wrapData(m_time_modified_label, info->modifiedDate());
-    m_form_label_map[m_time_modified_label] = info->modifiedDate();
+    wrapData(m_time_modified_label, modifyDate);
+    m_form_label_map[m_time_modified_label] = modifyDate;
 
     m_file_count_label->setText(tr(""));
     m_form_label_map[m_file_count_label] = "";

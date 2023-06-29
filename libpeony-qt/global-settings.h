@@ -28,6 +28,7 @@
 #include <QMutex>
 
 #include "peony-core_global.h"
+#include <gio/gio.h>
 
 //顶部菜单 - Top menu
 #define RESIDENT_IN_BACKEND         "resident"
@@ -133,6 +134,12 @@
 //dbus
 #define DBUS_STATUS_MANAGER_IF      "com.kylin.statusmanager.interface"
 
+#ifdef KY_SDK_DATE
+#define SDK_DATE_SERVER_PATH "/com/kylin/kysdk/Date"
+#define SDK_DATE_SERVER_SERVICE "com.kylin.kysdk.DateServer"
+#define SDK_DATE_SERVER_INTERFACE "com.kylin.kysdk.DateInterface"
+#endif
+
 class QGSettings;
 
 namespace Peony {
@@ -167,6 +174,7 @@ public Q_SLOTS:
     void setTimeFormat(const QString &value);
     void setDateFormat(const QString &value);
     QString getSystemTimeFormat();
+    QString transToSystemTimeFormat(guint64 mtime, bool longFormat=false);
 
     /*!
      * \brief 通过GSetting保存设置

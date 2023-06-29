@@ -31,6 +31,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QTableWidget>
+#include <QDBusInterface>
 
 namespace Peony {
 
@@ -62,6 +63,9 @@ public:
 Q_SIGNALS:
     void fileInfoReady();
 
+public Q_SLOTS:
+    void updateDateFormat(QString dateFormat);
+
 private:
     QString m_uri = nullptr;
     std::shared_ptr<FileInfo> m_fileInfo = nullptr;
@@ -83,6 +87,9 @@ private:
 
     QLabel *m_localLabel = nullptr;
     QLabel *m_nameLabel = nullptr;
+
+    QString m_date_format = "";
+    QDBusInterface  *mDbusDateServer;
 
     QWidget *createTableRow(QString labelText, QString content);
     QWidget *createTableRow(QString labelText, QLabel *contentLabel);

@@ -159,6 +159,8 @@ public Q_SLOTS:
 
     void updateSearchStatus(bool isSearching);
 
+    void updateDateFormat(QString dateFormat);
+
 protected:
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *e);
@@ -217,6 +219,9 @@ private:
 
     QDBusInterface *m_statusManagerDBus = nullptr;
     bool m_is_blur_window = false;
+
+    QString m_date_format = "";
+    QDBusInterface  *mDbusDateServer;
 };
 
 #endif // MAINWINDOW_H

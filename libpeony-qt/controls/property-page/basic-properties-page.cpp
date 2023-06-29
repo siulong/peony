@@ -495,6 +495,31 @@ void BasicPropertiesPage::loadOptionalData()
         });
     }
 
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "LongDateSignal",
+                                          this,
+                                          SLOT(updateDateFormat(QString)));
+#endif
+
     updateInfo(m_info.get()->uri());
     connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
         this->updateInfo(uri);
@@ -942,6 +967,16 @@ void BasicPropertiesPage::updateCountInfo(bool isDone)
     }
 }
 
+void BasicPropertiesPage::updateDateFormat(QString dateFormat)
+{
+    //update date and time show format, task #101605
+    qDebug() << "sdk format signal:"<<dateFormat;
+    if (m_date_format != dateFormat){
+        updateInfo(m_info->uri());
+        m_date_format = dateFormat;
+    }
+}
+
 void BasicPropertiesPage::updateInfo(const QString &uri)
 {
     //QT获取文件相关时间 ,
@@ -975,15 +1010,17 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
 
             m_timeModified = g_file_info_get_attribute_uint64(info,"time::modified");
             if(m_timeModifiedLabel) {
-                QDateTime date2 = QDateTime::fromMSecsSinceEpoch(m_timeModified*1000);
-                QString time2 = date2.toString(m_systemTimeFormat);
+//                QDateTime date2 = QDateTime::fromMSecsSinceEpoch(m_timeModified*1000);
+//                QString time2 = date2.toString(m_systemTimeFormat);
+                QString time2 = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeModified, true);
                 m_timeModifiedLabel->setText(time2);
             }
 
             if(m_timeAccessLabel) {
                 m_timeAccess = g_file_info_get_attribute_uint64(info,"time::access");
-                QDateTime date3 = QDateTime::fromMSecsSinceEpoch(m_timeAccess*1000);
-                QString time3 = date3.toString(m_systemTimeFormat);
+//                QDateTime date3 = QDateTime::fromMSecsSinceEpoch(m_timeAccess*1000);
+//                QString time3 = date3.toString(m_systemTimeFormat);
+                QString time3 = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeAccess, true);
                 m_timeAccessLabel->setText(time3);
             }
 
@@ -999,8 +1036,9 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
 //                    minTime = qMin (minTime, m_timeAccess);
 //                m_timeCreated = minTime;
                 if (m_timeCreated) {
-                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
-                    QString createTime = createDate.toString(m_systemTimeFormat);
+//                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
+//                    QString createTime = createDate.toString(m_systemTimeFormat);
+                    QString createTime = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeCreated, true);
                     m_timeCreatedLabel->setText(createTime);
                 } else {
                     QFormLayout *layout = this->findChild<QFormLayout*>("floorTwoBaseLayout");
