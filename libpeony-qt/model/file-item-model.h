@@ -261,7 +261,7 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void thumbnailUpdated(const QString& uri);
 
-    void setUrisForBatchQueryInfos(const QStringList& uris, /*OperateType*/int operate);
+    void setUrisForBatchQueryInfos(const QStringList& uris, /*OperateType*/int operateType, FileItem *parentItem);
 
 public Q_SLOTS:
     /*!
@@ -303,14 +303,14 @@ public:
     explicit FileManagerThread();
     ~FileManagerThread();
 
-    void batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/ int operateType);
+    void batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/ int operateType, FileItem *parentItem);
 
 protected:
     void run() override;
 
 
 Q_SIGNALS:
-    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos, /*FileItemModel::OperateType*/int operateType);
+    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem);
 };
 
 

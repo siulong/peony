@@ -99,7 +99,6 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
             return;
 
         QStringList favoriteUris;
-
         if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne && !m_batchProcessThread->isRunning()) {
             // do normal remove
             for (auto uri : m_uris_to_be_removed) {
@@ -450,10 +449,11 @@ void FileItem::findChildrenAsync()
                 m_ending_uris.clear();
                 m_ending_uris = uris;
             }
+
             uris.toSet().toList();/* 去重 */
 
-            qDebug()<<"11111111111111111"<<uris.size()<<this;
-            Q_EMIT m_model->setUrisForBatchQueryInfos(uris, FileItemModel::OperateType::Add);
+            qDebug()<<"11111111111111111"<<uris.size()<<m_ending_uris.size()<<this->uri();
+            Q_EMIT m_model->setUrisForBatchQueryInfos(uris, FileItemModel::OperateType::Add, this);
         });
 
         enumerator->connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed) {
@@ -690,7 +690,7 @@ void FileItem::onChanged(const QString &uri)
 {
     m_waiting_update_queue.append(uri);
     if (!m_changeChildTimer->isActive()) {
-        m_changeChildTimer->start(30);
+        m_changeChildTimer->start(100);
     }
 }
 
@@ -898,24 +898,29 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 
 void FileItem::connectFunc()
 {
-    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operate){
-        qDebug()<<"333333333333333333"<<retFileInfos.size()<<this;
-        if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operate)){
-            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
+        //qDebug()<<"333333333333333333"<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
+        if(parentItem && this != parentItem)
+            return;
+        if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
             for (auto info : retFileInfos) {
+//                if(m_uri_item_hash.contains(info.get()->uri()))
+//                    continue;
                 auto item = new FileItem(info, this, m_model);
+                m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
                 m_ending_uris.removeOne(item->uri());
+                m_model->endInsertRows();
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
-                Q_EMIT m_model->updated();/* 更新状态栏 */
             }
-            m_model->endInsertRows();
+            Q_EMIT m_model->updated();/* 更新状态栏 */
 
             if (m_ending_uris.isEmpty()) {
+                qDebug()<<"fffffffffffffffffffffffff";
                 Q_EMIT m_model->findChildrenFinished();
             }
-        }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operate)){
+        }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
             m_model->updated();
             for (auto info : retFileInfos) {
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
@@ -926,7 +931,7 @@ void FileItem::connectFunc()
 
     connect(m_addChildTimer, &QTimer::timeout, this, [=]{
         m_waiting_add_queue.removeDuplicates(); /* 去重 */
-        qDebug()<<"zzzzzzzzzzzzzzzzzzz"<<m_waiting_add_queue.count();
+        //qDebug()<<"zzzzzzzzzzzzzzzzzzz"<<m_waiting_add_queue.count();
         if(m_waiting_add_queue.count() < maxNumberOfDeletesByOne){
             for (auto uri : m_waiting_add_queue) {
                 m_waiting_add_queue.removeOne(uri);
@@ -967,6 +972,7 @@ void FileItem::connectFunc()
             }
 
         }else{
+            m_ending_uris = m_waiting_add_queue;
             QStringList list;
             if(m_waiting_add_queue.size() >= 2000){/* 每次批量处理最多数量 */
                 for(int i = 0; i < 2000; i++){
@@ -976,8 +982,8 @@ void FileItem::connectFunc()
             }else{
                 list.swap(m_waiting_add_queue);
             }
-            qDebug()<<"aaaaaaaaaaaaaa"<<m_waiting_add_queue.size()<<this;
-            Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Add);
+            //qDebug()<<"aaaaaaaaaaaaaa"<<m_waiting_add_queue.size();
+            Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Add, this);
             if (m_waiting_add_queue.size()>0 && !m_addChildTimer->isActive()) {
                 m_addChildTimer->start();
             }
@@ -995,7 +1001,7 @@ void FileItem::connectFunc()
         }else{
             list.swap(m_waiting_update_queue);
         }
-        Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Change);
+        Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Change, this);
         if (m_waiting_update_queue.size()>0 && !m_changeChildTimer->isActive()) {
             m_changeChildTimer->start();
         }
@@ -1072,11 +1078,11 @@ void BatchProcessItems::slot_removeItems()
     // do reset model
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
-    QList<FileItem *> itemsToBeDeleted;
+    QVector<FileItem *> itemsToBeDeleted;
     qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<",children count,uri item hash count:"<<m_children->size()<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
         if(m_uri_item_hash.contains(uri)){
-            auto child = m_uri_item_hash[uri];
+            auto child = m_uri_item_hash.value(uri);
             auto info = child->info();
             if (info && info->isDir())
             {
