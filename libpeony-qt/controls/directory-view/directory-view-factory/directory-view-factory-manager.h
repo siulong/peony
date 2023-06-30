@@ -54,6 +54,9 @@ public:
 
     const QStringList internalViews() {return m_internal_views;}
 
+Q_SIGNALS:
+    void updateViewEnable(const QString &name, DirectoryViewPluginIface2 *factory, const bool enable);
+
 public Q_SLOTS:
     void setDefaultViewId(const QString &viewId);
     void saveDefaultViewOption();

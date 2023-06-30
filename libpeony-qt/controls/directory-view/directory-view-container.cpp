@@ -95,6 +95,28 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
               refresh();
         });
     }
+
+    connect(DirectoryViewFactoryManager2::getInstance(), &DirectoryViewFactoryManager2::updateViewEnable, this, [=](const QString &name, DirectoryViewPluginIface2* factory, const bool enable){
+        QString currentUri = getCurrentUri();
+
+        int zoomLevel = -1;
+
+        if (currentUri.isNull())
+            return;
+
+        auto viewId = DirectoryViewFactoryManager2::getInstance()->getDefaultViewId(zoomLevel, currentUri);
+        switchViewType(viewId);
+
+        //update status bar zoom level
+        updateStatusBarSliderStateRequest();
+        if (zoomLevel < 0)
+            zoomLevel = getView()->currentZoomLevel();
+
+        setZoomLevelRequest(zoomLevel);
+        //qDebug() << "setZoomLevelRequest:" <<zoomLevel;
+        if (m_view)
+            m_view->setCurrentZoomLevel(zoomLevel);
+    });
 }
 
 DirectoryViewContainer::~DirectoryViewContainer()

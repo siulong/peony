@@ -82,6 +82,7 @@ void DirectoryViewFactoryManager2::unregisterFactory(const QString &name, Direct
         return;
     }
     auto value = m_hash->take(name);
+    Q_EMIT updateViewEnable(name, value, false);
     delete value;
 }
 

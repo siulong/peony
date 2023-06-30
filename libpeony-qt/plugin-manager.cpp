@@ -277,7 +277,6 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                        case PluginInterface::VFSPlugin: {
                            auto p = dynamic_cast<VFSPluginIface *>(plugin);
                            VFSPluginManager::getInstance()->registerPlugin(p);
-                           VFSPluginManager::getInstance()->updateVFSPlugin(p, true);
                            break;
                        }
                        case PluginInterface::EmblemPlugin: {

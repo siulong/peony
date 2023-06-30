@@ -45,6 +45,7 @@ void VFSPluginManager::registerPlugin(VFSPluginIface *plugin)
     plugin->initVFS();
     m_plugins<<plugin;
     m_support_schemes<<plugin->uriScheme();
+    Q_EMIT updateVFSPlugin(plugin, true);
 }
 
 void VFSPluginManager::unregisterPlugin(VFSPluginIface *plugin)
@@ -52,10 +53,10 @@ void VFSPluginManager::unregisterPlugin(VFSPluginIface *plugin)
     if (!m_support_schemes.contains(plugin->uriScheme()))
         return;
 
-    Q_EMIT updateVFSPlugin(plugin, false);
     plugin->initVFS();
     m_plugins.removeOne(plugin);
     m_support_schemes.removeOne(plugin->uriScheme());
+    Q_EMIT updateVFSPlugin(plugin, false);
 }
 
 QList<VFSPluginIface *> VFSPluginManager::registeredPlugins()
