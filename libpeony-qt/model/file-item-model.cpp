@@ -290,6 +290,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
     }
     case ModifiedDate: {
         switch (role) {
+        case Qt::ToolTipRole:
         case Qt::DisplayRole:
             //trash files show delete Date
             if (m_root_uri.startsWith("trash://") && !item->m_info->deletionDate().isNull()) {
@@ -305,6 +306,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
     }
     case FileType:
         switch (role) {
+        case Qt::ToolTipRole:
         case Qt::DisplayRole: {
             if (item->m_info->isSymbolLink()) {
                 return QVariant(tr("Symbol Link, ") + item->m_info->fileType());
@@ -316,6 +318,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         }
     case FileSize: {
         switch (role) {
+        case Qt::ToolTipRole:
         case Qt::DisplayRole: {
             if (item->hasChildren()) {
                 if (item->m_expanded) {
@@ -349,7 +352,8 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
 {
     if (orientation == Qt::Vertical)
         return QVariant();
-    if (role == Qt::DisplayRole) {
+
+    if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
         //qDebug() <<"headerData:" <<section;
         switch (section) {
         case FileName:
@@ -365,6 +369,7 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Size");
         case TrashOriginPath:
             return tr("Original Path");
+
         default:
             return QVariant();
         }
