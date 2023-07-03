@@ -1778,9 +1778,14 @@ void MainWindow::initUI(const QString &uri)
     });
 
     connect(m_tab, &TabWidget::menuRequest, this, [=](const QPoint &pos) {
-        Peony::DirectoryViewMenu menu(this, this);
-        menu.exec(pos);
-        m_uris_to_edit = menu.urisToEdit();
+        //fix bug#162775, show mutiple menu issue
+        if (! m_is_show_menu){
+            m_is_show_menu = true;
+            Peony::DirectoryViewMenu menu(this, this);
+            menu.exec(pos);
+            m_uris_to_edit = menu.urisToEdit();
+            m_is_show_menu = false;
+        }
     });
 
     connect(m_tab, &TabWidget::updateWindowSelectionRequest, this, [=](const QStringList &uris){

@@ -219,7 +219,7 @@ private:
 
     QDBusInterface *m_statusManagerDBus = nullptr;
     bool m_is_blur_window = false;
-
+    bool m_is_show_menu = false;
     QString m_date_format = "";
     QDBusInterface  *mDbusDateServer;
 };
