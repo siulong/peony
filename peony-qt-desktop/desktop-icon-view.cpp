@@ -2018,6 +2018,7 @@ void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
         QHoverEvent he(QHoverEvent::HoverLeave, e->posF(), e->posF());
         viewportEvent(&he);
     }
+    e->setDropAction(action);
     if (e->isAccepted())
         return;
     qDebug()<<"drag move event" <<action;
@@ -2025,7 +2026,6 @@ void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
         e->accept();
         return QListView::dragMoveEvent(e);
     }
-    e->setDropAction(action);
     e->accept();
 }
 
