@@ -786,7 +786,7 @@ void DesktopIconView::resolutionChange()
         QList<QPair<QRect, QString>> needChanged;
         for (auto pair : newPosition) {
             QRect itemRect = pair.first;
-            itemRect.setSize(icon);
+            itemRect.setWidth(icon.width());
             if (!screenRect.contains(itemRect)) {
                 needChanged.append(pair);
                 if (!m_resolution_item_rect.contains(pair.second)) {

@@ -172,13 +172,18 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     painter->save();
     painter->translate(1, 1 + iconSizeExpected.height() + 10);
 
+    int maxLineCount = 2;
+
     auto expectedSize = IconViewTextHelper::getTextSizeForIndex(opt, index, 2);
+    if(option.fontMetrics.height()*2 > view->viewport()->height() - option.rect.y() - iconSizeExpected.height() - 5) {
+        maxLineCount = 1;
+    }
     QPixmap pixmap(expectedSize);
     pixmap.fill(Qt::transparent);
     QPainter shadowPainter(&pixmap);
     QColor shadow = Qt::black;
     shadowPainter.setPen(shadow);
-    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, 2, false, shadow);
+    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, maxLineCount, false, shadow);
     shadowPainter.end();
 
     QImage shadowImage(expectedSize + QSize(4, 4), QImage::Format_ARGB32_Premultiplied);
@@ -226,7 +231,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
                                   index,
                                   maxTextHight,
                                   0,
-                                  2,
+                                  maxLineCount,
                                   false);
     painter->restore();
 
