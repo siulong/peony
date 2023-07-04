@@ -280,7 +280,7 @@ void FileCopy::run ()
 
     if (notSupportInputStream || notSupportOutputStream) {
         qInfo()<<"stream io not supported, use g_file_copy instead";
-        g_file_copy(srcFile, destFile, mCopyFlags, mCancel, mProgress, mProgressData, &error);
+        g_file_copy(srcFile, destFile, (writeIO? GFileCopyFlags(mCopyFlags|G_FILE_COPY_OVERWRITE): mCopyFlags), mCancel, mProgress, mProgressData, &error);
         sync(destFile);
         if (error) {
             qWarning() << "g_file_copy error:" << error->code << " -- " << error->message;
