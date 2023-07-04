@@ -494,7 +494,8 @@ void IconViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 void IconViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+    //fix I7GW9E 选中时候拉动边框文本会缩略导致闪
+    //QStyledItemDelegate::updateEditorGeometry(editor, option, index);
     auto edit = qobject_cast<IconViewEditor*>(editor);
     if (!edit)
         return;

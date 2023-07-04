@@ -217,6 +217,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     auto opt = m_option;
     auto rawRect = m_option.rect;
     opt.rect = this->rect();
+    auto widgetRect = this->rect();
+    if (qApp->devicePixelRatio() != 1.0) {
+        opt.rect.adjust(1, 1, -1, -1);
+        rawRect.adjust(1, 1, -1, -1);
+        widgetRect.adjust(1, 1, -1, -1);
+    }
 
     int horizalMargin = 2;
     auto fontMetrics = opt.fontMetrics;
@@ -315,6 +321,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
             p.save();
             //fix bug#147348
             p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            p.translate(widgetRect.topLeft());
             p.translate(0, m_delegate->getView()->iconSize().height() + 5);
 
            // p.translate(2, 2);
@@ -330,6 +337,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     }
     QString regFindKeyWords = m_delegate->getRegFindKeyWords();
     p.save();
+    p.translate(widgetRect.topLeft());
     p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
     p.setPen(opt.palette.highlightedText().color());
     IconViewTextHelper::paintText(&p,
@@ -352,7 +360,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //Adjust link emblem to topLeft.link story#8354
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(&p, this->rect().x() + 10, widgetRect.y()+m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
         p.restore();
     }
     if(view->isEnableMultiSelect())
