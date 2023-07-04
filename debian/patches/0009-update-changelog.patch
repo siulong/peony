@@ -1,0 +1,79 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Tue, 4 Jul 2023 17:25:02 +0800
+Subject: update changelog.
+
+---
+ .../controls/directory-view/delegate/icon-view-delegate.cpp    |  3 ++-
+ .../directory-view/delegate/icon-view-index-widget.cpp         | 10 +++++++++-
+ libpeony-qt/windows/properties-window.cpp                      |  2 +-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+index ba3b01c..658ce3f 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+@@ -494,7 +494,8 @@ void IconViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
+ 
+ void IconViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+ {
+-    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
++    //fix I7GW9E 选中时候拉动边框文本会缩略导致闪
++    //QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+     auto edit = qobject_cast<IconViewEditor*>(editor);
+     if (!edit)
+         return;
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+index 4bb1b81..505ac77 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+@@ -217,6 +217,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+     auto opt = m_option;
+     auto rawRect = m_option.rect;
+     opt.rect = this->rect();
++    auto widgetRect = this->rect();
++    if (qApp->devicePixelRatio() != 1.0) {
++        opt.rect.adjust(1, 1, -1, -1);
++        rawRect.adjust(1, 1, -1, -1);
++        widgetRect.adjust(1, 1, -1, -1);
++    }
+ 
+     int horizalMargin = 2;
+     auto fontMetrics = opt.fontMetrics;
+@@ -315,6 +321,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+             p.save();
+             //fix bug#147348
+             p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
++            p.translate(widgetRect.topLeft());
+             p.translate(0, m_delegate->getView()->iconSize().height() + 5);
+ 
+            // p.translate(2, 2);
+@@ -330,6 +337,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+     }
+     QString regFindKeyWords = m_delegate->getRegFindKeyWords();
+     p.save();
++    p.translate(widgetRect.topLeft());
+     p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
+     p.setPen(opt.palette.highlightedText().color());
+     IconViewTextHelper::paintText(&p,
+@@ -352,7 +360,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+         //Adjust link emblem to topLeft.link story#8354
+         p.save();
+         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+-        icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
++        icon.paint(&p, this->rect().x() + 10, widgetRect.y()+m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+         p.restore();
+     }
+     if(view->isEnableMultiSelect())
+diff --git a/libpeony-qt/windows/properties-window.cpp b/libpeony-qt/windows/properties-window.cpp
+index c217ec6..656bd5a 100644
+--- a/libpeony-qt/windows/properties-window.cpp
++++ b/libpeony-qt/windows/properties-window.cpp
+@@ -784,7 +784,7 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
+                 painter->restore();
+ 
+                 //选中时文字颜色 - Text color when selected
+-                painter->setPen(palette.color(QPalette::BrightText));
++                painter->setPen(palette.color(QPalette::HighlightedText));
+             } else if (tab->state & QStyle::State_MouseOver) {
+                 painter->save();
+                 //QColor color = palette.color(QPalette::Highlight).lighter(140);

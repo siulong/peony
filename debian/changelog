@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0704) yangtze; urgency=medium
+
+  * close-cd#I7GW9E【设计走查】【文档管理器】选中某个文件后，拉伸窗口过程中，该文件出现抖动问题
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 04 Jul 2023 17:23:10 +0800
+
 peony (4.0.0.0-ok2~0703) yangtze; urgency=medium
 
   * close #I5M6A1 将文件拖放到桌面的图标显示不支持
