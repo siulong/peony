@@ -45,6 +45,7 @@ public:
     static void init();
     static PluginManager *getInstance();
     void close();
+    PluginInterface* getPluginByFileName(QString &fileName);
 
 Q_SIGNALS:
     void pluginStateChanged(const QString &pluginName, bool enable);
@@ -57,6 +58,7 @@ private:
     ~PluginManager();
 
     QHash<QString, PluginInterface*> m_hash;
+    QHash<QString, PluginInterface*> m_fileNameHash;
 };
 
 }

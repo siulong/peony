@@ -39,6 +39,8 @@
 #include "gerror-wrapper.h"
 
 #include "file-utils.h"
+#include "plugin-manager.h"
+#include "vfs-plugin-manager.h"
 
 #include "x11-window-manager.h"
 #include "tag-management.h"
@@ -162,6 +164,19 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             this->setRowHidden(index.row(), index.parent(), true);
             return;
         }
+
+        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
+        for (auto extensions : disExtensions) {
+            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FileSystemItem
+                    && !item->uri().contains("computer:///")
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+                return;
+            }
+        }
+
         item->findChildrenAsync();
     });
 
@@ -339,6 +354,21 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 }
             }
             this->viewport()->update();
+        }
+    });
+
+    connect(VFSPluginManager::getInstance(), &VFSPluginManager::updateVFSPlugin, this, [=](VFSPluginIface *vfsPIface, bool enable){
+        qDebug() << __func__ << vfsPIface->name() << enable;
+        for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+            auto index = m_proxy_model->index(i, 0);
+            auto item = m_proxy_model->itemFromIndex(index);
+            if (item->type() == SideBarAbstractItem::FileSystemItem
+                    && item->uri().contains(vfsPIface->uriScheme())
+                    && !item->uri().contains("computer:///")
+                    && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
+                this->setRowHidden(index.row(), index.parent(), enable);
+                return;
+            }
         }
     });
 

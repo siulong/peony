@@ -53,9 +53,9 @@ void VFSPluginManager::unregisterPlugin(VFSPluginIface *plugin)
     if (!m_support_schemes.contains(plugin->uriScheme()))
         return;
 
-    plugin->initVFS();
-    m_plugins.removeOne(plugin);
-    m_support_schemes.removeOne(plugin->uriScheme());
+//    plugin->initVFS();
+//    m_plugins.removeOne(plugin);
+//    m_support_schemes.removeOne(plugin->uriScheme());
     Q_EMIT updateVFSPlugin(plugin, false);
 }
 

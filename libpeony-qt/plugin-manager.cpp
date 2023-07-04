@@ -91,12 +91,19 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 
         QFileInfo fileInfo(pluginLoader.fileName());
         if (fileInfo.exists()) {
-            if (disabledExtensions.contains(fileInfo.fileName())) {
+            if (disabledExtensions.contains(fileInfo.fileName())
+                    && piface->pluginType() != PluginInterface::VFSPlugin) {
                 continue;
+            } else if (disabledExtensions.contains(fileInfo.fileName())
+                       && piface->pluginType() == PluginInterface::VFSPlugin) {
+                m_hash.insert(piface->name(), piface);
+            } else if (!disabledExtensions.contains(fileInfo.fileName())
+                       && piface->pluginType() != PluginInterface::VFSPlugin) {
+                m_hash.insert(piface->name(), piface);
             }
         }
 
-        m_hash.insert(piface->name(), piface);
+        m_fileNameHash.insert(fileInfo.fileName(), piface);
         switch (piface->pluginType()) {
         case PluginInterface::MenuPlugin: {
             MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
@@ -191,76 +198,79 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 
                QFileInfo fileInfo(pluginLoader.fileName());
                if (fileInfo.exists()) {
-                   if (disExtensions.contains(fileInfo.fileName()) && m_hash.keys().contains(piface->name())) {
-                       m_hash.remove(piface->name());
-                       switch (piface->pluginType()) {
-                       case PluginInterface::MenuPlugin: {
+                   if (disExtensions.contains(fileInfo.fileName()) && m_hash.keys().contains(piface->name())
+                           && piface->pluginType() != PluginInterface::VFSPlugin) {
+                        m_hash.remove(piface->name());
+                        m_fileNameHash.remove(fileInfo.fileName());
+                        switch (piface->pluginType()) {
+                        case PluginInterface::MenuPlugin: {
                            MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
                            //MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
                            MenuPluginManager::getInstance()->unregisterPlugin(menuPlugin);
                            break;
-                       }
-                       case PluginInterface::PreviewPagePlugin: {
+                        }
+                        case PluginInterface::PreviewPagePlugin: {
                            PreviewPagePluginIface *previewPageFactory = dynamic_cast<PreviewPagePluginIface*>(plugin);
                            //PreviewPageFactoryManager::getInstance()->registerFactory(previewPageFactory->name(), previewPageFactory);
                            PreviewPageFactoryManager::getInstance()->unregisterFactory(previewPageFactory->name(), previewPageFactory);
                            break;
-                       }
-                       case PluginInterface::PropertiesWindowPlugin: {
+                        }
+                        case PluginInterface::PropertiesWindowPlugin: {
                            PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
                            //PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
                            PropertiesWindowPluginManager::getInstance()->unregisterFactory(propertiesWindowTabPageFactory);
                            break;
-                       }
-                       case PluginInterface::ColumnProviderPlugin: {
+                        }
+                        case PluginInterface::ColumnProviderPlugin: {
                            //FIXME:
                            break;
-                       }
-                       case PluginInterface::DirectoryViewPlugin2: {
+                        }
+                        case PluginInterface::DirectoryViewPlugin2: {
                            auto p = dynamic_cast<DirectoryViewPluginIface2*>(plugin);
                            //DirectoryViewFactoryManager2::getInstance()->registerFactory(p->viewIdentity(), p);
                            DirectoryViewFactoryManager2::getInstance()->unregisterFactory(p->viewIdentity(), p);
                            break;
-                       }
-                       case PluginInterface::VFSPlugin: {
+                        }
+                        case PluginInterface::VFSPlugin: {
                            auto p = dynamic_cast<VFSPluginIface *>(plugin);
                            //VFSPluginManager::getInstance()->registerPlugin(p);
                            VFSPluginManager::getInstance()->unregisterPlugin(p);
-                           VFSPluginManager::getInstance()->updateVFSPlugin(p, false);
                            break;
-                       }
-                       case PluginInterface::EmblemPlugin: {
+                        }
+                        case PluginInterface::EmblemPlugin: {
                            auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
                            //EmblemProviderManager::getInstance()->registerProvider(p->create());
                            EmblemProviderManager::getInstance()->unregisterProvider(p->create());
                            break;
-                       }
-                       default:
+                        }
+                        default:
                            break;
-                       }
-                   } else if (!disExtensions.contains(fileInfo.fileName()) && !m_hash.keys().contains(piface->name())) {
-                       m_hash.insert(piface->name(), piface);
-                       switch (piface->pluginType()) {
-                       case PluginInterface::MenuPlugin: {
+                        }
+                   } else if (!disExtensions.contains(fileInfo.fileName()) && !m_hash.keys().contains(piface->name())
+                              && piface->pluginType() != PluginInterface::VFSPlugin) {
+                        m_hash.insert(piface->name(), piface);
+                        m_fileNameHash.insert(fileInfo.fileName(), piface);
+                        switch (piface->pluginType()) {
+                        case PluginInterface::MenuPlugin: {
                            MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
                            MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
                            break;
-                       }
-                       case PluginInterface::PreviewPagePlugin: {
+                        }
+                        case PluginInterface::PreviewPagePlugin: {
                            PreviewPagePluginIface *previewPageFactory = dynamic_cast<PreviewPagePluginIface*>(plugin);
                            PreviewPageFactoryManager::getInstance()->registerFactory(previewPageFactory->name(), previewPageFactory);
                            break;
-                       }
-                       case PluginInterface::PropertiesWindowPlugin: {
+                        }
+                        case PluginInterface::PropertiesWindowPlugin: {
                            PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
                            PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
                            break;
-                       }
-                       case PluginInterface::ColumnProviderPlugin: {
+                        }
+                        case PluginInterface::ColumnProviderPlugin: {
                            //FIXME:
                            break;
-                       }
-                       case  PluginInterface::StylePlugin: {
+                        }
+                        case  PluginInterface::StylePlugin: {
                            /*!
                              \todo
                              manage the style plugin
@@ -268,25 +278,38 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                            auto styleProvider = dynamic_cast<StylePluginIface*>(plugin);
                            QApplication::setStyle(styleProvider->getStyle());
                            break;
-                       }
-                       case PluginInterface::DirectoryViewPlugin2: {
+                        }
+                        case PluginInterface::DirectoryViewPlugin2: {
                            auto p = dynamic_cast<DirectoryViewPluginIface2*>(plugin);
                            DirectoryViewFactoryManager2::getInstance()->registerFactory(p->viewIdentity(), p);
                            break;
-                       }
-                       case PluginInterface::VFSPlugin: {
+                        }
+                        case PluginInterface::VFSPlugin: {
                            auto p = dynamic_cast<VFSPluginIface *>(plugin);
-                           VFSPluginManager::getInstance()->registerPlugin(p);
+                           //VFSPluginManager::getInstance()->registerPlugin(p);
+                           Q_EMIT VFSPluginManager::getInstance()->updateVFSPlugin(p, true);
                            break;
-                       }
-                       case PluginInterface::EmblemPlugin: {
+                        }
+                        case PluginInterface::EmblemPlugin: {
                            auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
                            EmblemProviderManager::getInstance()->registerProvider(p->create());
                            break;
-                       }
-                       default:
+                        }
+                        default:
                            break;
-                       }
+                        }
+                   } else if (disExtensions.contains(fileInfo.fileName())
+                              && piface->pluginType() == PluginInterface::VFSPlugin
+                              && !m_hash.contains(piface->name())) {
+                        m_hash.insert(piface->name(), piface);
+                        auto p = dynamic_cast<VFSPluginIface *>(plugin);
+                        Q_EMIT VFSPluginManager::getInstance()->updateVFSPlugin(p, true);
+                   } else if (!disExtensions.contains(fileInfo.fileName())
+                              && piface->pluginType() == PluginInterface::VFSPlugin
+                              && m_hash.contains(piface->name())) {
+                        m_hash.remove(piface->name());
+                        auto p = dynamic_cast<VFSPluginIface *>(plugin);
+                        Q_EMIT VFSPluginManager::getInstance()->updateVFSPlugin(p, false);
                    }
                }
            }
@@ -320,6 +343,14 @@ void PluginManager::close()
 {
     if (global_instance)
         global_instance->deleteLater();
+}
+
+PluginInterface *PluginManager::getPluginByFileName(QString &fileName)
+{
+    if (!m_fileNameHash.contains(fileName)) {
+        return nullptr;
+    }
+    return m_fileNameHash.value(fileName);
 }
 
 void PluginManager::init()

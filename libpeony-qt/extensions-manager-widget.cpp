@@ -67,7 +67,6 @@ void Peony::ExtensionsManagerWidget::initUI()
             }
         }
 
-        qDebug() << "========extensions:" << extensions;
         GlobalSettings::getInstance()->setGSettingValue(DISABLED_EXTENSIONS, extensions);
         this->close();
     });
@@ -150,7 +149,7 @@ void Peony::ExtensionsManagerWidget::initExtensionInfo()
         m_disabledList = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
     }
 
-    qDebug() << "=======" << m_disabledList;
+    qDebug() << __func__ << __LINE__ << m_disabledList;
 
 
     QDir pluginsDir(PLUGIN_INSTALL_DIRS);
@@ -179,7 +178,7 @@ void Peony::ExtensionsManagerWidget::initExtensionInfo()
         }
     }
 
-    qDebug() << "=========" << __func__ << m_pluginMap.keys();
+    qDebug() << __func__ << __LINE__ << m_pluginMap.keys();
 }
 
 bool Peony::ExtensionsManagerWidget::updateCheckBox(const QString &path)
