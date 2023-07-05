@@ -73,6 +73,7 @@ void FileBatchRenameOperation::run()
         }
     }
     m_total_size = m_uris.count();
+    m_current_offset = 0;
     for (auto uri : m_uris) {
         if (isCancelled())
             break;
@@ -288,6 +289,7 @@ void FileBatchRenameOperation::run()
         }
 
         fileSync(uri, destUri);
+        m_current_offset += 1;
         Q_EMIT FileProgressCallback(uri, destUri, fileIconName, m_current_offset, m_total_size);
     }
     m_info->m_newnames = m_new_names;
