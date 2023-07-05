@@ -63,7 +63,12 @@ FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
 
     m_fileManagerThread = new FileManagerThread();
     m_fileManagerThread->moveToThread(m_fileManagerThread);
-    connect(this, &FileItemModel::setUrisForBatchQueryInfos, m_fileManagerThread,&FileManagerThread::batchQueryFileInfos);
+    connect(this, &FileItemModel::setUrisForBatchQueryInfos, this, [=] (const QStringList& uris, int operateType, FileItem *parentItem) {
+        auto infos = FileInfo::fromUris(uris);
+        m_infosJob = new FileInfoJob(infos, parentItem);
+        m_infosJob->connect(this, &FileItemModel::cancelBatchQuery, m_infosJob, &FileInfoJob::batchCancel);
+        Q_EMIT m_fileManagerThread->setParamForBatchQueryInfos(m_infosJob, operateType, parentItem);
+    });
     m_fileManagerThread->start();
 
     connect(EmblemProviderManager::getInstance(), &EmblemProviderManager::requestUpdateFile, this, &FileItemModel::updated);
@@ -121,7 +126,12 @@ void FileItemModel::setRootItem(FileItem *item)
     m_root_item->deleteLater();
 
     m_root_item = item;
+
     m_root_item->connectFunc();
+    if(m_infosJob){
+        Q_EMIT cancelBatchQuery();
+    }
+
     m_root_item->findChildrenAsync();
 
     endResetModel();
@@ -771,38 +781,21 @@ const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QStri
 
 FileManagerThread::FileManagerThread()
 {
+    connect(this, &FileManagerThread::setParamForBatchQueryInfos, this, &FileManagerThread::batchQueryFileInfos);
 }
 
 FileManagerThread::~FileManagerThread()
 {
 }
 
-void FileManagerThread::batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem)
+void FileManagerThread::batchQueryFileInfos(FileInfoJob *infosJob,  /*FileItemModel::OperateType*/int operateType, FileItem *parentItem)
 {
-    QStringList originalList = uris; // 原始列表
-    int chunkSize = 2000; // 每个列表的大小
-
-    QList<QStringList> splitLists;
-    int numChunks = originalList.count() / chunkSize;
-    if (originalList.count() % chunkSize)
-        numChunks++;
-
-    for (int i = 0; i < numChunks; i++) {
-        QStringList chunkList;
-        for (int j = 0; j < chunkSize && ((i * chunkSize) + j) < originalList.count(); j++) {
-            chunkList.append(originalList.at((i * chunkSize) + j));
-        }
-        splitLists.append(chunkList);
+    auto retFileInfos = infosJob->batchQuerySync();
+    if(infosJob){
+        delete infosJob;
+        infosJob = nullptr;
     }
-
-    for(auto &queryUris : splitLists){
-        auto infos = FileInfo::fromUris(queryUris);
-        auto infoJob = new FileInfoJob(infos);
-        infoJob->setAutoDelete();
-        auto retFileInfos = infoJob->batchQuerySync();
-        //qDebug()<<"22222222222222222"<<uris.size()<<queryUris.size()<<retFileInfos.size();
-        Q_EMIT finishQueryFileInfos(retFileInfos, operateType, parentItem);
-    }
+    Q_EMIT finishQueryFileInfos(retFileInfos, operateType, parentItem);
 }
 
 void FileManagerThread::run()

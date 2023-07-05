@@ -49,6 +49,7 @@ FileInfoJob::FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent) : QObj
 
     m_cancellable = g_cancellable_new();
     m_fs_cancellable = g_cancellable_new();
+    m_batchCanellable = g_cancellable_new();
 }
 
 FileInfoJob::FileInfoJob(const QString &uri, QObject *parent) : QObject (parent)
@@ -59,17 +60,22 @@ FileInfoJob::FileInfoJob(const QString &uri, QObject *parent) : QObject (parent)
 
     m_cancellable = g_cancellable_new();
     m_fs_cancellable = g_cancellable_new();
+    m_batchCanellable = g_cancellable_new();
 }
 
-FileInfoJob::FileInfoJob(std::vector<std::shared_ptr<FileInfo> > infos, QObject *parent)
+FileInfoJob::FileInfoJob(std::vector<std::shared_ptr<FileInfo> > infos, QObject *parent) : QObject (parent)
 {
     m_infos = infos;
+    m_cancellable = g_cancellable_new();
+    m_fs_cancellable = g_cancellable_new();
+    m_batchCanellable = g_cancellable_new();
 }
 
 FileInfoJob::~FileInfoJob()
 {
     g_object_unref(m_cancellable);
     g_object_unref(m_fs_cancellable);
+    g_object_unref(m_batchCanellable);
 }
 
 void FileInfoJob::cancel()
@@ -82,6 +88,11 @@ void FileInfoJob::cancel()
     g_cancellable_cancel(m_fs_cancellable);
     g_object_unref(m_fs_cancellable);
     m_fs_cancellable = g_cancellable_new();
+}
+
+void FileInfoJob::batchCancel()
+{
+    g_cancellable_cancel(m_batchCanellable);
 }
 
 bool FileInfoJob::querySync()
@@ -99,7 +110,7 @@ bool FileInfoJob::querySync()
     auto _info = g_file_query_info(info->m_file,
                                    "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
                                    G_FILE_QUERY_INFO_NONE,
-                                   nullptr,
+                                   m_cancellable,
                                    &err);
 
     if (err) {
@@ -152,26 +163,27 @@ std::vector<std::shared_ptr<FileInfo> > FileInfoJob::batchQuerySync()
         auto _info = g_file_query_info(info->m_file,
                                        "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
                                        G_FILE_QUERY_INFO_NONE,
-                                       nullptr,
+                                       m_batchCanellable,
                                        &err);
 
         if (err) {
-            qDebug()<<err->code<<err->message;
+            qDebug()<<err->code<<err->message<<info->uri();
             g_error_free(err);
             if (m_auto_delete)
                 deleteLater();
+            if(g_cancellable_is_cancelled(m_batchCanellable))
+                break;
             continue;
         }
 
-        GCancellable *fs_cancellable = g_cancellable_new();
-        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", fs_cancellable, &err);
-
+        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", m_batchCanellable, &err);
         if (err) {
             qDebug()<<err->code<<err->message;
             g_error_free(err);
-            g_object_unref(fs_cancellable);
             if (m_auto_delete)
                 deleteLater();
+            if(g_cancellable_is_cancelled(m_batchCanellable))
+                break;
             continue;
         }
 
@@ -181,11 +193,10 @@ std::vector<std::shared_ptr<FileInfo> > FileInfoJob::batchQuerySync()
 
         EmblemProviderManager::getInstance()->querySync(info->uri());
 
-        infoUpdated();
         fileInfoVec.push_back(m_info);
+
         if (m_auto_delete)
             deleteLater();
-        g_object_unref(fs_cancellable);
     }
     return fileInfoVec;
 }

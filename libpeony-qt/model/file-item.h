@@ -172,8 +172,8 @@ private:
     QStringList m_ending_uris;
     QStringList m_waiting_add_queue;
     QStringList m_waiting_update_queue;
-
     QStringList m_uris_to_be_removed;
+
     QTimer *m_idle = nullptr;
     QTimer *m_addChildTimer = nullptr;
     QTimer *m_changeChildTimer = nullptr;

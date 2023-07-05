@@ -35,6 +35,7 @@ class FileItem;
 class FileItemProxyFilterSortModel;
 class FileInfo;
 class FileManagerThread;
+class FileInfoJob;
 
 /*!
  * \brief The FileItemModel class
@@ -262,6 +263,7 @@ Q_SIGNALS:
     void thumbnailUpdated(const QString& uri);
 
     void setUrisForBatchQueryInfos(const QStringList& uris, /*OperateType*/int operateType, FileItem *parentItem);
+    void cancelBatchQuery();
 
 public Q_SLOTS:
     /*!
@@ -295,6 +297,7 @@ private:
     bool m_showFileExtension = true;
 
     FileManagerThread *m_fileManagerThread = nullptr;
+    FileInfoJob *m_infosJob = nullptr;
 };
 
 class PEONYCORESHARED_EXPORT FileManagerThread : public QThread{
@@ -303,7 +306,7 @@ public:
     explicit FileManagerThread();
     ~FileManagerThread();
 
-    void batchQueryFileInfos(const QStringList& uris, /*FileItemModel::OperateType*/ int operateType, FileItem *parentItem);
+    void batchQueryFileInfos(FileInfoJob *infosJob, /*FileItemModel::OperateType*/ int operateType, FileItem *parentItem);
 
 protected:
     void run() override;
@@ -311,6 +314,7 @@ protected:
 
 Q_SIGNALS:
     void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem);
+    void setParamForBatchQueryInfos(/*std::shared_ptr<FileInfoJob>*//*std::shared_ptr<FileInfoJob>*/ FileInfoJob *infosJob, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem);
 };
 
 

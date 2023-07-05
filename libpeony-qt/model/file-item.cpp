@@ -451,9 +451,25 @@ void FileItem::findChildrenAsync()
             }
 
             uris.toSet().toList();/* 去重 */
+            QStringList originalList = uris; // 原始列表
+            int chunkSize = 2000; // 每个列表的大小
 
-            qDebug()<<"11111111111111111"<<uris.size()<<m_ending_uris.size()<<this->uri();
-            Q_EMIT m_model->setUrisForBatchQueryInfos(uris, FileItemModel::OperateType::Add, this);
+            QList<QStringList> splitLists;
+            int numChunks = originalList.count() / chunkSize;
+            if (originalList.count() % chunkSize)
+                numChunks++;
+
+            for (int i = 0; i < numChunks; i++) {
+                QStringList chunkList;
+                for (int j = 0; j < chunkSize && ((i * chunkSize) + j) < originalList.count(); j++) {
+                    chunkList.append(originalList.at((i * chunkSize) + j));
+                }
+                splitLists.append(chunkList);
+            }
+            for(auto &queryUris : splitLists){
+                qDebug()<<"11111111111111111"<<queryUris.size()<<m_ending_uris.size()<<this->uri();
+                Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Add, this);
+            }
         });
 
         enumerator->connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed) {

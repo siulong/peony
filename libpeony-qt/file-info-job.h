@@ -116,6 +116,7 @@ public Q_SLOTS:
      * </br>
      */
     void cancel();
+    void batchCancel();/* 批量取消查询时使用 */
 
     QString getAppName(QString desktopfp);
 
@@ -144,6 +145,8 @@ private:
 
     GCancellable *m_cancellable = nullptr;
     GCancellable *m_fs_cancellable = nullptr;
+    GCancellable *m_batchCanellable = nullptr;
+
 };
 
 }
