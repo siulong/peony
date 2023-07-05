@@ -456,6 +456,7 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
 {
     if("bo_CN" == QLocale::system().name()){
         m_widget_size.setHeight(m_widget_size.height() + 61);
+        m_widget_size.setWidth(m_widget_size.width() + 30);
     }
     setFixedSize(m_widget_size);
     if("bo_CN" == QLocale::system().name()){
