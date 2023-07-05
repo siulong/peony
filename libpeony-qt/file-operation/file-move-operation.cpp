@@ -241,7 +241,7 @@ void FileMoveOperation::move()
     } else {
         // If the storage is valid, get the available disk space
         quint64 diskFreeSpace = storage.bytesAvailable();
-        if(m_total_size > diskFreeSpace) {
+        if(m_total_size > diskFreeSpace && diskFreeSpace > 0) {
             // If there is not enough space, create a new FileOperationError object
             FileOperationError except;
             QString name;

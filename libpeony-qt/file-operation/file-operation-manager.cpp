@@ -352,7 +352,7 @@ start:
         quint64 diskFreeSpace = storage.bytesAvailable();
 
         // Check if there is an error getting the disk free space
-        if (-1 == diskFreeSpace) {
+        if (0 >= diskFreeSpace) {
             qWarning() << "get disk free space error!";
             return;
         }
