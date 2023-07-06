@@ -429,7 +429,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     m_btn_close->setToolTip(tr("Close"));
     connect (m_btn_close, &QPushButton::clicked, this, [=] () {
         QMessageBox msgBox(QMessageBox::Warning, tr("cancel all file operations"),
-            tr("Are you sure want to cancel all file operations"),
+            tr("Are you sure to cancel all file operations?"),
             QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.button(QMessageBox::Ok)->setText(tr("OK"));
         msgBox.button(QMessageBox::Cancel)->setText(tr("Cancel"));
