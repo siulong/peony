@@ -548,6 +548,15 @@ int NavigationSideBar::sizeHintForColumn(int column) const
     return QTreeView::sizeHintForColumn(column);
 }
 
+QStyleOptionViewItem NavigationSideBar::viewOptions() const
+{
+    auto opt = QTreeView::viewOptions();
+    auto hoverColor = opt.palette.color(QPalette::BrightText);
+    hoverColor.setAlphaF(0.05);
+    opt.palette.setBrush(QPalette::Disabled, QPalette::Midlight, hoverColor);
+    return opt;
+}
+
 void NavigationSideBar::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasUrls()) {

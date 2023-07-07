@@ -69,6 +69,8 @@ protected:
 
     int sizeHintForColumn(int column) const override;
 
+    QStyleOptionViewItem viewOptions() const override;
+
 private:
     Peony::SideBarProxyFilterSortModel *m_proxy_model = nullptr;
     Peony::SideBarModel *m_model = nullptr;
