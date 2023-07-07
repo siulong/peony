@@ -855,6 +855,7 @@ fallback_retry:
 //                g_error_free(error);
 
                 //make dir has no overwrite
+                setHasError(false);
                 break;
             }
             case OverWriteAll: {
@@ -873,7 +874,7 @@ fallback_retry:
 //                    setHasError(false);
 //                }
 //                g_error_free(error);
-
+                setHasError(false);
                 break;
             }
             case BackupOne: {
