@@ -395,6 +395,7 @@ void BasicPropertiesPage::loadPartOne()
             m_displayNameEdit->setToolTip(fileName);
             fileName = BasicPropertiesPage::elideText(m_displayNameEdit->font(),260,fileName);
             m_displayNameEdit->setText(fileName);
+            m_displayNameEdit->setToolTip(fileName);
             delete getNameThread;
         });
         getNameThread->start();
@@ -632,6 +633,7 @@ void BasicPropertiesPage::onSingleFileChanged(const QString &oldUri, const QStri
     }
 
     m_displayNameEdit->setText(fileName);
+    m_displayNameEdit->setToolTip(fileName);
 
     if (thumbnail.isNull()) {
         ThumbnailManager::getInstance()->createThumbnail(m_info.get()->uri(), m_thumbnail_watcher);
