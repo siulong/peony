@@ -111,13 +111,14 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     }
     }
 
+    QString line;
     QStringList messages;
-    line1 = qApp->fontMetrics().elidedText(line1, Qt::ElideMiddle, 500);
-    messages.append(line1);
-    line2 = qApp->fontMetrics().elidedText(line2, Qt::ElideMiddle, 500);
-    messages.append(line2);
-    line3 = qApp->fontMetrics().elidedText(line3, Qt::ElideMiddle, 500);
-    messages.append(line3);
+    line = qApp->fontMetrics().elidedText(line1, Qt::ElideMiddle, 500);
+    messages.append(line);
+    line = qApp->fontMetrics().elidedText(line2, Qt::ElideMiddle, 500);
+    messages.append(line);
+    line = qApp->fontMetrics().elidedText(line3, Qt::ElideMiddle, 500);
+    messages.append(line);
 
     auto labelText = messages.join('\n');
 
@@ -129,11 +130,11 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     labelIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
     gridLayout1->addWidget(labelIcon, 0, 0, Qt::AlignTop|Qt::AlignLeft);
     auto content = new QLabel;
-    content->setWordWrap(true);
+    //content->setWordWrap(true);
     //int textWidth = (this->width() - 40 - 40 - 24) * 3;
     //QString elidedString = qApp->fontMetrics().elidedText(error.errorStr, Qt::ElideMiddle, textWidth);
     content->setText(labelText);
-    gridLayout1->addWidget(content, 0, 1, Qt::AlignTop);
+    gridLayout1->addWidget(content, 0, 1,  Qt::AlignTop|Qt::AlignLeft);
     auto buttonBox = new QDialogButtonBox;
     buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
     auto skip = buttonBox->addButton(tr("Skip"), QDialogButtonBox::ActionRole);
@@ -162,7 +163,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     textEdit->setAutoFillBackground(true);
     textEdit->viewport()->setBackgroundRole(QPalette::Button);
     textEdit->viewport()->setAutoFillBackground(true);
-    int height = qApp->fontMetrics().height() * 3 + 1;
+    int height = qApp->fontMetrics().lineSpacing() * 3 + qApp->fontMetrics().descent();
     textEdit->setFixedHeight(height);
     gridLayout2->addWidget(textEdit, 1, 1, Qt::AlignTop);
     auto buttonBox2 = new QDialogButtonBox;
@@ -210,12 +211,21 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
                 renameIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(24, 24));
             } else if ("systemFont" == key || "systemFontSize" == key) {
                 QFontMetrics font = qApp->fontMetrics();
-                int leading = qAbs(font.leading());
-                int height = (font.boundingRect(textEdit->toPlainText()).height() + leading) * 3;
+                int height = font.lineSpacing() * 3 + font.descent();
                 textEdit->setFixedHeight(height);
                 textEdit->setTextCursor(cursor);
-                this->repaint();
 
+                QStringList messages;
+                QString line;
+                line = qApp->fontMetrics().elidedText(line1, Qt::ElideMiddle, 500);
+                messages.append(line);
+                line = qApp->fontMetrics().elidedText(line2, Qt::ElideMiddle, 500);
+                messages.append(line);
+                line = qApp->fontMetrics().elidedText(line3, Qt::ElideMiddle, 500);
+                messages.append(line);
+                auto labelText = messages.join('\n');
+                content->setText(labelText);
+                this->repaint();
             }
         });
     }
