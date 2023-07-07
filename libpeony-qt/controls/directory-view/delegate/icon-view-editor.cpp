@@ -57,13 +57,18 @@ IconViewEditor::~IconViewEditor()
 void IconViewEditor::paintEvent(QPaintEvent *e)
 {
     QPainter p(this->viewport());
-    p.fillRect(this->viewport()->rect(), m_styled_edit->palette().base());
-    QPen pen;
-    pen.setWidth(3);
-    pen.setColor(this->palette().highlight().color());
-    pen.setJoinStyle(Qt::RoundJoin);
-    p.setPen(pen);
-    p.drawRect(this->viewport()->rect());
+    qreal padding = 1.0;
+    QRectF rectF = viewport()->rect();
+    p.save();
+    if (devicePixelRatioF() < 2.0) {
+        if (devicePixelRatioF() > 1.0) {
+            padding = qMin(devicePixelRatioF(), 1.5);
+            p.setRenderHint(QPainter::Antialiasing);
+        }
+    }
+    p.fillRect(rectF, palette().highlight());
+    p.fillRect(rectF.adjusted(padding, padding, -padding, -padding), palette().base());
+    p.restore();
     QTextEdit::paintEvent(e);
 }
 
