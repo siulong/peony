@@ -526,10 +526,10 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         info->setProperty("orig-path", origPath);
     }
 
-    m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);
     // update peony qt color list after meta info updated.
     m_info->m_colors = FileLabelModel::getGlobalModel()->getFileColors(m_info->uri());
 
+    m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);
     auto customIconName = m_info->m_meta_info.get()->getMetaInfoString("custom-icon");
     if (!customIconName.isEmpty()/* && !customIconName.startsWith("/")*/) {
         m_info->m_icon_name = customIconName;

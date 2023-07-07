@@ -934,6 +934,7 @@ void FileItem::connectFunc()
 
             if (m_ending_uris.isEmpty()) {
                 qDebug()<<"fffffffffffffffffffffffff";
+                Q_EMIT m_model->updated();/* 更新状态栏 */
                 Q_EMIT m_model->findChildrenFinished();
             }
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){

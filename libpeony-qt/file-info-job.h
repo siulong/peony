@@ -73,6 +73,7 @@ public:
         return m_info;
     }
     ~FileInfoJob();
+
     bool querySync();
     std::vector<std::shared_ptr<FileInfo> > batchQuerySync();
 
@@ -130,6 +131,8 @@ private:
     void queryFileDisplayName(GFileInfo* new_info);
     void refreshFileSystemInfo (GFileInfo* new_info);
     void refreshInfoContents (GFileInfo *new_info);
+
+private:
     std::shared_ptr<FileInfo> m_info;
     std::vector<std::shared_ptr<FileInfo> >m_infos;
 

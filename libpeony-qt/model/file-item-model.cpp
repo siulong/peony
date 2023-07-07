@@ -66,6 +66,7 @@ FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
     connect(this, &FileItemModel::setUrisForBatchQueryInfos, this, [=] (const QStringList& uris, int operateType, FileItem *parentItem) {
         auto infos = FileInfo::fromUris(uris);
         m_infosJob = new FileInfoJob(infos, parentItem);
+        m_infosJob->connect(m_root_item, &FileItem::cancelFindChildren, m_infosJob, &FileInfoJob::batchCancel);
         m_infosJob->connect(this, &FileItemModel::cancelBatchQuery, m_infosJob, &FileInfoJob::batchCancel);
         Q_EMIT m_fileManagerThread->setParamForBatchQueryInfos(m_infosJob, operateType, parentItem);
     });
