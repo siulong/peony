@@ -1203,6 +1203,10 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
                 isSearchEngine = false;
             }
 
+            if (!m_last_search_path.startsWith("file:///") && !m_last_search_path.startsWith("computer:///")) {
+                isSearchEngine = false;
+            }
+
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
                                                          m_last_key, true, false, "", true);
             targetUri = Peony::SearchVFSUriParser::addSearchKey(targetUri, isSearchEngine);
