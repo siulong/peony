@@ -913,7 +913,9 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         QString parentUri = FileUtils::getParentUri(m_current_src_uri);
         target = QUrl(parentUri).path() + "/" + target;
     }
-    QUrl url = "file://" + target;
+    target.replace("#", "%23");
+    target.prepend("file://");
+    QUrl url(target);
     const char* symlinkValue = url.path().toUtf8().constData();
     g_file_make_symbolic_link(file.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
