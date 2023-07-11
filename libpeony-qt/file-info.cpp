@@ -142,7 +142,10 @@ std::vector<std::shared_ptr<FileInfo> > FileInfo::fromUris(QStringList uris)
 {
     std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
     for (auto uri : uris) {
-        fileInfoVec.push_back(fromUri(uri));
+        std::shared_ptr<FileInfo> newly_info = std::make_shared<FileInfo>();
+        newly_info->m_uri = uri;
+        newly_info->m_file = g_file_new_for_uri(uri.toUtf8().constData());
+        fileInfoVec.push_back(newly_info);
     }
     return fileInfoVec;
 }

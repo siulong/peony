@@ -35,7 +35,6 @@ class QTimer;
 namespace Peony {
 
 class FileInfo;
-class FileInfoManager;
 class FileItemModel;
 class FileWatcher;
 class FileItemProxyFilterSortModel;

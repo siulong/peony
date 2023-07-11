@@ -75,7 +75,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     /* 此处以中文命名的文件保护箱标记实时同步还存在问题，是由于uri编码（尽管使用FileUtils::urlEncoded进行转换）与底层(info的uri)不匹配 */
     QString uri = index.data(Qt::UserRole).toString();
-    auto info = FileInfo::fromUri(uri);
+    auto info = item->info();
     auto colors = info->getColors();
 
     if(uri.startsWith("favorite://")){/* 快速访问须特殊处理 */

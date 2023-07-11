@@ -919,9 +919,13 @@ void FileItem::connectFunc()
         if(parentItem && this != parentItem)
             return;
         if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
+            FileInfoManager *info_manager = FileInfoManager::getInstance();
             for (auto info : retFileInfos) {
 //                if(m_uri_item_hash.contains(info.get()->uri()))
 //                    continue;
+                info_manager->lock();
+                info_manager->updateFileInfo(info);
+                info_manager->unlock();
                 auto item = new FileItem(info, this, m_model);
                 m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                 m_children->append(item);

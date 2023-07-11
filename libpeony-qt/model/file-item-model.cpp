@@ -793,10 +793,10 @@ void FileManagerThread::batchQueryFileInfos(FileInfoJob *infosJob,  /*FileItemMo
 {
     auto retFileInfos = infosJob->batchQuerySync();
     if(infosJob){
-        delete infosJob;
-        infosJob = nullptr;
+        infosJob->deleteLater();
     }
     Q_EMIT finishQueryFileInfos(retFileInfos, operateType, parentItem);
+
 }
 
 void FileManagerThread::run()

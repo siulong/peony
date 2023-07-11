@@ -86,6 +86,17 @@ std::shared_ptr<FileInfo> FileInfoManager::insertFileInfo(std::shared_ptr<FileIn
     return info;
 }
 
+void FileInfoManager::updateFileInfo(std::shared_ptr<FileInfo> info)
+{
+    Q_ASSERT(global_info_list);
+
+    m_op_lock.lock();
+    global_info_list->insert(info->uri(), info);
+    m_op_lock.unlock();
+
+    return;
+}
+
 void FileInfoManager::showState()
 {
     qDebug()<<global_info_list->keys().count()<<global_info_list->values().count();
