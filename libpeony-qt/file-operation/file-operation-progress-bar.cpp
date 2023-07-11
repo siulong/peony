@@ -28,7 +28,7 @@
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QMessageBox>
-
+#include <QToolTip>
 #include <QTimer>
 #include "file-utils.h"
 #include "xatom-helper.h"
@@ -580,6 +580,29 @@ void MainProgressBar::mouseReleaseEvent(QMouseEvent *event)
     }
 
     QWidget::mouseReleaseEvent(event);
+}
+
+bool MainProgressBar::event(QEvent *event)
+{
+    if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QPoint pos = helpEvent->pos();
+        if ((pos.x() >= m_progress_pause_x)
+                   && (pos.x() <= m_progress_pause_x_r)
+                   && (pos.y() >= m_progress_pause_y)
+                   && (pos.y() <= m_progress_pause_y_b)){
+            QString tooltipText = "";
+            if (m_pause) {
+                tooltipText = tr("continue");
+            } else {
+                tooltipText = tr("pause");
+            }
+
+            QToolTip::showText(helpEvent->globalPos(), tooltipText, this);
+            return true;
+        }
+    }
+    return QWidget::event(event);
 }
 
 void MainProgressBar::paintFoot(QPainter &painter)
