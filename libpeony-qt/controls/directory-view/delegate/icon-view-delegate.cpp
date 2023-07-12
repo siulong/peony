@@ -420,7 +420,9 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto edit = new IconViewEditor(parent);
     edit->setContentsMargins(0, 0, 0, 0);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    edit->setMinimumSize(sizeHint(option, index).width(), 54);
+    auto size = sizeHint(option, index);
+    edit->setMinimumWidth(size.width());
+    edit->setMinimumHeight(size.height() - getView()->iconSize().height() - 5);
 
     edit->blockSignals(true);
     auto displayString = index.data(Qt::DisplayRole).toString();
