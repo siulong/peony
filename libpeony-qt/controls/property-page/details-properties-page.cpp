@@ -94,6 +94,8 @@ QWidget *DetailsPropertiesPage::createTableRow(QString labelText, QLabel *conten
     QLabel *label1 = this->createFixedLabel(FIXED_LABEL_WIDTH,0,labelText,row);
     label1->setContentsMargins(22,0,0,0);
 
+    contentLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    contentLabel->setCursor(Qt::IBeamCursor);
     boxLayout->addWidget(label1);
     boxLayout->addWidget(contentLabel);
     boxLayout->addStretch(1);
@@ -111,8 +113,11 @@ QWidget *DetailsPropertiesPage::createTableRow(QString labelText, QString conten
     QLabel *label1 = this->createFixedLabel(FIXED_LABEL_WIDTH,0,labelText,row);
     label1->setContentsMargins(22,0,0,0);
 
+    QLabel *labelContent = this->createFixedLabel(0,0,content,row);
+    labelContent->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    labelContent->setCursor(Qt::IBeamCursor);
     boxLayout->addWidget(label1);
-    boxLayout->addWidget(this->createFixedLabel(0,0,content,row));
+    boxLayout->addWidget(labelContent);
     boxLayout->addStretch(1);
 
     return row;
