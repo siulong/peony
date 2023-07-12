@@ -31,6 +31,9 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "global-settings.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include <QObject>
 #include <QMessageBox>
@@ -44,6 +47,10 @@
 #include <QTime>
 
 using namespace  Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
+
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
@@ -997,6 +1004,10 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
 
 void Format_Dialog::format_ok_dialog()
 {
+    //fix bug#177146, play finish sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::COMPLETE);
+#endif
     if (renameOK) {
         QMessageBox::about(this,QObject::tr("format"),QObject::tr("Format operation has been finished successfully."));
     } else {
@@ -1014,6 +1025,9 @@ void Format_Dialog::format_ok_dialog()
 
 void Format_Dialog::format_err_dialog()
 {
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::DIALOG_ERROR);
+#endif
     QMessageBox::warning(this,QObject::tr("qmesg_notify"),QObject::tr("Sorry, the format operation is failed!"));
     mCancelBtn->setEnabled(true);
 
@@ -1040,6 +1054,10 @@ bool Format_Dialog::format_makesure_dialog(){
         message_format->deleteLater ();
     });
 
+    //fix bug#177143, play warning sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::DIALOG_WARNING);
+#endif
     message_format->exec();
 
     if(message_format->clickedButton() == cancelButton)
