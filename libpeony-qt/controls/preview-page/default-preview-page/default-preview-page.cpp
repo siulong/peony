@@ -355,11 +355,14 @@ void FilePreviewPage::wrapData(QLabel *p_label, const QString &text)
     int width = p_label->width()==0?LABEL_MAX_WIDTH:p_label->width();
     if(textSize > width){
         int lastIndex = 0;
-        for(int i = lastIndex; i < wrapText.length(); i++) {
-            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == width) {
+        for(int i = lastIndex+1; i <= wrapText.length(); i++) {
+            QString line = wrapText.mid(lastIndex, i - lastIndex);
+            if(fontMetrics.width(line) == width) {
                 lastIndex = i;
-                wrapText.insert(i, '\n');
-            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > width) {
+                if (i != wrapText.length()) {
+                    wrapText.insert(i, '\n');
+                }
+            } else if(fontMetrics.width(line) > width) {
                 lastIndex = i;
                 wrapText.insert(i - 1, '\n');
             } else {
