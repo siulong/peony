@@ -75,6 +75,7 @@ public:
     Q_ENUM(ItemRole)
 
     enum OperateType {
+        Enumerate,
         Add,
         Change
     };

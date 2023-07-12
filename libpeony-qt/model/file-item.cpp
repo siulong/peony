@@ -444,16 +444,18 @@ void FileItem::findChildrenAsync()
                 delete enumerator;
                 return ;
             }
+            uris.toSet().toList();/* 去重 */
+            if(uris.size()<=0)
+                return;
 
             if (isEnding) {
                 m_ending_uris.clear();
                 m_ending_uris = uris;
             }
 
-            uris.toSet().toList();/* 去重 */
-            QStringList originalList = uris; // 原始列表
-            int chunkSize = 2000; // 每个列表的大小
 
+            QStringList originalList = uris; /* 原始列表 */
+            int chunkSize = 1000; /* 每个列表的大小 */
             QList<QStringList> splitLists;
             int numChunks = originalList.count() / chunkSize;
             if (originalList.count() % chunkSize)
@@ -467,8 +469,8 @@ void FileItem::findChildrenAsync()
                 splitLists.append(chunkList);
             }
             for(auto &queryUris : splitLists){
-                qDebug()<<"11111111111111111"<<queryUris.size()<<m_ending_uris.size()<<this->uri();
-                Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Add, this);
+                //qDebug()<<queryUris.size()<<m_ending_uris.size()<<this->uri();
+                Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Enumerate, this);
             }
         });
 
@@ -915,14 +917,13 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 void FileItem::connectFunc()
 {
     connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
-        //qDebug()<<"333333333333333333"<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
+        //qDebug()<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
         if(parentItem && this != parentItem)
             return;
-        if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
-            FileInfoManager *info_manager = FileInfoManager::getInstance();
+
+        FileInfoManager *info_manager = FileInfoManager::getInstance();
+        if(FileItemModel::OperateType::Enumerate == FileItemModel::OperateType(operateType)){
             for (auto info : retFileInfos) {
-//                if(m_uri_item_hash.contains(info.get()->uri()))
-//                    continue;
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
@@ -930,17 +931,29 @@ void FileItem::connectFunc()
                 m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
-                m_ending_uris.removeOne(item->uri());
                 m_model->endInsertRows();
+                m_ending_uris.removeOne(info->uri());
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             }
-            Q_EMIT m_model->updated();/* 更新状态栏 */
-
             if (m_ending_uris.isEmpty()) {
-                qDebug()<<"fffffffffffffffffffffffff";
+                //qDebug()<<"findChildrenFinished"<<m_children->size();
                 Q_EMIT m_model->updated();/* 更新状态栏 */
                 Q_EMIT m_model->findChildrenFinished();
             }
+
+        }else if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
+            for (auto info : retFileInfos) {
+                info_manager->lock();
+                info_manager->updateFileInfo(info);
+                info_manager->unlock();
+                auto item = new FileItem(info, this, m_model);
+                m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+                m_children->append(item);
+                m_uri_item_hash.insert(item->uri(), item);
+                m_model->endInsertRows();
+                ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+            }
+
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
             m_model->updated();
             for (auto info : retFileInfos) {
@@ -952,8 +965,7 @@ void FileItem::connectFunc()
 
     connect(m_addChildTimer, &QTimer::timeout, this, [=]{
         m_waiting_add_queue.removeDuplicates(); /* 去重 */
-        //qDebug()<<"zzzzzzzzzzzzzzzzzzz"<<m_waiting_add_queue.count();
-        if(m_waiting_add_queue.count() < maxNumberOfDeletesByOne){
+        if(m_waiting_add_queue.count() < 50){
             for (auto uri : m_waiting_add_queue) {
                 m_waiting_add_queue.removeOne(uri);
                 auto info = FileInfo::fromUri(uri);
@@ -993,7 +1005,6 @@ void FileItem::connectFunc()
             }
 
         }else{
-            m_ending_uris = m_waiting_add_queue;
             QStringList list;
             if(m_waiting_add_queue.size() >= 2000){/* 每次批量处理最多数量 */
                 for(int i = 0; i < 2000; i++){
@@ -1003,13 +1014,13 @@ void FileItem::connectFunc()
             }else{
                 list.swap(m_waiting_add_queue);
             }
-            //qDebug()<<"aaaaaaaaaaaaaa"<<m_waiting_add_queue.size();
+
             Q_EMIT m_model->setUrisForBatchQueryInfos(list, FileItemModel::OperateType::Add, this);
             if (m_waiting_add_queue.size()>0 && !m_addChildTimer->isActive()) {
                 m_addChildTimer->start();
             }
         }
-    });
+    },Qt::UniqueConnection);
 
     connect(m_changeChildTimer, &QTimer::timeout, this, [=]{
         m_waiting_update_queue.removeDuplicates(); /* 去重 */
@@ -1026,7 +1037,7 @@ void FileItem::connectFunc()
         if (m_waiting_update_queue.size()>0 && !m_changeChildTimer->isActive()) {
             m_changeChildTimer->start();
         }
-    });
+    },Qt::UniqueConnection);
 }
 
 void FileItem::clearChildren()
