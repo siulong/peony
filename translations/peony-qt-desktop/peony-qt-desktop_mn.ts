@@ -397,7 +397,7 @@
         <translation type="vanished">关闭桌面并退出</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="187"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="232"/>
         <source>peony-qt-desktop</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ</translation>
     </message>
@@ -410,27 +410,27 @@
         <translation type="vanished">桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="503"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="551"/>
         <source>Close the peony desktop window</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠫᠡᠷᠦᠭᠷᠡᠮ ᠢ᠋ ᠬᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="506"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="554"/>
         <source>Take over the dbus service.</source>
         <translation>dbus ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠵᠢ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ.</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="509"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="557"/>
         <source>Take over the desktop displaying</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠢ᠋ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="512"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
         <source>Setup backgrounds</source>
         <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="515"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
         <source>Clear standard icons</source>
         <translation>ᠪᠠᠷᠢᠮᠵᠢᠶᠠᠳᠤ ᠰᠢᠪᠠᠭ᠎ᠠ ᠵᠢ ᠴᠡᠪᠡᠷᠯᠡᠬᠦ</translation>
     </message>

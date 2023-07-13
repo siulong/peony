@@ -200,32 +200,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="768"/>
+        <location filename="../../src/windows/main-window.cpp" line="806"/>
         <source>File Manager</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="334"/>
+        <location filename="../../src/windows/main-window.cpp" line="372"/>
         <source>Undo</source>
         <translation>ᠪᠤᠴᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="341"/>
+        <location filename="../../src/windows/main-window.cpp" line="379"/>
         <source>Redo</source>
         <translation>ᠳᠠᠬᠢᠵᠤ ᠬᠢᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="696"/>
+        <location filename="../../src/windows/main-window.cpp" line="734"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="696"/>
+        <location filename="../../src/windows/main-window.cpp" line="734"/>
         <source>This operation is not supported.</source>
         <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ.</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="766"/>
+        <location filename="../../src/windows/main-window.cpp" line="804"/>
         <source>Search</source>
         <translation>ᠬᠠᠢᠯᠳᠠ</translation>
     </message>
@@ -254,7 +254,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="781"/>
+        <location filename="../../src/windows/main-window.cpp" line="819"/>
         <source>New Folder</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
     </message>
@@ -270,50 +270,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="393"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="406"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="393"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="406"/>
         <source>This operation is not supported.</source>
         <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="200"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="431"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="202"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="444"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
         <source>Tips</source>
         <translation>ᠰᠠᠨᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="200"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="202"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳᠤ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠢ ᠬᠡᠷᠡᠭ᠍ᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="431"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="444"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>ᠡᠨᠡ ᠪᠤᠯ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤU ᠲᠠᠪᠠᠭ, ᠳᠡᠬᠦᠨ ᠢ᠋ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠠᠩᠬᠠᠵᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>ᠡᠨᠡ ᠪᠤᠯ ᠨᠢᠭᠡᠨ ᠬᠤᠭᠤᠰᠤᠨ ᠬᠡᠷᠡᠯᠯᠢᠭ ᠬᠦᠳᠡᠯᠭᠡᠬᠦᠷ,CD ᠢ᠋/ ᠵᠢ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="229"/>
         <source>Open In New Window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠤᠩᠬᠤᠨ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="244"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="278"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="246"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="283"/>
         <source>Can not open %1, %2</source>
         <translation>%1, %2 ᠢ᠋/ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠬᠦ ᠵᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="262"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
         <source>Open In New Tab</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠱᠤᠰᠢᠭ᠎ᠠ ᠵᠢᠨ ᠨᠢᠭᠤᠷ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
     </message>
@@ -325,7 +325,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="600"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
         <source>All tags...</source>
         <translation>ᠪᠦᠬᠦᠢᠯᠡ ᠳᠡᠮᠳᠡᠭ...</translation>
     </message>
