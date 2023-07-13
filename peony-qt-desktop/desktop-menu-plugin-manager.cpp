@@ -63,18 +63,6 @@ void DesktopMenuPluginManager::loadAsync()
 //    if (COMMERCIAL_VERSION)
 //        pluginsDir = QDir("/usr/lib/peony-qt-extensions");
     pluginsDir.setFilter(QDir::Files);
-    Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (!plugin)
-            continue;
-
-        StylePluginIface *splugin = dynamic_cast<StylePluginIface*>(plugin);
-        if (splugin) {
-            QApplication::setStyle(splugin->getStyle());
-            break;
-        }
-    }
 
     QtConcurrent::run([=]() {
         qDebug()<<pluginsDir.entryList().count();
@@ -92,6 +80,12 @@ void DesktopMenuPluginManager::loadAsync()
             QObject *plugin = pluginLoader.instance();
             if (!plugin)
                 continue;
+
+            StylePluginIface *splugin = dynamic_cast<StylePluginIface*>(plugin);
+            if (splugin) {
+                QApplication::setStyle(splugin->getStyle());
+                continue;
+            }
 
             auto p = dynamic_cast<VFSPluginIface *>(plugin);
             if (p) {
