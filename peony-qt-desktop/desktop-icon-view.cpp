@@ -411,9 +411,9 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                     break;
                 }
                 }
+                if (m_initialized)
+                    resolutionChange();
             }
-            if (m_initialized)
-                resolutionChange();
         });
     }
 
