@@ -114,6 +114,8 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     QAction *searchAction = new QAction(m_search_box);
     searchAction->setIcon(QIcon::fromTheme("edit-find-symbolic"));
     m_search_box->addAction(searchAction,QLineEdit::LeadingPosition);
+    //fix bug#180920, contents and icon overlap issue
+    edit->setTextMargins(0, 0, 20, 0);
 
 //    layout->addWidget(filter, Qt::AlignLeft);
     layout->addWidget(edit, Qt::AlignLeft);

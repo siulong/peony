@@ -526,6 +526,8 @@ void TabWidget::addNewConditionBar()
     inputBox->setFixedWidth(TRASH_BUTTON_WIDTH *4);
     inputBox->setPlaceholderText(tr("Please input key words..."));
     inputBox->setText("");
+    //fix bug#180920, contents and icon overlap issue
+    inputBox->setTextMargins(0, 0, 20, 0);
 
     //bug#93521 添加清除按钮
     QToolButton* clearButton = new QToolButton(inputBox);
