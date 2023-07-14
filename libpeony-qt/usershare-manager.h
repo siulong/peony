@@ -26,8 +26,11 @@
 #include <QMap>
 #include <QMutex>
 #include <QObject>
+#include <memory>
+#include <QThread>
 //#include <QProcess>
 #include "peony-core_global.h"
+#include "file-watcher.h"
 namespace Peony {
 
 class PEONYCORESHARED_EXPORT ShareInfo
@@ -65,9 +68,10 @@ public:
     bool addUserShareAcl(QString &name, QString &acl);
     QString parseUserShareAcl(QString &content);
     bool checkDirAdvancedShare(QString &name);
+    QStringList getUsershareLists();
 
 private:
-    explicit UserShareInfoManager (QObject* parent = nullptr) : QObject(parent) {};
+    explicit UserShareInfoManager (QObject* parent = nullptr);
 
 Q_SIGNALS:
     void signal_addSharedFolder(const ShareInfo& shareInfo, bool successed);
@@ -79,6 +83,23 @@ private:
     QMap <QString, ShareInfo*>      m_sharedInfoMap;
     QMap <QString, QString>         m_usershareAclMap;
     static UserShareInfoManager*    g_shareInfo;
+    std::shared_ptr<FileWatcher>    m_watcher;
+    QStringList                     m_usersharelists;
 };
+
+
+class PEONYCORESHARED_EXPORT SharedDeleteInfoThread : public QThread {
+    Q_OBJECT
+public:
+    explicit SharedDeleteInfoThread(const QString uri);
+
+protected:
+    void run() override;
+
+private:
+    QString m_uri;
+    static QMutex m_mutex;
+};
+
 }
 #endif // USERSHARE_MANAGER_H

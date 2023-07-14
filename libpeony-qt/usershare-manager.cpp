@@ -21,16 +21,20 @@
  */
 
 #include "usershare-manager.h"
+#include "file-utils.h"
 
 #include <QDebug>
 #include <QProcess>
 #include <QMessageBox>
+#include <QFileInfo>
+#include <QDir>
 
 #include <glib.h>
 
 using namespace Peony;
 
 UserShareInfoManager* UserShareInfoManager::g_shareInfo = nullptr;
+QMutex SharedDeleteInfoThread::m_mutex;
 
 static void         parseShareInfo (ShareInfo& shareInfo, QString& content);
 static QString      exectueCommand (QStringList& args, bool* ret /* out */);
@@ -393,6 +397,40 @@ bool UserShareInfoManager::checkDirAdvancedShare(QString &name)
     return ret;
 }
 
+QStringList UserShareInfoManager::getUsershareLists()
+{
+    return m_usersharelists;
+}
+
+UserShareInfoManager::UserShareInfoManager(QObject *parent) : QObject(parent)
+{
+    QString filePath = "/var/lib/samba/usershares";
+    QString usersharesUri = "file://" + filePath;
+    m_watcher = std::make_shared<FileWatcher>(usersharesUri);
+    QDir dir(filePath);
+    QFileInfoList infoList = dir.entryInfoList(QDir::Files);
+    for (QFileInfo fileInfo : infoList) {
+        m_usersharelists.append(fileInfo.fileName());
+    }
+
+    qDebug() << __func__ << __LINE__ << m_usersharelists;
+    connect(m_watcher.get(), &FileWatcher::fileCreated, this, [=](QString uri){
+        QString name = Peony::FileUtils::urlDecode(uri).split("/").last();
+        if (!name.contains(":")) {
+            m_usersharelists.append(name);
+            m_usersharelists.removeDuplicates();
+        }
+    });
+    connect(m_watcher.get(), &FileWatcher::fileDeleted, this, [=](QString uri){
+        QString name = Peony::FileUtils::urlDecode(uri).split("/").last();
+        if (!name.contains(":") && m_usersharelists.contains(name)) {
+            m_usersharelists.removeOne(name);
+        }
+    });
+
+    m_watcher->startMonitor();
+}
+
 bool UserShareInfoManager::addShareInfo(ShareInfo* shareInfo)
 {
     if (nullptr == shareInfo
@@ -434,4 +472,19 @@ void UserShareInfoManager::removeShareInfo(QString &name)
     bool ret = false;
     exectueCommand (args, &ret);
     Q_EMIT signal_deleteSharedFolder(originalPath, ret);
+}
+
+SharedDeleteInfoThread::SharedDeleteInfoThread(const QString uri)
+    : m_uri(uri)
+{
+
+}
+
+void SharedDeleteInfoThread::run()
+{
+    QString name = FileUtils::getUriBaseName(m_uri);
+    QMutexLocker locker(&m_mutex);
+    UserShareInfoManager::getInstance()->removeShareInfo(name);
+    qDebug() << __func__ << "name:" << name;
+
 }

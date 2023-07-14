@@ -31,6 +31,7 @@
 #include "file-item-model.h"
 
 #include "thumbnail-manager.h"
+#include "usershare-manager.h"
 
 #include "gerror-wrapper.h"
 #include "bookmark-manager.h"
@@ -661,6 +662,17 @@ void FileItem::onChildRemoved(const QString &uri)
     m_waiting_add_queue.removeOne(uri);
     m_uris_to_be_removed.append(uri);
     m_idle->start();
+    if (m_uris_to_be_removed.count() == 1) {
+        auto info = FileInfo::fromUri(uri);
+        if (info->isDir()) {
+            QString displayName = info->displayName();
+            if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
+                SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
+                connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
+                thread->start();
+            }
+        }
+    }
     return;
 }
 

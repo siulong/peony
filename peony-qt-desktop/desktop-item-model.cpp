@@ -34,6 +34,7 @@
 #include "file-operation-utils.h"
 
 #include "thumbnail-manager.h"
+#include "usershare-manager.h"
 
 #include "file-meta-info.h"
 
@@ -329,6 +330,15 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 //this->endResetModel();
                 Q_EMIT this->requestClearIndexWidget(QStringList()<<uri);
                 Q_EMIT this->requestUpdateItemPositions();
+
+                if (info->isDir()) {
+                    QString displayName = info->displayName();
+                    if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
+                        SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
+                        connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
+                        thread->start();
+                    }
+                }
             }
         }
     });
