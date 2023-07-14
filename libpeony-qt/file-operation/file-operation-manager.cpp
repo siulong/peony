@@ -345,6 +345,9 @@ start:
 
         // Check if the file path is mounted correctly
         if (!storage.isValid()) {
+            if (m_progressbar->m_error) {
+                m_progressbar->m_error = false;
+            }
             qWarning() << "The file path is not mounted correctly";
             return;
         }
@@ -353,6 +356,9 @@ start:
 
         // Check if there is an error getting the disk free space
         if (0 >= diskFreeSpace) {
+            if (m_progressbar->m_error) {
+                m_progressbar->m_error = false;
+            }
             qWarning() << "get disk free space error!";
             return;
         }
@@ -402,6 +408,9 @@ start:
 
             // Display the error message
             dialog.handle(except);
+            if (m_progressbar->m_error) {
+                m_progressbar->m_error = false;
+            }
             return;
         }
 
