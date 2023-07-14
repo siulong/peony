@@ -36,6 +36,7 @@
 #include <QAction>
 #include <QModelIndex>
 #include "format_dialog.h"
+#include "format-dlg-create-delegate.h"
 
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
@@ -214,7 +215,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 if(discControl->work()){
                    connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
                        connect(action, &QAction::triggered, [=](){
-                           UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                           UdfFormatDialog *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlg(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
@@ -228,7 +229,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 if(discControl->work()){
                    connect(discControl, &UdfBurn::DiscControl::workFinished, [=](UdfBurn::DiscControl *discCtrl){
                        connect(action, &QAction::triggered, [=](){
-                           UdfBurn::UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
+                           UdfBurn::UdfFormatDialogWrapper *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlgWrapper(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
@@ -244,7 +245,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                     FileInfoJob job (uri, this);
                     job.querySync ();
                 }
-                Format_Dialog *fd  = new Format_Dialog(uri, m_item);
+                Format_Dialog *fd = FormatDlgCreateDelegate::getInstance()->createUDiskDlg(uri, m_item);
                 fd->show();
             });
         }

@@ -60,6 +60,7 @@
 #include "file-operation-error-dialog.h"
 #include "file-enumerator.h"
 #include "gerror-wrapper.h"
+#include "format-dlg-create-delegate.h"
 
 #include "global-settings.h"
 #include "sound-effect.h"
@@ -1089,6 +1090,8 @@ const QList<QAction *> DirectoryViewMenu::constructComputerActions()
                     // FIXME:// refactory Format_Dialog
                     Format_Dialog* fd  = new Format_Dialog(info->uri(), nullptr, m_view);
                     fd->show();
+//                    Format_Dialog *fd = format_dlg_create_delegate::getInstance()->createDlg(info->uri(), nullptr);
+//                    fd->show();
                 });
                 l.last()->setObjectName(FORMAT_ACTION);
 

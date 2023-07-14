@@ -1885,9 +1885,16 @@ UdfBurn::UdfFormatDialogWrapper::~UdfFormatDialogWrapper()
     delete m_dialog;
 }
 
+void UdfBurn::UdfFormatDialogWrapper::raise()
+{
+    m_dialog->raise();
+}
+
 void UdfBurn::UdfFormatDialogWrapper::show()
 {
     m_dialog->show();
 }
 
 #endif
+
+

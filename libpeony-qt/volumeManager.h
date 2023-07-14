@@ -292,6 +292,7 @@ public:
     explicit UdfFormatDialogWrapper(const QString &uri, DiscControl *discControl, QWidget *parent = nullptr);
     ~UdfFormatDialogWrapper();
 
+    void raise();
     void show();
 
 private:

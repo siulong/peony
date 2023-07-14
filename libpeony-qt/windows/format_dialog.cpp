@@ -31,9 +31,13 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "global-settings.h"
+#include "format-dlg-create-delegate.h"
+
 #ifdef KY_SDK_SOUND_EFFECTS
 #include "ksoundeffects.h"
 #endif
+
+#include "format-dlg-create-delegate.h"
 
 #include <QObject>
 #include <QMessageBox>
@@ -1278,6 +1282,7 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
 
 Format_Dialog::~Format_Dialog()
 {
+    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
     g_signal_handlers_disconnect_by_data(mVolumeMonitor, this);
 //    delete ui;
     if (mTimer)             mTimer->deleteLater();
@@ -1318,6 +1323,8 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+
+    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
 }
 
 void Format_Dialog::resizeEvent(QResizeEvent *event)

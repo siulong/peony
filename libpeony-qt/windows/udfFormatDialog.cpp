@@ -22,6 +22,7 @@
 
 #include "udfFormatDialog.h"
 #include "disccontrol.h"
+#include "format-dlg-create-delegate.h"
 #include <QMessageBox>
 #include <QThread>
 #include <QDebug>
@@ -100,6 +101,9 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
 
 UdfFormatDialog::~UdfFormatDialog()
 {
+#ifndef KY_UDF_BURN
+    FormatDlgCreateDelegate::getInstance()->removeFromUdfMap(this->m_uri);
+#endif
     if(m_discControl){
         m_discControl->deleteLater();
         m_discControl = nullptr;
@@ -202,6 +206,9 @@ void UdfFormatDialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+#ifndef KY_UDF_BURN
+    FormatDlgCreateDelegate::getInstance()->removeFromUdfMap(this->m_uri);
+#endif
 }
 
 bool UdfFormatDialog::udfFormatEnsureMsgBox()
