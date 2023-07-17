@@ -1317,16 +1317,7 @@ QString FileUtilsPrivate::getFileIconName(const QString &uri)
     if (g_icon && G_IS_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
         if (icon_names) {
-            auto p = icon_names;
-            while (*p) {
-                QIcon icon = QIcon::fromTheme(*p);
-                if (!icon.isNull()) {
-                    icon_name = QString (*p);
-                    break;
-                } else {
-                    p++;
-                }
-            }
+            icon_name = QString(icon_names[0]);
         } else {
             //if it's a bootable-media,maybe we can get the icon from the mount directory.
             char *bootableIcon = g_icon_to_string(g_icon);

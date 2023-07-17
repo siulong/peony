@@ -1058,9 +1058,12 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     if (nullptr != destUri) {
         m_dest_uri = Peony::FileUtils::urlDecode(destUri);
     }
-
-    if (fIcon != getIcon().name()) {
-        setIcon(fIcon);
+    QString newIcon = fIcon;
+    if (newIcon.isNull()) {
+        newIcon = Peony::FileUtilsPrivate::getFileIconName(srcUri);
+    }
+    if (newIcon != getIcon().name()) {
+        setIcon(newIcon);
     }
 
     double currentPercent = current * 1.0 / total;
