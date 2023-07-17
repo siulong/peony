@@ -351,7 +351,8 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                 } else {
                     windowTitle = m_fileInfo.get()->displayName();
                 }  
-                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
+                //fix bug#182415, fix show unknow-icon issue, but basic info icon is correct
+                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), true);
 
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
