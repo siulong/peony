@@ -547,6 +547,7 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                         //set focus to fix bug#54061
                         getView()->setFocus();
                     });
+                    infoJob->queryAsync();
                 });
             }, Qt::BlockingQueuedConnection);
 
@@ -558,10 +559,15 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                 auto info = renameOp->getOperationInfo().get();
                 auto uri = info->target();
                 QTimer::singleShot(100, getView(), [=](){
-                    getView()->setSelections(QStringList()<<uri);
-                    getView()->scrollToSelection(uri);
-                    //set focus to fix bug#54061
-                    getView()->setFocus();
+                    auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
+                    infoJob->setAutoDelete();
+                    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        getView()->setSelections(QStringList()<<uri);
+                        getView()->scrollToSelection(uri);
+                        //set focus to fix bug#54061
+                        getView()->setFocus();
+                    });
+                    infoJob->queryAsync();
                 });
             }, Qt::BlockingQueuedConnection);
 
