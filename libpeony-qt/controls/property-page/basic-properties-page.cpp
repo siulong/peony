@@ -676,7 +676,21 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
         m_countOp = new FileCountOperation(realUris.isEmpty() ? uris : realUris);
         DEBUG << "symlinkTarget:" << info.get()->symlinkTarget();
     } else {
-        m_countOp = new FileCountOperation(uris);
+        QStringList lists;
+        for (auto uri : uris) {
+            auto info = FileInfo::fromUri(uri);
+            if (info->isSymbolLink()) {
+                if (!info.get()->symlinkTarget().isEmpty()) {
+                    QString temp = "file://" + info.get()->symlinkTarget();
+                    lists.append(temp);
+                } else {
+                    lists.append(uri);
+                }
+            } else {
+                lists.append(uri);
+            }
+        }
+        m_countOp = new FileCountOperation(lists);
     }
 
     m_countOp->setAutoDelete(true);
@@ -701,27 +715,37 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
                 return;
             }
             QUrl url(uri);
-            bool isLocalFile = url.isLocalFile();
-            //某些带空格的文件名称会导致命令错误，加上引号解决此问题。
-            QString path;
-            if(uri == "filesafe:///") {
-                path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
-            } else {
-                g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
-                g_autofree gchar *gpath = g_file_get_path(gfile);
-                if (gpath) {
-                    path = gpath;
+            if (url.isLocalFile()) {
+                std::shared_ptr<FileInfo> fileInfo = FileInfo::fromUri(uri);
+                FileInfoJob *fileInfoJob = new FileInfoJob(fileInfo);
+                fileInfoJob->setAutoDelete();
+                fileInfoJob->querySync();
+                //某些带空格的文件名称会导致命令错误，加上引号解决此问题。
+                QString path;
+                if(uri == "filesafe:///") {
+                    path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
                 } else {
-                    path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
+    //                g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+    //                g_autofree gchar *gpath = g_file_get_path(gfile);
+    //                if (gpath) {
+    //                    path = gpath;
+    //                } else {
+                        path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
+    //                }
                 }
-            }
 
-            QProcess process;
-            process.start("/usr/bin/du -s " + path);
-            process.waitForFinished();
-            QString result = process.readAllStandardOutput();
-            //du -s xxx 输出格式：4	xxx  (大小单位为KB)
-            m_fileTotalSizeCount += result.split(QRegExp("\\s+")).first().toLong();
+
+                QProcess process;
+                if (fileInfo->isSymbolLink()) {
+                    process.start("/usr/bin/du -L " + path);
+                } else {
+                    process.start("/usr/bin/du -s " + path);
+                }
+                process.waitForFinished();
+                QString result = process.readAllStandardOutput();
+                //du -s xxx 输出格式：4	xxx  (大小单位为KB)
+                m_fileTotalSizeCount += result.split(QRegExp("\\s+")).first().toLong();
+            }
         }
         //转换为 xx Bytes
         m_fileTotalSizeCount *= CELL1K;
