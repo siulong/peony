@@ -108,7 +108,7 @@ void OpenWithPropertiesPage::initFloorOne()
     QLabel *targetTypeMsgLabel = new QLabel(floor1);
     targetTypeMsgLabel->setMinimumHeight(60);
     qDebug() << "targetTypeMsgLabel :" << targetTypeMsgLabel->height();
-    targetTypeMsgLabel->setText(tr("How do you want to open %1%2 files ?").arg(".").arg(m_fileInfo.get()->displayName().split(".").last()));
+    targetTypeMsgLabel->setText(tr("How do you want to open \"%1%2\" files ?").arg(".").arg(m_fileInfo.get()->displayName().split(".").last()));
     layout1->addWidget(targetTypeMsgLabel);
 
     QLabel *defaultOpenLabel = new QLabel(floor1);
