@@ -938,6 +938,11 @@ const QStringList ListView::getAllFileUris()
     return m_proxy_model->getAllFileUris();
 }
 
+const int ListView::getAllDisplayFileCount()
+{
+    return m_proxy_model->rowCount();
+}
+
 int ListView::getCurrentCheckboxColumn()
 {
     int section =header()->sectionViewportPosition(3);

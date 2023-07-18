@@ -79,6 +79,7 @@ public:
 
     //children
     const QStringList getAllFileUris() override;
+    const int getAllDisplayFileCount();
 
     int getCurrentCheckboxColumn();
 
@@ -219,6 +220,9 @@ public:
     //children
     const QStringList getAllFileUris() {
         return m_view->getAllFileUris();
+    }
+    const int getAllDisplayFileCount() {
+        return m_view->getAllDisplayFileCount();
     }
 
     int getSortType() {

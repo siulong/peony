@@ -838,6 +838,11 @@ const QStringList IconView::getAllFileUris()
     return m_sort_filter_proxy_model->getAllFileUris();
 }
 
+const int IconView::getAllDisplayFileCount()
+{
+    return m_sort_filter_proxy_model->rowCount();
+}
+
 void IconView::editUri(const QString &uri)
 {
     setState(QListView::NoState);

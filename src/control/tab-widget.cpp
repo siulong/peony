@@ -1109,6 +1109,13 @@ const QStringList TabWidget::getAllFileUris()
     return currentPage()->getAllFileUris();
 }
 
+const int TabWidget::getAllDisplayFileCount()
+{
+    if (!currentPage())
+        return 0;
+    return currentPage()->getAllDisplayFileCount();
+}
+
 const QStringList TabWidget::getBackList()
 {
     if (!currentPage())

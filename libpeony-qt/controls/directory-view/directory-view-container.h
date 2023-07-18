@@ -70,6 +70,7 @@ public:
     const int getCurrentRowcount();
 
     const QStringList getAllFileUris();
+    const int getAllDisplayFileCount();
 
     const QStringList getBackList();
     const QStringList getForwardList();

@@ -81,6 +81,8 @@ public:
     const int getCurrentRowcount();
 
     const QStringList getAllFileUris();
+    const int getAllDisplayFileCount();
+
     const QList<std::shared_ptr<Peony::FileInfo>> getCurrentSelectionFileInfos();
     /* Function:Get all file information under the current path */
     const QList<std::shared_ptr<Peony::FileInfo>> getCurrentAllFileInfos();

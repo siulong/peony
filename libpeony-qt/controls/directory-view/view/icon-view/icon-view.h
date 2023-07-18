@@ -95,6 +95,7 @@ public:
 
     //children
     const QStringList getAllFileUris() override;
+    const int getAllDisplayFileCount();
 
     QRect visualRect(const QModelIndex &index) const override;
 
@@ -245,6 +246,10 @@ public:
     //children
     const QStringList getAllFileUris() {
         return m_view->getAllFileUris();
+    }
+
+    const int getAllDisplayFileCount() {
+        return m_view->getAllDisplayFileCount();
     }
 
     int getSortType() {
