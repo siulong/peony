@@ -524,8 +524,9 @@ start:
            }
            if (info->operationType() != FileOperationInfo::Delete) {
                //fix bug#162024, play sound when operation finished
-               if (info->operationType() == FileOperationInfo::Copy ||
-                   info->operationType() == FileOperationInfo::Move){
+               if ((info->operationType() == FileOperationInfo::Copy ||
+                   info->operationType() == FileOperationInfo::Move) &&
+                    ! info->m_has_error){
                    //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                    //Task#152997, use sdk play sound
 #ifdef KY_SDK_SOUND_EFFECTS

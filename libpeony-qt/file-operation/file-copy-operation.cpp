@@ -851,7 +851,9 @@ void FileCopyOperation::run()
         }
     }
 
-    setHasError(false);
+    //comment to fix bug#177163, copy and paste file has error and play success sound issue
+    //copy operation has finished, no need reset flag, keep the same with move-operation
+    //setHasError(false);
     QStringList burnUris = m_source_uris;
     for (auto node : nodes) {
         if (!isCancelled()) {
