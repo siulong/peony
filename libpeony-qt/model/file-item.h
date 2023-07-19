@@ -163,6 +163,7 @@ private:
 
     bool m_expanded = false;
     bool m_isRTypeDisc = false;
+    bool m_isEndOfEnumerate = false;
 
     std::shared_ptr<FileWatcher> m_watcher = nullptr;
     std::shared_ptr<FileWatcher> m_rTypeDiscWatcher = nullptr;/* R类型光盘刻录缓冲数据的监听 */

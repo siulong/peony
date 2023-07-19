@@ -452,6 +452,7 @@ void FileItem::findChildrenAsync()
                 m_ending_uris.clear();
                 m_ending_uris = uris;
             }
+            m_isEndOfEnumerate = isEnding;
 
 
             QStringList originalList = uris; /* 原始列表 */
@@ -469,7 +470,7 @@ void FileItem::findChildrenAsync()
                 splitLists.append(chunkList);
             }
             for(auto &queryUris : splitLists){
-                //qDebug()<<queryUris.size()<<m_ending_uris.size()<<this->uri();
+                //qDebug()<<"childrenUpdated:"<<queryUris.size()<<m_ending_uris.size()<<this->uri()<<m_isEndOfEnumerate<<isEnding;
                 Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Enumerate, this);
             }
         });
@@ -936,8 +937,8 @@ void FileItem::connectFunc()
             }
             m_model->endInsertRows();
             Q_EMIT m_model->updated();/* 更新状态栏 */
-            if (m_ending_uris.isEmpty()) {
-                //qDebug()<<"findChildrenFinished"<<m_children->size();
+            if (m_isEndOfEnumerate && m_ending_uris.isEmpty()) {
+                //qDebug()<<"findChildrenFinished"<<m_children->size()<<m_isEndOfEnumerate;
                 Q_EMIT m_model->findChildrenFinished();
             }
 
