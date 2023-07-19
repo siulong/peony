@@ -923,37 +923,37 @@ void FileItem::connectFunc()
 
         FileInfoManager *info_manager = FileInfoManager::getInstance();
         if(FileItemModel::OperateType::Enumerate == FileItemModel::OperateType(operateType)){
+            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count() + retFileInfos.size() -1);
             for (auto info : retFileInfos) {
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
                 auto item = new FileItem(info, this, m_model);
-                m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
-                m_model->endInsertRows();
                 m_ending_uris.removeOne(info->uri());
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             }
+            m_model->endInsertRows();
+            Q_EMIT m_model->updated();/* 更新状态栏 */
             if (m_ending_uris.isEmpty()) {
                 //qDebug()<<"findChildrenFinished"<<m_children->size();
-                Q_EMIT m_model->updated();/* 更新状态栏 */
                 Q_EMIT m_model->findChildrenFinished();
             }
 
         }else if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
+            m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count() + retFileInfos.size() -1);
             for (auto info : retFileInfos) {
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
                 auto item = new FileItem(info, this, m_model);
-                m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
-                m_model->endInsertRows();
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
             }
-
+            m_model->endInsertRows();
+            Q_EMIT m_model->updated();/* 更新状态栏 */
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
             m_model->updated();
             for (auto info : retFileInfos) {
