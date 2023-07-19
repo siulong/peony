@@ -24,6 +24,7 @@
 #include "file-item.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-meta-info.h"
 
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
@@ -336,7 +337,18 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         switch (role) {
         case Qt::DisplayRole:
         case Qt::ToolTipRole: {
-            return item->m_info->property("orig-path");
+            QString originPath = item->m_info->property("orig-path").toString();
+            if (originPath.isEmpty()) {
+                auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
+                if (targetInfo->isEmptyInfo()) {
+                    FileInfoJob j(targetInfo);
+                    j.querySync();
+                    originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
+                    item->m_info->setProperty("orig-path", originPath);
+                }
+                return originPath;
+            }
+            return originPath;
             break;
         }
         default:
