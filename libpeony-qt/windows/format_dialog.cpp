@@ -445,12 +445,16 @@ void Format_Dialog::slot_format(bool enable)
         QString romType = mFSCombox->currentText();
         if (QString("vfat/fat32") == romType) {
             romType = "vfat";
+            if (mNameEdit->text().trimmed ().toUtf8().length() <= 11){
+               strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
+            }                    
+        } else {
+            strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
         }
 
         //get values from ui
         strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
         strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
-        strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
 
         //disable name and rom size list
         //ui->comboBox_rom_size->setDisabled(true);
