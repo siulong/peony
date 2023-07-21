@@ -268,10 +268,12 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
     });
 
     connect(m_proxy_model, &DesktopItemProxyModel::showHiddenFile, this, [=]() {
-        QTimer::singleShot(100, this, [=]() {
-            resetAllItemPositionInfos();
-            refresh();
-        });
+//        QTimer::singleShot(100, this, [=]() {
+//            resetAllItemPositionInfos();
+//            refresh();
+//        });
+        //fix#181595 桌面图标设置隐藏后排序
+        updateView();
     });
 
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
@@ -730,10 +732,12 @@ void DesktopIconView::setShowHidden()
     m_show_hidden = !GlobalSettings::getInstance()->getValue(SHOW_HIDDEN_PREFERENCE).toBool();
     m_proxy_model->setShowHidden(m_show_hidden);
     //fix show hidden file desktop icons overlapped issue
-    QTimer::singleShot(100, this, [=]() {
-        resetAllItemPositionInfos();
-        refresh();
-    });
+    //QTimer::singleShot(100, this, [=]() {
+        //resetAllItemPositionInfos();
+        //refresh();
+    //});
+    //fix#181595 桌面图标设置隐藏后排序
+    updateView();
 }
 
 void DesktopIconView::resolutionChange()
