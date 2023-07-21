@@ -39,6 +39,7 @@
 #include "directory-view-widget.h"
 
 #include "global-settings.h"
+#include "file-watcher.h"
 
 #ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
@@ -166,6 +167,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         default:
             break;
         }
+        registerPlugin(piface, plugin);
     }
 
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString &key){
@@ -315,6 +317,29 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
            }
        }
      });
+
+    auto pluginsDirWatcher = new Peony::FileWatcher(QString("file://%1").arg(PLUGIN_INSTALL_DIRS), this, true);
+    pluginsDirWatcher->connect(pluginsDirWatcher, &Peony::FileWatcher::fileCreated, this, [=](const QString &uri){
+        QUrl url = uri;
+        QPluginLoader pluginLoader(url.path());
+
+        // version check
+        if (pluginLoader.metaData().value("MetaData").toObject().value("version").toString() != VERSION)
+            return;
+
+        QObject *plugin = pluginLoader.instance();
+        if (!plugin)
+            return;
+
+        PluginInterface *piface = dynamic_cast<PluginInterface*>(plugin);
+        if (!piface)
+            return;
+
+        m_hash.insert(piface->name(), piface);
+        m_fileNameHash.insert(piface->name(), piface);
+        registerPlugin(piface, plugin);
+    });
+    pluginsDirWatcher->startMonitor();
 }
 
 PluginManager::~PluginManager()
@@ -351,6 +376,57 @@ PluginInterface *PluginManager::getPluginByFileName(QString &fileName)
         return nullptr;
     }
     return m_fileNameHash.value(fileName);
+}
+
+void PluginManager::registerPlugin(PluginInterface *piface, QObject *plugin)
+{
+    switch (piface->pluginType()) {
+    case PluginInterface::MenuPlugin: {
+        MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
+        MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
+        break;
+    }
+    case PluginInterface::PreviewPagePlugin: {
+        PreviewPagePluginIface *previewPageFactory = dynamic_cast<PreviewPagePluginIface*>(plugin);
+        PreviewPageFactoryManager::getInstance()->registerFactory(previewPageFactory->name(), previewPageFactory);
+        break;
+    }
+    case PluginInterface::PropertiesWindowPlugin: {
+        PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
+        PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+        break;
+    }
+    case PluginInterface::ColumnProviderPlugin: {
+        //FIXME:
+        break;
+    }
+    case  PluginInterface::StylePlugin: {
+        /*!
+          \todo
+          manage the style plugin
+          */
+        auto styleProvider = dynamic_cast<StylePluginIface*>(plugin);
+        QApplication::setStyle(styleProvider->getStyle());
+        break;
+    }
+    case PluginInterface::DirectoryViewPlugin2: {
+        auto p = dynamic_cast<DirectoryViewPluginIface2*>(plugin);
+        DirectoryViewFactoryManager2::getInstance()->registerFactory(p->viewIdentity(), p);
+        break;
+    }
+    case PluginInterface::VFSPlugin: {
+        auto p = dynamic_cast<VFSPluginIface *>(plugin);
+        VFSPluginManager::getInstance()->registerPlugin(p);
+        break;
+    }
+    case PluginInterface::EmblemPlugin: {
+        auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
+        EmblemProviderManager::getInstance()->registerProvider(p->create());
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void PluginManager::init()

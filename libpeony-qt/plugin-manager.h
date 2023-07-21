@@ -46,6 +46,7 @@ public:
     static PluginManager *getInstance();
     void close();
     PluginInterface* getPluginByFileName(QString &fileName);
+    void registerPlugin(PluginInterface* piface, QObject* plugin);
 
 Q_SIGNALS:
     void pluginStateChanged(const QString &pluginName, bool enable);
