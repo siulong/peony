@@ -217,3 +217,8 @@ void SearchWidget::updateTabletModeValue(bool isTabletMode)
     int height = isTabletMode? 48:36;
     m_locationBar->setFixedHeight(height);
 }
+
+void SearchWidget::updateSearchProgress(bool isSearching)
+{
+    m_locationBar->updateSearchProgress(isSearching);
+}

@@ -139,6 +139,7 @@ private Q_SLOTS:
     void updateTabletModeValue(bool isTabletMode);
     bool CopyOrMoveTo(bool isCut);
     void quitMultiSelect();
+    void setSearchMode(bool isSearching);
 
 private:
     const QString m_uri;

@@ -175,7 +175,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     a = addWidget(m_searchWidget);
     m_actions.insert(HeaderBarAction::LocationBar, a);
 
-    connect(this, &HeaderBar::updateSearchProgress, m_location_bar, &Peony::AdvancedLocationBar::updateSearchProgress);
+    connect(this, &HeaderBar::updateSearchProgress, m_searchWidget, &Peony::SearchWidget::updateSearchProgress);
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
         Q_EMIT m_searchWidget->clearSearchBox();
@@ -788,6 +788,11 @@ void HeaderBar::quitMultiSelect()
         m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
     }
+}
+
+void HeaderBar::setSearchMode(bool isSearching)
+{
+    m_searchWidget->setSearchMode(isSearching);
 }
 
 void HeaderBar::updateSelectStatus(bool autoUpdate)

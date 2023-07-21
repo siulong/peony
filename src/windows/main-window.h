@@ -157,6 +157,8 @@ public Q_SLOTS:
     QString getLastSearchKey();
     void updateTabletModeValue(bool isTabletMode);
 
+    void updateSearchStatus(bool isSearching);
+
 protected:
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *e);

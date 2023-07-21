@@ -56,6 +56,7 @@ public Q_SLOTS:
     void closeSearch();
     void setGlobalFlag(bool isGlobal);
     void updateTabletModeValue(bool isTabletMode);
+    void updateSearchProgress(bool isSearching);
 
 private:
     void initAnimation();
