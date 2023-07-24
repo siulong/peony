@@ -173,8 +173,9 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         //fix open mutiple peony window, mount in side bar crash issue, link to bug#116201,116589
         if(!m_currSelectedItem)
             return;
-        JumpDirectory(m_currSelectedItem->uri());
-        qDebug()<<"挂载后跳转路径："<<m_currSelectedItem->uri();
+        //规避182166的情况
+//        JumpDirectory(m_currSelectedItem->uri());
+//        qDebug()<<"挂载后跳转路径："<<m_currSelectedItem->uri();
     });
 
     connect(this, &QTreeView::clicked, [=](const QModelIndex &index) {
