@@ -165,6 +165,7 @@ public:
 
 Q_SIGNALS:
     void valueChanged(const QString &key);
+    void updateHiddenFile(const QString &fileName);
     void signal_updateRemoteServer(const QString& server, bool add);
 
 public Q_SLOTS:

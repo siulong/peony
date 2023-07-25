@@ -100,6 +100,14 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
         }
     });
 
+    //fix bug#174512, set hidden file should hidden in time
+    connect(GlobalSettings::getInstance(), &GlobalSettings::updateHiddenFile, this, [=] (const QString& fileName) {
+        qDebug() << "updateHiddenFile:"<<fileName;
+        QTimer::singleShot(100, this, [=](){
+            update();
+        });
+    });
+
     //黑白名单更新
     QDBusConnection conn = QDBusConnection::sessionBus();
     if (! conn.isConnected()) {

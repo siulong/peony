@@ -490,7 +490,7 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     m_tm->tm_hour = qtime.hour();
     m_tm->tm_min = qtime.minute();
     m_tm->tm_sec = qtime.second();
-    qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
+    //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
     //set date and time show format, task #101605
     auto ret = kdk_system_timeformat_transform(m_tm);
     auto formatDate = kdk_system_shortformat_transform(m_tm);
@@ -503,7 +503,7 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
         formatDate = kdk_system_longformat_transform(m_tm);
     if (ret && formatDate){
         QString dateStr = g_strdup_printf("%s %s", formatDate, ret->timesec);
-        qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
+        //qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
         //释放结构体
         kdk_free_timeinfo(ret);
 

@@ -67,9 +67,23 @@ void FileBatchRenameOperation::run()
             except.op = FileOpRenameToHideFile;
             except.dlgType = ED_WARNING;
             except.title = tr("File Rename warning");
-            except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
+            except.errorStr = tr("Are you sure to hidden these files?").arg("\“").arg(m_new_name).arg("\”");
 
             Q_EMIT errored(except);
+
+            //fix bug#161394, support cancel rename operation
+            if (except.respCode == Cancel) {
+                cancel();
+                setHasError(true);
+                //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+                getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+                Q_EMIT operationFinished();
+                return;
+            }else{
+                //fix bug#174512, can not hide file immediately
+                qDebug() << "Q_EMIT updateHiddenFile："<<m_new_name;
+                Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
+            }
         }
     }
     m_total_size = m_uris.count();

@@ -89,7 +89,7 @@ void FileRenameOperation::run()
             except.op = FileOpRenameToHideFile;
             except.dlgType = ED_WARNING;
             except.title = tr("File Rename warning");
-            except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
+            except.errorStr = tr("Are you sure to hidden this file?").arg("\“").arg(m_new_name).arg("\”");
 
             Q_EMIT errored(except);
 
@@ -101,6 +101,10 @@ void FileRenameOperation::run()
                 getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
                 Q_EMIT operationFinished();
                 return;
+            }else{
+                //fix bug#174512, can not hide file immediately
+                qDebug() << "Q_EMIT updateHiddenFile："<<m_new_name;
+                Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
             }
         }
     }
