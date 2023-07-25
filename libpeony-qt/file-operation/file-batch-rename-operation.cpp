@@ -67,7 +67,7 @@ void FileBatchRenameOperation::run()
             except.op = FileOpRenameToHideFile;
             except.dlgType = ED_WARNING;
             except.title = tr("File Rename warning");
-            except.errorStr = tr("Are you sure to hidden these files?").arg("\“").arg(m_new_name).arg("\”");
+            except.errorStr = tr("Are you sure to hidden these files?");
 
             Q_EMIT errored(except);
 
