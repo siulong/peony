@@ -983,15 +983,12 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     auto displayName = Peony::FileUtils::getFileDisplayName(curUri);
     qDebug() << "goToUri iconName:" <<iconName <<displayName<<curUri;
 
-    //elide text if it is too long
-    if (displayName.length() > ELIDE_TEXT_LENGTH)
-    {
-        int  charWidth = fontMetrics().averageCharWidth();
-        displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
-    }
     if (displayName.contains("&")) {
         displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
+    //elide text if it is too long, Use ElideMiddle mode to design
+    //related bug#155126
+    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - 12);
     m_current_search->setText(displayName);
 }
 

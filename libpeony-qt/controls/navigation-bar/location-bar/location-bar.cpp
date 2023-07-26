@@ -546,16 +546,36 @@ void LocationBar::doLayout()
 
     m_indicator_menu->clear();
 
+    int iconWidth = 0;
+    if (!m_buttons.isEmpty()) {
+        auto button = m_buttons.first();
+        button->setVisible(true);
+        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        iconWidth = button->sizeHint().width();
+        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        iconWidth = iconWidth - button->sizeHint().width();
+        button->setVisible(false);
+    }
+    int exceptTotalwidth = 0;
     for (auto button : m_buttons) {
         button->setVisible(true);
-        button->setFixedHeight(this->height());
+        // 默认不做自动文字缩略
+        button->setProperty("elideText", QVariant());
+        button->resize(button->sizeHint().width(), button->height());
+        button->setFixedHeight(this->height()); //fixme
         button->setToolButtonStyle(Qt::ToolButtonTextOnly);
         button->adjustSize();
-        sizeHints<<button->sizeHint().width();
+        int sizeHintWidth = button->sizeHint().width();
+        exceptTotalwidth += sizeHintWidth;
+        sizeHints<<sizeHintWidth;
         button->setVisible(false);
     }
 
-    int totalWidth = this->width();
+    int totalWidth = this->width() - iconWidth;
+    if (totalWidth < exceptTotalwidth) {
+        totalWidth = totalWidth - m_indicator->width() - 2;
+    }
+
     int currentWidth = 0;
     int visibleButtonCount = 0;
     for (int index = sizeHints.count() - 1; index >= 0; index--) {
@@ -592,8 +612,11 @@ void LocationBar::doLayout()
     if (visibleButtonCount == 0 && !m_buttons.isEmpty()) {
         auto button = m_buttons.values().at(sizeHints.count() - 1);
         button->setVisible(true);
+        // 设置自动文字缩略
+        button->setProperty("elideText", true);
         button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        button->resize(totalWidth - 20, this->height());
+        button->move(offset, 0);
+        button->resize(totalWidth, button->height());
     }
 
     int spaceCount = 0;
@@ -653,6 +676,14 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
             return qApp->style()->drawComplexControl(control, &opt, painter);
         } else {
             opt.rect.adjust(0, 1, 0, -1); //bug#165286 地址栏中“计算机”文字显示不完整，高度减小2，宽度不变
+        }
+        if (widget) {
+            if (widget->property("elideText").toBool()) {
+                // 设置文字缩略
+                int textWidth = opt.rect.width() - opt.iconSize.width() - (opt.features.testFlag(QStyleOptionToolButton::HasMenu)? 44: 20);
+                auto text = opt.text;
+                opt.text = opt.fontMetrics.elidedText(text, Qt::ElideRight, textWidth);
+            }
         }
         return qApp->style()->drawComplexControl(control, &opt, painter, widget);
     }
