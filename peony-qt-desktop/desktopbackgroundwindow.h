@@ -47,16 +47,15 @@ public:
     void setId(int id);
 
     bool event(QEvent *event) override;
+    void invaidScreen();
 
 Q_SIGNALS:
     void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
     void updateWindow(const QRect &geometry);
-    void destroyed();
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
-    void invaidScreen();
 
 protected Q_SLOTS:
     void updateWindowGeometry();

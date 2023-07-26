@@ -43,8 +43,6 @@ static bool startup = false;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent) : QMainWindow(parent)
 {
-    connect(this,  &DesktopBackgroundWindow::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
-
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);
     }

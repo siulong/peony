@@ -759,7 +759,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
     desktop_window_id = m_bg_windows.count();
     // recheck primary screen info. new screen might become
     // primary screen.
-    qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
+    qInfo()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen() << "count:" << m_bg_windows.count();
     window->show();
     connect(screen, &QScreen::destroyed, this, [=](){
         if (m_mode == 2) {
@@ -772,10 +772,11 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
                 m_mode = 0;
             }
         }
-        qDebug()<<"QScreen::destroyed screen name:"<<screen->name();
-        Q_EMIT window->destroyed();
-        m_bg_windows.removeOne(window);
-        window->deleteLater();
+        qInfo()<<"QScreen::destroyed screen name:"<<screen->name()<< m_bg_windows.count();
+        window->invaidScreen();
+        bool sucess = m_bg_windows.removeOne(window);
+        qDebug()<<"QScreen::destroyed :"<<sucess;
+        delete window;
     });
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
