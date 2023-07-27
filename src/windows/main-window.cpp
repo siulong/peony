@@ -50,6 +50,7 @@
 #include "navigation-side-bar.h"
 #include "advance-search-bar.h"
 #include "status-bar.h"
+#include "search-widget.h"
 
 #include "intel/intel-navigation-side-bar.h"
 
@@ -1668,7 +1669,7 @@ void MainWindow::initUI(const QString &uri)
         m_is_search = showSearch;
     });
     //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
-    connect(m_header_bar, &HeaderBar::updateSearch, this, &MainWindow::updateSearch);
+    connect(m_header_bar->m_searchWidget, &Peony::SearchWidget::updateSearch, this, &MainWindow::updateSearch);
 
     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
     tabBarHandler->registerWidget(m_tab->tabBar());

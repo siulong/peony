@@ -70,6 +70,8 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
                 Q_EMIT this->updateLocationRequest(targetUri, false);
             }
         }
+
+        this->updateSearch(path, key, true);
     });
 
     connect(m_locationBar, &AdvancedLocationBar::updateWindowLocationRequest, this, &SearchWidget::updateLocationRequest);
