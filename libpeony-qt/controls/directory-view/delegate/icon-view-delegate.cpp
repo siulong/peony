@@ -656,6 +656,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     document.setIndentWidth(0);
     document.setDocumentMargin(0);
 
+    bool isElided= false;
     //计算text的长度
     while (true) {
         QTextLine line = textLayout.createLine();
@@ -672,6 +673,9 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
             line.setLineWidth(width);
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+            }
             elidedText = option.text.left(line.textStart()) + elidedLastLine;
             textOpt.setWrapMode(QTextOption::NoWrap);
             line = textLayout.createLine();
@@ -687,7 +691,6 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     QTextCursor cursor(&document);
 
     cursor.beginEditBlock();
-
     QTextBlock textStyleBlock = cursor.block();
     QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
     textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
@@ -703,15 +706,35 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         cursor.mergeCharFormat(selectColorFormat);
     }
 
-    while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
-        highlightCursor = document.find(regFindKeyWords, highlightCursor);
-        if (!highlightCursor.isNull()) {
+    if (!regFindKeyWords.isEmpty()) {
+        //对特殊字符进行处理
+        QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
+        QRegularExpression regex(escapedKeywords);
+        QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
+
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            int startPos = match.capturedStart();
+            int endPos = match.capturedEnd();
+          int oo = elidedText.size();
+            // 判断是否关键字被省略
+            if (isElided && startPos >= elidedText.size() - 1) {
+                break; // 关键字被完全省略，退出循环
+            }
+
+            // 调整关键字的结束位置
+            if (endPos > elidedText.size()) {
+                endPos = elidedText.size() ; // 关键字的一部分被省略，将结束位置调整为最后一个字符的位置
+            }
+
+            // 执行关键字高亮
+            highlightCursor.setPosition(startPos);
+            highlightCursor.setPosition(endPos, QTextCursor::KeepAnchor);
             highlightCursor.mergeCharFormat(colorFormat);
         }
-
     }
     cursor.endEditBlock();
-    document.drawContents(painter/*, rect*/);
+    document.drawContents(painter);
 
     textLayout.endLayout();
     painter->restore();
