@@ -273,7 +273,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 //            refresh();
 //        });
         //fix#181595 桌面图标设置隐藏后排序
-        updateView();
+        Q_EMIT updateView();
     });
 
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
@@ -737,7 +737,7 @@ void DesktopIconView::setShowHidden()
         //refresh();
     //});
     //fix#181595 桌面图标设置隐藏后排序
-    updateView();
+    Q_EMIT updateView();
 }
 
 void DesktopIconView::resolutionChange()
