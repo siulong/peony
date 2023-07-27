@@ -197,6 +197,11 @@ public:
     void BatchRenameOppositeInfoConstruct();
     void UntrashOppositeInfoConstruct();
     void trashOppositeInfoConstruct();
+    void setOperationRecording(bool state);
+
+    bool getOperationRecording() {
+        return m_operation_recording;
+    }
 
     Type operationType() {
         return m_type;
@@ -236,6 +241,8 @@ public:
     QStringList m_newnames;
 
     bool m_has_error = false;
+
+    bool m_operation_recording = true;
 
     //using for distiguist move action.
     Qt::DropAction m_drop_action = Qt::IgnoreAction;

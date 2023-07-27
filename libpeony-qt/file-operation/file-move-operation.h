@@ -127,7 +127,7 @@ protected:
     void moveForceUseFallback();
     void moveForceUseFallback(FileNode* node);
     bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
-
+    ExceptionResponse udfCopyWarningDialog();
     /*!
      * \brief prehandle
      * \param err
@@ -200,6 +200,8 @@ private:
     FileNodeReporter *m_reporter = nullptr;
 
     bool m_is_udf_burn_work = false;
+
+    bool m_is_udf_warning = false;
 
     QStringList m_burn_uris;
 

@@ -254,6 +254,15 @@ fallback_retry:
             case OverWriteOne: {
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    auto result = udfCopyWarningDialog();
+                    if (Cancel == result) {
+                        cancel();
+                    } else if (IgnoreOne == result) {
+                        setHasError(true);
+                        return;
+                    }
+                }
 //                g_file_copy_attributes(srcFile.get()->get(),
 //                                       destFile.get()->get(),
 //                                       GFileCopyFlags(flags),
@@ -270,6 +279,16 @@ fallback_retry:
                 node->setState(FileNode::Handled);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    m_is_udf_warning = true;
+                    auto result = udfCopyWarningDialog();
+                    if (Cancel == result) {
+                        cancel();
+                    } else if (IgnoreOne == result) {
+                        setHasError(true);
+                        return;
+                    }
+                }
 //                g_file_copy_attributes(srcFile.get()->get(),
 //                                       destFile.get()->get(),
 //                                       GFileCopyFlags(flags),
@@ -525,6 +544,17 @@ fallback_retry:
                 break;
             }
             case OverWriteOne: {
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    node->setErrorResponse(OverWriteOne);
+                    auto result = udfCopyWarningDialog();
+                    if (Cancel == result) {
+                        cancel();
+                    } else if (IgnoreOne == result) {
+                        setHasError(true);
+                        return;
+                    }
+                    break;
+                }
                 FileCopy fileOverWriteOneCopy (node->uri(), destFileUri,
                                    (GFileCopyFlags)(m_default_copy_flag | G_FILE_COPY_OVERWRITE),
                                    getCancellable().get()->get(),
@@ -548,6 +578,19 @@ fallback_retry:
                 break;
             }
             case OverWriteAll: {
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    node->setErrorResponse(OverWriteOne);
+                    m_prehandle_hash.insert(err->code, OverWriteOne);
+                    m_is_udf_warning = true;
+                    auto result = udfCopyWarningDialog();
+                    if (Cancel == result) {
+                        cancel();
+                    } else if (IgnoreOne == result) {
+                        setHasError(true);
+                        return;
+                    }
+                    break;
+                }
                 FileCopy fileOverWriteOneCopy (node->uri(), destFileUri,
                                    (GFileCopyFlags)(m_default_copy_flag | G_FILE_COPY_OVERWRITE),
                                    getCancellable().get()->get(),
@@ -759,6 +802,10 @@ void FileCopyOperation::run()
         m_is_udf_burn_work = true;
         bool isMountpoint = false;
         mHelper->judgeSpecialDiscOperation();
+        auto discType = mHelper->getDiscType();
+        if (discType.contains("DVD-RW") || discType.contains("CD-RW")) {
+            Q_EMIT operationWithoutRecording();
+        }
         g_autoptr(GFile) file = g_file_new_for_uri (m_dest_dir_uri.toUtf8().constData());
         if (file) {
             g_autoptr(GFileInfo) fileInfo = g_file_query_info(file, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
@@ -866,6 +913,7 @@ void FileCopyOperation::run()
             if (m_is_udf_burn_work) {
                 switch (node->responseType()) {
                 case IgnoreOne:
+                case OverWriteOne:
                     burnUris.removeOne(node->uri());
                     break;
                 case BackupOne:
@@ -878,7 +926,6 @@ void FileCopyOperation::run()
         }
         delete node;
     }
-
     m_info->m_dest_uris = m_info->m_node_map.values();
     nodes.clear();
 #ifdef KY_UDF_BURN
@@ -1035,6 +1082,22 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         }
     }
     return true;
+}
+
+ExceptionResponse FileCopyOperation::udfCopyWarningDialog()
+{
+    FileOperationError except;
+    ExceptionResponse typeData = Invalid;
+    except.errorType = ET_CUSTOM;
+    except.op = FileOpCopy;
+    except.title = tr("File copy error");
+    except.srcUri = m_source_uris.first();
+    except.errorStr = tr("Burning does not support replacement");
+    except.destDirUri = m_dest_dir_uri;
+    except.dlgType = ED_WARNING;
+    Q_EMIT errored(except);
+    typeData = except.respCode;
+    return typeData;
 }
 
 void FileCopyOperation::cancel()

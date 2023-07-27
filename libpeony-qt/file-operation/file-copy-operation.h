@@ -75,6 +75,7 @@ protected:
 
     bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
 
+    ExceptionResponse udfCopyWarningDialog();
 private:
     /*!
      * \brief m_is_duplicated_copy
@@ -108,6 +109,7 @@ private:
     FileNodeReporter *m_reporter = nullptr;
 
     bool m_is_udf_burn_work = false;
+    bool m_is_udf_warning = false;
     /*!
      * \brief m_prehandle_hash
      * \details

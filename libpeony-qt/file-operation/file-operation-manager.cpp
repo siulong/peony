@@ -201,7 +201,6 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
     }
     //end
 
-
     if (operationInfo.get()->operationType() == FileOperationInfo::Trash) {
         auto value = GlobalSettings::getInstance()->getValue("showTrashDialog");
         if (value.isValid()) {
@@ -533,9 +532,10 @@ start:
                    kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
 #endif
                }
-
-               m_undo_stack.push(info);
-               m_redo_stack.clear();
+               if(info->getOperationRecording()) {
+                   m_undo_stack.push(info);
+                   m_redo_stack.clear();
+               }
            } else {
                this->clearHistory();
            }
@@ -573,6 +573,13 @@ start:
         operation->setParent(m_thread_pool);
         m_thread_pool->start(operation);
     }
+
+    connect(operation, &FileOperation::operationWithoutRecording, this, [=]() {
+        auto info = operation->getOperationInfo();
+        if (info->getOperationRecording()) {
+            info->setOperationRecording(false);
+        }
+    }, Qt::BlockingQueuedConnection);
 
     Q_EMIT this->operationStarted(operation->getOperationInfo());
 
@@ -964,6 +971,13 @@ std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperat
     oppositeInfo->m_oldnames = this->m_oldnames;
 
     return oppositeInfo;
+}
+
+void FileOperationInfo::setOperationRecording(bool state)
+{
+    if (m_operation_recording != state) {
+        m_operation_recording = state;
+    }
 }
 
 // S3/S4

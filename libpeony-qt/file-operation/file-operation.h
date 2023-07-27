@@ -339,6 +339,8 @@ Q_SIGNALS:
 
     void operationTotalFileSize(const qint64& total_file_size);
 
+    void operationWithoutRecording();
+
 public Q_SLOTS:
     virtual void cancel();
 
