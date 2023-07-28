@@ -109,7 +109,6 @@ IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const
 
     auto textSize = IconViewTextHelper::getTextSizeForIndex(opt, index, 2);
     int fixedHeight = 5 + iconExpectedSize.height() + 5 + textSize.height() + 5;
-
     int y_bottom = option.rect.y() + fixedHeight + 20;
     //qDebug() << "Y:" <<option.rect.y() <<fixedHeight <<m_delegate->getView()->height();
     b_elide_text = false;
@@ -329,13 +328,20 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     p.save();
     p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
     p.setPen(opt.palette.highlightedText().color());
-    IconViewTextHelper::paintText(&p,
-                                  opt,
-                                  9999,
-                                  xoffset,
-                                  regFindKeyWords,
-                                  2,
-                                  4);
+
+    qreal textHeight = IconViewTextHelper::drawText(&p,
+                                                     opt,
+                                                     9999,
+                                                     xoffset,
+                                                     regFindKeyWords,
+                                                     2,
+                                                     4);
+
+    //fix#bug182191 【文件管理器】文件添加标记后选中状态名称显示不全
+    int fixedHeight = 5 + m_delegate->getView()->iconSize().height() + 5 + textHeight + 5;
+    if (fixedHeight > this->height())
+        setFixedHeight(fixedHeight);
+
     p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left

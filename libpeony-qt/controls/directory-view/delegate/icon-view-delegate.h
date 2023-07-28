@@ -125,6 +125,14 @@ class PEONYCORESHARED_EXPORT IconViewTextHelper
                           const QString &regFindKeyWords,
                           int horizalMargin = 0,
                           int maxLineCount = 4) ;
+
+    static qreal drawText(QPainter *painter,
+                          const QStyleOptionViewItem &option,
+                          int textMaxHeight,
+                          int xOffset,
+                          const QString &regFindKeyWords,
+                          int horizalMargin = 0,
+                          int maxLineCount = 4) ;
 };
 
 }

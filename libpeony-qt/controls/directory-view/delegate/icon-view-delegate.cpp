@@ -665,12 +665,13 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
         int nextLineY = y + lineSpacing;
         lineCount++;
-
-        if (textMaxHeight >= nextLineY + lineSpacing && lineCount != maxLineCount) {
-            line.setLineWidth(width-xOffset);
-            y = nextLineY;
+        y = nextLineY;
+        if (1 == lineCount) {
+           line.setLineWidth(width-xOffset);
         } else {
             line.setLineWidth(width);
+        }
+        if (textMaxHeight < nextLineY + lineSpacing || lineCount == maxLineCount) {
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
             if (elidedLastLine != lastLine) {
@@ -738,6 +739,120 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     textLayout.endLayout();
     painter->restore();
+}
+
+qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
+{
+    painter->save();
+    QFont font = option.font;
+    QTextLayout textLayout(option.text, font);
+    QTextOption textOpt;
+    textOpt.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    textLayout.setTextOption(textOpt);
+    textLayout.beginLayout();
+
+    auto fontMetrics = option.fontMetrics;
+    auto lineSpacing = fontMetrics.lineSpacing();
+    int width = option.rect.width() - 2*horizalMargin;
+    int y = 0;
+    int lineCount = 0;
+    QString elidedText = option.text;
+
+    QTextDocument document;
+    textOpt.setAlignment(Qt::AlignHCenter);
+    document.setDefaultTextOption(textOpt);
+    document.setTextWidth(width);
+    document.setDefaultFont(option.font);
+    document.setIndentWidth(0);
+    document.setDocumentMargin(0);
+
+    bool isElided= false;
+    //计算text的长度
+    while (true) {
+        QTextLine line = textLayout.createLine();
+        if (!line.isValid())
+            break;
+
+        int nextLineY = y + lineSpacing;
+        lineCount++;
+        y = nextLineY;
+        if (1 == lineCount) {
+           line.setLineWidth(width-xOffset);
+        } else {
+            line.setLineWidth(width);
+        }
+        if (textMaxHeight < nextLineY + lineSpacing || lineCount == maxLineCount) {
+            QString lastLine = option.text.mid(line.textStart());
+            QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+            }
+            elidedText = option.text.left(line.textStart()) + elidedLastLine;
+            textOpt.setWrapMode(QTextOption::NoWrap);
+            line = textLayout.createLine();
+            break;
+        }
+    }
+    document.setPlainText(elidedText);
+
+    painter->translate(horizalMargin, 0);
+
+    //设置关键字高亮
+    QTextCursor highlightCursor(&document);
+    QTextCursor cursor(&document);
+
+    cursor.beginEditBlock();
+    QTextBlock textStyleBlock = cursor.block();
+    QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
+    textStyleFormat.setTextIndent(xOffset);
+    cursor.setBlockFormat(textStyleFormat);
+    QTextCharFormat plainFormat(highlightCursor.charFormat());
+    QTextCharFormat colorFormat = plainFormat;
+    colorFormat.setBackground(Qt::green);
+    if (option.state.testFlag(QStyle::State_Selected)) {
+        QTextCharFormat selectColorFormat(cursor.charFormat());
+        selectColorFormat.setForeground(Qt::white);
+        cursor.select(QTextCursor::Document);
+        cursor.mergeCharFormat(selectColorFormat);
+    }
+
+    if (!regFindKeyWords.isEmpty()) {
+        //对特殊字符进行处理
+        QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
+        QRegularExpression regex(escapedKeywords);
+        QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
+
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            int startPos = match.capturedStart();
+            int endPos = match.capturedEnd();
+          int oo = elidedText.size();
+            // 判断是否关键字被省略
+            if (isElided && startPos >= elidedText.size() - 1) {
+                break; // 关键字被完全省略，退出循环
+            }
+
+            // 调整关键字的结束位置
+            if (endPos > elidedText.size()) {
+                endPos = elidedText.size() ; // 关键字的一部分被省略，将结束位置调整为最后一个字符的位置
+            }
+
+            // 执行关键字高亮
+            highlightCursor.setPosition(startPos);
+            highlightCursor.setPosition(endPos, QTextCursor::KeepAnchor);
+            highlightCursor.mergeCharFormat(colorFormat);
+        }
+    }
+    cursor.endEditBlock();
+    document.drawContents(painter);
+
+    textLayout.endLayout();
+    painter->restore();
+
+    QSizeF docSize = document.size();
+    qreal docHeight = docSize.height(); // 获取文档的高度
+    return docHeight;
 }
 
 QSize IconViewTextHelper::getTextSizeForIndex(const QStyleOptionViewItem &option, const QModelIndex &index, int horizalMargin, int maxLineCount)
