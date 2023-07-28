@@ -988,7 +988,7 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     }
     //elide text if it is too long, Use ElideMiddle mode to design
     //related bug#155126
-    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - 12);
+    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - 12);
     m_current_search->setText(displayName);
 }
 
