@@ -361,6 +361,18 @@
         <source>Close</source>
         <translation>ཁ་རྒྱག</translation>
     </message>
+    <message>
+        <source>Are you sure to cancel all file operations?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pause</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageDialog</name>
@@ -1065,7 +1077,7 @@
     </message>
     <message>
         <source>yyyy-MM-dd, hh:mm:ss AP</source>
-        <translation>yyyyལོའི་ཟླMMཚེས་ddཉིན། hh:mm:ss AP</translation>
+        <translation type="vanished">yyyyལོའི་ཟླMMཚེས་ddཉིན། hh:mm:ss AP</translation>
     </message>
     <message>
         <source>Modify time:</source>
@@ -1206,7 +1218,7 @@
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།</translation>
+        <translation type="vanished">བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Sort Preferences...</source>
@@ -1266,7 +1278,7 @@
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Chinese First</source>
@@ -1368,6 +1380,29 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
 </context>
 <context>
+    <name>Peony::FileBatchRenameOperation</name>
+    <message>
+        <source>File Rename error</source>
+        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་དུ་བཏགས་པ་ནོར་འདུག</translation>
+    </message>
+    <message>
+        <source>Invalid file name %1%2%3 .</source>
+        <translation type="unfinished">ཁྲིམས་འགལ་གྱི་ཡིག་ཆའི་མིང་།%1%2%3 .</translation>
+    </message>
+    <message>
+        <source>File Rename warning</source>
+        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ཉེན་བརྡ།</translation>
+    </message>
+    <message>
+        <source>Are you sure to hidden these files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename file error</source>
+        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ནོར་བ།</translation>
+    </message>
+</context>
+<context>
     <name>Peony::FileCopy</name>
     <message>
         <source>The dest file &quot;%1&quot; has existed!</source>
@@ -1435,6 +1470,22 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <message>
         <source>Link file error</source>
         <translation>ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+    </message>
+    <message>
+        <source>File System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data</source>
+        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+    </message>
+    <message>
+        <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Burning does not support replacement</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1787,6 +1838,30 @@ Do you want to delete the link file?</source>
         <source>File:%1 was not found.</source>
         <translation>ཡིག་ཆ།: %1རྙེད་མ་སོང་།</translation>
     </message>
+    <message>
+        <source>File System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data</source>
+        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+    </message>
+    <message>
+        <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File move error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link file error</source>
+        <translation type="unfinished">ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+    </message>
+    <message>
+        <source>Burning does not support replacement</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileOperationAfterProgressPage</name>
@@ -1980,6 +2055,22 @@ Do you want to delete the link file?</source>
         <source>Do not show again</source>
         <translation>མངོན་འཆར་མི་བྱེད་པ།</translation>
     </message>
+    <message>
+        <source>File System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data</source>
+        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+    </message>
+    <message>
+        <source>Insufficient storage space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileOperationPreparePage</name>
@@ -2141,7 +2232,15 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>The file %1%2%3 will be hidden when you refresh or change directory!</source>
-        <translation>ཁྱོད་ཀྱིས་དཀར་ཆག་གསར་བཟོ་བྱེད་པའམ་ཡང་ན་བརྗེ་བའི་སྐབས་སུ་ཡིག་ཆ་1%2%3སྦས་སྐུང་བྱེད་སྲིད།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱིས་དཀར་ཆག་གསར་བཟོ་བྱེད་པའམ་ཡང་ན་བརྗེ་བའི་སྐབས་སུ་ཡིག་ཆ་1%2%3སྦས་སྐུང་བྱེད་སྲིད།</translation>
+    </message>
+    <message>
+        <source>Are you sure to hidden this file?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When change the file suffix, the file may be invalid. Are you sure to change it ?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2152,7 +2251,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Can not trash this file, would you like to delete it permanently?</source>
-        <translation>ཡིག་ཆ་འདི་ཕྱིར་བསྡུ་མི་རུང་། ཡུན་རིང་ལ་གསུབ་དགོས་སམ།</translation>
+        <translation type="vanished">ཡིག་ཆ་འདི་ཕྱིར་བསྡུ་མི་རུང་། ཡུན་རིང་ལ་གསུབ་དགོས་སམ།</translation>
     </message>
     <message>
         <source>The user does not have read and write rights to the file &apos;%1&apos; and cannot delete it to the Recycle Bin.</source>
@@ -2168,11 +2267,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Can not trash</source>
-        <translation>གད་སྙིགས་བླུགས་མི་ཆོག</translation>
+        <translation type="vanished">གད་སྙིགས་བླུགས་མི་ཆོག</translation>
     </message>
     <message>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
-        <translation>གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
+        <translation type="vanished">གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
     </message>
     <message>
         <source>An unmanageable conflict exists. Please check the recycle bin.</source>
@@ -2316,7 +2415,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>How do you want to open %1%2 files ?</source>
-        <translation>ཁྱོད་ཀྱི་རེ་བར་ཡིག་ཆ%1%2ཁ་འབྱེད་ཐབས་གང་ཡིན་ནམ།</translation>
+        <translation type="vanished">ཁྱོད་ཀྱི་རེ་བར་ཡིག་ཆ%1%2ཁ་འབྱེད་ཐབས་གང་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>Default open with:</source>
@@ -2329,6 +2428,10 @@ Do you want to delete the link file?</source>
     <message>
         <source>Choose other application</source>
         <translation>ཉེར་སྤྱོད་གཞན་འདེམ་པ།</translation>
+    </message>
+    <message>
+        <source>How do you want to open &quot;%1%2&quot; files ?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2566,6 +2669,14 @@ Do you want to delete the link file?</source>
     <message>
         <source>Symbolic Link</source>
         <translation>མྱུར་ཐབས།</translation>
+    </message>
+    <message>
+        <source>The dest file &quot;%1&quot; has existed!</source>
+        <translation type="unfinished">དམིགས་བཟུང་ཡིག་ཆ་%1གནས་ཡོད།</translation>
+    </message>
+    <message>
+        <source>Link file error</source>
+        <translation type="unfinished">ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
     </message>
 </context>
 <context>
@@ -2925,7 +3036,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation>བརྟན་འདོར།</translation>
+        <translation type="vanished">བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Icon View</source>
@@ -2947,7 +3058,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Can not trash these files. You can delete them permanently. Are you sure doing that?</source>
-        <translation>ཡིག་ཆ་འདི་དག་སྙིགས་སྣོད་དུ་འཇོག་མི་ཐུབ་པས། ཡིག་འདི་དག་གཏན་དུ་སུབ་རྒྱུ་ཡིན་ནམ།</translation>
+        <translation type="vanished">ཡིག་ཆ་འདི་དག་སྙིགས་སྣོད་དུ་འཇོག་མི་ཐུབ་པས། ཡིག་འདི་དག་གཏན་དུ་སུབ་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>format</source>
@@ -3019,7 +3130,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ཁྱེད་ཀྱིས་ཡིག་ཆ་འདི་དག་བསུབ་རྒྱུ་ཡིན་ནམ་།བསུབ་མགོ་བརྩམས་མ་ཐག་ཡིག་ཆ་འདི་དག་སླར་གསོ་བྱེད་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱེད་ཀྱིས་ཡིག་ཆ་འདི་དག་བསུབ་རྒྱུ་ཡིན་ནམ་།བསུབ་མགོ་བརྩམས་མ་ཐག་ཡིག་ཆ་འདི་དག་སླར་གསོ་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>mark this file.</source>
@@ -3055,11 +3166,11 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>Can not trash</source>
-        <translation>སླར་བསྡུ་མི་ཐུབ།</translation>
+        <translation type="vanished">སླར་བསྡུ་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Can not trash files more than 10GB, would you like to delete it permanently?</source>
-        <translation>གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
+        <translation type="vanished">གད་སྙིགས་བླུགས་པའི་ཡིག་ཆ་10GBལས་བརྒལ་མི་རུང་། ཁྱེད་ཀྱིས་དུས་གཏན་དུ་བསུབ་ན་ཆོག་གམ།</translation>
     </message>
     <message>
         <source>Failed to open file &quot;%1&quot;: insufficient permissions.</source>
@@ -3150,6 +3261,22 @@ Do you want to unmount forcely?</source>
     <message>
         <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
         <translation>སྒྲིག་ཆས་ཕྱིར་གཏོང་མ་ཐུབ་པ་ནི་སྒྲིག་ཆས་སྤོ་བསྒྱུར་བྱས་པ་སོགས་ཀྱི་རྒྱུ་རྐྱེན་རེད།</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to permanently delete this file? Once deletion begins, the file will not be recoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to permanently delete these %1 files? Once deletion begins, these file will not be recoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

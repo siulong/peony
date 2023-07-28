@@ -389,6 +389,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open each folder in a new window</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OperationMenuEditWidget</name>
@@ -692,6 +696,10 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source> %1 items    selected %2 items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searching for files ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

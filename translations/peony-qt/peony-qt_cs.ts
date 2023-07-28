@@ -84,134 +84,134 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="202"/>
+        <location filename="../../src/control/header-bar.cpp" line="207"/>
         <source>View Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="265"/>
+        <location filename="../../src/control/header-bar.cpp" line="270"/>
         <source>Sort Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="418"/>
+        <location filename="../../src/control/header-bar.cpp" line="423"/>
         <source>Operate Tips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="159"/>
+        <location filename="../../src/control/header-bar.cpp" line="163"/>
         <source>Go Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="211"/>
+        <location filename="../../src/control/header-bar.cpp" line="216"/>
         <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="302"/>
+        <location filename="../../src/control/header-bar.cpp" line="307"/>
         <source>Option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="315"/>
+        <location filename="../../src/control/header-bar.cpp" line="320"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="318"/>
+        <location filename="../../src/control/header-bar.cpp" line="323"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="330"/>
+        <location filename="../../src/control/header-bar.cpp" line="335"/>
         <source>&amp;Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="333"/>
+        <location filename="../../src/control/header-bar.cpp" line="338"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="339"/>
+        <location filename="../../src/control/header-bar.cpp" line="344"/>
         <source>&amp;Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="343"/>
-        <location filename="../../src/control/header-bar.cpp" line="355"/>
+        <location filename="../../src/control/header-bar.cpp" line="348"/>
+        <location filename="../../src/control/header-bar.cpp" line="360"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="360"/>
-        <location filename="../../src/control/header-bar.cpp" line="820"/>
-        <location filename="../../src/control/header-bar.cpp" line="838"/>
+        <location filename="../../src/control/header-bar.cpp" line="365"/>
+        <location filename="../../src/control/header-bar.cpp" line="830"/>
+        <location filename="../../src/control/header-bar.cpp" line="848"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="365"/>
+        <location filename="../../src/control/header-bar.cpp" line="370"/>
         <source>&amp;Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="368"/>
+        <location filename="../../src/control/header-bar.cpp" line="373"/>
         <source>Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="419"/>
+        <location filename="../../src/control/header-bar.cpp" line="424"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="628"/>
-        <location filename="../../src/control/header-bar.cpp" line="823"/>
+        <location filename="../../src/control/header-bar.cpp" line="633"/>
         <location filename="../../src/control/header-bar.cpp" line="833"/>
+        <location filename="../../src/control/header-bar.cpp" line="843"/>
         <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="638"/>
-        <location filename="../../src/control/header-bar.cpp" line="772"/>
-        <location filename="../../src/control/header-bar.cpp" line="806"/>
+        <location filename="../../src/control/header-bar.cpp" line="643"/>
+        <location filename="../../src/control/header-bar.cpp" line="777"/>
+        <location filename="../../src/control/header-bar.cpp" line="816"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="613"/>
+        <location filename="../../src/control/header-bar.cpp" line="618"/>
         <source>Restore</source>
         <translation type="unfinished">Onar</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="616"/>
+        <location filename="../../src/control/header-bar.cpp" line="621"/>
         <source>Maximize</source>
         <translation type="unfinished">Büyüt</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="809"/>
+        <location filename="../../src/control/header-bar.cpp" line="819"/>
         <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="665"/>
+        <location filename="../../src/control/header-bar.cpp" line="670"/>
         <source>MoveTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="674"/>
+        <location filename="../../src/control/header-bar.cpp" line="679"/>
         <source>CopyTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="683"/>
+        <location filename="../../src/control/header-bar.cpp" line="688"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="749"/>
+        <location filename="../../src/control/header-bar.cpp" line="754"/>
         <source>Select path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,7 +227,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1184"/>
+        <location filename="../../src/control/header-bar.cpp" line="1194"/>
         <source>Minimize</source>
         <translation type="unfinished">Küçült</translation>
     </message>
@@ -240,7 +240,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Büyüt</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1196"/>
+        <location filename="../../src/control/header-bar.cpp" line="1206"/>
         <source>Close</source>
         <translation type="unfinished">Kapat</translation>
     </message>
@@ -269,34 +269,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="370"/>
+        <location filename="../../src/windows/main-window.cpp" line="419"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="377"/>
+        <location filename="../../src/windows/main-window.cpp" line="426"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="727"/>
-        <location filename="../../src/windows/main-window.cpp" line="768"/>
+        <location filename="../../src/windows/main-window.cpp" line="776"/>
+        <location filename="../../src/windows/main-window.cpp" line="818"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="727"/>
-        <location filename="../../src/windows/main-window.cpp" line="768"/>
+        <location filename="../../src/windows/main-window.cpp" line="776"/>
+        <location filename="../../src/windows/main-window.cpp" line="818"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="801"/>
+        <location filename="../../src/windows/main-window.cpp" line="851"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="803"/>
+        <location filename="../../src/windows/main-window.cpp" line="853"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
@@ -305,7 +305,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="816"/>
+        <location filename="../../src/windows/main-window.cpp" line="866"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -317,50 +317,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Tüm etiketler...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="412"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="411"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="412"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="203"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="204"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="450"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="468"/>
         <source>Tips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="203"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="204"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="449"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="450"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="462"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="468"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="231"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="232"/>
         <source>Open In New Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="247"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="281"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="248"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="282"/>
         <source>Can not open %1, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="265"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
         <source>Open In New Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -368,7 +368,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationSideBarContainer</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="625"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
         <source>All tags...</source>
         <translation type="unfinished">Tüm etiketler...</translation>
     </message>
@@ -459,12 +459,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="178"/>
+        <source>Open each folder in a new window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="187"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="184"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -472,27 +477,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="239"/>
+        <location filename="../../src/control/operation-menu.cpp" line="246"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="250"/>
+        <location filename="../../src/control/operation-menu.cpp" line="257"/>
         <source>copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="259"/>
+        <location filename="../../src/control/operation-menu.cpp" line="266"/>
         <source>paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="268"/>
+        <location filename="../../src/control/operation-menu.cpp" line="275"/>
         <source>cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="277"/>
+        <location filename="../../src/control/operation-menu.cpp" line="284"/>
         <source>trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -605,7 +610,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Peony::SearchWidget</name>
     <message>
-        <location filename="../../src/control/search-widget.cpp" line="28"/>
+        <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -635,27 +640,27 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Dosya Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="165"/>
+        <location filename="../../src/peony-application.cpp" line="168"/>
         <source>peony-qt</source>
         <translation>Dosya Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="172"/>
+        <location filename="../../src/peony-application.cpp" line="175"/>
         <source>Files or directories to open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="172"/>
+        <location filename="../../src/peony-application.cpp" line="175"/>
         <source>[FILE1, FILE2,...]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="213"/>
+        <location filename="../../src/peony-application.cpp" line="216"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="213"/>
+        <location filename="../../src/peony-application.cpp" line="216"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
@@ -664,12 +669,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="472"/>
+        <location filename="../../src/peony-application.cpp" line="475"/>
         <source>Peony Qt</source>
         <translation type="unfinished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="473"/>
+        <location filename="../../src/peony-application.cpp" line="476"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -871,27 +876,33 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TabStatusBar</name>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="106"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="266"/>
+        <source>Searching for files ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-status-bar.cpp" line="123"/>
         <source> %1 items </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="178"/>
         <source>selected%1%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="173"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="190"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="190"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="207"/>
         <source> selected %1 items    %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="192"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="209"/>
         <source> %1 items    selected %2 items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -930,7 +941,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="492"/>
-        <location filename="../../src/control/tab-widget.cpp" line="650"/>
+        <location filename="../../src/control/tab-widget.cpp" line="652"/>
         <source>is</source>
         <translation type="unfinished"></translation>
     </message>
@@ -940,12 +951,12 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1563"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1566"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1564"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1567"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -954,8 +965,8 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">Lütfen anahtar kelimeler girin ...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="611"/>
-        <location filename="../../src/control/tab-widget.cpp" line="634"/>
+        <location filename="../../src/control/tab-widget.cpp" line="613"/>
+        <location filename="../../src/control/tab-widget.cpp" line="636"/>
         <source>contains</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1085,7 +1096,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="748"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="763"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1093,17 +1104,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="991"/>
+        <location filename="../../src/control/header-bar.cpp" line="1001"/>
         <source>Option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1004"/>
+        <location filename="../../src/control/header-bar.cpp" line="1014"/>
         <source>Minimize</source>
         <translation type="unfinished">Küçült</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1027"/>
+        <location filename="../../src/control/header-bar.cpp" line="1037"/>
         <source>Close</source>
         <translation type="unfinished">Kapat</translation>
     </message>
