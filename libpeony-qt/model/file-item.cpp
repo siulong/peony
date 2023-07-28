@@ -939,6 +939,8 @@ void FileItem::connectFunc()
             Q_EMIT m_model->updated();/* 更新状态栏 */
             if (m_isEndOfEnumerate && m_ending_uris.isEmpty()) {
                 //qDebug()<<"findChildrenFinished"<<m_children->size()<<m_isEndOfEnumerate;
+                if(this->uri().startsWith("search:///"))/* 搜索结束不排序 */
+                    return;
                 Q_EMIT m_model->findChildrenFinished();
             }
 

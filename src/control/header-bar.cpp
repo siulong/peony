@@ -546,8 +546,10 @@ void HeaderBar::updateIcons()
     qDebug()<<"updateIcons:" <<m_window->getCurrentSortOrder();
     m_view_type_menu->setCurrentDirectory(m_window->getCurrentUri());
     m_view_type_menu->setCurrentView(m_window->getCurrentPage()->getView()->viewId(), true);
-    m_sort_type_menu->switchSortTypeRequest(m_window->getCurrentSortColumn());
-    m_sort_type_menu->switchSortOrderRequest(m_window->getCurrentSortOrder());
+    if(!m_window->getCurrentUri().startsWith("search:///")){/* 取消搜索不排序 */
+        m_sort_type_menu->switchSortTypeRequest(m_window->getCurrentSortColumn());
+        m_sort_type_menu->switchSortOrderRequest(m_window->getCurrentSortOrder());
+    }
     //use fixed icon mark-location-symbolic in close search button
     //m_searchWidget->updateCloseSearch(Peony::FileUtils::getFileIconName(m_window->getCurrentUri()));
     //go back & go forward
