@@ -56,6 +56,7 @@ GlobalSettings *GlobalSettings::getInstance()
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "peony-qt-preferences", this);
+    m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
     //set default allow parallel
     if (! m_settings->allKeys().contains(ALLOW_FILE_OP_PARALLEL)) {
         qDebug() << "default ALLOW_FILE_OP_PARALLEL:true";
@@ -70,7 +71,6 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
     m_cache.insert(DISPLAY_STANDARD_ICONS, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
-        m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
             m_cache.insert(key, m_peonyGSettings->get(key));

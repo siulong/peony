@@ -209,6 +209,7 @@ private:
     QGSettings*                 m_gsettings = nullptr;
     QGSettings*                 m_control_center_plugin = nullptr;
     QGSettings*                 m_peony_gsettings  = nullptr;
+    QGSettings*                 m_peonyGSettings  = nullptr; //fixme: 代码冲突遗留，后续仅保留一个peony gsettings实例
     QGSettings *m_gsettings_tablet_mode = nullptr;
     QGSettings *m_gsettings_dual_screen_mode = nullptr;
     QMutex                      m_mutex;
