@@ -123,6 +123,7 @@ public:
 
     // only used in model refresh.
     void clearCache();
+    void modifyGridSize();
 
 private:
     QRect getScreenArea(QScreen* screen);
@@ -258,6 +259,8 @@ protected:
     void relayoutExsitingItems(const QStringList &uris);
     void checkItemsOver();
     void dragToOtherScreen(QDropEvent *e);
+//    QSize getSizeFromConfig();
+//    void  writeSizeToConfig(const QSize &gridSize);
 
 private:
     ZoomLevel m_zoom_level = Invalid;

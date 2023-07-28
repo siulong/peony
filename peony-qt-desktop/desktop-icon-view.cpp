@@ -85,7 +85,8 @@
 #include <kstartupinfo.h>
 
 using namespace Peony;
-
+#define MINGRIDSIZE 64
+#define MAXGRIDSIZE 200
 #define ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-item-position"
 #define PANEL_SETTINGS "org.ukui.panel.settings"
 #define UKUI_STYLE_SETTINGS "org.ukui.style"
@@ -94,10 +95,50 @@ using namespace Peony;
 #define RESTORE_SINGLESCREEN_ITEM_POS_ATTRIBUTE "metadata::peony-qt-desktop-restore-singlescreen-item-position"
 
 static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect, QString> &p2);
+static bool posLessThan(const int& p1, const int& p2);
 
 static bool refreshing = false;
 static bool g_isHighVersion = false;
 //static bool g_initialized = false;
+
+int getGreatestCommonDivisor(QList<int> &position)
+{
+    std::stable_sort(position.begin(), position.end(), posLessThan);
+    QList<int> spacingList;
+    for (int i = 0; i < position.size() - 1; i++) {
+        int spacing = position[i+1] - position[i];
+        if (spacing < MINGRIDSIZE &&  0 < spacing) {
+            if(0 < spacingList.count()) {
+                spacingList.pop_back();
+            }
+            i++;
+            continue;
+        }
+        if (!spacingList.contains(spacing) && 0 != spacing) {
+            spacingList.append(spacing);
+        }
+    }
+    int gridWidth = spacingList.size() > 0 ? spacingList[0] : 0;
+    for (int i = 0; i < spacingList.size() - 1; i++) {
+        int num1 = spacingList[i];
+        int num2 = spacingList[i+1];
+        int temp = 0;
+        if (num1 < num2) {
+            temp = num1;
+            num1 = num2;
+            num2 = temp;
+        }
+        while(num2 != 0) {
+            temp = num1%num2;
+            num1 = num2;
+            num2 = temp;
+        }
+        if (num1 > MINGRIDSIZE && num1 < gridWidth) {
+            gridWidth = num1;
+        }
+    }
+    return gridWidth;
+}
 
 DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
@@ -230,6 +271,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 }
                 }
                 getAllRestoreInfo();
+                modifyGridSize();
                 resolutionChange();
                 setAllRestoreInfo();
             }
@@ -1775,7 +1817,7 @@ void DesktopIconView::setDefaultZoomLevel(ZoomLevel level)
     m_zoom_level = level;
     switch (level) {
     case Small:
-        setIconSize(QSize(24, 24));
+        setIconSize(QSize(24, 24));  
         setGridSize(QSize(5, 5) + itemDelegate()->sizeHint(viewOptions(), QModelIndex()));
         break;
     case Large:
@@ -1797,13 +1839,16 @@ void DesktopIconView::setDefaultZoomLevel(ZoomLevel level)
     if (metaInfo) {
         qDebug()<<"set zoom level"<<m_zoom_level;
         metaInfo->setMetaInfoInt("peony-qt-desktop-zoom-level", int(m_zoom_level));
-    } else {
-
     }
 
     resetAllItemPositionInfos();
     if (m_model) {
         m_model->clearFloatItems();
+    }
+
+    auto settings = Peony::GlobalSettings::getInstance();
+    if (m_initialized && settings) {
+        settings->setValue(DEFAULT_GRID_SIZE, gridSize());
     }
 }
 
@@ -2879,6 +2924,77 @@ QRect DesktopIconView::getDataRect(const QModelIndex &index)
     rect.setHeight(iconRect.height() + textHeight);
     return rect;
 }
+
+void DesktopIconView::modifyGridSize()
+{
+    auto settings = Peony::GlobalSettings::getInstance();
+    if (settings) {
+        QSize sizeFromConfig = settings->getValue(DEFAULT_GRID_SIZE).toSize();
+        if (!sizeFromConfig.isEmpty() && sizeFromConfig.width() > MINGRIDSIZE && sizeFromConfig.width() < MAXGRIDSIZE && sizeFromConfig.height() > MINGRIDSIZE && sizeFromConfig.height() < MAXGRIDSIZE) {
+            setGridSize(sizeFromConfig);
+            return;
+        }
+    }
+
+    QList<int> positionX;
+    QList<int> positionY;
+    for (auto i = m_item_rect_hash.constBegin(); i != m_item_rect_hash.constEnd(); ++i) {
+        QRect itemRect = i.value();
+        positionX << itemRect.x();
+        positionY << itemRect.y();
+    }
+    int gridWidth = getGreatestCommonDivisor(positionX);
+    int gridHeight = getGreatestCommonDivisor(positionY);
+    QSize size = QSize(gridWidth,gridHeight);
+    if (gridWidth < MINGRIDSIZE || gridHeight < MINGRIDSIZE || gridWidth > MAXGRIDSIZE || gridHeight > MAXGRIDSIZE ) {
+       //重新排序
+        setDefaultZoomLevel(zoomLevel());
+        Q_EMIT updateView();
+        return ;
+    }
+    setGridSize(size);
+    if (settings) {
+        settings->setValue(DEFAULT_GRID_SIZE, size);
+    }
+}
+
+//QSize DesktopIconView::getSizeFromConfig()
+//{
+//    QSize sizeFromConfig;
+//    QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/peony-qt.txt";
+//    if (QFile::exists(configPath)) {
+//        QFile file(configPath);
+//        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//            QTextStream in(&file);
+//            QString configFileContent = in.readAll();
+//            file.close();
+
+//            QStringList sizeValues = configFileContent.split("x");
+//            if (sizeValues.size() == 2) {
+//                int width = sizeValues[0].toInt();
+//                int height = sizeValues[1].toInt();
+//                sizeFromConfig = QSize(width, height);
+//            }
+//        }
+//    }
+//    return sizeFromConfig;
+//}
+
+//void DesktopIconView::writeSizeToConfig(const QSize &gridSize)
+//{
+//    if (gridSize.isValid()) {
+//        QString configFileContent;
+//        QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/peony-qt.txt";
+//        QFile file(configPath);
+//        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+//            QTextStream out(&file);
+//            configFileContent = QString::number(gridSize.width()) + "x" + QString::number(gridSize.height());
+//            out << configFileContent;
+//            file.close();
+//        }
+//    }
+//}
+
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)
 {
     if (p1.first.x() > p2.first.x())
@@ -2889,6 +3005,15 @@ static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect
 
     if ((p1.first.x() == p2.first.x()))
         return p1.first.y() < p2.first.y();
+
+    return true;
+}
+
+static bool posLessThan (const int& p1, const int& p2)
+{
+    if (p1 > p2) {
+        return false;
+    }
 
     return true;
 }
