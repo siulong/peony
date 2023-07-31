@@ -366,6 +366,11 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                     && item->uri().contains(vfsPIface->uriScheme())
                     && !item->uri().contains("computer:///")
                     && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
+                if (m_currSelectedItem) {
+                    if (!m_currSelectedItem->uri().startsWith("file://") && enable) {
+                        JumpDirectory("computer:///");
+                    }
+                }
                 this->setRowHidden(index.row(), index.parent(), enable);
                 return;
             }

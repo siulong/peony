@@ -28,6 +28,7 @@ void Peony::ExtensionsManagerWidget::initUI()
     setAutoFillBackground(true);
     this->setContentsMargins(0, 0, 0, 0);
     this->resize(EXTENSIONS_SHOW_WIDTH, EXTENSIONS_SHOW_HEIGHT);
+    this->setMinimumWidth(EXTENSIONS_SHOW_WIDTH);
     this->setWindowTitle(tr("Extensions Manager"));
     this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
 
@@ -136,6 +137,7 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
 
         QTableWidgetItem* itemC2 = new QTableWidgetItem(iface->description());
         itemC2->setFlags(itemC2->flags() | Qt::ItemIsSelectable);
+        itemC2->setToolTip(iface->description());
         m_tableWidget->setItem(row, 2, itemC2);
         row++;
     }
