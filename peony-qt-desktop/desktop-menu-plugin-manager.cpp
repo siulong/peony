@@ -81,6 +81,9 @@ void DesktopMenuPluginManager::loadAsync()
             if (!plugin)
                 continue;
 
+            // try fixing #185164 【看图】桌面上的图片右键选择图片打印无打印弹窗，打印失败
+            plugin->moveToThread(qApp->thread());
+
             StylePluginIface *splugin = dynamic_cast<StylePluginIface*>(plugin);
             if (splugin) {
                 QApplication::setStyle(splugin->getStyle());
