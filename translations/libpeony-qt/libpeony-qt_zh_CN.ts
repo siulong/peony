@@ -2945,7 +2945,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="216"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="220"/>
@@ -2955,7 +2955,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="225"/>
         <source>Do you want to put selected %1 item(s) into trash?</source>
-        <translation>确认要将选中的 %1项放入回收站吗？</translation>
+        <translation>确认要将选中的 %1 项放入回收站吗？</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="227"/>
@@ -4367,12 +4367,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="296"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation>清空回收站</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="305"/>
         <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
-        <translation>是否永久清空回收站内的文件？删除后将无法恢复。</translation>
+        <translation>确认要清空回收站内的文件吗？此操作无法撤销。</translation>
     </message>
     <message>
         <source>Delete Permanently</source>
