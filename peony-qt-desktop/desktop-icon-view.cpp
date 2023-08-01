@@ -2290,7 +2290,8 @@ void DesktopIconView::dropEvent(QDropEvent *e)
     }
 
     //task#74174 扩展模式下支持拖拽图标放置到扩展屏,拖拽释放后进行设置过滤器，proxyModel刷新
-    dragToOtherScreen(e);
+    if (!m_ctrl_key_pressed && dragToOtherScreen(e))
+        return;
 
     m_model->dropMimeData(e->mimeData(), action, -1, -1, this->indexAt(e->pos()));
     //FIXME: save item position
@@ -2694,7 +2695,7 @@ void DesktopIconView::fileCreated(const QString &uri)
     this->m_uris_to_edit.clear();
 }
 
-void DesktopIconView::dragToOtherScreen(QDropEvent *e)
+bool DesktopIconView::dragToOtherScreen(QDropEvent *e)
 {
     auto view = static_cast<DesktopIconView*>(e->source());
     if (this != e->source() && view) {
@@ -2789,9 +2790,10 @@ void DesktopIconView::dragToOtherScreen(QDropEvent *e)
 
             Q_EMIT updateView();
             Q_EMIT view->updateView();
-            return;
+            return bDropToOtherScreen;
         }
     }
+    return false;
 }
 
 void DesktopIconView::saveExtendItemInfo()

@@ -258,7 +258,7 @@ protected:
 
     void relayoutExsitingItems(const QStringList &uris);
     void checkItemsOver();
-    void dragToOtherScreen(QDropEvent *e);
+    bool dragToOtherScreen(QDropEvent *e);
 //    QSize getSizeFromConfig();
 //    void  writeSizeToConfig(const QSize &gridSize);
 
