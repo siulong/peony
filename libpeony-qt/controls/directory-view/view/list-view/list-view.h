@@ -221,9 +221,6 @@ public:
     const QStringList getAllFileUris() {
         return m_view->getAllFileUris();
     }
-    const int getAllDisplayFileCount() {
-        return m_view->getAllDisplayFileCount();
-    }
 
     int getSortType() {
         return m_view->getSortType();

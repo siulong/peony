@@ -1185,6 +1185,13 @@ const QStringList DesktopIconView::getAllFileUris()
     return uris;
 }
 
+const int DesktopIconView::getAllDisplayFileCount()
+{
+    if(m_proxy_model)
+        return m_proxy_model->rowCount();
+    return 0;
+}
+
 void DesktopIconView::setSelections(const QStringList &uris)
 {
     clearSelection();

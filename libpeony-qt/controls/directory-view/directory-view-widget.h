@@ -75,10 +75,6 @@ public:
         return QStringList();
     }
 
-    const virtual int getAllDisplayFileCount() {
-        return 0;
-    }
-
     virtual int getSortType() {
         return 0;
     }

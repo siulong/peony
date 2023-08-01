@@ -497,13 +497,6 @@ const QStringList DirectoryViewContainer::getAllFileUris()
     return QStringList();
 }
 
-const int DirectoryViewContainer::getAllDisplayFileCount()
-{
-    if (m_view)
-        return m_view->getAllDisplayFileCount();
-    return 0;
-}
-
 void DirectoryViewContainer::stopLoading()
 {
     if (m_view) {

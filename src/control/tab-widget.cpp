@@ -61,6 +61,7 @@
 #include "file-info.h"
 
 #include "volume-manager.h"
+#include "directory-view-helper.h"
 
 #include "file-info-job.h"
 #include "file-meta-info.h"
@@ -1111,9 +1112,15 @@ const QStringList TabWidget::getAllFileUris()
 
 const int TabWidget::getAllDisplayFileCount()
 {
-    if (!currentPage())
+    if (!currentPage() || !currentPage()->getView())
         return 0;
-    return currentPage()->getAllDisplayFileCount();
+
+    int count = 0;
+    auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIfaceByDirectoryViewWidget(currentPage()->getView());
+    if(iface)
+        count = iface->getAllDisplayFileCount();
+
+    return count;
 }
 
 const QStringList TabWidget::getBackList()
