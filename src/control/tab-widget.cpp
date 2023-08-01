@@ -1284,6 +1284,11 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
                 realUri = Peony::FileUtils::urlEncode(realUri);
 
+            // fix #174653
+            if (realUri.isEmpty()) {
+                realUri = "file:///";
+            }
+
             //m_stack->addWidget(viewContainer);
             viewContainer->goToUri(realUri, false, true);
 
