@@ -156,7 +156,9 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
        opt.rect = opt.rect.adjusted(0,0,0,-31);
     }
 
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, nullptr);
+    if (!(opt.state.testFlag(QStyle::State_Selected) && view->indexWidget(index) && !isDragging)) {
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, nullptr);
+    }
     opt.decorationSize = rawDecoSize;
 
     bool bCutFile = false;
