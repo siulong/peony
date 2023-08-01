@@ -656,6 +656,8 @@ const QStringList FileUtils::toDisplayUris(const QStringList &args)
                 g_autofree gchar* file = g_strdup_printf ("file://%s/%s", currentDir, path.toUtf8 ().constData ());
                 uris << file;
             }
+        } else if (path.startsWith("mtp://") || path.startsWith("gphoto2://")) {
+            uris << path;
         } else {
             uris << FileUtils::urlEncode (path);
         }

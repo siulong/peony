@@ -310,6 +310,8 @@ QString PeonyApplication::getUriMessage(QStringList& strList)
             args << *uri;
         } else if ((*uri).startsWith("/")) {
             args << Peony::FileUtils::urlEncode("file://" + *uri);
+        } else if ((*uri).startsWith("mtp://") || (*uri).startsWith("gphoto2://")) {
+            args << *uri;
         } else if ((*uri).contains("://")) {
             args << Peony::FileUtils::urlEncode(*uri);
         } else {
