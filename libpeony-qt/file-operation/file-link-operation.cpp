@@ -68,7 +68,11 @@ void FileLinkOperation::linkrun()
 
 retry:
     QUrl url = m_src_uri;
-    const char* symlinkValue = url.path().toUtf8().constData();
+    auto path = url.path();
+    auto utf8 = path.toUtf8();
+    auto symlinkValue = utf8.constData();
+    //使用这种方式获取路径在路径中含有较多生僻字的时候会失效,经过定位，这种情况发生在调用constData获取指针时
+//    const char* symlinkValue = url.path().toUtf8().constData();
     g_file_make_symbolic_link(destFile.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
         //fix bug#162416, empty pointer err cause crash issue
