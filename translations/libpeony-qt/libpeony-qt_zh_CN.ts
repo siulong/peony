@@ -1034,27 +1034,27 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="102"/>
         <source>CPU Name:</source>
-        <translation>处理器:</translation>
+        <translation>处理器：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="103"/>
         <source>CPU Core:</source>
-        <translation>核心数:</translation>
+        <translation>核心数：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="104"/>
         <source>Memory Size:</source>
-        <translation>内存:</translation>
+        <translation>内存：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="116"/>
         <source>User Name: </source>
-        <translation>用户名: </translation>
+        <translation>用户名：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="117"/>
         <source>Desktop: </source>
-        <translation>桌面环境: </translation>
+        <translation>桌面环境：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="125"/>
@@ -1065,7 +1065,7 @@
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="142"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="240"/>
         <source>Name: </source>
-        <translation>分区名: </translation>
+        <translation>分区名：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="142"/>
@@ -1081,25 +1081,25 @@
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="143"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="245"/>
         <source>Total Space: </source>
-        <translation>总容量: </translation>
+        <translation>总容量：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="144"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="246"/>
         <source>Used Space: </source>
-        <translation>使用空间: </translation>
+        <translation>使用空间：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="145"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="247"/>
         <source>Free Space: </source>
-        <translation>剩余空间: </translation>
+        <translation>剩余空间：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="146"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="249"/>
         <source>Type: </source>
-        <translation>文件系统: </translation>
+        <translation>文件系统：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="262"/>
@@ -1109,7 +1109,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="268"/>
         <source>Open with: 	</source>
-        <translation>打开:</translation>
+        <translation>打开：</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="275"/>
