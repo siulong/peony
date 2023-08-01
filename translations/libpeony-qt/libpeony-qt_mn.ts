@@ -36,7 +36,7 @@
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.cpp" line="35"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.cpp" line="36"/>
@@ -205,7 +205,7 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="127"/>
         <source>ok</source>
-        <translation>ok</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="140"/>
@@ -292,7 +292,7 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="246"/>
         <source>OK</source>
-        <translation>ok</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="359"/>
@@ -480,7 +480,7 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="434"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="563"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="435"/>
@@ -809,7 +809,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="395"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="396"/>
@@ -2370,7 +2370,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="129"/>
@@ -2880,7 +2880,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="204"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="213"/>
@@ -3486,7 +3486,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="261"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="262"/>
@@ -3711,7 +3711,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="468"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="469"/>
