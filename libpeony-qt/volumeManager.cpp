@@ -1441,10 +1441,11 @@ void Drive::eject(GMountUnmountFlags ejectFlag)
     if(m_canEject && !m_device.startsWith("/dev/sd")){ /* U盘使用安全移除 */
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-    else if(g_drive_can_stop(m_drive)/* || g_drive_is_removable(m_drive)*/){//for mobile harddisk.
+    else if(g_drive_can_stop(m_drive) || (g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))){// for mobile harddisk.
+        /* 加"(g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))"这个判断是为了解决bug#184111和bug#149182；有些U盘的can-stop为false,其中为一款sd卡的devicename */
         g_drive_stop(m_drive, ejectFlag, mount_op, NULL, GAsyncReadyCallback(ejectDevicebyDrive), targetUri);
     }else if(g_drive_is_removable(m_drive)){
-        //fix bug#141782, SD card eject can not recgonize issue
+        //fix bug#149182, SD card eject can not recgonize issue
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
 }
