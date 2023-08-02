@@ -40,6 +40,7 @@
 
 #include "global-settings.h"
 
+#include <kysdk/kysdk-system/libkysysinfo.h>
 #include <QDebug>
 #include <QDir>
 #include <QPluginLoader>
@@ -119,8 +120,16 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             break;
         }
         case PluginInterface::VFSPlugin: {
-            auto p = dynamic_cast<VFSPluginIface *>(plugin);
-            VFSPluginManager::getInstance()->registerPlugin(p);
+            char *isCloudPlat = kdk_system_get_hostVirtType();
+            if (isCloudPlat != nullptr) {
+                qDebug() << "isCloudPlat is " << isCloudPlat;
+                if (strcmp(isCloudPlat, "none") == 0) {
+                    auto p = dynamic_cast<VFSPluginIface *>(plugin);
+                    VFSPluginManager::getInstance()->registerPlugin(p);
+                }
+                delete isCloudPlat;
+            }
+
             break;
         }
         case PluginInterface::EmblemPlugin: {
