@@ -118,6 +118,11 @@ void DirectoryViewMenu::setHiddenActionsByObjectName(const QStringList &actionNa
 
 void DirectoryViewMenu::fillActions()
 {
+    QString tmpUri;
+    g_autoptr (GFile) tmp_file = g_file_new_for_uri(m_directory.toUtf8().constData());
+    g_autofree gchar* tmp_uri = g_file_get_uri(tmp_file);
+    tmpUri = tmp_uri;
+
     if (m_directory == "computer:///") {
         m_is_computer = true;
     }
@@ -151,7 +156,7 @@ void DirectoryViewMenu::fillActions()
     }
 
     if (m_directory.startsWith("ftp://")
-            || m_directory.startsWith("sftp://")) {
+            || m_directory.startsWith("sftp://") || tmpUri.startsWith("ftp://") || tmpUri.startsWith("sftp://")) {
         m_is_ftp = true;
     }
 
@@ -163,7 +168,7 @@ void DirectoryViewMenu::fillActions()
         m_is_filesafe = true;
     }
 
-    if(m_directory.startsWith("smb://")){
+    if(m_directory.startsWith("smb://") || tmpUri.startsWith("smb://")){
         m_is_smb_file = true;
     }
 
