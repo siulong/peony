@@ -1120,7 +1120,9 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     (uri.startsWith("file://") || uri.startsWith("favorite://")))
         realUri = "file://" + info->symlinkTarget();
 
-    if (url.scheme().isEmpty()) {
+    //try to fix bug#174666, part phone mtp mode access wrong issue
+    if (url.scheme().isEmpty() && ! uri.startsWith("mtp://") && ! uri.startsWith("gphoto2://")) {
+        qDebug() << "transform special uri:"<<uri;
         if (uri.startsWith("/")) {
             realUri = "file://" + uri;
         } else {
