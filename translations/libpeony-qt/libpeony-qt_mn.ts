@@ -3501,7 +3501,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="439"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="440"/>
