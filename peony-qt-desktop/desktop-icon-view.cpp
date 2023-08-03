@@ -242,39 +242,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 
         // check if there are items overlapped.
         QTimer::singleShot(150, this, [=](){
-            if (!m_initialized) {
-                qInfo()<<"desktop icon view model inited";
-                m_initialized = true;
-
-                if (!QGSettings::isSchemaInstalled(PANEL_SETTINGS))
-                    return;
-                //panel
-                QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
-                int position = panelSetting->get("panelposition").toInt();
-                int margins = panelSetting->get("panelsize").toInt();
-                switch (position) {
-                case 1: {
-                    setViewportMargins(0, margins, 0, 0);
-                    break;
-                }
-                case 2: {
-                    setViewportMargins(margins, 0, 0, 0);
-                    break;
-                }
-                case 3: {
-                    setViewportMargins(0, 0, margins, 0);
-                    break;
-                }
-                default: {
-                    setViewportMargins(0, 0, 0, margins);
-                    break;
-                }
-                }
-                getAllRestoreInfo();
-                modifyGridSize();
-                resolutionChange();
-                setAllRestoreInfo();
-            }
+            initViewport();
             checkItemsOver();
 
             // check icon is out of screen
@@ -1568,8 +1536,8 @@ void DesktopIconView::rowsAboutToBeRemoved(const QModelIndex &parent, int start,
         auto uri = model()->index(row, 0).data(Qt::UserRole).toString();
         m_item_rect_hash.remove(uri);
         m_resolution_item_rect.remove(uri);
-        QPoint itemPos(-1, -1);
-        setRestoreInfo(uri, itemPos);
+//        QPoint itemPos(-1, -1);
+//        setRestoreInfo(uri, itemPos);
     }
     qDebug() << "[DesktopIconView::rowsAboutToBeRemove] need relayout:" << m_model->m_items_need_relayout;
     relayoutExsitingItems(m_model->m_items_need_relayout);
@@ -2501,6 +2469,7 @@ void DesktopIconView::setRestoreInfo(QString &uri, QPoint &itemPos)
       //  restoreInfo<<pixelRatio;
         restoreInfo<<QString::number(itemPos.x());
         restoreInfo<<QString::number(itemPos.y());
+        restoreInfo<<QString::number(m_id);
         metaInfo->setMetaInfoStringList(RESTORE_ITEM_POS_ATTRIBUTE, restoreInfo);
     }
 }
@@ -2515,6 +2484,7 @@ void DesktopIconView::setAllRestoreInfo()
             QStringList restoreInfo;
             restoreInfo<<QString::number(rect.topLeft().x());
             restoreInfo<<QString::number(rect.topLeft().y());
+            restoreInfo<<QString::number(m_id);
             metaInfo->setMetaInfoStringList(RESTORE_ITEM_POS_ATTRIBUTE, restoreInfo);
         }
     }
@@ -2527,10 +2497,11 @@ void DesktopIconView::getAllRestoreInfo()
         auto metaInfo = FileMetaInfo::fromUri(uri);
         if (metaInfo) {
             QStringList restoreInfo = metaInfo->getMetaInfoStringList(RESTORE_ITEM_POS_ATTRIBUTE);
-            if (restoreInfo.count() == 2) {
+            if (restoreInfo.count() == 3) {
                 int top = restoreInfo.at(0).toInt();
                 int left = restoreInfo.at(1).toInt();
-                if (top >= 0 && left >= 0) {
+                int id = restoreInfo.at(2).toInt();
+                if (id == m_id && top >= 0 && left >= 0) {
                     QPoint topLeft(top, left);
                     updateItemPosByUri(uri, topLeft);
                     setFileMetaInfoPos(uri, topLeft);
@@ -2960,42 +2931,42 @@ void DesktopIconView::modifyGridSize()
     }
 }
 
-//QSize DesktopIconView::getSizeFromConfig()
-//{
-//    QSize sizeFromConfig;
-//    QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/peony-qt.txt";
-//    if (QFile::exists(configPath)) {
-//        QFile file(configPath);
-//        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-//            QTextStream in(&file);
-//            QString configFileContent = in.readAll();
-//            file.close();
+void DesktopIconView::initViewport()
+{
+    if (!m_initialized) {
+        qInfo()<<"desktop icon view model inited";
+        m_initialized = true;
 
-//            QStringList sizeValues = configFileContent.split("x");
-//            if (sizeValues.size() == 2) {
-//                int width = sizeValues[0].toInt();
-//                int height = sizeValues[1].toInt();
-//                sizeFromConfig = QSize(width, height);
-//            }
-//        }
-//    }
-//    return sizeFromConfig;
-//}
-
-//void DesktopIconView::writeSizeToConfig(const QSize &gridSize)
-//{
-//    if (gridSize.isValid()) {
-//        QString configFileContent;
-//        QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/peony-qt.txt";
-//        QFile file(configPath);
-//        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-//            QTextStream out(&file);
-//            configFileContent = QString::number(gridSize.width()) + "x" + QString::number(gridSize.height());
-//            out << configFileContent;
-//            file.close();
-//        }
-//    }
-//}
+        if (!QGSettings::isSchemaInstalled(PANEL_SETTINGS))
+            return;
+        //panel
+        QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
+        int position = panelSetting->get("panelposition").toInt();
+        int margins = panelSetting->get("panelsize").toInt();
+        switch (position) {
+        case 1: {
+            setViewportMargins(0, margins, 0, 0);
+            break;
+        }
+        case 2: {
+            setViewportMargins(margins, 0, 0, 0);
+            break;
+        }
+        case 3: {
+            setViewportMargins(0, 0, margins, 0);
+            break;
+        }
+        default: {
+            setViewportMargins(0, 0, 0, margins);
+            break;
+        }
+        }
+        getAllRestoreInfo();
+        modifyGridSize();
+        resolutionChange();
+        setAllRestoreInfo();
+    }
+}
 
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)
 {
