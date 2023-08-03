@@ -50,6 +50,7 @@ public:
 
 Q_SIGNALS:
     void cancel();
+    void fontChanged();
 
 protected:
     FileOperationError*         m_error = nullptr;

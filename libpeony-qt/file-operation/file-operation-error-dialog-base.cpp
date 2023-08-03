@@ -207,7 +207,15 @@ QPushButton *Peony::FileOperationErrorDialogBase::addButton(QString name)
 {
     if (!name.isNull () && !name.isEmpty ()) {
         QPushButton* b = new QPushButton(name);
-        b->setMinimumWidth(96);
+        b->setContentsMargins(0, 0, 0, 0);
+        int buttonSize = qMax(96, b->sizeHint().width());
+        b->resize(buttonSize, b->width());
+
+        connect(this, &FileOperationErrorDialogBase::fontChanged, b, [=]{
+            int buttonSize = qMax(96, b->sizeHint().width());
+            b->resize(buttonSize, b->width());
+        });
+
         m_buttonRight->addWidget (b, Qt::AlignRight | Qt::AlignVCenter);
         return b;
     }
@@ -230,6 +238,7 @@ bool Peony::FileOperationErrorDialogBase::event(QEvent *event)
 {
     if (event->type() == QEvent::FontChange || event->type() == QEvent::ApplicationFontChange) {
         adjustTextContent();
+        Q_EMIT this->fontChanged();
     }
     return QDialog::event(event);
 }
