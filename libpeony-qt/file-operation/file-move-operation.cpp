@@ -1508,6 +1508,7 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         QString parentUri = FileUtils::getParentUri(m_current_src_uri);
         target = QUrl(parentUri).path() + "/" + target;
     }
+    target.replace("%", "%25");
     target.replace("#", "%23");
     target.prepend("file://");
     QUrl url(target);
