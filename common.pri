@@ -50,3 +50,8 @@ exists("/usr/include/kysdk/kysdk-system/libkydate.h") {
     DEFINES += KY_SDK_DATE
     PKGCONFIG += kysdk-systime
 }
+
+exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
+    message("kysysinfo find")
+    DEFINES += KY_SDK_SYSINFO
+}

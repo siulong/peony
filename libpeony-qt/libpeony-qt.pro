@@ -34,6 +34,10 @@ contains(DEFINES, KY_SDK_WAYLANDHELPER) {
     PKGCONFIG += kysdk-waylandhelper
 }
 
+contains(DEFINES, KY_SDK_SYSINFO) {
+    PKGCONFIG += kysdk-sysinfo
+}
+
 schemes.files += org.ukui.peony.settings.gschema.xml
 schemes.path = /usr/share/glib-2.0/schemas/
 

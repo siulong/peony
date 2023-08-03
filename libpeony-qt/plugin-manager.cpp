@@ -40,7 +40,10 @@
 
 #include "global-settings.h"
 
+#ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
+#endif
+
 #include <QDebug>
 #include <QDir>
 #include <QPluginLoader>
@@ -120,16 +123,23 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             break;
         }
         case PluginInterface::VFSPlugin: {
-            char *isCloudPlat = kdk_system_get_hostVirtType();
-            if (isCloudPlat != nullptr) {
-                qDebug() << "isCloudPlat is " << isCloudPlat;
-                if (strcmp(isCloudPlat, "none") == 0) {
-                    auto p = dynamic_cast<VFSPluginIface *>(plugin);
-                    VFSPluginManager::getInstance()->registerPlugin(p);
+            auto p = dynamic_cast<VFSPluginIface *>(plugin);
+#ifdef KY_SDK_SYSINFO
+            if (p->name() == "file-safe vfs") {
+                char *isCloudPlat = kdk_system_get_hostVirtType();
+                if (isCloudPlat != nullptr) {
+                    qDebug() << "isCloudPlat is " << isCloudPlat;
+                    if (strcmp(isCloudPlat, "none") == 0) {
+                        VFSPluginManager::getInstance()->registerPlugin(p);
+                    }
+                    delete isCloudPlat;
                 }
-                delete isCloudPlat;
+            } else {
+                VFSPluginManager::getInstance()->registerPlugin(p);
             }
-
+#else
+            VFSPluginManager::getInstance()->registerPlugin(p);
+#endif
             break;
         }
         case PluginInterface::EmblemPlugin: {
