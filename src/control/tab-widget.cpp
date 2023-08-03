@@ -75,6 +75,8 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#define PUSH_BUTTON_TOTAL_PADDING 14
+
 static PushButtonStyle *global_instance = nullptr;
 
 PushButtonStyle *PushButtonStyle::getStyle()
@@ -337,6 +339,10 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
                         m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
                 }
             }
+            //fix #185743
+            auto realDisplayName = m_search_path->property("realDisplayName").toString();
+            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+            m_search_path->setText(displayName);
         });
     }
 }
@@ -988,9 +994,10 @@ void TabWidget::updateSearchPathButton(const QString &uri)
         displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
     //elide text if it is too long, Use ElideMiddle mode to design
-    //related bug#155126
-    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - 12);
-    m_current_search->setText(displayName);
+    //related bug#155126, #185743
+    m_search_path->setProperty("realDisplayName", displayName);
+    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+    m_search_path->setText(displayName);
 }
 
 void TabWidget::updateSearchList()
