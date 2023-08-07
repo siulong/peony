@@ -28,6 +28,7 @@
 #include "global-settings.h"
 #include "file-count-operation.h"
 #include "file-operation-utils.h"
+#include "file-meta-info.h"
 
 #include <QGSettings>
 #include <QFormLayout>
@@ -138,6 +139,14 @@ void RecentAndTrashPropertiesPage::init()
                                                 nullptr);
             auto origin_path = g_file_info_get_attribute_byte_string(info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
 
+            if (!origin_path) {
+                auto targetInfo = FileInfo::fromUri(m_uri);
+                QString path = targetInfo.get()->property("orig-path").toString();
+                if (!path.isEmpty()) {
+                    origin_path = path.toUtf8().constData();
+                }
+            }
+
             QUrl url(FileUtils::getParentUri("file://" + QString(origin_path)));
 
             quint64 width = FIXED_ROW_WIDTH - label->fontMetrics().width(tr("Origin Path: "));
@@ -178,6 +187,9 @@ void RecentAndTrashPropertiesPage::init()
 
             //use sdk interface to get time format
             QString deletion_date = m_fileInfo->deletionDate();
+            if (deletion_date.isEmpty()) {
+                deletion_date = m_fileInfo->modifiedDate();
+            }
             quint64 delete_width = FIXED_ROW_WIDTH - delete_label->fontMetrics().width(tr("Deletion Date: "));
             delete_label->setText(label->fontMetrics().elidedText(deletion_date, Qt::ElideMiddle, delete_width));
             delete_label->setWordWrap(true);
