@@ -1051,11 +1051,11 @@ bool Format_Dialog::format_makesure_dialog(){
 
     message_format->setText(QObject::tr("Formatting this volume will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?"));
 
-    message_format->setWindowTitle(QObject::tr("format"));
+    message_format->setWindowTitle(QObject::tr("Format"));
 
-    QPushButton *okButton = message_format->addButton(QObject::tr("begin format"),QMessageBox::YesRole);
+    QPushButton *okButton = message_format->addButton(QObject::tr("Begin Format"),QMessageBox::YesRole);
 
-    QPushButton *cancelButton = message_format->addButton(QObject::tr("close"),QMessageBox::NoRole);
+    QPushButton *cancelButton = message_format->addButton(QObject::tr("Close"),QMessageBox::NoRole);
 
     message_format->connect (this, &QDialog::finished, message_format, [=] (int) {
         Q_EMIT cancelButton->clicked ();

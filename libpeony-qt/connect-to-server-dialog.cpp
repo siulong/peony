@@ -140,7 +140,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     }
     setFixedSize(m_widget_size);
     setWindowIcon(QIcon::fromTheme("network-server"));
-    setWindowTitle(tr("connect to server"));
+    setWindowTitle(tr("Connect to server"));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 
@@ -165,10 +165,10 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_remote_port->append(ftpDefaultPortStr);
     m_remote_port->append(sftpDefaultPortStr);
     m_remote_port->append(sambaDefaultPortStr);
-    m_ip_label->setText(tr("ip"));
+    m_ip_label->setText(tr("Ip"));
     m_port_editor->setEditable(true);
-    m_port_label->setText(tr("port"));
-    m_remote_type_label->setText(tr("type"));
+    m_port_label->setText(tr("Port"));
+    m_remote_type_label->setText(tr("Type"));
     m_main_layout->setMargin(m_widget_margin);
     m_remote_type_edit->setAutoCompletion(true);
     m_ip_label->setFixedHeight(36);
@@ -212,9 +212,9 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     m_main_layout->addSpacing(12);
 
-    m_btn_add->setText(tr("add"));
-    m_btn_del->setText(tr("delete"));
-    m_btn_conn->setText(tr("connect"));
+    m_btn_add->setText(tr("Add"));
+    m_btn_del->setText(tr("Delete"));
+    m_btn_conn->setText(tr("Connect"));
     m_btn_layout->addWidget(m_btn_add);
     m_btn_layout->addWidget(m_btn_del);
     m_btn_layout->addSpacing(72);
@@ -291,11 +291,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
             if (m_checkIp) {
                 m_checkIp = false;
-                QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+                QMessageBox::warning(nullptr, tr("Warning"), tr("Ip input error, please re-enter!"), QMessageBox::Ok);
                 return;
             } else if (m_checkPort) {
                 m_checkPort = false;
-                QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+                QMessageBox::warning(nullptr, tr("Warning"), tr("Port input error, please re-enter!"), QMessageBox::Ok);
                 return;
             }
             accept();
@@ -363,11 +363,11 @@ void ConnectServerDialog::addUri(QString uri)
 
     if (m_checkIp) {
         m_checkIp = false;
-        QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Ip input error, please re-enter!"), QMessageBox::Ok);
         return;
     } else if (m_checkPort) {
         m_checkPort = false;
-        QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Port input error, please re-enter!"), QMessageBox::Ok);
         return;
     }
 
@@ -480,7 +480,7 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_usr_btn_usr           = new QRadioButton;
 
     m_usr_label->setText(tr("User's identity"));
-    m_usr_btn_guest->setText(tr("guest"));
+    m_usr_btn_guest->setText(tr("Guest"));
     m_usr_btn_usr->setText(tr("Registered users"));
     m_usr_layout->addWidget(m_usr_label,         0, 0);
     m_usr_layout->addWidget(m_usr_btn_guest,     0, 1);
@@ -496,8 +496,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_reg_usr_layout        = new QGridLayout;
 
     m_reg_usr_name_editor->setEditable (true);
-    m_reg_usr_name_label->setText(tr("name"));
-    m_reg_usr_passwd_label->setText(tr("password"));
+    m_reg_usr_name_label->setText(tr("Name"));
+    m_reg_usr_passwd_label->setText(tr("Password"));
     m_reg_usr_combox->setText(tr("Remember the password"));
     m_reg_usr_name_label->setFixedHeight(36);
     m_reg_usr_passwd_label->setFixedHeight(36);
@@ -518,8 +518,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_btn_ok                = new QPushButton;
     m_btn_layout            = new QHBoxLayout;
     m_btn_layout->addSpacing(192);
-    m_btn_cancel->setText(tr("cancel"));
-    m_btn_ok->setText(tr("ok"));
+    m_btn_cancel->setText(tr("Cancel"));
+    m_btn_ok->setText(tr("OK"));
     m_btn_layout->addWidget(m_btn_cancel);
     m_btn_layout->addWidget(m_btn_ok);
     m_main_layout->addStretch();
