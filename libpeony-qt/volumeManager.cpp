@@ -1758,6 +1758,7 @@ MessageDialog::MessageDialog(QWidget *parent):
     QDialog(parent)
 {    
     //setWindowTitle("Volume is occupied");
+    setWindowTitle(tr("Peony"));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setMinimumSize(QSize(350,200));
