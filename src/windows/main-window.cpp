@@ -221,28 +221,10 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
     }
 
 #ifdef KY_SDK_DATE
-    QDBusConnection conn = QDBusConnection::sessionBus();
-    if (! conn.isConnected()) {
-        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
-        return;
-    }
-
-    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
-                                         SDK_DATE_SERVER_PATH,
-                                         SDK_DATE_SERVER_INTERFACE,
-                                         QDBusConnection::sessionBus());
-
-    if (! mDbusDateServer->isValid()){
-        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
-        return;
-    }
-
-    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
-                                          SDK_DATE_SERVER_PATH,
-                                          SDK_DATE_SERVER_INTERFACE,
-                                          "ShortDateSignal",
-                                          this,
-                                          SLOT(updateDateFormat(QString)));
+    connect(Peony::GlobalSettings::getInstance(),
+            &Peony::GlobalSettings::updateShortDataFormat,
+            this,
+            &MainWindow::updateDateFormat);
 #endif
 }
 

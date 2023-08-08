@@ -274,6 +274,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         m_cache.insert(IS_GUESTOS_MACHINE, false);
     }
 #endif
+    initDateFormatDBus();
 }
 
 GlobalSettings::~GlobalSettings()
@@ -358,6 +359,55 @@ void GlobalSettings::getDualScreenMode()
 const QVariant GlobalSettings::getValue(const QString &key)
 {
     return m_cache.value(key);
+}
+
+bool GlobalSettings::initDateFormatDBus()
+{
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return false;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return false;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "ShortDateSignal",
+                                          this,
+                                          SLOT(sendShortDataFormat(QString)));
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "LongDateSignal",
+                                          this,
+                                          SLOT(sendLongDataFormat(QString)));
+
+    return true;
+#endif
+
+    return false;
+}
+
+void GlobalSettings::sendShortDataFormat(const QString &format)
+{
+    Q_EMIT this->updateShortDataFormat(format);
+}
+
+void GlobalSettings::sendLongDataFormat(const QString &format)
+{
+    Q_EMIT this->updateLongDataFormat(format);
 }
 
 bool GlobalSettings::isExist(const QString &key)

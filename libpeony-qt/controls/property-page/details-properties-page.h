@@ -31,7 +31,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QTableWidget>
-#include <QDBusInterface>
 
 namespace Peony {
 
@@ -89,7 +88,6 @@ private:
     QLabel *m_nameLabel = nullptr;
 
     QString m_date_format = "";
-    QDBusInterface  *mDbusDateServer;
 
     QWidget *createTableRow(QString labelText, QString content);
     QWidget *createTableRow(QString labelText, QLabel *contentLabel);

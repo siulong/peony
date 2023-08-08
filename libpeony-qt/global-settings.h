@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QMutex>
+#include <QDBusInterface>
 
 #include "peony-core_global.h"
 #include <gio/gio.h>
@@ -162,12 +163,15 @@ public:
     static GlobalSettings *getInstance();
     const QVariant getValue(const QString &key);
     bool isExist(const QString &key);
+    bool initDateFormatDBus();
     QString getProjectName();
 
 Q_SIGNALS:
     void valueChanged(const QString &key);
     void updateHiddenFile(const QString &fileName);
     void signal_updateRemoteServer(const QString& server, bool add);
+    void updateShortDataFormat(const QString &fileName);
+    void updateLongDataFormat(const QString &fileName);
 
 public Q_SLOTS:
     void setValue(const QString &key, const QVariant &value);
@@ -175,6 +179,8 @@ public Q_SLOTS:
     void resetAll();
     void setTimeFormat(const QString &value);
     void setDateFormat(const QString &value);
+    void sendShortDataFormat(const QString &format);
+    void sendLongDataFormat(const QString &format);
     QString getSystemTimeFormat();
     QString transToSystemTimeFormat(guint64 mtime, bool longFormat=false);
 
@@ -219,6 +225,8 @@ private:
     QString                     m_date_format = "";
     QString                     m_time_format = "";
     QString                     m_system_time_format  = "";
+
+    QDBusInterface*             mDbusDateServer = nullptr;
 };
 
 }
