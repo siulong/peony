@@ -88,15 +88,9 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
     m_sortTimer->setSingleShot(true);
     connect(m_sortTimer, &QTimer::timeout, this, [=]{
         checkSortSettings();
-        Q_EMIT setOrderParam(m_sortType, m_sortOrder);
+        qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
+        return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
     });
-    m_sortThread = new FilesSortThread(this);
-    connect(this, &FileItemProxyFilterSortModel::setOrderParam, m_sortThread, &FilesSortThread::executeSorting);
-    connect(m_sortThread, &FilesSortThread::sortingFinished, [=]() {
-       /* 排序完成后的处理，可以在这里更新界面或执行其他操作 */
-         invalidateFilter();
-    });
-    m_sortThread->start();
 
     m_show_hidden = settings->isExist(SHOW_HIDDEN_PREFERENCE)? settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
@@ -141,15 +135,6 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
                                           "black_and_white_update",
                                           this,
                                           SLOT(updateBlackAndWhiteList()));
-}
-
-FileItemProxyFilterSortModel::~FileItemProxyFilterSortModel()
-{
-    if(m_sortThread){
-        m_sortThread->quit();
-        m_sortThread->wait();
-        m_sortThread->deleteLater();
-    }
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -521,7 +506,6 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
     }
 
     return true;
-
 }
 
 bool FileItemProxyFilterSortModel::checkFileNameFilter(const QString &displayName) const
@@ -1043,12 +1027,6 @@ void FileItemProxyFilterSortModel::sort(int column, Qt::SortOrder order)
     }
 }
 
-void FileItemProxyFilterSortModel::sortAsync(int column, Qt::SortOrder order)
-{
-    qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
-    QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
-}
-
 int FileItemProxyFilterSortModel::expectedSortType()
 {
     return m_sortType;
@@ -1074,22 +1052,4 @@ QStringList FileItemProxyFilterSortModel::getAllFileUris()
             l<<index.data(FileItemModel::UriRole).toString();
     }
     return l;
-}
-
-FilesSortThread::FilesSortThread(FileItemProxyFilterSortModel *model)
-    : m_model(model) {
-
-}
-
-void FilesSortThread::run() {
-    exec();
-}
-
-void FilesSortThread::executeSorting(int column, Qt::SortOrder order)
-{
-    /* 在后台线程中进行排序 */
-    m_model->sortAsync(column, order);
-
-    /* 排序完成后，发送信号通知主线程 */
-    Q_EMIT sortingFinished();
 }
