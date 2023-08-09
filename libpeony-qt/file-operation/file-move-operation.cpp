@@ -831,12 +831,18 @@ fallback_retry:
             case IgnoreOne: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    return;
+                }
                 break;
             }
             case IgnoreAll: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
                 m_prehandle_hash.insert(err->code, IgnoreOne);
+                if (!m_is_udf_warning && m_is_udf_burn_work) {
+                    return;
+                }
                 break;
             }
             case OverWriteOne: {
@@ -846,7 +852,7 @@ fallback_retry:
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
                         cancel();
-                    } else if (IgnoreOne == result) {
+                    } else if (IgnoreOne == result || IgnoreAll == result) {
                         return;
                     }
                     break;
@@ -877,7 +883,7 @@ fallback_retry:
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
                         cancel();
-                    } else if (IgnoreOne == result) {
+                    } else if (IgnoreOne == result || IgnoreAll == result) {
                         return;
                     }
                     break;
@@ -1095,7 +1101,7 @@ fallback_retry:
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
                         cancel();
-                    } else if (IgnoreOne == result) {
+                    } else if (IgnoreOne == result || IgnoreAll == result) {
                         return;
                     }
                     break;
@@ -1134,7 +1140,7 @@ fallback_retry:
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
                         cancel();
-                    } else if (IgnoreOne == result) {
+                    } else if (IgnoreOne == result || IgnoreAll == result) {
                         return;
                     }
                     break;
