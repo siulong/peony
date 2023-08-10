@@ -88,6 +88,9 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
 
         QTimer::singleShot(1, [=]() {
            //task#74174  扩展屏设置菜单
+            if (this->menuWidget() && this->menuWidget()->isVisible()) {
+                this->menuWidget()->hide();
+            }
             DesktopMenu menu(m_desktopIconView, this);
             connect(&menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
             connect(&menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
