@@ -94,9 +94,6 @@ public:
         return m_oMediumType;
     }
 
-Q_SIGNALS:
-    void getInfoFinished(const unsigned long& CapacitySize);
-
 private:
     bool open();
     void close();
@@ -122,23 +119,5 @@ private:
 };
 
 }
-
-class DvdMediaInfoFetcher : public QObject {
-    Q_OBJECT
-public:
-    explicit DvdMediaInfoFetcher(const QStringList& deviceName, const QString& deviceType, QObject* parent = nullptr)
-        : QObject(parent), m_deviceName(deviceName), m_deviceType(deviceType) {}
-
-Q_SIGNALS:
-    void resultReady(const QString& result, const QString& type);
-    void finished();
-
-public Q_SLOTS:
-    void fetch();
-
-private:
-    QStringList m_deviceName;
-    QString m_deviceType;
-};
 
 #endif // DATACDROM_H
