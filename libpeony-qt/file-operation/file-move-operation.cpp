@@ -1229,7 +1229,7 @@ fallback_retry:
             setHasError(false);
         }
 
-        fileSync(node->uri(), realDestUri);
+//        fileSync(node->uri(), realDestUri);
         if(node->uri().endsWith(".dsps") && realDestUri.endsWith(".dsps")){
             m_srcUrisOfCopyDspsFiles.append(FileUtils::urlDecode(node->uri()));
             m_destUrisOfCopyDspsFiles.append(FileUtils::urlDecode(realDestUri));

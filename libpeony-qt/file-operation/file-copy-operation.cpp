@@ -723,7 +723,7 @@ fallback_retry:
 
 
         m_current_offset += node->size();
-        fileSync(srcUri, destFileUri);
+//        fileSync(srcUri, destFileUri);
         Q_EMIT operationProgressedOne(node->uri(), node->destUri(), node->size());
 
         if(srcUri.endsWith(".dsps") && destFileUri.endsWith(".dsps")){

@@ -19,11 +19,16 @@
  * Authors: Ding Jing <dingjing@kylinos.cn>
  *
  */
+#include <sys/stat.h>
+#include <sys/sendfile.h>
+#include <sys/mman.h>
 #include "file-copy.h"
 #include "file-utils.h"
 #include <stdio.h>
+#include <fcntl.h>
 #include <cstring>
 #include <QString>
+#include <mutex>
 #include <mntent.h>
 #include <QProcess>
 #include "file-info.h"
@@ -31,6 +36,9 @@
 
 #define BUF_SIZE        1024000
 #define SYNC_INTERVAL   10
+#define BIG_FILE_SIZE   300 * 1024 * 1024
+const size_t BUFFER_SIZE = 4096;
+std::mutex fileMutex;
 
 using namespace Peony;
 
@@ -106,12 +114,18 @@ void FileCopy::sync(const GFile* destFile)
         return;
     }
 
+    if(mTotalSize < BUF_SIZE * SYNC_INTERVAL || mIsDestFileLocal) {
+        return;
+    }
+
     // execute sync
-    QProcess p;
-    p.setProgram("/usr/bin/sync");
-    p.setArguments(QStringList() << "-f" << path);
-    p.start();
-    p.waitForFinished(-1);
+    int fromfd = open(path, O_SYNC);
+    if (-1 != fromfd) {
+        fsync(fromfd);
+        close(fromfd);
+    } else {
+        qWarning() << "open error";
+    }
 }
 
 
@@ -229,6 +243,7 @@ void FileCopy::run ()
 
     // check dest filesystem
     destDir = g_file_get_parent (destFile);
+    mIsDestFileLocal = isFileOnLocal(destDir);
     if (destDir) {
         g_autoptr (GMount) destMount = g_file_find_enclosing_mount (destDir, NULL, NULL);
         if (destMount) {
@@ -245,6 +260,28 @@ void FileCopy::run ()
                         }
                     }
                 }
+            }
+        }
+    }
+
+    if (mTotalSize > BIG_FILE_SIZE) {
+        auto SrcPath = g_file_get_path(srcFile);
+        auto destPath = g_file_get_path(destFile);
+
+        if(-1 != doCopyBigFile(SrcPath, destPath)){
+            if (CANCEL == mStatus) {
+                error = g_error_new(1, G_IO_ERROR_CANCELLED, "%s", tr("operation cancel").toUtf8().constData());
+                detailError(&error);
+                g_file_delete(destFile, nullptr, nullptr);
+            } else {
+                mStatus = FINISHED;
+            }
+            goto out;
+        } else {
+            if (ERROR == mStatus) {
+                error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Error writing to file: Input/output error").toUtf8().constData());
+                detailError(&error);
+                goto out;
             }
         }
     }
@@ -455,6 +492,85 @@ out:
     if (nullptr != destFileInfo) {
         g_object_unref(destFileInfo);
     }
+}
+
+int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
+{
+    mStatus = RUNNING;
+    int in_fd, out_fd, ret(-1);
+    struct stat stat_buf;
+    off_t offset = 0;
+    int syncCount = 0;
+
+    std::lock_guard<std::mutex> lock(fileMutex);
+    in_fd = open(srcPath, O_RDONLY);
+    if (in_fd == -1) {
+        qDebug() << "Failed to open the source file";
+        return ret;
+    }
+
+    if  (fstat(in_fd, &stat_buf) == -1) {
+        qDebug() << "Failed to get the source file status";
+        return ret;
+    }
+
+    out_fd = open(destPath, O_WRONLY | O_CREAT, stat_buf.st_mode);
+    if (out_fd == -1) {
+        qDebug() << "Failed to open the destination file";
+        return ret;
+    }
+
+    off_t buf = 10 * 1024 * 1024;
+    ssize_t sendSize = 0;
+    ssize_t size = 0;
+    while(size < stat_buf.st_size) {
+        if (nullptr != mCancel && g_cancellable_is_cancelled(mCancel)) {
+            mStatus = CANCEL;
+            break;
+        }
+
+        if (RUNNING == mStatus) {
+            sendSize = sendfile(out_fd, in_fd, &offset, buf);
+            if (sendSize == -1) {
+                size = sendSize;
+                if (0 != offset) {
+                    mStatus = ERROR;
+                }
+                qWarning() << "send file error";
+                break;
+            }
+            size += sendSize;
+            if (mOffset <= mTotalSize) {
+                mOffset = size;
+            }
+            if (!mIsDestFileLocal) {
+                if (++syncCount > SYNC_INTERVAL) {
+                    syncCount = 0;
+                    fsync(out_fd);
+                }
+            }
+            updateProgress ();
+        } else if (PAUSE == mStatus) {
+            if (mPause.tryLock(3000)) {
+                if (RESUME == mStatus) {
+                    mPause.unlock();
+                }
+                mStatus = RUNNING;
+            }
+        }
+    }
+    close(in_fd);
+    close(out_fd);
+    return size;
+}
+
+bool FileCopy::isFileOnLocal(const GFile* destFile)
+{
+    GMount* mount = g_file_find_enclosing_mount(const_cast<GFile*>(destFile), NULL, NULL);
+    if (mount) {
+        return !g_mount_can_unmount(mount);
+    }
+    return true;
 }
 
 /**
