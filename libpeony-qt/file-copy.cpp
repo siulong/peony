@@ -456,12 +456,24 @@ out:
         }
         sync(destFile);
     } else {
-        // some special detail for mtp
-        if (mSrcUri.startsWith("mtp:///") || mDestUri.startsWith("mtp:///")) {
+        // some special detail for mtp,  gphoto2, or other cases.
+        if (mSrcUri.startsWith("mtp://") || mDestUri.startsWith("mtp://")) {
             if (mError) {
                 g_error_free(*mError);
                 *mError = nullptr;
-                g_set_error(mError, 1, G_IO_ERROR_NOT_SUPPORTED, "%s", tr("File opening failure").toUtf8().constData());
+                g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
+            }else if (mDestUri.startsWith("gphoto2://")) {
+                if (mError) {
+                    g_error_free(*mError);
+                    *mError = nullptr;
+                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("Failed to create %1. Please ensure if it is in root directory, or if the device supports gphoto2 protocol correctly.").arg(mDestUri).toUtf8().constData());
+                }
+            } else {
+                if (mError) {
+                    g_error_free(*mError);
+                    *mError = nullptr;
+                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("Failed to create %1.").arg(mDestUri).toUtf8().constData());
+                }
             }
         }
     }

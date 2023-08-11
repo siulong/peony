@@ -177,6 +177,10 @@ void DirectoryViewMenu::fillActions()
         m_is_boxpath = true;
     }
 
+    if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+        m_is_mtp_ptp = true;
+    }
+
     auto dev = VolumeManager::getDriveFromUri(m_directory);
     if(dev != nullptr){
         bool canEject = g_drive_can_eject(dev.get()->getGDrive());
@@ -532,6 +536,9 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
             createAction->setEnabled(false);
         }
         if (m_is_boxpath) {
+            createAction->setEnabled(false);
+        }
+        if (m_is_mtp_ptp) {
             createAction->setEnabled(false);
         }
         //fix create folder fail issue in special path
@@ -912,7 +919,18 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 l<<pasteAction;
                 l.last()->setObjectName(PASTE_ACTION);
                 ClipboardUtils::getInstance()->updateClipboardManually();
-                pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
+
+                //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
+                auto info = FileInfo::fromUri(m_directory);
+                bool isDirectoryCanWrite = true;
+                if (!info->isEmptyInfo()) {
+                    isDirectoryCanWrite = info->canWrite();
+                }
+                if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+                    isDirectoryCanWrite = false;
+                }
+
+                pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles() && isDirectoryCanWrite);
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto op = ClipboardUtils::pasteClipboardFiles(m_directory);
                     if (op) {

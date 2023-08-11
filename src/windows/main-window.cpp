@@ -556,6 +556,10 @@ void MainWindow::setShortCuts()
             if (boxpath == getCurrentUri()) {
                 return;
             }
+            //not allow create in phone path
+            if (getCurrentUri().startsWith("mtp://") || getCurrentUri().startsWith("gphoto2://")){
+                return;
+            }
 
             createFolderOperation();
         });
@@ -758,6 +762,14 @@ void MainWindow::setShortCuts()
                 QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
                 return;
             }
+
+            //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
+            auto info = Peony::FileInfo::fromUri(currentUri);
+            if (!info->canWrite() || currentUri.startsWith("mtp://")
+                || currentUri.startsWith("gphoto2://")) {
+                return;
+            }
+
             Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
                 //FIXME: how about duplicated copy?

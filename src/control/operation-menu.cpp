@@ -358,11 +358,21 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     bool isComputer = currentDirUri.startsWith("computer:///");
     bool isFileBox = currentDirUri == "filesafe:///";
 
+    //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
+    bool isDirectoryCanWrite = true;
+    auto info = Peony::FileInfo::fromUri(currentDirUri);
+    if (!info->isEmptyInfo()) {
+        isDirectoryCanWrite = info->canWrite();
+    }
+    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
+        isDirectoryCanWrite = false;
+    }
+
     m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer);
+    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && !isDirectoryCanWrite);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && !isDirectoryCanWrite);
 
     Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
-    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox);
+    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && !isDirectoryCanWrite);
 }

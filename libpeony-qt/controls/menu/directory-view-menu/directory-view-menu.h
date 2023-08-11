@@ -92,6 +92,7 @@ private:
     bool m_is_smb_file = false;
     bool m_is_mobile_file = false;
     bool m_is_boxpath = false;
+    bool m_is_mtp_ptp = false;
 
     const int ELIDE_TEXT_LENGTH = 16;
 
