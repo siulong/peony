@@ -124,7 +124,10 @@ void FileCopy::sync(const GFile* destFile)
         fsync(fromfd);
         close(fromfd);
     } else {
-        qWarning() << "open error";
+        auto lastError = strerror(errno);
+        qWarning() << "Failed to open the source file, path:" << path
+                   << "error code:" << errno
+                   << "error msg:" << lastError;
     }
 }
 
