@@ -33,6 +33,9 @@ class PlasmaShellSurface;
 }
 }
 
+namespace Peony {
+class DesktopMenu;
+}
 class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
@@ -80,6 +83,7 @@ private:
     Peony::DesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
+    Peony::DesktopMenu *m_menu = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H
