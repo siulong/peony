@@ -108,8 +108,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
     header()->setStretchLastSection(false);
-    header()->setMinimumSectionSize(64);
-
+    header()->setMinimumSectionSize(130);
+    header()->setTextElideMode(Qt::ElideRight);
     if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
         connect(header(), &QHeaderView::sectionClicked, this, [=](){
             //update sort policy
