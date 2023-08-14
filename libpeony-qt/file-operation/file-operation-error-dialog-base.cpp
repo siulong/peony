@@ -79,6 +79,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     closebtn->setProperty ("isWindowButton", 0x02);
     closebtn->setIconSize (QSize(16, 16));
     closebtn->setIcon (QIcon::fromTheme("window-close-symbolic"));
+    closebtn->setToolTip(tr("Close"));
 
     headerLayout->addStretch ();
 //    headerLayout->setSpacing (1);
