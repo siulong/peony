@@ -23,6 +23,7 @@
 #include "peony-search-vfs-file.h"
 #include "peony-search-vfs-file-enumerator.h"
 #include "file-enumerator.h"
+#include "file-utils.h"
 #include "search-vfs-manager.h"
 #include <QString>
 #include <QDebug>
@@ -371,6 +372,7 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
         details->m_queue->clear();
 
         for (QString &dir : paths) {
+            dir = Peony::FileUtils::urlDecode(dir);
             details->m_search->addSearchDir(dir);
         }
 
