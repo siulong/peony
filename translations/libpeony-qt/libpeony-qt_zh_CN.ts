@@ -2180,12 +2180,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="566"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="567"/>
         <source>The password dialog box is canceled</source>
         <translation>密码对话框被取消</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="568"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="569"/>
+        <source>Message recipient disconnected from message bus without replying!</source>
+        <translation>消息接收者在没有回复的情况下与消息总线断开连接!</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="571"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>

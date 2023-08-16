@@ -1513,6 +1513,10 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <source>The password dialog box is canceled</source>
         <translation>གསང་བའི་གླེང་མོལ་གྱི་སྒྲོམ་གཞི་མེད་པར་བཟོས།</translation>
     </message>
+    <message>
+        <source>Message recipient disconnected from message bus without replying!</source>
+        <translation>གསར་འགྱུར་བསྡུ་ལེན་བྱེད་མཁན་གྱིས་ལན་མ་བཏབ་པའི་གནས་ཚུལ་འོག་གནས་ཚུལ་དང་གནས་ཚུལ་གྱི་སྤྱིའི་སྐུད་པ་ཆད་སོང་།！</translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileInfo</name>

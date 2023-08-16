@@ -2122,12 +2122,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="obsolete">Dosyayı Sil Uyarısı</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="566"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="567"/>
         <source>The password dialog box is canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="568"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="569"/>
+        <source>Message recipient disconnected from message bus without replying!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="571"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
