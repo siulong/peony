@@ -112,8 +112,6 @@ public:
     void clearAllRestoreInfo();
     void refreshResolutionChange();
 
-    DesktopItemProxyModel *getProxyModel();
-
     void saveExtendItemInfo();
     void resetExtendItemInfo();
     void clearItemRect();

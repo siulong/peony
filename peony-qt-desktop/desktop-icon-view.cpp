@@ -1688,15 +1688,30 @@ void DesktopIconView::checkItemsOver()
     QStringList needRelayoutItems;
     QRegion notEmptyRegion;
     if (model()) {
+        QMap<QString, QRect> destoryItemMap;
         for (int i = 0; i < model()->rowCount(); i++) {
             QModelIndex index = model()->index(i, 0);
+            QString uri = index.data(Qt::UserRole).toString();
             QRect rect = getDataRect(index);
+            if (m_model->m_destoryItems.contains(uri)) {
+                destoryItemMap.insert(uri, rect);
+                continue;
+            }
             if (notEmptyRegion.intersects(rect)) {
-                needRelayoutItems.append(index.data(Qt::UserRole).toString());
+                needRelayoutItems.append(uri);
             } else {
                 notEmptyRegion += rect;
             }
         }
+        for (auto uri : destoryItemMap.keys()) {
+            auto rect = destoryItemMap.value(uri);
+            if (notEmptyRegion.intersects(rect)) {
+                needRelayoutItems.append(uri);
+            } else {
+                notEmptyRegion += rect;
+            }
+        }
+        m_model->m_destoryItems.clear();
     }
     if (0 == needRelayoutItems.size()) {
         return;
@@ -2626,15 +2641,8 @@ void DesktopIconView::refreshResolutionChange()
     getAllRestoreInfo();
 }
 
-DesktopItemProxyModel *DesktopIconView::getProxyModel()
-{
-    return m_proxy_model;
-}
-
 void DesktopIconView::fileCreated(const QString &uri)
 {
-
-    qDebug()<<"DesktopIconView::fileCreated,view:" << this;
     qDebug()<<"DesktopIconView::fileCreated,view:" << this <<m_new_files_to_be_selected.length();
     if (m_new_files_to_be_selected.isEmpty()) {
         m_new_files_to_be_selected<<uri;
@@ -2801,6 +2809,9 @@ void DesktopIconView::saveExtendItemInfo()
         topLeft<<QString::number(indexRect.left());
         topLeft<<QString::number(m_id);
         QString uri = index.data(Qt::UserRole).toString();
+        if (0 != m_id && m_model) {
+            m_model->m_destoryItems.append(uri);
+        }
         auto metaInfo = FileMetaInfo::fromUri(uri);
         if (metaInfo) {
             qDebug() << "uri:"<<str<<" topLeft:"<<topLeft;

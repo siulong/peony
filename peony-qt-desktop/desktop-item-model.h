@@ -112,6 +112,7 @@ private:
     QQueue<QString> m_new_file_info_query_queue;
 
     QStringList m_items_need_relayout;
+    QStringList m_destoryItems;
     UserdirManager * m_dir_manager;
 
     std::shared_ptr<FileInfo> m_desktop_info;
