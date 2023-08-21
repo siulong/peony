@@ -117,6 +117,7 @@ public:
     static gint64 getCreateTimeOfMicro (const QString& url);
     static QString handleSpecialSymbols(const QString &displayName);
     BLOCKING static QString getFsTypeFromFile(const QString &fileUri);
+    static bool isFuseFileSystem(const QString &fileUri);
 private:
     FileUtils();
 };

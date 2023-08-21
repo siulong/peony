@@ -69,7 +69,11 @@ enum ExceptionResponse {
     Force,          // Force operation
     ForceAll,       //
     RenameOne,      // usually used for long name handling, etc...
-    RenameAll       // not used yet
+    RenameAll,      // not used yet
+    TruncateOne,    // truncate
+    TruncateAll,
+    SaveOne,        //long name file save as other paht
+    SaveAll,
 };
 
 typedef enum{

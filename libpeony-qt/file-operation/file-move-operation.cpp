@@ -30,6 +30,9 @@
 #include <QDir>
 #include <QProcess>
 #include <QStorageInfo>
+#include <QStandardPaths>
+#include <QDBusInterface>
+#include <QDBusReply>
 #include <file-copy.h>
 
 using namespace Peony;
@@ -730,6 +733,7 @@ void FileMoveOperation::copyRecursively(FileNode *node)
     }
     g_free(dest_file_uri);
     QString destName = "";
+    QString destDir = m_dest_dir_uri;
     g_autoptr(GFileInfo) srcFileInfo = nullptr;
     g_autoptr(GFile) srcFile = g_file_new_for_uri(m_current_src_uri.toUtf8().constData());
     srcFileInfo = g_file_query_info(srcFile, G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
@@ -956,6 +960,33 @@ fallback_retry:
                 //setHasError(true);
                 goto fallback_retry;
             }
+            case TruncateOne: {
+                except.respValue.value("").toInt();
+                node->setErrorResponse(TruncateOne);
+                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                goto fallback_retry;
+            }
+            case TruncateAll: {
+                node->setErrorResponse(TruncateOne);
+                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_prehandle_hash.insert(err->code, TruncateOne);
+                goto fallback_retry;
+            }
+            case SaveOne: {
+                node->setErrorResponse(SaveOne);
+                if (!saveAsOtherPath()) {
+                    break;
+                }
+                goto fallback_retry;
+            }
+            case SaveAll: {
+                node->setErrorResponse(SaveOne);
+                if (!saveAsOtherPath()) {
+                    break;
+                }
+                m_prehandle_hash.insert(err->code, SaveOne);
+                goto fallback_retry;
+            }
             case Cancel: {
                 node->setState(FileNode::Unhandled);
                 cancel();
@@ -985,6 +1016,9 @@ fallback_retry:
         m_current_offset += node->size();
         Q_EMIT FileProgressCallback(m_current_src_uri, destFileName, fileIconName, m_current_offset, m_total_size);
         Q_EMIT operationProgressedOne(node->uri(), node->destUri(), node->size());
+        if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
+            m_dest_dir_uri = destDir;
+        }
         for (auto child : *(node->children())) {
             copyRecursively(child);
         }
@@ -1217,6 +1251,32 @@ fallback_retry:
                 //setHasError(true);
                 goto fallback_retry;
             }
+            case TruncateOne: {
+                node->setErrorResponse(TruncateOne);
+                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                goto fallback_retry;
+            }
+            case TruncateAll: {
+                node->setErrorResponse(TruncateOne);
+                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_prehandle_hash.insert(err->code, TruncateOne);
+                goto fallback_retry;
+            }
+            case SaveOne: {
+                node->setErrorResponse(SaveOne);
+                if (!saveAsOtherPath()) {
+                    break;
+                }
+                goto fallback_retry;
+            }
+            case SaveAll: {
+                node->setErrorResponse(SaveOne);
+                if (!saveAsOtherPath()) {
+                    break;
+                }
+                m_prehandle_hash.insert(err->code, SaveOne);
+                goto fallback_retry;
+            }
             case Cancel: {
                 node->setErrorResponse(Cancel);
                 cancel();
@@ -1228,7 +1288,9 @@ fallback_retry:
         }else{
             setHasError(false);
         }
-
+        if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
+            m_dest_dir_uri = destDir;
+        }
 //        fileSync(node->uri(), realDestUri);
         if(node->uri().endsWith(".dsps") && realDestUri.endsWith(".dsps")){
             m_srcUrisOfCopyDspsFiles.append(FileUtils::urlDecode(node->uri()));
@@ -1503,6 +1565,9 @@ end:
 #endif
     Q_EMIT operationFinished();
     sendSrcAndDestUrisOfCopyDspsFiles();
+    if (m_is_long_name_file_operation) {
+        Q_EMIT operationSaveAsLongNameFile(m_save_as_other_uri);
+    }
 }
 
 bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file)
@@ -1651,6 +1716,39 @@ ExceptionResponse FileMoveOperation::udfCopyWarningDialog()
     Q_EMIT errored(except);
     typeData = except.respCode;
     return typeData;
+}
+
+bool FileMoveOperation::saveAsOtherPath()
+{
+    QString destUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展";
+    if (!FileUtils::isFileExsit(destUri)) {
+        QDir dir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+        dir.mkdir("扩展");
+        QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
+        QDBusReply<bool> reply = iface.call("SetSetings", "true", dir.path());
+        if (reply.isValid()) {
+            if (!reply.value()) {
+                qInfo() << "fuse setings false";
+                return false;
+            }
+        } else {
+            qWarning() << "fuse dbus has error : " << iface.lastError();
+            return false;
+        }
+    }
+
+    m_save_as_other_uri = destUri;
+    if (m_dest_dir_uri == m_save_as_other_uri) {
+        if (m_is_long_name_file_operation) {
+            m_is_long_name_file_operation = false;
+        }
+        return false;
+    }
+    m_dest_dir_uri = m_save_as_other_uri;
+    if (!m_is_long_name_file_operation) {
+        m_is_long_name_file_operation = true;
+    }
+    return true;
 }
 
 void FileMoveOperation::cancel()

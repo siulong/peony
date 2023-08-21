@@ -40,6 +40,7 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <gio/gdesktopappinfo.h>
+#include <gio/gunixmounts.h>
 
 using namespace Peony;
 
@@ -1299,6 +1300,26 @@ QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 //        fsType = blockInterface.property("IdVersion").toString();
 
     return fsType;
+}
+
+bool FileUtils::isFuseFileSystem(const QString &fileUri)
+{
+    g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
+    g_autoptr (GFile) parent = g_file_get_parent(file);
+    auto path = g_file_peek_path(parent);
+    g_autoptr (GUnixMountEntry) entry = g_unix_mount_at(path, NULL);
+    if (!entry) {
+        entry = g_unix_mount_for(path, NULL);
+        if (!entry) {
+            return false;
+        }
+    }
+    auto fsType = g_unix_mount_get_fs_type(entry);
+    if (QString(fsType).contains("fuse.kyfs")) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)

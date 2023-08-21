@@ -341,6 +341,8 @@ Q_SIGNALS:
 
     void operationWithoutRecording();
 
+    void operationSaveAsLongNameFile(const QString &uri);
+
 public Q_SLOTS:
     virtual void cancel();
 

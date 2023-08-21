@@ -46,6 +46,7 @@
 #include <QStyle>
 #include <QApplication>
 #include <QPainter>
+#include <QDBusReply>
 
 #include "icon-view-editor.h"
 #include "icon-view-index-widget.h"
@@ -436,11 +437,23 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     if (info->isDesktopFile()) {
         suffix = ".desktop";
     }
+    if (FileUtils::isFuseFileSystem(uri)) {
+        fsType = "fuse.kyfs";
+    }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
         edit->setMaxLengthLimit(255 - suffix.length());
+    } else if (fsType.contains("fuse.kyfs")) {
+        int32_t maxLength = 255;
+        edit->setLimitBytes(false);
+        QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
+        QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
+        if (reply.isValid()) {
+            maxLength = reply.value();
+        }
+        edit->setMaxLengthLimit(maxLength - suffix.length());
     }
     edit->setText(displayString);
     edit->blockSignals(false);

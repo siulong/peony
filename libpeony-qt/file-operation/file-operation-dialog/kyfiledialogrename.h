@@ -30,14 +30,24 @@
 #include "kyfileoperationdialog.h"
 #include <QDBusInterface>
 #include <QDBusReply>
+
+namespace Peony {
+enum TurnCateType {
+    Post = 0,
+    Front,
+};
+}
+
 class KyFileDialogRename : public KyFileOperationDialog, public Peony::FileOperationErrorHandler
 {
     Q_OBJECT
 public:
     explicit KyFileDialogRename(QWidget *parent = nullptr);
 
-
     void handle(Peony::FileOperationError &error) override;
+    const QString truncateDestFileName(const QString &uri, const int cateType);
+    QWidget *m_currentWidget = nullptr;
+
 private:
         QDBusInterface *m_statusManagerDBus = nullptr;
 };

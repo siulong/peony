@@ -32,6 +32,11 @@
 
 namespace Peony {
 
+enum TurnCateType {
+    Post = 0,
+    Front,
+};
+
 class FileNodeReporter;
 
 /*!
@@ -174,6 +179,8 @@ public:
         }
     }
     const QString resolveDestFileUri(const QString &destRootDir);
+
+    void truncateDestFileName(const int cateType);
 
 private:
     QString m_uri = nullptr;

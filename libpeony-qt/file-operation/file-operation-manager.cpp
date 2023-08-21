@@ -48,6 +48,7 @@
 
 #include "properties-window.h"
 #include "sound-effect.h"
+#include <kballontip.h>
 #ifdef KY_SDK_SOUND_EFFECTS
 #include "ksoundeffects.h"
 #endif
@@ -579,6 +580,10 @@ start:
         if (info->getOperationRecording()) {
             info->setOperationRecording(false);
         }
+    }, Qt::BlockingQueuedConnection);
+    connect(operation, &FileOperation::operationSaveAsLongNameFile, this, [=](const QString &uri){
+        QString text = QString(tr("The long name file is saved to %1")).arg(uri);
+        QMessageBox::information(nullptr,nullptr,text);
     }, Qt::BlockingQueuedConnection);
 
     Q_EMIT this->operationStarted(operation->getOperationInfo());
