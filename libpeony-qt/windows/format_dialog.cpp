@@ -978,10 +978,9 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
         // rename fail
         // fixme: deal with crypt volume.
         // fixme: send to device is enabled for crypt volume
-        if (data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
+        if (!curName.isEmpty() && data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
             data->dl->renameOK = false;
         }
-
         end_flag = 1;
         *(data->format_finish) =  1; //format success
     }
