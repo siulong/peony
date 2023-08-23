@@ -255,6 +255,9 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                     }
                 }
             }
+            auto app = static_cast<PeonyDesktopApplication *>(qApp);
+            Q_EMIT app->emitFinish();
+            qInfo()<<"desktop finish";
         });
 
         return;

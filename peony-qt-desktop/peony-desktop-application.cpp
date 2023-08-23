@@ -83,6 +83,7 @@ static bool has_background = false;
 static QRect max_size = QRect(0, 0, 0, 0);
 static Peony::DesktopItemModel *desktop_model = nullptr;
 static int desktop_window_id = 0;
+static bool g_emitFinish = false;
 
 /*!
  * \brief virtualDesktopWindow
@@ -355,7 +356,22 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
     parseCmd(message, !isRunning());
 
     //check if is great wall device and init settings
-    greatWallDeviceInit();
+    connect(this, &PeonyDesktopApplication::emitFinish, this , [=](){
+        if (g_emitFinish)
+            return;
+        g_emitFinish = true;
+        QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
+                                                              "/org/gnome/SessionManager",
+                                                              "org.gnome.SessionManager",
+                                                              "startupfinished");
+        QList<QVariant> args;
+        args.append("peony-qt-desktop");
+        args.append("startupfinished");
+        message.setArguments(args);
+        QDBusConnection::sessionBus().send(message);
+
+        greatWallDeviceInit();
+    });
 
     qDebug()<<"monitor volumes change";
     auto volumeManager = Peony::VolumeManager::getInstance();

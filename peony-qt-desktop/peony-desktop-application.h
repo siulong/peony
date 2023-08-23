@@ -69,6 +69,7 @@ public:
 
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
+    void emitFinish();
 
 protected Q_SLOTS:
     void parseCmd(QString msg, bool isPrimary);

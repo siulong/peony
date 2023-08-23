@@ -118,15 +118,15 @@ int main(int argc, char *argv[])
 //    QObject::connect(&a, &PeonyDesktopApplication::requestSetUKUIOutputEnable, &waylandOutputManager, &WaylandOutputManager::setUKUIOutputEnable);
 //    waylandThread.start();
 
-    QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
-                                                          "/org/gnome/SessionManager",
-                                                          "org.gnome.SessionManager",
-                                                          "startupfinished");
-    QList<QVariant> args;
-    args.append("peony-qt-desktop");
-    args.append("startupfinished");
-    message.setArguments(args);
-    QDBusConnection::sessionBus().send(message);
+//    QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
+//                                                          "/org/gnome/SessionManager",
+//                                                          "org.gnome.SessionManager",
+//                                                          "startupfinished");
+//    QList<QVariant> args;
+//    args.append("peony-qt-desktop");
+//    args.append("startupfinished");
+//    message.setArguments(args);
+//    QDBusConnection::sessionBus().send(message);
 
     return a.exec();
 }
