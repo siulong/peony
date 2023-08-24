@@ -203,6 +203,8 @@ private:
 
     bool m_is_long_name_file_operation = false;
 
+    bool m_is_long_name_error_msg_show = false;
+
     bool m_is_udf_burn_work = false;
 
     bool m_is_udf_warning = false;

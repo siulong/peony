@@ -812,6 +812,9 @@ fallback_retry:
                         m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                         QString msg = tr("The file name exceeds the limit");
                         Q_EMIT operationInfoMsgBox(msg);
+                        if (m_is_long_name_file_operation) {
+                            m_is_long_name_file_operation = false;
+                        }
                         return;
                     }
                     except.destDirUri = realDestUri;
@@ -835,6 +838,17 @@ fallback_retry:
                     m_prehandle_hash.insert(err->code, IgnoreOne);
                 }
                 handle_type = typeData;
+            } else if (handle_type == SaveOne || handle_type == SaveAll) {
+                if (node->destBaseName().length() > 255 && !m_is_long_name_error_msg_show &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
+                    m_is_long_name_error_msg_show = true;
+                    return;
+                }
             }
             //handle.
             switch (handle_type) {
@@ -877,6 +891,9 @@ fallback_retry:
                     m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                     QString msg = tr("The file name exceeds the limit");
                     Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
                     return;
                 }
 //                g_file_copy_attributes(srcFile.get()->get(),
@@ -1139,6 +1156,9 @@ fallback_retry:
                         m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                         QString msg = tr("The file name exceeds the limit");
                         Q_EMIT operationInfoMsgBox(msg);
+                        if (m_is_long_name_file_operation) {
+                            m_is_long_name_file_operation = false;
+                        }
                         return;
                     }
                     except.destDirUri = realDestUri;
@@ -1155,6 +1175,17 @@ fallback_retry:
                 }
                 }
                 handle_type = typeData;
+            } else if (handle_type == SaveOne || handle_type == SaveAll) {
+                if (node->destBaseName().length() > 255 && !m_is_long_name_error_msg_show &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
+                    m_is_long_name_error_msg_show = true;
+                    return;
+                }
             }
 
             GError *nodeErr = nullptr;
@@ -1274,6 +1305,9 @@ fallback_retry:
                     m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                     QString msg = tr("The file name exceeds the limit");
                     Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
                     return;
                 }
                 FileCopy fileCopy (node->uri(), realDestUri, GFileCopyFlags(m_default_copy_flag | G_FILE_COPY_BACKUP),

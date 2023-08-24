@@ -228,6 +228,9 @@ fallback_retry:
                         m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                         QString msg = tr("The file name exceeds the limit");
                         Q_EMIT operationInfoMsgBox(msg);
+                        if (m_is_long_name_file_operation) {
+                            m_is_long_name_file_operation = false;
+                        }
                         return;
                     }
                     except.dlgType = ED_RENAME;
@@ -246,6 +249,17 @@ fallback_retry:
                     }
                     break;
                 }
+                }
+            } else if (handle_type == SaveOne || handle_type == SaveAll) {
+                if (node->destBaseName().length() > 255 && !m_is_long_name_error_msg_show &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
+                    m_is_long_name_error_msg_show = true;
+                    return;
                 }
             }
             //handle.
@@ -591,6 +605,9 @@ fallback_retry:
                         m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                         QString msg = tr("The file name exceeds the limit");
                         Q_EMIT operationInfoMsgBox(msg);
+                        if (m_is_long_name_file_operation) {
+                            m_is_long_name_file_operation = false;
+                        }
                         return;
                     }
                     except.dlgType = ED_RENAME;
@@ -606,6 +623,17 @@ fallback_retry:
                     handle_type = typeData;
                     break;
                 }
+                }
+            } else if (handle_type == SaveOne || handle_type == SaveAll) {
+                if (node->destBaseName().length() > 255 && !m_is_long_name_error_msg_show &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    if (m_is_long_name_file_operation) {
+                        m_is_long_name_file_operation = false;
+                    }
+                    m_is_long_name_error_msg_show = true;
+                    return;
                 }
             }
             //handle.
