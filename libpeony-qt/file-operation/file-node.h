@@ -35,6 +35,8 @@ namespace Peony {
 enum TurnCateType {
     Post = 0,
     Front,
+    AllPost,
+    ALLFront,
 };
 
 class FileNodeReporter;

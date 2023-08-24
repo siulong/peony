@@ -808,6 +808,12 @@ fallback_retry:
                     break;
                 }
                 case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    if (node->destBaseName().length() > 255 &&
+                        m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                        QString msg = tr("The file name exceeds the limit");
+                        Q_EMIT operationInfoMsgBox(msg);
+                        return;
+                    }
                     except.destDirUri = realDestUri;
                     except.dlgType = ED_RENAME;
                     Q_EMIT errored(except);
@@ -838,6 +844,9 @@ fallback_retry:
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     return;
                 }
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case IgnoreAll: {
@@ -846,6 +855,9 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, IgnoreOne);
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     return;
+                }
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
                 }
                 break;
             }
@@ -860,6 +872,12 @@ fallback_retry:
                         return;
                     }
                     break;
+                }
+                if (node->destBaseName().length() > 255 &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    return;
                 }
 //                g_file_copy_attributes(srcFile.get()->get(),
 //                                       destFile.get()->get(),
@@ -961,14 +979,25 @@ fallback_retry:
                 goto fallback_retry;
             }
             case TruncateOne: {
-                except.respValue.value("").toInt();
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                auto respValut = except.respValue.value("cateType").toInt();
+                if (m_cate_type == AllPost) {
+                    respValut = Post;
+                } else if (m_cate_type = ALLFront) {
+                    respValut = Front;
+                }
+                node->truncateDestFileName(respValut);
                 goto fallback_retry;
             }
             case TruncateAll: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_cate_type = except.respValue.value("cateType").toInt();
+                node->truncateDestFileName(m_cate_type);
+                if (Post == m_cate_type) {
+                    m_cate_type = AllPost;
+                } else if (Front) {
+                    m_cate_type = ALLFront;
+                }
                 m_prehandle_hash.insert(err->code, TruncateOne);
                 goto fallback_retry;
             }
@@ -981,10 +1010,10 @@ fallback_retry:
             }
             case SaveAll: {
                 node->setErrorResponse(SaveOne);
+                m_prehandle_hash.insert(err->code, SaveOne);
                 if (!saveAsOtherPath()) {
                     break;
                 }
-                m_prehandle_hash.insert(err->code, SaveOne);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -1038,7 +1067,14 @@ fallback_retry:
         GFileWrapperPtr sourceFile = wrapGFile(g_file_new_for_uri(node->uri().toUtf8().constData()));
         auto realDestUri = node->resolveDestFileUri(m_dest_dir_uri);
         destFile = wrapGFile(g_file_new_for_uri(realDestUri.toUtf8().constData()));
-
+        if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
+           GFileWrapperPtr parentPtr = FileUtils::getFileParent(destFile);
+           auto path = g_file_peek_path(parentPtr.get()->get());
+           QDir destFileParentPath(path);
+           if (!destFileParentPath.exists()) {
+               destFileParentPath.mkpath(path);
+           }
+        }
         FileCopy fileCopy (node->uri(), realDestUri, m_default_copy_flag,
                            getCancellable().get()->get(),
                            GFileProgressCallback(progress_callback),
@@ -1099,6 +1135,12 @@ fallback_retry:
                     break;
                 }
                 case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    if (node->destBaseName().length() > 255 &&
+                        m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                        QString msg = tr("The file name exceeds the limit");
+                        Q_EMIT operationInfoMsgBox(msg);
+                        return;
+                    }
                     except.destDirUri = realDestUri;
                     except.dlgType = ED_RENAME;
                     Q_EMIT errored(except);
@@ -1121,12 +1163,18 @@ fallback_retry:
             case IgnoreOne: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case IgnoreAll: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
                 m_prehandle_hash.insert(err->code, IgnoreOne);
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case OverWriteOne: {
@@ -1222,6 +1270,12 @@ fallback_retry:
                 }
                 auto handledDestFileUri = node->resolveDestFileUri(m_dest_dir_uri);
                 auto handledDestFile = wrapGFile(g_file_new_for_uri(handledDestFileUri.toUtf8()));
+                if (handledDestFileUri.length() > 255 &&
+                    m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                    QString msg = tr("The file name exceeds the limit");
+                    Q_EMIT operationInfoMsgBox(msg);
+                    return;
+                }
                 FileCopy fileCopy (node->uri(), realDestUri, GFileCopyFlags(m_default_copy_flag | G_FILE_COPY_BACKUP),
                                    getCancellable().get()->get(),
                                    GFileProgressCallback(progress_callback),
@@ -1253,12 +1307,24 @@ fallback_retry:
             }
             case TruncateOne: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                auto respValut = except.respValue.value("cateType").toInt();
+                if (m_cate_type == AllPost) {
+                    respValut = Post;
+                } else if (m_cate_type = ALLFront) {
+                    respValut = Front;
+                }
+                node->truncateDestFileName(respValut);
                 goto fallback_retry;
             }
             case TruncateAll: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_cate_type = except.respValue.value("cateType").toInt();
+                node->truncateDestFileName(m_cate_type);
+                if (Post == m_cate_type) {
+                    m_cate_type = AllPost;
+                } else if (Front) {
+                    m_cate_type = ALLFront;
+                }
                 m_prehandle_hash.insert(err->code, TruncateOne);
                 goto fallback_retry;
             }
@@ -1271,10 +1337,10 @@ fallback_retry:
             }
             case SaveAll: {
                 node->setErrorResponse(SaveOne);
+                m_prehandle_hash.insert(err->code, SaveOne);
                 if (!saveAsOtherPath()) {
                     break;
                 }
-                m_prehandle_hash.insert(err->code, SaveOne);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -1736,7 +1802,9 @@ bool FileMoveOperation::saveAsOtherPath()
             return false;
         }
     }
-
+    if (m_current_src_uri.startsWith(destUri)) {
+        return false;
+    }
     m_save_as_other_uri = destUri;
     if (m_dest_dir_uri == m_save_as_other_uri) {
         if (m_is_long_name_file_operation) {

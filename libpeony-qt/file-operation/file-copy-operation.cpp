@@ -224,6 +224,12 @@ fallback_retry:
                     break;
                 }
                 case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    if (node->destBaseName().length() > 255 &&
+                        m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                        QString msg = tr("The file name exceeds the limit");
+                        Q_EMIT operationInfoMsgBox(msg);
+                        return;
+                    }
                     except.dlgType = ED_RENAME;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
@@ -250,6 +256,9 @@ fallback_retry:
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     return;
                 }
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case IgnoreAll: {
@@ -258,6 +267,9 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, IgnoreOne);
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     return;
+                }
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
                 }
                 break;
             }
@@ -373,12 +385,24 @@ fallback_retry:
             }
             case TruncateOne: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                auto respValut = except.respValue.value("cateType").toInt();
+                if (m_cate_type == AllPost) {
+                    respValut = Post;
+                } else if (m_cate_type = ALLFront) {
+                    respValut = Front;
+                }
+                node->truncateDestFileName(respValut);
                 goto fallback_retry;
             }
             case TruncateAll: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_cate_type = except.respValue.value("cateType").toInt();
+                node->truncateDestFileName(m_cate_type);
+                if (Post == m_cate_type) {
+                    m_cate_type = AllPost;
+                } else if (Front) {
+                    m_cate_type = ALLFront;
+                }
                 m_prehandle_hash.insert(err->code, TruncateOne);
                 goto fallback_retry;
             }
@@ -391,10 +415,10 @@ fallback_retry:
             }
             case SaveAll: {
                 node->setErrorResponse(SaveOne);
+                m_prehandle_hash.insert(err->code, SaveOne);
                 if (!saveAsOtherPath()) {
                     break;
                 }
-                m_prehandle_hash.insert(err->code, SaveOne);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -441,7 +465,14 @@ fallback_retry:
         if (src) {
             srcInfo = g_file_query_info(src, "unix::*", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
         }
-
+        if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
+           GFileWrapperPtr parentPtr = FileUtils::getFileParent(destFile);
+           auto path = g_file_peek_path(parentPtr.get()->get());
+           QDir destFileParentPath(path);
+           if (!destFileParentPath.exists()) {
+               destFileParentPath.mkpath(path);
+           }
+        }
         if (url.isLocalFile() && node->uri().endsWith(".desktop")) {
             GDesktopAppInfo* desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8().constData());
             if (G_IS_DESKTOP_APP_INFO(desktop_info)) {
@@ -556,6 +587,12 @@ fallback_retry:
                     break;
                 }
                 case G_IO_ERROR_FILENAME_TOO_LONG: {
+                    if (node->destBaseName().length() > 255 &&
+                        m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
+                        QString msg = tr("The file name exceeds the limit");
+                        Q_EMIT operationInfoMsgBox(msg);
+                        return;
+                    }
                     except.dlgType = ED_RENAME;
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
@@ -576,12 +613,18 @@ fallback_retry:
             case IgnoreOne: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case IgnoreAll: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
                 m_prehandle_hash.insert(err->code, IgnoreOne);
+                if (m_is_long_name_file_operation) {
+                    m_is_long_name_file_operation = false;
+                }
                 break;
             }
             case OverWriteOne: {
@@ -698,12 +741,24 @@ fallback_retry:
             }
             case TruncateOne: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                auto respValut = except.respValue.value("cateType").toInt();
+                if (m_cate_type == AllPost) {
+                    respValut = Post;
+                } else if (m_cate_type = ALLFront) {
+                    respValut = Front;
+                }
+                node->truncateDestFileName(respValut);
                 goto fallback_retry;
             }
             case TruncateAll: {
                 node->setErrorResponse(TruncateOne);
-                node->truncateDestFileName(except.respValue.value("cateType").toInt());
+                m_cate_type = except.respValue.value("cateType").toInt();
+                node->truncateDestFileName(m_cate_type);
+                if (Post == m_cate_type) {
+                    m_cate_type = AllPost;
+                } else if (Front) {
+                    m_cate_type = ALLFront;
+                }
                 m_prehandle_hash.insert(err->code, TruncateOne);
                 goto fallback_retry;
             }
@@ -716,10 +771,10 @@ fallback_retry:
             }
             case SaveAll: {
                 node->setErrorResponse(SaveOne);
+                m_prehandle_hash.insert(err->code, SaveOne);
                 if (!saveAsOtherPath()) {
                     break;
                 }
-                m_prehandle_hash.insert(err->code, SaveOne);
                 goto fallback_retry;
             }
             case Cancel: {
@@ -1196,9 +1251,9 @@ bool FileCopyOperation::saveAsOtherPath()
             return false;
         }
     }
-
-//    QDBusReply<> reply = iface.call("SetSetings");
-
+    if (m_current_src_uri.startsWith(destUri)) {
+        return false;
+    }
     m_save_as_other_uri = destUri;
     if (m_dest_dir_uri == m_save_as_other_uri) {
         if (m_is_long_name_file_operation) {

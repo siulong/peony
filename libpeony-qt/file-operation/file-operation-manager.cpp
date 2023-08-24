@@ -585,7 +585,10 @@ start:
         QString text = QString(tr("The long name file is saved to %1")).arg(uri);
         QMessageBox::information(nullptr,nullptr,text);
     }, Qt::BlockingQueuedConnection);
-
+    connect(operation, &FileOperation::operationInfoMsgBox, this, [=](const QString &msg){
+        QString text = msg;
+        QMessageBox::information(nullptr,nullptr,text);
+    }, Qt::BlockingQueuedConnection);
     Q_EMIT this->operationStarted(operation->getOperationInfo());
 
     m_progressbar->showDelay();

@@ -343,6 +343,8 @@ Q_SIGNALS:
 
     void operationSaveAsLongNameFile(const QString &uri);
 
+    void operationInfoMsgBox(const QString &uri);
+
 public Q_SLOTS:
     virtual void cancel();
 

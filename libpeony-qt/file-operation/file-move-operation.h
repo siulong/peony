@@ -209,6 +209,8 @@ private:
 
     QStringList m_burn_uris;
 
+    int m_cate_type = 0;
+
     /*!
      * \brief m_prehandle_hash
      * \details

@@ -114,6 +114,7 @@ private:
     bool m_is_udf_burn_work = false;
     bool m_is_udf_warning = false;
     bool m_is_long_name_file_operation = false;
+    int m_cate_type = 0;
     /*!
      * \brief m_prehandle_hash
      * \details
