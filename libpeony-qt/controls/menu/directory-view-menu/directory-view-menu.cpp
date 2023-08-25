@@ -1097,7 +1097,10 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
                 auto uris = m_top_window->getCurrentAllFileUris();
-                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+//                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+                // fix #161877 【文件管理器】回收站内右键空白处选择情况回收站，确认弹窗不居中
+                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, dynamic_cast<QWidget *>(m_top_window));
+
                 qApp->setProperty("clearTrash",true);
 //                    if(removeop){
 //                        removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
