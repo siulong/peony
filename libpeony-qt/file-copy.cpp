@@ -268,23 +268,25 @@ void FileCopy::run ()
     }
 
     if (mTotalSize > BIG_FILE_SIZE) {
-        auto SrcPath = g_file_get_path(srcFile);
-        auto destPath = g_file_get_path(destFile);
+        if (!mSrcUri.startsWith("ftp://") && !mSrcUri.startsWith("sftp://")) {
+            auto SrcPath = g_file_get_path(srcFile);
+            auto destPath = g_file_get_path(destFile);
 
-        if(-1 != doCopyBigFile(SrcPath, destPath)){
-            if (CANCEL == mStatus) {
-                error = g_error_new(1, G_IO_ERROR_CANCELLED, "%s", tr("operation cancel").toUtf8().constData());
-                detailError(&error);
-                g_file_delete(destFile, nullptr, nullptr);
-            } else {
-                mStatus = FINISHED;
-            }
-            goto out;
-        } else {
-            if (ERROR == mStatus) {
-                error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Error writing to file: Input/output error").toUtf8().constData());
-                detailError(&error);
+            if(-1 != doCopyBigFile(SrcPath, destPath)){
+                if (CANCEL == mStatus) {
+                    error = g_error_new(1, G_IO_ERROR_CANCELLED, "%s", tr("operation cancel").toUtf8().constData());
+                    detailError(&error);
+                    g_file_delete(destFile, nullptr, nullptr);
+                } else {
+                    mStatus = FINISHED;
+                }
                 goto out;
+            } else {
+                if (ERROR == mStatus) {
+                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Error writing to file: Input/output error").toUtf8().constData());
+                    detailError(&error);
+                    goto out;
+                }
             }
         }
     }
