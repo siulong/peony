@@ -84,6 +84,8 @@
 #include "location-bar.h"
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
+#include "file-utils.h"
+
 #include <QSplitter>
 
 #include <QPainter>
@@ -434,8 +436,17 @@ void MainWindow::setShortCuts()
             QString downloadPath = Peony::FileUtils::getEncodedUri("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
             if (!uris.isEmpty() && !uris.contains(desktopUri) && !uris.contains(homeUri) && !uris.contains(documentPath) && !uris.contains(musicPath)
                     && !uris.contains(moviesPath) && !uris.contains(picturespPath) && !uris.contains(downloadPath)) {
+
+                bool canTrash = true;
+                for (auto uri : uris) {
+                    if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
+                        canTrash = false;
+                        break;
+                    }
+                }
+
                 bool isTrash = this->getCurrentUri() == "trash:///";
-                if (!isTrash) {
+                if (!isTrash && canTrash) {
                     Peony::FileOperationUtils::trash(uris, true);
                 } else {
                     Peony::FileOperationUtils::executeRemoveActionWithDialog(uris);

@@ -854,6 +854,11 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
                     if (! info->canDelete() && (!uri.startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
                         canDelete = false;
+
+                    if(FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
+                        canTrash = false;
+                        break;
+                    }
                 }
 
                 //fix unencrypted box file can delete to trash issue, link to bug#72948

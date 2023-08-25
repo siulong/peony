@@ -1321,6 +1321,21 @@ bool FileUtils::isFuseFileSystem(const QString &fileUri)
         return false;
     }
 }
+bool FileUtils::isLongNameFileOfNotDel2Trash(const QString &fileUri)
+{
+    /* 存放长文件名目录的下，判断文件名超过224字符的，右键删除选项改成永久删除，不删除到回收站。link bug#188864  */
+    QString extendDir = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展";/* 长文件名文件存放在家目录/下载/扩展目录下 */
+    QString fileDecodeUri = urlDecode(fileUri);
+    if(!fileDecodeUri.startsWith(extendDir))
+        return false;
+
+    QString baseName = Peony::FileUtils::getUriBaseName(fileDecodeUri);
+    qDebug()<<"file decodeUri:"<<fileDecodeUri<<";base name:"<<baseName<<";length of base name:"<<baseName.length();
+    if(224 < baseName.length())
+        return true;
+
+    return false;
+}
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {

@@ -46,6 +46,7 @@
 #include "directory-view-widget.h"
 #include "directory-view-container.h"
 #include "file-meta-info.h"
+#include "file-utils.h"
 
 OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent)
 {
@@ -368,9 +369,17 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
         isDirectoryCanWrite = false;
     }
 
+    bool hasLongFileName = false;
+    for (auto uri : selections) {
+        if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除,所以该菜单置灰，link bug#188864 */
+            hasLongFileName = true;
+            break;
+        }
+    }
+
     m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
     m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && !isDirectoryCanWrite);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && !isDirectoryCanWrite);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && !isDirectoryCanWrite && !hasLongFileName);
 
     Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
