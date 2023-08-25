@@ -358,6 +358,13 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     bool isTrash = currentDirUri.startsWith("trash://");
     bool isComputer = currentDirUri.startsWith("computer:///");
     bool isFileBox = currentDirUri == "filesafe:///";
+    bool hasLongFileName = false;
+    for (auto uri : selections) {
+        if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除,所以该菜单置灰，link bug#188864 */
+            hasLongFileName = true;
+            break;
+        }
+    }
 
     //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
     bool isDirectoryCanWrite = true;
