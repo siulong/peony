@@ -1,10 +1,15 @@
+peony (4.0.0.0-ok2~0826) yangtze; urgency=medium
+
+  * close-cd#I79G9Q【文件管理器】文件复制窗口界面文字显示折叠
+ -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 25 Aug 2023 14:40:23 +0800
+
 peony (4.0.0.0-ok2~0825) yangtze; urgency=medium
 
   * close #I6YFT4 删除文件到回收站确认弹窗未居中显示
   * close #I79G9Q 文件复制窗口界面文字显示折叠
   * close #I71SXV 重命名框没有限制输入超过255字节的文件名
 
- -- meihonghe<hemeihong@kylinos.cn>  Fri, 25 Aug 2023 11:00:10 +0800
+ -- meihonghe <hemeihong@kylinos.cn>  Fri, 25 Aug 2023 11:00:10 +0800
 
 peony (4.0.0.0-ok2~0704) yangtze; urgency=medium
 
