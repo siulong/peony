@@ -1,0 +1,50 @@
+From: MeihongHe <hemeihong@kylinos.cn>
+Date: Fri, 25 Aug 2023 09:26:05 +0000
+Subject: =?utf-8?b?ITY4IGNsb3NlLWNkICNJNzlHOVHjgJDmlofku7bnrqHnkIblmajjgJE=?=
+ =?utf-8?b?5paH5Lu25aSN5Yi256qX5Y+j55WM6Z2i5paH5a2X5pi+56S65oqY5Y+gIE1lcmdl?=
+ =?utf-8?b?IHB1bGwgcmVxdWVzdCAhNjggZnJvbSB5YW5neWFud2VpMS9ob3RmaXgtb3Blbmt5?=
+ =?utf-8?b?bGluLUk3OUc5Ry10ZW1wMw==?=
+
+---
+ .../controls/menu/directory-view-menu/directory-view-menu.cpp        | 5 ++++-
+ libpeony-qt/file-operation/file-operation-progress-bar.cpp           | 4 ++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+index 953296c..c35b022 100644
+--- a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
++++ b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+@@ -1097,7 +1097,10 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
+             l.last()->setEnabled(!isTrashEmpty);
+             connect(l.last(), &QAction::triggered, [=]() {
+                 auto uris = m_top_window->getCurrentAllFileUris();
+-                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
++//                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
++                // fix #161877 【文件管理器】回收站内右键空白处选择情况回收站，确认弹窗不居中
++                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, dynamic_cast<QWidget *>(m_top_window));
++
+                 qApp->setProperty("clearTrash",true);
+ //                    if(removeop){
+ //                        removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
+diff --git a/libpeony-qt/file-operation/file-operation-progress-bar.cpp b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+index b55e280..c43f882 100644
+--- a/libpeony-qt/file-operation/file-operation-progress-bar.cpp
++++ b/libpeony-qt/file-operation/file-operation-progress-bar.cpp
+@@ -477,7 +477,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
+ {
+     QFontMetrics fontMetrics(font);
+     QString display_name = strInfo;
+-    if(fontMetrics.width(strInfo) > 2*width) {
++    if(fontMetrics.width(strInfo) > 2*width - 20) {
+         display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
+     }
+     return display_name;
+@@ -640,7 +640,7 @@ void MainProgressBar::paintContent(QPainter &painter)
+         } else {
+             this->setToolTip(m_file_name);
+             QString display_name;
+-            display_name = elideText(this->font(),400,m_file_name);
++            display_name = elideText(this->font(), m_file_name_w, m_file_name);
+             int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
+             int fileNameHeight = qMax(m_file_name_height, fontHeight);
+             int textY = m_fix_height / 2 - fileNameHeight / 2;
