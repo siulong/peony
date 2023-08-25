@@ -477,7 +477,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
 {
     QFontMetrics fontMetrics(font);
     QString display_name = strInfo;
-    if(fontMetrics.width(strInfo) > 2*width) {
+    if(fontMetrics.width(strInfo) > 2*width - 20) {
         display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
     }
     return display_name;
@@ -640,7 +640,7 @@ void MainProgressBar::paintContent(QPainter &painter)
         } else {
             this->setToolTip(m_file_name);
             QString display_name;
-            display_name = elideText(this->font(),400,m_file_name);
+            display_name = elideText(this->font(), m_file_name_w, m_file_name);
             int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
             int fileNameHeight = qMax(m_file_name_height, fontHeight);
             int textY = m_fix_height / 2 - fileNameHeight / 2;
