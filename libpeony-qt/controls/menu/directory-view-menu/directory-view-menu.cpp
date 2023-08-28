@@ -418,6 +418,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     });
                 }
             } else if (!info->isVolume()) {
+                bool needDisable = isMultVideoOrAudio(info);
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -427,6 +428,10 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     else
                         FileLaunchManager::openAsync(uri, false, false);
                 });
+
+                if (needDisable) {
+                    l.last()->setEnabled(false);
+                }
 
                 if (m_is_network)
                     return l;
@@ -472,6 +477,9 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     d.exec();
                 });
                 openWithAction->setMenu(openWithMenu);
+                if (needDisable) {
+                    openWithAction->setEnabled(false);
+                }
             } else {
                 l<<addAction(tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -1282,6 +1290,21 @@ const QList<QAction *> DirectoryViewMenu::constructSearchActions()
         });
     }
     return l;
+}
+
+bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
+{
+    if (!info) {
+        qDebug() << "file info not valid";
+        return false;
+    }
+
+    QString uri = info->uri();
+    if (uri.startsWith("mult:///") && (info->isAudioFile() || info->isVideoFile())) {
+        return true;
+    }
+
+    return false;
 }
 
 const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()

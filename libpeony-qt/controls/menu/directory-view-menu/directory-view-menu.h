@@ -24,6 +24,7 @@
 #define DIRECTORYVIEWMENU_H
 
 #include <QMenu>
+#include <memory>
 #include "peony-core_global.h"
 
 #include "directory-view-plugin-iface2.h"
@@ -31,6 +32,7 @@
 namespace Peony {
 
 class FMWindowIface;
+class FileInfo;
 
 /*!
  * \brief The DirectoryViewMenu class
@@ -69,6 +71,9 @@ protected:
     const QList<QAction *> constructTrashActions();
     const QList<QAction *> constructSearchActions();
     const QList<QAction *> constructMultiSelectActions();
+
+private:
+    bool isMultVideoOrAudio(std::shared_ptr<FileInfo> info);
 
 private:
     FMWindowIface *m_top_window;
