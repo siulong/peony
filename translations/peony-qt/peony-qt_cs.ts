@@ -269,34 +269,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="419"/>
+        <location filename="../../src/windows/main-window.cpp" line="401"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="426"/>
+        <location filename="../../src/windows/main-window.cpp" line="408"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="776"/>
-        <location filename="../../src/windows/main-window.cpp" line="818"/>
+        <location filename="../../src/windows/main-window.cpp" line="762"/>
+        <location filename="../../src/windows/main-window.cpp" line="812"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="776"/>
-        <location filename="../../src/windows/main-window.cpp" line="818"/>
+        <location filename="../../src/windows/main-window.cpp" line="762"/>
+        <location filename="../../src/windows/main-window.cpp" line="812"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="851"/>
+        <location filename="../../src/windows/main-window.cpp" line="845"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="853"/>
+        <location filename="../../src/windows/main-window.cpp" line="847"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
@@ -305,7 +305,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="866"/>
+        <location filename="../../src/windows/main-window.cpp" line="860"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -669,12 +669,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="475"/>
+        <location filename="../../src/peony-application.cpp" line="477"/>
         <source>Peony Qt</source>
         <translation type="unfinished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="476"/>
+        <location filename="../../src/peony-application.cpp" line="478"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -910,53 +910,53 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="218"/>
+        <location filename="../../src/control/tab-widget.cpp" line="220"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="222"/>
+        <location filename="../../src/control/tab-widget.cpp" line="224"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="227"/>
+        <location filename="../../src/control/tab-widget.cpp" line="229"/>
         <source>Recover</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="353"/>
+        <location filename="../../src/control/tab-widget.cpp" line="360"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="363"/>
+        <location filename="../../src/control/tab-widget.cpp" line="370"/>
         <source>Computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="432"/>
+        <location filename="../../src/control/tab-widget.cpp" line="439"/>
         <source>Select Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="492"/>
-        <location filename="../../src/control/tab-widget.cpp" line="652"/>
+        <location filename="../../src/control/tab-widget.cpp" line="499"/>
+        <location filename="../../src/control/tab-widget.cpp" line="659"/>
         <source>is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="527"/>
+        <location filename="../../src/control/tab-widget.cpp" line="534"/>
         <source>Please input key words...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1566"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1583"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1567"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1584"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -965,8 +965,8 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">Lütfen anahtar kelimeler girin ...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="613"/>
-        <location filename="../../src/control/tab-widget.cpp" line="636"/>
+        <location filename="../../src/control/tab-widget.cpp" line="620"/>
+        <location filename="../../src/control/tab-widget.cpp" line="643"/>
         <source>contains</source>
         <translation type="unfinished"></translation>
     </message>

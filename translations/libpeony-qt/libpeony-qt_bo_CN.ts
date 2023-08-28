@@ -363,7 +363,7 @@
     </message>
     <message>
         <source>Are you sure to cancel all file operations?</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁྱོས་ཡིག་ཆའི་བཀོལ་སྤྱོད་ཐམས་ཅད་རྩིས་མེད་གཏང་རྒྱུ་ཡིན་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>continue</source>
@@ -380,6 +380,10 @@
         <source>Forcibly pulling out the device may cause data
  loss or device exceptions!</source>
         <translation>བཙན་ཤེད་ཀྱིས་སྒྲིག་ཆས་འཐེན་ན་གཞི་གྲངས་བོར་བརླག་གམ་སྒྲིག་ཆས་རྒྱུན་ལྡན་མིན་པར་འགྱུར་སྲིད།!</translation>
+    </message>
+    <message>
+        <source>Peony</source>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས།</translation>
     </message>
 </context>
 <context>
@@ -831,31 +835,31 @@
     <name>Peony::ConnectServerDialog</name>
     <message>
         <source>ip</source>
-        <translation>ཞབས་ཞུ་ཆས།</translation>
+        <translation type="vanished">ཞབས་ཞུ་ཆས།</translation>
     </message>
     <message>
         <source>add</source>
-        <translation>ཁ་སྣོན།</translation>
+        <translation type="vanished">ཁ་སྣོན།</translation>
     </message>
     <message>
         <source>port</source>
-        <translation>མཐུད་ཁ།</translation>
+        <translation type="vanished">མཐུད་ཁ།</translation>
     </message>
     <message>
         <source>type</source>
-        <translation>རིགས་རྣམ།</translation>
+        <translation type="vanished">རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>delete</source>
-        <translation>འདོར་བ།</translation>
+        <translation type="vanished">འདོར་བ།</translation>
     </message>
     <message>
         <source>connect</source>
-        <translation>འབྲེལ་མཐུད།</translation>
+        <translation type="vanished">འབྲེལ་མཐུད།</translation>
     </message>
     <message>
         <source>connect to server</source>
-        <translation>ཞབས་ཞུའི་འཕྲུལ་ཆས་ལ་སྦྲེལ་བ།</translation>
+        <translation type="vanished">ཞབས་ཞུའི་འཕྲུལ་ཆས་ལ་སྦྲེལ་བ།</translation>
     </message>
     <message>
         <source>Personal Collection server:</source>
@@ -867,10 +871,46 @@
     </message>
     <message>
         <source>ip input error, please re-enter!</source>
-        <translation>ipནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
+        <translation type="vanished">ipནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
     <message>
         <source>port input error, please re-enter!</source>
+        <translation type="vanished">མཐུད་སྣེའི་ཨང་རྟགས་ནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
+    </message>
+    <message>
+        <source>Connect to server</source>
+        <translation>ཞབས་ཞུའི་འཕྲུལ་ཆས་ལ་སྦྲེལ་བ།</translation>
+    </message>
+    <message>
+        <source>Ip</source>
+        <translation>ཞབས་ཞུ་ཆས།</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>མཐུད་ཁ།</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>རིགས་རྣམ།</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>ཁ་སྣོན།</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>འདོར་བ།</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>འབྲེལ་མཐུད།</translation>
+    </message>
+    <message>
+        <source>Ip input error, please re-enter!</source>
+        <translation>ipནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
+    </message>
+    <message>
+        <source>Port input error, please re-enter!</source>
         <translation>མཐུད་སྣེའི་ཨང་རྟགས་ནང་འཇུག་ནོར་འཁྲུལ་བྱུང་བས་ཡང་བསྐྱར་ནང་འཇུག་གནང་རོགས།</translation>
     </message>
 </context>
@@ -878,15 +918,15 @@
     <name>Peony::ConnectServerLogin</name>
     <message>
         <source>ok</source>
-        <translation>གཏན་འཁེལ།</translation>
+        <translation type="vanished">གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>name</source>
-        <translation>སྤྱོད་མཁན་གྱི་མིང་།</translation>
+        <translation type="vanished">སྤྱོད་མཁན་གྱི་མིང་།</translation>
     </message>
     <message>
         <source>guest</source>
-        <translation>ཡུལ་སྐོར་བ （མིང་མེད་ཐོ་འཇུག）</translation>
+        <translation type="vanished">ཡུལ་སྐོར་བ （མིང་མེད་ཐོ་འཇུག）</translation>
     </message>
     <message>
         <source>The login user</source>
@@ -894,7 +934,7 @@
     </message>
     <message>
         <source>cancel</source>
-        <translation>འདོར་བ།</translation>
+        <translation type="vanished">འདོར་བ།</translation>
     </message>
     <message>
         <source>Registered users</source>
@@ -910,11 +950,31 @@
     </message>
     <message>
         <source>password</source>
-        <translation>གསང་ཨང་།</translation>
+        <translation type="vanished">གསང་ཨང་།</translation>
     </message>
     <message>
         <source>Remember the password</source>
         <translation>གསང་ཨང་དེ་སེམས་ལ་ཟུངས།</translation>
+    </message>
+    <message>
+        <source>Guest</source>
+        <translation>ཡུལ་སྐོར་བ （མིང་མེད་ཐོ་འཇུག）</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>སྤྱོད་མཁན་གྱི་མིང་།</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>གསང་ཨང་།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>མེད་པར་བཟོ་བ</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>གཏན་འཁེལ་བྱེད་པ།</translation>
     </message>
 </context>
 <context>
@@ -1383,15 +1443,15 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <name>Peony::FileBatchRenameOperation</name>
     <message>
         <source>File Rename error</source>
-        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་དུ་བཏགས་པ་ནོར་འདུག</translation>
+        <translation>ཡིག་ཆའི་མིང་བསྐྱར་དུ་བཏགས་པ་ནོར་འདུག</translation>
     </message>
     <message>
         <source>Invalid file name %1%2%3 .</source>
-        <translation type="unfinished">ཁྲིམས་འགལ་གྱི་ཡིག་ཆའི་མིང་།%1%2%3 .</translation>
+        <translation>ཁྲིམས་འགལ་གྱི་ཡིག་ཆའི་མིང་།%1%2%3 .</translation>
     </message>
     <message>
         <source>File Rename warning</source>
-        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ཉེན་བརྡ།</translation>
+        <translation>ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ཉེན་བརྡ།</translation>
     </message>
     <message>
         <source>Are you sure to hidden these files?</source>
@@ -1399,7 +1459,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>Rename file error</source>
-        <translation type="unfinished">ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ནོར་བ།</translation>
+        <translation>ཡིག་ཆའི་མིང་བསྐྱར་འདོགས་ནོར་བ།</translation>
     </message>
 </context>
 <context>
@@ -1448,6 +1508,18 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <source>Can not copy %1, file doesn&apos;t exist. Has the file been renamed or moved?</source>
         <translation>བརྒྱ་ཆ་%1，གི་ཡིག་ཆ་མེད་པ། མིང་ལ་གཙིགས་ཆེན་བྱེད་པ་འམ་ཡང་ན་སྤོ་འགུལ་བྱས་པ？</translation>
     </message>
+    <message>
+        <source>Error writing to file: Input/output error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create %1. Please ensure if it is in root directory, or if the device supports gphoto2 protocol correctly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileCopyOperation</name>
@@ -1473,11 +1545,11 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
     <message>
         <source>File System</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
@@ -1844,11 +1916,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File System</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
@@ -1856,11 +1928,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File move error</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་སྤོ་སྒུལ་ནོར་བ།</translation>
     </message>
     <message>
         <source>Link file error</source>
-        <translation type="unfinished">ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+        <translation>ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
     </message>
     <message>
         <source>Burning does not support replacement</source>
@@ -1931,6 +2003,13 @@ Do you want to delete the link file?</source>
     <message>
         <source>File Operation Error</source>
         <translation>ཡིག་ཆ་བཀོལ་སྤྱོད་ནོར་འཁྲུལ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::FileOperationErrorDialogBase</name>
+    <message>
+        <source>Close</source>
+        <translation>ཁ་རྒྱག</translation>
     </message>
 </context>
 <context>
@@ -2061,11 +2140,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>File System</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished">གཞི་གྲངས་སྡེར།</translation>
+        <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
         <source>Insufficient storage space</source>
@@ -2316,7 +2395,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation>ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Close</source>
@@ -2435,7 +2514,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>How do you want to open &quot;%1%2&quot; files ?</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁྱོད་ཀྱི་རེ་བར་ཡིག་ཆ“%1%2”ཁ་འབྱེད་ཐབས་གང་ཡིན་ནམ།</translation>
     </message>
 </context>
 <context>
@@ -2525,7 +2604,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Group or User</source>
-        <translation type="unfinished"></translation>
+        <translation>སྤྱོད་མཁན་ནམ་ཚོ།</translation>
     </message>
     <message>
         <source>Read and Write</source>
@@ -2584,7 +2663,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>Restore</source>
-        <translation type="unfinished">ཕྱིར་ལོག</translation>
+        <translation>ཕྱིར་ལོག</translation>
     </message>
 </context>
 <context>
@@ -2676,11 +2755,11 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>The dest file &quot;%1&quot; has existed!</source>
-        <translation type="unfinished">དམིགས་བཟུང་ཡིག་ཆ་%1གནས་ཡོད།</translation>
+        <translation>དམིགས་བཟུང་ཡིག་ཆ་“%1”གནས་ཡོད།</translation>
     </message>
     <message>
         <source>Link file error</source>
-        <translation type="unfinished">ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+        <translation>ཡིག་ཆའི་སྦྲེལ་མཐུད་བཟོ་བ་ཕམ་ཉེས་བྱུང་།</translation>
     </message>
 </context>
 <context>
@@ -2964,11 +3043,11 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <source>begin format</source>
-        <translation>འགོ་རྩོམ་པ།</translation>
+        <translation type="vanished">འགོ་རྩོམ་པ།</translation>
     </message>
     <message>
         <source>close</source>
-        <translation>ཁ་རྒྱག</translation>
+        <translation type="vanished">ཁ་རྒྱག</translation>
     </message>
     <message>
         <source>Show the computer properties or items in computer.</source>
@@ -3281,6 +3360,18 @@ Do you want to unmount forcely?</source>
     <message>
         <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>རྣམ་གཞག</translation>
+    </message>
+    <message>
+        <source>Begin Format</source>
+        <translation>རྣམ་པར་འཇོག་འགོ་བརྩམས་པ།</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ཁ་རྒྱག</translation>
     </message>
 </context>
 <context>

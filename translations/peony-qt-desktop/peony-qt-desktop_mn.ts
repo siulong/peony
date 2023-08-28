@@ -9,12 +9,12 @@
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="618"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
         <source>New Folder</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="712"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
         <source>set background</source>
         <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
@@ -23,22 +23,22 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="954"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
         <source>Open failed</source>
         <translation>ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="955"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ, ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="937"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
         <source>Open Link failed</source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="938"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>ᠬᠠᠷᠠᠯᠳᠠᠳᠤ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠤᠷᠤᠰᠢᠬᠤ ᠦᠬᠡᠢ, ᠳᠤᠰ ᠬᠦᠴᠦᠨ ᠦᠬᠡᠢ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠬᠠᠰᠤᠬᠤ ᠤᠤ?</translation>
     </message>
@@ -397,7 +397,7 @@
         <translation type="vanished">关闭桌面并退出</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="232"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="233"/>
         <source>peony-qt-desktop</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ</translation>
     </message>
@@ -410,27 +410,27 @@
         <translation type="vanished">桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="551"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="567"/>
         <source>Close the peony desktop window</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠫᠡᠷᠦᠭᠷᠡᠮ ᠢ᠋ ᠬᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="554"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="570"/>
         <source>Take over the dbus service.</source>
         <translation>dbus ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠵᠢ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ.</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="557"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="573"/>
         <source>Take over the desktop displaying</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠢ᠋ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="576"/>
         <source>Setup backgrounds</source>
         <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="579"/>
         <source>Clear standard icons</source>
         <translation>ᠪᠠᠷᠢᠮᠵᠢᠶᠠᠳᠤ ᠰᠢᠪᠠᠭ᠎ᠠ ᠵᠢ ᠴᠡᠪᠡᠷᠯᠡᠬᠦ</translation>
     </message>
@@ -442,12 +442,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="98"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="96"/>
         <source>set background</source>
         <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="103"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="101"/>
         <source>display settings</source>
         <translation>ᠦᠵᠡᠭᠦᠯᠦᠯᠭᠡ ᠶᠢᠨ ᠪᠠᠶᠢᠷᠢᠯᠠᠭᠤᠯᠤᠯᠲᠠ ᠶᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
     </message>
