@@ -341,8 +341,9 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             }
             //fix #185743
             auto realDisplayName = m_current_search->property("realDisplayName").toString();
-            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, /*m_current_search->width()*/200 - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
             m_current_search->setText(displayName);
+            m_current_search->adjustSize();
         });
     }
 }
@@ -877,7 +878,7 @@ void TabWidget::updateSearchBar(bool showSearch)
         m_home_search->show();
         m_add_filter_button->show();
         m_search_bar_layout->setContentsMargins(10, 5, 10, 5);
-        updateSearchPathButton();
+        updateSearchPathButton(getCurrentUri());
         switchSearchPath(true);
     }
     else
@@ -940,11 +941,13 @@ void TabWidget::updateCurrentSearchPath()
         currentUri = g_file_peek_path (file);
         QString displayName = currentUri.right(currentUri.count() - currentUri.lastIndexOf("/") - 1);
         m_current_search->setText(displayName);
+        m_current_search->adjustSize();
         g_object_unref(file);
     }
     else {
         QString displayName = currentUri.left(currentUri.indexOf(":"));
         m_current_search->setText(displayName);
+        m_current_search->adjustSize();
     }
 }
 
@@ -996,8 +999,9 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     //elide text if it is too long, Use ElideMiddle mode to design
     //related bug#155126, #185743
     m_current_search->setProperty("realDisplayName", displayName);
-    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, /*m_current_search->width()*/200 - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
     m_current_search->setText(displayName);
+    m_current_search->adjustSize();
 }
 
 void TabWidget::updateSearchList()
