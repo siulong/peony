@@ -340,9 +340,9 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
                 }
             }
             //fix #185743
-            auto realDisplayName = m_search_path->property("realDisplayName").toString();
-            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
-            m_search_path->setText(displayName);
+            auto realDisplayName = m_current_search->property("realDisplayName").toString();
+            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+            m_current_search->setText(displayName);
         });
     }
 }
@@ -995,9 +995,9 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     }
     //elide text if it is too long, Use ElideMiddle mode to design
     //related bug#155126, #185743
-    m_search_path->setProperty("realDisplayName", displayName);
-    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_search_path->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
-    m_search_path->setText(displayName);
+    m_current_search->setProperty("realDisplayName", displayName);
+    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, m_current_search->width() - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
+    m_current_search->setText(displayName);
 }
 
 void TabWidget::updateSearchList()
