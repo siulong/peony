@@ -343,6 +343,7 @@ QString FileUtils::getNonSuffixedBaseNameFromUri(const QString &uri)
     }
 }
 
+#include "file-label-model.h"
 QString FileUtils::getFileDisplayName(const QString &uri)
 {
     auto fileInfo = FileInfo::fromUri(uri);
@@ -363,6 +364,15 @@ QString FileUtils::getFileDisplayName(const QString &uri)
             return showName;
         }
     }
+    if(uri.startsWith("label://")){/* 标记模式uri的displayName */
+        if("label:///" == uri){
+            showName = QObject::tr("label");
+        }else{
+            showName = uri.section("/", -1,-1).replace("?schema=file","");
+        }
+        return showName;
+    }
+
     return fileInfo.get()->displayName();
 }
 

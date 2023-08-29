@@ -27,6 +27,7 @@
 #include "audio-play-manager.h"
 
 #include <QMessageBox>
+#include <QUrl>
 
 static FileLabelModel *global_instance = nullptr;
 static QMap<int, QString> standardLabelNames;
@@ -64,6 +65,8 @@ FileLabelModel::FileLabelModel(QObject *parent)
     } else {
         initLabelItems();
     }
+
+    connect(this, &FileLabelModel::fileLabelRenamed, this, &FileLabelModel::renameFileLabel);
 }
 
 FileLabelModel::~FileLabelModel()
@@ -285,6 +288,26 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
+
+    /* add时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    auto iter = m_globalLabelMap.find(labelId);
+    QSet<QString> uriSet;
+    if(iter != m_globalLabelMap.end()){
+        uriSet = m_globalLabelMap.value(labelId);
+    }
+    uriSet.insert(uri);
+    m_globalLabelMap.insert(labelId, uriSet);
+    m_label_settings->setValue(QString::number(labelId), QVariant(m_globalLabelMap.value(labelId).toList()));
+    m_label_settings->sync();
+    m_label_settings->endGroup();
+
+    /* 同步全局标记 */
+    QUrl url(uri);
+    QString labelUri = QString("label:///").append(getLabelNameFromLabelId(labelId)) + url.path() + "?schema=" + url.scheme();
+    Q_EMIT fileLabelAdded(labelUri, true);//end
+
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (!metaInfo) {
         return;
@@ -296,16 +319,24 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
     labelIds.removeDuplicates();
     metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     Q_EMIT fileLabelChanged(uri);
+    Q_EMIT fileLabelChanged(labelUri);/* 更新标识模式界面的该文件 */
+
+
 }
 
 void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (! metaInfo)
         return;
-    if (labelId <= 0) {
+
+    QList<int> labelIds;
+    if (labelId <= 0) {/* 删除所有标记 */
+        labelIds = getFileLabelIds(uri);
         metaInfo->removeMetaInfo(PEONY_FILE_LABEL_IDS);
-    } else {
+    } else {/* 去掉颜色勾选 */
+        labelIds.append(labelId);
         if (metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
             return;
         QStringList labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
@@ -313,6 +344,28 @@ void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
         metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     }
     Q_EMIT fileLabelChanged(uri);
+
+
+    /* remove时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    for(auto &id: labelIds){
+        auto iter = m_globalLabelMap.find(id);
+        if(iter != m_globalLabelMap.end()){
+            QSet<QString> uriSet;
+            uriSet = m_globalLabelMap.value(id);
+            if(!uriSet.contains(uri))
+                continue;
+            uriSet.remove(uri);
+            m_globalLabelMap.insert(id, uriSet);
+            m_label_settings->setValue(QString::number(id), QVariant(m_globalLabelMap.value(id).toList()));
+            m_label_settings->sync();
+        }
+        /* 同步全局标记 */
+        QUrl url(uri);
+        QString labelUri = QString("label:///").append(getLabelNameFromLabelId(id)) + url.path() + "?schema=" + url.scheme();
+        Q_EMIT fileLabelRemoved(labelUri, true);
+    }
+    m_label_settings->endGroup();
 }
 
 int FileLabelModel::rowCount(const QModelIndex &parent) const
@@ -388,6 +441,32 @@ bool FileLabelModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
+QSet<QString> FileLabelModel::getFileUrisFromLabelId(int labelId)
+{
+    QSet<QString> uriSet = m_globalLabelMap.value(labelId);
+    return uriSet;
+}
+
+int FileLabelModel::getLabelIdFromLabelName(const QString &colorName)
+{
+    for (auto item : m_labels) {
+        if (item->name() == colorName) {
+            return item->id();
+        }
+    }
+    return 0;
+}
+
+QString FileLabelModel::getLabelNameFromLabelId(int id)
+{
+    for (auto item : m_labels) {
+        if (item->id() == id) {
+            return item->name();
+        }
+    }
+    return QString();
+}
+
 void FileLabelModel::setName(FileLabelItem *item, const QString &name)
 {
     m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
@@ -405,6 +484,22 @@ void FileLabelModel::setColor(FileLabelItem *item, const QColor &color)
     m_label_settings->setValue("color", color);
     m_label_settings->endArray();
     m_label_settings->sync();
+}
+
+#include <QtConcurrent>
+void FileLabelModel::renameFileLabel(const QString oldUri, const QString newUri)
+{
+    qDebug() << "rename file label -- old:" << oldUri << "  ==  new:" << newUri;
+    QtConcurrent::run([=]() {
+        QList<int> labelIds = getFileLabelIds(oldUri);
+        removeFileLabel(oldUri);
+        for(auto &id: labelIds){
+            if(id <= 0)
+                continue;
+            addLabelToFile(newUri, id);
+        }
+
+    });
 }
 
 void FileLabelModel::initLabelItems()
@@ -435,6 +530,13 @@ void FileLabelModel::initLabelItems()
     }
     m_label_settings->endArray();
     endResetModel();
+    m_label_settings->beginGroup("global labels");
+    QStringList keys = m_label_settings->allKeys();
+    for(const QString &key: keys){
+        QSet<QString> uriSet = m_label_settings->value(key).toStringList().toSet();
+        m_globalLabelMap.insert(key.toInt(), uriSet);
+    }
+    m_label_settings->endGroup();
 }
 
 void FileLabelModel::addId()

@@ -199,7 +199,7 @@ void LocationBar::setRootUri(const QString &uri)
             infoJob->cancel();
         });
         connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
-            if (!successed) {
+            if (!successed && !info.get()->uri().startsWith("label://")) {
                 qWarning()<<"can not query file:"<<info->uri();
                 // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
                 // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况

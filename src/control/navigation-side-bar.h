@@ -23,6 +23,7 @@
 #ifndef NAVIGATIONSIDEBAR_H
 #define NAVIGATIONSIDEBAR_H
 #include "side-bar.h"
+#include "file-label-box.h"
 
 #include <QTreeView>
 #include <QStyledItemDelegate>
@@ -92,6 +93,7 @@ private:
     QVBoxLayout *m_layout = nullptr;
 
     QPushButton *m_label_button = nullptr;
+    FileLabelBox *m_labelDialog = nullptr;
 };
 
 class NavigationSideBarItemDelegate : public QStyledItemDelegate

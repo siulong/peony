@@ -612,19 +612,17 @@ NavigationSideBarContainer::NavigationSideBarContainer(QWidget *parent) : Peony:
     m_layout->setContentsMargins(0, 4, 0, 0);
     m_layout->setSpacing(0);
 
-    auto sideBar = new NavigationSideBar(this);
-
     QWidget *widget = new QWidget;
     m_layout->addWidget(new TitleLabel(this));
-    m_layout->addWidget(sideBar);
     widget->setLayout(m_layout);
-
     setWidget(widget);
 
+    auto sideBar = new NavigationSideBar(this);
+    addSideBar(sideBar);
     connect(sideBar, &NavigationSideBar::updateWindowLocationRequest, this, &NavigationSideBarContainer::updateWindowLocationRequest);
-
  }
 
+#include "file-label-model.h"
 void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 {
     if (m_sidebar)
@@ -632,10 +630,35 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     m_sidebar = sidebar;
     m_layout->addWidget(sidebar);
+    //m_layout->addStretch();
+
+    m_labelDialog = new FileLabelBox(this);
+    m_labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_labelDialog->hide();
+    m_layout->addWidget(m_labelDialog);
 
     QWidget *w = new QWidget(this);
     QVBoxLayout *l = new QVBoxLayout;
     l->setContentsMargins(4, 4, 2, 4);
+
+    connect(m_labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
+    {
+        QModelIndex index = m_labelDialog->currentIndex();
+        auto item = FileLabelModel::getGlobalModel()->itemFormIndex(index);
+        int id = item->id();
+        if (id)
+        {
+            //QString uri = "label:///" + QString::number(id);
+            QString uri = "label:///" + item->name();
+            Q_EMIT m_sidebar->updateWindowLocationRequest(uri);
+        }
+    });
+    //when clicked in blank, currentChanged may not triggered
+    connect(m_labelDialog, &FileLabelBox::leftClickOnBlank, [=]()
+    {
+        //setLabelNameFilter("");
+    });
+
 
     m_label_button = new QPushButton(QIcon(":/icons/sign"), tr("All tags..."), this);
     m_label_button->setProperty("useIconHighlightEffect", 0x2);
@@ -646,14 +669,18 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     m_label_button->setFocusPolicy(Qt::FocusPolicy(m_label_button->focusPolicy() & ~Qt::TabFocus));
 
+    l->setSpacing(0);
+    //l->addWidget(m_labelDialog);
     l->addWidget(m_label_button);
 
-    connect(m_label_button, &QPushButton::clicked, m_sidebar, &NavigationSideBar::labelButtonClicked);
+    connect(m_label_button, &QPushButton::clicked, this, [=](bool checked){        
+        //m_labelDialog->setGeometry(0, this->height() - 600, this->width(), 600 - m_label_button->height());
+        m_labelDialog->setVisible(checked);
+
+    });
 
     w->setLayout(l);
-
     m_layout->addWidget(w);
-
     setLayout(m_layout);
 }
 

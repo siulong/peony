@@ -25,8 +25,8 @@
 #include "file-node.h"
 #include "file-enumerator.h"
 #include "file-info.h"
-
 #include "file-utils.h"
+#include "file-label-model.h"
 #include "file-operation-manager.h"
 #include "sound-effect.h"
 #include "clipboard-utils.h"
@@ -57,6 +57,12 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
 
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
     QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
+    if("label" == firstSrcUrl.scheme())
+    {
+        QString scheme = firstSrcUrl.path().section("?schema=",-1,-1);
+        QString path = firstSrcUrl.path().section("?schema=", 0, 0).section("/",2,-1);
+        firstSrcUrl = QString(scheme).append(":///").append(path);
+    }
 
     if (destDirUrl.isParentOf(firstSrcUrl)) {
         if (1 == firstSrcUrl.path().split("/").count() - destDirUrl.path().split("/").count()) {
@@ -72,12 +78,24 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
         }
     }*/
 
+    QStringList srcUris;
+    for(auto &uri : sourceUris){
+        if(uri.startsWith("label://"))
+        {
+            QUrl url(uri);
+            QString scheme = url.path().section("?schema=",-1,-1);
+            QString path = url.path().section("?schema=", 0, 0).section("/",2,-1);
+            uri = QString(scheme).append(":///").append(path);
+        }
+        srcUris.append(uri);
+    }
+
     m_conflict_files.clear();
-    m_source_uris = sourceUris;
+    m_source_uris = srcUris;
     m_dest_dir_uri = FileUtils::urlDecode(destDirUri);
     m_reporter = new FileNodeReporter;
     connect(m_reporter, &FileNodeReporter::nodeFound, this, &FileOperation::operationPreparedOne);
-    m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Copy);
+    m_info = std::make_shared<FileOperationInfo>(srcUris, destDirUri, FileOperationInfo::Copy);
 }
 
 FileCopyOperation::~FileCopyOperation()
@@ -445,6 +463,25 @@ fallback_retry:
             }
         } else {
             node->setState(FileNode::Handled);
+            // if copy sucessed, flush all data
+            g_autoptr(GFile) destFile = g_file_new_for_uri(destFileUri.toUtf8().constData());
+            if (g_file_query_exists(destFile, nullptr)) {
+                // copy file attribute
+                // It is possible that some file systems do not support file attributes
+                g_autoptr(GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
+                g_file_copy_attributes(srcFile, destFile, G_FILE_COPY_ALL_METADATA, nullptr, &err);
+                if (nullptr != err) {
+                    qWarning() <<destFileUri<<"copy attribute error:" << err->code << "  ---  " << err->message;
+                    g_error_free(err);
+                    err = nullptr;
+                }
+                QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(srcUri);
+                for(auto &labelId: labelIds){
+                    if(labelId <= 0)
+                        continue;
+                    FileLabelModel::getGlobalModel()->addLabelToFile(destFileUri, labelId);
+                }
+            }
         }
 
         if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
