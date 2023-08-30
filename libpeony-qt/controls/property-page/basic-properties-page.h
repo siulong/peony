@@ -135,6 +135,7 @@ protected:
     bool isNameChanged();
     void setSysTimeFormat();
     QString elideText(QFont font,int width,QString strInfo);
+    QString elideTextAndToolTip(QFont font, int width, QString strInfo, Qt::TextElideMode mode, QWidget* widgt);
 
 protected Q_SLOTS:
     void getFIleInfo(QString uri);
