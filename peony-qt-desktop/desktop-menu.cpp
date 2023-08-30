@@ -302,6 +302,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
                         CreateTemplateOperation op(m_directory, CreateTemplateOperation::Template, t);
                         op.run();
                         auto target = op.target();
+                        //clear old data,fix bug#164160, not enter edit new file issue
+                        m_uris_to_edit.clear();
                         m_uris_to_edit<<target;
                     });
                     subMenu->addAction(action);
@@ -325,6 +327,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
             op.run();
             auto targetUri = op.target();
             qDebug()<<"target:"<<targetUri;
+            //clear old data,fix bug#164160, not enter edit new file issue
+            m_uris_to_edit.clear();
             m_uris_to_edit<<targetUri;
         });
         auto createFolderActions = new QAction(QIcon::fromTheme("folder-new-symbolic"), tr("Folder"), this);
@@ -335,6 +339,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
             op.run();
             auto targetUri = op.target();
             qDebug()<<"target:"<<targetUri;
+            //clear old data,fix bug#164160, not enter edit new file issue
+            m_uris_to_edit.clear();
             m_uris_to_edit<<targetUri;
         });
         subMenu->addActions(actions);
@@ -538,11 +544,17 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
                 connect(l.last(), &QAction::triggered, [=]() {
                     m_view->editUri(m_selections.first());
                 });
+            } else if (m_selections.count() > 1) {
+                l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
+                connect(l.last(), &QAction::triggered, [=]() {
+                    m_view->editUris(m_selections);
+                });
             }
         }
     } else {
         auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
         l<<pasteAction;
+        ClipboardUtils::getInstance()->updateClipboardManually();
         pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
         connect(l.last(), &QAction::triggered, [=]() {
             ClipboardUtils::pasteClipboardFiles(m_directory);
@@ -579,11 +591,11 @@ void DesktopMenu::openWindow(const QString &uri)
     QUrl url = uri;
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-folders"<<url.toEncoded());
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-folders"<<uri);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-folders"<<uri);
 #endif
 }
 
@@ -624,11 +636,11 @@ void DesktopMenu::openWindow(const QStringList &uris)
     }
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-folders"<<args);
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-folders"<<args);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-folders"<<args);
 #endif
 }
 
@@ -644,11 +656,11 @@ void DesktopMenu::showProperties(const QString &uri)
     QUrl url = uri;
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList()<<"--show-properties"<<url.toEncoded());
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-properties"<<url.toEncoded());
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<url.toEncoded());
 #endif
 }
 
@@ -675,35 +687,35 @@ void DesktopMenu::showProperties(const QStringList &uris)
         QtConcurrent::run([=]() {
             QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-            p.setProgram("peony");
+            p.setProgram("/usr/bin/peony");
             p.setArguments(QStringList() << "--show-properties" << "trash:///");
             p.startDetached();
 #else
-            p.startDetached("peony", QStringList()<<"--show-properties"<<args);
+            p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<args);
 #endif
         });
     }
 
     QProcess p;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    p.setProgram("peony");
+    p.setProgram("/usr/bin/peony");
     p.setArguments(QStringList() << "--show-properties" << args);
     p.startDetached();
 #else
-    p.startDetached("peony", QStringList()<<"--show-properties"<<args);
+    p.startDetached("/usr/bin/peony", QStringList()<<"--show-properties"<<args);
 #endif
 }
 
 void DesktopMenu::gotoAboutComputer()
 {
     QProcess p;
-    p.setProgram("ukui-control-center");
+    p.setProgram("/usr/bin/ukui-control-center");
     //-m About para to show about computer infos, related to bug#88258
     p.setArguments(QStringList()<<"-m" << "About");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("ukui-control-center", QStringList()<<"-m" << "About");
+    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" << "About");
 #endif
     p.waitForFinished(-1);
 }

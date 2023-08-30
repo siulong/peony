@@ -1,15 +1,40 @@
+/*
+ * Peony-Qt
+ *
+ * Copyright (C) 2023, KylinSoft Information Technology Co., Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yue Lan <lanyue@kylinos.cn>
+ *
+ */
+
 #include "udfFormatDialog.h"
 #include "disccontrol.h"
+#include "format-dlg-create-delegate.h"
 #include <QMessageBox>
 #include <QThread>
 #include <QDebug>
+#include <volumeManager.h>
+#include <QMutexLocker>
 
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
 
 UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, QWidget *parent):
-        QDialog(parent), m_uri(uri),m_discControl(discControl)
+        QDialog(parent), m_uri(uri), m_check(false), m_discControl(discControl)
 {
 
     setAutoFillBackground(true);
@@ -31,13 +56,13 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     m_discTypeEdit->setReadOnly(true);
     m_discTypeEdit->setEnabled(false);
     m_mainLayout->addWidget(m_discTypeLabel, 1, 1, 1, 2);
-    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 8);
+    m_mainLayout->addWidget(m_discTypeEdit, 1, 3, 1, 6);
 
     m_discNameLabel = new QLabel;
     m_discNameLabel->setText(tr("Device Name:"));
     m_discNameEdit = new QLineEdit;
     m_mainLayout->addWidget(m_discNameLabel, 2, 1, 1, 2);
-    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 8);
+    m_mainLayout->addWidget(m_discNameEdit, 2, 3, 1, 6);
 
     m_progress = new QProgressBar;
     m_progress->setMinimum(0);
@@ -68,10 +93,17 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     connect(m_okBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfFormat, Qt::UniqueConnection);
     connect(m_cancelBtn, &QPushButton::clicked, this, &UdfFormatDialog::slot_udfCancel, Qt::UniqueConnection);
     connect(m_discControl, &DiscControl::formatUdfFinished, this,  &UdfFormatDialog::slot_formatFinished, Qt::UniqueConnection);
+
+    //监控光驱设备是否被移除
+    auto volumeManager = Experimental_Peony::VolumeManager::getInstance();
+    connect(volumeManager,&Experimental_Peony::VolumeManager::volumeRemove,this,&UdfFormatDialog::slot_volumeDeviceRemove);
 }
 
 UdfFormatDialog::~UdfFormatDialog()
 {
+#ifndef KY_UDF_BURN
+    FormatDlgCreateDelegate::getInstance()->removeFromUdfMap(this->m_uri);
+#endif
     if(m_discControl){
         m_discControl->deleteLater();
         m_discControl = nullptr;
@@ -85,6 +117,7 @@ UdfFormatDialog::~UdfFormatDialog()
 
 void UdfFormatDialog::slot_udfFormat()
 {
+    qDebug() << "begin slot_udformat";
     setButtonState(true);
     if (!udfFormatEnsureMsgBox()) {
         setButtonState(false);
@@ -97,6 +130,8 @@ void UdfFormatDialog::slot_udfFormat()
         return;
     }
 
+    qDebug() << "卷标名称为： " << m_discNameEdit->text();
+
     m_progress->setVisible(true);
     m_progress->setMaximum(0);
     b_canClose = false;
@@ -107,8 +142,9 @@ void UdfFormatDialog::slot_udfFormat()
     connect(m_thread, &QThread::started, m_discControl, [=](){
          m_discControl->formatUdfSync(m_discNameEdit->text());
     }, Qt::UniqueConnection);
-    connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
-    connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
+    //connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater, Qt::UniqueConnection);
+    //connect(m_thread, &QThread::finished, m_discControl, &DiscControl::deleteLater, Qt::UniqueConnection);
+    connect(m_thread, &QThread::finished, this, &UdfFormatDialog::slot_FreeMemory, Qt::UniqueConnection);
     m_thread->start();
 }
 
@@ -138,6 +174,31 @@ void UdfFormatDialog::slot_formatFinished(bool successful, QString errorInfo)
     this->close();
 }
 
+void UdfFormatDialog::slot_volumeDeviceRemove(const QString dev)
+{
+    qDebug() << __func__ << __LINE__ << QString("[%1] device has been removed").arg(dev);
+    QMutexLocker locker(&m_mutex);
+    if (m_check) {
+        qDebug() << __LINE__ << "m_check =  " << m_check;
+        return ;
+    }
+    if (dev == m_discControl->discDevice()) {
+        qDebug() << __func__ << __LINE__ << QString("[%1] prepare to kill the formatting process").arg(dev);
+        m_discControl->setRemoved(true);
+        m_discControl->killFormatProcess();
+    }
+}
+
+void UdfFormatDialog::slot_FreeMemory()
+{
+    qDebug() << __LINE__ << "UDF format thread Finshed";
+    QMutexLocker locker(&m_mutex);
+    this->m_check = true;
+    this->m_discControl->deleteLater();  // 这个在前
+    this->m_thread->deleteLater(); // 这个在后
+}
+
+
 void UdfFormatDialog::closeEvent(QCloseEvent *e)
 {
     if (!b_canClose) {
@@ -145,6 +206,9 @@ void UdfFormatDialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+#ifndef KY_UDF_BURN
+    FormatDlgCreateDelegate::getInstance()->removeFromUdfMap(this->m_uri);
+#endif
 }
 
 bool UdfFormatDialog::udfFormatEnsureMsgBox()

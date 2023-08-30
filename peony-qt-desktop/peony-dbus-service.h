@@ -55,11 +55,15 @@ public:
 
 Q_SIGNALS:
    void sendSrcAndDestUrisOfCopyDspsFiles(const QStringList& sourceUris, const QStringList& destUris);
+   void black_and_white_update();
 
 public Q_SLOTS:
     QString GetSecurityConfigPath();
     int ReloadSecurityConfig();
     void receiveSrcAndDestUrisOfCopy(const QStringList& sourceUris, const QStringList& destUris);
+    QString getBlackAndWhiteModel();
+    bool getBlackAndWhiteListExist(QString name);
+    QStringList getBWListInfo();
 
 private:
     DesktopIconView *m_desktopIconView = nullptr;

@@ -69,7 +69,11 @@ enum ExceptionResponse {
     Force,          // Force operation
     ForceAll,       //
     RenameOne,      // usually used for long name handling, etc...
-    RenameAll       // not used yet
+    RenameAll,      // not used yet
+    TruncateOne,    // truncate
+    TruncateAll,
+    SaveOne,        //long name file save as other paht
+    SaveAll,
 };
 
 typedef enum{
@@ -84,6 +88,7 @@ typedef enum{
     FileOpCount,    //file or dir file count
     FileOpCreateTemp, //create file or dir
     FileOpRenameToHideFile, // file or dir rename to a hide file
+    FileOpRenameChangeType, // change file suffix cause type change
     FileOpNum,
 }FileOpsType;
 

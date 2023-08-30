@@ -28,6 +28,7 @@
 #include <memory>
 
 #include "peony-core_global.h"
+#include "file-info.h"
 
 namespace Peony {
 
@@ -37,11 +38,31 @@ class PEONYCORESHARED_EXPORT ThumbnailJob : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
+    enum Type {
+        Unkown = 0,
+        Invalid = 1,
+        Image = 2,
+        Pdf = 3,
+        ImagePdf = 4,
+        Video = 5,
+        Office = 6,
+        Desktop = 7,
+        CustomIcon = 8,
+        Other
+    };
+    Q_ENUM (Type)
+
     explicit ThumbnailJob(const QString &uri, const std::shared_ptr<FileWatcher> watcher, QObject *parent = nullptr);
     ~ThumbnailJob();
 
 public Q_SLOTS:
     void run() override;
+
+    void setForceUpdate(bool force);
+    bool isForceUpdate();
+
+    void setType(Type type);
+    Type type();
 
 private:
     QString m_uri;

@@ -27,6 +27,7 @@
 #include "file-copy-operation.h"
 #include "file-trash-operation.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-delete-operation.h"
 #include "file-link-operation.h"
 
@@ -40,6 +41,7 @@
 
 #include "file-operation-internal-dialog.h"
 #include "sound-effect.h"
+#include "global-settings.h"
 
 #include <QUrl>
 #include <QFileInfo>
@@ -153,6 +155,12 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 //            }
 //            qDebug() <<"total_size:" <<total_size<<ONE_GIB_SIZE<<canNotTrash<<isBigFile;
 
+            //task#147972 【删除回收站】选项需求
+            //如果是长城的机器并且带了9215控制器，不再区分移动设备，统一右键删除到回收站
+            bool trashSettings = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+            if (trashSettings)
+                break;
+
             //file total size more than 10G, not trash but delete, task#56444
             //FIXME 判断是否是移动设备文件，可能不准确, 目前暂未找到好的判断方法
             bool isMobileDeviece = FileUtils::isMobileDeviceFile(uri);
@@ -175,13 +183,27 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 
     if (canNotTrash) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
-        QString message = QObject::tr("Can not trash these files. "
-                                      "You can delete them permanently. "
-                                      "Are you sure doing that?");
-        if (isBigFile)
-           message = QObject::tr("Can not trash files more than 10GB, would you like to delete it permanently?");
+        //task #155670,155671 improve delete file permanently message
+        QString message;
+        if (isBigFile){
+            message = QObject::tr("The file is too large to be moved to the recycle bin. "
+                                  "Do you want to permanently delete it?");
 
-        auto result = QMessageBox::question(nullptr, QObject::tr("Can not trash"), message);
+            if (uris.length() > 1)
+                message = QObject::tr("These files are too large to be moved to the recycle bin. "
+                                      "Do you want to permanently delete these %1 files?").arg(uris.length());
+        }
+        else if (uris.length() == 1){
+            message = QObject::tr("Are you sure you want to permanently delete this file?"
+                                  " Once deletion begins, "
+                                  "the file will not be recoverable.");
+        }else{
+            message = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                                  " Once deletion begins, "
+                                  "these file will not be recoverable.").arg(uris.length());
+        }
+
+        auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (result == QMessageBox::Yes) {
             op = FileOperationUtils::remove(uris);
         }
@@ -335,12 +357,16 @@ void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
 
     Peony::AudioPlayManager::getInstance()->playWarningAudio();
     int result = 0;
-    if (uris.count() == 1) {
-        QUrl url = uris.first();
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."));
-    } else {
-        result = QMessageBox::question(nullptr, QObject::tr("Delete Permanently"), QObject::tr("Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again."));
+    QString message = QObject::tr("Are you sure you want to permanently delete this file?"
+                          " Once deletion begins, "
+                          "the file will not be recoverable.");
+    if (uris.count() > 1) {
+        message = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                              " Once deletion begins, "
+                              "these file will not be recoverable.").arg(uris.length());
     }
+
+    result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
     if (result == QMessageBox::Yes) {
         FileOperationUtils::remove(uris);

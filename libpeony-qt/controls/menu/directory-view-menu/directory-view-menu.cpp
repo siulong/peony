@@ -42,6 +42,9 @@
 #include "file-untrash-operation.h"
 #include "file-delete-operation.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include "file-utils.h"
 #include "bookmark-manager.h"
@@ -57,6 +60,7 @@
 #include "file-operation-error-dialog.h"
 #include "file-enumerator.h"
 #include "gerror-wrapper.h"
+#include "format-dlg-create-delegate.h"
 
 #include "global-settings.h"
 #include "sound-effect.h"
@@ -76,6 +80,9 @@
 #include <QDebug>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 DirectoryViewMenu::DirectoryViewMenu(DirectoryViewWidget *directoryView, QWidget *parent) : QMenu(parent)
 {
@@ -111,6 +118,11 @@ void DirectoryViewMenu::setHiddenActionsByObjectName(const QStringList &actionNa
 
 void DirectoryViewMenu::fillActions()
 {
+    QString tmpUri;
+    g_autoptr (GFile) tmp_file = g_file_new_for_uri(m_directory.toUtf8().constData());
+    g_autofree gchar* tmp_uri = g_file_get_uri(tmp_file);
+    tmpUri = tmp_uri;
+
     if (m_directory == "computer:///") {
         m_is_computer = true;
     }
@@ -144,7 +156,7 @@ void DirectoryViewMenu::fillActions()
     }
 
     if (m_directory.startsWith("ftp://")
-            || m_directory.startsWith("sftp://")) {
+            || m_directory.startsWith("sftp://") || tmpUri.startsWith("ftp://") || tmpUri.startsWith("sftp://")) {
         m_is_ftp = true;
     }
 
@@ -156,8 +168,21 @@ void DirectoryViewMenu::fillActions()
         m_is_filesafe = true;
     }
 
-    if(m_directory.startsWith("smb://")){
+    if(m_directory.startsWith("smb://") || tmpUri.startsWith("smb://")){
         m_is_smb_file = true;
+    }
+
+    QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
+    if(m_directory == boxpath) {
+        m_is_boxpath = true;
+    }
+
+    if (m_directory.startsWith("label://")){
+        m_is_label_model = true;
+    }
+
+    if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+        m_is_mtp_ptp = true;
     }
 
     auto dev = VolumeManager::getDriveFromUri(m_directory);
@@ -169,6 +194,12 @@ void DirectoryViewMenu::fillActions()
         }
         qDebug() << "canEject :" << canEject;
     }
+
+    //task#147972 【删除回收站】选项需求
+    //如果是长城的机器并且带了9215控制器，不再区分移动设备，统一右键删除到回收站
+    bool trashSettings = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+    if (trashSettings)
+       m_is_mobile_file = false;
 
     QString homeUri = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString musicUri = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
@@ -391,6 +422,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     });
                 }
             } else if (!info->isVolume()) {
+                bool needDisable = isMultVideoOrAudio(info);
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -400,6 +432,10 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     else
                         FileLaunchManager::openAsync(uri, false, false);
                 });
+
+                if (needDisable) {
+                    l.last()->setEnabled(false);
+                }
 
                 if (m_is_network)
                     return l;
@@ -445,6 +481,9 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     d.exec();
                 });
                 openWithAction->setMenu(openWithMenu);
+                if (needDisable) {
+                    openWithAction->setEnabled(false);
+                }
             } else {
                 l<<addAction(tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -502,10 +541,16 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
 const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
-    if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash) {
+    if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash && !m_is_label_model) {
         auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
+            createAction->setEnabled(false);
+        }
+        if (m_is_boxpath) {
+            createAction->setEnabled(false);
+        }
+        if (m_is_mtp_ptp) {
             createAction->setEnabled(false);
         }
         //fix create folder fail issue in special path
@@ -793,18 +838,25 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (m_is_kydroid)
                 return l;
 
-            if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe)
+            if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model)
             {
-                l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
-                l.last()->setObjectName(CUT_ACTION);
-                connect(l.last(), &QAction::triggered, [=]() {
-                    ClipboardUtils::setClipboardFiles(m_selections, true);
-                    m_view->repaintView();
-                });
+                bool canCut = true;
+                auto info = FileInfo::fromUri(m_directory);
+                if (!info->canWrite()) {
+                    canCut = false;
+                }
+                if (canCut) {
+                    l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
+                    l.last()->setObjectName(CUT_ACTION);
+                    connect(l.last(), &QAction::triggered, [=]() {
+                        ClipboardUtils::setClipboardFiles(m_selections, true);
+                        m_view->repaintView();
+                    });
+                }
             }
 
             bool hasDeleteForever = false;
-            if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe) {
+            if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe && !m_is_label_model) {
                 bool canTrash = true;
                 bool canDelete = true;
                 for (auto uri : m_selections) {
@@ -814,6 +866,11 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
                     if (! info->canDelete() && (!uri.startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
                         canDelete = false;
+
+                    if(FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
+                        canTrash = false;
+                        break;
+                    }
                 }
 
                 //fix unencrypted box file can delete to trash issue, link to bug#72948
@@ -844,7 +901,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 }
             }
 
-            if (m_is_favorite && m_can_delete && !m_is_filesafe && !hasDeleteForever) {
+            if ((m_is_favorite || m_is_label_model) && m_can_delete && !m_is_filesafe && !hasDeleteForever ) {
                 l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
                 l.last()->setObjectName(DELETE_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -860,20 +917,37 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 });
             }
 
-            if (m_selections.count() == 1 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe) {
+            if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
                 l.last()->setObjectName(RENAME_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
-                    m_view->editUri(m_selections.first());
+                    if (m_selections.count() == 1) {
+                        m_view->editUri(m_selections.first());
+                    } else if (m_selections.count() > 1) {
+                        m_view->editUris(m_selections);
+                    }
                 });
             }
+
         } else {
-            if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd)
+            if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd && !m_is_label_model)
             {
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
                 l.last()->setObjectName(PASTE_ACTION);
-                pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
+                ClipboardUtils::getInstance()->updateClipboardManually();
+
+                //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
+                auto info = FileInfo::fromUri(m_directory);
+                bool isDirectoryCanWrite = true;
+                if (!info->isEmptyInfo()) {
+                    isDirectoryCanWrite = info->canWrite();
+                }
+                if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+                    isDirectoryCanWrite = false;
+                }
+
+                pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles() && isDirectoryCanWrite);
                 connect(l.last(), &QAction::triggered, [=]() {
                     auto op = ClipboardUtils::pasteClipboardFiles(m_directory);
                     if (op) {
@@ -1002,6 +1076,14 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                             selectUriList<< m_selections.at(uriIndex);
                         }
                     }
+                }else if(m_selections.first().startsWith("label:///")){
+                    for(auto &labelUri : m_selections){/* 标记模式页面为不同目录下的文件（夹），所以每个都需要一个属性对话框 */
+                        QStringList urisList;
+                        urisList.append(labelUri);
+                        PropertiesWindow *p = new PropertiesWindow(urisList);
+                        p->setAttribute(Qt::WA_DeleteOnClose);
+                        p->show();
+                    }
                 }else {
                     selectUriList = m_selections;
                 }
@@ -1056,6 +1138,8 @@ const QList<QAction *> DirectoryViewMenu::constructComputerActions()
                     // FIXME:// refactory Format_Dialog
                     Format_Dialog* fd  = new Format_Dialog(info->uri(), nullptr, m_view);
                     fd->show();
+//                    Format_Dialog *fd = format_dlg_create_delegate::getInstance()->createDlg(info->uri(), nullptr);
+//                    fd->show();
                 });
                 l.last()->setObjectName(FORMAT_ACTION);
 
@@ -1082,7 +1166,10 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setEnabled(!isTrashEmpty);
             connect(l.last(), &QAction::triggered, [=]() {
                 auto uris = m_top_window->getCurrentAllFileUris();
-                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+//                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this->topLevelWidget());
+                // fix #161877 【文件管理器】回收站内右键空白处选择情况回收站，确认弹窗不居中
+                auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, dynamic_cast<QWidget *>(m_top_window));
+
                 qApp->setProperty("clearTrash",true);
 //                    if(removeop){
 //                        removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,[=](){
@@ -1107,15 +1194,23 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                 if (m_selections.count() == 1) {
                     auto untrashop = FileOperationUtils::restore(m_selections.first());
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+                            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
                         });
                     }
                 } else {
                     auto untrashop = FileOperationUtils::restore(m_selections);
                     if(untrashop){
-                        connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
-                                 Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                        untrashop->connect(untrashop,&Peony::FileUntrashOperation::operationFinished,[=](){
+                            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+                            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+                            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
                         });
                     }
                 }
@@ -1125,9 +1220,17 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l.last()->setObjectName(DELETE_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
                 AudioPlayManager::getInstance()->playWarningAudio();
-                auto result = QMessageBox::question(nullptr, tr("Delete Permanently"), tr("Are you sure that you want to delete these files? "
-                                                                                          "Once you start a deletion, the files deleting will never be "
-                                                                                          "restored again."));
+                int result = 0;
+                QString message = QObject::tr("Are you sure you want to permanently delete this file?"
+                                      " Once deletion begins, "
+                                      "the file will not be recoverable.");
+                if (m_selections.count() > 1) {
+                    message = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                                          " Once deletion begins, "
+                                          "these file will not be recoverable.").arg(m_selections.count());
+                }
+
+                result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (result == QMessageBox::Yes) {
 //                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
@@ -1201,10 +1304,25 @@ const QList<QAction *> DirectoryViewMenu::constructSearchActions()
     return l;
 }
 
+bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
+{
+    if (!info) {
+        qDebug() << "file info not valid";
+        return false;
+    }
+
+    QString uri = info->uri();
+    if (uri.startsWith("mult:///") && (info->isAudioFile() || info->isVideoFile())) {
+        return true;
+    }
+
+    return false;
+}
+
 const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
 {
     QList<QAction *> l;
-    if (!m_is_favorite) {
+    if (!m_is_favorite && !m_is_label_model) {
         auto pluginIds = MenuPluginManager::getInstance()->getPluginIds();
         //sort plugiins by name, so the menu option orders is relatively fixed
         std::sort(pluginIds.begin(), pluginIds.end());

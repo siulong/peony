@@ -24,6 +24,7 @@
 
 #include "favorite-vfs-register.h"
 #include "search-vfs-register.h"
+#include "label-vfs-register.h"
 
 using namespace Peony;
 
@@ -76,4 +77,6 @@ VFSPluginManager::VFSPluginManager(QObject *parent) : QObject(parent)
     auto favoriteVFSPlugin = new FavoriteVFSInternalPlugin;
     registerPlugin(favoriteVFSPlugin);
 
+    auto labelVFSPlugin = new LabelVFSInternalPlugin;
+    registerPlugin(labelVFSPlugin);
 }

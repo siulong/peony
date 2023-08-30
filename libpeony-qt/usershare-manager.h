@@ -26,8 +26,11 @@
 #include <QMap>
 #include <QMutex>
 #include <QObject>
+#include <memory>
+#include <QThread>
 //#include <QProcess>
 #include "peony-core_global.h"
+#include "file-watcher.h"
 namespace Peony {
 
 class PEONYCORESHARED_EXPORT ShareInfo
@@ -51,15 +54,24 @@ class PEONYCORESHARED_EXPORT UserShareInfoManager : public QObject
 public:
     static UserShareInfoManager* getInstance ();
     QString exectueCommand (QStringList& args, bool* ret /* out */, QString sharedPath="");
+    static QString exectueSetAclCommand(QStringList& args, bool* ret);
 
     bool hasSharedInfo (QString& name);
     void removeShareInfo (QString& name);
     bool addShareInfo (ShareInfo* shareInfo);
     bool updateShareInfo (ShareInfo& shareInfo);
     const ShareInfo* getShareInfo (QString& name);
+    bool updateShareInfo (ShareInfo& shareInfo, const QString usershareAcl);
+    void removeShareInfoAcl (QString& name);
+
+    QString getUserShareAcl(QString& name);
+    bool addUserShareAcl(QString &name, QString &acl);
+    QString parseUserShareAcl(QString &content);
+    bool checkDirAdvancedShare(QString &name);
+    QStringList getUsershareLists();
 
 private:
-    explicit UserShareInfoManager (QObject* parent = nullptr) : QObject(parent) {};
+    explicit UserShareInfoManager (QObject* parent = nullptr);
 
 Q_SIGNALS:
     void signal_addSharedFolder(const ShareInfo& shareInfo, bool successed);
@@ -69,7 +81,25 @@ private:
     bool                            m_bInit = false;
     QMutex                          m_mutex;
     QMap <QString, ShareInfo*>      m_sharedInfoMap;
+    QMap <QString, QString>         m_usershareAclMap;
     static UserShareInfoManager*    g_shareInfo;
+    std::shared_ptr<FileWatcher>    m_watcher;
+    QStringList                     m_usersharelists;
 };
+
+
+class PEONYCORESHARED_EXPORT SharedDeleteInfoThread : public QThread {
+    Q_OBJECT
+public:
+    explicit SharedDeleteInfoThread(const QString uri);
+
+protected:
+    void run() override;
+
+private:
+    QString m_uri;
+    static QMutex m_mutex;
+};
+
 }
 #endif // USERSHARE_MANAGER_H

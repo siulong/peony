@@ -27,6 +27,7 @@
 
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-utils.h"
 
 #include "icon-view-delegate.h"
@@ -102,7 +103,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     if (!view->indexWidget(index)) {
         //painter->setClipRect(opt.rect);
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         if (opt.state.testFlag(QStyle::State_MouseOver) && !opt.state.testFlag(QStyle::State_Selected)) {
             QColor color = m_styled_button->palette().highlight().color();
             color.setAlpha(255*0.3);//half transparent
@@ -147,8 +148,17 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     auto text = opt.text;
     opt.text = nullptr;
 
+    auto state = opt.state;
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected))
+    {
+        opt.state &= ~QStyle::State_Selected;
+    }
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    painter->restore();
 
+    opt.state = state;
     opt.text = text;
     opt.font = qApp->font();
     opt.fontMetrics = qApp->fontMetrics();
@@ -162,13 +172,18 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     painter->save();
     painter->translate(1, 1 + iconSizeExpected.height() + 10);
 
+    int maxLineCount = 2;
+
     auto expectedSize = IconViewTextHelper::getTextSizeForIndex(opt, index, 2);
+    if(option.fontMetrics.height()*2 > view->viewport()->height() - option.rect.y() - iconSizeExpected.height() - 5) {
+        maxLineCount = 1;
+    }
     QPixmap pixmap(expectedSize);
     pixmap.fill(Qt::transparent);
     QPainter shadowPainter(&pixmap);
     QColor shadow = Qt::black;
     shadowPainter.setPen(shadow);
-    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, 2, false, shadow);
+    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, maxLineCount, false, shadow);
     shadowPainter.end();
 
     QImage shadowImage(expectedSize + QSize(4, 4), QImage::Format_ARGB32_Premultiplied);
@@ -216,7 +231,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
                                   index,
                                   maxTextHight,
                                   0,
-                                  2,
+                                  maxLineCount,
                                   false);
     painter->restore();
 
@@ -261,14 +276,20 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         {
             emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+            painter->restore();
         }
         else if(! file->canWrite()/* && ! file->canExecute()*/)
         {
             //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-readonly");
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+            painter->restore();
         }
     }
 
@@ -309,7 +330,10 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
         topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
         auto linkRect = QRect(topLeft, symbolicIconSize);
         QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
+        painter->save();
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         symbolicLinkIcon.paint(painter, linkRect, Qt::AlignCenter);
+        painter->restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
@@ -349,6 +373,8 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
         if (!icon.isNull()) {
             int pos = emblemPoses.takeFirst();
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             switch (pos) {
             case 1: {
                 icon.paint(painter,
@@ -389,6 +415,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             default:
                 break;
             }
+            painter->restore();
         }
     }
 
@@ -410,7 +437,8 @@ QSize DesktopIconViewDelegate::sizeHint(const QStyleOptionViewItem &option, cons
 
     auto view = qobject_cast<DesktopIconView*>(this->parent());
     auto iconSize = view->iconSize();
-    auto font = view->font();
+    QFont font = view->font();
+    font.setFamily(view->font().defaultFamily());
     // asume max text size.
     font.setPointSize(15);
     auto fm = QFontMetrics(font);
@@ -444,7 +472,24 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setMinimumSize(sizeHint(option, index).width(), 54);
 
-    edit->setText(index.data(Qt::DisplayRole).toString());
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto info = FileInfo::fromUri(uri);
+    auto displayName = info->displayName();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    if (info->isDesktopFile()) {
+        suffix = ".desktop";
+    }
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setLimitBytes(false);
+        edit->setMaxLengthLimit(255 - suffix.length());
+    }
+    edit->setText(displayString);
+    edit->blockSignals(false);
     edit->setAlignment(Qt::AlignCenter);
     //NOTE: if we directly call this method, there will be
     //nothing happen. add a very short delay will ensure that
@@ -519,22 +564,42 @@ void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
-        getView()->setRenaming(true);
+        if (getView()->getSelections().count() > 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+           QStringList lists = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(lists, newName);
+            getView()->setRenaming(true);
 
-        //select file when rename finished
-        connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, getView(), [=](){
-                getView()->setSelections(QStringList()<<uri);
-                getView()->scrollToSelection(uri);
-                getView()->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
+            //select file when rename finished
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    getView()->setSelections(QStringList()<<uri);
+                    getView()->scrollToSelection(uri);
+                    getView()->setFocus();
+                });
+            }, Qt::BlockingQueuedConnection);
 
-        fileOpMgr->startOperation(renameOp, true);
+            fileOpMgr->startOperation(renameOp, true);
+        } else {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
+            getView()->setRenaming(true);
+
+            //select file when rename finished
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    getView()->setSelections(QStringList()<<uri);
+                    getView()->scrollToSelection(uri);
+                    getView()->setFocus();
+                });
+            }, Qt::BlockingQueuedConnection);
+
+            fileOpMgr->startOperation(renameOp, true);
+        }
     }
     else if (newName == oldName)
     {

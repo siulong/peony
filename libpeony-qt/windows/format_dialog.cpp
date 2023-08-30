@@ -31,6 +31,13 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "global-settings.h"
+#include "format-dlg-create-delegate.h"
+
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
+
+#include "format-dlg-create-delegate.h"
 
 #include <QObject>
 #include <QMessageBox>
@@ -41,7 +48,13 @@
 #include <QInputDialog>
 #include <QValidator>
 
+#include <QTime>
+
 using namespace  Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
+
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
@@ -202,6 +215,9 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 12, Qt::AlignLeft);
 
     mProgress = new QProgressBar;
+    // show progress bar tooltip when inactived
+    this->setAttribute(Qt::WA_AlwaysShowToolTips);
+    mProgress->setMouseTracking(true);
     mProgress->setMinimum(0);
     mProgress->setValue (0);
     mProgress->setMaximum(100);
@@ -333,6 +349,12 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
         auto gvolume = g_mount_get_volume(mount->getGMount());
         dialogVolumes.insert(this, gvolume);
 
+        g_autoptr (GDrive) gdrive = g_volume_get_drive(gvolume);
+        auto volumes = g_drive_get_volumes(gdrive);
+        int volumeCount = g_list_length(volumes);
+        g_list_free_full(volumes, g_object_unref);
+        setProperty("formatDriveVolumesCount", volumeCount);
+
         if(m_uris == "file:///data" || targetUri == "file:///data"){
             mNameEdit->setText(tr("Data"));
         }else{
@@ -394,9 +416,9 @@ void Format_Dialog::slot_format(bool enable)
         full_clean = mEraseCkbox->isChecked();
         //恢复之前被删除的代码，尝试修复在100%进度等待问题，bug#105901
         if(full_clean){
-            //完全擦除方式格式化，预估为半小时，1秒更新一次
+            //完全擦除方式格式化，从udisksjob获取进度，1秒更新一次
             mTimer->setInterval(1000);
-            m_total_predict = 1800;
+            m_total_predict = -1;
         }else{
             //快速格式化，预估时间为75S,0.5秒更新一次
             mTimer->setInterval(500);
@@ -423,12 +445,16 @@ void Format_Dialog::slot_format(bool enable)
         QString romType = mFSCombox->currentText();
         if (QString("vfat/fat32") == romType) {
             romType = "vfat";
+            if (mNameEdit->text().trimmed ().toUtf8().length() <= 11){
+               strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
+            }                    
+        } else {
+            strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
         }
 
         //get values from ui
         strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
         strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
-        strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
 
         //disable name and rom size list
         //ui->comboBox_rom_size->setDisabled(true);
@@ -443,9 +469,39 @@ void Format_Dialog::slot_format(bool enable)
         devtype = rom_type;
 
         int format_value = 0;
+
+        bool canUseAtaSecureErase = false;
+        // judge fastest erase type
+        if (full_clean) {
+            // judge if drive only has one volume
+            if (property("formatDriveVolumesCount").toInt() <= 1) {
+                // judge drive has ata commands supported
+                g_autoptr (UDisksClient) client = udisks_client_new_sync(0, 0);
+                if (client) {
+                    struct stat statbuf;
+                    int ret = stat(dev_name, &statbuf);
+                    if (ret == 0) {
+                        g_autoptr (UDisksBlock) block = udisks_client_get_block_for_dev(client, statbuf.st_rdev);
+                        if (block) {
+                            auto drive_path = udisks_block_get_drive(block);
+                            if (drive_path) {
+                                g_autoptr (UDisksObject) drive_object = udisks_client_get_object(client, drive_path);
+                                if (drive_object) {
+                                    g_autoptr (UDisksDriveAta) drive_ata = udisks_object_get_drive_ata(drive_object);
+                                    if (drive_ata) {
+                                        canUseAtaSecureErase = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         //do format
         kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
-                     full_clean?"zero":NULL, rom_name,&format_value);
+                     full_clean? (canUseAtaSecureErase? "ata-scure-erase": "zero"): NULL, rom_name, &format_value);
     });
 }
 
@@ -603,10 +659,38 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
     }
     if(jobs!=NULL)
     {
+        mProgress->setRange(0, 100);
         UDisksJob *job =(UDisksJob *)jobs->data;
         if(udisks_job_get_progress_valid (job))
         {
+            setProperty("hasProgress", true);
                 double res = udisks_job_get_progress(job);
+                guint64 rate = udisks_job_get_rate(job);
+                guint64 expect_end_time = udisks_job_get_expected_end_time(job);
+                guint64 time_left = expect_end_time - g_get_real_time();
+                if (rate > 0) {
+                    g_autofree gchar* size_format = g_format_size(rate);
+                    QString speed = size_format;
+                    bool showMinutes = false;
+                    bool showHours = false;
+                    auto seconds = time_left/1000000;
+                    auto minutes = seconds/60;
+                    if (minutes) {
+                        showMinutes = true;
+                        seconds = seconds%60;
+                    }
+                    auto hours = minutes/60;
+                    if (hours) {
+                        showHours = true;
+                        minutes = minutes%60;
+                    }
+
+                    QTime t(hours, minutes, seconds);
+                    auto timeString = t.toString();
+                    mProgress->setToolTip(tr("%1/sec, %2 remaining.").arg(speed).arg(timeString.isEmpty()? tr("over one day"): timeString));
+                } else {
+                    mProgress->setToolTip(tr("getting progress..."));
+                }
 
                 g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
                 g_list_free (jobs);
@@ -616,6 +700,10 @@ double Format_Dialog::get_format_bytes_done(const gchar * device_name)
 
         g_list_foreach (jobs, (GFunc) g_object_unref, NULL);
         g_list_free (jobs);
+    } else {
+        if (!property("hasProgress").toBool()) {
+            mProgress->setRange(0, 0);
+        }
     }
 
     return 0;
@@ -649,27 +737,23 @@ void Format_Dialog::formatloop(){
     if(nullptr != devName)
     strcpy(name_dev,devName.toUtf8().constData());
 
-    double pre = (get_format_bytes_done(name_dev) * 100);
-    double cost = m_cost_seconds * 100/m_total_predict;
-    if (cost > 100)
-        cost = 100;
-
-    if (m_simulate_progress >= pre){
-        //fix waiting in 100% issue
-        if (m_simulate_progress < 99)
-           m_simulate_progress += (cost - pre)/100;
-    }
-    else{
+    if (m_total_predict > 0) {
+        double cost = m_cost_seconds * 100.0/m_total_predict;
+        if (cost >= 99) {
+            cost = 99;
+            mTimer->stop();
+        }
+        m_simulate_progress = cost;
+        qDebug()<<"get format 0.5s timer count"<<cost;
+    } else {
+        double pre = (get_format_bytes_done(name_dev) * 100);
         m_simulate_progress = pre;
+        qDebug()<<"get erase-format progress"<<pre;
     }
 
     //防止看起来回退现象，进度值比之前还小了
     if (m_simulate_progress < m_before_progress)
         m_simulate_progress = m_before_progress;
-
-
-    qDebug() << "formatloop predict and cost:" <<pre <<cost
-             <<m_simulate_progress <<m_cost_seconds <<b_finished;
 
     m_before_progress = m_simulate_progress;
 //    sprintf(prestr,"%.1f",m_simulate_progress);
@@ -873,11 +957,11 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
     }
     else
     {
-        UDisksClient* client = udisks_client_new_sync(NULL, NULL);
+        g_autoptr (UDisksClient) client = udisks_client_new_sync(NULL, NULL);
         if (client) {
-            UDisksObject* udiskObj = getObjectFromBlockDevice(client, data->dl->mVolumeName.toStdString().c_str());
+            g_autoptr (UDisksObject) udiskObj = getObjectFromBlockDevice(client, data->dl->mVolumeName.toStdString().c_str());
             if (udiskObj) {
-                UDisksBlock* diskBlock = udisks_object_get_block (udiskObj);
+                g_autoptr (UDisksBlock) diskBlock = udisks_object_get_block (udiskObj);
                 if (diskBlock) {
                     curName = udisks_block_get_id_label (diskBlock);
                     qDebug () << data->dl->mVolumeName << "  --  " << data->filesystem_name << "  --  " << curName;
@@ -894,16 +978,16 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
         // rename fail
         // fixme: deal with crypt volume.
         // fixme: send to device is enabled for crypt volume
-        if (data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
+        if (!curName.isEmpty() && data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
             data->dl->renameOK = false;
         }
-
         end_flag = 1;
         *(data->format_finish) =  1; //format success
     }
 
     if(end_flag == 1){
         b_finished = true;
+        data->dl->setProperty("isFinished", true);
         data->dl->mProgress->setValue(100);
 //        data->dl->ui->label_process->setText("100%");
         data->dl->format_ok_dialog();
@@ -918,16 +1002,19 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
     data->dl->setProperty("password", QVariant());
     data->dl->mTimer->stop();
     data->dl->close();
+    data->dl->deleteLater();
 
     createformatfree(data);
     qDebug()<<"format cb end";
-
-    data->dl->deleteLater();
 };
 
 
 void Format_Dialog::format_ok_dialog()
 {
+    //fix bug#177146, play finish sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::COMPLETE);
+#endif
     if (renameOK) {
         QMessageBox::about(this,QObject::tr("format"),QObject::tr("Format operation has been finished successfully."));
     } else {
@@ -945,6 +1032,9 @@ void Format_Dialog::format_ok_dialog()
 
 void Format_Dialog::format_err_dialog()
 {
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::DIALOG_ERROR);
+#endif
     QMessageBox::warning(this,QObject::tr("qmesg_notify"),QObject::tr("Sorry, the format operation is failed!"));
     mCancelBtn->setEnabled(true);
 
@@ -960,17 +1050,21 @@ bool Format_Dialog::format_makesure_dialog(){
 
     message_format->setText(QObject::tr("Formatting this volume will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?"));
 
-    message_format->setWindowTitle(QObject::tr("format"));
+    message_format->setWindowTitle(QObject::tr("Format"));
 
-    QPushButton *okButton = message_format->addButton(QObject::tr("begin format"),QMessageBox::YesRole);
+    QPushButton *okButton = message_format->addButton(QObject::tr("Begin Format"),QMessageBox::YesRole);
 
-    QPushButton *cancelButton = message_format->addButton(QObject::tr("close"),QMessageBox::NoRole);
+    QPushButton *cancelButton = message_format->addButton(QObject::tr("Close"),QMessageBox::NoRole);
 
     message_format->connect (this, &QDialog::finished, message_format, [=] (int) {
         Q_EMIT cancelButton->clicked ();
         message_format->deleteLater ();
     });
 
+    //fix bug#177143, play warning sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::DIALOG_WARNING);
+#endif
     message_format->exec();
 
     if(message_format->clickedButton() == cancelButton)
@@ -1191,6 +1285,7 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
 
 Format_Dialog::~Format_Dialog()
 {
+    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
     g_signal_handlers_disconnect_by_data(mVolumeMonitor, this);
 //    delete ui;
     if (mTimer)             mTimer->deleteLater();
@@ -1231,6 +1326,8 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
+
+    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
 }
 
 void Format_Dialog::resizeEvent(QResizeEvent *event)

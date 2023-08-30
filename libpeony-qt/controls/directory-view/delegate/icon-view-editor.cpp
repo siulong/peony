@@ -38,6 +38,10 @@ IconViewEditor::IconViewEditor(QWidget *parent) : QTextEdit(parent)
     m_styled_edit = new QLineEdit;
     setContentsMargins(0, 0, 0, 0);
     setAlignment(Qt::AlignCenter);
+    // fix #164278, icon view text editor doesn't cover view item.
+    // note on ukui platform theme, style panel frame is not visible,
+    // we have to draw a frame by ourselves.
+    setFrameShape(QFrame::NoFrame);
 
 //    setStyleSheet("padding: 0px;"
 //                  "background-color: white;");
@@ -53,13 +57,18 @@ IconViewEditor::~IconViewEditor()
 void IconViewEditor::paintEvent(QPaintEvent *e)
 {
     QPainter p(this->viewport());
-    p.fillRect(this->viewport()->rect(), m_styled_edit->palette().base());
-    QPen pen;
-    pen.setWidth(2);
-    pen.setColor(this->palette().highlight().color());
-    QPolygon polygon = this->viewport()->rect();
-    p.setPen(pen);
-    p.drawPolygon(polygon);
+    qreal padding = 1.0;
+    QRectF rectF = viewport()->rect();
+    p.save();
+    if (devicePixelRatioF() < 2.0) {
+        if (devicePixelRatioF() > 1.0) {
+            padding = qMin(devicePixelRatioF(), 1.5);
+            p.setRenderHint(QPainter::Antialiasing);
+        }
+    }
+    p.fillRect(rectF, palette().highlight());
+    p.fillRect(rectF.adjusted(padding, padding, -padding, -padding), palette().base());
+    p.restore();
     QTextEdit::paintEvent(e);
 }
 
@@ -74,5 +83,51 @@ void IconViewEditor::keyPressEvent(QKeyEvent *e)
 
 void IconViewEditor::minimalAdjust()
 {
+    if (m_max_length_limit) {
+        //fix #154584
+        blockSignals(true);
+        auto privousText = toPlainText();
+        auto currentText = privousText;
+        auto position = textCursor().position();
+        bool needReset = false;
+        while (true) {
+            if (m_limit_bytes) {
+                auto local8Bit = currentText.toLocal8Bit();
+                if (local8Bit.length() <= m_max_length_limit) {
+                    break;
+                }
+            } else {
+                if (currentText.length() <= m_max_length_limit) {
+                    break;
+                }
+            }
+
+            if (position > 0) {
+                position--;
+                currentText.remove(position, 1);
+            } else {
+                currentText.remove(0, 1);
+            }
+            needReset = true;
+        }
+        if (needReset) {
+            setText(currentText);
+            auto currentTextCursor = textCursor();
+            currentTextCursor.setPosition(position);
+            setTextCursor(currentTextCursor);
+        }
+        blockSignals(false);
+    }
+
     this->resize(QSize(document()->size().width(), document()->size().height() + 24));
+}
+
+void IconViewEditor::setMaxLengthLimit(int length)
+{
+    m_max_length_limit = length;
+}
+
+void IconViewEditor::setLimitBytes(bool limitBytes)
+{
+    m_limit_bytes = limitBytes;
 }

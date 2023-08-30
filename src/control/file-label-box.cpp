@@ -157,7 +157,7 @@ void LabelBoxStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
                 QPixmap pic(QSize(12, 12));
                 pic.fill(Qt::transparent);
                 QPainter p(&pic);
-                p.setRenderHint(QPainter::Antialiasing);
+                p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 p.setPen(QPen(Qt::gray, 0.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                 p.setBrush(color);
                 p.drawEllipse(QRect(0, 0, 12, 12));

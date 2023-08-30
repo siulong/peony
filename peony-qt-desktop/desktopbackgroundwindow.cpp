@@ -1,3 +1,25 @@
+/*
+ * Peony-Qt
+ *
+ * Copyright (C) 2023, KylinSoft Information Technology Co., Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yue Lan <lanyue@kylinos.cn>
+ *
+ */
+
 #include "desktopbackgroundwindow.h"
 #include "desktop-background-manager.h"
 #include "peony-desktop-application.h"
@@ -12,12 +34,15 @@
 
 #include <QRegion>
 
+#include <QX11Info>
+#include <X11/Xlib.h>
+
 static QTimeLine *gTimeLine = nullptr;
+
+static bool startup = false;
 
 DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent) : QMainWindow(parent)
 {
-    connect(this,  &DesktopBackgroundWindow::destroyed, this, &DesktopBackgroundWindow::invaidScreen);
-
     if (!gTimeLine) {
         gTimeLine = new QTimeLine(100);
     }
@@ -37,6 +62,7 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
     move(screen->geometry().topLeft());
     setFixedSize(screen->geometry().size());
     setContentsMargins(0, 0, 0, 0);
+    m_desktopIconView->resize(screen->geometry().size());
     connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
     auto manager = DesktopBackgroundManager::globalInstance();
@@ -86,12 +112,14 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
             }
             menu.exec(mapToGlobal(pos));
             auto urisToEdit = menu.urisToEdit();
-            if (urisToEdit.count() == 1) {
-                QTimer::singleShot(
-                            100, this, [=]() {
-                    m_desktopIconView->editUri(urisToEdit.first());
-                });
-            }
+            m_desktopIconView->UpdateToEditUris(urisToEdit);
+//            if (urisToEdit.count() >= 1) {
+//                QTimer::singleShot(
+//                            100, this, [=]() {
+//                    m_desktopIconView->editUri(urisToEdit.first());
+//                    qDebug() << "editUri count >=1:"<<urisToEdit.first();
+//                });
+//            }
         });
     });
 }
@@ -231,6 +259,16 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
             }
         }
         p.restore();
+    }
+
+    if (!startup) {
+        startup = true;
+        QTimer::singleShot(1000, []{
+            if (QX11Info::isPlatformX11()) {
+                XSetWindowBackground(QX11Info::display(), QX11Info::appRootWindow(), 0);
+                XSync(QX11Info::display(), false);
+            }
+        });
     }
 }
 

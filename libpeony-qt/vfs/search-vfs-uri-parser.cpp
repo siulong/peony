@@ -126,3 +126,14 @@ const QString SearchVFSUriParser::getSearchUriTargetDirectory(const QString &sea
     }
     return nullptr;
 }
+
+const QString SearchVFSUriParser::addSearchKey(const QString &uri, const bool &search_engine)
+{
+    QString search_str = uri;
+    if (search_engine) {
+        search_str += "&search_engine=1";
+    } else {
+        search_str += "&search_engine=0";
+    }
+    return search_str;
+}

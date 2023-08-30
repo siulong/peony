@@ -118,6 +118,7 @@ void PathEdit::focusOutEvent(QFocusEvent *e)
     if (! m_right_click) {
         Q_EMIT editCancelled();
     }
+    m_right_click = false;
 }
 
 void PathEdit::focusInEvent(QFocusEvent *e)

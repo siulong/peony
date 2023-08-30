@@ -31,6 +31,11 @@
 #include <QDebug>
 #include <gio/gdesktopappinfo.h>
 
+#ifdef KY_SDK_QT_WIDGETS
+#include "kborderlessbutton.h"
+using namespace kdk;
+#endif
+
 using namespace Peony;
 OpenWithGlobalData *OpenWithPropertiesPage::openWithGlobalData = nullptr;
 
@@ -103,7 +108,7 @@ void OpenWithPropertiesPage::initFloorOne()
     QLabel *targetTypeMsgLabel = new QLabel(floor1);
     targetTypeMsgLabel->setMinimumHeight(60);
     qDebug() << "targetTypeMsgLabel :" << targetTypeMsgLabel->height();
-    targetTypeMsgLabel->setText(tr("How do you want to open %1%2 files ?").arg(".").arg(m_fileInfo.get()->displayName().split(".").last()));
+    targetTypeMsgLabel->setText(tr("How do you want to open \"%1%2\" files ?").arg(".").arg(m_fileInfo.get()->displayName().split(".").last()));
     layout1->addWidget(targetTypeMsgLabel);
 
     QLabel *defaultOpenLabel = new QLabel(floor1);
@@ -165,7 +170,12 @@ void OpenWithPropertiesPage::initFloorThree()
     floor3->setLayout(layout3);
     floor3->setMaximumHeight(122);
     layout3->setContentsMargins(22, 0, 0, 0);
-
+#ifdef KY_SDK_QT_WIDGETS
+    KBorderlessButton *allOpenLabel = new KBorderlessButton(tr("Choose other application"), floor3);
+    KBorderlessButton *otherOpenLabel = new KBorderlessButton(tr("Go to application center"), floor3);
+    connect(allOpenLabel, &KBorderlessButton::clicked, this, &OpenWithPropertiesPage::chooseOtherApp);
+    connect(otherOpenLabel, &KBorderlessButton::clicked, this, &OpenWithPropertiesPage::openAppCenter);
+#else
     QString str1;
     str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
           + tr("Choose other application")
@@ -173,41 +183,16 @@ void OpenWithPropertiesPage::initFloorThree()
     QLabel *allOpenLabel = new QLabel(str1, floor3);
     allOpenLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    connect(allOpenLabel, &QLabel::linkActivated, this, [=]() {
-        AllFileLaunchDialog dialog(m_fileInfo.get()->uri());
-        if (QDialog::Accepted == dialog.exec()) {
-            m_defaultOpenWithWidget->setLaunchAction(FileLaunchManager::getDefaultAction(m_fileInfo->uri()));
-        }
-    });
-
-    layout3->addWidget(allOpenLabel);
-
     QString str2;
     str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-underline: none;\">"
           + tr("Go to application center")
           + "</a>";
+
     QLabel *otherOpenLabel = new QLabel(str2, floor3);
     otherOpenLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-
-    connect(otherOpenLabel, &QLabel::linkActivated, this, [=]() {
-        QtConcurrent::run([=]() {
-            QProcess p;
-            if (COMMERCIAL_VERSION || (GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU))
-                p.setProgram("kylin-software-center");
-            else
-                p.setProgram("ubuntu-kylin-software-center");
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-            p.startDetached();
-#else
-            if (COMMERCIAL_VERSION)
-                p.startDetached("kylin-software-center");
-            else
-                p.startDetached("ubuntu-kylin-software-center");
-
+    connect(allOpenLabel, &QLabel::linkActivated, this, &OpenWithPropertiesPage::chooseOtherApp);
+    connect(otherOpenLabel, &QLabel::linkActivated, this, &OpenWithPropertiesPage::openAppCenter);
 #endif
-        });
-    });
 
     bool isVisible = false;
     if(QFileInfo::exists("/usr/bin/kylin-software-center")
@@ -216,10 +201,41 @@ void OpenWithPropertiesPage::initFloorThree()
     }
 
     otherOpenLabel->setVisible(isVisible);
+
+    layout3->addWidget(allOpenLabel);
     layout3->addWidget(otherOpenLabel);
     layout3->addStretch(1);
 
     this->m_layout->addWidget(floor3);
+}
+
+void OpenWithPropertiesPage::chooseOtherApp()
+{
+    AllFileLaunchDialog dialog(m_fileInfo.get()->uri());
+    if (QDialog::Accepted == dialog.exec()) {
+        m_defaultOpenWithWidget->setLaunchAction(FileLaunchManager::getDefaultAction(m_fileInfo->uri()));
+    }
+}
+
+void OpenWithPropertiesPage::openAppCenter()
+{
+    QtConcurrent::run([=]() {
+        QProcess p;
+        if (COMMERCIAL_VERSION)
+            p.setProgram("/usr/bin/kylin-software-center");
+        else
+            p.setProgram("/usr/bin/ubuntu-kylin-software-center");
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+        p.startDetached();
+#else
+        if (COMMERCIAL_VERSION)
+            p.startDetached("/usr/bin/kylin-software-center");
+        else
+            p.startDetached("/usr/bin/ubuntu-kylin-software-center");
+
+#endif
+    });
 }
 
 NewFileLaunchDialog::NewFileLaunchDialog(const QString &uri, QWidget *parent) : QDialog(parent)

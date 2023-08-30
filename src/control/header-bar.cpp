@@ -130,16 +130,13 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 //    openTerminal->setFixedSize(QSize(40, 40));
 //    openTerminal->setIconSize(QSize(16, 16));
 
-
     auto goBack = new QToolButton(this);
     m_go_back = goBack;
     goBack->setEnabled(false);
     goBack->setToolTip(tr("Go Back"));
     goBack->setIcon(QIcon::fromTheme("go-previous-symbolic"));
-
     auto a = addWidget(goBack);
     m_actions.insert(HeaderBarAction::GoBack, a);
-
 
     auto goForward = new QToolButton(this);
     m_go_forward = goForward;
@@ -151,8 +148,12 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(goForward, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goForward();
     });
-
+#ifdef KYLIN_COMMON
     m_is_intel = (QString::compare("V10SP1-edu", QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
+#else
+    m_is_intel = false;
+#endif // KYLIN_COMMON
+
     if (! m_is_intel)
     {
         //non intel project, show go up button
@@ -174,6 +175,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     a = addWidget(m_searchWidget);
     m_actions.insert(HeaderBarAction::LocationBar, a);
 
+    connect(this, &HeaderBar::updateSearchProgress, m_searchWidget, &Peony::SearchWidget::updateSearchProgress);
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
         Q_EMIT m_searchWidget->clearSearchBox();
@@ -215,6 +217,14 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(m_view_type_menu,&QMenu::aboutToShow,m_view_type_menu,[=](){
         m_view_type_menu->addSeparator();
         m_view_type_menu->insertAction(0,m_preview_action);
+    });
+
+    //fix bug#128963, QToolButton not update status issue
+    connect(m_view_type_menu, &QMenu::aboutToHide, this, [=](){
+        viewType->setAttribute(Qt::WA_UnderMouse, false);
+        viewType->setDown(false);
+        viewType->releaseMouse();
+        viewType->update();
     });
 
     m_preview_action->setCheckable(true);
@@ -284,7 +294,27 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
     });
 
+    //fix bug#128963, QToolButton not update status issue
+    connect(m_sort_type_menu, &QMenu::aboutToHide, this, [=](){
+        sortType->setAttribute(Qt::WA_UnderMouse, false);
+        sortType->setDown(false);
+        sortType->releaseMouse();
+        sortType->update();
+    });
+
     addSpacing(3);
+
+    a = addAction(QIcon::fromTheme("open-menu-symbolic"), tr("Option"));
+    m_actions.insert(HeaderBarAction::Option, a);
+    QToolButton *optionButton = qobject_cast<QToolButton *>(widgetForAction(a));
+    optionButton->setAutoRaise(false);
+    optionButton->setIconSize(QSize(16, 16));
+    optionButton->setPopupMode(QToolButton::InstantPopup);
+    optionButton->setProperty("isOptionButton", true);
+    optionButton->setProperty("isWindowButton", 1);
+
+    OperationMenu *operationMenu = new OperationMenu(m_window,m_window);
+    a->setMenu(operationMenu);
 
     // Add by wnn, add tool button when select item
     a = addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("&Copy"));
@@ -349,8 +379,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
             Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
         }
     });
-    //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加关闭控件
-    addTopMenu();
 
     for (auto action : actions()) {
         auto w = widgetForAction(action);
@@ -376,6 +404,7 @@ void HeaderBar::findDefaultTerminal()
             if (tmp.contains("terminal")) {
                 terminal_cmd = tmp;
                 if (tmp == "mate-terminal") {
+                    terminal_cmd = "/usr/bin/mate-terminal";
                     break;
                 }
             }
@@ -436,20 +465,11 @@ void HeaderBar::switchSelectStatus(bool select)
     if (m_tablet_mode) {
         // fixme: 没有实现directoryviewiface2接口的view不应该显示全选之类的选项
         //task#106007 【文件管理器】文件管理器应用做平板UI适配，增加多选模式
-        if (select) {
-            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(true);
-            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(true);
-            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(true);
-        } else {
-            m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
-            m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
-            m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
-        }
-        updateSelectAllStatus(true);
+        updateSelectStatus(true);
         return;
     }
 
-    if (select) {
+    if (m_is_intel && select) {
         m_actions.find(HeaderBarAction::SortType).value()->setVisible(false);
         m_actions.find(HeaderBarAction::ViewType).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Copy).value()->setVisible(true);
@@ -617,7 +637,7 @@ void HeaderBar::addTabletMenu()
 
     tabletAction->setVisible(false);
     connect(tabletAction, &QAction::triggered, [=]() {
-        updateSelectAllStatus(false);
+        updateSelectStatus(false);
     });
 
     tabletAction = addAction(tr("Select"));
@@ -630,18 +650,19 @@ void HeaderBar::addTabletMenu()
         auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
         if (iface2) {
             if (iface2->isEnableMultiSelect()) {
-                iface2->doMultiSelect(false);
-                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
-                selectDone->setText(tr("Select"));
                 quitMultiSelect();
             } else {
                 iface2->doMultiSelect(true);
-                m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(true);
-                updateSelectAllStatus(true);
-                selectDone->setText(tr("Select Done"));
+                updateSelectStatus(true);
             }
          }
         m_window->getCurrentPage()->getView()->repaintView();
+    });
+
+    connect(Peony::DirectoryViewHelper::globalInstance(), &Peony::DirectoryViewHelper::updateSelectStatus, this, [=](bool status){
+        if (m_tablet_mode) {
+            updateSelectStatus(true);
+        }
     });
 
     addSpacing(2);
@@ -676,12 +697,15 @@ void HeaderBar::addTabletMenu()
         } else {
             Peony::FileOperationUtils::trash(m_window->getCurrentSelections(), true);
         }
+        updateSelectStatus(true);
     });
 }
 
 void HeaderBar::updateTabletModeValue(bool isTabletMode)
 {
     setStyle(HeaderBarStyle::getStyle());
+    m_searchWidget->closeSearch();
+    m_searchWidget->updateSearchRequest(false);
     m_searchWidget->updateTabletModeValue(isTabletMode);
     m_tablet_mode = isTabletMode;
     bool noComputer = false;
@@ -697,20 +721,18 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
         m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
         m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(true);
-        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(true);
         m_actions.find(HeaderBarAction::Option).value()->setVisible(true);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(false);
         }
+        updateSelectStatus(true);
+
     } else {
         m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
         m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletMin).value()->setVisible(false);
-        m_actions.find(HeaderBarAction::TabletClose).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Option).value()->setVisible(false);
         if (! m_is_intel) {
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(true);
@@ -743,56 +765,6 @@ bool HeaderBar::CopyOrMoveTo(bool isCut)
     return true;
 }
 
-void HeaderBar::addTopMenu()
-{
-    QToolButton *optionButton = new QToolButton(this);
-    optionButton->setIcon(QIcon::fromTheme("open-menu-symbolic"));
-    optionButton->setToolTip(tr("Option"));
-    optionButton->setAutoRaise(true);
-    optionButton->setFixedSize(QSize(48, 48));
-    optionButton->setIconSize(QSize(16, 16));
-    optionButton->setPopupMode(QToolButton::InstantPopup);
-    optionButton->setProperty("isOptionButton", true);
-    optionButton->setProperty("isWindowButton", 1);
-
-    OperationMenu *operationMenu = new OperationMenu(m_window, optionButton);
-    optionButton->setMenu(operationMenu);
-    QAction *a = addWidget(optionButton);
-    m_actions.insert(HeaderBarAction::Option, a);
-
-    QToolButton *minimize = new QToolButton(this);
-    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
-    minimize->setToolTip(tr("Minimize"));
-    minimize->setAutoRaise(true);
-    minimize->setFixedSize(QSize(48, 48));
-    minimize->setIconSize(QSize(16, 16));
-    minimize->setProperty("isWindowButton", 1);
-    a = addWidget(minimize);
-    m_actions.insert(HeaderBarAction::TabletMin, a);
-    connect(minimize, &QToolButton::clicked, this, [=]() {
-        KWindowSystem::minimizeWindow(m_window->winId());
-        m_window->showMinimized();
-    });
-
-    QToolButton *close = new QToolButton(this);
-    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
-    close->setToolTip(tr("Close"));
-    close->setAutoRaise(true);
-    close->setFixedSize(QSize(48, 48));
-    close->setIconSize(QSize(16, 16));
-
-    //fix bug#143507, button color is not red issue
-    close->setProperty("isWindowButton", 2);
-    close->setProperty("useIconHighlightEffect", 0x8);
-
-    a = addWidget(close);
-    m_actions.insert(HeaderBarAction::TabletClose, a);
-    a->setVisible(false);
-    connect(close, &QToolButton::clicked, this, [=]() {
-        m_window->close();
-    });
-}
-
 void HeaderBar::quitMultiSelect()
 {
     if (m_tablet_mode) {
@@ -804,11 +776,8 @@ void HeaderBar::quitMultiSelect()
         auto select = qobject_cast<QToolButton *>(widgetForAction(action));
         select->setText(tr("Select"));
 
-        if (view->getAllFileUris().count() == 0) {
-            action->setVisible(false);
-        } else {
-            action->setVisible(true);
-        }
+        bool status = view->getAllFileUris().count() > 0 ? true : false;
+        action->setVisible(status);
 
         auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
         if (iface2 && iface2->isEnableMultiSelect()) {
@@ -821,10 +790,36 @@ void HeaderBar::quitMultiSelect()
     }
 }
 
-void HeaderBar::updateSelectAllStatus(bool autoUpdate)
+void HeaderBar::setSearchMode(bool isSearching)
 {
+    m_searchWidget->setSearchMode(isSearching);
+}
+
+void HeaderBar::updateSelectStatus(bool autoUpdate)
+{
+    QAction *action = m_actions.find(HeaderBarAction::TabletSelectDone).value();
+    auto selectDone = qobject_cast<QToolButton *>(widgetForAction(action));
+    if(!m_window->getCurrentPage())
+        return;
     auto view = m_window->getCurrentPage()->getView();
-    auto action = m_actions.find(HeaderBarAction::TabletSelectAll).value();
+    auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
+    if (!iface2)
+        return ;
+
+    if (!iface2->isEnableMultiSelect()) {
+        m_actions.find(HeaderBarAction::TabletSelectAll).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(false);
+        bool status = view->getAllFileUris().count() > 0? true : false;
+        m_actions.find(HeaderBarAction::TabletSelectDone).value()->setVisible(status);
+        selectDone->setText(tr("Select"));
+        return;
+    }
+    selectDone->setText(tr("Select Done"));
+
+    action = m_actions.find(HeaderBarAction::TabletSelectAll).value();
+    action->setVisible(true);
     auto selectAll = qobject_cast<QToolButton *>(widgetForAction(action));
 
     if (autoUpdate) {
@@ -837,15 +832,15 @@ void HeaderBar::updateSelectAllStatus(bool autoUpdate)
             m_isSelectAll = false;
             selectAll->setText(tr("Select All Item"));
         }
+        bool status = num > 0? true : false;
+        m_actions.find(HeaderBarAction::TabletMoveTo).value()->setVisible(status);
+        m_actions.find(HeaderBarAction::TabletCopyTo).value()->setVisible(status);
+        m_actions.find(HeaderBarAction::TabletDelete).value()->setVisible(status);
     } else {
         if (m_isSelectAll) {
             view->invertSelections();
             m_isSelectAll = false;
             selectAll->setText(tr("Select All Item"));
-            auto iface2 = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(view);
-            if (iface2 && iface2->isEnableMultiSelect()) {
-               iface2->doMultiSelect(true);
-            }
         } else {
             view->setSelections(QStringList());
             view->invertSelections();
@@ -919,9 +914,9 @@ void HeaderBarStyle::drawComplexControl(QStyle::ComplexControl control, const QS
             return qApp->style()->drawComplexControl(control, &button, painter, widget);
         } else {
             if (0x01 == widget->property("textColor").toInt()) {
-                button.palette.setColor(QPalette::ButtonText, QColor(55, 144, 250));
+                button.palette.setColor(QPalette::Text, QColor(55, 144, 250));
             } else if (0x02 == widget->property("textColor").toInt()) {
-                button.palette.setColor(QPalette::ButtonText, QColor(243, 34, 45));
+                button.palette.setColor(QPalette::Text, QColor(243, 34, 45));
             }
             return qApp->style()->drawComplexControl(control, &button, painter, widget);
         }
@@ -1134,7 +1129,6 @@ HeaderBarContainer::HeaderBarContainer(QWidget *parent) : QToolBar(parent)
 //                  "border: 0px solid transparent"
 //                  "}");
 
-    setFixedHeight(54);
     setMovable(false);
 
     m_layout = new QHBoxLayout;
@@ -1183,14 +1177,51 @@ void HeaderBarContainer::addHeaderBar(HeaderBar *headerBar)
     m_header_bar = headerBar;
 
     headerBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_layout->addWidget(headerBar);
 
+    m_layout->addWidget(headerBar);
     m_internal_widget->setLayout(m_layout);
     addWidget(m_internal_widget);
 
 //    m_header_bar->m_window->installEventFilter(this);
 }
+void HeaderBarContainer::addMenu(MainWindow *m_window)
+{
+    m_topMenu = new QWidget(this);
+    QHBoxLayout *layout = new QHBoxLayout(m_topMenu);
 
+    QToolButton *minimize = new QToolButton(this);
+    minimize->setIcon(QIcon::fromTheme("window-minimize-symbolic"));
+    minimize->setToolTip(tr("Minimize"));
+    minimize->setAutoRaise(true);
+    minimize->setFixedSize(QSize(48, 48));
+    minimize->setIconSize(QSize(16, 16));
+    minimize->setProperty("isWindowButton", 1);
+    connect(minimize, &QToolButton::clicked, this, [=]() {
+        KWindowSystem::minimizeWindow(m_window->winId());
+        m_window->showMinimized();
+    });
+
+    QToolButton *close = new QToolButton(this);
+    close->setIcon(QIcon::fromTheme("window-close-symbolic"));
+    close->setToolTip(tr("Close"));
+    close->setAutoRaise(true);
+    close->setFixedSize(QSize(48, 48));
+    close->setIconSize(QSize(16, 16));
+
+    //fix bug#143507, button color is not red issue
+    close->setProperty("isWindowButton", 2);
+    close->setProperty("useIconHighlightEffect", 0x8);
+    connect(close, &QToolButton::clicked, this, [=]() {
+        m_window->close();
+    });
+
+    layout->addWidget(minimize);
+    layout->addWidget(close);
+    m_topMenu->setLayout(layout);
+    m_topMenu->hide();
+    m_layout->addWidget(m_topMenu);
+
+}
 void HeaderBarContainer::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);

@@ -390,7 +390,12 @@ void SideBarNetWorkItem::slot_updateRemoteServer(const QString& server,bool add)
                m_canDeleteServer = true;
                connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, [=](const QString& server){
                    if(m_canDeleteServer){
-                       removeItemForUri(server);
+                       /* hotfix bug#162858 【文件管理器】ftp已挂载，删除记录后侧边栏仍显示ftp服务器记录 */
+                       QUrl serverUrl(server);/* ftp:///127.0.0.1 */
+                       QUrl itemUrl(item->uri());/* ftp:///127.0.0.1:21 */
+                       if(serverUrl.scheme() == itemUrl.scheme() && serverUrl.host() == itemUrl.host()){
+                           removeItemForUri(item->uri());
+                       }
                        m_canDeleteServer = false;
                    }
                });
@@ -476,6 +481,7 @@ void SharedDirectoryInfoThread::run()
              */
 
             const Peony::ShareInfo* shareInfo = userShareManager->getShareInfo(shareName);
+            userShareManager->getUserShareAcl(shareName);
             //修复共享新建文件夹副本后，闪退问题(命令行设置共享成功，属性中共享设置无法成功)
             if (! shareInfo)
                 continue;

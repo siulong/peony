@@ -21,6 +21,17 @@ include(windows/windows.pri)
 # preview
 include(thumbnail/thumbnail.pri)
 
+# kyudfburn
+contains(DEFINES, "KY_UDF_BURN") {
+    PKGCONFIG += kyudfburn
+}
+
+# ukui-search
+contains(DEFINES, "KY_UKUI_SEARCH") {
+    PKGCONFIG += ukui-search
+}
+
+
 HEADERS += \
     $$PWD/file-copy.h               \
     $$PWD/peony-log.h               \

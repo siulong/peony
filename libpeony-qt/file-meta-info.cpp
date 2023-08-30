@@ -111,7 +111,6 @@ FileMetaInfo::FileMetaInfo(FileMetaInfo *other)
 
 FileMetaInfo::~FileMetaInfo()
 {
-    QMutexLocker l(&m_mutex);
 }
 
 void FileMetaInfo::setMetaInfoInt(const QString &key, int value)

@@ -89,11 +89,13 @@ Q_SIGNALS:
 
    // void fileCreated(const QString &uri);
 
+    void prepareRefresh();
+
 public Q_SLOTS:
     void refresh();
 
 protected Q_SLOTS:
-    void onEnumerateFinished();
+    void onEnumerateFinished(bool successed);
     void clearFloatItems();
 
 private:
@@ -104,8 +106,8 @@ private:
     std::shared_ptr<FileWatcher> m_desktop_watcher;
     std::shared_ptr<FileWatcher> m_thumbnail_watcher; //just handle the thumbnail created.
 
-    std::shared_ptr<FileWatcher> m_system_app_watcher;
-    std::shared_ptr<FileWatcher> m_andriod_app_watcher;
+//    std::shared_ptr<FileWatcher> m_system_app_watcher;
+//    std::shared_ptr<FileWatcher> m_andriod_app_watcher;
 
     QQueue<QString> m_new_file_info_query_queue;
 

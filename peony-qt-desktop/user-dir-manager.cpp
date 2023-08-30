@@ -1,3 +1,25 @@
+/*
+ * Peony-Qt
+ *
+ * Copyright (C) 2023, KylinSoft Information Technology Co., Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yue Lan <lanyue@kylinos.cn>
+ *
+ */
+
 #include "user-dir-manager.h"
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
@@ -29,9 +51,7 @@ UserdirManager::UserdirManager(QObject *parent) : QObject(parent)
     m_showTrashDialog = m_settings->value(SHOW_TRASH_DIALOG).toBool();
     m_user_dir_watcher = new QFileSystemWatcher(this);
 
-    m_user_path = "/home/"+m_user_name;
-    if (m_user_name == "root")
-        m_user_path = "/root";
+    m_user_path = g_get_home_dir();
     QString path0 = QString(m_user_path +"/.config/user-dirs.dirs");
     QString path1 = QString(m_user_path +"/.config/org.ukui/peony-qt-preferences.conf");
 

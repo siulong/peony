@@ -42,6 +42,9 @@
 #include <QCollator>
 
 #include <QRegularExpression>
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QDBusConnectionInterface>
 
 using namespace Peony;
 
@@ -88,6 +91,50 @@ FileItemProxyFilterSortModel::FileItemProxyFilterSortModel(QObject *parent) : QS
         qDebug()<<"sort type:"<<m_sortType<<" sort order:"<<m_sortOrder<<" folder first:"<<m_folder_first;
         return QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
     });
+
+    m_show_hidden = settings->isExist(SHOW_HIDDEN_PREFERENCE)? settings->getValue(SHOW_HIDDEN_PREFERENCE).toBool(): false;
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
+        if (SHOW_HIDDEN_PREFERENCE == key) {
+            m_show_hidden= GlobalSettings::getInstance()->getValue(key).toBool();
+            invalidateFilter();
+        }
+    });
+
+    //fix bug#174512, set hidden file should hidden in time
+    connect(GlobalSettings::getInstance(), &GlobalSettings::updateHiddenFile, this, [=] (const QString& fileName) {
+        qDebug() << "updateHiddenFile:"<<fileName;
+        QTimer::singleShot(100, this, [=](){
+            update();
+        });
+    });
+
+    //黑白名单更新
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusPeonyServer, can not connect to session dbus";
+        return;
+    }
+
+    mDbusPeonyServer = new QDBusInterface("org.ukui.peony",
+                                      "/org/ukui/peony",
+                                      "org.ukui.peony",
+                                      QDBusConnection::sessionBus());
+
+    if (! mDbusPeonyServer->isValid()){
+        qCritical() << "Create /org/ukui/peony Interface Failed " << QDBusConnection::systemBus().lastError();
+        return;
+    }
+
+    //同步黑白名单数据
+    syncBlackAndWhiteData();
+
+    //接收到black_and_white_update信号则进行更新
+    QDBusConnection::sessionBus().connect("org.ukui.peony",
+                                          "/org/ukui/peony",
+                                          "org.ukui.peony",
+                                          "black_and_white_update",
+                                          this,
+                                          SLOT(updateBlackAndWhiteList()));
 }
 
 void FileItemProxyFilterSortModel::setSourceModel(QAbstractItemModel *model)
@@ -166,9 +213,9 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
                     return lesser;
                 return !lesser;
             }
-        }else if (sortColumn() != FileItemModel::ModifiedDate){
+        }/*else if (sortColumn() != FileItemModel::ModifiedDate){
             goto default_sort;
-        }
+        }*/
 
         //fix bug#97408,change indicator meanings
         //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
@@ -212,6 +259,14 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
                 goto default_sort;
             }
             return leftItem->m_info->modifiedTime() > rightItem->m_info->modifiedTime();
+        }
+        case FileItemModel::TrashOriginPath: {
+            auto leftString = leftItem->m_info->property("orig-path").toString();
+            auto rightString = rightItem->m_info->property("orig-path").toString();
+            if (leftString == rightString) {
+                goto default_sort;
+            }
+            return comparer.compare(leftString, rightString) > 0;
         }
         default:
             break;
@@ -314,7 +369,18 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
             return false;
         if (! checkFileSizeOrTypeFilter(item->m_info->size(), item->m_info->isDir()))
             return false;
-        if (! checkFileNameFilter(item->m_info->displayName()))
+
+        //fix bug162927, desktop file should consider file name
+        if (item->uri().endsWith(".desktop")){
+            QString originName = item->uri().split("/").last();
+            QString AppName = item->m_info->displayName();
+            //对性能有影响，暂时屏蔽，后续再考虑优化
+//           if (! item->info()->canExecute())
+//               AppName = FileUtils::getApplicationName(item->uri());
+           if (! checkFileNameFilter(AppName) && ! checkFileNameFilter(originName))
+               return false;
+        }
+        else if (! checkFileNameFilter(item->m_info->displayName()))
             return false;
 
         //check the file label filter conditions
@@ -425,7 +491,20 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
                 return false;
             }
         }
+
+        //黑白名单处理
+        if (item->m_info->isDesktopFile() && nullptr != item->m_info->desktopName()){
+            if (m_bw_list_model != BW_LIST_NORMAL){
+                bool exist = m_bwListInfo.contains(item->m_info->desktopName());
+                if (m_bw_list_model == BW_LIST_BLACK){
+                   return ! exist;
+                }else if (m_bw_list_model == BW_LIST_WHITE){
+                   return exist;
+                }
+            }
+        }
     }
+
     return true;
 }
 
@@ -465,6 +544,32 @@ void FileItemProxyFilterSortModel::checkSortSettings()
             m_folder_first = true;
         }
     }
+}
+
+void FileItemProxyFilterSortModel::syncBlackAndWhiteData()
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
+                     "org.ukui.peony", "getBlackAndWhiteModel");
+    QDBusMessage response = QDBusConnection::sessionBus().call(msg);
+    m_bw_list_model = BW_LIST_NORMAL;
+    if (response.type() == QDBusMessage::ReplyMessage){
+        m_bw_list_model = response.arguments().takeFirst().toString();
+        qDebug() << "getBlackAndWhiteModel:"<<m_bw_list_model;
+    }
+
+    QDBusMessage interface = QDBusMessage::createMethodCall("org.ukui.peony", "/org/ukui/peony",
+                     "org.ukui.peony", "getBWListInfo");
+    QDBusMessage resp = QDBusConnection::sessionBus().call(interface);
+    if (resp.type() == QDBusMessage::ReplyMessage){
+        m_bwListInfo = resp.arguments().takeFirst().toStringList();
+        qDebug() << "syncBlackAndWhiteData:"<<resp.arguments().length()<<m_bwListInfo;
+    }
+}
+
+void FileItemProxyFilterSortModel::updateBlackAndWhiteList()
+{
+    syncBlackAndWhiteData();
+    update();
 }
 
 void FileItemProxyFilterSortModel::setSelectionModeHint(QAbstractItemView::SelectionMode mode)
@@ -546,7 +651,7 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
         }
         case AUDIO:
         {
-            if (type.contains(Audio_Type))
+            if (type.contains(Audio_Type) || type.contains("application/x-smaf"))
                 return true;
             break;
         }
@@ -554,7 +659,7 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
         {
             //exclude classfied types, show the rest other types
             if (type != Folder_Type && ! type.contains(Image_Type) && ! type.contains(Video_Type)
-                    && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type))
+                    && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type) && !type.contains("application/x-smaf"))
                 return true;
             break;
         }

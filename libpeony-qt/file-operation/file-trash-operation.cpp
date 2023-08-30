@@ -99,8 +99,14 @@ void FileTrashOperation::run()
     if (total_size/10 > ONE_GIB_SIZE){
         except.dlgType = ED_NOT_SUPPORTED;
         except.errorCode = G_IO_ERROR_NOT_SUPPORTED;
-        except.title = tr("Can not trash");
-        except.errorStr = tr("Can not trash files more than 10GB, would you like to delete it permanently?");
+        except.title = "";
+        //task #155670,155671 improve delete file permanently message
+        except.errorStr = QObject::tr("The file is too large to be moved to the recycle bin. "
+                                      "Do you want to permanently delete it?");
+        if (m_total_count >1){
+            except.errorStr = QObject::tr("These files are too large to be moved to the recycle bin. "
+                                          "Do you want to permanently delete these %1 files?").arg(m_total_count);
+        }
 
         Q_EMIT errored(except);
 
@@ -167,19 +173,31 @@ retry:
                 } else {
                     if (err->code == G_IO_ERROR_NOT_SUPPORTED) {
                         except.dlgType = ED_NOT_SUPPORTED;
-                        //auto fileName = g_file_get_basename(srcFile.get()->get());
-                        except.errorStr = tr("Can not trash this file, would you like to delete it permanently?");
-//                        if (fileName) {
-//                            g_free(fileName);
-//                        }
+                        //task #155670,155671 improve delete file permanently message
+                        except.errorStr = QObject::tr("Are you sure you want to permanently delete this file?"
+                                                      " Once deletion begins, "
+                                                      "the file will not be recoverable.");
+                        if (m_total_count >1){
+                            except.errorStr = QObject::tr("Are you sure you want to permanently delete these %1 files?"
+                                                          " Once deletion begins, "
+                                                          "these file will not be recoverable.").arg(m_total_count);
+                        }
                     } else if (err->code == G_IO_ERROR_FILENAME_TOO_LONG) {
+                        GError *error = nullptr;
                         char *orig_path = g_file_get_path(srcFile.get()->get());
                         char *basename = g_file_get_basename(srcFile.get()->get());
                         QString trashDir = QString(g_get_user_data_dir()) + "/Trash/files";
                         GFile *trash = g_file_new_for_path(trashDir.toUtf8().constData());
                         GFile *dest_file = g_file_resolve_relative_path(trash, basename);
                         g_object_unref(trash);
-                        g_file_move(srcFile.get()->get(), dest_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, nullptr, nullptr, nullptr, nullptr);
+                        g_file_move(srcFile.get()->get(), dest_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, nullptr, nullptr, nullptr, &error);
+                        if (error && error->code == G_IO_ERROR_EXISTS) {
+                            except.errorCode = error->code;
+                            except.dlgType = ED_WARNING;
+                            except.errorStr = tr("An unmanageable conflict exists. Please check the recycle bin.");
+                            Q_EMIT errored(except);
+                            g_error_free(error);
+                        }
                         g_file_set_attribute_string(dest_file, "metadata::orig-path", orig_path, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
                         g_object_unref(dest_file);
                         if (orig_path) {

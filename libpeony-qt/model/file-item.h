@@ -148,6 +148,8 @@ protected:
     void removeChildren();
     void batchRemoveItems();
 
+    void showFilesForBurningOnRTypeDisc();/* udf刻录与文管适配，R类型光盘遍历家目录下的“.cache/KylinTransitBurner/”获取缓冲数据;将缓冲数据显示在光盘挂载目录下 */
+
 private:
     FileItem *m_parent = nullptr;
     std::shared_ptr<Peony::FileInfo> m_info;
@@ -156,8 +158,10 @@ private:
     FileItemModel *m_model = nullptr;
 
     bool m_expanded = false;
+    bool m_isRTypeDisc = false;
 
     std::shared_ptr<FileWatcher> m_watcher = nullptr;
+    std::shared_ptr<FileWatcher> m_rTypeDiscWatcher = nullptr;/* R类型光盘刻录缓冲数据的监听 */
     std::shared_ptr<FileWatcher> m_thumbnail_watcher = nullptr;
 
     QStringList m_ending_uris;

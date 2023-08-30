@@ -185,6 +185,8 @@ void MountOperation::ask_password_cb(GMountOperation *op,
             QString showMessage(message);
             if (showMessage.contains(url.host())){
                 showMessage = QString(tr("Login failed, unknown username or password error, please re-enter!"));
+                QString str = "";
+                p_this->m_dlg->setCurrentUserName(str);
             }
             QMessageBox::information(0, 0, showMessage);
             auto code = p_this->m_dlg->exec();

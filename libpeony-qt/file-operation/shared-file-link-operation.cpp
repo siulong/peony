@@ -69,17 +69,35 @@ void SharedFileLinkOperation::run()
 void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
 {
     m_dest_uri += ".desktop";
-    QUrl url  = m_dest_uri;
+    QUrl url(m_dest_uri);
     QString desktopfp =  url.path();
+    if (!url.fragment().isEmpty()) {
+        desktopfp = url.path() + "#" + url.fragment();
+    }
 
     g_autoptr (GError) error = nullptr;
+    if(g_file_test(desktopfp.toUtf8().constData(), G_FILE_TEST_EXISTS)) {
+        error = g_error_new (1, G_IO_ERROR_EXISTS, "%s", QString(tr("The dest file \"%1\" has existed!")).arg(desktopfp).toUtf8().constData());
+        FileOperationError except;
+        except.srcUri = m_src_uri;
+        except.errorType = ET_GIO;
+        except.isCritical = true;
+        except.op = FileOpLink;
+        except.title = tr("Link file error");
+        except.destDirUri = m_dest_uri;
+        except.errorStr = error->message;
+        except.dlgType = ED_WARNING;
+        Q_EMIT errored(except);
+        return;
+    }
+
     GKeyFile* keyfile = g_key_file_new ();
 
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, "true");
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TYPE, "Application");
 
     QUrl srcUrl = srcUri;
-    QString exec = "peony " + srcUri;
+    QString exec = "peony " + FileUtils::urlDecode(srcUri);
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, exec.toUtf8().constData());
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, "folder-remote");
 
@@ -93,12 +111,14 @@ void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Peony-CMD", "true");
 
     // 可能会有路径重复的情况，后续需要做异常处理
-    g_key_file_save_to_file(keyfile, desktopfp.toUtf8().constData(), nullptr);
+    g_key_file_save_to_file(keyfile, desktopfp.toUtf8().constData(), &error);
 
     if (keyfile) {
         g_key_file_free(keyfile);
     }
-    g_autoptr(GFile) destFile = g_file_new_for_uri(m_dest_uri.toUtf8().constData());
+
+    QString destUri = FileUtils::urlEncode(m_dest_uri);
+    g_autoptr(GFile) destFile = g_file_new_for_uri(destUri.toUtf8().constData());
     if (destFile) {
         mode_t mod = S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP;
         g_file_set_attribute_uint32(destFile, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);

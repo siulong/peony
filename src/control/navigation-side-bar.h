@@ -23,6 +23,7 @@
 #ifndef NAVIGATIONSIDEBAR_H
 #define NAVIGATIONSIDEBAR_H
 #include "side-bar.h"
+#include "file-label-box.h"
 
 #include <QTreeView>
 #include <QStyledItemDelegate>
@@ -57,8 +58,6 @@ public:
     QSize sizeHint() const;
     void JumpDirectory(const QString& uri);/* 跳转目录 */
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
     void labelButtonClicked(bool checked);
@@ -70,6 +69,8 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
 
     int sizeHintForColumn(int column) const override;
+
+    QStyleOptionViewItem viewOptions() const override;
 
 private:
     Peony::SideBarProxyFilterSortModel *m_proxy_model = nullptr;
@@ -92,6 +93,7 @@ private:
     QVBoxLayout *m_layout = nullptr;
 
     QPushButton *m_label_button = nullptr;
+    FileLabelBox *m_labelDialog = nullptr;
 };
 
 class NavigationSideBarItemDelegate : public QStyledItemDelegate

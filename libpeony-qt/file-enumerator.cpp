@@ -558,12 +558,15 @@ GAsyncReadyCallback FileEnumerator::mount_enclosing_volume_callback(GFile *file,
                 if (finished_err) {
                     qDebug()<<"finished err:"<<finished_err->code()<<finished_err->message();
                     if (finished_err->code() == G_IO_ERROR_PERMISSION_DENIED
-                            || finished_err->code() == G_IO_ERROR_FAILED_HANDLED) {
+                            || finished_err->code() == G_IO_ERROR_FAILED_HANDLED
+                            || finished_err->code() == G_IO_ERROR_NOT_DIRECTORY) {
                         p_this->enumerateFinished(false);
                         Peony::AudioPlayManager::getInstance()->playWarningAudio();
                         QString strErr = finished_err->message();
                         if (finished_err->code() == G_IO_ERROR_FAILED_HANDLED) {
                             strErr = tr("The password dialog box is canceled");
+                        } else if (finished_err->code() == G_IO_ERROR_NOT_DIRECTORY) {
+                            strErr = tr("Message recipient disconnected from message bus without replying!");
                         }
                         QMessageBox::critical(nullptr, tr("Error"), strErr);
                         return;

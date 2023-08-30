@@ -46,6 +46,8 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void minimalAdjust();
+    void setMaxLengthLimit(int length);
+    void setLimitBytes(bool limitBytes);
 
 protected:
     void paintEvent(QPaintEvent *e) override;
@@ -53,6 +55,9 @@ protected:
 
 private:
     QLineEdit *m_styled_edit;
+
+    int m_max_length_limit = 0;
+    bool m_limit_bytes = true;
 };
 
 }

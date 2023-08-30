@@ -50,6 +50,8 @@ public:
     bool eventFilter(QObject *obj, QEvent *e);
 
     void addHeaderBar(HeaderBar *headerBar);
+    void addMenu(MainWindow *m_window);
+    QWidget *m_topMenu = nullptr;
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -61,6 +63,7 @@ private:
     HeaderBar *m_header_bar = nullptr;
 
     QToolButton *m_max_or_restore = nullptr;
+
 };
 
 class HeaderBar : public QToolBar
@@ -113,14 +116,14 @@ Q_SIGNALS:
     void cancelEdit();
     void startEdit(bool bSearch = false);
     void finishEdit();
+    void updateSearchProgress(bool searching);
 
 protected:
     void addSpacing(int pixel);
     void mouseMoveEvent(QMouseEvent *e);
     void mouseDoubleClickEvent(QMouseEvent *e);
     void addTabletMenu();
-    void addTopMenu();
-    void updateSelectAllStatus(bool autoUpdate);
+    void updateSelectStatus(bool autoUpdate);
 
 private Q_SLOTS:
     void updateIcons();
@@ -136,6 +139,7 @@ private Q_SLOTS:
     void updateTabletModeValue(bool isTabletMode);
     bool CopyOrMoveTo(bool isCut);
     void quitMultiSelect();
+    void setSearchMode(bool isSearching);
 
 private:
     const QString m_uri;

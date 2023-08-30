@@ -29,6 +29,7 @@
 
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 
 #include "emblem-provider.h"
 
@@ -45,6 +46,7 @@
 #include <QStyle>
 #include <QApplication>
 #include <QPainter>
+#include <QDBusReply>
 
 #include "icon-view-editor.h"
 #include "icon-view-index-widget.h"
@@ -52,6 +54,7 @@
 #include <QPushButton>
 
 #include "clipboard-utils.h"
+#include "global-settings.h"
 
 #include <QTextLayout>
 #include <QFileInfo>
@@ -67,6 +70,7 @@ IconViewDelegate::IconViewDelegate(QObject *parent) : QStyledItemDelegate (paren
 {
     m_styled_button = new QPushButton;
     m_isStartDrag = false;
+    m_watcher = new QFileSystemWatcher;
 }
 
 IconViewDelegate::~IconViewDelegate()
@@ -82,7 +86,7 @@ QSize IconViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     auto view = qobject_cast<IconView*>(this->parent());
     auto iconSize = view->iconSize();
     auto fm = qApp->fontMetrics();
-    int width = iconSize.width() + 41;
+    int width = iconSize.width() + 41 - 4;
     int height = iconSize.height() + fm.ascent()*2 + 20 + 10;
     return QSize(width, height);
     /*
@@ -109,6 +113,25 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
 
+
+    //get file info from index
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(index);
+    //NOTE: item might be deleted when painting, because we might start a
+    //location change during the painting.
+    if (!item) {
+        return;
+    }
+
+#ifdef KY_UDF_BURN
+    /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+    if(item->property("isFileForBurning").toBool()){
+        painter->setOpacity(0.5);
+    }else{
+        painter->setOpacity(1.0);
+    }
+#endif
+
     //default painter
     //QStyledItemDelegate::paint(painter, option, index);
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
@@ -134,7 +157,9 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
        opt.rect = opt.rect.adjusted(0,0,0,-31);
     }
 
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, nullptr);
+    if (!(opt.state.testFlag(QStyle::State_Selected) && view->indexWidget(index) && !isDragging)) {
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, nullptr);
+    }
     opt.decorationSize = rawDecoSize;
 
     bool bCutFile = false;
@@ -160,7 +185,17 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto text = opt.text;
     opt.text = nullptr;
+    auto state = opt.state;
+    //bug#99340,修改图标选中状态，会变暗
+    if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected) && !m_isStartDrag)
+    {
+        opt.state &= ~QStyle::State_Selected;
+    }
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    painter->restore();
+    opt.state = state;
     opt.text = text;
 
     auto rect = view->visualRect(index);
@@ -188,6 +223,32 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+
+            auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+            auto item = model->itemFromIndex(index);
+            QString tmpUri = item->info().get()->uri();
+            connect(getView()->m_model, &FileItemModel::thumbnailUpdated, indexWidget, [=](QString uri){
+                if (getView()->getSelections().count() == 1
+                        && view->selectedIndexes().first() == index
+                        && tmpUri == uri) {
+                       Q_EMIT updateIndexWidget(option);
+                   }
+            });
+//            QString itemPath = item->info().get()->filePath();
+//            m_watcher->addPath(itemPath);
+//            connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=](){
+//                if (getView()->getSelections().count() == 1 && view->selectedIndexes().first() == index) {
+//                    Q_EMIT updateIndexWidget(option);
+//                }
+//            });
+//            connect(indexWidget, &IconViewIndexWidget::destroyed, this, [=](){
+//                m_watcher->removePath(itemPath);
+//            });
         }
     }
 
@@ -195,14 +256,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (bCutFile && !getView()->getDelegateEditFlag())/* Rename is index is not set to nullptr,link to bug#61119.modified by 2021/06/22 */
         view->setIndexWidget(index, nullptr);
 
-    //get file info from index
-    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
-    auto item = model->itemFromIndex(index);
-    //NOTE: item might be deleted when painting, because we might start a
-    //location change during the painting.
-    if (!item) {
-        return;
-    }
     auto info = item->info();
     // draw color symbols
     int yoffset = 0;
@@ -249,7 +302,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
-                painter->setRenderHint(QPainter::Antialiasing);
+                //fix bug#147348
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 painter->translate(opt.rect.topLeft());
                 painter->translate(0, iconRect.size().height() + 5);
                 painter->setPen(opt.palette.highlightedText().color());
@@ -281,7 +335,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
 
-
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
         emblemPoses.removeOne(3);
@@ -350,7 +405,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
     }
-
+    painter->restore();
 
     //single selection, we have to repaint the emblems.
 
@@ -368,9 +423,41 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto edit = new IconViewEditor(parent);
     edit->setContentsMargins(0, 0, 0, 0);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    edit->setMinimumSize(sizeHint(option, index).width(), 54);
+    auto size = sizeHint(option, index);
+    edit->setMinimumWidth(size.width());
+    edit->setMinimumHeight(size.height() - getView()->iconSize().height() - 5);
 
-    edit->setText(index.data(Qt::DisplayRole).toString());
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto displayName = index.data(Qt::UserRole + 1).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    auto info = FileInfo::fromUri(uri);
+    if (info->isDesktopFile()) {
+        suffix = ".desktop";
+    }
+    if (FileUtils::isFuseFileSystem(uri)) {
+        fsType = "fuse.kyfs";
+    }
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setLimitBytes(false);
+        edit->setMaxLengthLimit(255 - suffix.length());
+    } else if (fsType.contains("fuse.kyfs")) {
+        int32_t maxLength = 255;
+        edit->setLimitBytes(false);
+        QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
+        QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
+        if (reply.isValid()) {
+            maxLength = reply.value();
+        }
+        edit->setMaxLengthLimit(maxLength - suffix.length());
+    }
+    edit->setText(displayString);
+    edit->blockSignals(false);
+
     edit->setAlignment(Qt::AlignCenter);
     //NOTE: if we directly call this method, there will be
     //nothing happen. add a very short delay will ensure that
@@ -459,21 +546,48 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         newName = "";
     //comment new name != suffix check to fix feedback issue
     if (newName.length() >0 && newName != oldName/* && newName != suffix*/) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
+        if (getView()->getSelections().count() > 1) {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            QStringList uris = getView()->getSelections();
+            auto renameOp = new FileBatchRenameOperation(uris, newName);
+            connect(renameOp, &FileBatchRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
+                    infoJob->setAutoDelete();
+                    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        getView()->setSelections(QStringList()<<uri);
+                        getView()->scrollToSelection(uri);
+                        //set focus to fix bug#54061
+                        getView()->setFocus();
+                    });
+                    infoJob->queryAsync();
+                });
+            }, Qt::BlockingQueuedConnection);
 
-        connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, getView(), [=](){
-                getView()->setSelections(QStringList()<<uri);
-                getView()->scrollToSelection(uri);
-                //set focus to fix bug#54061
-                getView()->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
+            fileOpMgr->startOperation(renameOp, true);
+        } else {
+            auto fileOpMgr = FileOperationManager::getInstance();
+            auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), newName);
+            connect(renameOp, &FileRenameOperation::operationFinished, getView(), [=](){
+                auto info = renameOp->getOperationInfo().get();
+                auto uri = info->target();
+                QTimer::singleShot(100, getView(), [=](){
+                    auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
+                    infoJob->setAutoDelete();
+                    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        getView()->setSelections(QStringList()<<uri);
+                        getView()->scrollToSelection(uri);
+                        //set focus to fix bug#54061
+                        getView()->setFocus();
+                    });
+                    infoJob->queryAsync();
+                });
+            }, Qt::BlockingQueuedConnection);
 
-        fileOpMgr->startOperation(renameOp, true);
+            fileOpMgr->startOperation(renameOp, true);
+        }
     }
     else if (newName == oldName)
     {
@@ -557,6 +671,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     document.setIndentWidth(0);
     document.setDocumentMargin(0);
 
+    bool isElided= false;
     //计算text的长度
     while (true) {
         QTextLine line = textLayout.createLine();
@@ -565,14 +680,18 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
         int nextLineY = y + lineSpacing;
         lineCount++;
-
-        if (textMaxHeight >= nextLineY + lineSpacing && lineCount != maxLineCount) {
-            line.setLineWidth(width-xOffset);
-            y = nextLineY;
+        y = nextLineY;
+        if (1 == lineCount) {
+           line.setLineWidth(width-xOffset);
         } else {
             line.setLineWidth(width);
+        }
+        if (textMaxHeight < nextLineY + lineSpacing || lineCount == maxLineCount) {
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+            }
             elidedText = option.text.left(line.textStart()) + elidedLastLine;
             textOpt.setWrapMode(QTextOption::NoWrap);
             line = textLayout.createLine();
@@ -581,19 +700,16 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     document.setPlainText(elidedText);
 
-    //painter->translate(option.rect.topLeft());
     painter->translate(horizalMargin, 0);
-   // painter->translate(0, iconRect.size().height() + 5);
-
 
     //设置关键字高亮
     QTextCursor highlightCursor(&document);
     QTextCursor cursor(&document);
 
     cursor.beginEditBlock();
-
     QTextBlock textStyleBlock = cursor.block();
     QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
     textStyleFormat.setTextIndent(xOffset);
     cursor.setBlockFormat(textStyleFormat);
     QTextCharFormat plainFormat(highlightCursor.charFormat());
@@ -606,18 +722,152 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         cursor.mergeCharFormat(selectColorFormat);
     }
 
-    while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
-        highlightCursor = document.find(regFindKeyWords, highlightCursor);
-        if (!highlightCursor.isNull()) {
+    if (!regFindKeyWords.isEmpty()) {
+        //对特殊字符进行处理
+        QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
+        QRegularExpression regex(escapedKeywords);
+        QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
+
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            int startPos = match.capturedStart();
+            int endPos = match.capturedEnd();
+          int oo = elidedText.size();
+            // 判断是否关键字被省略
+            if (isElided && startPos >= elidedText.size() - 1) {
+                break; // 关键字被完全省略，退出循环
+            }
+
+            // 调整关键字的结束位置
+            if (endPos > elidedText.size()) {
+                endPos = elidedText.size() ; // 关键字的一部分被省略，将结束位置调整为最后一个字符的位置
+            }
+
+            // 执行关键字高亮
+            highlightCursor.setPosition(startPos);
+            highlightCursor.setPosition(endPos, QTextCursor::KeepAnchor);
             highlightCursor.mergeCharFormat(colorFormat);
         }
-
     }
     cursor.endEditBlock();
-    document.drawContents(painter/*, rect*/);
+    document.drawContents(painter);
 
     textLayout.endLayout();
     painter->restore();
+}
+
+qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
+{
+    painter->save();
+    QFont font = option.font;
+    QTextLayout textLayout(option.text, font);
+    QTextOption textOpt;
+    textOpt.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    textLayout.setTextOption(textOpt);
+    textLayout.beginLayout();
+
+    auto fontMetrics = option.fontMetrics;
+    auto lineSpacing = fontMetrics.lineSpacing();
+    int width = option.rect.width() - 2*horizalMargin;
+    int y = 0;
+    int lineCount = 0;
+    QString elidedText = option.text;
+
+    QTextDocument document;
+    textOpt.setAlignment(Qt::AlignHCenter);
+    document.setDefaultTextOption(textOpt);
+    document.setTextWidth(width);
+    document.setDefaultFont(option.font);
+    document.setIndentWidth(0);
+    document.setDocumentMargin(0);
+
+    bool isElided= false;
+    //计算text的长度
+    while (true) {
+        QTextLine line = textLayout.createLine();
+        if (!line.isValid())
+            break;
+
+        int nextLineY = y + lineSpacing;
+        lineCount++;
+        y = nextLineY;
+        if (1 == lineCount) {
+           line.setLineWidth(width-xOffset);
+        } else {
+            line.setLineWidth(width);
+        }
+        if (textMaxHeight < nextLineY + lineSpacing || lineCount == maxLineCount) {
+            QString lastLine = option.text.mid(line.textStart());
+            QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+            }
+            elidedText = option.text.left(line.textStart()) + elidedLastLine;
+            textOpt.setWrapMode(QTextOption::NoWrap);
+            line = textLayout.createLine();
+            break;
+        }
+    }
+    document.setPlainText(elidedText);
+
+    painter->translate(horizalMargin, 0);
+
+    //设置关键字高亮
+    QTextCursor highlightCursor(&document);
+    QTextCursor cursor(&document);
+
+    cursor.beginEditBlock();
+    QTextBlock textStyleBlock = cursor.block();
+    QTextBlockFormat textStyleFormat = textStyleBlock.blockFormat();
+    textStyleFormat.setLineHeight(lineSpacing, QTextBlockFormat::FixedHeight);
+    textStyleFormat.setTextIndent(xOffset);
+    cursor.setBlockFormat(textStyleFormat);
+    QTextCharFormat plainFormat(highlightCursor.charFormat());
+    QTextCharFormat colorFormat = plainFormat;
+    colorFormat.setBackground(Qt::green);
+    if (option.state.testFlag(QStyle::State_Selected)) {
+        QTextCharFormat selectColorFormat(cursor.charFormat());
+        selectColorFormat.setForeground(Qt::white);
+        cursor.select(QTextCursor::Document);
+        cursor.mergeCharFormat(selectColorFormat);
+    }
+
+    if (!regFindKeyWords.isEmpty()) {
+        //对特殊字符进行处理
+        QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
+        QRegularExpression regex(escapedKeywords);
+        QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
+
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            int startPos = match.capturedStart();
+            int endPos = match.capturedEnd();
+          int oo = elidedText.size();
+            // 判断是否关键字被省略
+            if (isElided && startPos >= elidedText.size() - 1) {
+                break; // 关键字被完全省略，退出循环
+            }
+
+            // 调整关键字的结束位置
+            if (endPos > elidedText.size()) {
+                endPos = elidedText.size() ; // 关键字的一部分被省略，将结束位置调整为最后一个字符的位置
+            }
+
+            // 执行关键字高亮
+            highlightCursor.setPosition(startPos);
+            highlightCursor.setPosition(endPos, QTextCursor::KeepAnchor);
+            highlightCursor.mergeCharFormat(colorFormat);
+        }
+    }
+    cursor.endEditBlock();
+    document.drawContents(painter);
+
+    textLayout.endLayout();
+    painter->restore();
+
+    QSizeF docSize = document.size();
+    qreal docHeight = docSize.height(); // 获取文档的高度
+    return docHeight;
 }
 
 QSize IconViewTextHelper::getTextSizeForIndex(const QStyleOptionViewItem &option, const QModelIndex &index, int horizalMargin, int maxLineCount)
@@ -718,4 +968,3 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
 
     painter->restore();
 }
-

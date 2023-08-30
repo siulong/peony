@@ -32,7 +32,8 @@ LIBS += -L$$PWD/../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
 TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_tr.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_cs.ts \
-                ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
+                ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts
 
 SOURCES += \
     desktop-background-manager.cpp \
