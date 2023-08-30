@@ -304,6 +304,8 @@ private:
     QPoint m_press_pos;
 
     int m_id = 0;
+
+    QStringList m_storageBox;
 };
 
 }

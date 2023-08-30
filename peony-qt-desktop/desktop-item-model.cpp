@@ -317,6 +317,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
+        m_destoryItems.removeOne(uri);
         std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri);
         Peony::DesktopIconView *view = nullptr;
         if (info.get()->isEmptyInfo()) {

@@ -860,8 +860,15 @@ void DesktopIconView::resolutionChange()
             QStringList itemNeedBeRelayout;
 
             qInfo()<<"尝试恢复超过屏幕范围的元素" <<m_resolution_item_rect;
+            QMap<QString, QRect> destoryItemMap;
             for (auto uri : m_resolution_item_rect.keys()) {
+                m_storageBox.removeOne(uri);
                 auto originalRect = m_resolution_item_rect.value(uri);
+                //优先恢复主屏的图标
+                if (m_model->m_destoryItems.contains(uri)) {
+                    destoryItemMap.insert(uri, originalRect);
+                    continue;
+                }
                 QRect itemRect = originalRect;
                 itemRect.setSize(icon);
                 if (screenRect.contains(itemRect)) {
@@ -873,8 +880,19 @@ void DesktopIconView::resolutionChange()
                 }
             }
 
+            for (auto uri : destoryItemMap.keys()) {
+                auto rect = destoryItemMap.value(uri);
+                if (screenRect.contains(rect)) {
+                    m_item_rect_hash.insert(uri, rect);
+                    m_resolution_item_rect.remove(uri);
+                } else {
+                    m_item_rect_hash.remove(uri);
+                    itemNeedBeRelayout<<uri;
+                }
+            }
             qInfo()<<"重排需要更新位置的元素";
-
+            itemNeedBeRelayout.append(m_storageBox);
+            m_storageBox.clear();
             relayoutExsitingItems(itemNeedBeRelayout);
 
             // re-layout overlayed items
@@ -1549,6 +1567,7 @@ void DesktopIconView::rowsAboutToBeRemoved(const QModelIndex &parent, int start,
         auto uri = model()->index(row, 0).data(Qt::UserRole).toString();
         m_item_rect_hash.remove(uri);
         m_resolution_item_rect.remove(uri);
+        m_storageBox.removeOne(uri);
 //        QPoint itemPos(-1, -1);
 //        setRestoreInfo(uri, itemPos);
     }
@@ -1659,6 +1678,9 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     next.moveTo(next.x() + grid.width(), top);
                     //如果满了，就放到（0，0） 位置
                     if (next.left()+grid.width() > viewRect.right()) {
+                        if (!m_storageBox.contains(uri)) {
+                            m_storageBox.append(uri);
+                        }
                         next.moveTo(0, 0);
                         isEmptyPos = true;
                         m_item_rect_hash.insert(uri, next);
@@ -1697,6 +1719,11 @@ void DesktopIconView::checkItemsOver()
                 destoryItemMap.insert(uri, rect);
                 continue;
             }
+            if (!viewport()->rect().contains(rect)) {
+                needRelayoutItems.append(uri);
+                m_resolution_item_rect.insert(uri, rect);
+                continue;
+            }
             if (notEmptyRegion.intersects(rect)) {
                 needRelayoutItems.append(uri);
             } else {
@@ -1705,13 +1732,12 @@ void DesktopIconView::checkItemsOver()
         }
         for (auto uri : destoryItemMap.keys()) {
             auto rect = destoryItemMap.value(uri);
-            if (notEmptyRegion.intersects(rect)) {
+            if (notEmptyRegion.intersects(rect) || !viewport()->rect().contains(rect)) {
                 needRelayoutItems.append(uri);
             } else {
                 notEmptyRegion += rect;
             }
         }
-        m_model->m_destoryItems.clear();
     }
     if (0 == needRelayoutItems.size()) {
         return;
@@ -1758,6 +1784,9 @@ void DesktopIconView::checkItemsOver()
     }
     for (auto uri : m_item_rect_hash.keys()) {
         auto rect = m_item_rect_hash.value(uri);
+        if (isFull && 0 == rect.x() && 0 == rect.y() && !m_storageBox.contains(uri) && !m_resolution_item_rect.contains(uri)) {
+            m_storageBox.append(uri);
+        }
         updateItemPosByUri(uri, rect.topLeft());
         setFileMetaInfoPos(uri, rect.topLeft());
     }
@@ -2144,6 +2173,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             // remove info from resolution item rect map.
             for (auto index : m_drag_indexes) {
                 m_resolution_item_rect.remove(index.data(Qt::UserRole).toString());
+                m_model->m_destoryItems.removeOne(index.data(Qt::UserRole).toString());
                 QPoint itemPos(-1, -1);
                 QString uri = index.data(Qt::UserRole).toString();
                 setRestoreInfo(uri, itemPos);
@@ -2803,7 +2833,6 @@ void DesktopIconView::saveExtendItemInfo()
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
         auto index = m_proxy_model->index(i, 0);
         auto indexRect = QListView::visualRect(index);
-        QString str = index.data(Qt::UserRole).toString();
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
@@ -2814,7 +2843,7 @@ void DesktopIconView::saveExtendItemInfo()
         }
         auto metaInfo = FileMetaInfo::fromUri(uri);
         if (metaInfo) {
-            qDebug() << "uri:"<<str<<" topLeft:"<<topLeft;
+            qDebug() << "uri:"<<uri<<" topLeft:"<<topLeft;
             QStringList extendPos = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
             if (extendPos.count() == 3) {
                 continue;
@@ -2854,13 +2883,13 @@ void DesktopIconView::resetExtendItemInfo()
         auto index = m_model->index(i, 0);
         QString uri = index.data(Qt::UserRole).toString();
         auto metaInfo = FileMetaInfo::fromUri(uri);
-        auto str = index.data(Qt::UserRole).toString();
+        m_model->m_destoryItems.removeOne(uri);
         if (metaInfo) {
             QStringList list = metaInfo->getMetaInfoStringList(RESTORE_EXTEND_ITEM_POS_ATTRIBUTE);
             QStringList pos = metaInfo->getMetaInfoStringList(ITEM_POS_ATTRIBUTE);
             if (list.count() == 3) {
                 QString id = list.takeLast();
-                qDebug() << "[DesktopIconView::resetExtendItemInfo] uri:"<<str<<" peony-qt-desktop-restore-extend-item-position:"<<list<<" id:"<<m_id;
+                qDebug() << "[DesktopIconView::resetExtendItemInfo] uri:"<<uri<<" peony-qt-desktop-restore-extend-item-position:"<<list<<" id:"<<m_id;
                 if (id.toInt() != m_id) {
                     continue;
                 }
@@ -2883,6 +2912,7 @@ void DesktopIconView::clearItemRect()
 {
     m_resolution_item_rect.clear();
     m_item_rect_hash.clear();
+    m_storageBox.clear();
 }
 
 void DesktopIconView::clearExtendItemPos(bool saveId)
@@ -2996,6 +3026,18 @@ void DesktopIconView::initViewport()
         modifyGridSize();
         resolutionChange();
         setAllRestoreInfo();
+    }
+    checkItemsOver();
+
+    // check icon is out of screen
+    auto geo = viewport()->rect();
+    if (geo.width() != 0 && geo.height() != 0) {
+        for (auto rec : m_item_rect_hash.values()) {
+            if (!geo.contains(rec)) {
+                resolutionChange();
+                break;
+            }
+        }
     }
 }
 

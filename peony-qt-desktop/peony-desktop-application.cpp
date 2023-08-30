@@ -784,6 +784,7 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         if (m_mode == 2) {
             if (m_bg_windows.count() > 2) {
                 //task#74174 销毁时保存扩展屏元素的坐标点
+                getIconView(screen)->getAllRestoreInfo();
                 getIconView(screen)->saveExtendItemInfo();
                 Q_EMIT getIconView(qApp->primaryScreen())->updateView();
             } else if (m_bg_windows.count() == 2) {
@@ -876,6 +877,7 @@ void PeonyDesktopApplication::singleScreenMode()
     }
     for (auto bgWindow : m_bg_windows) {
         auto view = bgWindow->getIconView();
+        view->getAllRestoreInfo();
         view->clearItemRect();
         view->saveExtendItemInfo();
     }
@@ -887,6 +889,7 @@ void PeonyDesktopApplication::multiscreenMode()
 {
     for (auto bgWindow : m_bg_windows) {
         auto view = bgWindow->getIconView();
+        view->getAllRestoreInfo();
         view->clearItemRect();
         view->resetExtendItemInfo();
     }
