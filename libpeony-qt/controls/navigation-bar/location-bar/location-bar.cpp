@@ -167,10 +167,16 @@ void LocationBar::setRootUri(const QString &uri)
 
     //clear buttons
     clearButtons();
-    if (m_current_uri.startsWith("search://")) {
+    if (m_current_uri.startsWith("search://") ) {
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
         //fix bug 94229, show button
+        doLayout();
+        return;
+    }
+
+    if (m_current_uri.startsWith("label://")) {
+        addButton(m_current_uri);
         doLayout();
         return;
     }
