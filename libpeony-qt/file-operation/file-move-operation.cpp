@@ -1015,7 +1015,7 @@ fallback_retry:
                 auto respValut = except.respValue.value("cateType").toInt();
                 if (m_cate_type == AllPost) {
                     respValut = Post;
-                } else if (m_cate_type = ALLFront) {
+                } else if (m_cate_type == ALLFront) {
                     respValut = Front;
                 }
                 node->truncateDestFileName(respValut);
@@ -1027,7 +1027,7 @@ fallback_retry:
                 node->truncateDestFileName(m_cate_type);
                 if (Post == m_cate_type) {
                     m_cate_type = AllPost;
-                } else if (Front) {
+                } else if (Front == m_cate_type) {
                     m_cate_type = ALLFront;
                 }
                 m_prehandle_hash.insert(err->code, TruncateOne);
@@ -1359,7 +1359,7 @@ fallback_retry:
                 auto respValut = except.respValue.value("cateType").toInt();
                 if (m_cate_type == AllPost) {
                     respValut = Post;
-                } else if (m_cate_type = ALLFront) {
+                } else if (m_cate_type == ALLFront) {
                     respValut = Front;
                 }
                 node->truncateDestFileName(respValut);
@@ -1371,7 +1371,7 @@ fallback_retry:
                 node->truncateDestFileName(m_cate_type);
                 if (Post == m_cate_type) {
                     m_cate_type = AllPost;
-                } else if (Front) {
+                } else if (Front == m_cate_type) {
                     m_cate_type = ALLFront;
                 }
                 m_prehandle_hash.insert(err->code, TruncateOne);
