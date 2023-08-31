@@ -34,6 +34,8 @@
 #include <QHeaderView>
 #include <QMenu>
 
+#include <QPainterPath>
+
 using namespace Peony;
 static TagManagement *global_instance = nullptr;
 
