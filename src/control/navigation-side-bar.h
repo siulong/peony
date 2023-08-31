@@ -38,6 +38,7 @@ class SideBarAbstractItem;
 
 class QPushButton;
 class QVBoxLayout;
+class QHBoxLayout;
 class QLabel;
 
 class NavigationSideBar : public QTreeView
@@ -92,7 +93,6 @@ private:
     NavigationSideBar *m_sidebar = nullptr;
     QVBoxLayout *m_layout = nullptr;
 
-    QPushButton *m_label_button = nullptr;
     FileLabelBox *m_labelDialog = nullptr;
 };
 
@@ -125,4 +125,28 @@ private:
     QGSettings *m_gSettings;
 };
 
+class LabelButton : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit LabelButton(QWidget *parent = nullptr);
+    void setLastIcon(const QString &symbolic);
+    void setFirstIcon(const QString &symbolic);
+    void setText(QString text);
+
+Q_SIGNALS:
+    void clicked (bool show);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
+private:
+    QLabel *m_firstSymbolic = nullptr;
+    QLabel *m_lastSymbolic = nullptr;
+    QLabel *m_text = nullptr;
+    QHBoxLayout *m_mainLayout = nullptr;
+    bool m_isPress = false;
+    bool m_show = false;
+};
 #endif // NAVIGATIONSIDEBAR_H

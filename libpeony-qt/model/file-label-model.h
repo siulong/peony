@@ -30,6 +30,7 @@
 #include <QMutex>
 #include <QColor>
 #include <peony-core_global.h>
+#include <QSortFilterProxyModel>
 
 #define PEONY_FILE_LABEL_IDS "peony-file-label-ids"
 
@@ -47,7 +48,7 @@ public:
 
     int lastLabelId();
 
-    void addLabel(const QString &label, const QColor &color);
+    bool addLabel(const QString &label, const QColor &color, bool isInit = false);
     void removeLabel(int id);
     void setLabelName(int id, const QString &name);
     void setLabelColor(int id, const QColor &color);
@@ -60,6 +61,7 @@ public:
     const QList<QColor> getFileColors(const QString &uri);
     FileLabelItem *itemFromId(int id);
     FileLabelItem *itemFormIndex(const QModelIndex &index);
+    FileLabelItem *getItemByRow(int row);
 
     QList<FileLabelItem *> getAllFileLabelItems();
 
@@ -94,8 +96,9 @@ Q_SIGNALS:
 public Q_SLOTS:
     void setName(FileLabelItem *item, const QString &name);
     void setColor(FileLabelItem *item, const QColor &color);
+    void setValidInSidebar(FileLabelItem *item, bool isChecked);
+    void setValidInMenu(FileLabelItem *item, bool isChecked);
     void renameFileLabel(const QString oldUri, const QString newUri);
-
 
 protected:
     void initLabelItems();
@@ -126,6 +129,12 @@ public:
     void setName(const QString &name);
     void setColor(const QColor &color);
 
+    bool isValidInSidebar();
+    bool isValidInMenu();
+
+    void setValidInSidebar(bool isChecked);
+    void setValidInMenu(bool isChecked);
+
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void colorChanged(const QColor &color);
@@ -134,6 +143,18 @@ private:
     int m_id = -1; //invalid
     QString m_name = nullptr;
     QColor m_color = Qt::transparent;
+    bool m_isValidInSidebar = false;
+    bool m_isValidInMenu = false;
 };
 
+class PEONYCORESHARED_EXPORT FileLableProxyFilterSortModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    explicit FileLableProxyFilterSortModel(QObject *parent = nullptr);
+
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+};
 #endif // FILELABELMODEL_H

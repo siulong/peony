@@ -131,8 +131,14 @@ public:
     friend class FileLabelInternalMenuPlugin;
     Q_OBJECT
 
+Q_SIGNALS:
+    void changeText(const QString &text);
+
 public Q_SLOTS:
     void clickItem(int index);
+
+protected:
+    void paintEvent(QPaintEvent *e);
 
 private:
     explicit FileLabelWidget(const QStringList &selectionUris);
