@@ -2532,7 +2532,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="197"/>
         <source>label management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>标识管理 ...</translation>
     </message>
 </context>
 <context>
@@ -2540,7 +2540,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="381"/>
         <source>label management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>标识管理 ...</translation>
     </message>
 </context>
 <context>
@@ -5029,7 +5029,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/file-utils.cpp" line="369"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="323"/>
         <source>label</source>
-        <translation type="unfinished"></translation>
+        <translation>标记</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="186"/>
@@ -5088,7 +5088,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="261"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="394"/>
         <source>Virtual file directories do not support move operations</source>
-        <translation type="unfinished"></translation>
+        <translation>虚拟文件路径不支持移动和复制操作</translation>
     </message>
 </context>
 <context>
