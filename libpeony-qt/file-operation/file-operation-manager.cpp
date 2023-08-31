@@ -482,7 +482,7 @@ start:
    proc->connect(proc, &ProgressBar::resume, operation, &FileOperation::operationResume);
 
    operation->connect(operation, &FileOperation::errored, [=]() {
-       if (operation->getOperationInfo()->m_type == FileOperationInfo::Copy) {
+       if (operation->getOperationInfo()->m_type == FileOperationInfo::Copy || operation->getOperationInfo()->m_type == FileOperationInfo::Move) {
            return;
        }
        operation->setHasError(true);
