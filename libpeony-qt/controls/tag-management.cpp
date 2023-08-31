@@ -307,10 +307,10 @@ TagManagement::TagManagement(QWidget *parent) : QMainWindow(parent)
     QWidget *sidebar = new QWidget(this);
     QWidget *Advanced = new QWidget(this);
 
-    management->addTab(general, tr("General"));
+    //management->addTab(general, tr("General"));
     management->addTab(tag, tr("Mark"));
-    management->addTab(sidebar, tr("Sidebar"));
-    management->addTab(Advanced, tr("Advanced"));
+    //management->addTab(sidebar, tr("Sidebar"));
+    //management->addTab(Advanced, tr("Advanced"));
 }
 
 //TagManagement* TagManagement::getInstance()

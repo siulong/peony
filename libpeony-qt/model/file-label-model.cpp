@@ -501,7 +501,7 @@ void FileLabelModel::setColor(FileLabelItem *item, const QColor &color)
 
 void FileLabelModel::setValidInSidebar(FileLabelItem *item, bool isChecked)
 {
-    m_label_settings->beginWriteArray("labels");
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
     m_label_settings->setArrayIndex(item->id());
     m_label_settings->setValue("sidebar", isChecked);
     m_label_settings->endArray();
@@ -513,7 +513,7 @@ void FileLabelModel::setValidInSidebar(FileLabelItem *item, bool isChecked)
 
 void FileLabelModel::setValidInMenu(FileLabelItem *item, bool isChecked)
 {
-    m_label_settings->beginWriteArray("labels");
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
     m_label_settings->setArrayIndex(item->id());
     m_label_settings->setValue("menu", isChecked);
     m_label_settings->endArray();
@@ -561,13 +561,22 @@ void FileLabelModel::initLabelItems()
             item->m_id = i;
             item->m_name = name;
             item->m_color = color;
-            item->m_isValidInSidebar = m_label_settings->value("sidebar").toBool();
-            item->m_isValidInMenu = m_label_settings->value("menu").toBool();
+            item->m_isValidInSidebar = m_label_settings->contains("sidebar") ? m_label_settings->value("sidebar").toBool() : true;
+            item->m_isValidInMenu = m_label_settings->contains("menu") ? m_label_settings->value("menu").toBool() : true;
             m_labels.append(item);
         }
     }
     m_label_settings->endArray();
     endResetModel();
+
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
+    for (int i = 0; i < m_labels.size(); i++) {
+        m_label_settings->setArrayIndex(m_labels[i]->id());
+        m_label_settings->setValue("sidebar", m_labels[i]->isValidInSidebar());
+        m_label_settings->setValue("menu", m_labels[i]->isValidInMenu());
+    }
+    m_label_settings->endArray();
+
     m_label_settings->beginGroup("global labels");
     QStringList keys = m_label_settings->allKeys();
     for(const QString &key: keys){
