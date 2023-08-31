@@ -1083,11 +1083,14 @@ fallback_retry:
         }
 
         //related bug#172512
-        g_file_copy_attributes(srcFile.get()->get(),
-                               destFile.get()->get(),
-                               GFileCopyFlags(flags),
-                               nullptr,
-                               &error);
+        if (node->state() == FileNode::Handled) {
+            g_file_copy_attributes(srcFile.get()->get(),
+                                   destFile.get()->get(),
+                                   GFileCopyFlags(flags),
+                                   nullptr,
+                                   &error);
+        }
+
         if (error) {
             qDebug() << __func__ << error->code << error->message;
         }
