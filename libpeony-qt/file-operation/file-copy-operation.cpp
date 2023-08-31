@@ -106,7 +106,6 @@ FileCopyOperation::~FileCopyOperation()
 
 ExceptionResponse FileCopyOperation::prehandle(GError *err)
 {
-    setHasError(true);
 //    SoundEffect::getInstance()->copyOrMoveFailedMusic();
 
     switch (err->code) {
@@ -281,6 +280,7 @@ fallback_retry:
                 }
             }
             //handle.
+            node->setState(FileNode::Handling);
             switch (handle_type) {
             case IgnoreOne: {
                 node->setState(FileNode::Unhandled);
@@ -306,7 +306,7 @@ fallback_retry:
                 break;
             }
             case OverWriteOne: {
-                node->setState(FileNode::Handled);
+                node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     auto result = udfCopyWarningDialog();
@@ -330,7 +330,7 @@ fallback_retry:
                 break;
             }
             case OverWriteAll: {
-                node->setState(FileNode::Handled);
+                node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
@@ -355,7 +355,6 @@ fallback_retry:
                 break;
             }
             case BackupOne: {
-                node->setState(FileNode::Handled);
                 node->setErrorResponse(BackupOne);
                 // use custom name
                 QString name = "";
@@ -388,7 +387,6 @@ fallback_retry:
                 goto fallback_retry;
             }
             case BackupAll: {
-                node->setState(FileNode::Handled);
                 node->setErrorResponse(BackupOne);
                 while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
                     handleDuplicate(node);
@@ -411,8 +409,8 @@ fallback_retry:
                 goto fallback_retry;
             }
             case RenameOne: {
+                node->setErrorResponse(RenameOne);
                 node->setDestFileName(except.respValue.value("newName").toString());
-                setHasError(false);
                 goto fallback_retry;
             }
             case TruncateOne: {
@@ -674,6 +672,7 @@ fallback_retry:
                 }
             }
             //handle.
+            node->setState(FileNode::Handling);
             switch (handle_type) {
             case IgnoreOne: {
                 node->setState(FileNode::Unhandled);
@@ -693,6 +692,7 @@ fallback_retry:
                 break;
             }
             case OverWriteOne: {
+                node->setState(FileNode::Invalid);
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     node->setErrorResponse(OverWriteOne);
                     auto result = udfCopyWarningDialog();
@@ -716,13 +716,13 @@ fallback_retry:
                 if (m_is_pause) fileOverWriteOneCopy.pause();
                 fileOverWriteOneCopy.run();
                 if (fileCopy.getStatus() == FileCopy::FINISHED) {
-                    node->setState(FileNode::Handled);
+                    node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 } else {
-                    setHasError(true);
-                    node->setState(FileNode::Unhandled);
+                    node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 }
+                setHasError(true);
                 m_is_duplicated_copy = false;
                 break;
             }
@@ -752,19 +752,18 @@ fallback_retry:
                 if (m_is_pause) fileOverWriteOneCopy.pause();
                 fileOverWriteOneCopy.run();
                 if (fileCopy.getStatus() == FileCopy::FINISHED) {
-                    node->setState(FileNode::Handled);
+                    node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 } else {
-                    setHasError(true);
-                    node->setState(FileNode::Unhandled);
+                    node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 }
+                setHasError(true);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 m_is_duplicated_copy = false;
                 break;
             }
             case BackupOne: {
-                node->setState(FileNode::Handled);
                 node->setErrorResponse(BackupOne);
                 // use custom name
                 QString name = "";
@@ -788,7 +787,6 @@ fallback_retry:
                 goto fallback_retry;
             }
             case BackupAll: {
-                node->setState(FileNode::Handled);
                 node->setErrorResponse(BackupOne);
                 while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
                     handleDuplicate(node);
@@ -800,8 +798,8 @@ fallback_retry:
                 goto fallback_retry;
             }
             case RenameOne: {
+                node->setErrorResponse(RenameOne);
                 node->setDestFileName(except.respValue.value("newName").toString());
-                setHasError(false);
                 goto fallback_retry;
             }
             case TruncateOne: {
@@ -1162,7 +1160,6 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
     g_file_make_symbolic_link(file.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
         qDebug() << "linkrun:" << err->message;
-        setHasError(true);
         FileOperationError except;
         except.srcUri = m_current_src_uri;
         except.errorType = ET_GIO;
@@ -1201,32 +1198,30 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         }
         //handle.
         switch (handle_type) {
+        node->setState(FileNode::Handling);
         case IgnoreOne: {
-            node->setState(FileNode::Unhandled);
             node->setErrorResponse(IgnoreOne);
             break;
         }
         case IgnoreAll: {
-            node->setState(FileNode::Unhandled);
             node->setErrorResponse(IgnoreOne);
             m_prehandle_hash.insert(err->code, IgnoreOne);
             break;
         }
         case OverWriteOne: {
             g_file_delete(file.get()->get(),  nullptr, nullptr);
-            node->setState(FileNode::Handled);
+            node->setState(FileNode::Invalid);
             node->setErrorResponse(OverWriteOne);
             return false;
         }
         case OverWriteAll: {
             g_file_delete(file.get()->get(),  nullptr, nullptr);
-            node->setState(FileNode::Handled);
+            node->setState(FileNode::Invalid);
             node->setErrorResponse(OverWriteOne);
             m_prehandle_hash.insert(err->code, OverWriteOne);
             break;
         }
         case BackupOne: {
-            node->setState(FileNode::Handled);
             node->setErrorResponse(BackupOne);
             QString name = "";
             QStringList extendStr = node->destBaseName().split(".");
@@ -1249,7 +1244,6 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             return false;
         }
         case BackupAll: {
-            node->setState(FileNode::Handled);
             node->setErrorResponse(BackupOne);
             while (FileUtils::isFileExsit(node->resolveDestFileUri(m_dest_dir_uri))) {
                 handleDuplicate(node);
@@ -1261,8 +1255,8 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             return false;
         }
         case RenameOne: {
+            node->setErrorResponse(RenameOne);
             node->setDestFileName(except.respValue.value("newName").toString());
-            setHasError(false);
             return false;
         }
         case Cancel: {
@@ -1273,6 +1267,8 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         default:
             break;
         }
+    } else {
+        node->setState(FileNode::Handled);
     }
     return true;
 }
