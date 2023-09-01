@@ -1066,7 +1066,7 @@ fallback_retry:
             //    qDebug() << __func__ << error->code << error->message;
             //}
             //g_error_free(error);
-
+            node->setState(FileNode::Handled);
         }
 
         fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
