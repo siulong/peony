@@ -1340,12 +1340,19 @@ fallback_retry:
                                    getCancellable().get()->get(),
                                    GFileProgressCallback(progress_callback),
                                    this,
-                                   &err);
+                                   &nodeErr);
                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
                 if (m_is_pause) fileCopy.pause();
                 fileCopy.run();
+                if (nodeErr) {
+                    node->setErrorResponse(Invalid);
+                    g_error_free (nodeErr);
+                } else {
+                    // 设置node的状态为handled用于后续删除原文件的流程
+                    node->setState(FileNode::Handled);
+                }
                 //node->setState(FileNode::Handled);
 //                node->setErrorResponse(BackupOne);
 //                setHasError(false);
