@@ -1253,6 +1253,7 @@ fallback_retry:
 //                node->setErrorResponse(OverWriteOne);
                 if (nodeErr){
 //                    setHasError(true);
+                    node->setErrorResponse(Invalid);
                     g_error_free(nodeErr);
                 }else{
 //                    setHasError(false);
@@ -1296,6 +1297,7 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, OverWriteAll);
                 if (nodeErr){
 //                    setHasError(true);
+                    node->setErrorResponse(Invalid);
                     g_error_free(nodeErr);
                 }else{
 //                    setHasError(false);
@@ -1436,24 +1438,30 @@ fallback_retry:
 void FileMoveOperation::deleteRecursively(FileNode *node)
 {
     qDebug() << "deleteRecursively:"<<node->uri()<<isCancelled()<<hasError();
-    if (isCancelled() || hasError())
+    if (isCancelled()/* || hasError()*/)
         return;
 
+    // 在外部判断可以节约时间
+//    if (m_info->m_type != FileOperationInfo::Move) {
+//        return;
+//    }
+
     g_autoptr(GFile) file = g_file_new_for_uri(node->uri().toUtf8().constData());
-    if (node->isFolder()) {
-        for (auto child : *(node->children())) {
-            deleteRecursively(child);
-        }
-        if (node->state() != FileNode::Unhandled) {
-            g_file_delete(file, getCancellable().get()->get(), nullptr);
-            node->setState(FileNode::Handled);
-        }
-    } else {
-        if (node->state() != FileNode::Unhandled) {
-            g_file_delete(file, getCancellable().get()->get(), nullptr);
-            node->setState(FileNode::Handled);
+    if (node->state() == FileNode::Handled || node->responseType() == OverWriteOne || node->responseType() == OverWriteAll) {
+        if (node->isFolder()) {
+            for (auto child : *(node->children())) {
+                deleteRecursively(child);
+            }
+            g_file_delete(file, /*getCancellable().get()->get()*/nullptr, nullptr);
+        } else {
+            // targetmove替换时原文件也需要删除，需要注意替换可能会失败的情况，这里只是一层保险，
+            // 在overwrite操作时应该判断是否overwrite成功，如果不成功需要设置response type为invalid
+            if (FileUtils::isFileExsit(node->destUri())) {
+                g_file_delete(file, /*getCancellable().get()->get()*/nullptr, nullptr);
+            }
         }
     }
+
     operationAfterProgressedOne(node->uri());
 }
 
@@ -1768,13 +1776,13 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             break;
         }
         case OverWriteOne: {
-            node->setErrorResponse(OverWriteOne);
-            g_file_delete(file.get()->get(),  nullptr, nullptr);
+            bool success = g_file_delete(file.get()->get(),  nullptr, nullptr);
+            node->setErrorResponse(success? OverWriteOne: Invalid);
             return false;
         }
         case OverWriteAll: {
-            node->setErrorResponse(OverWriteOne);
-            g_file_delete(file.get()->get(),  nullptr, nullptr);
+            bool success = g_file_delete(file.get()->get(),  nullptr, nullptr);
+            node->setErrorResponse(success? OverWriteOne: Invalid);
             m_prehandle_hash.insert(err->code, OverWriteOne);
             break;
         }
