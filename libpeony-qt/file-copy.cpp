@@ -95,9 +95,7 @@ void FileCopy::detailError (GError** error)
     }
 
     g_set_error(mError, (*error)->domain, (*error)->code, "%s", (*error)->message);
-    g_error_free(*error);
-
-    *error = nullptr;
+    g_clear_error(error);
 }
 
 void FileCopy::sync(const GFile* destFile)

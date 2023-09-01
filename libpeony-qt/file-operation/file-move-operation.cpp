@@ -870,20 +870,21 @@ fallback_retry:
                 if (m_is_long_name_file_operation) {
                     m_is_long_name_file_operation = false;
                 }
-                break;
+                return;
             }
             case IgnoreAll: {
                 node->setState(FileNode::Unhandled);
                 node->setErrorResponse(IgnoreOne);
                 setHasError(true);
                 m_prehandle_hash.insert(err->code, IgnoreOne);
+                return;
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     return;
                 }
                 if (m_is_long_name_file_operation) {
                     m_is_long_name_file_operation = false;
                 }
-                break;
+                return;
             }
             case OverWriteOne: {
                 node->setState(FileNode::Invalid);
@@ -1215,7 +1216,7 @@ fallback_retry:
                 if (m_is_long_name_file_operation) {
                     m_is_long_name_file_operation = false;
                 }
-                break;
+                return;
             }
             case IgnoreAll: {
                 node->setState(FileNode::Unhandled);
@@ -1225,7 +1226,7 @@ fallback_retry:
                 if (m_is_long_name_file_operation) {
                     m_is_long_name_file_operation = false;
                 }
-                break;
+                return;
             }
             case OverWriteOne: {
                 node->setState(FileNode::Invalid);
@@ -1783,15 +1784,33 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             break;
         }
         case OverWriteOne: {
+            setHasError(true);
             bool success = g_file_delete(file.get()->get(),  nullptr, nullptr);
-            node->setErrorResponse(success? OverWriteOne: Invalid);
+            if (!success) {
+                node->setState(FileNode::Invalid);
+                node->setErrorResponse(Invalid);
+                qWarning()<<"failed to remove orignal dest file";
+                return true;
+            } else {
+                node->setState(FileNode::Invalid);
+                node->setErrorResponse(OverWriteOne);
+            }
             return false;
         }
         case OverWriteAll: {
-            bool success = g_file_delete(file.get()->get(),  nullptr, nullptr);
-            node->setErrorResponse(success? OverWriteOne: Invalid);
             m_prehandle_hash.insert(err->code, OverWriteOne);
-            break;
+            setHasError(true);
+            bool success = g_file_delete(file.get()->get(),  nullptr, nullptr);
+            if (!success) {
+                node->setState(FileNode::Invalid);
+                node->setErrorResponse(Invalid);
+                qWarning()<<"failed to remove orignal dest file";
+                return true;
+            } else {
+                node->setState(FileNode::Invalid);
+                node->setErrorResponse(OverWriteOne);
+            }
+            return false;
         }
         case BackupOne: {
             node->setErrorResponse(BackupOne);
@@ -1899,6 +1918,7 @@ bool FileMoveOperation::saveAsOtherPath()
 
 void FileMoveOperation::cancel()
 {
+    setHasError(true);
     FileOperation::cancel();
     if (m_reporter)
         m_reporter->cancel();
