@@ -1084,7 +1084,7 @@ fallback_retry:
         }
 
         //related bug#172512
-        if (node->state() == FileNode::Handled) {
+        if (node->state() == FileNode::Handled || node->responseType() == OverWriteOne || node->responseType() == OverWriteAll) {
             g_file_copy_attributes(srcFile.get()->get(),
                                    destFile.get()->get(),
                                    GFileCopyFlags(flags),
