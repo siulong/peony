@@ -316,7 +316,6 @@ fallback_retry:
                     if (Cancel == result) {
                         cancel();
                     } else if (IgnoreOne == result || IgnoreAll == result) {
-                        setHasError(true);
                         return;
                     }
                 }
@@ -343,7 +342,6 @@ fallback_retry:
                     if (Cancel == result) {
                         cancel();
                     } else if (IgnoreOne == result || IgnoreAll == result) {
-                        setHasError(true);
                         return;
                     }
                 }
@@ -709,7 +707,6 @@ fallback_retry:
                     if (Cancel == result) {
                         cancel();
                     } else if (IgnoreOne == result || IgnoreAll == result) {
-                        setHasError(true);
                         return;
                     }
                     break;
@@ -732,7 +729,6 @@ fallback_retry:
                     node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 }
-                setHasError(true);
                 m_is_duplicated_copy = false;
                 break;
             }
@@ -746,7 +742,6 @@ fallback_retry:
                     if (Cancel == result) {
                         cancel();
                     } else if (IgnoreOne == result || IgnoreAll == result) {
-                        setHasError(true);
                         return;
                     }
                     break;
@@ -769,7 +764,6 @@ fallback_retry:
                     node->setState(FileNode::Invalid);
                     node->setErrorResponse(OverWriteOne);
                 }
-                setHasError(true);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 m_is_duplicated_copy = false;
                 break;

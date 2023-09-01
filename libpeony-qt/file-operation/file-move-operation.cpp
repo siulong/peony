@@ -1121,7 +1121,6 @@ fallback_retry:
         fileCopy.run();
 
         if (err) {
-//            setHasError(true);
             switch (err->code) {
             case G_IO_ERROR_CANCELLED:
                 return;
@@ -1253,11 +1252,9 @@ fallback_retry:
                 fileCopy.run();
 //                node->setErrorResponse(OverWriteOne);
                 if (nodeErr){
-//                    setHasError(true);
                     node->setErrorResponse(Invalid);
                     g_error_free(nodeErr);
                 }else{
-//                    setHasError(false);
                 }
                 break;
             }
@@ -1297,11 +1294,9 @@ fallback_retry:
 //                node->setErrorResponse(OverWriteAll);
                 m_prehandle_hash.insert(err->code, OverWriteAll);
                 if (nodeErr){
-//                    setHasError(true);
                     node->setErrorResponse(Invalid);
                     g_error_free(nodeErr);
                 }else{
-//                    setHasError(false);
                 }
                 break;
             }
@@ -1356,7 +1351,6 @@ fallback_retry:
                 }
                 //node->setState(FileNode::Handled);
 //                node->setErrorResponse(BackupOne);
-//                setHasError(false);
                 break;
             }
             case BackupAll: {
@@ -1372,7 +1366,6 @@ fallback_retry:
                 node->setErrorResponse(RenameOne);
                 node->setDestFileName(except.respValue.value("newName").toString());
                 // fixme: 目前无法undo，原文件名不能保留
-                //setHasError(true);
                 goto fallback_retry;
             }
             case TruncateOne: {
@@ -1423,7 +1416,6 @@ fallback_retry:
             }
         }else{
             node->setState(FileNode::Handled);
-//            setHasError(false);
         }
         if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
             m_dest_dir_uri = destDir;
@@ -1734,7 +1726,6 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
     g_file_make_symbolic_link(file.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
         qDebug() << "linkrun:" << err->message;
-//        setHasError(true);
         FileOperationError except;
         except.srcUri = m_current_src_uri;
         except.errorType = ET_GIO;
@@ -1775,13 +1766,15 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         node->setState(FileNode::Handling);
         switch (handle_type) {
         case IgnoreOne: {
+            setHasError(true);
             node->setErrorResponse(IgnoreOne);
-            break;
+            return true;
         }
         case IgnoreAll: {
+            setHasError(true);
             node->setErrorResponse(IgnoreOne);
             m_prehandle_hash.insert(err->code, IgnoreOne);
-            break;
+            return true;
         }
         case OverWriteOne: {
             setHasError(true);
@@ -1848,7 +1841,6 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
         case RenameOne: {
             node->setErrorResponse(RenameOne);
             node->setDestFileName(except.respValue.value("newName").toString());
-//            setHasError(false);
             return false;
         }
         case Cancel: {
