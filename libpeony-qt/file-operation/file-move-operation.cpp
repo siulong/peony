@@ -792,6 +792,34 @@ fallback_retry:
         GError *error = nullptr;
         auto fileIconName = FileUtilsPrivate::getFileIconName(m_current_src_uri);
         auto destFileName = FileUtils::isFileDirectory(m_current_dest_dir_uri) ? nullptr : m_current_dest_dir_uri;
+        // check if valid
+        g_autofree gchar *relative_path = g_file_get_relative_path(srcFile.get()->get(), destFile.get()->get());
+        if (relative_path) {
+            node->setState(FileNode::Invalid);
+            setHasError(true);
+            invalidOperation(tr("Invalid move operation, cannot move a file into its sub directories."));
+            invalidExited(tr("Invalid Operation."));
+            FileOperationError except;
+            except.errorType = ET_GIO;
+            except.dlgType = ED_WARNING;
+            except.srcUri = nullptr;
+            except.destDirUri = nullptr;
+            except.op = FileOpMove;
+            except.title = tr("Invalid Operation");
+            except.errorCode = G_IO_ERROR_INVAL;
+            except.errorStr = tr("Invalid move operation, cannot move a file into its sub directories.");
+            Q_EMIT errored(except);
+            auto response = except.respCode;
+            switch (response) {
+            case Cancel:
+                cancel();
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+
         //NOTE: mkdir doesn't have a progress callback.
         Q_EMIT FileProgressCallback(m_current_src_uri, destFileName, fileIconName, node->size(), node->size());
         g_file_make_directory(destFile.get()->get(),getCancellable().get()->get(), &err);
