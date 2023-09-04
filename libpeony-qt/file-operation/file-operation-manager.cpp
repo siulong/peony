@@ -965,9 +965,10 @@ void FileOperationInfo::trashOppositeInfoConstruct()
 
 std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperationInfo *info) {
 
-    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, m_opposite_type);
+    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, info->m_opposite_type);
+    oppositeInfo->m_drop_action = info->m_drop_action;
     if (info->m_drop_action == Qt::TargetMoveAction) {
-        oppositeInfo->m_drop_action = Qt::TargetMoveAction;
+        //oppositeInfo->m_drop_action = Qt::TargetMoveAction;
         oppositeInfo->m_type = FileOperationInfo::Move;
     }
     QMap<QString, QString> oppsiteMap;

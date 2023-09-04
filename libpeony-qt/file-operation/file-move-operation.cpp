@@ -81,6 +81,10 @@ FileMoveOperation::~FileMoveOperation()
 
 void FileMoveOperation::setCopyMove(bool copyMove)
 {
+    // use setAction() instead.
+    setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
+
+    return;
     m_copy_move = copyMove;
     m_info.get()->m_type = copyMove? FileOperationInfo::Copy: FileOperationInfo::Move;
     m_info.get()->m_opposite_type = copyMove? FileOperationInfo::Delete: FileOperationInfo::Move;
@@ -98,6 +102,7 @@ void FileMoveOperation::setAction(Qt::DropAction action)
     }
     default: {
         m_info.get()->m_type = FileOperationInfo::Move;
+        m_info.get()->m_opposite_type = FileOperationInfo::Move;
         break;
     }
     }
@@ -294,6 +299,7 @@ void FileMoveOperation::move()
     if (!errNode.isEmpty()) {
         if (m_move_action == Qt::TargetMoveAction) {
             m_info.get()->m_type = FileOperationInfo::Move;
+            m_info.get()->m_opposite_type = FileOperationInfo::Move;
         } else if(m_move_action == Qt::MoveAction){
             //only when action is copy can delete when ctrl+z
             //当前文件夹替换其实做的是合并操作，撤销操作不能删除文件夹，有丢失文件的风险
@@ -1502,6 +1508,7 @@ void FileMoveOperation::moveForceUseFallback()
 
     if (m_move_action == Qt::TargetMoveAction) {
         m_info.get()->m_type = FileOperationInfo::Move;
+        m_info.get()->m_opposite_type = FileOperationInfo::Move;
         for (auto node : nodes) {
             deleteRecursively(node);
         }
