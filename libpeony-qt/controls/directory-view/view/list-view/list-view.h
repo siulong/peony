@@ -157,6 +157,8 @@ protected:
 
     void startDrag(Qt::DropActions flags) override;
 
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
+
 private Q_SLOTS:
     void slotRename();
 
