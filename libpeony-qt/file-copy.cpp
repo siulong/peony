@@ -517,7 +517,8 @@ int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
     off_t offset = 0;
     int syncCount = 0;
 
-    std::lock_guard<std::mutex> lock(fileMutex);
+    std::unique_lock<std::mutex> lock(fileMutex, std::defer_lock);
+    lock.lock();
     in_fd = open(srcPath, O_RDONLY);
     if (in_fd == -1) {
         qDebug() << "Failed to open the source file";
@@ -528,7 +529,7 @@ int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
         qDebug() << "Failed to get the source file status";
         return ret;
     }
-
+    lock.unlock();
     out_fd = open(destPath, O_WRONLY | O_CREAT, stat_buf.st_mode);
     if (out_fd == -1) {
         qDebug() << "Failed to open the destination file";
