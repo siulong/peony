@@ -1,0 +1,41 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 5 Sep 2023 16:37:58 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 8 ++++++++
+ libpeony-qt/controls/directory-view/view/list-view/list-view.h   | 2 ++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 84a82c6..16757d8 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -744,6 +744,14 @@ void ListView::startDrag(Qt::DropActions flags)
+     }
+ }
+ 
++void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
++{
++    // fix #I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
++    QRect adjustedRect = rect;
++    adjustedRect.setLeft(0);
++    QTreeView::setSelection(adjustedRect, command);
++}
++
+ void ListView::slotRename()
+ {
+     //special path like trash path not allow rename
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.h b/libpeony-qt/controls/directory-view/view/list-view/list-view.h
+index fe03dc7..2147a02 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.h
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.h
+@@ -157,6 +157,8 @@ protected:
+ 
+     void startDrag(Qt::DropActions flags) override;
+ 
++    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
++
+ private Q_SLOTS:
+     void slotRename();
+ 
