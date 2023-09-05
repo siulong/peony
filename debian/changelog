@@ -1,3 +1,9 @@
+peony (4.1.1.0-ok1~0905.2) nile; urgency=medium
+
+  * debian/control: 暂时去除libkysdk-soundeffects-dev的编译依赖
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 05 Sep 2023 13:40:02 +0800
+
 peony (4.1.1.0-ok1~0905.1) nile; urgency=medium
 
   * peony-qt-desktop: 使用kscreen后台替换qscreen后台
