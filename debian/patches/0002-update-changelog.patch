@@ -1,0 +1,71 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 5 Sep 2023 13:55:46 +0800
+Subject: update changelog.
+
+---
+ .../controls/property-page/basic-properties-page.cpp   | 18 ++++++++++++++++--
+ .../controls/property-page/basic-properties-page.h     |  1 +
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/libpeony-qt/controls/property-page/basic-properties-page.cpp b/libpeony-qt/controls/property-page/basic-properties-page.cpp
+index cff50af..e0d13ec 100644
+--- a/libpeony-qt/controls/property-page/basic-properties-page.cpp
++++ b/libpeony-qt/controls/property-page/basic-properties-page.cpp
+@@ -325,7 +325,7 @@ void BasicPropertiesPage::initFloorTwo()
+         QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
+         checkboxLayout->addSpacing(1);
+         checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
+-        checkboxLayout->addSpacing(40);
++        checkboxLayout->addSpacing(35);
+         checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
+         checkboxLayout->addStretch(1);
+ 
+@@ -749,7 +749,8 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
+         g_free(fileTotalSizeFormat);
+ 
+         if(m_fileType != BP_Folder) {
+-             m_fileTotalSizeLabel->setText(fileTotalSizeText);
++            fileTotalSizeText = BasicPropertiesPage::elideTextAndToolTip(m_fileTotalSizeLabel->font(), 240, fileTotalSizeText, Qt::ElideMiddle, m_fileTotalSizeLabel);
++            m_fileTotalSizeLabel->setText(fileTotalSizeText);
+         }
+     });
+ 
+@@ -963,6 +964,7 @@ void BasicPropertiesPage::updateCountInfo(bool isDone)
+             g_free(fileSizeFormat);
+         }
+ 
++        fileSizeText = BasicPropertiesPage::elideTextAndToolTip(m_fileSizeLabel->font(), 240, fileSizeText, Qt::ElideMiddle, m_fileSizeLabel);
+         m_fileSizeLabel->setText(fileSizeText);
+ 
+         //在为完成统计前，先显示文件大小而不是占用空间大小
+@@ -1196,6 +1198,18 @@ QString BasicPropertiesPage::elideText(QFont font, int width, QString strInfo)
+     return strInfo;
+ }
+ 
++QString BasicPropertiesPage::elideTextAndToolTip(QFont font, int width, QString strInfo, Qt::TextElideMode mode, QWidget *widgt)
++{
++    QFontMetrics fontMetrics(font);
++
++    if (fontMetrics.width(strInfo) > width) {
++        widgt->setToolTip(strInfo);
++        strInfo = QFontMetrics(font).elidedText(strInfo, mode, width);
++    }
++
++    return strInfo;
++}
++
+ void FileNameThread::run()
+ {
+     QString fileName = "";
+diff --git a/libpeony-qt/controls/property-page/basic-properties-page.h b/libpeony-qt/controls/property-page/basic-properties-page.h
+index aecc8ad..24b6651 100644
+--- a/libpeony-qt/controls/property-page/basic-properties-page.h
++++ b/libpeony-qt/controls/property-page/basic-properties-page.h
+@@ -136,6 +136,7 @@ protected:
+     bool isNameChanged();
+     void setSysTimeFormat();
+     QString elideText(QFont font,int width,QString strInfo);
++    QString elideTextAndToolTip(QFont font, int width, QString strInfo, Qt::TextElideMode mode, QWidget* widgt);
+ 
+ protected Q_SLOTS:
+     void getFIleInfo(QString uri);
