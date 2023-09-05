@@ -752,6 +752,14 @@ void ListView::startDrag(Qt::DropActions flags)
     }
 }
 
+void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
+{
+    // fix #I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
+    QRect adjustedRect = rect;
+    adjustedRect.setLeft(0);
+    QTreeView::setSelection(adjustedRect, command);
+}
+
 void ListView::slotRename()
 {
     //special path like trash path not allow rename
