@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QGSettings>
 #include "desktop-icon-view.h"
+#include <KF5/KScreen/kscreen/output.h>
 
 namespace KWayland {
 namespace Client {
@@ -37,25 +38,29 @@ class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent = nullptr);
+    explicit DesktopBackgroundWindow(const KScreen::OutputPtr &output, int desktopWindowId, QWidget *parent = nullptr);
     ~DesktopBackgroundWindow() override;
 
     int id() const;
 
-    QScreen *screen() const;
+    KScreen::OutputPtr screen() const;
+    QRect getLogicalGeometryFromScreen();
+
     Peony::DesktopIconView *getIconView();
     void setId(int id);
 
     bool event(QEvent *event) override;
-    void invaidScreen();
 
 Q_SIGNALS:
     void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
-    void updateWindow(const QRect &geometry);
+    void destroyed();
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
+    void invaidScreen();
+
+    void setCentralView();
 
 protected Q_SLOTS:
     void updateWindowGeometry();
@@ -75,11 +80,12 @@ protected:
 
 private:
     int m_id = -1;
-    QScreen *m_screen = nullptr;
+    //QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
     Peony::DesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
+    KScreen::OutputPtr m_output = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H
