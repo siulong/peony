@@ -48,11 +48,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>FileLabelBox</name>
     <message>
         <source>Create New Label</source>
-        <translation>མཚོན་རྟགས་གསར་སྐྲུན།</translation>
+        <translation type="vanished">མཚོན་རྟགས་གསར་སྐྲུན།</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>བསུབ་པ།</translation>
+        <translation type="vanished">བསུབ་པ།</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -313,7 +313,15 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation>མཚོན་རྟགས་ཡོངས་རྫོགས།</translation>
+        <translation type="vanished">མཚོན་རྟགས་ཡོངས་རྫོགས།</translation>
+    </message>
+    <message>
+        <source>Manager tags...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More tags...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
