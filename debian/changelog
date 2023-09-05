@@ -1,3 +1,9 @@
+peony (4.1.1.0-ok1) nile; urgency=medium
+
+  * close-cd#I71T1F【文件管理器】查看视频属性信息显示不全
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 05 Sep 2023 13:55:12 +0800
+
 peony (4.1.1.0-ok1~0905.2) nile; urgency=medium
 
   * debian/control: 暂时去除libkysdk-soundeffects-dev的编译依赖
