@@ -284,6 +284,7 @@ private:
     bool m_show_search_bar = false;
     bool m_search_child_flag = true;
     bool m_isTabletMode = false;
+    bool m_jumpToComputer = false;
 
     //Button size macro definition
     //change height to 36 to ensure max size font can show complete, link to bug#58824

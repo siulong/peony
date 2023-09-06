@@ -377,10 +377,16 @@ void TabWidget::initAdvanceSearch()
     m_add_filter_button->setStyleSheet("border: 1px solid transparent;");
 
     connect(m_home_search, &QPushButton::clicked, m_home_search, [=]() {
+        m_jumpToComputer = true;
         switchSearchPath(false);
     });
     connect(m_current_search, &QPushButton::clicked, m_current_search, [=]() {
         switchSearchPath(true);
+        if (!m_jumpToComputer) {
+            browsePath();
+        } else {
+            m_jumpToComputer = false;
+        }
     });
 
     connect(m_add_filter_button, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
@@ -879,6 +885,7 @@ void TabWidget::updateSearchBar(bool showSearch)
         m_add_filter_button->show();
         m_search_bar_layout->setContentsMargins(10, 5, 10, 5);
         updateSearchPathButton(getCurrentUri());
+        m_jumpToComputer = false;
         switchSearchPath(true);
     }
     else
@@ -888,6 +895,7 @@ void TabWidget::updateSearchBar(bool showSearch)
         m_current_search->hide();
         m_home_search->hide();
         m_add_filter_button->hide();
+        m_jumpToComputer = false;
         m_search_bar_layout->setContentsMargins(10, 0, 10, 0);
     }
 
