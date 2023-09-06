@@ -335,8 +335,10 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
             if (pThis->m_volumeList->contains(gdevice)) {
                 auto driveItem = pThis->m_volumeList->value(gdevice);
                 driveItem->setHidden(true);
+                /* hotfix bug#161064 【HWE】【文件管理器】插入多个U盘，偶现文管侧边栏1个U盘显示两个名称现象，其中一个名称点击后提示U盘异常 */
+                Q_EMIT pThis->volumeRemove(gdevice);
                 qDebug()<<__func__<<__LINE__<<driveItem->device()<<driveItem->getHidden();
-                Q_EMIT pThis->volumeUpdate(*driveItem, "name");
+                Q_EMIT pThis->volumeAdd(Volume(*driveItem));
             }
             g_object_unref(gdrive);
         }
