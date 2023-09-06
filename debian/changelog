@@ -1,4 +1,13 @@
-peony (4.0.0.0-ok2~0905.1) nile; urgency=medium
+peony (4.0.0.0-ok2~0906) yangtze; urgency=medium
+
+  * close #I65HA3 【RISC-V】【文件管理器】从一个U盘到另一个U盘复制文件时弹出的文件操作窗口存在双标题栏
+  * close #I739UK 【区域语言】切换语言后立刻重启计算机，桌面出现多余图标
+  * close #I7251N【U盘管理工具】插入U盘，侧边栏出现两个U盘信息，其中一个显示未挂载
+  * close #I71Z8B【文件管理器】选中文件后，点击shift+delete，再点击enter，文件未永久删除
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 06 Sep 2023 18:01:07 +0800
+
+peony (4.0.0.0-ok2~0905.1) yangtze; urgency=medium
 
   * 尝试修复#I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
 
