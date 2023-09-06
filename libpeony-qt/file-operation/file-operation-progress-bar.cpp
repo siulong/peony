@@ -28,7 +28,7 @@
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QMessageBox>
-
+#include <QToolTip>
 #include <QTimer>
 #include "file-utils.h"
 #include "xatom-helper.h"
@@ -73,6 +73,7 @@ void FileOperationProgressBar::removeAllProgressbar()
     m_widget_list->clear();
     m_list_widget->clear();
     m_progress_list->clear();
+    m_pro_list->clear();
     m_progress_size = 0;
 
     uninhibit();
@@ -88,6 +89,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
     m_list_widget->setItemWidget(li, proc);
     (*m_progress_list)[proc] = li;
     (*m_widget_list)[li] = proc;
+    m_pro_list->append(proc);
     li->setSizeHint(QSize(m_list_widget->width(), m_progress_item_height));
     li->setFlags(Qt::NoItemFlags);
 
@@ -114,6 +116,7 @@ ProgressBar *FileOperationProgressBar::addFileOperation()
 void FileOperationProgressBar::showProgress(ProgressBar &progress)
 {
     if (m_progress_size > 0) {
+        kdk::UkuiStyleHelper::self()->removeHeader(this);
         progress.show();
         show();
     }
@@ -127,6 +130,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
     m_list_widget->removeItemWidget(li);
     m_progress_list->remove(progress);
     m_widget_list->remove(li);
+    m_pro_list->removeOne(progress);
 
     --m_progress_size;
 
@@ -134,7 +138,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
     if (m_current_main == progress) {
         // check other progress
         if (m_progress_size > 0) {
-            QListWidgetItem* pg = m_progress_list->first();
+            QListWidgetItem* pg = m_progress_list->value(m_pro_list->first());
             m_current_main = (*m_widget_list)[pg];
             mainProgressChange(pg);
         }
@@ -210,6 +214,7 @@ FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(pa
 
     m_progress_list = new QMap<ProgressBar*, QListWidgetItem*>;
     m_widget_list = new QMap<QListWidgetItem*, ProgressBar*>;
+    m_pro_list = new QList<ProgressBar*>;
 
     showWidgetList(false);
 
@@ -240,6 +245,18 @@ FileOperationProgressBar::~FileOperationProgressBar()
 {
     delete btn;
     if (m_dbus_connection) g_object_unref(m_dbus_connection);
+    if (!m_pro_list->isEmpty()) {
+        delete m_pro_list;
+        m_pro_list = nullptr;
+    }
+    if (!m_progress_list->isEmpty()) {
+        delete m_progress_list;
+        m_progress_list = nullptr;
+    }
+    if (!m_widget_list->isEmpty()) {
+        delete m_widget_list;
+        m_widget_list = nullptr;
+    }
 }
 
 void FileOperationProgressBar::showMore()
@@ -384,6 +401,7 @@ void FileOperationProgressBar::showDelay(int msec)
 {
     QTimer::singleShot(msec, this, [=] () {
         if (m_list_widget->count() > 0 && !m_error) {
+            kdk::UkuiStyleHelper::self()->removeHeader(this);
             show();
         }
     });
@@ -402,6 +420,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     m_btn_mini->setFlat (true);
     m_btn_mini->setProperty ("isWindowButton", 0x01);
     m_btn_mini->setIcon (QIcon::fromTheme("window-minimize-symbolic"));
+    m_btn_mini->setToolTip(tr("Minimize"));
     connect (m_btn_mini, &QPushButton::clicked, this, [=] () {
         Q_EMIT minimized();
     });
@@ -409,9 +428,10 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     m_btn_close->setFlat (true);
     m_btn_close->setProperty ("isWindowButton", 0x02);
     m_btn_close->setIcon (QIcon::fromTheme("window-close-symbolic"));
+    m_btn_close->setToolTip(tr("Close"));
     connect (m_btn_close, &QPushButton::clicked, this, [=] () {
         QMessageBox msgBox(QMessageBox::Warning, tr("cancel all file operations"),
-            tr("Are you sure want to cancel all file operations"),
+            tr("Are you sure to cancel all file operations?"),
             QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.button(QMessageBox::Ok)->setText(tr("OK"));
         msgBox.button(QMessageBox::Cancel)->setText(tr("Cancel"));
@@ -478,7 +498,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
 {
     QFontMetrics fontMetrics(font);
     QString display_name = strInfo;
-    if(fontMetrics.width(strInfo) > 2*width - 20) {
+    if(fontMetrics.width(strInfo) > 2*width) {
         display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
     }
     return display_name;
@@ -564,6 +584,29 @@ void MainProgressBar::mouseReleaseEvent(QMouseEvent *event)
     QWidget::mouseReleaseEvent(event);
 }
 
+bool MainProgressBar::event(QEvent *event)
+{
+    if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QPoint pos = helpEvent->pos();
+        if ((pos.x() >= m_progress_pause_x)
+                   && (pos.x() <= m_progress_pause_x_r)
+                   && (pos.y() >= m_progress_pause_y)
+                   && (pos.y() <= m_progress_pause_y_b)){
+            QString tooltipText = "";
+            if (m_pause) {
+                tooltipText = tr("continue");
+            } else {
+                tooltipText = tr("pause");
+            }
+
+            QToolTip::showText(helpEvent->globalPos(), tooltipText, this);
+            return true;
+        }
+    }
+    return QWidget::event(event);
+}
+
 void MainProgressBar::paintFoot(QPainter &painter)
 {
     painter.save();
@@ -642,7 +685,7 @@ void MainProgressBar::paintContent(QPainter &painter)
         } else {
             this->setToolTip(m_file_name);
             QString display_name;
-            display_name = elideText(this->font(), m_file_name_w, m_file_name);
+            display_name = elideText(this->font(),400,m_file_name);
             int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
             int fileNameHeight = qMax(m_file_name_height, fontHeight);
             int textY = m_fix_height / 2 - fileNameHeight / 2;
@@ -1017,14 +1060,17 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     if (nullptr != destUri) {
         m_dest_uri = Peony::FileUtils::urlDecode(destUri);
     }
-
-    if (fIcon != getIcon().name()) {
-        setIcon(fIcon);
+    QString newIcon = fIcon;
+    if (newIcon.isNull()) {
+        newIcon = Peony::FileUtilsPrivate::getFileIconName(srcUri);
+    }
+    if (newIcon != getIcon().name()) {
+        setIcon(newIcon);
     }
 
     double currentPercent = current * 1.0 / total;
     //fix bug#133624,133380, delete all empty files, not update progress bar
-//    if (m_total_size <= 0){
+//    if (m_total_size <= 0 || 16 * m_total_count <= m_total_size){
 //        m_update_count++;
 //        currentPercent = m_update_count * 1.0 /m_total_count;
 //    }
