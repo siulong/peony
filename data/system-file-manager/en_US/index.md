@@ -169,7 +169,7 @@ Delete to recycling bin:
 * Way 2:Selected, Delete
 * Way 3:Select it and drag it to the "Trash"on the desktop
 
-If the deleted files are on a removable device, eject the device without emptying the Trash, the deleted files on the removable device may not be visible on other operating systems, but they still exist;When the device is reinserted into the system used to delete this file, it will be visible in the Trash.
+If the deleted files are on removable devices, or some remote directories and special directories, the deletion option is to delete permanently, and the local file deletion option is to delete to the Recycle bin, where the deleted files can be seen.
 
 Delete permanently:
 * Way 1:Delete again in the "Trash"
@@ -220,14 +220,14 @@ Advanced settings are the peony preferences.21,Preferences are divided into thre
 
 (2)Share: sharing, printer, zip, mailbox sharing
 
-(3)Drop-down menus:Keep Allow , Show Hidden, Show File Extension, Forbid thumbnailing, Resident in Backend,Parallel Operations,Help, About.
+(3)Drop-down menus:Keep Allow , Show Hidden, Show File Extension, Forbid thumbnailing, Resident in Backend,Parallel Operations,Set samba password, Open each folder in a new window, Help, About.
 
 |Icons|Description|Icons|Description
 | :------------ | :------------ | :------------ | :------------ |
 |![](image/icon20.png)|	Reproduction of selected projects|![](image/icon21.png)|	Paste selected items
-	|![](image/icon22.png)|Cut the selected item|![](image/icon23.png)|Trash, empty all items	
-	|![](image/icon24.png)|Share selected projects|![](image/icon25.png)|Printer and scanner functional items
-	|![](image/icon26.png)|Share the selected zip file|![](image/icon27.png)|Send email function item
+|![](image/icon22.png)|Cut the selected item|![](image/icon23.png)|Trash, empty all items
+|![](image/icon24.png)|Share selected projects|![](image/icon25.png)|Printer and scanner functional items
+|![](image/icon26.png)|Share the selected zip file|![](image/icon27.png)|Send email function item
 
 <br>
 
@@ -243,6 +243,8 @@ The content that can be set contains multiple aspects, and the functions corresp
 |Forbid thumbnailing|Whether to display the preview thumbnails of pictures, videos, and wps office files
 |Resident in Backend|Whether the file manager program has been kept in the background without completely exiting
 |Parallel Operations|Whether multiple file operations can be performed simultaneously
+|Set samba password|You can set the samba password for the current user
+|Open each folder in a new window|Whether a new window opens when the folder is opened
 |Help|Jump to User Manual
 |About|Show details of the peony 
 
