@@ -32,7 +32,7 @@
 //顶部菜单 - Top menu
 #define RESIDENT_IN_BACKEND         "resident"
 #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
-#define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
+#define ALLOW_FILE_OP_PARALLEL      "allow-file-op-parallel"
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
 
 //视图 - View
