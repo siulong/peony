@@ -1,0 +1,58 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Thu, 7 Sep 2023 14:18:05 +0800
+Subject: update changelog.
+
+---
+ src/control/tab-widget.cpp | 8 ++++++++
+ src/control/tab-widget.h   | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index e91e3c5..eea2a4f 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -349,10 +349,16 @@ void TabWidget::initAdvanceSearch()
+     m_add_filter_button->setStyleSheet("border: 1px solid transparent;");
+ 
+     connect(m_home_search, &QPushButton::clicked, m_home_search, [=]() {
++        m_jumpToComputer = true;
+         switchSearchPath(false);
+     });
+     connect(m_current_search, &QPushButton::clicked, m_current_search, [=]() {
+         switchSearchPath(true);
++        if (!m_jumpToComputer) {
++            browsePath();
++        } else {
++            m_jumpToComputer = false;
++        }
+     });
+ 
+     connect(m_add_filter_button, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
+@@ -855,6 +861,7 @@ void TabWidget::updateSearchBar(bool showSearch)
+         m_add_filter_button->show();
+         m_search_bar_layout->setContentsMargins(10, 5, 10, 5);
+         updateSearchPathButton();
++        m_jumpToComputer = false;
+         switchSearchPath(true);
+     }
+     else
+@@ -864,6 +871,7 @@ void TabWidget::updateSearchBar(bool showSearch)
+         m_current_search->hide();
+         m_home_search->hide();
+         m_add_filter_button->hide();
++        m_jumpToComputer = false;
+         m_search_bar_layout->setContentsMargins(10, 0, 10, 0);
+     }
+ 
+diff --git a/src/control/tab-widget.h b/src/control/tab-widget.h
+index 4b0f697..e25c4f4 100644
+--- a/src/control/tab-widget.h
++++ b/src/control/tab-widget.h
+@@ -284,6 +284,7 @@ private:
+     bool m_show_search_bar = false;
+     bool m_search_child_flag = true;
+     bool m_isTabletMode = false;
++    bool m_jumpToComputer = false;
+ 
+     //Button size macro definition
+     //change height to 36 to ensure max size font can show complete, link to bug#58824
