@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0907) yangtze; urgency=medium
+
+  * close #I72D2H【文件管理器】切换搜索目录失败
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 07 Sep 2023 14:17:39 +0800
+
 peony (4.0.0.0-ok2~0906) yangtze; urgency=medium
 
   * close #I65HA3 【RISC-V】【文件管理器】从一个U盘到另一个U盘复制文件时弹出的文件操作窗口存在双标题栏
