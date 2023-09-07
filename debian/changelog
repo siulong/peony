@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0907.1) yangtze; urgency=medium
+
+  * close #I64Q59  取消操作并行后仍然可以并行复制粘贴文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 07 Sep 2023 16:06:11 +0800
+
 peony (4.0.0.0-ok2~0907) yangtze; urgency=medium
 
   * close #I72D2H【文件管理器】切换搜索目录失败
