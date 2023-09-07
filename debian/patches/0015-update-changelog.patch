@@ -1,0 +1,21 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Thu, 7 Sep 2023 16:06:34 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/global-settings.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libpeony-qt/global-settings.h b/libpeony-qt/global-settings.h
+index 39239ca..876fc7b 100644
+--- a/libpeony-qt/global-settings.h
++++ b/libpeony-qt/global-settings.h
+@@ -32,7 +32,7 @@
+ //顶部菜单 - Top menu
+ #define RESIDENT_IN_BACKEND         "resident"
+ #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
+-#define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
++#define ALLOW_FILE_OP_PARALLEL      "allow-file-op-parallel"
+ #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
+ 
+ //视图 - View
