@@ -70,6 +70,7 @@ void DirectoryViewFactoryManager2::registerFactory(const QString &name, Director
         return;
     }
     m_hash->insert(name, factory);
+    Q_EMIT updateViewEnable(name, factory, true);
 }
 
 void DirectoryViewFactoryManager2::unregisterFactory(const QString &name, DirectoryViewPluginIface2 *factory)
