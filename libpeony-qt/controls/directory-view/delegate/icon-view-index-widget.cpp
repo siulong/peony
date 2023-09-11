@@ -195,7 +195,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 //    p.fillRect(0, 0, 999, 999, qApp->palette().base());
 
     //adjustPos();
-
+    auto bgColor = QApplication::palette().base().color();
+    p.save();
+    p.setPen(Qt::transparent);
+    p.setBrush(bgColor);
+    p.drawRoundedRect(this->rect(), 6, 6);
+    p.restore();
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
 
