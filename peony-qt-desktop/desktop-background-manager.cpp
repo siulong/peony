@@ -205,6 +205,11 @@ void DesktopBackgroundManager::setAccountBackground()
     qDebug() << "setAccountBackground path:" <<m_current_bg_path;
     if (!msg.errorMessage().isEmpty())
         qDebug() << "update user background file error: " << msg.errorMessage();
+
+    //saveBlurBackground
+    QProcess p;
+    p.startDetached("/usr/bin/save-blurBackground");
+
 }
 
 void DesktopBackgroundManager::switchBackground()
