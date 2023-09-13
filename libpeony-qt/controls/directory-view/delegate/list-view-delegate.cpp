@@ -571,6 +571,8 @@ void TextEdit::adjustText()
                 textCursor().setPosition(position);
                 textCursor().deletePreviousChar();
                 textCursor().endEditBlock();
+            } else {
+                break;
             }
         }
         blockSignals(false);
