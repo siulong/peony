@@ -32,6 +32,7 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QFile>
+#include <QProcess>
 #include <global-settings.h>
 
 #include <gio/gio.h>
