@@ -38,6 +38,7 @@
 #include <gio/gio.h>
 
 #include <QDebug>
+#include <QProcess>
 
 static DesktopBackgroundManager *global_instance = nullptr;
 
