@@ -921,6 +921,19 @@ void BasicPropertiesPage::chooseFileIcon()
     iconPathUrl.setPath("/usr/share/icons");
     auto picture = QFileDialog::getOpenFileName(nullptr, tr("Choose a custom icon"), "/usr/share/icons", "*.png *.jpg *.jpeg *.svg");
 
+    QFileInfo fileInfo(picture);
+    if (fileInfo.exists()) {
+        qint64 fileSize = fileInfo.size();
+        double fileSizeMB = fileSize / (1024.0 * 1024.0);
+        qDebug() << "fileSize is ：" << fileSizeMB << "MB";
+        if (fileSizeMB > 1.0) {
+            QMessageBox::warning(nullptr, "", tr("Please select a image that is smaller than 1MB."));
+            return;
+        }
+    } else {
+        qDebug() << "file does not exist ：" << picture;
+    }
+
     if (!picture.isEmpty()) {
         qDebug()<<"chose new file icon:"<< picture;
         m_iconButton->setIcon(QIcon(picture));
