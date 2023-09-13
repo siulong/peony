@@ -38,6 +38,12 @@
       <description>show file extension in peony </description>
     </key>
 
+    <key type="b" name="show-create-time">
+      <default>false</default>
+      <summary>show create time</summary>
+      <description>show file create time in peony </description>
+    </key>
+
     <key type="b" name="send-uris-of-copy-dsps">
       <default>false</default>
       <summary>send uris of copy dsps</summary>
