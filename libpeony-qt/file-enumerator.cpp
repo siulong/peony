@@ -429,7 +429,11 @@ void FileEnumerator::enumerateAsync()
     // query directory info first
     auto infoJob = new FileInfoJob(m_uri);
     infoJob->setAutoDelete(true);
-    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+        if (!successed) {
+            Q_EMIT enumerateFinished(false);
+            return;
+        }
         //auto uri = g_file_get_uri(m_root_file);
         //auto path = g_file_get_path(m_root_file);
         g_file_enumerate_children_async(m_root_file,
@@ -442,6 +446,7 @@ void FileEnumerator::enumerateAsync()
                                         this);
 
     });
+    connect(this, &FileEnumerator::cancelled, infoJob, &FileInfoJob::cancel);
     infoJob->queryAsync();
 }
 
