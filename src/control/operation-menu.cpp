@@ -100,6 +100,12 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     });
     m_showFileExtension->setCheckable(true);
 
+    m_showCreateTime = addAction(tr("Show Create Time"), this, [](bool checked){
+        Peony::GlobalSettings::getInstance()->setGSettingValue(SHOW_CREATE_TIME, checked);
+    });
+    m_showCreateTime->setCheckable(true);
+    m_showCreateTime->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool());
+
     auto forbidThumbnailing = addAction(tr("Forbid thumbnailing"), this, [=](bool checked) {
         //FIXME:
         Peony::GlobalSettings::getInstance()->setValue(FORBID_THUMBNAIL_IN_VIEW, checked);

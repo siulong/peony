@@ -56,6 +56,7 @@
 #define SORT_FOLDER_FIRST           "folderFirst"
 #define SORT_CHINESE_FIRST          "chineseFirst"
 #define USE_GLOBAL_DEFAULT_SORTING "useGlobalDefaultSorting"
+#define SHOW_CREATE_TIME            "showCreateTime"
 
 //窗口设置 - Window setting
 #define DEFAULT_WINDOW_WIDTH        "defaultWindowWidth"

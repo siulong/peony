@@ -274,6 +274,16 @@ quint64 FileInfo::getDeletionDateUInt64()
     return m_deletion_date_uint64;
 }
 
+guint64 FileInfo::getCreate_time() const
+{
+    return m_create_time;
+}
+
+QString FileInfo::getCreate_date() const
+{
+    return m_create_date;
+}
+
 const QString FileInfo::getFinalDisplayName()
 {
     if (isEmptyInfo())

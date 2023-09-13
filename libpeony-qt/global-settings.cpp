@@ -141,6 +141,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(SEND_URIS_OF_COPY_DSPS, false);
     m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
     m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
+    m_cache.insert(SHOW_CREATE_TIME, false);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         m_peony_gsettings = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 
@@ -158,7 +159,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
             bool sendChanged = false;
-            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING) {
+            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING || SHOW_CREATE_TIME == key)) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);

@@ -324,6 +324,10 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 //use sdk interface to get time format
                 return QVariant(item->m_info->deletionDate());
             }
+            if (Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool()) {
+                return QVariant(item->m_info->getCreate_date());
+            }
+
             return QVariant(item->m_info->modifiedDate());
         default:
             return QVariant();
@@ -398,6 +402,10 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             //trash files show delete Date
             if (m_root_uri.startsWith("trash:///"))
                 return tr("Delete Date");
+            if (Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool()) {
+                return tr("Create Date");
+            }
+
             return tr("Modified Date");
         case FileType:
             return tr("File Type");

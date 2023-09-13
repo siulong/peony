@@ -341,6 +341,10 @@ public:
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
 
+    guint64 getCreate_time() const;
+
+    QString getCreate_date() const;
+
 Q_SIGNALS:
     void updated();
 
@@ -420,6 +424,9 @@ private:
     QMutex m_mutex;
 
     QString m_finalDisplayName; /* 最终的显示名，查询获取后缓存起来 */
+
+    guint64 m_create_time = 0;
+    QString m_create_date = nullptr;
 };
 
 }
