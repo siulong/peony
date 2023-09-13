@@ -86,35 +86,22 @@ void IconViewEditor::minimalAdjust()
     if (m_max_length_limit) {
         //fix #154584
         blockSignals(true);
-        auto privousText = toPlainText();
-        auto currentText = privousText;
-        auto position = textCursor().position();
-        bool needReset = false;
         while (true) {
             if (m_limit_bytes) {
-                auto local8Bit = currentText.toLocal8Bit();
+                auto local8Bit = toPlainText().toLocal8Bit();
                 if (local8Bit.length() <= m_max_length_limit) {
                     break;
                 }
             } else {
-                if (currentText.length() <= m_max_length_limit) {
+                if (toPlainText().length() <= m_max_length_limit) {
                     break;
                 }
             }
-
+            auto position = textCursor().position();
             if (position > 0) {
-                position--;
-                currentText.remove(position, 1);
-            } else {
-                currentText.remove(0, 1);
+                textCursor().setPosition(position - 1);
+                textCursor().deletePreviousChar();
             }
-            needReset = true;
-        }
-        if (needReset) {
-            setText(currentText);
-            auto currentTextCursor = textCursor();
-            currentTextCursor.setPosition(position);
-            setTextCursor(currentTextCursor);
         }
         blockSignals(false);
     }
