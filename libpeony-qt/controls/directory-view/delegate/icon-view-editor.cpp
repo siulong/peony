@@ -86,6 +86,7 @@ void IconViewEditor::minimalAdjust()
     if (m_max_length_limit) {
         //fix #154584
         blockSignals(true);
+        auto position = textCursor().position();
         while (true) {
             if (m_limit_bytes) {
                 auto local8Bit = toPlainText().toLocal8Bit();
@@ -97,10 +98,12 @@ void IconViewEditor::minimalAdjust()
                     break;
                 }
             }
-            auto position = textCursor().position();
             if (position > 0) {
-                textCursor().setPosition(position - 1);
+                position--;
+                textCursor().beginEditBlock();
+                textCursor().setPosition(position);
                 textCursor().deletePreviousChar();
+                textCursor().endEditBlock();
             }
         }
         blockSignals(false);
