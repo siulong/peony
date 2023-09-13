@@ -131,15 +131,11 @@ The various documents are sorted as follows:
 
 (6)Sort by folder path: sort by path of folder storage.
 
-(7)Sort by tag: The file manager provides the tagging function, and after the user tags, the default sort by tag is, sort by color red > orange > yellow > green > green > blue > purple > gray > no color.
+(7)Incremental sorting: sort documents in numerical, alphabetical ascending order.
 
-![Fig 10 Mark sort-big](image/10.png)
+(8)Descending sorting: sort documents in numerical, alphabetical descending order.
 
-(8)Incremental sorting: sort documents in numerical, alphabetical ascending order.
-
-(9)Descending sorting: sort documents in numerical, alphabetical descending order.
-
-(10)Sort items ... : By selecting this item, the user can customize the sorting method in the menu.
+(9)Sort items ... : By selecting this item, the user can customize the sorting method in the menu.
 
 ### Advanced Search Function
 The Peony provides advanced search for users, using the Simple Search feature by default.Simple search function:Click the "![](image/icon18-o.png)"icon button to switch to the search input box.users can search for files in the current directory by entering the contents in the search box and pressing the Enter key.
@@ -220,14 +216,14 @@ Advanced settings are the peony preferences.21,Preferences are divided into thre
 
 (2)Share: sharing, printer, zip, mailbox sharing
 
-(3)Drop-down menus:Keep Allow , Show Hidden, Show File Extension, Forbid thumbnailing, Resident in Backend,Parallel Operations,Help, About.
+(3)Drop-down menus:Keep Allow , Show Hidden, Show File Extension, Forbid thumbnailing, Resident in Backend,Parallel Operations,Set samba password,Help, About.
 
 |Icons|Description|Icons|Description
 | :------------ | :------------ | :------------ | :------------ |
 |![](image/icon20.png)|	Reproduction of selected projects|![](image/icon21.png)|	Paste selected items
-	|![](image/icon22.png)|Cut the selected item|![](image/icon23.png)|Trash, empty all items	
-	|![](image/icon24.png)|Share selected projects|![](image/icon25.png)|Printer and scanner functional items
-	|![](image/icon26.png)|Share the selected zip file|![](image/icon27.png)|Send email function item
+|![](image/icon22.png)|Cut the selected item|![](image/icon23.png)|Trash, empty all items	
+|![](image/icon24.png)|Share selected projects|![](image/icon25.png)|Printer and scanner functional items
+|![](image/icon26.png)|Share the selected zip file|![](image/icon27.png)|Send email function item
 
 <br>
 
@@ -243,6 +239,7 @@ The content that can be set contains multiple aspects, and the functions corresp
 |Forbid thumbnailing|Whether to display the preview thumbnails of pictures, videos, and wps office files
 |Resident in Backend|Whether the file manager program has been kept in the background without completely exiting
 |Parallel Operations|Whether multiple file operations can be performed simultaneously
+|Set samba password|You can set the samba password for the current user
 |Help|Jump to User Manual
 |About|Show details of the peony 
 
