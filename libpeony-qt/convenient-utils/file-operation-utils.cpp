@@ -294,7 +294,7 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
 FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list, QWidget *parent)
 {
     FileOperationInternalDialog questionbox((QDialog*)parent);
-    auto okButton = questionbox.addButton(QObject::tr("OK"));
+    auto okButton = questionbox.addButton(QObject::tr("Clean the Trash"));
     questionbox.connect(okButton, &QPushButton::clicked, &questionbox, [&]{
         questionbox.accept();
     });
