@@ -705,12 +705,25 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
     qDebug() << "output added:" << output.data()->name()<< output->id() << output->geometry();
     int desktopWindowId = getDesktopWindowId();
     auto window = new DesktopBackgroundWindow(output, desktopWindowId);
-    window->getIconView()->refresh();
+
     m_bg_windows.append(window);
     desktop_window_id = m_bg_windows.count();
     qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
     window->show();
 
+    //task#74174 恢复扩展屏
+    m_mode = checkScreenMode(output->geometry());
+    if (2 == m_mode) {
+        multiscreenMode();
+    }
+    //在设置模式后初始化viewprt，否则会导致主屏是扩展屏，插入扩展屏后，model没有数据
+    if (output->isPrimary()) {
+        window->getIconView()->refresh();
+    } else {
+        QTimer::singleShot(150, window, [=](){
+            window->getIconView()->initViewport();
+        });
+    }
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
         for (auto bgWindow : m_bg_windows) {
@@ -726,11 +739,6 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
             bgWindow->getIconView()->setSortType(sortType);
         }
     });
-    //task#74174 恢复扩展屏
-    m_mode = checkScreenMode(output->geometry());
-    if (2 == m_mode) {
-        multiscreenMode();
-    }
 
     relocateIconView(output);
 }

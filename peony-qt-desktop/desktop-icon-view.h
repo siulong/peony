@@ -118,6 +118,7 @@ public:
 
     // only used in model refresh.
     void clearCache();
+    void initViewport();
 
 private:
     QRect getScreenArea(QScreen* screen);
@@ -252,7 +253,7 @@ protected:
 
     void relayoutExsitingItems(const QStringList &uris);
     void checkItemsOver();
-    void dragToOtherScreen(QDropEvent *e);
+    bool dragToOtherScreen(QDropEvent *e);
 
 private:
     ZoomLevel m_zoom_level = Invalid;
