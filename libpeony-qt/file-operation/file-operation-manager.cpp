@@ -316,31 +316,31 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
     }
 
 start:
-
+    static bool oldQuitOnLastWindow = QApplication::quitOnLastWindowClosed();
     QApplication::setQuitOnLastWindowClosed(false);
 
     connect(operation, &FileOperation::operationFinished, this, [=]() {
         operation->notifyFileWatcherOperationFinished();
-        auto settings = GlobalSettings::getInstance();
-        bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
-        QApplication::setQuitOnLastWindowClosed(!runbackend);
-
-        QTimer::singleShot(1000, this, [=]() {
-            int last_op_count = m_thread_pool->children().count();
-            if (last_op_count == 0) {
-                if (qApp->allWidgets().isEmpty()) {
-                    if (!runbackend) {
-                        qApp->quit();
+        if (qApp->property("isPeony").toBool()) {
+            auto settings = GlobalSettings::getInstance();
+            bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
+            QApplication::setQuitOnLastWindowClosed(!runbackend);
+            QTimer::singleShot(1000, this, [=]() {
+                int last_op_count = m_thread_pool->children().count();
+                if (last_op_count == 0) {
+                    if (qApp->allWidgets().isEmpty()) {
+                        if (!runbackend) {
+                            qApp->quit();
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            QApplication::setQuitOnLastWindowClosed(oldQuitOnLastWindow);
+        }
     }, Qt::BlockingQueuedConnection);
 
-
-
     bool allowParallel = m_allow_parallel;
-
 
     connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
         // fix #171449
