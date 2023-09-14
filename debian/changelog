@@ -1,3 +1,10 @@
+peony (4.0.0.0-ok2~0914) yangtze; urgency=medium
+
+  * close #I6YT5F【文件管理器】用户手册部分内容与实际内容不一致
+  * close #I72DPQ 双屏扩展模式下-主屏桌面空间不足，扩展屏存在文件，断开扩展屏再重新连接扩展屏，扩展屏左上角上的文件重叠，以及修改 恢复扩展屏图标失败，拖拽问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 14 Sep 2023 18:10:52 +0800
+
 peony (4.0.0.0-ok2~0907.1) yangtze; urgency=medium
 
   * close #I64Q59  取消操作并行后仍然可以并行复制粘贴文件
