@@ -199,7 +199,7 @@ void LocationBar::setRootUri(const QString &uri)
 
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
-        infoJob->setAutoDelete();
+        //infoJob->setAutoDelete();
         // enumerate buttons info directory
         auto enumerator = new FileEnumerator;
         //comment to fix kydroid path show abnormal issue
@@ -256,11 +256,13 @@ void LocationBar::setRootUri(const QString &uri)
                     m_buttons_info.removeOne(info);
                 }
                 enumerator->deleteLater();
+                infoJob->deleteLater();
                 return;
             }
 
             enumerator->setEnumerateDirectory(info.get()->uri());
             enumerator->enumerateAsync();
+            infoJob->deleteLater();
         });
         infoJob->queryAsync();
     }
