@@ -1227,9 +1227,10 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
-    infoJob->setAutoDelete();
+    //infoJob->setAutoDelete();
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
+        infoJob->deleteLater();
         QString rootDir = info.get()->uri();
         if (info.get()->uri().startsWith("file:///") && !info.get()->isDir()) {
             rootDir = Peony::FileUtils::getParentUri(rootDir);

@@ -308,7 +308,7 @@ void LocationBar::updateButtons()
 
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
-        infoJob->setAutoDelete();
+        //infoJob->setAutoDelete();
         connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
             // enumerate buttons info directory
             auto enumerator = new FileEnumerator;
@@ -343,6 +343,7 @@ void LocationBar::updateButtons()
             });
 
             enumerator->enumerateAsync();
+            infoJob->deleteLater();
         });
         infoJob->queryAsync();
     }
