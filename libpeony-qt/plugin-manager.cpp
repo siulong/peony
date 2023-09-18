@@ -109,6 +109,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         case PluginInterface::MenuPlugin: {
             MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
             MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
+            if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
+                qApp->setProperty("deviceRenamePluginLoaded", true);
+            }
             break;
         }
         case PluginInterface::PreviewPagePlugin: {
@@ -209,6 +212,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                            MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
                            //MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
                            MenuPluginManager::getInstance()->unregisterPlugin(menuPlugin);
+                           if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
+                               qApp->setProperty("deviceRenamePluginLoaded", false);
+                           }
                            break;
                         }
                         case PluginInterface::PreviewPagePlugin: {
@@ -256,6 +262,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                         case PluginInterface::MenuPlugin: {
                            MenuPluginInterface *menuPlugin = dynamic_cast<MenuPluginInterface*>(piface);
                            MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
+                           if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
+                               qApp->setProperty("deviceRenamePluginLoaded", true);
+                           }
                            break;
                         }
                         case PluginInterface::PreviewPagePlugin: {
