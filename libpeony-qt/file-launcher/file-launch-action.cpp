@@ -126,6 +126,7 @@ bool FileLaunchAction::isExcuteableFile(QString fileType)
 
 void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -248,6 +249,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
 
 void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -467,6 +469,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 
 void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(files.isEmpty())
         return;
 
@@ -711,7 +714,7 @@ bool FileLaunchAction::launchAppWithDBus()
     //mavis不通过session而通过AppMgr
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
 
-    if (isDesktopFileAction()) {
+    if (isDesktopFileAction() && !m_force_with_arg) {
         bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
         if (intel && mavis) {
             return launchAppWithAppMgr();
