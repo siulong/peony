@@ -1,0 +1,48 @@
+From: kylin <yangyanwei>
+Date: Mon, 18 Sep 2023 09:34:16 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QjSTc3WFZS44CQYXJt44CR44CQ5qCR6I6T5rS+44CR44CQ?=
+ =?utf-8?b?5omT5byA5pa55byP44CR5Y+z6ZSu5qGM6Z2i5LiK55qEZGVza3RvcOaWh+S7tg==?=
+ =?utf-8?b?77yM5omT5byA5pa55byP6YCJ5oup5paH5pys57yW6L6R5Zmo77yM5omT5byA5LqG?=
+ =?utf-8?b?5bqU55So?=
+
+---
+ libpeony-qt/file-launcher/file-launch-action.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/libpeony-qt/file-launcher/file-launch-action.cpp b/libpeony-qt/file-launcher/file-launch-action.cpp
+index 3f6c336..b6e97f6 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.cpp
++++ b/libpeony-qt/file-launcher/file-launch-action.cpp
+@@ -126,6 +126,7 @@ bool FileLaunchAction::isExcuteableFile(QString fileType)
+ 
+ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
+ {
++    m_force_with_arg = forceWithArg;
+     if(checkAppDisabled()) {
+         return;
+     }
+@@ -248,6 +249,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
+ 
+ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
+ {
++    m_force_with_arg = forceWithArg;
+     if(checkAppDisabled()) {
+         return;
+     }
+@@ -467,6 +469,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
+ 
+ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithArg, bool skipDialog)
+ {
++    m_force_with_arg = forceWithArg;
+     if(files.isEmpty())
+         return;
+ 
+@@ -709,7 +712,7 @@ bool FileLaunchAction::launchAppWithDBus()
+     //mavis不通过session而通过AppMgr
+     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
+ 
+-    if (isDesktopFileAction()) {
++    if (isDesktopFileAction() && !m_force_with_arg) {
+         bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
+         if (intel && mavis) {
+             return launchAppWithAppMgr();
