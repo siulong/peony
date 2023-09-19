@@ -58,7 +58,7 @@ bool SideBarProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelIn
     auto item = static_cast<SideBarAbstractItem*>(index.internalPointer());
 
     if (item->type() != SideBarAbstractItem::SeparatorItem) {
-        if (item->displayName().isNull() && item->type() == SideBarAbstractItem::FileSystemItem)
+        if (item->displayName().isNull() && (item->type() == SideBarAbstractItem::FileSystemItem || item->type() == SideBarAbstractItem::VFSItem))
             return false;
 
         //not exist path filter
@@ -117,52 +117,64 @@ bool SideBarProxyFilterSortModel::lessThan(const QModelIndex &left, const QModel
     }
     auto leftItem = static_cast<SideBarAbstractItem*>(left.internalPointer());
     auto rightItem = static_cast<SideBarAbstractItem*>(right.internalPointer());
-    if (leftItem->type() != SideBarAbstractItem::FileSystemItem || rightItem->type() != SideBarAbstractItem::FileSystemItem) {
+    bool isVFSorFileSystemItem = false;
+    bool isVFSItem = false;
+    if (leftItem->type() == SideBarAbstractItem::FileSystemItem && rightItem->type() == SideBarAbstractItem::FileSystemItem) {
+        isVFSorFileSystemItem = true;
+    }
+    if (leftItem->type() == SideBarAbstractItem::VFSItem && rightItem->type() == SideBarAbstractItem::VFSItem) {
+        isVFSorFileSystemItem = true;
+        isVFSItem = true;
+    }
+
+    if (!isVFSorFileSystemItem) {
         return false;
     }
 
-    if (left.parent().data(Qt::UserRole).toString().compare("computer:///") == 0
-            && right.parent().data(Qt::UserRole).toString().compare("computer:///") == 0) {
-        if (leftItem->uri().compare("file:///") == 0) {
-            return false;
-        }
-        if (rightItem->uri().compare("file:///") == 0) {
-            return true;
-        }
-        if (leftItem->uri().compare("computer:///ukui-data-volume") == 0) {
-            return false;
-        }
-        if (rightItem->uri().compare("computer:///ukui-data-volume") == 0) {
-            return true;
-        }
+    if (!isVFSItem) {
+        if (left.parent().data(Qt::UserRole).toString().compare("computer:///") == 0
+                && right.parent().data(Qt::UserRole).toString().compare("computer:///") == 0) {
+            if (leftItem->uri().compare("file:///") == 0) {
+                return false;
+            }
+            if (rightItem->uri().compare("file:///") == 0) {
+                return true;
+            }
+            if (leftItem->uri().compare("computer:///ukui-data-volume") == 0) {
+                return false;
+            }
+            if (rightItem->uri().compare("computer:///ukui-data-volume") == 0) {
+                return true;
+            }
 
-        if ((!(leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/bus/usb"))
-                && (!(rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/bus/usb"))) {
+            if ((!(leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/bus/usb"))
+                    && (!(rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/bus/usb"))) {
+                return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
+            } else if (!(leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/bus/usb")) {
+                return false;
+            } else if (!(rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/bus/usb")) {
+                return true;
+            }
+
+            if (((leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/sr"))
+                    && ((rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/sr"))) {
+                return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
+            } else if ((leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/sr")) {
+                return false;
+            } else if ((rightItem->isEjectable() || rightItem->isEjectable()) && !rightItem->getDevice().startsWith("/dev/sr")) {
+                return true;
+            }
+
+            if (leftItem->getDevice().startsWith("/dev/bus/usb") && rightItem->getDevice().startsWith("/dev/bus/usb")) {
+                return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
+            } else if (leftItem->getDevice().startsWith("/dev/bus/usb")) {
+                return false;
+            } else if (rightItem->getDevice().startsWith("/dev/bus/usb")) {
+                return true;
+            }
+
             return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
-        } else if (!(leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/bus/usb")) {
-            return false;
-        } else if (!(rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/bus/usb")) {
-            return true;
         }
-
-        if (((leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/sr"))
-                && ((rightItem->isEjectable() || rightItem->isStopable()) && !rightItem->getDevice().startsWith("/dev/sr"))) {
-            return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
-        } else if ((leftItem->isEjectable() || leftItem->isStopable()) && !leftItem->getDevice().startsWith("/dev/sr")) {
-            return false;
-        } else if ((rightItem->isEjectable() || rightItem->isEjectable()) && !rightItem->getDevice().startsWith("/dev/sr")) {
-            return true;
-        }
-
-        if (leftItem->getDevice().startsWith("/dev/bus/usb") && rightItem->getDevice().startsWith("/dev/bus/usb")) {
-            return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
-        } else if (leftItem->getDevice().startsWith("/dev/bus/usb")) {
-            return false;
-        } else if (rightItem->getDevice().startsWith("/dev/bus/usb")) {
-            return true;
-        }
-
-        return m_comparer.compare(leftItem->getDevice(), rightItem->getDevice()) > 0;
     }
 
     return m_comparer.compare(leftItem->displayName(), rightItem->displayName()) > 0;
