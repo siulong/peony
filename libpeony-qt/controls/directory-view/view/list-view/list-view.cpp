@@ -151,7 +151,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setIconSize(QSize(40, 40));
     setMouseTracking(true);//追踪鼠标
 
-    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
+    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -441,7 +441,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         m_logicRect = logicRect.normalized();
 
         int dx = -horizontalOffset();
-        int dy = -verticalOffset() + this->header()->height();
+        int dy = -verticalOffset();
         auto realRect = m_logicRect.adjusted(dx, dy, dx ,dy);
 
         if (!m_rubberBand->isVisible())

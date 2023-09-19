@@ -353,9 +353,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         auto index = model()->index(row,0);
         auto srcIndex = m_proxy_model->mapToSource(index);
         auto item = m_model->itemFromIndex(srcIndex);
-        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
-            continue;
-        expand(index);
+        auto type = item->type();
+        if (item->type() != SideBarAbstractItem::VFSItem && item->type() != SideBarAbstractItem::SeparatorItem) {
+            expand(index);
+        }
+//        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
+//            continue;
+//        expand(index);
     }
 }
 

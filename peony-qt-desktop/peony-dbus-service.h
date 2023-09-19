@@ -54,8 +54,9 @@ public:
    void DbusServerRegister();
 
 Q_SIGNALS:
-   void sendSrcAndDestUrisOfCopyDspsFiles(const QStringList& sourceUris, const QStringList& destUris);
-   void black_and_white_update();
+    void sendSrcAndDestUrisOfCopyDspsFiles(const QStringList& sourceUris, const QStringList& destUris);
+    void black_and_white_update();
+    void opreateFinishedOfEngrampa(const QString& path, bool finish);/* 第一个参数是解压/压缩的路径，第二个参数是操作是否完成；该信号用于归档管理器进行解压/压缩完成后通知文管 */
 
 public Q_SLOTS:
     QString GetSecurityConfigPath();
@@ -64,6 +65,7 @@ public Q_SLOTS:
     QString getBlackAndWhiteModel();
     bool getBlackAndWhiteListExist(QString name);
     QStringList getBWListInfo();
+    void sendEngrampaOpreateFinishSig(const QString& path, bool finish);
 
 private:
     DesktopIconView *m_desktopIconView = nullptr;

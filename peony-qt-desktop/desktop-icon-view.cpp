@@ -2302,9 +2302,16 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
         pixmap.fill(Qt::transparent);
         pixmap.setDevicePixelRatio(scale);
         QPainter painter(&pixmap);
+        // try fixing #190315, text shadow displayment issue while compositing not running.
+        bool shouldDrawBackground = !QX11Info::isCompositingManagerRunning();
         for (auto index : indexes) {
             painter.save();
             painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
+            if (shouldDrawBackground) {
+                painter.setPen(qApp->palette().highlight().color());
+                painter.setBrush(qApp->palette().highlight());
+                painter.drawRoundedRect(QRect(0, 0, this->gridSize().width(), this->gridSize().height()).adjusted(1, 1, -1, -1), 6, 6);
+            }
             itemDelegate()->paint(&painter, viewOptions(), index);
             painter.restore();
         }
