@@ -361,6 +361,8 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
             int totalHeight = qApp->fontMetrics().lineSpacing() *(len+1) + qApp->fontMetrics().descent();
             totalHeight = totalHeight + 150 > this->height() ? totalHeight + 150 : this->height();
             this->setFixedHeight(totalHeight);
+        } else if (3 == id) {
+            textEdit->setFocus();
         }
         stack->setCurrentWidget(m_currentWidget);
     });

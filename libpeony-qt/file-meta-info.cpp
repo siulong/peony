@@ -46,6 +46,7 @@ std::shared_ptr<FileMetaInfo> FileMetaInfo::dupFromUri(const QString &uri)
     auto mgr = FileInfoManager::getInstance();
     auto info = mgr->findFileInfoByUri(uri);
     if (info) {
+        //fixme: metainfo不安全, 在主线程中可能被修改
         auto metaInfo = mgr->findFileInfoByUri(uri)->m_meta_info;
         if (metaInfo) {
             QMutexLocker l(&(metaInfo->m_mutex));

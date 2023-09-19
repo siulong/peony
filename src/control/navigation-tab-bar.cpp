@@ -107,10 +107,11 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 {
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
-    infoJob->setAutoDelete();
+    //infoJob->setAutoDelete();
     setTabData(index, uri);
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
+        infoJob->deleteLater();
         if (uri != tabData(index).toString())
             return;
         auto iconName = Peony::FileUtils::getFileIconName(uri);

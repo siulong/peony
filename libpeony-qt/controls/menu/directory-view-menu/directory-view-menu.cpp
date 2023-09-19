@@ -550,9 +550,10 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
         if (m_is_boxpath) {
             createAction->setEnabled(false);
         }
-        if (m_is_mtp_ptp) {
-            createAction->setEnabled(false);
-        }
+        //related bug#191108, huawei/android phone can paste file success,also can create
+//        if (m_is_mtp_ptp) {
+//            createAction->setEnabled(false);
+//        }
         //fix create folder fail issue in special path
         auto info = FileInfo::fromUri(m_directory);
         if (info.get()->isEmptyInfo()) {
@@ -943,9 +944,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 if (!info->isEmptyInfo()) {
                     isDirectoryCanWrite = info->canWrite();
                 }
-                if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
-                    isDirectoryCanWrite = false;
-                }
+                //comment to fix bug#191108, huawei phone can paste file success
+//                if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+//                    isDirectoryCanWrite = false;
+//                }
 
                 pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles() && isDirectoryCanWrite);
                 connect(l.last(), &QAction::triggered, [=]() {

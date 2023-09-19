@@ -36,7 +36,7 @@
 #include "peony-core_global.h"
 #include "file-operation-progress-bar.h"
 #include "file-operation-error-dialogs.h"
-
+class QDBusInterface;
 
 namespace Peony {
 
@@ -134,6 +134,9 @@ public Q_SLOTS:
      * not support monitoring.
      */
     void manuallyNotifyDirectoryChanged(FileOperationInfo *info);
+
+    void slot_opreateFinishedOfEngrampa(const QString& path, bool finish);/* hotfix bug#188622 【文件管理器】连接共享文件夹后进行压缩/解压缩操作，需要手动刷新后才会显示 */
+
 private:
     explicit FileOperationManager(QObject *parent = nullptr);
     ~FileOperationManager();
@@ -160,6 +163,7 @@ private:
     QStack<std::shared_ptr<FileOperationInfo>> m_redo_stack;
     QHash<QString, totalOperationInfo> *m_mount_operation_list = nullptr;
     QHash<FileOperation*, currentOpertionInfo> *m_operation_use_list = nullptr;
+    QDBusInterface* m_iface = nullptr;
 };
 
 class FileOperationInfo : public QObject

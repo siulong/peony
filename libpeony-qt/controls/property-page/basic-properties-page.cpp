@@ -325,7 +325,7 @@ void BasicPropertiesPage::initFloorTwo()
         QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
         checkboxLayout->addSpacing(1);
         checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
-        checkboxLayout->addSpacing(40);
+        checkboxLayout->addSpacing(35);
         checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
         checkboxLayout->addStretch(1);
 
@@ -749,7 +749,8 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
         g_free(fileTotalSizeFormat);
 
         if(m_fileType != BP_Folder) {
-             m_fileTotalSizeLabel->setText(fileTotalSizeText);
+            fileTotalSizeText = BasicPropertiesPage::elideTextAndToolTip(m_fileTotalSizeLabel->font(), 240, fileTotalSizeText, Qt::ElideMiddle, m_fileTotalSizeLabel);
+            m_fileTotalSizeLabel->setText(fileTotalSizeText);
         }
     });
 
@@ -920,6 +921,19 @@ void BasicPropertiesPage::chooseFileIcon()
     iconPathUrl.setPath("/usr/share/icons");
     auto picture = QFileDialog::getOpenFileName(nullptr, tr("Choose a custom icon"), "/usr/share/icons", "*.png *.jpg *.jpeg *.svg");
 
+    QFileInfo fileInfo(picture);
+    if (fileInfo.exists()) {
+        qint64 fileSize = fileInfo.size();
+        double fileSizeMB = fileSize / (1024.0 * 1024.0);
+        qDebug() << "fileSize is ：" << fileSizeMB << "MB";
+        if (fileSizeMB > 1.0) {
+            QMessageBox::warning(nullptr, "", tr("Please select a image that is smaller than 1MB."));
+            return;
+        }
+    } else {
+        qDebug() << "file does not exist ：" << picture;
+    }
+
     if (!picture.isEmpty()) {
         qDebug()<<"chose new file icon:"<< picture;
         m_iconButton->setIcon(QIcon(picture));
@@ -963,6 +977,7 @@ void BasicPropertiesPage::updateCountInfo(bool isDone)
             g_free(fileSizeFormat);
         }
 
+        fileSizeText = BasicPropertiesPage::elideTextAndToolTip(m_fileSizeLabel->font(), 240, fileSizeText, Qt::ElideMiddle, m_fileSizeLabel);
         m_fileSizeLabel->setText(fileSizeText);
 
         //在为完成统计前，先显示文件大小而不是占用空间大小
@@ -1193,6 +1208,18 @@ QString BasicPropertiesPage::elideText(QFont font, int width, QString strInfo)
     if(fontMetrics.width(strInfo) > width) {
         strInfo= QFontMetrics(font).elidedText(strInfo, Qt::ElideRight, width);
     }
+    return strInfo;
+}
+
+QString BasicPropertiesPage::elideTextAndToolTip(QFont font, int width, QString strInfo, Qt::TextElideMode mode, QWidget *widgt)
+{
+    QFontMetrics fontMetrics(font);
+
+    if (fontMetrics.width(strInfo) > width) {
+        widgt->setToolTip(strInfo);
+        strInfo = QFontMetrics(font).elidedText(strInfo, mode, width);
+    }
+
     return strInfo;
 }
 

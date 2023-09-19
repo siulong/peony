@@ -91,3 +91,8 @@ QStringList PeonyDbusService::getBWListInfo()
     qDebug() << "getBWListInfo in service:"<<info;
     return info.toList();
 }
+
+void PeonyDbusService::sendEngrampaOpreateFinishSig(const QString &path, bool finish)
+{
+    Q_EMIT opreateFinishedOfEngrampa(path, finish);
+}

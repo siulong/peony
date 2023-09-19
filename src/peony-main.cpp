@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
     }
 
     PeonyApplication app(argc, argv, "peony-qt");
+    qApp->setProperty("isPeony", true);
     Peony::XdgPortalHelper::getInstance()->tryResetPortal();
     if (app.isSecondary())
         return 0;

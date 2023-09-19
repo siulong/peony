@@ -68,7 +68,7 @@ void DesktopMenuPluginManager::loadAsync()
         qDebug()<<pluginsDir.entryList().count();
         Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
             qDebug()<<fileName;
-            if ("libpeony-filesafe-vfs-plugin.so" == fileName || "libpeony-filesafe-menu-plugin.so" == fileName)
+            if (/*"libpeony-filesafe-vfs-plugin.so" == fileName || */"libpeony-filesafe-menu-plugin.so" == fileName)
                 continue;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             qDebug()<<pluginLoader.fileName();
@@ -86,11 +86,11 @@ void DesktopMenuPluginManager::loadAsync()
             // try fixing #185164 【看图】桌面上的图片右键选择图片打印无打印弹窗，打印失败
             plugin->moveToThread(qApp->thread());
 
-            StylePluginIface *splugin = dynamic_cast<StylePluginIface*>(plugin);
-            if (splugin) {
-                QApplication::setStyle(splugin->getStyle());
-                continue;
-            }
+//            StylePluginIface *splugin = dynamic_cast<StylePluginIface*>(plugin);
+//            if (splugin) {
+//                QApplication::setStyle(splugin->getStyle());
+//                continue;
+//            }
 
             auto p = dynamic_cast<VFSPluginIface *>(plugin);
             if (p) {
@@ -107,9 +107,11 @@ void DesktopMenuPluginManager::loadAsync()
             MenuPluginInterface *piface = dynamic_cast<MenuPluginInterface*>(plugin);
             if (!piface)
                 continue;
+
             qDebug()<<"ok:" <<piface->name();
             if (!m_map.value(piface->name()))
                 m_map.insert(piface->name(), piface);
+
             m_is_loaded = true;
         }
         Q_EMIT pluginLoadFinished();
