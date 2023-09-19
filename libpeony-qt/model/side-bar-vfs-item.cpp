@@ -121,10 +121,8 @@ void SideBarVFSItem::clearChildren()
 
 void SideBarVFSItem::slot_enumeratorFinish(bool successed)
 {
-    if(!successed)
-        return;
     auto infos = m_enumerator->getChildren();    
-    if (infos.isEmpty()) {
+    if (infos.isEmpty() || !successed) {
         auto separator = new SideBarSeparatorItem(SideBarSeparatorItem::EmptyFile, this, m_model);
         this->m_children->prepend(separator);
         m_model->insertRows(0, 1, this->firstColumnIndex());
