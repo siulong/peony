@@ -1,3 +1,10 @@
+peony (4.1.1.1-ok1~0919) nile; urgency=medium
+
+  * New upstream release.
+  * 同步桌面kscreen替换qscreen相关patch
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 19 Sep 2023 10:34:21 +0800
+
 peony (4.1.1.0-ok2~0905) nile; urgency=medium
 
   * 尝试修复#I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
