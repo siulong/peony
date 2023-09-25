@@ -253,7 +253,7 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
                 return leftItem->m_info->deletionDate() > rightItem->m_info->deletionDate();
             }
 
-            if (Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool()) {
+            if (Peony::GlobalSettings::getInstance()->getShowCreateTime()) {
                 if (leftItem->m_info->getCreate_time() == rightItem->m_info->getCreate_time()) {
                     goto default_sort;
                 }

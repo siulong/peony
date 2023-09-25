@@ -172,15 +172,18 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
                 m_cache.remove(key);
                 m_cache.insert(key, m_peony_gsettings->get(key));
             }
+            m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
             if (sendChanged) {
                 Q_EMIT this->valueChanged(key);
             }
+
         });
 
         for (auto key : m_peony_gsettings->keys()) {
             m_cache.remove(key);
             m_cache.insert(key, m_peony_gsettings->get(key));
         }
+        m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);

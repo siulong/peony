@@ -168,6 +168,8 @@ public:
     bool initDateFormatDBus();
     QString getProjectName();
 
+    bool getShowCreateTime() const;
+
 Q_SIGNALS:
     void valueChanged(const QString &key);
     void updateHiddenFile(const QString &fileName);
@@ -229,6 +231,7 @@ private:
     QString                     m_system_time_format  = "";
 
     QDBusInterface*             mDbusDateServer = nullptr;
+    bool m_showCreateTime = false;
 };
 
 }
