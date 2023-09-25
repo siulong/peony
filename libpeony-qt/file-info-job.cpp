@@ -180,15 +180,14 @@ std::vector<std::shared_ptr<FileInfo> > FileInfoJob::batchQuerySync()
         if (err) {
             qDebug()<<err->code<<err->message;
             g_error_free(err);
-            if (m_auto_delete)
-                deleteLater();
             if(g_cancellable_is_cancelled(m_batchCanellable))
                 break;
-            continue;
         }
 
         refreshInfoContents(_info);
-        refreshFileSystemInfo(_fs_info);
+        if (_fs_info) {
+            refreshFileSystemInfo(_fs_info);
+        }
         g_object_unref(_info);
 
         EmblemProviderManager::getInstance()->querySync(info->uri());
