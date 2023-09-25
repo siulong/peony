@@ -297,7 +297,7 @@ void FileItem::findChildrenAsync()
                         qDebug() << "Delete unused symbollink.";
                         QStringList selections;
                         selections.push_back(this->uri());
-                        FileOperationUtils::trash(selections, true);
+                        FileOperationUtils::trash(selections, true, this->uri().startsWith("search:///"));
                     }
                 }
                 else if (err.get()->code() == G_IO_ERROR_PERMISSION_DENIED)

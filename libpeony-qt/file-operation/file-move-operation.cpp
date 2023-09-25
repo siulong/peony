@@ -108,6 +108,23 @@ void FileMoveOperation::setAction(Qt::DropAction action)
     }
 }
 
+void FileMoveOperation::setUriSort(bool isSort, int type)
+{
+    if (isSort != m_is_sort) {
+        m_is_sort = isSort;
+    }
+    if (type != m_sort_type) {
+        m_sort_type = type;
+    }
+}
+
+void FileMoveOperation::setSearchOperation(const bool &isSearch)
+{
+    if (isSearch != m_is_search) {
+        m_is_search = isSearch;
+    }
+}
+
 void FileMoveOperation::progress_callback(goffset current_num_bytes,
         goffset total_num_bytes,
         FileMoveOperation *p_this)
@@ -1642,6 +1659,11 @@ bool FileMoveOperation::isValid()
 void FileMoveOperation::run()
 {
     Q_EMIT operationStarted();
+
+    if (m_is_sort && m_is_search) {
+        m_src_uris = sortUris(m_src_uris, m_sort_type);
+        m_info.get()->m_is_search = true;
+    }
 
     if (hook_check_operation_valid) {
         if (!hook_check_operation_valid(m_src_uris, m_dest_dir_uri, FILE_OPERATION_MOVE)) {

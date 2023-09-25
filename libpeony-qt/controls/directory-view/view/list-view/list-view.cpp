@@ -66,6 +66,7 @@
 
 #include <QPainterPath>
 
+
 #define LISTVIEW_ITEM_BORDER_RADIUS 6
 
 using namespace Peony;
@@ -570,10 +571,10 @@ void ListView::dropEvent(QDropEvent *e)
     if(m_current_uri == boxpath || m_current_uri == oldboxpath || m_current_uri == "filesafe:///"){
         return;
     }
-
     //move in current path, do nothing
     if (e->source() == this)
     {
+
         if (indexAt(e->pos()).isValid())
         {
             auto uri = m_proxy_model->itemFromIndex(proxy_index)->uri();
@@ -693,7 +694,14 @@ void ListView::startDrag(Qt::DropActions flags)
         }
 
         auto drag = new QDrag(this);
-        drag->setMimeData(model()->mimeData(indexes));
+        if(m_current_uri.startsWith("search://")){
+            QMimeData* data = model()->mimeData(indexes);
+            QVariant isSearchData = QVariant(true);
+            data->setData("peony-qt/is-search", isSearchData.toByteArray());
+            drag->setMimeData(data);
+        }else{
+            drag->setMimeData(model()->mimeData(indexes));
+        }
 
         QRegion rect;
         QHash<QModelIndex, QRect> indexRectHash;

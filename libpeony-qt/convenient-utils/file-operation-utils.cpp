@@ -97,6 +97,11 @@ FileOperation *FileOperationUtils::copy(const QStringList &srcUris, const QStrin
 
 FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory)
 {
+    return trash(uris, addHistory, false);
+}
+
+FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory, bool isFromSearchTab)
+{
     FileOperation *op = nullptr;
     bool canNotTrash = false;
     bool isBigFile = false;
@@ -213,6 +218,9 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
 
     auto fileOpMgr = FileOperationManager::getInstance();
     auto trashOp = new FileTrashOperation(uris);
+    if (isFromSearchTab) {
+        trashOp->setSearchOperation(isFromSearchTab);
+    }
     fileOpMgr->startOperation(trashOp, addHistory);
 
     return trashOp;
@@ -254,6 +262,11 @@ std::shared_ptr<FileInfo> FileOperationUtils::queryFileInfo(const QString &uri)
 
 FileOperation *FileOperationUtils::moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action)
 {
+    return moveWithAction(srcUris, destUri, addHistory, action, false);
+}
+
+FileOperation *FileOperationUtils::moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action, bool bMoveFromSearchTab)
+{
     FileOperation *op;
     QString destDir = nullptr;
     auto fileOpMgr = FileOperationManager::getInstance();
@@ -276,12 +289,13 @@ FileOperation *FileOperationUtils::moveWithAction(const QStringList &srcUris, co
         } else {
             auto moveOp = new FileMoveOperation(srcUris, destDir);
             moveOp->setAction(action);
+            moveOp->setSearchOperation(bMoveFromSearchTab);
             op = moveOp;
         }
 
         fileOpMgr->startOperation(op, addHistory);
     } else {
-        op = FileOperationUtils::trash(srcUris, true);
+        op = FileOperationUtils::trash(srcUris, true, bMoveFromSearchTab);
     }
     return op;
 }

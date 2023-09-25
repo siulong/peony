@@ -199,6 +199,13 @@ void FileOperation::notifyFileWatcherOperationFinished()
     }
 }
 
+QStringList FileOperation::sortUris(const QStringList &uris, const int &type)
+{
+    QStringList sortedURIs = uris;
+    std::sort(sortedURIs.begin(), sortedURIs.end(), URISorter(type));
+    return sortedURIs;
+}
+
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDBusConnectionInterface>

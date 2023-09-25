@@ -601,7 +601,14 @@ void IconView::startDrag(Qt::DropActions supportedActions)
         }
 
         auto drag = new QDrag(this);
-        drag->setMimeData(model()->mimeData(indexes));
+        if(m_current_uri.startsWith("search://")){
+            QMimeData* data = model()->mimeData(indexes);
+            QVariant isSearchData = QVariant(true);
+            data->setData("peony-qt/is-search", isSearchData.toByteArray());
+            drag->setMimeData(data);
+        }else{
+            drag->setMimeData(model()->mimeData(indexes));
+        }
 
         QRegion rect;
         QHash<QModelIndex, QRect> indexRectHash;

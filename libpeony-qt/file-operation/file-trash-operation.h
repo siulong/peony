@@ -41,6 +41,8 @@ public:
     }
     void run() override;
 
+    void setSearchOperation(const bool &isSearch);
+
 Q_SIGNALS:
     void deleteRequest(const QStringList &uris);
 
@@ -52,6 +54,7 @@ private:
 private:
     int m_current_count = 0;
     int m_total_count = 0;
+    bool m_is_search = false;
     std::shared_ptr<FileOperationInfo> m_info = nullptr;
 
     // record source file infos before trashed, only used in native fs

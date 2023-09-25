@@ -140,9 +140,15 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
 
-    if (ClipboardUtils::isClipboardHasFiles() &&
-        FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), view->getDirectoryUri())) {
-        if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
+
+    if (ClipboardUtils::isClipboardHasFiles()){
+        QString actualDirUri = view->getDirectoryUri();
+        if(actualDirUri.startsWith("search:///search_uris")){
+            actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
+        }
+        if (FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), actualDirUri)
+                && ClipboardUtils::isPeonyFilesBeCut()
+                && ClipboardUtils::isClipboardFilesBeCut()) {
             auto clipedUris = ClipboardUtils::getClipboardFilesUris();
             if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
                 painter->setOpacity(0.5);

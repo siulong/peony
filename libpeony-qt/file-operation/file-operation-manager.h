@@ -136,6 +136,7 @@ public Q_SLOTS:
     void manuallyNotifyDirectoryChanged(FileOperationInfo *info);
 
     void slot_opreateFinishedOfEngrampa(const QString& path, bool finish);/* hotfix bug#188622 【文件管理器】连接共享文件夹后进行压缩/解压缩操作，需要手动刷新后才会显示 */
+    void slot_moveFilesToAnotherProcCompleted(const QStringList& srcUris);/*跨进程move操作完成后更新视图，目前用于从搜索页面剪切或拖拽到桌面，linkto story#23915 */
 
 private:
     explicit FileOperationManager(QObject *parent = nullptr);
@@ -247,6 +248,8 @@ public:
     bool m_has_error = false;
 
     bool m_operation_recording = true;
+
+    bool m_is_search = false;
 
     //using for distiguist move action.
     Qt::DropAction m_drop_action = Qt::IgnoreAction;

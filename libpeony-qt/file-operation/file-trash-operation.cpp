@@ -46,6 +46,10 @@ void FileTrashOperation::run()
     Q_EMIT operationStarted();
     Peony::ExceptionResponse response = Invalid;
 
+    if (m_is_search) {
+        m_info.get()->m_is_search = true;
+    }
+
     QSet<QString> trashBefore;
     FileEnumerator e;
     e.setEnumerateDirectory("trash:///");
@@ -339,6 +343,12 @@ void FileTrashOperation::deleteRecursively(FileNode *node)
     }
 }
 
+void FileTrashOperation::setSearchOperation(const bool &isSearch)
+{
+    if (isSearch != m_is_search) {
+        m_is_search = isSearch;
+    }
+}
 
 void FileTrashOperation::setErrorMessage(GError** err)
 {

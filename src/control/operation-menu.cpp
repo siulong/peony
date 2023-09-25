@@ -315,7 +315,7 @@ OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *pa
 //            if (window->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
 //                return ;
 //            }
-            Peony::ClipboardUtils::setClipboardFiles(window->getCurrentSelections(), true);
+            Peony::ClipboardUtils::setClipboardFiles(window->getCurrentSelections(), true, window->getCurrentUri().startsWith("search://"));
             window->getCurrentPage()->getView()->repaintView();
             Q_EMIT operationAccepted();
         }
@@ -337,7 +337,7 @@ OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *pa
         if (window->getCurrentUri() == "trash:///") {
             Peony::FileOperationUtils::executeRemoveActionWithDialog(window->getCurrentSelections());
         } else {
-            Peony::FileOperationUtils::trash(window->getCurrentSelections(), true);
+            Peony::FileOperationUtils::trash(window->getCurrentSelections(), true, window->getCurrentUri().startsWith("search://"));
         }
         Q_EMIT operationAccepted();
     });
@@ -389,9 +389,9 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
 //        isDirectoryCanWrite = false;
 //    }
 
-    m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && isDirectoryCanWrite && !hasLongFileName);
+    m_copy->setEnabled(!isSelectionEmpty && !isRecent && !isTrash && !isComputer);
+    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isComputer && isDirectoryCanWrite && !hasLongFileName);
 
     Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();

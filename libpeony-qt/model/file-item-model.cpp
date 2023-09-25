@@ -688,6 +688,12 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
+
+    bool bMoveFromSearchTab = false;
+    if (data->hasFormat("peony-qt/is-search")) {
+        bMoveFromSearchTab = QVariant(data->data("peony-qt/is-search")).toBool();
+    }
+
     bool b_trash_item = false;
     for(auto path : srcUris)
     {
@@ -708,7 +714,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         // fix drag filesafe to trash error issue, #81938
         if(!(srcUris.first().startsWith("filesafe:///") &&
             (QString(srcUris.first()).remove("filesafe:///").indexOf("/") == -1))) {
-            FileOperationUtils::trash(srcUris, true);
+            FileOperationUtils::trash(srcUris, true, bMoveFromSearchTab);
         }
         return true;
     }
@@ -732,7 +738,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (srcUris.first().startsWith("filesafe:///"))
         action = Qt::CopyAction;
 
-    auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
+    auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action, bMoveFromSearchTab);
     connect(op, &FileOperation::operationFinished, this, [=](){
         auto opInfo = op->getOperationInfo();
         if (! opInfo->m_has_error){

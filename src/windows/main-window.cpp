@@ -425,8 +425,10 @@ void MainWindow::setShortCuts()
         trashAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_Delete<<QKeySequence(Qt::CTRL + Qt::Key_D));
         connect(trashAction, &QAction::triggered, [=]() {
             auto currentUri = getCurrentUri();
-            if (currentUri.startsWith("search://")
-                    || currentUri.startsWith("favorite://") || currentUri == "filesafe:///"
+            if(currentUri.startsWith("search://")){
+                currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
+            }
+            if (currentUri.startsWith("favorite://") || currentUri == "filesafe:///"
                     || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
                 return;
 
@@ -453,7 +455,7 @@ void MainWindow::setShortCuts()
 
                 bool isTrash = this->getCurrentUri() == "trash:///";
                 if (!isTrash && canTrash) {
-                    Peony::FileOperationUtils::trash(uris, true);
+                    Peony::FileOperationUtils::trash(uris, true, m_is_search);
                 } else {
                     Peony::FileOperationUtils::executeRemoveActionWithDialog(uris);
                 }
@@ -466,8 +468,10 @@ void MainWindow::setShortCuts()
         addAction(deleteAction);
         connect(deleteAction, &QAction::triggered, [=]() {
             auto currentUri = getCurrentUri();
-            if (currentUri.startsWith("search://") || currentUri == "filesafe:///"
-                    || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
+            if(currentUri.startsWith("search://")){
+                currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
+            }
+            if (currentUri == "filesafe:///" || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
                 return;
 
             auto uris = this->getCurrentSelections();
@@ -822,15 +826,10 @@ void MainWindow::setShortCuts()
                     return ;
                 }
 
-                auto currentUri = getCurrentUri();
-                if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
-                    || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
-                    || currentUri.startsWith("search://") || currentUri == "filesafe:///") {
-                    /* Add hint information,link to bug#107640. */
-                    QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
-                    return;
+                QString currentUri = getCurrentUri();
+                if(currentUri.startsWith("search://")){
+                    currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
                 }
-
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
                     return;
@@ -841,7 +840,7 @@ void MainWindow::setShortCuts()
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 if (! this->getCurrentSelections().contains(desktopUri) && ! this->getCurrentSelections().contains(homeUri))
                 {
-                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true);
+                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, m_is_search);
                    this->getCurrentPage()->getView()->repaintView();
                 }
             }

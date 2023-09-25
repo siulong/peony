@@ -1350,6 +1350,17 @@ bool FileUtils::isLongNameFileOfNotDel2Trash(const QString &fileUri)
     return false;
 }
 
+QString FileUtils::getActualDirFromSearchUri(const QString &searchUri)
+{
+    QString actualDir =  searchUri;
+    if(actualDir.startsWith("search:///search_uris=")){
+        QUrl url(actualDir);
+        QString uri = url.path().section("&", 0, 0).replace("/search_uris=", "");
+        actualDir = FileUtils::getEncodedUri(uri);
+    }
+    return actualDir;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";

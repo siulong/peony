@@ -925,6 +925,11 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
     }
 
+    bool bMoveFromSearchTab = false;
+    if (data->hasFormat("peony-qt/is-search")) {
+        bMoveFromSearchTab = QVariant(data->data("peony-qt/is-search")).toBool();
+    }
+
     bool b_trash_item = false;
     for(auto path : srcUris)
     {
@@ -955,7 +960,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         if(!(srcUris.first().startsWith("filesafe:///") &&
             (QString(srcUris.first()).remove("filesafe:///").indexOf("/") == -1))) {
             //fix bug#91525, can trash file in U disk issue
-            FileOperationUtils::trash(srcUris, true);
+            FileOperationUtils::trash(srcUris, true, bMoveFromSearchTab);
 //            if(canNotTrash){
 //                FileOperationUtils::trash(srcUris, false);
 //            }else {
@@ -979,7 +984,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
             action = Qt::TargetMoveAction;
         }
 
-        auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
+        auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action, bMoveFromSearchTab);
         op->connect(op, &FileOperation::operationFinished, this, [=](){
             //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
             //Task#152997, use sdk play sound
