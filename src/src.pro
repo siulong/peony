@@ -50,7 +50,8 @@ TRANSLATIONS += ../translations/peony-qt/peony-qt_zh_CN.ts \
                 ../translations/peony-qt/peony-qt_tr.ts \
                 ../translations/peony-qt/peony-qt_cs.ts \
                 ../translations/peony-qt/peony-qt_bo_CN.ts \
-                ../translations/peony-qt/peony-qt_mn.ts
+                ../translations/peony-qt/peony-qt_mn.ts \
+                ../translations/peony-qt/peony-qt_zh_HK.ts
 
 SOURCES += \
     peony-application.cpp \

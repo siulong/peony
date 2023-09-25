@@ -33,7 +33,8 @@ TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_tr.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_cs.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts \
-                ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+                ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
 
 SOURCES += \
     desktop-background-manager.cpp \
