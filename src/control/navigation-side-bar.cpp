@@ -175,6 +175,17 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 this->setRowHidden(index.row(), index.parent(), true);
                 return;
             }
+
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FavoriteItem
+                    && pIface->uriScheme() == "kmre://") {
+                auto tIndex = index.child(4, 0);
+                auto tItem = m_proxy_model->itemFromIndex(tIndex);
+                if (tItem && tItem->uri().startsWith("kmre:///")) {
+                    this->setRowHidden(tIndex.row(), tIndex.parent(), true);
+                    return;
+                }
+            }
         }
 
         item->findChildrenAsync();
@@ -373,6 +384,23 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 }
                 this->setRowHidden(index.row(), index.parent(), enable);
                 return;
+            }
+            //hide kmre
+            if (item->type() == SideBarAbstractItem::FavoriteItem
+                    && vfsPIface->uriScheme() == "kmre://"
+                    && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
+                if (m_currSelectedItem) {
+                    if (!m_currSelectedItem->uri().startsWith("file:///") && enable) {
+                        JumpDirectory("computer:///");
+                    }
+                }
+
+                auto tIndex = index.child(4, 0);
+                auto tItem = m_proxy_model->itemFromIndex(tIndex);
+                if (tItem && tItem->uri().startsWith("kmre:///")) {
+                    this->setRowHidden(tIndex.row(), tIndex.parent(), enable);
+                    return;
+                }
             }
         }
     });
