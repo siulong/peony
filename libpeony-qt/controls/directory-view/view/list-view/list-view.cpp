@@ -1128,8 +1128,28 @@ void ListView::setSearchKey(const QString &key)
 void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
-    painter->setOpacity(1.0);
-    const QString uri = const_cast<ListView*>(this)->getDirectoryUri();
+
+    auto proxyModel = static_cast<FileItemProxyFilterSortModel*>(model());
+    auto sourceIndex = proxyModel->mapToSource(index);
+
+    FileItem *item = sourceIndex.isValid()? static_cast<FileItem*>(sourceIndex.internalPointer()): nullptr;
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            painter->setOpacity(0.5);
+        }else{
+            painter->setOpacity(1.0);
+        }
+    }
+#endif
+
+    if (!m_model) {
+        painter->restore();
+        return QTreeView::drawRow(painter, option, index);
+    }
+
+    QString uri = m_model->getRootUri();
     if (ClipboardUtils::isClipboardHasFiles() &&
         FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
         if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
