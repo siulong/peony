@@ -31,6 +31,7 @@
 #include "gerror-wrapper.h"
 
 #include <QString>
+#include <QStringList>
 
 namespace Peony {
 
@@ -123,6 +124,10 @@ public:
 
 private:
     FileUtils();
+
+private:
+    static QStringList m_standardPaths;
+
 };
 
 class FileUtilsPrivate

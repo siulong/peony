@@ -876,14 +876,15 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                     if (! info->canTrash())
                         canTrash = false;
 
-                    if (! info->canDelete() && (!uri.startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
-                        canDelete = false;
-
-                    if(FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
-                        canTrash = false;
-                        break;
-                    }
-                }
+                /* 同一目录下文件夹和文件的info->cantrash()和info->canDelete()通常一样，采用m_selections.first()判断 */
+                auto info = FileInfo::fromUri(m_selections.first());
+                if (! info->canTrash())
+                    canTrash = false;
+                if (! info->canDelete() && (!m_selections.first().startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
+                    canDelete = false;
+                if(FileUtils::isLongNameFileOfNotDel2Trash(m_selections.first())){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
+                    canTrash = false;
+                }//end
 
                 //fix unencrypted box file can delete to trash issue, link to bug#72948
                 if (canTrash && ! m_is_filebox_file && !m_is_mobile_file)
