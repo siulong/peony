@@ -156,6 +156,7 @@ protected:
     void focusInEvent(QFocusEvent *e) override;
 
     void startDrag(Qt::DropActions flags) override;
+    void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
 

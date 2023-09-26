@@ -35,6 +35,7 @@
 
 #include "file-meta-info.h"
 #include "search-vfs-uri-parser.h"
+#include "clipboard-utils.h"
 #include <QHeaderView>
 
 #include <QVBoxLayout>
@@ -1123,6 +1124,28 @@ void ListView::setSearchKey(const QString &key)
     auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
     viewItemDelegate->setSearchKeyword(key);
 }
+
+void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+    painter->setOpacity(1.0);
+    const QString uri = const_cast<ListView*>(this)->getDirectoryUri();
+    if (ClipboardUtils::isClipboardHasFiles() &&
+        FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
+        if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
+            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
+            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+                painter->setOpacity(0.5);
+            }
+            else {
+                painter->setOpacity(1.0);
+            }
+        }
+    }
+    QTreeView::drawRow(painter, option, index);
+    painter->restore();
+}
+
 
 void ListView::doMultiSelect(bool isMultiSlelect)
 {
