@@ -48,6 +48,7 @@ class QSplitter;
 namespace Peony {
 class PreviewPageIface;
 class DirectoryViewContainer;
+class FileInfo;
 }
 
 /*!
@@ -222,6 +223,7 @@ protected:
     void updatePreviewButtonStatus(bool status);
 
     void paintEvent(QPaintEvent *e);
+    bool isMultVideoOrAudio(std::shared_ptr<Peony::FileInfo> info);
 private:
     NavigationTabBar *m_tab_bar;
     QToolButton *m_add_page_button;

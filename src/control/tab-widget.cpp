@@ -348,6 +348,22 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     }
 }
 
+bool TabWidget::isMultVideoOrAudio(std::shared_ptr<Peony::FileInfo> info)
+{
+    if (!info) {
+        qDebug() << "file info not valid";
+        return false;
+    }
+
+    QString uri = info->uri();
+    if (uri.startsWith("mult:///") && (info->isAudioFile() || info->isVideoFile())) {
+        return true;
+    }
+
+    return false;
+}
+
+
 void TabWidget::initAdvanceSearch()
 {
     //advance search bar
@@ -1581,6 +1597,11 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
 {
     qDebug()<<"tab widget double clicked"<<uri;
     auto info = Peony::FileInfo::fromUri(uri);
+    if (isMultVideoOrAudio(info)) {
+        qDebug() << "Mult video or audio file, do not open";
+        QMessageBox::warning(nullptr, "", tr("Opening such files is not currently supported"));//暂时不支持打开此类文件
+        return;
+    }
     if (info->uri().startsWith("trash://")) {
         auto w = new Peony::PropertiesWindow(QStringList()<<uri);
         w->show();
