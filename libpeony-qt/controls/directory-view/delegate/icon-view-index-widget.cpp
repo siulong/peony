@@ -50,6 +50,7 @@ using namespace Peony::DirectoryView;
 
 IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const QStyleOptionViewItem &option, const QModelIndex &index, QWidget *parent) : QWidget(parent)
 {
+    setObjectName("peony_icon_view_index_widget");
     installEventFilter(parent);
 
     setMouseTracking(true);
@@ -175,8 +176,17 @@ bool IconViewIndexWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+void IconViewIndexWidget::clearModelIndex()
+{
+    m_delegate->getView()->setIndexWidget(m_index, nullptr);
+}
+
 void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 {
+    bool isUpdateEnable = updatesEnabled();
+    if (!isUpdateEnable)
+        return;
+
     if (!m_info.lock()) {
         return;
     }

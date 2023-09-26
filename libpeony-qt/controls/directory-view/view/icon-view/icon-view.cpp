@@ -27,6 +27,7 @@
 #include "icon-view-style.h"
 
 #include "directory-view-menu.h"
+#include "icon-view-index-widget.h"
 #include "file-info.h"
 #include "file-utils.h"
 
@@ -205,6 +206,7 @@ const QString IconView::getDirectoryUri()
 
 void IconView::beginLocationChange()
 {
+    traverseNode();
     m_editValid = false;
     m_model->setRootUri(m_current_uri);
 }
@@ -212,6 +214,21 @@ void IconView::beginLocationChange()
 void IconView::stopLocationChange()
 {
     m_model->cancelFindChildren();
+}
+
+void IconView::traverseNode()
+{
+    //fix bug 194738, clear model index
+    QList<IconViewIndexWidget *> widgets = this->findChildren<IconViewIndexWidget *>("peony_icon_view_index_widget");
+    if (!widgets.isEmpty()) {
+        for (int i = 0; i < widgets.size(); ++i) {
+            auto node = widgets.at(i);
+            if (node) {
+                node->setUpdatesEnabled(false);
+                node->clearModelIndex();
+            }
+        }
+    }
 }
 
 //other

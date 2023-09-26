@@ -181,6 +181,8 @@ private Q_SLOTS:
     void slotRename();
 
 private:
+    void traverseNode();
+
     QTimer m_repaint_timer;
 
     bool  m_editValid;
