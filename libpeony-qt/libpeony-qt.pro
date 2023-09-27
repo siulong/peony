@@ -19,23 +19,23 @@ PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libn
 DEFINES += PEONYCORE_LIBRARY
 
 contains(DEFINES, KY_FILE_DIALOG) {
-    PKGCONFIG += kysdk-qtwidgets
+    PKGCONFIG += kysdk-applications
 }
 
 contains(DEFINES, KY_SDK_SYSINFO) {
-    PKGCONFIG += kysdk-sysinfo
+    PKGCONFIG += kysdk-system
 }
 
 contains(DEFINES, KY_SDK_QT_WIDGETS) {
-    PKGCONFIG += kysdk-qtwidgets
+    PKGCONFIG += kysdk-applications
 }
 
 contains(DEFINES, KY_SDK_WAYLANDHELPER) {
-    PKGCONFIG += kysdk-waylandhelper
+    PKGCONFIG += kysdk-applications
 }
 
 contains(DEFINES, KY_SDK_SYSINFO) {
-    PKGCONFIG += kysdk-sysinfo
+    PKGCONFIG += kysdk-system
 }
 
 schemes.files += org.ukui.peony.settings.gschema.xml

@@ -48,7 +48,6 @@ exists("/usr/include/kysdk/desktop/kysdk-soundeffects_global.h") {
 
 exists("/usr/include/kysdk/kysdk-system/libkydate.h") {
     DEFINES += KY_SDK_DATE
-    PKGCONFIG += kysdk-systime
 }
 
 exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
