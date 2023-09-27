@@ -1,0 +1,9 @@
+/etc/xdg/autostart/peony-desktop.desktop
+data/system-file-manager/* usr/share/kylin-user-guide/data/guide/system-file-manager
+peony-qt-desktop/freedesktop-dbus-interfaces.xml usr/share/dbus-1/interfaces
+peony-qt-desktop/org.ukui.freedesktop.FileManager1.service usr/share/dbus-1/services
+translations/peony-qt-desktop/* usr/share/peony-qt-desktop
+translations/peony-qt/* usr/share/peony-qt
+usr/share/glib-2.0/schemas/org.ukui.peony.settings.gschema.xml
+usr/share/peony-qt-desktop/*.qm
+usr/share/peony-qt/*.qm

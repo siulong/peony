@@ -1,0 +1,190 @@
+peony (4.0.0.0-ok3) unstable; urgency=medium
+
+  * pbuilder
+
+ -- xibowen <xibowen@kylinos.cn>  Wed, 30 Aug 2023 14:40:23 +0800
+
+peony (4.0.0.0-ok2~0826) yangtze; urgency=medium
+
+  * close-cd#I79G9Q【文件管理器】文件复制窗口界面文字显示折叠
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 25 Aug 2023 14:40:23 +0800
+
+peony (4.0.0.0-ok2~0825) yangtze; urgency=medium
+
+  * close #I6YFT4 删除文件到回收站确认弹窗未居中显示
+  * close #I79G9Q 文件复制窗口界面文字显示折叠
+  * close #I71SXV 重命名框没有限制输入超过255字节的文件名
+
+ -- meihonghe <hemeihong@kylinos.cn>  Fri, 25 Aug 2023 11:00:10 +0800
+
+peony (4.0.0.0-ok2~0704) yangtze; urgency=medium
+
+  * close-cd#I7GW9E【设计走查】【文档管理器】选中某个文件后，拉伸窗口过程中，该文件出现抖动问题
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 04 Jul 2023 17:23:10 +0800
+
+peony (4.0.0.0-ok2~0703) yangtze; urgency=medium
+
+  * close #I5M6A1 将文件拖放到桌面的图标显示不支持
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 03 Jul 2023 12:00:36 +0800
+
+peony (4.0.0.0-ok2~0625) yangtze; urgency=medium
+
+  * 尝试修复wayland下窗管窗口移动处理异常问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Sun, 25 Jun 2023 11:25:22 +0800
+
+peony (4.0.0.0-ok2~0606) yangtze; urgency=medium
+
+  * close-cd#I6YEV4【显示器】扩展模式副屏壁纸截断, 在x模式下，刚接入时获取的kscreen大小不对
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 06 Jun 2023 18:17:55 +0800
+
+peony (4.0.0.0-ok2~0526) yangtze; urgency=medium
+
+  * close-cd #I64KVD【平板模式】【文件管理器】【次要】选项下拉菜单里仍存在复制，粘贴，剪切，删除的图标按钮
+  *【文件管理器】平板 & PC模式退出多选模式的交互不一致
+  *【文件管理器】竖屏下文件管理器显示界面不完全
+  *【文件管理器】多选情况下，多次点击取消不了
+  * 修改由于主题框架改动导致字体颜色消失
+  * 修改打开预览框拉动侧边栏关闭按钮被遮盖以及headerbar缩略图标显示不全
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 26 May 2023 15:54:37 +0800
+
+peony (4.0.0.0-ok2~0522) yangtze; urgency=medium
+
+  * close-cd #I6YFFP【文件管理器】桌面文件被遮挡
+  * close-cd #I6YRLA【X】【桌面】桌面壁纸显示没有适配缩放率
+  * close-cd #I6YT1D【X】【桌面】应该添加桌面快捷方式桌面图标未自动排列（只显示一列）
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Mon, 22 May 2023 17:40:30 +0800
+
+peony (4.0.0.0-ok2~0414) yangtze; urgency=medium
+
+  * close-cd #130104 属性tabs标签页悬停和点击的颜色显示非灰色系
+
+ -- xiangwenjie <xiangwenjie@kylinos.cn>  Fri, 14 Apr 2023 09:52:11 +0800
+
+peony (4.0.0.0-ok2~0413) yangtze; urgency=medium
+
+  * colse-cd #130425 【文件管理器】插拔手机后未退出手机目录
+
+ -- yangling <yangling@kylinos-src>  Wed, 12 Apr 2023 14:25:25 +0800
+
+peony (4.0.0.0-ok2~0412) yangtze; urgency=medium
+
+  * close-cd #128963 按钮悬停效果异常问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 12 Apr 2023 09:51:32 +0800
+
+peony (4.0.0.0-ok2~0331) yangtze; urgency=medium
+
+  * 更新桌面翻译文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 31 Mar 2023 13:37:40 +0800
+
+peony (4.0.0.0-ok1) yantze; urgency=medium
+
+  * new upstream release.
+  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
+  * close-cd #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
+  * close #I65YUO 手指触摸拖拽文件到桌面异常
+  * close#I64SM9 修复重命名U盘后文件管理器退出问题
+  * 修改debian/install文件，适配新用户手册资料路径
+  * close-cd#131094【wayland】【控制面板】【显示器】连接2个显示器，设置主屏不生效(必现)
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 30 Mar 2023 16:40:40 +0800
+
+peony (4.0.0.0-ok1~0330) yangtze; urgency=medium
+
+  * new upstreame release.
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 30 Mar 2023 10:11:04 +0800
+
+peony (3.22.0.0-ok3~0106) yangtze; urgency=medium
+
+  * close #I64SM9 修复重命名U盘后文件管理器退出问题
+  * close #I65YUO 手指触摸拖拽文件到桌面异常
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 06 Jan 2023 11:43:25 +0800
+
+peony (3.22.0.0-ok3~0104) yangtze; urgency=medium
+
+  * close #I64KZQ【文件管理器】文件管理器右键属性窗口有两层标题栏,修改复制窗口出现两层标题
+  * close #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 04 Jan 2023 17:52:11 +0800
+
+peony (3.22.0.0-ok2~1230) yangtze; urgency=medium
+
+  * 更新桌面的翻译文件
+  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
+  * close-cd#131094【wayland】【控制面板】【显示器】连接2个显示器，设置主屏不生效(必现)
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 13:43:36 +0800
+
+peony (3.22.0.0-ok1) yangtze; urgency=medium
+
+  * 同步3.22.0.0的改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 09:56:14 +0800
+
+peony (3.14.4.5-ok10) yangtze; urgency=medium
+
+  * 同步平板版本改动和3.20.4.13改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 18 Nov 2022 16:36:17 +0800
+
+peony (3.14.4.5-ok9) yangtze; urgency=medium
+
+  * 删除依赖udfclient.
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 25 Oct 2022 11:52:51 +0800
+
+peony (3.14.4.5-ok8) yangtze; urgency=medium
+
+  * 同步3.20.4.7版本的改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 21 Oct 2022 13:16:57 +0800
+
+peony (3.14.4.5-ok7) yangtze; urgency=medium
+
+  * close-cd #137305 【文件管理器】共享文件连接成功后无弹出标识 
+
+ -- xiangwenjie <xiangwenjie.kylinos.cn>  Wed, 31 Aug 2022 14:48:38 +0800
+
+peony (3.14.4.5-ok6) yangtze; urgency=medium
+
+  * close-cd #133469 同时选择多个文本，右键打开选中文本只能打开第一个
+  * 修复共享文件夹带空格文件夹不能共享问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 25 Aug 2022 10:21:54 +0800
+
+peony (3.14.4.5-ok6~0803) yangtze; urgency=medium
+
+  * 修复弹出菜单有概率带标题栏的问题
+  * 适配appmanager接口
+  * 修复适配appmanager导致的其它打开方式不可用问题
+  * 修复scrollbar不可见的问题
+  * close-cd #126846 修复桌面双击打开两个相同窗口问题
+  * close-cd #127731 平板模式下重启后桌面带标题栏问题
+  * close-cd #125560 在平板模式重启重新登录进入桌面后，桌面显示错误（平板模式重启后应进入PC模式）
+  * close-cd #128746、#128734 修复文件标记属性页面的显示不全的问题
+  * close-cd #129037 【wayland】【文件管理器】从U盘中无法拖动复制文件到系统
+  * close-cd #128689 打开文管，插拔一次U盘后，再次插入U盘，文管侧边栏计算机下方的“文件系统”消失
+  * close-cd #128704 【文件管理器】菜单重命名为英文
+  * close-cd #128813 图片与视频在非桌面目录创建快捷方式后，快捷方式标识显示位置异常
+  * 修复openkylin上多屏场景桌面背景位置异常的问题
+  * close-cd #127644 【计算器】置顶功能不生效
+  * 修复dialog的双标题栏问题
+  * 适配wayland下工具栏和tab页的空白区域拖拽
+  * 优化触控逻辑，优化鼠标点击逻辑
+  * 优化左侧边栏和列表视图item列布局
+  * 处理编译依赖相关问题
+  * close-cd #130583 关于界面调用sdk
+  * close-cd #130787 【wayland】【桌面】【旋转】从PC模式切换到平板模式后设置屏幕旋转，平板模式桌面没有适配
+  * close-cd #131066 取消全局排序后选择不同排序方式不成功
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
