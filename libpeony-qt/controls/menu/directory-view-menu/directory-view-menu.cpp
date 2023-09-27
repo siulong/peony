@@ -422,7 +422,9 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     });
                 }
             } else if (!info->isVolume()) {
-                bool needDisable = isMultVideoOrAudio(info);
+#ifdef MULTI_DISABLE
+                bool needDisable = isMultFile(info);
+#endif
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -432,11 +434,11 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     else
                         FileLaunchManager::openAsync(uri, false, false);
                 });
-
+#ifdef MULTI_DISABLE
                 if (needDisable) {
                     l.last()->setEnabled(false);
                 }
-
+#endif
                 if (m_is_network)
                     return l;
                 auto openWithAction = addAction(tr("Open with..."));
@@ -481,9 +483,11 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     d.exec();
                 });
                 openWithAction->setMenu(openWithMenu);
+#ifdef MULTI_DISABLE
                 if (needDisable) {
                     openWithAction->setEnabled(false);
                 }
+#endif
             } else {
                 l<<addAction(tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -1306,7 +1310,7 @@ const QList<QAction *> DirectoryViewMenu::constructSearchActions()
     return l;
 }
 
-bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
+bool DirectoryViewMenu::isMultFile(std::shared_ptr<FileInfo> info)
 {
     if (!info) {
         qDebug() << "file info not valid";
@@ -1314,7 +1318,7 @@ bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
     }
 
     QString uri = info->uri();
-    if (uri.startsWith("mult:///") && (info->isAudioFile() || info->isVideoFile())) {
+    if (uri.startsWith("mult:///") && (!info->isDir())) {
         return true;
     }
 
