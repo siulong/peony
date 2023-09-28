@@ -291,7 +291,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="858"/>
+        <location filename="../../src/windows/main-window.cpp" line="859"/>
         <source>File Manager</source>
         <translation>Dosya Yöneticisi</translation>
     </message>
@@ -307,18 +307,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="773"/>
-        <location filename="../../src/windows/main-window.cpp" line="823"/>
+        <location filename="../../src/windows/main-window.cpp" line="824"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="773"/>
-        <location filename="../../src/windows/main-window.cpp" line="823"/>
+        <location filename="../../src/windows/main-window.cpp" line="824"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="856"/>
+        <location filename="../../src/windows/main-window.cpp" line="857"/>
         <source>Search</source>
         <translation type="unfinished">Ara</translation>
     </message>
@@ -339,7 +339,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="871"/>
+        <location filename="../../src/windows/main-window.cpp" line="872"/>
         <source>New Folder</source>
         <translation>Yeni Klasör</translation>
     </message>
@@ -355,19 +355,19 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Yeni Pencerede Aç</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="413"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="417"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="413"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="417"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="205"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="451"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="469"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="455"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="473"/>
         <source>Tips</source>
         <translation type="unfinished"></translation>
     </message>
@@ -377,12 +377,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="451"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="455"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="469"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="473"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -414,12 +414,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Tüm etiketler...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="675"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="679"/>
         <source>Manager tags...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="678"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="682"/>
         <source>More tags...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -427,7 +427,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NavigationTabBar</name>
     <message>
-        <location filename="../../src/control/navigation-tab-bar.cpp" line="123"/>
+        <location filename="../../src/control/navigation-tab-bar.cpp" line="124"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
         <translation>&quot;%2&quot; de &quot;%1&quot; ara</translation>
     </message>
@@ -1004,22 +1004,27 @@ Do you want to unmount forcely?</source>
         <translation>Geri Yükle</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="370"/>
+        <location filename="../../src/control/tab-widget.cpp" line="385"/>
         <source>Computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="439"/>
+        <location filename="../../src/control/tab-widget.cpp" line="460"/>
         <source>Select Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1583"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1603"/>
+        <source>Opening such files is not currently supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.cpp" line="1616"/>
         <source>Open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1584"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1617"/>
         <source>Open directory failed, you have no permission!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1028,7 +1033,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">Gelişmiş aramayı kapat.</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="360"/>
+        <location filename="../../src/control/tab-widget.cpp" line="375"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
@@ -1053,13 +1058,13 @@ Do you want to unmount forcely?</source>
         <translation type="obsolete">Yol seç</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="499"/>
-        <location filename="../../src/control/tab-widget.cpp" line="659"/>
+        <location filename="../../src/control/tab-widget.cpp" line="520"/>
+        <location filename="../../src/control/tab-widget.cpp" line="680"/>
         <source>is</source>
         <translation>de</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="534"/>
+        <location filename="../../src/control/tab-widget.cpp" line="555"/>
         <source>Please input key words...</source>
         <translation>Lütfen anahtar kelimeler girin ...</translation>
     </message>
@@ -1068,130 +1073,130 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">Lütfen anahtar kelimeler girin ...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="620"/>
-        <location filename="../../src/control/tab-widget.cpp" line="643"/>
+        <location filename="../../src/control/tab-widget.cpp" line="641"/>
+        <location filename="../../src/control/tab-widget.cpp" line="664"/>
         <source>contains</source>
         <translation>İçerik</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="294"/>
+        <location filename="../../src/control/tab-widget.h" line="297"/>
         <source>name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="294"/>
+        <location filename="../../src/control/tab-widget.h" line="297"/>
         <source>type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="294"/>
+        <location filename="../../src/control/tab-widget.h" line="297"/>
         <source>modify time</source>
         <translation>Değiştirme Zamanı</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="294"/>
+        <location filename="../../src/control/tab-widget.h" line="297"/>
         <source>file size</source>
         <translation>Dosya Boyutu</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="295"/>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
         <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>all</source>
         <translation>Tümü</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="295"/>
+        <location filename="../../src/control/tab-widget.h" line="298"/>
         <source>file folder</source>
         <translation>Dosya klasör</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="295"/>
+        <location filename="../../src/control/tab-widget.h" line="298"/>
         <source>image</source>
         <translation>Resim</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="295"/>
+        <location filename="../../src/control/tab-widget.h" line="298"/>
         <source>video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="296"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>text file</source>
         <translation>Metin dosyası</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="296"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>audio</source>
         <translation>Ses</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="296"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>others</source>
         <translation>Diğer</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="296"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>wps file</source>
         <translation type="unfinished">Wps Dosyası</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>today</source>
         <translation>Bugün</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>this week</source>
         <translation>Bu hafta</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>this month</source>
         <translation>Bu ay</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>this year</source>
         <translation>Bu yıl</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>year ago</source>
         <translation>Geçen yıl</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>tiny(0-16K)</source>
         <translation>Çok küçük(0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>small(16k-1M)</source>
         <translation>Küçük(16k-1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>empty(0K)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>medium(1M-128M)</source>
         <translation type="unfinished">Orta(1M-100M) {1M?} {128M?}</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>big(128M-1G)</source>
         <translation type="unfinished">Büyük(100M-1G) {128M?} {1G?}</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>large(1-4G)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>great(&gt;4G)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1211,7 +1216,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="811"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="815"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>

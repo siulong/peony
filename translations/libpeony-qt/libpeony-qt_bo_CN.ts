@@ -834,6 +834,10 @@
         <source>Time Create:</source>
         <translation>གསར་བཟོའི་དུས་ཚོད།</translation>
     </message>
+    <message>
+        <source>Please select a image that is smaller than 1MB.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::ComputerPropertiesPage</name>
@@ -3459,7 +3463,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ།</translation>
+        <translation type="vanished">གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3523,6 +3527,10 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Virtual file directories do not support move operations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clean the Trash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

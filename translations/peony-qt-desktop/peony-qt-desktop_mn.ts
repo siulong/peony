@@ -442,12 +442,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="96"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>set background</source>
         <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="101"/>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>display settings</source>
         <translation>ᠦᠵᠡᠭᠦᠯᠦᠯᠭᠡ ᠶᠢᠨ ᠪᠠᠶᠢᠷᠢᠯᠠᠭᠤᠯᠤᠯᠲᠠ ᠶᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
     </message>

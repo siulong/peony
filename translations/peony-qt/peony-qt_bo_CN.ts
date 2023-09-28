@@ -873,6 +873,10 @@ Do you want to unmount forcely?</source>
         <source>Computer</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Opening such files is not currently supported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TitleLabel</name>
