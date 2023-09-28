@@ -385,7 +385,7 @@ void FileCopy::run ()
                 if (!existed) {
                     error = g_error_new (1, G_IO_ERROR_FAILED, "%s", tr("Please check whether the device has been removed!").toUtf8().constData());
                 } else {
-                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Write file error: There is no avaliable disk space for device!").toUtf8().constData());
+                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Write file error: There is no available disk space for device!").toUtf8().constData());
                 }
 
                 detailError(&error);

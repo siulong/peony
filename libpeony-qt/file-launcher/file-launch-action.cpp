@@ -192,7 +192,7 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -395,7 +395,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 #endif
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -592,7 +592,7 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;

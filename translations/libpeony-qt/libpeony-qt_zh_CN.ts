@@ -1822,7 +1822,7 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="718"/>
-        <source>Orignal Path</source>
+        <source>Original Path</source>
         <translation>原始路径</translation>
     </message>
     <message>
@@ -2237,7 +2237,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="388"/>
-        <source>Write file error: There is no avaliable disk space for device!</source>
+        <source>Write file error: There is no available disk space for device!</source>
         <translation>写入文件错误: 设备上没有足够可用空间!</translation>
     </message>
     <message>
@@ -5141,7 +5141,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="89"/>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
@@ -5232,7 +5232,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="92"/>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
@@ -5312,7 +5312,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="86"/>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>

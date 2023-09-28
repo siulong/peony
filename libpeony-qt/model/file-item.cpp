@@ -1075,5 +1075,5 @@ void BatchProcessItems::slot_removeItems()
         delete child;
     }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
-    qDebug()<<"excute deletion finished, cost"<<time1 - time0;
+    qDebug()<<"execute deletion finished, cost"<<time1 - time0;
 }

@@ -189,7 +189,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             if (metaInfoPos.x() >= 0) {
-                // check if overlapped, it might happend whild drag out and in desktop view.
+                // check if overlapped, it might happened whild drag out and in desktop view.
                 auto indexRect = QRect(metaInfoPos, iconSize);
                 if (notEmptyRegion.intersects(indexRect)) {
 
@@ -867,7 +867,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     auto info = FileInfo::fromUri(destDirUri);
     if (info.get()->isEmptyInfo()) {
-        // note that this case nearly won't happend.
+        // note that this case nearly won't happened.
         // but there is a bug reported due to this.
         // link to task #48798.
         FileInfoJob j(info);

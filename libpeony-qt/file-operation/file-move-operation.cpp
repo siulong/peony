@@ -1817,7 +1817,7 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             if (!success) {
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(Invalid);
-                qWarning()<<"failed to remove orignal dest file";
+                qWarning()<<"failed to remove Original dest file";
                 return true;
             } else {
                 node->setState(FileNode::Invalid);
@@ -1832,7 +1832,7 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             if (!success) {
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(Invalid);
-                qWarning()<<"failed to remove orignal dest file";
+                qWarning()<<"failed to remove Original dest file";
                 return true;
             } else {
                 node->setState(FileNode::Invalid);

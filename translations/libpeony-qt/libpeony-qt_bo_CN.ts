@@ -1432,7 +1432,7 @@
         <translation>ཡིག་ཆ་སྲུང་སྐྱོབ་སྒམ་རྒྱ་བསྐྱེད་པ།</translation>
     </message>
     <message>
-        <source>Orignal Path</source>
+        <source>Original Path</source>
         <translation>གདོད་མའི་འགྲོ་ལམ།</translation>
     </message>
     <message>
@@ -1568,7 +1568,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ་པ།</translation>
     </message>
     <message>
-        <source>Write file error: There is no avaliable disk space for device!</source>
+        <source>Write file error: There is no available disk space for device!</source>
         <translation>ཡིག་ཆ་འབྲི་ནོར་ཤོར་བ་སྟེ། སྒྲིག་ཆས་ལ་གོ་མི་སྲིད་པའི་ཁབ་ལེན་གྱི་བར་སྟོང་མེད།</translation>
     </message>
     <message>
@@ -3549,7 +3549,7 @@ Do you want to unmount forcely?</source>
         <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
@@ -3620,7 +3620,7 @@ Do you want to unmount forcely?</source>
         <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
@@ -3683,7 +3683,7 @@ Do you want to unmount forcely?</source>
         <translation>དོར་བ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>

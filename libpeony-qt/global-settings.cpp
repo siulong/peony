@@ -62,7 +62,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         qDebug() << "default ALLOW_FILE_OP_PARALLEL:true";
         setValue(ALLOW_FILE_OP_PARALLEL, true);
     }
-    //if local languege is chinese, set chinese first as deafult
+    //if local languege is chinese, set chinese first as default
     if (QLocale::system().name().contains("zh") && !m_settings->allKeys().contains(SORT_CHINESE_FIRST))
         setValue(SORT_CHINESE_FIRST, true);
     for (auto key : m_settings->allKeys()) {
@@ -224,7 +224,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             setValue(DEFAULT_WINDOW_WIDTH, default_width);
             setValue(DEFAULT_WINDOW_HEIGHT, default_height);
             setValue(DEFAULT_SIDEBAR_WIDTH, 292);
-            qDebug() << "deafult set DEFAULT_SIDEBAR_WIDTH:"<<210;
+            qDebug() << "default set DEFAULT_SIDEBAR_WIDTH:"<<210;
         }
     }
 
