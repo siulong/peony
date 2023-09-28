@@ -31,6 +31,12 @@
 #include <QWidgetAction>
 #include <QStandardPaths>
 #include <KWindowSystem>
+#include <QDBusInterface>
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QVariant>
+#include <QMessageBox>
+#include <QInputDialog>
 
 #include "global-settings.h"
 #include "clipboard-utils.h"
@@ -40,6 +46,7 @@
 #include "directory-view-widget.h"
 #include "directory-view-container.h"
 #include "file-meta-info.h"
+#include "file-utils.h"
 
 OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent)
 {
@@ -116,6 +123,65 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     allowFileOpParallel->setCheckable(true);
     allowFileOpParallel->setChecked(Peony::FileOperationManager::getInstance()->isAllowParallel());
 
+    addAction(tr("Set samba password"), this, [=]() {
+        QDBusInterface *interFace = new QDBusInterface("org.ukui.samba.share.config",
+                                                           "/org/ukui/samba/share",
+                                                           "org.ukui.samba.share.config",
+                                                           QDBusConnection::systemBus());
+        QString username = g_get_user_name();
+        int pid = getpid();
+        int uid = getuid();
+        QDBusReply<bool> initReply = interFace->call("init", username, pid, uid);
+        if (initReply.isValid()) {
+            if (initReply.value()) {
+                 QDBusReply<bool> hasPasswdReply = interFace->call("hasPasswd");
+                 if (hasPasswdReply.isValid()) {
+                    if (hasPasswdReply.value()) {
+                        auto result = QMessageBox::question(nullptr, tr("Tips"), tr("The user already has a samba password, do you need to reset the samba password?"),
+                                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                        if (result == QMessageBox::Yes) {
+                              goto setPasswd;
+                        }
+                    } else {
+setPasswd:
+                        bool ok = false;
+                        QInputDialog dlg;
+                        dlg.setLabelText(tr("Samba password:"));
+                        dlg.setTextEchoMode(QLineEdit::Password);
+                        dlg.setWindowTitle(tr("Samba set user password"));
+                        dlg.setFixedSize(470,150);
+                        ok = dlg.exec();
+                        QString text = dlg.textValue();
+                        if (ok && !text.isNull() && !text.isEmpty()) {
+                            QDBusReply<bool> setPasswdReply = interFace->call("setPasswd", text);
+                            if (setPasswdReply.isValid()) {
+                                if (!setPasswdReply.value()) {
+                                     QMessageBox::warning(nullptr, tr("Warning"), tr("Samba set password failed, Please re-enter!"));
+                                }
+                            } else {
+                                qDebug() << "setPasswd call failed!";
+                            }
+                        }
+                    }
+                 } else {
+                     qDebug() << "hasPasswd call failed!";
+                 }
+            } else {
+                 QMessageBox::warning(nullptr, tr("Warning"), tr("Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!"), QMessageBox::Ok);
+            }
+        } else {
+           qDebug() << "init call failed!";
+        }
+        interFace->call("finished");
+    });
+
+    //task#147390  设置是否新建窗口打开文件夹
+    auto showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
+        Peony::GlobalSettings::getInstance()->setValue(SHOW_IN_NEW_WINDOW, checked);
+    });
+    showFoldersInNewWindow->setCheckable(true);
+    showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
+
     addSeparator();
 
     //comment icon to design request
@@ -165,6 +231,11 @@ void OperationMenu::updateMenu()
 
     bool tablet = qApp->property("tabletMode").toBool();
     m_editWidgetContainer->setVisible(!tablet);
+    if (tablet) {
+        m_edit_widget->hide();
+    } else {
+        m_edit_widget->show();
+    }
 }
 
 OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *parent) : QWidget(parent)
@@ -287,11 +358,30 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     bool isTrash = currentDirUri.startsWith("trash://");
     bool isComputer = currentDirUri.startsWith("computer:///");
     bool isFileBox = currentDirUri == "filesafe:///";
+    bool hasLongFileName = false;
+    for (auto uri : selections) {
+        if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除,所以该菜单置灰，link bug#188864 */
+            hasLongFileName = true;
+            break;
+        }
+    }
+
+    //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
+    bool isDirectoryCanWrite = true;
+    auto info = Peony::FileInfo::fromUri(currentDirUri);
+    if (!info->isEmptyInfo()) {
+        isDirectoryCanWrite = info->canWrite();
+    }
+    //comment to fix bug#191108, huawei phone can paste file success
+//    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
+//        isDirectoryCanWrite = false;
+//    }
 
     m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer);
+    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && isDirectoryCanWrite && !hasLongFileName);
 
+    Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
-    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox);
+    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && isDirectoryCanWrite);
 }

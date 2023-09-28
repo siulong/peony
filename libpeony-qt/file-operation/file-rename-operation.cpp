@@ -30,6 +30,7 @@
 #include <QUrl>
 
 #include <QProcess>
+#include <QFileInfo>
 
 static QString set_desktop_name (QString file, QString& name, GError** error);
 
@@ -43,7 +44,7 @@ static QString handleDuplicate(QString name)
 FileRenameOperation::FileRenameOperation(QString uri, QString newName)
 {
     m_uri = uri;
-    m_new_name = FileUtils::urlDecode(newName);
+    m_new_name = newName;
     m_old_name = FileUtils::getFileDisplayName(uri);
     QStringList srcUris;
     srcUris<<uri;
@@ -88,11 +89,54 @@ void FileRenameOperation::run()
             except.op = FileOpRenameToHideFile;
             except.dlgType = ED_WARNING;
             except.title = tr("File Rename warning");
-            except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
+            except.errorStr = tr("Are you sure to hidden this file?");
 
             Q_EMIT errored(except);
+
+            //fix bug#161394, support cancel rename operation
+            if (except.respCode == Cancel) {
+                cancel();
+                setHasError(true);
+                //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+                getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+                Q_EMIT operationFinished();
+                return;
+            }else{
+                //fix bug#174512, can not hide file immediately
+                qDebug() << "Q_EMIT updateHiddenFile："<<m_new_name;
+                Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
+            }
         }
     }
+
+    //task#144488, support cancel rename operation when change file type
+    //修改了文件类型后缀名，提示用户改变文件类型可能导致文件不可用
+    //修复新建文件夹改名错误弹框提示问题，无后缀名的文件不处理
+    bool isFolder = FileUtils::getFileIsFolder(m_uri);
+    if (! isFolder && (m_new_name.split(".").length() >1 || m_old_name.split(".").length() >1) &&
+        m_new_name.split(".").last() != m_old_name.split(".").last()){
+        FileOperationError except;
+        except.srcUri = m_uri;
+        except.errorType = ET_GIO;
+        except.op = FileOpRenameChangeType;
+        except.dlgType = ED_WARNING;
+        except.title = tr("File Rename warning");
+        except.errorStr = tr("When change the file suffix, the file may be invalid. "
+                             "Are you sure to change it ?");
+
+        Q_EMIT errored(except);
+
+        //support cancel rename operation when change file type
+        if (except.respCode == Cancel) {
+            cancel();
+            setHasError(true);
+            //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
+            getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
     std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(m_uri);
     if(fileinfo && !fileinfo->isDir()){
         bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
@@ -231,10 +275,19 @@ retry:
                 case OverWriteOne: {
                     // 避免重名替换
                     //fix bug#143435, use m_src_uris is null cause crash issue
-                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)) {
+                    if (FileUtils::isSamePath(except.srcUri, except.destDirUri)
+                            || !FileUtils::isFileExsit(except.srcUri)
+                            || !FileUtils::isFileExsit(except.destDirUri)) {
                         break;
                     }
-                    g_file_delete(newFile.get()->get(), nullptr, nullptr);
+                    g_clear_error(&err);
+                    g_file_delete(newFile.get()->get(), nullptr, &err);
+                    if (err) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = err->message;
+                        Q_EMIT errored(except);
+                        break;
+                    }
                     goto retry;
                 }
                 case IgnoreAll:
@@ -292,11 +345,20 @@ cancel:
 
     fileSync(m_uri, destUri);
 
+#ifdef KY_UDF_BURN
+    std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_uri);
+    if (mHelper->isUnixCDDevice()) {
+        mHelper->judgeSpecialDiscOperation();
+        QString oldNamePath = mHelper->getDestName(m_uri);
+        mHelper->discRenameOperation(oldNamePath, m_new_name);
+    }
+#endif
+
     Q_EMIT operationFinished();
     //notifyFileWatcherOperationFinished();
+
 }
 
-#include <QFileInfo>
 QString FileRenameOperation::getFileExtensionOfFile(const QString& file)
 {   
     /* 一些常见扩展名处理，特殊情况以后待完善 */

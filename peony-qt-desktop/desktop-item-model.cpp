@@ -34,6 +34,7 @@
 #include "file-operation-utils.h"
 
 #include "thumbnail-manager.h"
+#include "usershare-manager.h"
 
 #include "file-meta-info.h"
 
@@ -41,6 +42,12 @@
 #include "desktop-icon-view.h"
 #include "global-settings.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
+#include "desktop-icon-view-delegate.h"
+#include "desktop-menu-plugin-manager.h"
+#include "emblem-provider.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -55,6 +62,9 @@
 #include <QDebug>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 DesktopItemModel::DesktopItemModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -160,17 +170,27 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 notEmptyRegion += rect;
             }
 
+            int isUpdateIconGeometry = false;
             if (!view->isRenaming()) {
                 view->setFileMetaInfoPos(uri, QPoint(-1, -1));
             } else {
                 m_items_need_relayout.removeOne(uri);
                 view->setRenaming(false);
+                isUpdateIconGeometry = true;
             }
 
             auto metaInfoPos = view->getFileMetaInfoPos(uri);
+            QSize iconSize;
+            if (itemRectHash.isEmpty()) {
+                auto delegate = qobject_cast<DesktopIconViewDelegate *>(view->itemDelegate());
+                iconSize = delegate->sizeHint(QStyleOptionViewItem(), QModelIndex());
+            } else {
+                iconSize = itemRectHash.values().first().size();
+            }
+
             if (metaInfoPos.x() >= 0) {
                 // check if overlapped, it might happend whild drag out and in desktop view.
-                auto indexRect = QRect(metaInfoPos, itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
+                auto indexRect = QRect(metaInfoPos, iconSize);
                 if (notEmptyRegion.intersects(indexRect)) {
 
                     // move index to closest empty grid.
@@ -199,6 +219,8 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                         // handle position locate in DesktopIconView::itemInserted().
                         view->setFileMetaInfoPos(info->uri(), next.topLeft());
                     }
+                } else if (isUpdateIconGeometry){
+                    FileInfo::fromUri(uri).get()->setProperty("iconGeometry", QRect(view->mapToGlobal(metaInfoPos), iconSize));
                 }
 
                 this->beginInsertRows(QModelIndex(), m_files.count(), m_files.count());
@@ -219,7 +241,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             // aligin exsited rect
-            int marginTop = notEmptyRegion.boundingRect().top();
+            int marginTop = notEmptyRegion.isEmpty()? view->getViewRect().top() : notEmptyRegion.boundingRect().top();
             while (marginTop - grid.height() >= 0) {
                 marginTop -= grid.height();
             }
@@ -229,7 +251,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 marginLeft -= grid.width();
             }
 
-            auto indexRect = QRect(QPoint(marginLeft, marginTop), itemRectHash.isEmpty()? QSize(): itemRectHash.values().first().size());
+            auto indexRect = QRect(QPoint(marginLeft, marginTop), iconSize);
             if (notEmptyRegion.intersects(indexRect)) {
 
                 // move index to closest empty grid.
@@ -287,7 +309,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
-        auto info = FileInfo::fromUri(uri);
+        std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri);
         Peony::DesktopIconView *view = nullptr;
         if (info.get()->isEmptyInfo()) {
             view = ((PeonyDesktopApplication*)qApp)->removeUri(uri);
@@ -308,6 +330,15 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 //this->endResetModel();
                 Q_EMIT this->requestClearIndexWidget(QStringList()<<uri);
                 Q_EMIT this->requestUpdateItemPositions();
+
+                if (info->isDir()) {
+                    QString displayName = info->displayName();
+                    if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
+                        SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
+                        connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
+                        thread->start();
+                    }
+                }
             }
         }
     });
@@ -332,83 +363,90 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
         }
     });
 
+    //comment these code to fix bug#149540, story-view-19425
     //when system app uninstalled, delete link in desktop if exist
-    QString system_app_path = "file:///usr/share/applications/";
-    m_system_app_watcher = std::make_shared<FileWatcher>(system_app_path, this);
-    m_system_app_watcher->setMonitorChildrenChange(true);
-    auto mInfo = FileInfo::fromUri(system_app_path);
-    qDebug() <<"system_app_path:" <<mInfo->isDir();
-    this->connect(m_system_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
-        qDebug() << "m_system_app_watcher:" <<uri;
-        if (uri.endsWith(".desktop"))
-        {
-            QString fileName = uri;
-            fileName = fileName.replace(system_app_path, "");
-            qDebug() << "m_system_app_watcher:" <<fileName <<uri;
-            for (auto info : m_files) {
-                if (info->uri().endsWith(fileName)) {
-                    //fix bug#136661, desktop file may be auto deleted wrong
-                    //desktop file be deleted and then created
-                    QString absPath = uri;
-                    absPath = absPath.replace("file://", "");
-                    QTimer::singleShot(100, this, [=](){
-                    if (! QFile::exists(absPath)){
-                        //this->beginResetModel();
-                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                        m_files.removeOne(info);
-                        this->endRemoveRows();
-                        //this->endResetModel();
-                        Q_EMIT this->requestClearIndexWidget();
-                        Q_EMIT this->requestUpdateItemPositions();
-                        QStringList list;
-                        list.append(info->uri());
-                        //auto remove, link to task#10131
-                        FileOperationUtils::remove(list);
-                      }
-                    });
-                }
-            }
-        }
-    });
+//    QString system_app_path = "file:///usr/share/applications/";
+//    m_system_app_watcher = std::make_shared<FileWatcher>(system_app_path, this);
+//    m_system_app_watcher->setMonitorChildrenChange(true);
+//    auto mInfo = FileInfo::fromUri(system_app_path);
+//    qDebug() <<"system_app_path:" <<mInfo->isDir();
+//    this->connect(m_system_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
+//        qDebug() << "m_system_app_watcher:" <<uri;
+//        if (uri.endsWith(".desktop"))
+//        {
+//            QString fileName = uri;
+//            fileName = fileName.replace(system_app_path, "");
+//            qDebug() << "m_system_app_watcher:" <<fileName <<uri;
+//            for (auto info : m_files) {
+//                if (info->uri().endsWith(fileName)) {
+//                    //fix bug#136661, desktop file may be auto deleted wrong
+//                    //desktop file be deleted and then created
+//                    QString absPath = uri;
+//                    absPath = absPath.replace("file://", "");
+//                    QTimer::singleShot(100, this, [=](){
+//                    if (! QFile::exists(absPath)){
+//                        //this->beginResetModel();
+//                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+//                        m_files.removeOne(info);
+//                        this->endRemoveRows();
+//                        //this->endResetModel();
+//                        Q_EMIT this->requestClearIndexWidget();
+//                        Q_EMIT this->requestUpdateItemPositions();
+//                        //fix bug#148380, 148375 remove file not exist, deleted by app
+//                        if (QFile::exists(info->uri().replace("file://", ""))){
+//                            QStringList list;
+//                            list.append(info->uri());
+//                            //auto remove, link to task#10131
+//                            FileOperationUtils::remove(list);
+//                        }
+//                      }
+//                    });
+//                }
+//            }
+//        }
+//    });
 
-    //when andriod app uninstalled, delete link in desktop if exist
-    QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    auto andriod_app_path = homePath + "/.local/share/applications/";
-    auto app_info = FileInfo::fromUri(andriod_app_path);
-    qDebug() <<"andriod_app_path:" <<app_info->isDir();
-    m_andriod_app_watcher = std::make_shared<FileWatcher>(andriod_app_path, this);
-    m_andriod_app_watcher->setMonitorChildrenChange(true);
-    this->connect(m_andriod_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
-        if (uri.endsWith(".desktop"))
-        {
-            QString fileName = uri;
-            fileName = fileName.replace(andriod_app_path, "");
-            qDebug() << "andriod_app_path:" <<fileName <<uri;
-            for (auto info : m_files) {
-                if (info->uri().endsWith(fileName)) {
-                    //fix bug#136661,android desktop file be auto deleted wrong
-                    //desktop file be deleted and then created
-                    QString absPath = uri;
-                    absPath = absPath.replace("file://", "");
-                    QTimer::singleShot(100, this, [=](){
-                    if (! QFile::exists(absPath)){
-                        //this->beginResetModel();
-                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
-                        m_files.removeOne(info);
-                        this->endRemoveRows();
-                        //this->endResetModel();
-                        Q_EMIT this->requestClearIndexWidget();
-                        Q_EMIT this->requestUpdateItemPositions();
-                        QStringList list;
-                        list.append(info->uri());
-                        //auto remove, link to task#10131
-                        FileOperationUtils::remove(list);
-                      }
-                    });
-                }
-            }
-        }
-    });
+//    //when andriod app uninstalled, delete link in desktop if exist
+//    QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+//    auto andriod_app_path = homePath + "/.local/share/applications/";
+//    auto app_info = FileInfo::fromUri(andriod_app_path);
+//    qDebug() <<"andriod_app_path:" <<app_info->isDir();
+//    m_andriod_app_watcher = std::make_shared<FileWatcher>(andriod_app_path, this);
+//    m_andriod_app_watcher->setMonitorChildrenChange(true);
+//    this->connect(m_andriod_app_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
+//        if (uri.endsWith(".desktop"))
+//        {
+//            QString fileName = uri;
+//            fileName = fileName.replace(andriod_app_path, "");
+//            qDebug() << "andriod_app_path:" <<fileName <<uri;
+//            for (auto info : m_files) {
+//                if (info->uri().endsWith(fileName)) {
+//                    //fix bug#136661,android desktop file be auto deleted wrong
+//                    //desktop file be deleted and then created
+//                    QString absPath = uri;
+//                    absPath = absPath.replace("file://", "");
+//                    QTimer::singleShot(100, this, [=](){
+//                    if (! QFile::exists(absPath)){
+//                        //this->beginResetModel();
+//                        this->beginRemoveRows(QModelIndex(), m_files.indexOf(info), m_files.indexOf(info));
+//                        m_files.removeOne(info);
+//                        this->endRemoveRows();
+//                        //this->endResetModel();
+//                        Q_EMIT this->requestClearIndexWidget();
+//                        Q_EMIT this->requestUpdateItemPositions();
+//                        //fix bug#148380, 148375 remove file not exist, deleted by app
+//                        if (QFile::exists(info->uri().replace("file://", ""))){
+//                            QStringList list;
+//                            list.append(info->uri());
+//                            //auto remove, link to task#10131
+//                            FileOperationUtils::remove(list);
+//                         }
+//                       }
+//                    });
+//                }
+//            }
+//        }
+//    });
 
     //handle standard dir changing.
     m_dir_manager =new UserdirManager(this);
@@ -489,6 +527,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             endResetModel();
         }
     });
+
+    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, [=](){
+       QTimer::singleShot(1000, this, [=]{
+           for (auto file : m_files) {
+               EmblemProviderManager::getInstance()->queryAsync(file->uri());
+           }
+       });
+    });
 }
 
 DesktopItemModel::~DesktopItemModel()
@@ -526,44 +572,10 @@ void DesktopItemModel::refreshInternal()
         ThumbnailManager::getInstance()->releaseThumbnail(info->uri());
     }
     m_files.clear();
-
-    auto desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
-    //FIXME: replace BLOCKING api in ui thread.
-    if (!FileUtils::isFileExsit(desktopUri)) {
-        // try get correct desktop path delay.
-        //FIXME: replace BLOCKING api in ui thread.
-
-        if (findProgram("xdg-user-dirs-update")) {
-            do {
-                QProcess p;
-                p.setProgram("xdg-user-dirs-update");
-                p.start();
-                p.waitForFinished();
-                desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-            } while (!FileUtils::isFileExsit(desktopUri));
-        }
-
-        QTimer::singleShot(1000, this, [=](){
-            if (!FileUtils::isFileExsit(desktopUri)) {
-                endResetModel();
-                Q_EMIT refreshed();
-                refresh();
-            } else {
-                m_enumerator = new FileEnumerator(this);
-                m_enumerator->setAutoDelete();
-                m_enumerator->setEnumerateWithInfoJob();
-                m_enumerator->setEnumerateDirectory(desktopUri);
-                m_enumerator->connect(m_enumerator, &FileEnumerator::enumerateFinished, this, &DesktopItemModel::onEnumerateFinished);
-                m_enumerator->enumerateAsync();
-                endResetModel();
-            }
-        });
-        return;
-    }
-
     m_enumerator = new FileEnumerator(this);
+    connect(this, &DesktopItemModel::prepareRefresh, m_enumerator, &FileEnumerator::cancel, Qt::DirectConnection);
     m_enumerator->setAutoDelete();
+    QString desktopUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     m_enumerator->setEnumerateDirectory(desktopUri);
     m_enumerator->connect(m_enumerator, &FileEnumerator::enumerateFinished, this, &DesktopItemModel::onEnumerateFinished);
     m_enumerator->enumerateAsync();
@@ -629,7 +641,7 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
         if (!thumbnail.isNull()) {
             return thumbnail;
         }
-        return QIcon::fromTheme(info->iconName(), QIcon::fromTheme("text-x-generic"));
+        return QIcon::fromTheme(info->iconName(), QIcon::fromTheme("unknown"));
     }
     case UriRole:
         return info->uri();
@@ -639,8 +651,21 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void DesktopItemModel::onEnumerateFinished()
+void DesktopItemModel::onEnumerateFinished(bool successed)
 {
+    if (!successed) {
+        qWarning()<<"failed to enumerate desktop";
+        beginResetModel();
+        m_files.clear();
+        endResetModel();
+        return;
+    }
+
+    // check if there is info querying, if true, wait querying finished.
+    while (!m_querying_files.isEmpty()) {
+        qApp->processEvents();
+    }
+
     //beginResetModel();
     beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
     m_files.clear();
@@ -664,11 +689,25 @@ void DesktopItemModel::onEnumerateFinished()
     //this->endResetModel();
     for (auto info : infos) {
         auto asyncJob = new FileInfoJob(info);
-        connect(asyncJob, &FileInfoJob::queryAsyncFinished, this, [=](){
+        connect(this, &DesktopItemModel::prepareRefresh, asyncJob, [=]{
+            asyncJob->cancel();
+            asyncJob->setProperty("isCancelled", true);
+        }, Qt::DirectConnection);
+        connect(asyncJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
             m_querying_files.removeOne(info);
+            if (!successed) {
+                m_files.removeOne(info);
+            }
+
+            if (asyncJob->property("isCancelled").toBool()) {
+                // quit loop to avoid invalid data inserted;
+                return;
+            }
+
             if (m_querying_files.isEmpty()) {
-                beginInsertRows(QModelIndex(), 0, m_files.count() - 1);
-                endInsertRows();
+                if (!m_files.isEmpty()) {
+                    beginInsertRows(QModelIndex(), 0, m_files.count() - 1);
+                    endInsertRows();
 
                 for (auto info : m_files) {
                     auto uri = info->uri();
@@ -680,10 +719,11 @@ void DesktopItemModel::onEnumerateFinished()
                         view->ensureItemPosByUri(uri);
                     }
 
-                    if (info->isDesktopFile()) {
-                        ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
-                    } else {
-                        ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                        if (info->isDesktopFile()) {
+                            ThumbnailManager::getInstance()->updateDesktopFileThumbnail(info->uri(), m_thumbnail_watcher);
+                        } else {
+                            ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                        }
                     }
                 }
 
@@ -697,8 +737,8 @@ void DesktopItemModel::onEnumerateFinished()
                     m_desktop_watcher->setMonitorChildrenChange(true);
                 }
                 m_desktop_watcher->startMonitor();
-                m_system_app_watcher->startMonitor();
-                m_andriod_app_watcher->startMonitor();
+//                m_system_app_watcher->startMonitor();
+//                m_andriod_app_watcher->startMonitor();
 
                 Q_EMIT refreshed();
 
@@ -840,9 +880,18 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     //NOTE:
     //do not allow drop on it self.
     auto urls = data->urls();
+    if (urls.isEmpty())
+        return false;
+
+    bool hasPeonyEncodedUris = false;
+    if (data->hasFormat("peony-qt/encoded-uris")) {
+        if (!data->data("peony-qt/encoded-uris").isEmpty()) {
+            hasPeonyEncodedUris = true;
+        }
+    }
 
     QStringList srcUris;
-    if (data->hasFormat("peony-qt/encoded-uris")) {
+    if (hasPeonyEncodedUris) {
         srcUris = QString(data->data("peony-qt/encoded-uris")).split(" ");
         for (QString uri : srcUris) {
             if (uri.startsWith("recent://"))
@@ -932,7 +981,11 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
         auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
         op->connect(op, &FileOperation::operationFinished, this, [=](){
-            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+            //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
         });
     }
 
@@ -955,12 +1008,26 @@ Qt::DropActions DesktopItemModel::supportedDragActions() const
 
 void DesktopItemModel::refresh()
 {
+    Q_EMIT prepareRefresh();
+
+    beginResetModel();
+    m_files.clear();
+    m_items_need_relayout.clear();
+    auto app = static_cast<PeonyDesktopApplication *>(qApp);
+    app->clearViewCache();
+    endResetModel();
+
     m_desktop_info = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     auto infoJob = new FileInfoJob(m_desktop_info);
     infoJob->setAutoDelete();
-    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
-        refreshInternal();
+    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+        if (successed) {
+            refreshInternal();
+        } else {
+            qWarning()<<"desktop model refreshs: can not query desktop info"<<m_desktop_info->uri();
+        }
     });
+    connect(this, &DesktopItemModel::prepareRefresh, infoJob, &FileInfoJob::cancel, Qt::DirectConnection);
     infoJob->queryAsync();
 }
 

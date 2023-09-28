@@ -126,7 +126,9 @@ protected:
     void move();
     void moveForceUseFallback();
     void moveForceUseFallback(FileNode* node);
-
+    bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
+    ExceptionResponse udfCopyWarningDialog();
+    bool saveAsOtherPath();
     /*!
      * \brief prehandle
      * \param err
@@ -163,9 +165,10 @@ private:
      * \brief m_current_dest_dir_uri, used in progress_callback.
      */
     QString m_current_dest_dir_uri = nullptr;
+    QString m_save_as_other_uri= nullptr;
 
     goffset m_current_offset = 0;
-    goffset m_total_szie = 0;
+    goffset m_total_size = 0;
 
     /*!
      * \brief m_force_use_callback
@@ -185,6 +188,8 @@ private:
      */
     bool m_copy_move = false;
 
+    bool m_is_same_fs = false;
+
     /*!
      * \brief m_move_action
      * replacing m_copy_move flag.
@@ -195,6 +200,18 @@ private:
                                          G_FILE_COPY_NO_FALLBACK_FOR_MOVE);
 
     FileNodeReporter *m_reporter = nullptr;
+
+    bool m_is_long_name_file_operation = false;
+
+    bool m_is_long_name_error_msg_show = false;
+
+    bool m_is_udf_burn_work = false;
+
+    bool m_is_udf_warning = false;
+
+    QStringList m_burn_uris;
+
+    int m_cate_type = 0;
 
     /*!
      * \brief m_prehandle_hash

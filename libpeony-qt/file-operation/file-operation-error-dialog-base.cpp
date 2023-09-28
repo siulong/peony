@@ -32,6 +32,7 @@
 #include <QProxyStyle>
 #include <QPushButton>
 #include <QApplication>
+#include <QGSettings>
 
 #ifdef KY_SDK_WAYLANDHELPER
 #include <ukuistylehelper/ukuistylehelper.h>
@@ -60,7 +61,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
 #endif
 
     QVBoxLayout* mainLayout = new QVBoxLayout (this);
-    mainLayout->setContentsMargins (16, 4, 8, 16);
+    mainLayout->setContentsMargins (16, 5, 5, 16);
 
     QHBoxLayout* headerLayout = new QHBoxLayout;
 
@@ -78,6 +79,7 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     closebtn->setProperty ("isWindowButton", 0x02);
     closebtn->setIconSize (QSize(16, 16));
     closebtn->setIcon (QIcon::fromTheme("window-close-symbolic"));
+    closebtn->setToolTip(tr("Close"));
 
     headerLayout->addStretch ();
 //    headerLayout->setSpacing (1);
@@ -87,24 +89,36 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     mainLayout->addLayout (headerLayout);
 
     QHBoxLayout* contentLayout = new QHBoxLayout;
-    contentLayout->setContentsMargins (6, 0, 0, 0);
+    contentLayout->setContentsMargins (6, 0, 3, 0);
     contentLayout->setAlignment (Qt::AlignTop | Qt::AlignLeft);
 
     m_tipimage = new QLabel(this);
     m_tipimage->setMargin (0);
-    m_tipimage->setFixedWidth(64);
+    m_tipimage->setMinimumWidth(24);
     m_tipimage->setAlignment (Qt::AlignTop);
-    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (64, 64));
+    m_tipimage->setPixmap (QIcon::fromTheme ("dialog-warning").pixmap (24, 24));
+
+    m_iconName = "dialog-warning";
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *settings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+            if("iconThemeName" == key){
+                m_tipimage->setPixmap(QIcon::fromTheme(m_iconName).pixmap(m_tipimage->size()));
+            }
+        });
+    }
+
     contentLayout->addWidget (m_tipimage);
 
     m_tipcontent = new QLabel(this);
     m_tipcontent->setWordWrap (true);
-    m_tipcontent->setFixedWidth(420);
+    m_tipcontent->setMinimumWidth(420);
+    m_tipcontent->setMaximumWidth(460);
     m_tipcontent->setAlignment (Qt::AlignLeft | Qt::AlignTop);
 
     QScrollArea* scroll = new QScrollArea(this);
-
-    scroll->setFixedWidth(440);
+    scroll->setMaximumWidth(480);
     scroll->setWidgetResizable (true);
     scroll->setFrameShape(QFrame::NoFrame);
 
@@ -123,7 +137,8 @@ Peony::FileOperationErrorDialogBase::FileOperationErrorDialogBase(QDialog *paren
     m_buttonRight->setSpacing(16); /* 按设计稿设置button的space,link to bug#139766 */
 
     QHBoxLayout* buttonLayout = new QHBoxLayout;
-    buttonLayout->setContentsMargins (0, 0, 13, 3);
+    buttonLayout->setContentsMargins (0, 0, 16, 3);
+    m_buttonLeft->addStretch();
 
     buttonLayout->addLayout (m_buttonLeft);
     buttonLayout->addStretch ();
@@ -164,8 +179,10 @@ void Peony::FileOperationErrorDialogBase::adjustTextContent()
     } else {
         topMargin = qMax(48 - fontMetrics().height(), 0);
     }
-
     m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
+    int pimageMargin = 0;
+    pimageMargin = qMax(topMargin - (m_tipimage->pixmap()->height()-fontMetrics().height())/2,  0);
+    m_tipimage->setContentsMargins(0, pimageMargin, 0, 0);
 }
 
 void Peony::FileOperationErrorDialogBase::setText(QString text)
@@ -178,15 +195,28 @@ void Peony::FileOperationErrorDialogBase::setText(QString text)
 
 void Peony::FileOperationErrorDialogBase::setIcon(QString iconName)
 {
+    m_iconName = iconName;
     if (!iconName.isNull () && !iconName.isEmpty ()) {
-        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (64, 64));
+        int size = iconName.contains("dialog-warning") ? 24 : 64;
+        m_tipimage->setPixmap (QIcon::fromTheme (iconName).pixmap (size, size));
     }
+    int pimageMargin = qMax(m_tipcontent->contentsMargins().top() - (m_tipimage->pixmap()->height()-fontMetrics().height())/2,  0);
+    m_tipimage->setContentsMargins(0, pimageMargin, 0, 0);
 }
 
 QPushButton *Peony::FileOperationErrorDialogBase::addButton(QString name)
 {
     if (!name.isNull () && !name.isEmpty ()) {
         QPushButton* b = new QPushButton(name);
+        b->setContentsMargins(0, 0, 0, 0);
+        int buttonSize = qMax(96, b->sizeHint().width());
+        b->resize(buttonSize, b->width());
+
+        connect(this, &FileOperationErrorDialogBase::fontChanged, b, [=]{
+            int buttonSize = qMax(96, b->sizeHint().width());
+            b->resize(buttonSize, b->width());
+        });
+
         m_buttonRight->addWidget (b, Qt::AlignRight | Qt::AlignVCenter);
         return b;
     }
@@ -209,6 +239,7 @@ bool Peony::FileOperationErrorDialogBase::event(QEvent *event)
 {
     if (event->type() == QEvent::FontChange || event->type() == QEvent::ApplicationFontChange) {
         adjustTextContent();
+        Q_EMIT this->fontChanged();
     }
     return QDialog::event(event);
 }

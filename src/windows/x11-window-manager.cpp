@@ -156,12 +156,22 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
                 QMouseEvent me(QMouseEvent::MouseButtonRelease, e->pos(), e->windowPos(), e->screenPos(), e->button(), e->buttons(), e->modifiers(), Qt::MouseEventSynthesizedByApplication);
                 qApp->sendEvent(watched, &me);
 
+                memset(&xEvent, 0, sizeof(XEvent));
+                xEvent.type = ButtonRelease;
+                xEvent.xbutton.button = Button1;
+                xEvent.xbutton.same_screen = true;
+                xEvent.xbutton.window = m_current_widget->topLevelWidget()->winId();
+                XSendEvent(display, m_current_widget->topLevelWidget()->winId(),
+                           False, 0,
+                           &xEvent);
+
                 return true;
             } else {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
                 auto widget = qobject_cast<QWidget *>(watched);
                 auto topLevel = widget->topLevelWidget();
                 topLevel->windowHandle()->startSystemMove();
+                m_is_draging = false;
 #else
                 //auto me = static_cast<QMouseEvent *>(event);
                 auto widget = qobject_cast<QWidget *>(watched);

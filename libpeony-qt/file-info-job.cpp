@@ -118,12 +118,13 @@ bool FileInfoJob::querySync()
     refreshInfoContents(_info);
     refreshFileSystemInfo(_fs_info);
     g_object_unref(_info);
-    if (m_auto_delete)
-        deleteLater();
 
     EmblemProviderManager::getInstance()->querySync(m_info->uri());
 
     infoUpdated();
+
+    if (m_auto_delete)
+        deleteLater();
 
     return true;
 }
@@ -338,6 +339,9 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     if(g_file_info_has_attribute(new_info,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE))
         info->m_unix_device_file = g_file_info_get_attribute_string(new_info,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
 
+    info->m_target_uri = g_file_info_get_attribute_string(new_info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+    info->m_symlink_target = g_file_info_get_symlink_target(new_info);
+
     GIcon *g_icon = g_file_info_get_icon (new_info);
     if (G_IS_THEMED_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
@@ -356,7 +360,19 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         //g_object_unref(g_icon);
     }
 
-    //qDebug()<<m_display_name<<m_icon_name;
+    //fix bug#163449, trash desktop file icon issue
+    auto uri = m_info.get()->uri();
+    QUrl targetUrl = info->m_target_uri;
+    if (uri.startsWith("trash:///") && uri != "trash:///" && QFile::exists(targetUrl.path())){
+        if (info->m_icon_name == "application-x-desktop"){
+            auto _desktop_file = g_desktop_app_info_new_from_filename(QUrl(targetUrl).path().toUtf8().constData());
+            if (_desktop_file) {
+                info->m_icon_name = g_desktop_app_info_get_string(_desktop_file, "Icon");
+            }
+        }
+    }
+
+    //qDebug()<<"refreshInfoContents:"<<info->m_uri <<info->m_icon_name;
     GIcon *g_symbolic_icon = g_file_info_get_symbolic_icon (new_info);
     if (G_IS_THEMED_ICON(g_symbolic_icon)) {
         const gchar* const* symbolic_icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_symbolic_icon));
@@ -405,29 +421,31 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
            info->m_file_size = nullptr;
     }
 
-    auto systemTimeFormat = GlobalSettings::getInstance()->getSystemTimeFormat();
-    QDateTime date = QDateTime::fromMSecsSinceEpoch(info->m_modified_time*1000);
+//    auto systemTimeFormat = GlobalSettings::getInstance()->getSystemTimeFormat();
+//    QDateTime date = QDateTime::fromMSecsSinceEpoch(info->m_modified_time*1000);
     if (info->m_modified_time) {
-        info->m_modified_date = date.toString(systemTimeFormat);
+        //info->m_modified_date = date.toString(systemTimeFormat);
+        info->m_modified_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_modified_time);
     } else {
         info->m_modified_date = nullptr;
     }
 
     if (info->m_access_time) {
-        date = QDateTime::fromMSecsSinceEpoch(info->m_access_time*1000);
-        info->m_access_date = date.toString(systemTimeFormat);
+//        date = QDateTime::fromMSecsSinceEpoch(info->m_access_time*1000);
+//        info->m_access_date = date.toString(systemTimeFormat);
+        info->m_access_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_access_time);
     } else {
         info->m_access_date = nullptr;
     }
 
     if (g_file_info_has_attribute(new_info, "trash::deletion-date"))
     {
-        QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
-        info->m_deletion_date = deletionDate.replace("T", " ");
-        QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
-        info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
-        date = QDateTime::fromMSecsSinceEpoch(info->m_deletion_date_uint64);
-        info->m_deletion_date = date.toString(systemTimeFormat);
+       QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
+       info->m_deletion_date = deletionDate.replace("T", " ");
+       QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
+       info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+       //time already processed, need /1000 to origin state
+       info->m_deletion_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_deletion_date_uint64/1000);
     }
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
         auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
@@ -445,12 +463,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     queryFileDisplayName(new_info);
 
-    info->m_target_uri = g_file_info_get_attribute_string(new_info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-    info->m_symlink_target = g_file_info_get_symlink_target(new_info);
-
     // fix #81862
-    auto uri = m_info.get()->uri();
-    QUrl targetUrl = info->m_target_uri;
     //fix bug#126974, related to trash link files, use this code when target exists
     if (uri.startsWith("trash:///") && uri != "trash:///" && QFile::exists(targetUrl.path())) {
         auto targetInfo = FileInfo::fromUri(info->m_target_uri);

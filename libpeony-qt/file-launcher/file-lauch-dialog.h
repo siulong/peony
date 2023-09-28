@@ -51,6 +51,57 @@ class QListWidgetItem;
 namespace Peony {
 
 class FileLaunchAction;
+class PEONYCORESHARED_EXPORT FileLauchDialog;
+
+//默认打开方式组件
+class DefaultAcitonWidget : public QWidget
+{
+Q_OBJECT
+
+private:
+    QLabel*           m_appNameLabel = nullptr;
+    QLabel*           m_appIconLabel = nullptr;
+    QHBoxLayout*      m_layout       = nullptr;
+
+public:
+    explicit DefaultAcitonWidget(QWidget *parent = nullptr);
+    ~DefaultAcitonWidget() override;
+
+    /**
+     * \brief 设置应用图标
+     * \param appIcon
+     */
+    void setAppIcon(QIcon appIcon);
+
+    /**
+     * \brief 设置应用名称
+     * \param appName
+     */
+    void setAppName(QString appName);
+
+    void setLaunchAction(FileLaunchAction* launchAction);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+};
+
+class ActionGlobalData : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ActionGlobalData(QObject *parent = nullptr);
+
+    DefaultAcitonWidget *createWidgetForUri(const QString &uri, QWidget *parent = nullptr);
+    FileLaunchAction *getActionByUri(const QString &uri);
+    void setActionForUri(FileLaunchAction *newAction, bool needUpdate = true);
+    void removeAction(const QString &uri);
+
+private:
+    QMap<QString, QList<DefaultAcitonWidget*>*> m_openWithWidgetMap;
+    QMap<QString, FileLaunchAction*> m_newActionMap;
+
+};
+
 
 /*!
  * \brief The FileLauchDialog class
@@ -61,12 +112,21 @@ class PEONYCORESHARED_EXPORT FileLauchDialog : public QDialog
 {
     Q_OBJECT
 public:
+    static ActionGlobalData *actionGlobalData;
+    static DefaultAcitonWidget* createDefaultAcitonWidget(const QString &uri, QWidget *parent);
+    static void setNewLaunchAction(FileLaunchAction *newAction, bool needUpdate);
+
     explicit FileLauchDialog(const QString &uri, QWidget *parent = nullptr);
     QSize sizeHint() const override {
         return QSize(400, 600);
     }
 Q_SIGNALS:
     void open(FileLaunchAction *action);
+
+public Q_SLOTS:
+    void chooseOtherApp();
+    void openAppCenter();
+
 protected:
     void init(const QString &uri);
     void initFloorOne();
@@ -95,7 +155,7 @@ private:
     QVBoxLayout *m_layout;
     std::shared_ptr<FileInfo> m_info = nullptr;
     //默认打开方式
-    DefaultOpenWithWidget* m_defaultOpenWithWidget = nullptr;
+    DefaultAcitonWidget* m_defaultOpenWithWidget = nullptr;
 
     QListWidget *m_view;
     QHash<QListWidgetItem*, FileLaunchAction*> m_hash;

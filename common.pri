@@ -32,3 +32,25 @@ exists(/usr/include/kysdk/applications/ukuistylehelper/ukuistylehelper.h) {
     message("kywaylandhelper find")
     DEFINES += KY_SDK_WAYLANDHELPER
 }
+
+exists("/usr/include/libkyudfburn/udfburn_global.h") {
+    DEFINES += KY_UDF_BURN
+}
+
+exists("/usr/include/ukui-search/libsearch_global.h") {
+    DEFINES += KY_UKUI_SEARCH
+}
+
+exists("/usr/include/kysdk/desktop/kysdk-soundeffects_global.h") {
+    DEFINES += KY_SDK_SOUND_EFFECTS
+    PKGCONFIG += kysdk-soundeffects
+}
+
+exists("/usr/include/kysdk/kysdk-system/libkydate.h") {
+    DEFINES += KY_SDK_DATE
+}
+
+exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
+    message("kysysinfo find")
+    DEFINES += KY_SDK_SYSINFO
+}

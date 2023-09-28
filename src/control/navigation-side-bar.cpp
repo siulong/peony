@@ -41,6 +41,7 @@
 #include "file-utils.h"
 
 #include "x11-window-manager.h"
+#include "tag-management.h"
 
 #include <QHeaderView>
 #include <QPushButton>
@@ -155,6 +156,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         /*!
           \bug can not expanded? enumerator can not get prepared signal, why?
           */
+        bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                    Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+        if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+            this->setRowHidden(index.row(), index.parent(), true);
+            return;
+        }
         item->findChildrenAsync();
     });
 
@@ -167,8 +174,9 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         //fix open mutiple peony window, mount in side bar crash issue, link to bug#116201,116589
         if(!m_currSelectedItem)
             return;
-        JumpDirectory(m_currSelectedItem->uri());
-        qDebug()<<"挂载后跳转路径："<<m_currSelectedItem->uri();
+        //规避182166的情况
+//        JumpDirectory(m_currSelectedItem->uri());
+//        qDebug()<<"挂载后跳转路径："<<m_currSelectedItem->uri();
     });
 
     connect(this, &QTreeView::clicked, [=](const QModelIndex &index) {
@@ -315,6 +323,25 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         m_proxy_model->invalidate();
     });
 
+    connect(Peony::GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString& key){
+        if (SHOW_NETWORK == key) {
+            for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+                auto index = m_proxy_model->index(i, 0);
+                auto item = m_proxy_model->itemFromIndex(index);
+                bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                            Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
+                if (item->type() == SideBarAbstractItem::NetWorkItem) {
+                    this->setRowHidden(index.row(), index.parent(), !isShowNetwork);
+                    if (!isShowNetwork) {
+                        item->findChildrenAsync();
+                    }
+                    return;
+                }
+            }
+            this->viewport()->update();
+        }
+    });
+
     connect(m_model, &SideBarModel::signal_collapsedChildren, this, [=](const QModelIndex &index){
         QModelIndex modelIndex = m_proxy_model->mapFromSource(index);
         collapse(modelIndex);
@@ -326,9 +353,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         auto index = model()->index(row,0);
         auto srcIndex = m_proxy_model->mapToSource(index);
         auto item = m_model->itemFromIndex(srcIndex);
-        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
-            continue;
-        expand(index);
+        auto type = item->type();
+        if (item->type() != SideBarAbstractItem::VFSItem && item->type() != SideBarAbstractItem::SeparatorItem) {
+            expand(index);
+        }
+//        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
+//            continue;
+//        expand(index);
     }
 }
 
@@ -426,10 +457,15 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
     }
 
     auto info = FileInfo::fromUri(uri);
-    if (info.get()->isEmptyInfo()) {
-        FileInfoJob j(info);
-        j.querySync();
+
+    // try fix #174128, peony stucked when click sidebar network item sometimes.
+    if (!uri.startsWith("network:///")) {
+        if (info.get()->isEmptyInfo()) {
+            FileInfoJob j(info);
+            j.querySync();
+        }
     }
+
     auto targetUri = FileUtils::getTargetUri(uri);
     if (targetUri == "" && uri== "burn://")
     {
@@ -443,16 +479,15 @@ void NavigationSideBar::JumpDirectory(const QString &uri)
         return;
     }
 
+    // try fixing #133429.
+    if (m_currSelectedItem->getDevice().startsWith("/dev/sr") && uri.startsWith("computer://")) {
+        return;
+    }
+
     //some side bar item doesn't have a uri.
     //do not emit signal with a null uri to window.
     if (!uri.isNull())
         Q_EMIT this->updateWindowLocationRequest(uri);
-}
-
-void NavigationSideBar::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void NavigationSideBar::keyPressEvent(QKeyEvent *event)
@@ -497,7 +532,6 @@ void NavigationSideBar::focusInEvent(QFocusEvent *event)
         }
     }
     GlobalSettings::getInstance()->setValue("LAST_FOCUS_PEONY_WINID", dynamic_cast<MainWindow *>(this->topLevelWidget())->winId());
-    setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void NavigationSideBar::wheelEvent(QWheelEvent *event)
@@ -518,6 +552,15 @@ int NavigationSideBar::sizeHintForColumn(int column) const
         return viewport()->width() - MINIMUM_COLUMN_SIZE - viewportMargins().left() - viewportMargins().right() - verticalScrollBar()->width();
 
     return QTreeView::sizeHintForColumn(column);
+}
+
+QStyleOptionViewItem NavigationSideBar::viewOptions() const
+{
+    auto opt = QTreeView::viewOptions();
+    auto hoverColor = opt.palette.color(QPalette::BrightText);
+    hoverColor.setAlphaF(0.05);
+    opt.palette.setBrush(QPalette::Disabled, QPalette::Midlight, hoverColor);
+    return opt;
 }
 
 void NavigationSideBar::dragEnterEvent(QDragEnterEvent *event)
@@ -560,7 +603,7 @@ void NavigationSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionV
 //        //painter->setClipPath(rightRoundedRegion);
 //    }
 
-    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QStyledItemDelegate::paint(painter, option, index);
     painter->restore();
 }
@@ -574,19 +617,17 @@ NavigationSideBarContainer::NavigationSideBarContainer(QWidget *parent) : Peony:
     m_layout->setContentsMargins(0, 4, 0, 0);
     m_layout->setSpacing(0);
 
-    auto sideBar = new NavigationSideBar(this);
-
     QWidget *widget = new QWidget;
     m_layout->addWidget(new TitleLabel(this));
-    m_layout->addWidget(sideBar);
     widget->setLayout(m_layout);
-
     setWidget(widget);
 
+    auto sideBar = new NavigationSideBar(this);
+    addSideBar(sideBar);
     connect(sideBar, &NavigationSideBar::updateWindowLocationRequest, this, &NavigationSideBarContainer::updateWindowLocationRequest);
-
  }
 
+#include "file-label-model.h"
 void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 {
     if (m_sidebar)
@@ -594,28 +635,77 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     m_sidebar = sidebar;
     m_layout->addWidget(sidebar);
+    //m_layout->addStretch();
+
+    m_labelDialog = new FileLabelBox(this);
+    m_labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_labelDialog->hide();
+    m_layout->addWidget(m_labelDialog);
 
     QWidget *w = new QWidget(this);
     QVBoxLayout *l = new QVBoxLayout;
     l->setContentsMargins(4, 4, 2, 4);
 
-    m_label_button = new QPushButton(QIcon(":/icons/sign"), tr("All tags..."), this);
-    m_label_button->setProperty("useIconHighlightEffect", 0x2);
-    m_label_button->setProperty("iconHighlightEffectMode", 1);
-    m_label_button->setProperty("fillIconSymbolicColor", true);
-    m_label_button->setProperty("isWindowButton", 0x1);
-    m_label_button->setCheckable(true);
+    connect(m_labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
+    {
+        QModelIndex index = m_labelDialog->currentIndex();
+        QString name = index.data(Qt::DisplayRole).toString();
+        int id = index.data(Qt::UserRole).toInt();
+        if (id)
+        {
+            //QString uri = "label:///" + QString::number(id);
+            QString uri = "label:///" + name;
+            Q_EMIT m_sidebar->updateWindowLocationRequest(uri);
+        }
+    });
+    //when clicked in blank, currentChanged may not triggered
+    connect(m_labelDialog, &FileLabelBox::leftClickOnBlank, [=]()
+    {
+        //setLabelNameFilter("");
+    });
 
-    m_label_button->setFocusPolicy(Qt::FocusPolicy(m_label_button->focusPolicy() & ~Qt::TabFocus));
 
-    l->addWidget(m_label_button);
+    LabelButton *labelButton = new LabelButton(this);
 
-    connect(m_label_button, &QPushButton::clicked, m_sidebar, &NavigationSideBar::labelButtonClicked);
+    labelButton->setProperty("useIconHighlightEffect", 0x2);
+    labelButton->setProperty("iconHighlightEffectMode", 1);
+    labelButton->setProperty("fillIconSymbolicColor", true);
+    labelButton->setProperty("isWindowButton", 0x1);
+    //m_label_button->setCheckable(true);
+
+    labelButton->setFocusPolicy(Qt::FocusPolicy(labelButton->focusPolicy() & ~Qt::TabFocus));
+    labelButton->setLastIcon(":/icons/ukui-down-symbolic");
+    labelButton->setFirstIcon(":/icons/sign");
+    labelButton->setText(tr("Manager tags..."));
+
+    LabelButton *control = new LabelButton(this);
+    control->setText(tr("More tags..."));
+    control->hide();
+
+    connect(control, &LabelButton::clicked, this, [=](bool checked){
+        Peony::TagManagement::getInstance()->show();
+    });
+
+    l->setSpacing(0);
+
+    l->addWidget(control);
+    l->addWidget(labelButton);
+    connect(labelButton, &LabelButton::clicked, this, [=](bool checked){
+        if (checked) {
+            labelButton->setLastIcon(":/icons/ukui-up-symbolic");
+        } else {
+            labelButton->setLastIcon(":/icons/ukui-down-symbolic");
+        }
+        m_labelDialog->setFloatWidgetVisible(checked);
+    });
+
+    connect(m_labelDialog, &FileLabelBox::fileLabelVisible, this, [=](bool checked){
+        control->setVisible(checked);
+        m_labelDialog->setVisible(checked);
+    });
 
     w->setLayout(l);
-
     m_layout->addWidget(w);
-
     setLayout(m_layout);
 }
 
@@ -642,7 +732,7 @@ void NavigationSideBarStyle::drawPrimitive(QStyle::PrimitiveElement element, con
     switch (element) {
     case QStyle::PE_IndicatorItemViewItemDrop: {
         /* hotfixbug#99344：拖拽文件到侧边栏，出现黑框 */
-        painter->setRenderHint(QPainter::Antialiasing, true);/* 反锯齿 */
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);/* 反锯齿 */
         /* 按设计要求，边框颜色为调色板highlight值，圆角为6px */
         QColor color = option->palette.color(QPalette::Highlight);
         painter->setPen(color);
@@ -730,4 +820,53 @@ TitleLabel::TitleLabel(QWidget *parent):QWidget(parent)
     l->addWidget(m_text_label);
     l->addStretch();
     this->setFixedHeight(sizeHint().height());
+}
+
+LabelButton::LabelButton(QWidget *parent) : QWidget(parent)
+{
+    this->setAttribute(Qt::WA_TranslucentBackground);
+    m_mainLayout = new QHBoxLayout(this);
+    m_firstSymbolic = new QLabel(this);
+    m_lastSymbolic = new QLabel(this);
+    m_text = new QLabel(this);
+    m_mainLayout->addWidget(m_firstSymbolic);
+    m_mainLayout->addWidget(m_text);
+    m_mainLayout->addStretch();
+    m_mainLayout->addWidget(m_lastSymbolic);
+    setLayout(m_mainLayout);
+}
+
+void LabelButton::mousePressEvent(QMouseEvent *event)
+{
+    if (!m_isPress) {
+        m_isPress = true;
+    }
+    Q_UNUSED(event);
+}
+
+void LabelButton::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (m_isPress) {
+        m_show = !m_show;
+        Q_EMIT clicked(m_show);
+    }
+
+    m_isPress = false;
+
+    Q_UNUSED(event);
+}
+
+void LabelButton::setLastIcon(const QString &symbolic)
+{
+     m_lastSymbolic->setPixmap(QIcon(symbolic).pixmap(64,64));
+}
+
+void LabelButton::setFirstIcon(const QString &symbolic)
+{
+     m_firstSymbolic->setPixmap(QIcon(symbolic).pixmap(64,64));
+}
+
+void LabelButton::setText(QString text)
+{
+     m_text->setText(text);
 }

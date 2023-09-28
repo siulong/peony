@@ -27,6 +27,7 @@
 #include "audio-play-manager.h"
 
 #include <QMessageBox>
+#include <QUrl>
 
 static FileLabelModel *global_instance = nullptr;
 static QMap<int, QString> standardLabelNames;
@@ -40,7 +41,6 @@ FileLabelModel::FileLabelModel(QObject *parent)
     standardLabelNames.insert(4, tr("Green"));
     standardLabelNames.insert(5, tr("Blue"));
     standardLabelNames.insert(6, tr("Purple"));
-    standardLabelNames.insert(7, tr("Gray"));
 
     m_label_settings = new QSettings(QSettings::UserScope, "org.ukui", "peony-qt", this);
     if (m_label_settings->value("lastid").isNull()) {
@@ -51,19 +51,20 @@ FileLabelModel::FileLabelModel(QObject *parent)
         QColor Green(0x5FD065);
         QColor Blue(0x478EF8);
         QColor Purple(0xB470D5);
-        QColor Gray(0x9D9DA0);
+        //QColor Gray(0x9D9DA0);
         //init settings
-        addLabel(tr("Red"), Red);
-        addLabel(tr("Orange"), Orange);
-        addLabel(tr("Yellow"), Yellow);
-        addLabel(tr("Green"), Green);
-        addLabel(tr("Blue"), Blue);
-        addLabel(tr("Purple"), Purple);
-        addLabel(tr("Gray"), Gray);
+        addLabel(tr("Red"), Red, true);
+        addLabel(tr("Orange"), Orange, true);
+        addLabel(tr("Yellow"), Yellow, true);
+        addLabel(tr("Green"), Green, true);
+        addLabel(tr("Blue"), Blue, true);
+        addLabel(tr("Purple"), Purple, true);
         //addLabel(tr("Transparent"), Qt::transparent);
     } else {
         initLabelItems();
     }
+
+    connect(this, &FileLabelModel::fileLabelRenamed, this, &FileLabelModel::renameFileLabel);
 }
 
 FileLabelModel::~FileLabelModel()
@@ -120,14 +121,14 @@ int FileLabelModel::lastLabelId()
     }
 }
 
-void FileLabelModel::addLabel(const QString &label, const QColor &color)
+bool FileLabelModel::addLabel(const QString &label, const QColor &color, bool isInit)
 {
     beginResetModel();
 
     if (getLabels().contains(label) || getColors().contains(color)) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
         QMessageBox::critical(nullptr, tr("Error"), tr("Label or color is duplicated."));
-        return;
+        return false;
     }
 
     int lastid = lastLabelId();
@@ -136,34 +137,38 @@ void FileLabelModel::addLabel(const QString &label, const QColor &color)
     m_label_settings->setValue("label", label);
     m_label_settings->setValue("color", color);
     m_label_settings->setValue("visible", true);
+    m_label_settings->setValue("sidebar", true);
+    m_label_settings->setValue("menu", isInit);
     m_label_settings->endArray();
 
     auto item = new FileLabelItem(this);
     item->m_id = lastid + 1;
     item->m_name = label;
     item->m_color = color;
-
+    item->m_isValidInSidebar = true;
+    item->m_isValidInMenu = isInit;
     m_labels.append(item);
 
     addId();
 
-    connect(item, &FileLabelItem::nameChanged, this, [=](const QString &name) {
-        m_label_settings->beginWriteArray("labels");
-        m_label_settings->setArrayIndex(item->id());
-        m_label_settings->setValue("label", name);
-        m_label_settings->endArray();
-        m_label_settings->sync();
-    });
+//    connect(item, &FileLabelItem::nameChanged, this, [=](const QString &name) {
+//        m_label_settings->beginWriteArray("labels");
+//        m_label_settings->setArrayIndex(item->id());
+//        m_label_settings->setValue("label", name);
+//        m_label_settings->endArray();
+//        m_label_settings->sync();
+//    });
 
-    connect(item, &FileLabelItem::colorChanged, this, [=](const QColor &color) {
-        m_label_settings->beginWriteArray("labels");
-        m_label_settings->setArrayIndex(item->id());
-        m_label_settings->setValue("color", color);
-        m_label_settings->endArray();
-        m_label_settings->sync();
-    });
+//    connect(item, &FileLabelItem::colorChanged, this, [=](const QColor &color) {
+//        m_label_settings->beginWriteArray("labels");
+//        m_label_settings->setArrayIndex(item->id());
+//        m_label_settings->setValue("color", color);
+//        m_label_settings->endArray();
+//        m_label_settings->sync();
+//    });
 
     endResetModel();
+    return true;
 }
 
 void FileLabelModel::removeLabel(int id)
@@ -278,6 +283,14 @@ FileLabelItem *FileLabelModel::itemFormIndex(const QModelIndex &index)
     return nullptr;
 }
 
+FileLabelItem *FileLabelModel::getItemByRow(int row)
+{
+    if (row >= 0) {
+        return m_labels.at(row);
+    }
+    return nullptr;
+}
+
 QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 {
     return m_labels;
@@ -285,6 +298,26 @@ QList<FileLabelItem *> FileLabelModel::getAllFileLabelItems()
 
 void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
+
+    /* add时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    auto iter = m_globalLabelMap.find(labelId);
+    QSet<QString> uriSet;
+    if(iter != m_globalLabelMap.end()){
+        uriSet = m_globalLabelMap.value(labelId);
+    }
+    uriSet.insert(uri);
+    m_globalLabelMap.insert(labelId, uriSet);
+    m_label_settings->setValue(QString::number(labelId), QVariant(m_globalLabelMap.value(labelId).toList()));
+    m_label_settings->sync();
+    m_label_settings->endGroup();
+
+    /* 同步全局标记 */
+    QUrl url(uri);
+    QString labelUri = QString("label:///").append(getLabelNameFromLabelId(labelId)) + url.path() + "?schema=" + url.scheme();
+    Q_EMIT fileLabelAdded(labelUri, true);//end
+
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (!metaInfo) {
         return;
@@ -296,16 +329,24 @@ void FileLabelModel::addLabelToFile(const QString &uri, int labelId)
     labelIds.removeDuplicates();
     metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     Q_EMIT fileLabelChanged(uri);
+    Q_EMIT fileLabelChanged(labelUri);/* 更新标识模式界面的该文件 */
+
+
 }
 
 void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
 {
+    QMutexLocker lock(&m_mutex);
     auto metaInfo = Peony::FileMetaInfo::fromUri(uri);
     if (! metaInfo)
         return;
-    if (labelId <= 0) {
+
+    QList<int> labelIds;
+    if (labelId <= 0) {/* 删除所有标记 */
+        labelIds = getFileLabelIds(uri);
         metaInfo->removeMetaInfo(PEONY_FILE_LABEL_IDS);
-    } else {
+    } else {/* 去掉颜色勾选 */
+        labelIds.append(labelId);
         if (metaInfo->getMetaInfoVariant(PEONY_FILE_LABEL_IDS).isNull())
             return;
         QStringList labelIds = metaInfo->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
@@ -313,6 +354,28 @@ void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
         metaInfo->setMetaInfoStringList(PEONY_FILE_LABEL_IDS, labelIds);
     }
     Q_EMIT fileLabelChanged(uri);
+
+
+    /* remove时更新全局标识 */
+    m_label_settings->beginGroup("global labels");
+    for(auto &id: labelIds){
+        auto iter = m_globalLabelMap.find(id);
+        if(iter != m_globalLabelMap.end()){
+            QSet<QString> uriSet;
+            uriSet = m_globalLabelMap.value(id);
+            if(!uriSet.contains(uri))
+                continue;
+            uriSet.remove(uri);
+            m_globalLabelMap.insert(id, uriSet);
+            m_label_settings->setValue(QString::number(id), QVariant(m_globalLabelMap.value(id).toList()));
+            m_label_settings->sync();
+        }
+        /* 同步全局标记 */
+        QUrl url(uri);
+        QString labelUri = QString("label:///").append(getLabelNameFromLabelId(id)) + url.path() + "?schema=" + url.scheme();
+        Q_EMIT fileLabelRemoved(labelUri, true);
+    }
+    m_label_settings->endGroup();
 }
 
 int FileLabelModel::rowCount(const QModelIndex &parent) const
@@ -338,6 +401,9 @@ QVariant FileLabelModel::data(const QModelIndex &index, int role) const
     }
     case Qt::DecorationRole: {
         return m_labels.at(index.row())->color();
+    }
+    case Qt::UserRole: {
+        return m_labels.at(index.row())->id();
     }
     default:
         return QVariant();
@@ -388,6 +454,32 @@ bool FileLabelModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
+QSet<QString> FileLabelModel::getFileUrisFromLabelId(int labelId)
+{
+    QSet<QString> uriSet = m_globalLabelMap.value(labelId);
+    return uriSet;
+}
+
+int FileLabelModel::getLabelIdFromLabelName(const QString &colorName)
+{
+    for (auto item : m_labels) {
+        if (item->name() == colorName) {
+            return item->id();
+        }
+    }
+    return 0;
+}
+
+QString FileLabelModel::getLabelNameFromLabelId(int id)
+{
+    for (auto item : m_labels) {
+        if (item->id() == id) {
+            return item->name();
+        }
+    }
+    return QString();
+}
+
 void FileLabelModel::setName(FileLabelItem *item, const QString &name)
 {
     m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
@@ -405,6 +497,46 @@ void FileLabelModel::setColor(FileLabelItem *item, const QColor &color)
     m_label_settings->setValue("color", color);
     m_label_settings->endArray();
     m_label_settings->sync();
+}
+
+void FileLabelModel::setValidInSidebar(FileLabelItem *item, bool isChecked)
+{
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
+    m_label_settings->setArrayIndex(item->id());
+    m_label_settings->setValue("sidebar", isChecked);
+    m_label_settings->endArray();
+    m_label_settings->sync();
+
+    int row = m_labels.indexOf(item);
+    Q_EMIT dataChanged(index(row), index(row));
+}
+
+void FileLabelModel::setValidInMenu(FileLabelItem *item, bool isChecked)
+{
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
+    m_label_settings->setArrayIndex(item->id());
+    m_label_settings->setValue("menu", isChecked);
+    m_label_settings->endArray();
+    m_label_settings->sync();
+
+    int row = m_labels.indexOf(item);
+    Q_EMIT dataChanged(index(row), index(row));
+}
+
+#include <QtConcurrent>
+void FileLabelModel::renameFileLabel(const QString oldUri, const QString newUri)
+{
+    qDebug() << "rename file label -- old:" << oldUri << "  ==  new:" << newUri;
+    QtConcurrent::run([=]() {
+        QList<int> labelIds = getFileLabelIds(oldUri);
+        removeFileLabel(oldUri);
+        for(auto &id: labelIds){
+            if(id <= 0)
+                continue;
+            addLabelToFile(newUri, id);
+        }
+
+    });
 }
 
 void FileLabelModel::initLabelItems()
@@ -429,12 +561,29 @@ void FileLabelModel::initLabelItems()
             item->m_id = i;
             item->m_name = name;
             item->m_color = color;
-
+            item->m_isValidInSidebar = m_label_settings->contains("sidebar") ? m_label_settings->value("sidebar").toBool() : true;
+            item->m_isValidInMenu = m_label_settings->contains("menu") ? m_label_settings->value("menu").toBool() : true;
             m_labels.append(item);
         }
     }
     m_label_settings->endArray();
     endResetModel();
+
+    m_label_settings->beginWriteArray("labels", lastLabelId() + 1);
+    for (int i = 0; i < m_labels.size(); i++) {
+        m_label_settings->setArrayIndex(m_labels[i]->id());
+        m_label_settings->setValue("sidebar", m_labels[i]->isValidInSidebar());
+        m_label_settings->setValue("menu", m_labels[i]->isValidInMenu());
+    }
+    m_label_settings->endArray();
+
+    m_label_settings->beginGroup("global labels");
+    QStringList keys = m_label_settings->allKeys();
+    for(const QString &key: keys){
+        QSet<QString> uriSet = m_label_settings->value(key).toStringList().toSet();
+        m_globalLabelMap.insert(key.toInt(), uriSet);
+    }
+    m_label_settings->endGroup();
 }
 
 void FileLabelModel::addId()
@@ -471,6 +620,7 @@ void FileLabelItem::setName(const QString &name)
     if (m_id >= 0) {
         if (global_instance)
             global_instance->setName(this, name);
+        Q_EMIT nameChanged(name);
     }
 }
 
@@ -486,5 +636,52 @@ void FileLabelItem::setColor(const QColor &color)
     if (m_id >= 0) {
         if (global_instance)
             global_instance->setColor(this, color);
+        Q_EMIT colorChanged(color);
     }
+}
+bool FileLabelItem::isValidInSidebar()
+{
+    return m_isValidInSidebar;
+
+}
+
+bool FileLabelItem::isValidInMenu()
+{
+    return m_isValidInMenu;
+}
+
+void FileLabelItem::setValidInSidebar(bool isChecked)
+{
+    m_isValidInSidebar = isChecked;
+    if (m_id >= 0) {
+        if (global_instance)
+            global_instance->setValidInSidebar(this, isChecked);
+    }
+}
+
+void FileLabelItem::setValidInMenu(bool isChecked)
+{
+    m_isValidInMenu = isChecked;
+    if (m_id >= 0) {
+        if (global_instance)
+            global_instance->setValidInMenu(this, isChecked);
+    }
+}
+
+FileLableProxyFilterSortModel::FileLableProxyFilterSortModel(QObject *parent) : QSortFilterProxyModel(parent)
+{
+}
+
+bool FileLableProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    //FIXME:
+    FileLabelModel *model = static_cast<FileLabelModel*>(sourceModel());
+    //root
+    auto childIndex = model->index(sourceRow, 0, sourceParent);
+    if (childIndex.isValid()) {
+        auto item = static_cast<FileLabelItem*>(model->itemFormIndex(childIndex));
+        if (item)
+           return item->isValidInSidebar();
+    }
+    return true;
 }

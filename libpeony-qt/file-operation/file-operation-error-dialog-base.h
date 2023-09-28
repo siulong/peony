@@ -50,6 +50,7 @@ public:
 
 Q_SIGNALS:
     void cancel();
+    void fontChanged();
 
 protected:
     FileOperationError*         m_error = nullptr;
@@ -59,6 +60,7 @@ private:
     QLabel*                     m_tipcontent = nullptr;
     QHBoxLayout*                m_buttonLeft = nullptr;
     QHBoxLayout*                m_buttonRight = nullptr;
+    QString                     m_iconName;
 };
 };
 

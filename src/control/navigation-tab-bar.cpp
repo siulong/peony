@@ -107,10 +107,11 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 {
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
-    infoJob->setAutoDelete();
+    //infoJob->setAutoDelete();
     setTabData(index, uri);
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
+        infoJob->deleteLater();
         if (uri != tabData(index).toString())
             return;
         auto iconName = Peony::FileUtils::getFileIconName(uri);
@@ -129,9 +130,13 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 //            int  charWidth = fontMetrics().averageCharWidth();
 //            displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
 //        }
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabData(index, uri);
+        setTabToolTip(index, displayName);
 
         Q_EMIT this->locationUpdated(uri);
     });
@@ -148,6 +153,9 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
     if (!uri.isNull()) {
         //FIXME: replace BLOCKING api in ui thread.
         auto displayName = Peony::FileUtils::getFileDisplayName(uri);
+        if (displayName.contains("&")) {
+            displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
+        }
         addTab(displayName);        
         setTabData(count() - 1, uri);
         if (jumpToNewTab)
@@ -182,6 +190,13 @@ void NavigationTabBar::tabInserted(int index)
 
 void NavigationTabBar::dragEnterEvent(QDragEnterEvent *e)
 {
+    if (e->source() != this) {
+        QPoint pos = e->pos();
+        int index = tabAt(pos);
+        if (index >= 0) {
+            setCurrentIndex(index);
+        }
+    }
     e->accept();
     return;
 }
@@ -335,7 +350,8 @@ void TabBarStyle::polish(QWidget *widget)
     QProxyStyle::polish(widget);
     if (widget && qobject_cast<QToolButton *>(widget)) {
         widget->setProperty("isWindowButton", 0x1);
-        widget->setProperty("useIconHighlightEffect", 0x2);
+        //bug#167146 useIconHighlightEffect=2 导致打开预览框的图标不反白
+        //widget->setProperty("useIconHighlightEffect", 0x2);
     }
 }
 
@@ -404,7 +420,7 @@ void TabBarStyle::drawComplexControl(QStyle::ComplexControl control, const QStyl
 {
     if (widget && (widget->objectName() == "addPageButton" || widget->objectName() == "toolButton")) {
         painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         QPainterPath path;
         if (!m_need_adjust) {
             path.addEllipse(QRect(option->rect.adjusted(4, 4, -4, -4)));

@@ -199,6 +199,21 @@ bool FileInfo::isExecDisable()
     return false;
 }
 
+bool FileInfo::isAudioFile()
+{
+    if (nullptr != m_mime_type_string) {
+        if (m_mime_type_string.startsWith("audio")
+            || m_mime_type_string.startsWith("application/x-smaf")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+
 bool FileInfo::isOfficeFile()
 {
     int idx = 0;

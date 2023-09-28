@@ -31,14 +31,23 @@
 #include "file-item-model.h"
 
 #include "thumbnail-manager.h"
+#include "usershare-manager.h"
 
 #include "gerror-wrapper.h"
 #include "bookmark-manager.h"
 #include "audio-play-manager.h"
+#include "file-label-model.h"
+
+#ifndef KY_UDF_BURN
+#include "disccontrol.h"
+#else
+#include <libkyudfburn/disccontrol.h>
+using namespace UdfBurn;
+#endif
 
 #include <QDebug>
 #include <QStandardPaths>
-
+#include <QDir>
 #include <QMessageBox>
 #include <QUrl>
 #include <QTimer>
@@ -93,6 +102,9 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 }
                 */
             });
+
+            infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
             infoJob->queryAsync();
             m_waiting_update_queue.removeOne(uri);
         }
@@ -119,6 +131,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_children->remove(row);
                         m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
+                        FileLabelModel::getGlobalModel()->removeFileLabel(uri);
                         delete child;
                         break;
                     }
@@ -152,6 +165,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                 //m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                 //m_model->dataChanged(item->firstColumnIndex(), item->firstColumnIndex());
                 m_model->updated();
+                m_model->thumbnailUpdated(uri);
             }
         }
     });
@@ -163,7 +177,10 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 FileItem::~FileItem()
 {
     //qDebug()<<"~FileItem"<<m_info->uri();
-    Q_EMIT cancelFindChildren();
+    // try fix #164883, error cusor while searching
+    if (!property("isCancelled").toBool()) {
+        Q_EMIT cancelFindChildren();
+    }
     //disconnect();
 
     for (auto child : *m_children) {
@@ -226,6 +243,10 @@ void FileItem::findChildrenAsync()
     //the root item will be delete, so we should cancel the previous enumeration.
     enumerator->connect(this, &FileItem::cancelFindChildren, enumerator, &FileEnumerator::cancel);
     enumerator->connect(enumerator, &FileEnumerator::cancelled, m_model, [=](){
+        if (enumerator->getEnumerateUri() != m_model->getRootUri()) {
+            // try fix #164883, error cusor while searching
+            return;
+        }
         m_model->findChildrenFinished();
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
@@ -273,6 +294,7 @@ void FileItem::findChildrenAsync()
                 {
                     //check bookmark and delete
                     BookMarkManager::getInstance()->removeBookMark(uri2FavoriteUri(this->uri()));
+                    FileLabelModel::getGlobalModel()->removeFileLabel(this->uri());
                     m_model->sendPathChangeRequest("computer:///", this->uri());
                 }
                 else
@@ -284,7 +306,8 @@ void FileItem::findChildrenAsync()
                 if (err.get()->code() == G_IO_ERROR_NOT_FOUND && fileInfo->isSymbolLink())
                 {
                     auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
-                                          tr("File not exist, do you want to delete the link file?"));
+                                          tr("File not exist, do you want to delete the link file?"),
+                                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (result == QMessageBox::Yes) {
                         qDebug() << "Delete unused symbollink.";
                         QStringList selections;
@@ -361,6 +384,8 @@ void FileItem::findChildrenAsync()
                         m_model->dataChanged(child->firstColumnIndex(), child->lastColumnIndex());
                     });
 
+                    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
                     job->queryAsync();
                 }
             } else {
@@ -368,6 +393,10 @@ void FileItem::findChildrenAsync()
                 Q_EMIT m_model->findChildrenFinished();
                 return;
             }
+
+
+            /* 如果是R类型光盘，遍历完当前目录后，再遍历将要刻录的缓冲数据加入item的m_children列表 */
+            showFilesForBurningOnRTypeDisc();
 
             enumerator->cancel();
             delete enumerator;
@@ -446,6 +475,16 @@ void FileItem::findChildrenAsync()
                     m_children->append(item);
                     m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
+
+                    /* 解决：升级上来的版本点击标记以后无法显示原来已有的标记文件（兼容性问题） */
+                    if(!item->uri().startsWith("label://")){
+                        QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(item->uri());
+                        for(auto &labelId: labelIds){
+                            if(labelId <= 0)
+                                continue;
+                            FileLabelModel::getGlobalModel()->addLabelToFile(item->uri(), labelId);
+                        }
+                    }//end
                     //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                     //Q_EMIT m_model->updated();
                     ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
@@ -457,6 +496,9 @@ void FileItem::findChildrenAsync()
                         Q_EMIT m_model->updated();
                     }
                 });
+
+                infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
                 infoJob->queryAsync();
             }
         });
@@ -471,6 +513,9 @@ void FileItem::findChildrenAsync()
 
             if (!m_model||!m_children||!m_info)
                 return;
+
+            /* 如果是R类型光盘，遍历完当前目录后，再遍历将要刻录的缓冲数据加入item的m_children列表 */
+            showFilesForBurningOnRTypeDisc();
 
             m_watcher = std::make_shared<FileWatcher>(this->m_info->uri(), nullptr, true);
             m_watcher->setMonitorChildrenChange(true);
@@ -491,9 +536,10 @@ void FileItem::findChildrenAsync()
             });
             connect(m_watcher.get(), &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri) {
                 this->onRenamed(oldUri, newUri);
+                FileLabelModel::getGlobalModel()->fileLabelRenamed(oldUri, newUri);
                 BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
             });
-            connect(m_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
+            connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
                 m_model->updated();
                 //m_model->dataChanged(m_model->indexFromUri(uri), m_model->indexFromUri(uri));
             });
@@ -589,6 +635,11 @@ void FileItem::onChildAdded(const QString &uri)
         // add exsited checkment. link to: #66999
         if (!item) {
             item = new FileItem(info, this, m_model);
+#ifdef KY_UDF_BURN
+            if(m_isRTypeDisc){
+                item->setProperty("isFileForBurning", true);
+            }
+#endif
             m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
             m_children->append(item);
             m_uri_item_hash.insert(item->uri(), item);
@@ -606,6 +657,9 @@ void FileItem::onChildAdded(const QString &uri)
             qInfo()<<"file"<<uri<<"has arealy in file item model";
         }
     });
+
+    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
     infoJob->queryAsync();
 
 //    FileItem *newChild = new FileItem(FileInfo::fromUri(uri), this, m_model);
@@ -623,6 +677,17 @@ void FileItem::onChildRemoved(const QString &uri)
     m_waiting_add_queue.removeOne(uri);
     m_uris_to_be_removed.append(uri);
     m_idle->start();
+    if (m_uris_to_be_removed.count() == 1) {
+        auto info = FileInfo::fromUri(uri);
+        if (info->isDir()) {
+            QString displayName = info->displayName();
+            if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
+                SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
+                connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
+                thread->start();
+            }
+        }
+    }
     return;
 }
 
@@ -659,10 +724,13 @@ void FileItem::onDeleted(const QString &thisUri)
             tmpItem = tmpItem->m_parent;
         }
         if (!tmpUri.isNull()) {
-            if(tmpUri.startsWith("file:///media"))
+            if(tmpUri.startsWith("file:///media")){
                 m_model->sendPathChangeRequest("computer:///", tmpItem->uri());
-            else
+            }else if(tmpUri.startsWith("file:///run/user")){
+                m_model->sendPathChangeRequest("computer:///", thisUri);
+            }else{
                 m_model->setRootUri(tmpUri);
+            }
         } else {
             //! \note Fix direct setRootUri() prevents view switch error
             // m_model->setRootUri("file:///");
@@ -788,6 +856,9 @@ void FileItem::updateInfoAsync()
         m_model->updated();
         ThumbnailManager::getInstance()->createThumbnail(this->uri(), m_thumbnail_watcher, true);
     });
+
+    job->connect(this, &FileItem::cancelFindChildren, job, &FileInfoJob::cancel);
+
     job->queryAsync();
 }
 
@@ -843,6 +914,74 @@ void FileItem::batchRemoveItems()
     }
 }
 
+void FileItem::showFilesForBurningOnRTypeDisc()
+{
+#ifdef KY_UDF_BURN
+    QString unixDevice = m_info.get()->unixDeviceFile();
+    if(!unixDevice.startsWith("/dev/sr"))
+        return;
+
+    DiscControl *discControl = new DiscControl(unixDevice);
+    if(discControl->work()){
+       connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
+           if(discControl->isAllRType()){
+               m_isRTypeDisc = true;
+               FileEnumerator e;
+               QString parentDirForBurnFiles = "file://" + QDir::homePath()+"/.cache/KylinTransitBurner/";/* 例：file:///home/kylin/.cache/KylinTransitBurner */
+               e.setEnumerateDirectory(parentDirForBurnFiles);
+               e.enumerateSync();
+               for(auto &fileInfo : e.getChildren()){
+                   auto info = FileInfo::fromUri(fileInfo.get()->uri());
+                   auto infoJob = new FileInfoJob(info);
+                   infoJob->setAutoDelete();
+                   infoJob->connect(infoJob, &FileInfoJob::infoUpdated, this, [=]() {
+                       if(m_uri_item_hash.contains(info.get()->uri()))
+                           return;
+                       auto item = new FileItem(info, this, m_model);
+                       item->setProperty("isFileForBurning", true);/* 所有"/home/家目录/.cache/KylinTransitBurner/"中的子文件展示在挂载点时都应该半透明显示，区别于普通文件 */
+                       m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
+                       m_children->append(item);
+                       m_uri_item_hash.insert(item->uri(), item);
+                       m_model->endInsertRows();
+                       ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                   });
+
+                   infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+
+                   infoJob->queryAsync();
+               }
+               /* 监听 */
+               m_rTypeDiscWatcher = std::make_shared<FileWatcher>(parentDirForBurnFiles, nullptr, true);
+               m_rTypeDiscWatcher->setMonitorChildrenChange(true);
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileCreated, this, [=](QString uri) {
+                   this->onChildAdded(uri);
+                   Q_EMIT this->childAdded(uri);
+                   ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileDeleted, this, [=](QString uri) {
+                   this->onChildRemoved(uri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileChanged, this, [=](const QString &uri) {
+                  onChanged(uri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri) {
+                   this->onRenamed(oldUri, newUri);
+                   BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
+               });
+               connect(m_rTypeDiscWatcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
+                   m_model->updated();
+               });
+               m_rTypeDiscWatcher->startMonitor();
+           }
+           if(discControl){
+               discControl->deleteLater();
+           }
+       });
+
+    }
+#endif
+}
+
 void FileItem::clearChildren()
 {
     auto parent = firstColumnIndex();
@@ -855,6 +994,8 @@ void FileItem::clearChildren()
     m_expanded = false;
     m_watcher.reset();
     m_watcher = nullptr;
+    m_rTypeDiscWatcher.reset();
+    m_rTypeDiscWatcher = nullptr;
 }
 
 /* Func: if it isn't a vaild volume device,it should not be displayed.
@@ -924,6 +1065,7 @@ void BatchProcessItems::slot_removeItems()
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
+            FileLabelModel::getGlobalModel()->removeFileLabel(uri);
             itemsToBeDeleted.append(child);
         }
     }

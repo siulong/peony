@@ -34,11 +34,13 @@
 #include <QDir>
 #include <QIcon>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
-
+#include <gio/gdesktopappinfo.h>
+#include <gio/gunixmounts.h>
 
 using namespace Peony;
 
@@ -341,6 +343,7 @@ QString FileUtils::getNonSuffixedBaseNameFromUri(const QString &uri)
     }
 }
 
+#include "file-label-model.h"
 QString FileUtils::getFileDisplayName(const QString &uri)
 {
     auto fileInfo = FileInfo::fromUri(uri);
@@ -361,7 +364,37 @@ QString FileUtils::getFileDisplayName(const QString &uri)
             return showName;
         }
     }
+    if(uri.startsWith("label://")){/* 标记模式uri的displayName */
+        if("label:///" == uri){
+            showName = QObject::tr("label");
+        }else{
+            showName = uri.section("/", -1,-1).replace("?schema=file","");
+        }
+        return showName;
+    }
+
     return fileInfo.get()->displayName();
+}
+
+QString FileUtils::getApplicationName(const QString &uri)
+{
+    QString displayName = getFileDisplayName(uri);
+    if (uri.endsWith(".desktop")){
+        g_autoptr(GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+        g_autofree gchar *desktop_file_path = g_file_get_path(gfile);
+        g_autoptr(GDesktopAppInfo) gdesktopappinfo = g_desktop_app_info_new_from_filename(desktop_file_path);
+        if (gdesktopappinfo) {
+            g_autofree gchar *desktop_name = g_desktop_app_info_get_locale_string(gdesktopappinfo, "Name");
+            if (!desktop_name) {
+                desktop_name = g_desktop_app_info_get_string(gdesktopappinfo, "Name");
+            }
+            if (desktop_name) {
+                displayName = desktop_name;
+            }
+        }
+    }
+
+    return displayName;
 }
 
 QString FileUtils::getFileIconName(const QString &uri, bool checkValid)
@@ -634,6 +667,8 @@ const QStringList FileUtils::toDisplayUris(const QStringList &args)
                 g_autofree gchar* file = g_strdup_printf ("file://%s/%s", currentDir, path.toUtf8 ().constData ());
                 uris << file;
             }
+        } else if (path.startsWith("mtp://") || path.startsWith("gphoto2://")) {
+            uris << path;
         } else {
             uris << FileUtils::urlEncode (path);
         }
@@ -983,7 +1018,6 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     UDisksObject *object, *crypto_backing_object;
     UDisksBlock *block;
     UDisksClient *client =udisks_client_new_sync (NULL,NULL);
-
     object = NULL;
     if (stat (device_name, &statbuf) != 0)
     {
@@ -1016,6 +1050,20 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     g_object_unref(block);
 
     return volume_size;
+}
+
+quint64 FileUtils::getDiskFreeSpace(const gchar * path, bool &isState)
+{
+    struct statvfs vfs;
+    quint64 freeSize = 0;
+    auto state = statvfs(path, &vfs);
+    if(0 > state) {
+        isState = false;
+        qWarning() << "read statvfs error";
+    } else {
+        freeSize = vfs.f_bavail * vfs.f_bsize;
+    }
+    return freeSize;
 }
 
 quint64 FileUtils::getFileSystemSize(QString uri)
@@ -1090,6 +1138,27 @@ QString FileUtils::getMobieDataPath()
         return "file://" + completePath;
     else
         return "";
+}
+
+QString FileUtils::getFileSystemId(QString uri)
+{
+    if (nullptr == uri) return "";
+
+    QString systemId = "";
+    auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
+    auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
+        G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+        G_FILE_QUERY_INFO_NONE,
+        nullptr,
+        nullptr));
+    if (!G_IS_FILE_INFO (info.get()->get()))
+        return systemId;
+
+    if (info) {
+        systemId = g_file_info_get_attribute_string(info.get()->get(), G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+    }
+
+    return systemId;
 }
 
 bool FileUtils::isRemoteServerUri(const QString &uri)
@@ -1192,6 +1261,95 @@ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
     return iconName;
 }
 
+QString FileUtils::handleSpecialSymbols(const QString &displayName)
+{
+    QString tmpStr = displayName;
+    if (displayName.contains("&")) {
+        tmpStr = tmpStr.replace("&", "&&");
+    }
+    return tmpStr;
+}
+
+QString FileUtils::getFsTypeFromFile(const QString &fileUri)
+{
+    QString fsType = "ext";
+
+    g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
+    g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
+    if (!mount)
+        return "ext";
+
+    g_autoptr (GVolume) volume = g_mount_get_volume(mount);
+    if (!volume)
+        return fsType;
+
+    g_autofree gchar* unix_file = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+    if (!unix_file)
+        return fsType;
+
+    QString unixDevice = unix_file;
+
+    // try fix #179725
+    if (unixDevice.startsWith("/dev/dm")) {
+        return "ext";
+    }
+
+    QString dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
+    if (! QDBusConnection::systemBus().isConnected())
+        return fsType;
+    QDBusInterface blockInterface("org.freedesktop.UDisks2",
+                                  dbusPath,
+                                  "org.freedesktop.UDisks2.Block",
+                                  QDBusConnection::systemBus());
+
+    if(blockInterface.isValid())
+        fsType = blockInterface.property("IdType").toString();
+
+    //if need diff FAT16 and FAT32, should use IdVersion
+//    if(fsType == "" && blockInterface.isValid())
+//        fsType = blockInterface.property("IdVersion").toString();
+
+    return fsType;
+}
+
+bool FileUtils::isFuseFileSystem(const QString &fileUri)
+{
+    g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
+    g_autoptr (GFile) parent = g_file_get_parent(file);
+    auto path = g_file_peek_path(parent);
+    if (!path) {
+        return false;
+    }
+    g_autoptr (GUnixMountEntry) entry = g_unix_mount_at(path, NULL);
+    if (!entry) {
+        entry = g_unix_mount_for(path, NULL);
+        if (!entry) {
+            return false;
+        }
+    }
+    auto fsType = g_unix_mount_get_fs_type(entry);
+    if (QString(fsType).contains("fuse.kyfs")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+bool FileUtils::isLongNameFileOfNotDel2Trash(const QString &fileUri)
+{
+    /* 存放长文件名目录的下，判断文件名超过224字符的，右键删除选项改成永久删除，不删除到回收站。link bug#188864  */
+    QString extendDir = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展";/* 长文件名文件存放在家目录/下载/扩展目录下 */
+    QString fileDecodeUri = urlDecode(fileUri);
+    if(!fileDecodeUri.startsWith(extendDir))
+        return false;
+
+    QString baseName = Peony::FileUtils::getUriBaseName(fileDecodeUri);
+    qDebug()<<"file decodeUri:"<<fileDecodeUri<<";base name:"<<baseName<<";length of base name:"<<baseName.length();
+    if(224 < baseName.length())
+        return true;
+
+    return false;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";
@@ -1210,16 +1368,7 @@ QString FileUtilsPrivate::getFileIconName(const QString &uri)
     if (g_icon && G_IS_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
         if (icon_names) {
-            auto p = icon_names;
-            while (*p) {
-                QIcon icon = QIcon::fromTheme(*p);
-                if (!icon.isNull()) {
-                    icon_name = QString (*p);
-                    break;
-                } else {
-                    p++;
-                }
-            }
+            icon_name = QString(icon_names[0]);
         } else {
             //if it's a bootable-media,maybe we can get the icon from the mount directory.
             char *bootableIcon = g_icon_to_string(g_icon);

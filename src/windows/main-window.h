@@ -157,6 +157,10 @@ public Q_SLOTS:
     QString getLastSearchKey();
     void updateTabletModeValue(bool isTabletMode);
 
+    void updateSearchStatus(bool isSearching);
+
+    void updateDateFormat(QString dateFormat);
+
 protected:
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *e);
@@ -197,6 +201,7 @@ private:
     bool m_should_save_side_bar_width = false;
     bool m_should_save_window_size = false;
     bool m_is_first_tab =true;
+    bool m_searching = false;
 
     QPoint m_offset;
 
@@ -213,6 +218,10 @@ private:
     QStringList m_uris_to_edit;/* 新建文件/文件夹，可编辑文件名list */
 
     QDBusInterface *m_statusManagerDBus = nullptr;
+    bool m_is_blur_window = false;
+    bool m_is_show_menu = false;
+    QString m_date_format = "";
+    QDBusInterface  *mDbusDateServer;
 };
 
 #endif // MAINWINDOW_H

@@ -108,22 +108,29 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
     header()->setStretchLastSection(false);
-
-    connect(header(), &QHeaderView::sectionClicked, this, [=](){
-        //update sort policy
-        auto settings = GlobalSettings::getInstance();
-        if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            settings->setValue(SORT_COLUMN, getSortType());
-            settings->setValue(SORT_ORDER, getSortOrder());
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
-            if (metaInfo) {
-                metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
-                metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+    header()->setMinimumSectionSize(130);
+    header()->setTextElideMode(Qt::ElideRight);
+    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+        connect(header(), &QHeaderView::sectionClicked, this, [=](){
+            //update sort policy
+            auto settings = GlobalSettings::getInstance();
+            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                settings->setValue(SORT_COLUMN, getSortType());
+                settings->setValue(SORT_ORDER, getSortOrder());
             } else {
-                qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
+                if (metaInfo) {
+                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
+                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+                } else {
+                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                }
             }
-        }
+        });
+    }
+
+    connect(header(), &QHeaderView::sectionResized, this, [=]{
+        m_header_section_resized_manually = true;
     });
 
     setExpandsOnDoubleClick(false);
@@ -144,7 +151,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setIconSize(QSize(40, 40));
     setMouseTracking(true);//追踪鼠标
 
-    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
+    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -159,16 +166,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     {
         m_proxy_model->manualUpdateExpectedSortInfo(logicalIndex, order);
         //qDebug() << "sortIndicatorChanged:" <<logicalIndex<<order;
-        if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-            Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
-            Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
-            if (!metaInfo) {
-                qWarning()<<"no meta info"<<m_current_uri;
+        if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
+            if (GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                Peony::GlobalSettings::getInstance()->setValue(SORT_COLUMN, logicalIndex);
+                Peony::GlobalSettings::getInstance()->setValue(SORT_ORDER, order);
             } else {
-                metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
-                metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                auto metaInfo = FileMetaInfo::fromUri(m_current_uri);
+                if (!metaInfo) {
+                    qWarning()<<"no meta info"<<m_current_uri;
+                } else {
+                    metaInfo->setMetaInfoInt(SORT_COLUMN, logicalIndex);
+                    metaInfo->setMetaInfoInt(SORT_ORDER, order);
+                }
             }
         }
     });
@@ -279,6 +288,16 @@ void ListView::keyPressEvent(QKeyEvent *e)
         }
         break;
     }
+    case Qt::Key_Home:
+    case Qt::Key_End:
+    case Qt::Key_PageUp:
+    case Qt::Key_PageDown: {
+        //fix bug#160799, can not update scrollBar to show selected file issue
+        if (!selectedIndexes().isEmpty()) {
+            QTreeView::scrollTo(selectedIndexes().first());
+        }
+        break;
+    }
     default:
         break;
     }
@@ -326,7 +345,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
         this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1) {
+    if(getSelections().count()>1) {
         multiSelect();
     }
 
@@ -346,8 +365,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
 
     //if click left button at blank space, it should select nothing
     //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid();
-    bool isClearSelection = !(qApp->property("tabletMode").toBool() && isEnableMultiSelect());
-    if(isClearSelection && (!indexAt(e->pos()).isValid()) )
+    if(!indexAt(e->pos()).isValid())
     {
         this->clearSelection();
         disableMultiSelect();
@@ -423,7 +441,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         m_logicRect = logicRect.normalized();
 
         int dx = -horizontalOffset();
-        int dy = -verticalOffset() + this->header()->height();
+        int dy = -verticalOffset();
         auto realRect = m_logicRect.adjusted(dx, dy, dx ,dy);
 
         if (!m_rubberBand->isVisible())
@@ -438,7 +456,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         doAutoScroll();
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
 }
 
@@ -568,6 +586,13 @@ void ListView::dropEvent(QDropEvent *e)
         return;
     }
 
+    auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
+    auto validRect = QRect(visualRect(proxy_index).topLeft(), sizeHint);
+    if (!validRect.contains(e->pos())) {
+        //拖拽到在空白处，就移动到当前目录下
+        m_model->dropMimeData(e->mimeData(), action, 0, 0, QModelIndex());
+        return;
+    }
     m_model->dropMimeData(e->mimeData(), action, 0, 0, index);
 }
 
@@ -654,7 +679,6 @@ void ListView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void ListView::startDrag(Qt::DropActions flags)
@@ -728,10 +752,12 @@ void ListView::startDrag(Qt::DropActions flags)
     }
 }
 
-void ListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
 {
-    QTreeView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
+    // fix #I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
+    QRect adjustedRect = rect;
+    adjustedRect.setLeft(0);
+    QTreeView::setSelection(adjustedRect, command);
 }
 
 void ListView::slotRename()
@@ -741,7 +767,9 @@ void ListView::slotRename()
         || getDirectoryUri().startsWith("recent://")
         || getDirectoryUri().startsWith("favorite://")
         || getDirectoryUri().startsWith("search://")
-        || getDirectoryUri().startsWith("network://"))
+        || getDirectoryUri().startsWith("network://")
+        || getDirectoryUri().startsWith("label://"))
+
         return;
 
     //standardPaths not allow rename
@@ -790,6 +818,12 @@ void ListView::adjustColumnsSize()
     if (model()->columnCount() == 0)
         return;
 
+    // try fixing #155969, list view can not save columns' state while resizing.
+    if (m_header_section_resized_manually)
+        return;
+
+    // do not trigger header's sectionResized() signal. related to #155969.
+    header()->blockSignals(true);
     header()->resizeSections(QHeaderView::ResizeToContents);
 
     int rightPartsSize = 0;
@@ -811,27 +845,37 @@ void ListView::adjustColumnsSize()
         for (int column = 1; column < model()->columnCount(); column++) {
             setColumnWidth(column, size);
         }
+        header()->blockSignals(false);
         return;
     }
 
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
     header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+    header()->blockSignals(false);
 }
 
 void ListView::multiSelect()
 {
+    if (selectionMode() == MultiSelection) {
+        return;
+    }
     if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
         m_multi_select = true;
     }
     setSelectionMode(MultiSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void ListView::disableMultiSelect()
 {
+    if (selectionMode() == ExtendedSelection) {
+        return;
+    }
     m_multi_select = false;
     setSelectionMode(ExtendedSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void ListView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -966,6 +1010,11 @@ bool ListView::getDelegateEditFlag()
     return m_delegate_editing;
 }
 
+void ListView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
+}
+
 int ListView::getSortType()
 {
     int type = m_proxy_model->expectedSortType();
@@ -1001,7 +1050,7 @@ void ListView::editUri(const QString &uri)
     auto origin = FileUtils::getOriginalUri(uri);
     if(uri.startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
         origin = uri;
-    QModelIndex index =m_proxy_model->indexFromUri(origin);
+    QModelIndex index = m_proxy_model->indexFromUri(origin);
     setIndexWidget(index, nullptr);
     //注释该行以修复bug:#60474
 //    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
@@ -1024,6 +1073,19 @@ void ListView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
+    setState(QTreeView::NoState);
+    auto origin = FileUtils::getOriginalUri(uris.first());
+    if(uris.first().startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
+        origin = uris.first();
+    QModelIndex index = m_proxy_model->indexFromUri(origin);
+    setIndexWidget(index, nullptr);
+    //fix bug#70769, edit box overlapped with status bar issue
+    //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
+    if(index.row() >= m_proxy_model->rowCount()-1)
+       QTreeView::scrollToBottom();
+    //注释该行以修复bug:#60474
+//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
+    edit(index);
 }
 
 bool ListView::isEnableMultiSelect()
@@ -1084,7 +1146,9 @@ ListView2::ListView2(QWidget *parent) : DirectoryViewWidget(parent)
     setAutoFillBackground(true);
     m_view = new ListView(this);
 
-    DirectoryViewHelper::globalInstance()->addListViewWithDirectoryViewWidget(m_view, this);
+    DirectoryViewHelper * viewHelper = DirectoryViewHelper::globalInstance();
+    viewHelper->addListViewWithDirectoryViewWidget(m_view, this);
+    connect(m_view, &ListView::updateSelectStatus, viewHelper, &DirectoryViewHelper::updateSelectStatus);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())

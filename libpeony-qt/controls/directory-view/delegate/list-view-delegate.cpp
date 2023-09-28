@@ -23,7 +23,10 @@
 #include "list-view-delegate.h"
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
+#include "file-batch-rename-operation.h"
 #include "file-item-model.h"
+#include "file-item-proxy-filter-sort-model.h"
+#include "file-item.h"
 
 #include "list-view.h"
 #include "clipboard-utils.h"
@@ -36,6 +39,7 @@
 #include <QPushButton>
 
 #include <QPainter>
+#include <QDBusReply>
 
 #include <QKeyEvent>
 #include <QItemDelegate>
@@ -68,6 +72,21 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto view = qobject_cast<DirectoryView::ListView *>(parent());
     opt.decorationSize = view->iconSize();
+
+    auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
+    auto item = model->itemFromIndex(index);
+
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            painter->setOpacity(0.5);
+        }else{
+            painter->setOpacity(1.0);
+        }
+    }//end
+#endif
+
     /* 此处以中文命名的文件保护箱标记实时同步还存在问题，是由于uri编码（尽管使用FileUtils::urlEncoded进行转换）与底层(info的uri)不匹配 */
     QString uri = index.data(Qt::UserRole).toString();
     auto info = FileInfo::fromUri(uri);
@@ -118,7 +137,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             for (int i = startIndex; i < colors.count(); ++i) {
                 auto color = colors.at(i);
                 painter->save();
-                painter->setRenderHint(QPainter::Antialiasing);
+                //fix bug#147348
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 painter->translate(0, opt.rect.topLeft().y());
                 painter->translate(2, 2);
                 painter->setPen(opt.palette.highlightedText().color());
@@ -257,8 +277,10 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             if(iconSize.height() < 28){
                 iconSizeHeight = 28;
             }
+            painter->save();
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-            //painter->restore();
+            painter->restore();
         }
 
         //paint access emblems
@@ -268,12 +290,18 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             if (!info->canRead()) {
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-unreadable");
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 icon.paint(painter, loc_x, loc_y, size, size);
+                painter->restore();
             } else if (!info->canWrite()/* && !info->canExecute()*/) {
                 //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-readonly");
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 icon.paint(painter, loc_x, loc_y, size, size);
+                painter->restore();
             }
         }
 
@@ -292,6 +320,8 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
             if (!icon.isNull()) {
+                painter->save();
+                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
@@ -313,9 +343,11 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 default:
                    break;
                 }
+                painter->restore();
             }
         }
     }
+
 }
 
 QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -327,6 +359,36 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setWordWrapMode(QTextOption::NoWrap);
 
+    edit->blockSignals(true);
+    auto displayString = index.data(Qt::DisplayRole).toString();
+    auto displayName = index.data(Qt::UserRole + 1).toString();
+    auto uri = index.data(Qt::UserRole).toString();
+    auto suffix = displayName.remove(displayString);
+    auto fsType = FileUtils::getFsTypeFromFile(uri);
+    auto info = FileInfo::fromUri(uri);
+    if (info->isDesktopFile()) {
+        suffix = ".desktop";
+    }
+    if (FileUtils::isFuseFileSystem(uri)) {
+        fsType = "fuse.kyfs";
+    }
+    if (fsType.contains("ext")) {
+        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType.contains("ntfs")) {
+        edit->setLimitBytes(false);
+        edit->setMaxLengthLimit(255 - suffix.length());
+    } else if (fsType.contains("fuse.kyfs")) {
+        int32_t maxLength = 255;
+        edit->setLimitBytes(false);
+        QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
+        QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
+        if (reply.isValid()) {
+            maxLength = reply.value();
+        }
+        edit->setMaxLengthLimit(maxLength - suffix.length());
+    }
+    edit->blockSignals(false);
+
 //    QTimer::singleShot(1, parent, [=]() {
 //        this->updateEditorGeometry(edit, option, index);
 //    });
@@ -336,6 +398,7 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 //    });
 
     connect(edit, &TextEdit::textChanged, this, [=]() {
+        edit->adjustText();
         updateEditorGeometry(edit, option, index);
     });
 
@@ -413,21 +476,40 @@ void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         return;
     }
 
-    auto fileOpMgr = FileOperationManager::getInstance();
-    auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
+    if (view->getSelections().count() > 1) {
+        auto fileOpMgr = FileOperationManager::getInstance();
+        QStringList lists = view->getSelections();
+        auto renameOp = new FileBatchRenameOperation(lists, text);
 
-    connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
-        auto info = renameOp->getOperationInfo().get();
-        auto uri = info->target();
-        QTimer::singleShot(100, view, [=](){
-            view->setSelections(QStringList()<<uri);
-            //after rename will nor sort immediately, comment to fix bug#60482
-            //view->scrollToSelection(uri);
-            view->setFocus();
-        });
-    }, Qt::BlockingQueuedConnection);
+        connect(renameOp, &FileBatchRenameOperation::operationFinished, view, [=](){
+            auto info = renameOp->getOperationInfo().get();
+            auto uri = info->target();
+            QTimer::singleShot(100, view, [=](){
+                view->setSelections(QStringList()<<uri);
+                //after rename will nor sort immediately, comment to fix bug#60482
+                //view->scrollToSelection(uri);
+                view->setFocus();
+            });
+        }, Qt::BlockingQueuedConnection);
 
-    fileOpMgr->startOperation(renameOp, true);
+        fileOpMgr->startOperation(renameOp, true);
+    } else {
+        auto fileOpMgr = FileOperationManager::getInstance();
+        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
+
+        connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
+            auto info = renameOp->getOperationInfo().get();
+            auto uri = info->target();
+            QTimer::singleShot(100, view, [=](){
+                view->setSelections(QStringList()<<uri);
+                //after rename will nor sort immediately, comment to fix bug#60482
+                //view->scrollToSelection(uri);
+                view->setFocus();
+            });
+        }, Qt::BlockingQueuedConnection);
+
+        fileOpMgr->startOperation(renameOp, true);
+    }
 }
 
 //not comment this bug to fix bug#93314
@@ -459,7 +541,52 @@ void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 //TextEdit
 TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
 {
-    this->setContentsMargins(0,0,0,0);
+    // fix #164278, icon view text editor doesn't cover view item.
+    // note on ukui platform theme, style panel frame is not visible.
+    setFrameShape(QFrame::NoFrame);
+    setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    setViewportMargins(1, 2, 1, 2);
+}
+
+void TextEdit::adjustText()
+{
+    if (m_max_length_limit) {
+        //fix #154584
+        blockSignals(true);
+        auto position = textCursor().position();
+        while (true) {
+            if (m_limit_bytes) {
+                auto local8Bit = toPlainText().toLocal8Bit();
+                if (local8Bit.length() <= m_max_length_limit) {
+                    break;
+                }
+            } else {
+                if (toPlainText().length() <= m_max_length_limit) {
+                    break;
+                }
+            }
+            if (position > 0) {
+                position--;
+                textCursor().beginEditBlock();
+                textCursor().setPosition(position);
+                textCursor().deletePreviousChar();
+                textCursor().endEditBlock();
+            } else {
+                break;
+            }
+        }
+        blockSignals(false);
+    }
+}
+
+void TextEdit::setMaxLengthLimit(int length)
+{
+    m_max_length_limit = length;
+}
+
+void TextEdit::setLimitBytes(bool limitBytes)
+{
+    m_limit_bytes = limitBytes;
 }
 
 void TextEdit::keyPressEvent(QKeyEvent *e)

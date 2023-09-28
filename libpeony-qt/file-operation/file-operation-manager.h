@@ -36,7 +36,7 @@
 #include "peony-core_global.h"
 #include "file-operation-progress-bar.h"
 #include "file-operation-error-dialogs.h"
-
+class QDBusInterface;
 
 namespace Peony {
 
@@ -81,6 +81,8 @@ Q_SIGNALS:
 
     void operationStarted(std::shared_ptr<FileOperationInfo> info);
     void operationFinished(std::shared_ptr<FileOperationInfo> info, bool successed);
+
+    void errored(FileOperationError& error);
 
 public Q_SLOTS:
     void startOperation(FileOperation *operation, bool addToHistory = true);
@@ -132,12 +134,26 @@ public Q_SLOTS:
      * not support monitoring.
      */
     void manuallyNotifyDirectoryChanged(FileOperationInfo *info);
+
+    void slot_opreateFinishedOfEngrampa(const QString& path, bool finish);/* hotfix bug#188622 【文件管理器】连接共享文件夹后进行压缩/解压缩操作，需要手动刷新后才会显示 */
+
 private:
     explicit FileOperationManager(QObject *parent = nullptr);
     ~FileOperationManager();
     static void systemSleep (GDBusConnection* connection, const gchar* senderName, const gchar* objectPath, const gchar* interfaceName, const gchar* signalName, GVariant* parameters, gpointer udata);
 
 private:
+    struct currentOpertionInfo
+    {
+        QString mountRootName;
+        quint64 opertionFileSize;
+    };
+    struct totalOperationInfo
+    {
+        quint64 preoccupationSize;
+        quint64 totalSize;
+    };
+
     QThreadPool *m_thread_pool;
     bool m_allow_parallel = false;
     QVector<FileWatcher *> m_watchers;
@@ -145,6 +161,9 @@ private:
     FileOperationProgressBar *m_progressbar = nullptr;
     QStack<std::shared_ptr<FileOperationInfo>> m_undo_stack;
     QStack<std::shared_ptr<FileOperationInfo>> m_redo_stack;
+    QHash<QString, totalOperationInfo> *m_mount_operation_list = nullptr;
+    QHash<FileOperation*, currentOpertionInfo> *m_operation_use_list = nullptr;
+    QDBusInterface* m_iface = nullptr;
 };
 
 class FileOperationInfo : public QObject
@@ -167,6 +186,8 @@ public:
         CreateTxt,//delete
         CreateFolder,//delete
         CreateTemplate,//delete
+        BatchRename,//batch rename
+        BatchRenameInternal,
         Other//nothing to do
     };
 
@@ -177,8 +198,14 @@ public:
     void commonOppositeInfoConstruct();
     void LinkOppositeInfoConstruct();
     void RenameOppositeInfoConstruct();
+    void BatchRenameOppositeInfoConstruct();
     void UntrashOppositeInfoConstruct();
     void trashOppositeInfoConstruct();
+    void setOperationRecording(bool state);
+
+    bool getOperationRecording() {
+        return m_operation_recording;
+    }
 
     Type operationType() {
         return m_type;
@@ -214,7 +241,12 @@ public:
     QString m_oldname = nullptr;
     QString m_newname = nullptr;
 
+    QStringList m_oldnames;
+    QStringList m_newnames;
+
     bool m_has_error = false;
+
+    bool m_operation_recording = true;
 
     //using for distiguist move action.
     Qt::DropAction m_drop_action = Qt::IgnoreAction;

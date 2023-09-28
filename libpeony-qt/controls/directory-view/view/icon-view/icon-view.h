@@ -103,6 +103,7 @@ public:
 
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
+    void updateSelectStatus(bool status);
 
 public Q_SLOTS:
     //location
@@ -139,6 +140,8 @@ public Q_SLOTS:
     void setSearchKey(const QString &key);
     void doMultiSelect(bool isMultiSlelect);
 
+    void setItemsVisible(bool visible) override;
+
 protected:
     /*!
      * \brief changeZoomLevel
@@ -170,10 +173,9 @@ protected:
 
     void startDrag(Qt::DropActions supportedActions) override;
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
     bool getIgnore_mouse_move_event() const;
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
+    void releaseUnselect(bool select);
 
 private Q_SLOTS:
     void slotRename();

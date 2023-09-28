@@ -48,11 +48,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>FileLabelBox</name>
     <message>
         <source>Create New Label</source>
-        <translation>མཚོན་རྟགས་གསར་སྐྲུན།</translation>
+        <translation type="vanished">མཚོན་རྟགས་གསར་སྐྲུན།</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>བསུབ་པ།</translation>
+        <translation type="vanished">བསུབ་པ།</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -167,11 +167,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation type="obsolete">ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">ཁ་རྒྱག་པ།</translation>
+        <translation type="obsolete">ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Deselect All</source>
@@ -190,15 +190,19 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>HeaderBarContainer</name>
     <message>
         <source>Close</source>
-        <translation type="vanished">ཁ་རྒྱག་པ།</translation>
+        <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="vanished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation>ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
         <translation type="vanished">ཆེས་ཆེ་བ/སླར་གསོ།</translation>
+    </message>
+    <message>
+        <source>Option</source>
+        <translation type="obsolete">འདེམས་ཚན།</translation>
     </message>
 </context>
 <context>
@@ -309,7 +313,15 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation>མཚོན་རྟགས་ཡོངས་རྫོགས།</translation>
+        <translation type="vanished">མཚོན་རྟགས་ཡོངས་རྫོགས།</translation>
+    </message>
+    <message>
+        <source>Manager tags...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More tags...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -352,6 +364,42 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <message>
         <source>Show File Extension</source>
         <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བའི</translation>
+    </message>
+    <message>
+        <source>Set samba password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tips</source>
+        <translation type="unfinished">གསལ་འདེབས་བྱེད་ཐབས།</translation>
+    </message>
+    <message>
+        <source>The user already has a samba password, do you need to reset the samba password?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Samba set user password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Samba password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">ཉེན་བརྡ།</translation>
+    </message>
+    <message>
+        <source>Samba set password failed, Please re-enter!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open each folder in a new window</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -656,6 +704,10 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source> %1 items    selected %2 items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searching for files ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

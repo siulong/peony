@@ -89,6 +89,7 @@ private:
 
     QMap<QListWidgetItem*, ProgressBar*>* m_widget_list = nullptr;
     QMap<ProgressBar*, QListWidgetItem*>* m_progress_list = nullptr;
+    QList<ProgressBar*>* m_pro_list = nullptr;
 
     int m_show_items = 2;
     bool m_show_more = false;
@@ -224,7 +225,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 //    void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-
+    bool event(QEvent *event) override;
 private:
     void paintFoot (QPainter& painter);
     void paintHeader (QPainter& painter);

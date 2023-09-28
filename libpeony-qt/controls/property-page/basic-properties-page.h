@@ -34,11 +34,11 @@
 #include <QtConcurrent>
 #include <QProxyStyle>
 #include <QComboBox>
+#include <QDBusInterface>
 
 #include "properties-window-tab-iface.h"
 #include "open-with-properties-page.h"
 
-#define DEBUG qDebug() << "[" << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << "]"
 #define CELL1K 1024
 #define CELL4K 4096
 #define CELL1M 1048576
@@ -136,6 +136,7 @@ protected:
     bool isNameChanged();
     void setSysTimeFormat();
     QString elideText(QFont font,int width,QString strInfo);
+    QString elideTextAndToolTip(QFont font, int width, QString strInfo, Qt::TextElideMode mode, QWidget* widgt);
 
 protected Q_SLOTS:
     void getFIleInfo(QString uri);
@@ -144,6 +145,7 @@ protected Q_SLOTS:
     void onFileCountOne(const QString &uri, quint64 size);
     void cancelCount();
     void updateInfo(const QString &uri);
+    void updateDateFormat(QString dateFormat);
 
 private:
     QVBoxLayout                 *m_layout = nullptr;
@@ -203,7 +205,9 @@ private:
 
     QTimer *m_timer = nullptr;
     bool m_isReadOnly = false;
-    bool m_isHidden = false;
+
+    QString m_date_format = "";
+    QDBusInterface  *mDbusDateServer;
 };
 
 class PushButtonStyle : public QProxyStyle

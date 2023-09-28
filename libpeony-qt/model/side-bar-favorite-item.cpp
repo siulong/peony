@@ -79,6 +79,14 @@ SideBarFavoriteItem::SideBarFavoriteItem(QString uri,SideBarFavoriteItem *parent
         Q_EMIT this->queryInfoFinished();
     });
     infoJob->queryAsync();
+
+    if (m_uri == "trash:///") {
+        m_displayName = tr("Trash");
+        m_iconName = "user-trash-symbolic";
+    } else if (m_uri == "recent:///") {
+        m_displayName = tr("Recent");
+        m_iconName = "document-open-recent-symbolic";
+    }
 }
 
 void SideBarFavoriteItem::initChildren()
@@ -182,6 +190,8 @@ QString SideBarFavoriteItem::displayName()
 
     if (!m_info)
         return m_displayName;
+    if (m_info->displayName().isEmpty())
+        return m_displayName;
     return m_info.get()->displayName();
 }
 
@@ -193,6 +203,9 @@ QString SideBarFavoriteItem::iconName()
 
     if (!m_info)
         return m_iconName;
+    if (m_info->iconName().isEmpty()) {
+        return m_iconName;
+    }
     /* 设计要求图标统一，文件夹图标名称为folder；而从底层读取的文件夹名称为inode-directory，因此替换一下 */
     auto iconName = m_info.get()->iconName();
     if(iconName == "inode-directory")

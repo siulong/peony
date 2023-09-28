@@ -40,6 +40,8 @@ public:
     }
     void run() override;
 
+    void linkrun();
+
 private:
     QString m_src_uri = nullptr;
     QString m_dest_uri = nullptr;

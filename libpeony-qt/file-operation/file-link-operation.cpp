@@ -25,11 +25,17 @@
 
 #include "gerror-wrapper.h"
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include <QUrl>
 #include <QProcess>
 
 using namespace Peony;
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 FileLinkOperation::FileLinkOperation(QString srcUri, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
@@ -55,16 +61,18 @@ FileLinkOperation::~FileLinkOperation()
 
 }
 
-void FileLinkOperation::run()
+void FileLinkOperation::linkrun()
 {
-    operationStarted();
     auto destFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_dest_uri).toUtf8().constData()));
     GError *err = nullptr;
 
 retry:
     QUrl url = m_src_uri;
-    g_file_make_symbolic_link(destFile.get()->get(), url.path().toUtf8().constData(), nullptr, &err);
+    const char* symlinkValue = url.path().toUtf8().constData();
+    g_file_make_symbolic_link(destFile.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
+        //fix bug#162416, empty pointer err cause crash issue
+        qDebug() << "linkrun:" << err->message;
         setHasError(true);
         //forbid response actions except retry and cancel.
         FileOperationError except;
@@ -94,7 +102,11 @@ retry:
         }
     }
     else{
-        SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
+        //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+        kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
+#endif
     }
 
     g_file_set_display_name(destFile.get()->get(), QUrl::fromPercentEncoding(m_dest_uri.split("/").last().toUtf8()).toUtf8().constData(), nullptr, nullptr);
@@ -103,9 +115,12 @@ end:
 
     // maybe not need sync ???
     fileSync(m_src_uri, m_dest_uri);
+}
 
-
-
+void FileLinkOperation::run()
+{
+    operationStarted();
+    linkrun();
     // judge if the operation should sync.
 //    bool needSync = false;
 //    GFile *src_first_file = g_file_new_for_uri(m_src_uri.toUtf8().constData());
@@ -144,3 +159,4 @@ end:
     operationFinished();
     //notifyFileWatcherOperationFinished();
 }
+

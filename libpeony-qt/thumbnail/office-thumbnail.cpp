@@ -84,6 +84,13 @@ QIcon OfficeThumbnail::generateThumbnail()
     qint16 idx = fileName.lastIndexOf(".");
     QString fileThumbnail=thumbnail_dir + "/" + fileName.left(idx) + ".jpg";
 
+    //优化无效流程，未安装libreoffice则直接返回
+    if (! QFile::exists("/usr/bin/libreoffice"))
+    {
+        qDebug()<<"libreoffice not installed, return";
+        return thumbnailImage;
+    }
+
     qDebug()<<"file thumbnail:"<<fileThumbnail;
     if (!QFile::exists(fileThumbnail)) {
         //libreoffice --convert-to jpg:writer_jpg_Export test1.doc --outdir ./
@@ -98,7 +105,7 @@ QIcon OfficeThumbnail::generateThumbnail()
         qDebug()<<"the libreoffice cmd: " << list;
 
         QProcess p;
-        p.start("libreoffice",list);
+        p.start("/usr/bin/libreoffice",list);
 
         /*
         * 等待30s超时，30s是默认时间，可以修改

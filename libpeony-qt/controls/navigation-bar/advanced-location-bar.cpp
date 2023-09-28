@@ -96,6 +96,11 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         {
             Q_EMIT searchRequest(m_last_non_search_path, key);
             m_last_key = key;
+            if (key == "") {
+                m_search_bar->updateSearchProgress(false);
+            } else {
+                m_search_bar->updateSearchProgress(true);
+            }
         }
     });
 
@@ -103,6 +108,8 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
     {
         Q_EMIT this->updateFileTypeFilter(index);
     });
+
+    connect(this, &Peony::AdvancedLocationBar::updateSearchProgress, m_search_bar, &Peony::SearchBarContainer::updateSearchProgress);
 
     bool is_intel = (QString::compare("V10SP1-edu", GlobalSettings::getInstance()->getProjectName(), Qt::CaseInsensitive) == 0);
     if (is_intel) {

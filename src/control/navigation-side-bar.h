@@ -23,6 +23,7 @@
 #ifndef NAVIGATIONSIDEBAR_H
 #define NAVIGATIONSIDEBAR_H
 #include "side-bar.h"
+#include "file-label-box.h"
 
 #include <QTreeView>
 #include <QStyledItemDelegate>
@@ -37,6 +38,7 @@ class SideBarAbstractItem;
 
 class QPushButton;
 class QVBoxLayout;
+class QHBoxLayout;
 class QLabel;
 
 class NavigationSideBar : public QTreeView
@@ -57,8 +59,6 @@ public:
     QSize sizeHint() const;
     void JumpDirectory(const QString& uri);/* 跳转目录 */
 
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
     void labelButtonClicked(bool checked);
@@ -70,6 +70,8 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
 
     int sizeHintForColumn(int column) const override;
+
+    QStyleOptionViewItem viewOptions() const override;
 
 private:
     Peony::SideBarProxyFilterSortModel *m_proxy_model = nullptr;
@@ -91,7 +93,7 @@ private:
     NavigationSideBar *m_sidebar = nullptr;
     QVBoxLayout *m_layout = nullptr;
 
-    QPushButton *m_label_button = nullptr;
+    FileLabelBox *m_labelDialog = nullptr;
 };
 
 class NavigationSideBarItemDelegate : public QStyledItemDelegate
@@ -123,4 +125,28 @@ private:
     QGSettings *m_gSettings;
 };
 
+class LabelButton : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit LabelButton(QWidget *parent = nullptr);
+    void setLastIcon(const QString &symbolic);
+    void setFirstIcon(const QString &symbolic);
+    void setText(QString text);
+
+Q_SIGNALS:
+    void clicked (bool show);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
+private:
+    QLabel *m_firstSymbolic = nullptr;
+    QLabel *m_lastSymbolic = nullptr;
+    QLabel *m_text = nullptr;
+    QHBoxLayout *m_mainLayout = nullptr;
+    bool m_isPress = false;
+    bool m_show = false;
+};
 #endif // NAVIGATIONSIDEBAR_H

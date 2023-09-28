@@ -61,9 +61,15 @@ public:
     Peony::DesktopIconView * removeUri(const QString& uri);
     int checkScreenMode(const QRect &geometry);
     Peony::DesktopIconView *getNotFullView();
+    void singleScreenMode();
+    void multiscreenMode();
+
+    // only used in model refresh.
+    void clearViewCache();
 
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
+    void emitFinish();
 
 protected Q_SLOTS:
     void parseCmd(QString msg, bool isPrimary);
@@ -83,6 +89,7 @@ public Q_SLOTS:
 
     void addBgWindow(QScreen *screen);
     void relocateIconView();
+    void raiseWid();
 
 private:
     void setupDesktop();
@@ -95,6 +102,7 @@ private:
     QList<DesktopBackgroundWindow *> m_bg_windows;
 
     QTimeLine *m_primaryScreenSettingsTimeLine = nullptr;
+    int m_mode = 0;
 };
 
 #endif // PEONYDESKTOPAPPLICATION_H

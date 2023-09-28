@@ -27,6 +27,7 @@
 #include<QMessageBox>
 #include<QProcess>
 #include <QInputDialog>
+#include <QTimer>
 #include"sync-thread.h"
 #include "file-utils.h"
 
@@ -130,6 +131,23 @@ bool VolumeManager::isEmptyDrive(const Volume &volume)
     return false;
 }
 
+static void forceUnmountOfOccupiedDeviceCb(GMount* gmount, GAsyncResult* result, VolumeManager *pThis) {
+
+    GError *err = nullptr;
+    g_mount_unmount_with_operation_finish(gmount, result, &err);
+    if (err) {
+        QMessageBox::warning(nullptr, QObject::tr("Force unmount failed"), QObject::tr("Error: %1\n").arg(err->message));
+        g_error_free(err);
+    } else {        
+        QMutexLocker lk(pThis->getMutex());
+        if(pThis->getOccupiedVolume() && (pThis->getOccupiedVolume()->canEject() || pThis->getOccupiedVolume()->canStop())){
+            qDebug()<<"Force eject Operation:"<<pThis->getOccupiedVolume()->device()<<pThis->getOccupiedVolume();
+            pThis->getOccupiedVolume()->eject(G_MOUNT_UNMOUNT_FORCE);
+        }
+
+    }
+}
+
 VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
 {
     initManagerInfo();
@@ -141,8 +159,26 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<std::map<QString,QIcon> >("std::map<QString,QIcon>&");
     m_occupiedAppsInfoThread = new GetOccupiedAppsInfoThread();
     connect(m_occupiedAppsInfoThread, &GetOccupiedAppsInfoThread::signal_occupiedAppInfo, this, [=](std::map<QString,QIcon>& occupiedAppMap, const QString& message){
-        if(!occupiedAppMap.size()){
-            QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
+        if(1 == occupiedAppMap.size() && occupiedAppMap.count("ffmpeg")){/* 过滤应用，只有ffmpeg占用时可以强制弹出 */
+            {
+                QMutexLocker lk(&m_mutex);
+                if(!m_occupiedVolume)
+                    return;
+
+                qDebug()<<"Force unmount Operation: "<<m_occupiedVolume->device();
+                g_mount_unmount_with_operation(m_occupiedVolume->getGMount(), G_MOUNT_UNMOUNT_FORCE, nullptr, nullptr,
+                                               GAsyncReadyCallback(forceUnmountOfOccupiedDeviceCb), this);
+
+                return;
+            }
+        }
+
+        if(0 == occupiedAppMap.size()){
+            QTimer::singleShot(500,[=](){
+                QMutexLocker lk(&m_mutex);
+                m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
+            });
+            //QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
         }else{
             MessageDialog* dlg = new MessageDialog();
             dlg->init(occupiedAppMap, message);
@@ -151,7 +187,6 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
         }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
-
 }
 
 VolumeManager::~VolumeManager(){
@@ -163,6 +198,8 @@ VolumeManager::~VolumeManager(){
         g_signal_handler_disconnect(m_volumeMonitor, m_volumeRemoveHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveConnectHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_driveDisconnectHandle);
+        g_signal_handler_disconnect(m_volumeMonitor, m_driveChangedHandle);
+        g_signal_handler_disconnect(m_volumeMonitor, m_mountPreUnmountHandle);
         g_object_unref(m_volumeMonitor);
         m_volumeMonitor = nullptr;
     }
@@ -176,6 +213,13 @@ VolumeManager::~VolumeManager(){
         }
         m_volumeList->clear();
         delete m_volumeList;
+    }
+    {
+        QMutexLocker lk(&m_mutex);
+        if(m_occupiedVolume){
+            delete m_occupiedVolume;
+            m_occupiedVolume = nullptr;
+        }
     }
 }
 
@@ -191,6 +235,8 @@ void VolumeManager::initManagerInfo(){
     m_volumeChangeHandle = g_signal_connect(m_volumeMonitor,"volume-changed",G_CALLBACK(volumeChangeCallback),this);
     m_driveConnectHandle = g_signal_connect(m_volumeMonitor,"drive-connected",G_CALLBACK(driveConnectCallback),this);
     m_driveDisconnectHandle = g_signal_connect(m_volumeMonitor,"drive-disconnected",G_CALLBACK(driveDisconnectCallback),this);
+    m_driveChangedHandle = g_signal_connect(m_volumeMonitor,"drive-changed",G_CALLBACK(driveChangedCallback),this);
+    m_mountPreUnmountHandle = g_signal_connect(m_volumeMonitor,"mount-pre-unmount",G_CALLBACK(mountPreUnmountCallback),this);
 }
 
 /*gparted应用是否打开*/
@@ -204,7 +250,7 @@ bool VolumeManager::gpartedIsOpening(){
         drives = g_volume_monitor_get_connected_drives(m_volumeMonitor);
     }
 
-    m_gpartedIsOpening = true;
+   // m_gpartedIsOpening = true;  /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
 
     for(l = drives; l!=nullptr; l=l->next){
         drive = (GDrive*) l->data;
@@ -251,6 +297,7 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
     // use gvolume for quering volume item is more reliable for now.
     for (auto volumeItem : pThis->m_volumeList->values()) {
         if (volumeItem->getGVolume() == gvolume) {
+            qDebug()<<__func__<<__LINE__<<volumeItem->device()<<name<<device;
             volumeItem->setLabel(name);
             volumeItem->setDevice(device);
             Q_EMIT pThis->volumeUpdate(Volume(*volumeItem),"name");
@@ -276,6 +323,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->volumeRemove(device);
         pThis->m_volumeList->remove(device);
         pThis->m_volumeList->insert(device, addItem);
+        qDebug()<<__func__<<__LINE__<<device;
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
         //情景1、关闭gparted时，所有具有卸载属性的设备均会触发volume-added信号
         //      该情景似乎不需要更新属性信息，确认一下name属性？
@@ -287,7 +335,10 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
             if (pThis->m_volumeList->contains(gdevice)) {
                 auto driveItem = pThis->m_volumeList->value(gdevice);
                 driveItem->setHidden(true);
-                Q_EMIT pThis->volumeUpdate(*driveItem, "name");
+                /* hotfix bug#161064 【HWE】【文件管理器】插入多个U盘，偶现文管侧边栏1个U盘显示两个名称现象，其中一个名称点击后提示U盘异常 */
+                Q_EMIT pThis->volumeRemove(gdevice);
+                qDebug()<<__func__<<__LINE__<<driveItem->device()<<driveItem->getHidden();
+                Q_EMIT pThis->volumeAdd(Volume(*driveItem));
             }
             g_object_unref(gdrive);
         }
@@ -297,6 +348,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         //情景3、默认用数据线连接的手机("仅充电")
         pThis->m_volumeList->remove(addItem->device());
         pThis->m_volumeList->insert(addItem->device(),addItem);
+        qDebug()<<__func__<<__LINE__<<addItem->device();
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
     }
 }
@@ -334,8 +386,27 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                 if (device.startsWith("/dev/sr")) {
                     addItem->setHidden(false);
                 }
+                /* hotfix bug#154563 【文件管理器】【PTOF】格式化U盘后，文件管理器侧边栏出现两个U盘  */
+                if (device.startsWith("/dev/sd")) {
+                    QString uuid = getDeviceUUID(device.toUtf8().constData());
+                    auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+                    qDebug()<<__func__<<__LINE__<<uuid<<size;
+                    if (uuid.isEmpty() && size == 0) {
+                        addItem->setHidden(true);
+                        // if drive has media, it is not represent a docking station.
+                        // so it should not be hidden.
+                        if (g_drive_has_media(gdrive)) {
+                            addItem->setHidden(false);
+                        }
+                    }else if(uuid.isEmpty()){
+                        qDebug()<<__func__<<__LINE__<<device<<uuid;
+                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
+                        addItem->setHidden(true);
+                    }
+                }//end
                 pThis->m_volumeList->remove(device);
                 Q_EMIT pThis->volumeRemove(device);
+                qDebug()<<__func__<<__LINE__<<device<<addItem->device();
                 pThis->m_volumeList->insert(device, addItem);
                 Q_EMIT pThis->volumeAdd(Volume(*addItem));
             }
@@ -445,6 +516,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->mountRemove(mountPoint);
     }
 
+
     delete mountItem;
 }
 
@@ -534,10 +606,28 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     }
     else{
         Q_EMIT pThis->mountRemove(mountPoint);/* 发出更新item的moun属性的信号,手机卸载时 */
+        Q_EMIT pThis->signal_unmountFinished(mountPoint);
     }
 
     delete mountItem;
     g_object_unref(rootFile);
+}
+
+void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
+{
+    if(!pThis->m_volumeList)
+        return;
+
+    GMount* gMount = (GMount*)g_object_ref(gmount);
+    GVolume* gVolume = (GVolume*)g_object_ref(g_mount_get_volume(gMount));
+    Volume* volume = new Volume(gVolume);
+    if(pThis->m_volumeList->contains(volume->device())){
+        {
+            QMutexLocker lk(pThis->getMutex());
+            pThis->m_occupiedVolume = volume;
+            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume;
+        }
+    }
 }
 
 void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
@@ -555,6 +645,15 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         Volume* volume = new Volume(nullptr);
         volume->setFromDrive(*dirve);
 
+        /* hotfix bug#158557 【文件管理器】【安全密钥】文件管理器将ukey设备识别为光驱，显示在了文管侧边栏 */
+        if(device.contains("/dev/sr")){
+            QString uuid = getDeviceUUID(device.toUtf8().constData());
+            auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+            if (uuid.isEmpty() && size == 0 && "UltraSec USK220 KEY" == volume->name()) {
+                volume->setHidden(true);
+            }
+        }//end
+
         // try fix #90641, a docking station should be hidden.
         if (device.startsWith("/dev/sd")) {
             auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
@@ -568,7 +667,6 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 }
             }
         }
-
         // 如果有volume，应该被隐藏
         GList *volumes = g_drive_get_volumes(gdrive);
         if (volumes) {
@@ -579,6 +677,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
         if(volume->canEject()){
             pThis->m_volumeList->remove(device);
             pThis->m_volumeList->insert(device, volume);
+            qDebug()<<__func__<<__LINE__<<device<<volume->getHidden();
             Q_EMIT pThis->volumeAdd(Volume(*volume));
         }
     }
@@ -608,6 +707,31 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
         //非暴力拔出的情况,如正常弹出(在其他回调内部处理)
         //此时的先后顺序：1、mount-removed 2、volume-removed 3、drive-connnected(拔出才会触发)
     }*/
+    {
+        QMutexLocker lk(pThis->getMutex());
+        if(pThis->m_occupiedVolume){
+            delete pThis->m_occupiedVolume;
+            pThis->m_occupiedVolume = nullptr;
+        }
+    }
+}
+
+void VolumeManager::driveChangedCallback(GVolumeMonitor *monitor, GDrive *gdrive, VolumeManager *pThis)
+{
+    if(!pThis->m_volumeList)
+        return;
+
+    Drive* dirve = new Drive(gdrive);
+    Volume* volume = new Volume(nullptr);
+    volume->setFromDrive(*dirve);
+    QString device = dirve->device();
+
+    if(device.startsWith("/dev/sr") && volume->canEject()){
+        pThis->m_volumeList->remove(device);
+        pThis->m_volumeList->insert(device, volume);
+        qDebug()<<__func__<<__LINE__<<device<<volume->getHidden();
+    }
+
 }
 
 VolumeManager* VolumeManager::getInstance(){
@@ -624,7 +748,7 @@ QList<GVolume*> VolumeManager::allGVolumes(){
     if(m_volumeMonitor)
         volumes = g_volume_monitor_get_volumes(m_volumeMonitor);
 
-    m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr
+    //m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
     for(l = volumes; l != nullptr; l = l->next){
         gvolume = (GVolume*)l->data;
         volumeList.push_back(gvolume);
@@ -727,6 +851,14 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
             m_volumeList->remove(volumeItem->device());
             m_volumeList->insert(volumeItem->device(), volumeItem);
+            /* hotfix bug#158557 【文件管理器】【安全密钥】文件管理器将ukey设备识别为光驱，显示在了文管侧边栏 */
+            if(device.contains("/dev/sr")){
+                QString uuid = getDeviceUUID(device.toUtf8().constData());
+                auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
+                if (uuid.isEmpty() && size == 0 && "UltraSec USK220 KEY" == volumeItem->name()) {
+                    volumeItem->setHidden(true);
+                }
+            }//end
         }
         if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
             m_volumeList->remove(volumeItem->device());
@@ -1226,7 +1358,7 @@ static GAsyncReadyCallback eject_cb(GDrive *gDrive, GAsyncResult *result, QStrin
     bool successed = g_drive_eject_with_operation_finish(gDrive, result, &error);
     qDebug()<<"The result that drive eject with operation finish:"<<successed;
     if (error) {
-        qDebug()<<error->message;
+        qDebug()<<"error code of drive stop:"<<error->code<<", error message:"<<error->message;
         if(targetUri){
             delete targetUri;
             targetUri = nullptr;
@@ -1240,9 +1372,14 @@ static GAsyncReadyCallback eject_cb(GDrive *gDrive, GAsyncResult *result, QStrin
             //QMessageBox::warning(nullptr,QObject::tr("Eject failed"),QObject::tr("Not authorized to perform operation."), QMessageBox::Ok);
             return nullptr;
         }
-        QMessageBox warningBox(QMessageBox::Warning,QObject::tr("Eject failed"), QString(error->message), QMessageBox::Ok);
-        warningBox.exec();        
 
+        //fix bug#104482, pull device immediately when eject it, error message not translated issue
+        QString errMessage = error->message;
+        if (error->code == G_IO_ERROR_FAILED){
+            errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
+        }
+        QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
+        warningBox.exec();
     } else {
         /* 弹出完成信息提示 */
         QString ejectNotify = QObject::tr("Data synchronization is complete and the device can be safely unplugged!");
@@ -1266,15 +1403,21 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
         if((NULL != error) && (G_IO_ERROR_FAILED_HANDLED != error->code)){
             // @note 这里不要拼接字符串，多次弹出会崩溃
 //            QString errorMsg = QObject::tr("Unable to eject").arg(pThis->name());
+            qDebug()<<"error code of drive stop:"<<error->code<<", error message:"<<error->message;
             if(G_IO_ERROR_BUSY == error->code){/* 卷被占用时，防止二次弹出信息提示框 */
                 return;
             }
             if(! strcmp(error->message,"Not authorized to perform operation")){/* gmountOperation会弹出授权框，防止二次弹框 */
                 return;
             }
-            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), error->message, QMessageBox::Ok);
-            warningBox.exec();
 
+            //fix bug#104482, pull device immediately when eject it, error message not translated issue
+            QString errMessage = error->message;
+            if (error->code == G_IO_ERROR_FAILED){
+                errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
+            }
+            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
+            warningBox.exec();
         }
     }else {
         /* 弹出完成信息提示 */
@@ -1294,13 +1437,17 @@ void Drive::eject(GMountUnmountFlags ejectFlag)
     // drive will do operation without user interaction.
     auto mount_op = VolumeManager::getInstance()->getOccupiedInfoThread()->getMountOp();
     QString *targetUri = new QString(VolumeManager::getInstance()->getTargetUriFromUnixDevice(m_device));
+    qDebug()<<"eject flag: "<<ejectFlag<<m_device<<m_canEject<<g_drive_can_stop(m_drive)<<g_drive_is_removable(m_drive);
     if(m_canEject && !m_device.startsWith("/dev/sd")){ /* U盘使用安全移除 */
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-    else if(g_drive_can_stop(m_drive) || g_drive_is_removable(m_drive)){//for mobile harddisk.
+    else if(g_drive_can_stop(m_drive) || (g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))){// for mobile harddisk.
+        /* 加"(g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))"这个判断是为了解决bug#184111和bug#149182；有些U盘的can-stop为false,其中为一款sd卡的devicename */
         g_drive_stop(m_drive, ejectFlag, mount_op, NULL, GAsyncReadyCallback(ejectDevicebyDrive), targetUri);
+    }else if(g_drive_is_removable(m_drive)){
+        //fix bug#149182, SD card eject can not recgonize issue
+        g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-
 }
 
 void Drive::setMountPath(const QString &mountPath)
@@ -1459,6 +1606,11 @@ GDrive *Volume::getGDrive() const
     return m_gdrive;
 }
 
+GMount *Volume::getGMount() const
+{
+    return m_gMount;
+}
+
 bool Volume::canEject() const{
     return m_canEject;
 }
@@ -1606,6 +1758,7 @@ MessageDialog::MessageDialog(QWidget *parent):
     QDialog(parent)
 {    
     //setWindowTitle("Volume is occupied");
+    setWindowTitle(tr("Peony"));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setMinimumSize(QSize(350,200));
@@ -1616,7 +1769,7 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
     QVBoxLayout *layout = new QVBoxLayout();
     QFont font;
     font.setBold(true);
-    QLabel* massageLabel = new QLabel(tr(message.toStdString().data()));
+    QLabel* massageLabel = new QLabel(message.toStdString().data());
     massageLabel->setFont(font);
     massageLabel->setContentsMargins(40,10,0,0);
 
@@ -1632,15 +1785,19 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
         listWidget->insertItem(i, newItem);
     }
 
+    QLabel* hintLabel = new QLabel(tr("Forcibly pulling out the device may cause data\n loss or device exceptions!"));
+
     layout->addWidget(massageLabel);
     layout->addStretch(5);
     layout->addWidget(listWidget);
     layout->addStretch();
+    layout->addWidget(hintLabel);
     setLayout(layout);
 }
 
 #include <gio/gio.h>
-
+#include <gio/gdesktopappinfo.h>
+#include"file-utils.h"
 GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent)
 {
 
@@ -1654,22 +1811,56 @@ void GetOccupiedAppsInfoThread::run()
 
 void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char *message, GArray *processes, char **choices, gpointer user_data)
 {
+    qDebug()<<"len of processes:"<<processes->len;
     std::map<QString,QIcon> occupiedAppMap;
     for(int i=0; i< processes->len; i++)
     {
         GPid pid = g_array_index(processes, GPid ,i);
         QProcess *process =new QProcess();
-        QString cmd =QString("ps -p %1 o comm=").arg(pid);
+        QString cmd =QString("/usr/bin/ps -p %1 o comm=").arg(pid);
         process->start(cmd);
         process->waitForFinished();
-        auto application = QString(process->readAll()).replace("\n","");
+        QString application = QString(process->readAll()).replace("\n","");
+
         QString iconName = "application-x-executable";
+        /* 通过应用名获取.desktop,再获取iconName,linkto bug#157362 【文件管理器】优盘占用提示弹窗中正在占用卷的应用程序图标显示为齿轮  */
+        auto results = g_desktop_app_info_search(application.toUtf8().constData());
+        if(results){
+            for (int i = 0; results[i]; i++)
+            {
+                QString desktopFileName = *results[i];
+                if("wps" == application){
+                    desktopFileName = "wps-office-wps.desktop";
+                }else if("peony" == application){
+                    desktopFileName = "peony.desktop";
+                }
+                QString fileName = QString("/usr/share/applications/").append(desktopFileName);
+                g_autoptr (GDesktopAppInfo) desktop_app_info = g_desktop_app_info_new_from_filename(fileName.toUtf8().constData());
+                if (desktop_app_info) {
+                    auto app_info = G_APP_INFO(desktop_app_info);
+                    GIcon *icon = g_app_info_get_icon(app_info);
+                    iconName = Peony::FileUtils::getIconStringFromGIcon(icon);
+                }
+                qDebug()<<application<<desktopFileName<<iconName;
+                g_strfreev (results[i]);
+                break;
+            }
+            g_free (results);
+        }//end
+
         if(application=="bash")
             iconName = "utilities-terminal";
+
+        if (application == "ffmpeg") {
+            QProcess p;
+            p.start(QString("/usr/bin/kill -9 %1").arg(pid));
+            p.waitForFinished(-1);
+            p.close();
+        }
+
         auto icon = QIcon::fromTheme(iconName);
         occupiedAppMap.insert(std::pair<QString, QIcon>(application,icon));
-        qDebug()<<application;
-
+        qDebug()<<application<<pid;
     }
 
     auto thread = static_cast<GetOccupiedAppsInfoThread *>(user_data);
@@ -1680,3 +1871,32 @@ GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const
 {
     return m_mountOp;
 }
+
+#ifdef KY_UDF_BURN
+#include <libkyudfburn/disccontrol.h>
+#include "ky-udf-format-dialog.h"
+#include "udfAppendBurnDataDialog.h"
+
+UdfBurn::UdfFormatDialogWrapper::UdfFormatDialogWrapper(const QString &uri, UdfBurn::DiscControl *discControl, QWidget *parent)
+{
+    m_dialog = new UdfFormatDialog(uri, discControl, parent);
+}
+
+UdfBurn::UdfFormatDialogWrapper::~UdfFormatDialogWrapper()
+{
+    delete m_dialog;
+}
+
+void UdfBurn::UdfFormatDialogWrapper::raise()
+{
+    m_dialog->raise();
+}
+
+void UdfBurn::UdfFormatDialogWrapper::show()
+{
+    m_dialog->show();
+}
+
+#endif
+
+

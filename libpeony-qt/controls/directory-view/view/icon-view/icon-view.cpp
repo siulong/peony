@@ -115,7 +115,7 @@ IconView::IconView(QWidget *parent) : QListView(parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    setGridSize(QSize(136, 136));
+    setIconSize(QSize(86, 86));
     setGridSize(itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));
 
     m_renameTimer = new QTimer(this);
@@ -355,7 +355,7 @@ void IconView::mouseMoveEvent(QMouseEvent *e)
         doAutoScroll();
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
     viewport()->update(viewport()->rect());
 }
@@ -388,12 +388,12 @@ void IconView::mousePressEvent(QMouseEvent *e)
         selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
-    if(!qApp->property("tabletMode").toBool() && getSelections().count()>1)
+    if(getSelections().count()>1)
         multiSelect();
 
     viewport()->update(viewport()->rect());
 
-    if (!qApp->property("tabletMode").toBool() && !itemIndex.isValid()) {
+    if (!itemIndex.isValid()) {
         disableMultiSelect();
     }
     //FIXME: Modify the icon style, only click on the text to respond, click on the icon to not respond
@@ -575,7 +575,6 @@ void IconView::focusInEvent(QFocusEvent *e)
             });
         }
     }
-    setAttribute(Qt::WA_InputMethodEnabled, false);
 }
 
 void IconView::startDrag(Qt::DropActions supportedActions)
@@ -630,12 +629,6 @@ void IconView::startDrag(Qt::DropActions supportedActions)
     }
 }
 
-void IconView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    QListView::currentChanged(current, previous);
-    setAttribute(Qt::WA_InputMethodEnabled, false);
-}
-
 void IconView::slotRename()
 {
     //special path like trash path not allow rename
@@ -643,7 +636,8 @@ void IconView::slotRename()
         || getDirectoryUri().startsWith("recent://")
         || getDirectoryUri().startsWith("favorite://")
         || getDirectoryUri().startsWith("search://")
-        || getDirectoryUri().startsWith("network://"))
+        || getDirectoryUri().startsWith("network://")
+        || getDirectoryUri().startsWith("label://"))
         return;
 
     //standardPaths not allow rename
@@ -854,6 +848,15 @@ void IconView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
+    setState(QListView::NoState);
+    auto origin = FileUtils::getOriginalUri(uris.first());
+    if(uris.first().startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
+        origin = uris.first();
+    QModelIndex index = m_sort_filter_proxy_model->indexFromUri(origin);
+    setIndexWidget(index, nullptr);
+    qDebug() << "editUris:" << uris << origin;
+    QListView::scrollTo(index);
+    edit(index);
 }
 
 void IconView::selectAll()
@@ -878,18 +881,26 @@ void IconView::clearIndexWidget()
 
 void IconView::multiSelect()
 {
+    if (selectionMode() == MultiSelection) {
+        return;
+    }
     if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
         m_multi_select = true;
     }
     setSelectionMode(MultiSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void IconView::disableMultiSelect()
 {
+    if (selectionMode() == ExtendedSelection) {
+        return;
+    }
     m_multi_select = false;
     setSelectionMode(ExtendedSelection);
     viewport()->update(viewport()->rect());
+    Q_EMIT updateSelectStatus(m_multi_select);
 }
 
 void IconView::setSearchKey(const QString &key)
@@ -907,9 +918,19 @@ void IconView::doMultiSelect(bool isMultiSlelect)
     }
 }
 
+void IconView::setItemsVisible(bool visible)
+{
+    viewport()->setVisible(visible);
+}
+
 bool IconView::isEnableMultiSelect()
 {
     return m_multi_select;
+}
+
+void IconView::releaseUnselect(bool select)
+{
+    m_mouse_release_unselect = select;
 }
 
 //Icon View 2
@@ -920,7 +941,10 @@ IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
     layout->setMargin(0);
     layout->setSpacing(0);
     m_view = new IconView(this);
-    DirectoryViewHelper::globalInstance()->addIconViewWithDirectoryViewWidget(m_view, this);
+
+    DirectoryViewHelper * viewHelper = DirectoryViewHelper::globalInstance();
+    viewHelper->addIconViewWithDirectoryViewWidget(m_view, this);
+    connect(m_view, &IconView::updateSelectStatus, viewHelper, &DirectoryViewHelper::updateSelectStatus);
 
     int defaultZoomLevel = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt();
     if (defaultZoomLevel >= minimumZoomLevel() && defaultZoomLevel <= maximumZoomLevel())

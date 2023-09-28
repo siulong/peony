@@ -31,12 +31,21 @@
 #include <file-utils.h>
 #include <QStyleOptionViewItem>
 #include "sound-effect.h"
+#ifdef KY_SDK_SOUND_EFFECTS
+#include "ksoundeffects.h"
+#endif
 
 #include "file-operation-dialog/kyfiledialogrename.h"
+
+#ifdef KY_SDK_SOUND_EFFECTS
+using namespace kdk;
+#endif
 
 static QPixmap drawSymbolicColoredPixmap (const QPixmap& source);
 
 static QString formatGerrorString (const Peony::FileOperationError* error);
+
+static const int ELIDE_TEXT_LENGTH = 960;
 
 
 Peony::FileOperationErrorDialogConflict::FileOperationErrorDialogConflict(FileOperationErrorDialogBase *parent)
@@ -68,6 +77,7 @@ Peony::FileOperationErrorDialogConflict::FileOperationErrorDialogConflict(FileOp
         m_replace = false;
         done(QDialog::Accepted);
     });
+    b->setDefault(true);
 
     QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
     connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
@@ -198,6 +208,7 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = false;
         done(QDialog::Accepted);
     });
+    b->setDefault(true);
 
     m_cancel_btn = b = addButton (tr("Cancel"));
     b->setBackgroundRole(QPalette::Button);
@@ -206,6 +217,7 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = true;
         done(QDialog::Rejected);
     });
+
 }
 
 Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
@@ -216,23 +228,30 @@ Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
 void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &error)
 {
     m_error = &error;
-    SoundEffect::getInstance()->copyOrMoveFailedMusic();
+    //SoundEffect::getInstance()->copyOrMoveFailedMusic();
+    //Task#152997, use sdk play sound
+#ifdef KY_SDK_SOUND_EFFECTS
+    kdk::KSoundEffects::playSound(SoundType::OPERATION_UNSUPPORTED);
+#endif
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
+        auto errorText = m_error->errorStr;
+        errorText.replace("\n", "<br>");
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr/*.toHtmlEscaped()*/, Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr/*.toHtmlEscaped()*/, Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     } else {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     }
 
-    if (m_error->op && FileOpRenameToHideFile == m_error->op) {
-        if (m_cancel_btn) {
-            delete m_cancel_btn;
-        }
-    }
+    //fix bug#161394, support cancel rename operation
+//    if (m_error->op && FileOpRenameToHideFile == m_error->op) {
+//        if (m_cancel_btn) {
+//            delete m_cancel_btn;
+//        }
+//    }
 
     int ret = exec();
 
@@ -305,7 +324,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         m_cancel = false;
         done(QDialog::Accepted);
     });
-
+    b->setDefault(true);
 //    QCheckBox* c = addCheckBoxLeft (tr("Do the same"));
 //    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
 //        switch (chose) {
@@ -331,11 +350,11 @@ void Peony::FileOperationErrorDialogNotSupported::handle(Peony::FileOperationErr
     QStyleOptionViewItem opt;
     if (nullptr != m_error->errorStr) {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr.toHtmlEscaped(), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(m_error->errorStr.toHtmlEscaped(), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     } else {
         QString htmlString = QString("<p>%1</p>")
-                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, 480).toHtmlEscaped());
+                                 .arg(opt.fontMetrics.elidedText(tr("Make sure the disk is not full or write protected and that the file is not protected"), Qt::ElideMiddle, ELIDE_TEXT_LENGTH).toHtmlEscaped());
         setText(htmlString);
     }
 

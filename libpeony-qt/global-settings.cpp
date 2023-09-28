@@ -33,6 +33,9 @@
 #include <QApplication>
 #include <QPalette>
 #include <QScreen>
+#ifdef KY_SDK_DATE
+#include <kysdk/kysdk-system/libkydate.h>
+#endif
 
 #ifdef KY_SDK_SYSINFO
 #include <kysdk/kysdk-system/libkysysinfo.h>
@@ -53,6 +56,7 @@ GlobalSettings *GlobalSettings::getInstance()
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "peony-qt-preferences", this);
+    m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
     //set default allow parallel
     if (! m_settings->allKeys().contains(ALLOW_FILE_OP_PARALLEL)) {
         qDebug() << "default ALLOW_FILE_OP_PARALLEL:true";
@@ -63,6 +67,35 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(SORT_CHINESE_FIRST, true);
     for (auto key : m_settings->allKeys()) {
         m_cache.insert(key, m_settings->value(key));
+    }
+
+    m_cache.insert(DISPLAY_STANDARD_ICONS, true);
+    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+            Q_EMIT this->valueChanged(key);
+        });
+
+        for (auto key : m_peonyGSettings->keys()) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+        }
+    }
+
+    m_cache.insert(TRASH_MOBILE_FILES, false);
+    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
+        m_peonyGSettings = new QGSettings("org.ukui.peony.settings", "/org/ukui/peony/settings/", this);
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+            Q_EMIT this->valueChanged(key);
+        });
+
+        for (auto key : m_peonyGSettings->keys()) {
+            m_cache.remove(key);
+            m_cache.insert(key, m_peonyGSettings->get(key));
+        }
     }
 
     m_date_format = tr("yyyy/MM/dd");
@@ -224,6 +257,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue (SORT_ORDER, 0);
     }
 
+    if (m_cache.value(DEFAULT_GRID_SIZE).isNull()) {
+        setValue(DEFAULT_GRID_SIZE, QSize());
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
@@ -237,6 +274,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         m_cache.insert(IS_GUESTOS_MACHINE, false);
     }
 #endif
+    initDateFormatDBus();
 }
 
 GlobalSettings::~GlobalSettings()
@@ -323,6 +361,55 @@ const QVariant GlobalSettings::getValue(const QString &key)
     return m_cache.value(key);
 }
 
+bool GlobalSettings::initDateFormatDBus()
+{
+#ifdef KY_SDK_DATE
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (! conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return false;
+    }
+
+    mDbusDateServer = new QDBusInterface(SDK_DATE_SERVER_SERVICE,
+                                         SDK_DATE_SERVER_PATH,
+                                         SDK_DATE_SERVER_INTERFACE,
+                                         QDBusConnection::sessionBus());
+
+    if (! mDbusDateServer->isValid()){
+        qCritical() << "Create /com/kylin/kysdk/Date Interface Failed " << QDBusConnection::systemBus().lastError();
+        return false;
+    }
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "ShortDateSignal",
+                                          this,
+                                          SLOT(sendShortDataFormat(QString)));
+
+    QDBusConnection::sessionBus().connect(SDK_DATE_SERVER_SERVICE,
+                                          SDK_DATE_SERVER_PATH,
+                                          SDK_DATE_SERVER_INTERFACE,
+                                          "LongDateSignal",
+                                          this,
+                                          SLOT(sendLongDataFormat(QString)));
+
+    return true;
+#endif
+
+    return false;
+}
+
+void GlobalSettings::sendShortDataFormat(const QString &format)
+{
+    Q_EMIT this->updateShortDataFormat(format);
+}
+
+void GlobalSettings::sendLongDataFormat(const QString &format)
+{
+    Q_EMIT this->updateLongDataFormat(format);
+}
+
 bool GlobalSettings::isExist(const QString &key)
 {
     return !m_cache.value(key).isNull();
@@ -359,7 +446,7 @@ void GlobalSettings::resetAll()
 
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
-    if (key == REMOTE_SERVER_REMOTE_IP || key == DEFAULT_WINDOW_SIZE) {
+    if (key == REMOTE_SERVER_REMOTE_IP || key == DEFAULT_WINDOW_SIZE || !m_peonyGSettings->keys().contains(key)) {
         m_cache.remove(key);
         m_cache.insert(key, value);
         QtConcurrent::run([=]() {
@@ -416,6 +503,7 @@ void GlobalSettings::setTimeFormat(const QString &value)
     else{
         m_time_format = tr("HH:mm:ss");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 void GlobalSettings::setDateFormat(const QString &value)
@@ -426,13 +514,63 @@ void GlobalSettings::setDateFormat(const QString &value)
     else{
         m_date_format = tr("yyyy-MM-dd");
     }
+    m_system_time_format = m_date_format + " " + m_time_format;
 }
 
 QString GlobalSettings::getSystemTimeFormat()
 {
-    m_system_time_format = m_date_format + " " + m_time_format;
+    //m_system_time_format = m_date_format + " " + m_time_format;
     return m_system_time_format;
 }
+
+QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
+{
+    QDateTime dateTime = QDateTime::fromMSecsSinceEpoch(mtime *1000);
+    QString systemTimeFormat = GlobalSettings::getInstance()->getSystemTimeFormat();
+
+#ifdef KY_SDK_DATE
+    struct tm *m_tm;
+    time_t lt;
+    lt = time(NULL);
+    m_tm = localtime(&lt);
+
+    QDate date = dateTime.date();
+    QTime qtime = dateTime.time();
+
+    m_tm->tm_year = date.year();
+    m_tm->tm_mon = date.month();
+    m_tm->tm_mday = date.day();
+
+    m_tm->tm_hour = qtime.hour();
+    m_tm->tm_min = qtime.minute();
+    m_tm->tm_sec = qtime.second();
+    //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
+    //set date and time show format, task #101605
+    auto ret = kdk_system_timeformat_transform(m_tm);
+    auto formatDate = kdk_system_shortformat_transform(m_tm);
+    //sdk接口会改变结构体数据，需要重初始化要使用的日期数据
+    //属于接口缺陷，已跟SDK接口负责人沟通，先使用此方式
+    m_tm->tm_year = date.year();
+    m_tm->tm_mon = date.month();
+    m_tm->tm_mday = date.day();
+    if (longFormat)
+        formatDate = kdk_system_longformat_transform(m_tm);
+    if (ret && formatDate){
+        QString dateStr = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        //qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
+        //释放结构体
+        kdk_free_timeinfo(ret);
+
+        //use sdk interface
+        if (dateStr.trimmed().length() > 0)
+            return dateStr;
+    }
+#endif
+
+    //old way of date, processed by self
+    return dateTime.toString(systemTimeFormat);
+}
+
 void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
 {
     if (!m_peony_gsettings)
@@ -451,5 +589,9 @@ void GlobalSettings::setGSettingValue(const QString &key, const QVariant &value)
 
 QString GlobalSettings::getProjectName()
 {
+#ifdef KYLIN_COMMON
     return QString::fromStdString(KDKGetPrjCodeName());
+#else
+    return "unknown-project-name";
+#endif // KYLIN_COMMON
 }

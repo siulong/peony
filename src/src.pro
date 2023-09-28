@@ -28,11 +28,11 @@ CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -L$$PWD/../libpeony-qt/ -lpeony
 
 contains(DEFINES, KY_SDK_QT_WIDGETS) {
-    PKGCONFIG += kysdk-qtwidgets
+    PKGCONFIG += kysdk-applications
 }
 
 contains(DEFINES, KY_SDK_WAYLANDHELPER) {
-    PKGCONFIG += kysdk-waylandhelper
+    PKGCONFIG += kysdk-applications
 }
 
 # The following define makes your compiler emit warnings if you use
@@ -49,7 +49,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TRANSLATIONS += ../translations/peony-qt/peony-qt_zh_CN.ts \
                 ../translations/peony-qt/peony-qt_tr.ts \
                 ../translations/peony-qt/peony-qt_cs.ts \
-                ../translations/peony-qt/peony-qt_bo_CN.ts
+                ../translations/peony-qt/peony-qt_bo_CN.ts \
+                ../translations/peony-qt/peony-qt_mn.ts
 
 SOURCES += \
     peony-application.cpp \

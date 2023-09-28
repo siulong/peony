@@ -48,7 +48,7 @@ public:
     static void help();
 
     static bool userGuideDaemonRunning();
-    static void showGuide(const QString &appName = "peony");
+    static void showGuide(const QString &appName = "system-file-manager");
 
     static qint64 peony_start_time;
 

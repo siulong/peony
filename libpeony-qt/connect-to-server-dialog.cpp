@@ -135,9 +135,12 @@ QRect ButtonStyle::subElementRect(SubElement element, const QStyleOption *option
 
 ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 {
+    if("bo_CN" == QLocale::system().name()){
+        m_widget_size.setWidth(m_widget_size.width() + 57);
+    }
     setFixedSize(m_widget_size);
     setWindowIcon(QIcon::fromTheme("network-server"));
-    setWindowTitle(tr("connect to server"));
+    setWindowTitle(tr("Connect to server"));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 
@@ -162,15 +165,14 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_remote_port->append(ftpDefaultPortStr);
     m_remote_port->append(sftpDefaultPortStr);
     m_remote_port->append(sambaDefaultPortStr);
-    m_ip_label->setText(tr("ip"));
+    m_ip_label->setText(tr("Ip"));
     m_port_editor->setEditable(true);
-    m_port_label->setText(tr("port"));
-    m_remote_type_label->setText(tr("type"));
+    m_port_label->setText(tr("Port"));
+    m_remote_type_label->setText(tr("Type"));
     m_main_layout->setMargin(m_widget_margin);
     m_remote_type_edit->setAutoCompletion(true);
     m_ip_label->setFixedHeight(36);
     m_ip_edit->setFixedHeight(36);
-    m_ip_edit->setFixedWidth(194);
     m_port_label->setFixedHeight(36);
     m_port_editor->setFixedHeight(36);
     m_port_editor->setFixedWidth(65);
@@ -184,9 +186,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_remote_layout->addWidget(m_remote_type_edit,  0, 1, 1, 5);
     m_remote_layout->setVerticalSpacing(20);
     m_remote_layout->addWidget(m_ip_label,          1, 0, 1, 1);
-    m_remote_layout->addWidget(m_ip_edit,           1, 1, 1, 1);
-    m_remote_layout->addWidget(m_port_label,        1, 2, 1, 1);
-    m_remote_layout->addWidget(m_port_editor,       1, 3, 1, 3);
+    m_remote_layout->addWidget(m_ip_edit,           1, 1, 1, 3);
+    m_remote_layout->addWidget(m_port_label,        1, 4, 1, 1);
+    m_remote_layout->addWidget(m_port_editor,       1, 5, 1, 1);
+    m_remote_layout->setColumnStretch(0, 1);
+    m_remote_layout->setColumnStretch(1, 5);
 
     m_main_layout->addLayout(m_remote_layout);
     m_main_layout->addSpacing(28);
@@ -208,9 +212,9 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     m_main_layout->addSpacing(12);
 
-    m_btn_add->setText(tr("add"));
-    m_btn_del->setText(tr("delete"));
-    m_btn_conn->setText(tr("connect"));
+    m_btn_add->setText(tr("Add"));
+    m_btn_del->setText(tr("Delete"));
+    m_btn_conn->setText(tr("Connect"));
     m_btn_layout->addWidget(m_btn_add);
     m_btn_layout->addWidget(m_btn_del);
     m_btn_layout->addSpacing(72);
@@ -263,7 +267,7 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
     connect(m_btn_del, &QPushButton::clicked, this, [=] (bool checked) {
         QString delUri = uri();
-        if (delUri != m_favorite_list->currentItem()->text()) {
+        if (m_favorite_list && m_favorite_list->currentItem() && delUri != m_favorite_list->currentItem()->text()) {
             delUri = m_favorite_list->currentItem()->text();
         }
         removeUri(delUri);
@@ -287,11 +291,11 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
 
             if (m_checkIp) {
                 m_checkIp = false;
-                QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+                QMessageBox::warning(nullptr, tr("Warning"), tr("Ip input error, please re-enter!"), QMessageBox::Ok);
                 return;
             } else if (m_checkPort) {
                 m_checkPort = false;
-                QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+                QMessageBox::warning(nullptr, tr("Warning"), tr("Port input error, please re-enter!"), QMessageBox::Ok);
                 return;
             }
             accept();
@@ -359,11 +363,11 @@ void ConnectServerDialog::addUri(QString uri)
 
     if (m_checkIp) {
         m_checkIp = false;
-        QMessageBox::warning(nullptr, tr("Warning"), tr("ip input error, please re-enter!"), QMessageBox::Ok);
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Ip input error, please re-enter!"), QMessageBox::Ok);
         return;
     } else if (m_checkPort) {
         m_checkPort = false;
-        QMessageBox::warning(nullptr, tr("Warning"), tr("port input error, please re-enter!"), QMessageBox::Ok);
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Port input error, please re-enter!"), QMessageBox::Ok);
         return;
     }
 
@@ -450,6 +454,10 @@ void ConnectServerDialog::checkConnectIpAndPort(QString uri)
 ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     : QDialog(parent),m_remoteIP(uri)
 {
+    if("bo_CN" == QLocale::system().name()){
+        m_widget_size.setHeight(m_widget_size.height() + 61);
+        m_widget_size.setWidth(m_widget_size.width() + 30);
+    }
     setFixedSize(m_widget_size);
     if("bo_CN" == QLocale::system().name()){
         setFixedSize(QSize(424,455));
@@ -459,7 +467,6 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     m_main_layout = new QVBoxLayout(this);
-    m_main_layout->addSpacing(12);
     m_main_layout->setMargin(m_widget_margin);
 
     QUrl url(uri);
@@ -467,22 +474,18 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_tip->setWordWrap(true);
     m_tip->setText(QString(tr("Please enter the %1's user name and password of the server.")).arg(url.host ()));
     m_main_layout->addWidget(m_tip);
-
+    m_usr_layout            = new QGridLayout;
     m_usr_label             = new QLabel;
-    m_usr_btn_group         = new QVBoxLayout;
     m_usr_btn_guest         = new QRadioButton;
     m_usr_btn_usr           = new QRadioButton;
-    m_usr_layout            = new QHBoxLayout;
 
     m_usr_label->setText(tr("User's identity"));
-    m_usr_btn_guest->setText(tr("guest"));
+    m_usr_btn_guest->setText(tr("Guest"));
     m_usr_btn_usr->setText(tr("Registered users"));
-    m_usr_btn_group->addWidget(m_usr_btn_guest);
-    m_usr_btn_group->addWidget(m_usr_btn_usr);
-    m_usr_layout->addWidget(m_usr_label);
-    m_usr_layout->addLayout(m_usr_btn_group);
-    m_usr_label->setAlignment (Qt::AlignTop | Qt::AlignLeft);
-    m_usr_layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    m_usr_layout->addWidget(m_usr_label,         0, 0);
+    m_usr_layout->addWidget(m_usr_btn_guest,     0, 1);
+    m_usr_layout->addWidget(m_usr_btn_usr,       1, 1);
+    m_usr_layout->setColumnStretch(2, 1);
     m_main_layout->addLayout(m_usr_layout);
 
     m_reg_usr_name_label    = new QLabel;
@@ -493,8 +496,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_reg_usr_layout        = new QGridLayout;
 
     m_reg_usr_name_editor->setEditable (true);
-    m_reg_usr_name_label->setText(tr("name"));
-    m_reg_usr_passwd_label->setText(tr("password"));
+    m_reg_usr_name_label->setText(tr("Name"));
+    m_reg_usr_passwd_label->setText(tr("Password"));
     m_reg_usr_combox->setText(tr("Remember the password"));
     m_reg_usr_name_label->setFixedHeight(36);
     m_reg_usr_passwd_label->setFixedHeight(36);
@@ -515,11 +518,11 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_btn_ok                = new QPushButton;
     m_btn_layout            = new QHBoxLayout;
     m_btn_layout->addSpacing(192);
-    m_btn_cancel->setText(tr("cancel"));
-    m_btn_ok->setText(tr("ok"));
+    m_btn_cancel->setText(tr("Cancel"));
+    m_btn_ok->setText(tr("OK"));
     m_btn_layout->addWidget(m_btn_cancel);
     m_btn_layout->addWidget(m_btn_ok);
-    m_main_layout->addSpacing(20);
+    m_main_layout->addStretch();
     m_btn_ok->setAutoDefault(true);
     m_btn_cancel->setAutoDefault(false);
     m_main_layout->addLayout(m_btn_layout);
@@ -632,6 +635,16 @@ bool ConnectServerLogin::anonymous()
 bool ConnectServerLogin::savePassword()
 {
     return m_reg_usr_combox->isChecked();
+}
+
+void ConnectServerLogin::setCurrentUserName(QString &name)
+{
+    m_reg_usr_name_editor->setCurrentText(name);
+}
+
+void ConnectServerLogin::setCurrentPasswd(QString &passwd)
+{
+    m_reg_usr_passwd_editor->setText(passwd);
 }
 
 void ConnectServerLogin::syncRemoteServer(const QUrl& url)

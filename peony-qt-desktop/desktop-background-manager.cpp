@@ -1,3 +1,25 @@
+/*
+ * Peony-Qt
+ *
+ * Copyright (C) 2023, KylinSoft Information Technology Co., Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Authors: Yue Lan <lanyue@kylinos.cn>
+ *
+ */
+
 #include "peony-desktop-application.h"
 
 #include "desktop-background-manager.h"
@@ -10,7 +32,10 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QFile>
+#include <QProcess>
 #include <global-settings.h>
+
+#include <gio/gio.h>
 
 #include <QDebug>
 
@@ -47,6 +72,12 @@ void DesktopBackgroundManager::initGSettings()
     if (QGSettings::isSchemaInstalled(BACKGROUND_SETTINGS)) {
         m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+
+        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+        if (settings) {
+            bool writable = g_settings_is_writable(settings, "picture-filename");
+            m_shouldSyncAccountBackground = writable;
+        }
     } else {
         m_backgroundOption = "scaled";
     }
@@ -111,6 +142,13 @@ void DesktopBackgroundManager::setBackground()
 
 QString DesktopBackgroundManager::getAccountBackground()
 {
+    if (!m_shouldSyncAccountBackground) {
+        if (m_backgroundSettings) {
+            return m_backgroundSettings->get("pictureFilename").toString();
+        }
+        return nullptr;
+    }
+
     uid_t uid = getuid();
     QDBusInterface iface("org.freedesktop.Accounts", "/org/freedesktop/Accounts",
                          "org.freedesktop.Accounts",QDBusConnection::systemBus());
@@ -130,6 +168,10 @@ QString DesktopBackgroundManager::getAccountBackground()
 
 void DesktopBackgroundManager::setAccountBackground()
 {
+    if (!m_shouldSyncAccountBackground) {
+        return;
+    }
+
     QDBusInterface * interface = new QDBusInterface("org.freedesktop.Accounts",
                                      "/org/freedesktop/Accounts",
                                      "org.freedesktop.Accounts",
@@ -164,6 +206,11 @@ void DesktopBackgroundManager::setAccountBackground()
     qDebug() << "setAccountBackground path:" <<m_current_bg_path;
     if (!msg.errorMessage().isEmpty())
         qDebug() << "update user background file error: " << msg.errorMessage();
+
+    //saveBlurBackground
+    QProcess p;
+    p.startDetached("/usr/bin/save-blurBackground");
+
 }
 
 void DesktopBackgroundManager::switchBackground()
@@ -201,6 +248,15 @@ void DesktopBackgroundManager::switchBackground()
             m_current_bg_path = path;
         } else {
             m_frontPixmap = QPixmap(path);
+            //天翼云项目反馈壁纸问题修复
+            //fix jpeg file change suffix name to png, set as wallpaper fail issue
+            if (m_frontPixmap.isNull()){
+                QFile file(path);
+                if (file.open(QIODevice::ReadOnly)){
+                    m_frontPixmap.loadFromData(file.readAll());
+                    file.close();
+                }
+            }
             if (m_backPixmap.isNull()) {
                 m_backPixmap = m_frontPixmap;
             }
