@@ -1317,6 +1317,9 @@ bool FileUtils::isFuseFileSystem(const QString &fileUri)
     g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
     g_autoptr (GFile) parent = g_file_get_parent(file);
     auto path = g_file_peek_path(parent);
+    if (!path) {
+        return false;
+    }
     g_autoptr (GUnixMountEntry) entry = g_unix_mount_at(path, NULL);
     if (!entry) {
         entry = g_unix_mount_for(path, NULL);

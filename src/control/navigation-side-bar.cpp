@@ -41,6 +41,7 @@
 #include "file-utils.h"
 
 #include "x11-window-manager.h"
+#include "tag-management.h"
 
 #include <QHeaderView>
 #include <QPushButton>
@@ -352,9 +353,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         auto index = model()->index(row,0);
         auto srcIndex = m_proxy_model->mapToSource(index);
         auto item = m_model->itemFromIndex(srcIndex);
-        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
-            continue;
-        expand(index);
+        auto type = item->type();
+        if (item->type() != SideBarAbstractItem::VFSItem && item->type() != SideBarAbstractItem::SeparatorItem) {
+            expand(index);
+        }
+//        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
+//            continue;
+//        expand(index);
     }
 }
 
@@ -644,12 +649,12 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     connect(m_labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
     {
         QModelIndex index = m_labelDialog->currentIndex();
-        auto item = FileLabelModel::getGlobalModel()->itemFormIndex(index);
-        int id = item->id();
+        QString name = index.data(Qt::DisplayRole).toString();
+        int id = index.data(Qt::UserRole).toInt();
         if (id)
         {
             //QString uri = "label:///" + QString::number(id);
-            QString uri = "label:///" + item->name();
+            QString uri = "label:///" + name;
             Q_EMIT m_sidebar->updateWindowLocationRequest(uri);
         }
     });
@@ -660,23 +665,43 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     });
 
 
-    m_label_button = new QPushButton(QIcon(":/icons/sign"), tr("All tags..."), this);
-    m_label_button->setProperty("useIconHighlightEffect", 0x2);
-    m_label_button->setProperty("iconHighlightEffectMode", 1);
-    m_label_button->setProperty("fillIconSymbolicColor", true);
-    m_label_button->setProperty("isWindowButton", 0x1);
-    m_label_button->setCheckable(true);
+    LabelButton *labelButton = new LabelButton(this);
 
-    m_label_button->setFocusPolicy(Qt::FocusPolicy(m_label_button->focusPolicy() & ~Qt::TabFocus));
+    labelButton->setProperty("useIconHighlightEffect", 0x2);
+    labelButton->setProperty("iconHighlightEffectMode", 1);
+    labelButton->setProperty("fillIconSymbolicColor", true);
+    labelButton->setProperty("isWindowButton", 0x1);
+    //m_label_button->setCheckable(true);
+
+    labelButton->setFocusPolicy(Qt::FocusPolicy(labelButton->focusPolicy() & ~Qt::TabFocus));
+    labelButton->setLastIcon(":/icons/ukui-down-symbolic");
+    labelButton->setFirstIcon(":/icons/sign");
+    labelButton->setText(tr("Manager tags..."));
+
+    LabelButton *control = new LabelButton(this);
+    control->setText(tr("More tags..."));
+    control->hide();
+
+    connect(control, &LabelButton::clicked, this, [=](bool checked){
+        Peony::TagManagement::getInstance()->show();
+    });
 
     l->setSpacing(0);
-    //l->addWidget(m_labelDialog);
-    l->addWidget(m_label_button);
 
-    connect(m_label_button, &QPushButton::clicked, this, [=](bool checked){        
-        //m_labelDialog->setGeometry(0, this->height() - 600, this->width(), 600 - m_label_button->height());
+    l->addWidget(control);
+    l->addWidget(labelButton);
+    connect(labelButton, &LabelButton::clicked, this, [=](bool checked){
+        if (checked) {
+            labelButton->setLastIcon(":/icons/ukui-up-symbolic");
+        } else {
+            labelButton->setLastIcon(":/icons/ukui-down-symbolic");
+        }
+        m_labelDialog->setFloatWidgetVisible(checked);
+    });
+
+    connect(m_labelDialog, &FileLabelBox::fileLabelVisible, this, [=](bool checked){
+        control->setVisible(checked);
         m_labelDialog->setVisible(checked);
-
     });
 
     w->setLayout(l);
@@ -795,4 +820,53 @@ TitleLabel::TitleLabel(QWidget *parent):QWidget(parent)
     l->addWidget(m_text_label);
     l->addStretch();
     this->setFixedHeight(sizeHint().height());
+}
+
+LabelButton::LabelButton(QWidget *parent) : QWidget(parent)
+{
+    this->setAttribute(Qt::WA_TranslucentBackground);
+    m_mainLayout = new QHBoxLayout(this);
+    m_firstSymbolic = new QLabel(this);
+    m_lastSymbolic = new QLabel(this);
+    m_text = new QLabel(this);
+    m_mainLayout->addWidget(m_firstSymbolic);
+    m_mainLayout->addWidget(m_text);
+    m_mainLayout->addStretch();
+    m_mainLayout->addWidget(m_lastSymbolic);
+    setLayout(m_mainLayout);
+}
+
+void LabelButton::mousePressEvent(QMouseEvent *event)
+{
+    if (!m_isPress) {
+        m_isPress = true;
+    }
+    Q_UNUSED(event);
+}
+
+void LabelButton::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (m_isPress) {
+        m_show = !m_show;
+        Q_EMIT clicked(m_show);
+    }
+
+    m_isPress = false;
+
+    Q_UNUSED(event);
+}
+
+void LabelButton::setLastIcon(const QString &symbolic)
+{
+     m_lastSymbolic->setPixmap(QIcon(symbolic).pixmap(64,64));
+}
+
+void LabelButton::setFirstIcon(const QString &symbolic)
+{
+     m_firstSymbolic->setPixmap(QIcon(symbolic).pixmap(64,64));
+}
+
+void LabelButton::setText(QString text)
+{
+     m_text->setText(text);
 }

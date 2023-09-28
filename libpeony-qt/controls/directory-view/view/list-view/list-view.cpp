@@ -151,7 +151,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setIconSize(QSize(40, 40));
     setMouseTracking(true);//追踪鼠标
 
-    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
+    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -441,7 +441,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         m_logicRect = logicRect.normalized();
 
         int dx = -horizontalOffset();
-        int dy = -verticalOffset() + this->header()->height();
+        int dy = -verticalOffset();
         auto realRect = m_logicRect.adjusted(dx, dy, dx ,dy);
 
         if (!m_rubberBand->isVisible())
@@ -750,6 +750,14 @@ void ListView::startDrag(Qt::DropActions flags)
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
     }
+}
+
+void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
+{
+    // fix #I7GWAX【设计走查】【文档管理器】列表视图框选文件时，被框选的文件，其以下的文件会被自动选中
+    QRect adjustedRect = rect;
+    adjustedRect.setLeft(0);
+    QTreeView::setSelection(adjustedRect, command);
 }
 
 void ListView::slotRename()

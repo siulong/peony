@@ -372,15 +372,16 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     if (!info->isEmptyInfo()) {
         isDirectoryCanWrite = info->canWrite();
     }
-    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
-        isDirectoryCanWrite = false;
-    }
+    //comment to fix bug#191108, huawei phone can paste file success
+//    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
+//        isDirectoryCanWrite = false;
+//    }
 
     m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && !isDirectoryCanWrite);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && !isDirectoryCanWrite && !hasLongFileName);
+    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && isDirectoryCanWrite && !hasLongFileName);
 
     Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
-    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && !isDirectoryCanWrite);
+    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && isDirectoryCanWrite);
 }

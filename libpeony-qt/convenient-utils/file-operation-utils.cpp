@@ -77,7 +77,8 @@ FileOperation *FileOperationUtils::move(const QStringList &srcUris, const QStrin
         }
 
         auto moveOp = new FileMoveOperation(srcUris, destDir);
-        moveOp->setCopyMove(copyMove);
+        moveOp->setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
+        //moveOp->setCopyMove(copyMove);
         op = moveOp;
         fileOpMgr->startOperation(moveOp, addHistory);
     } else {
@@ -293,7 +294,7 @@ FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &
 FileOperation *FileOperationUtils::clearRecycleBinWithDialog(const QStringList &list, QWidget *parent)
 {
     FileOperationInternalDialog questionbox((QDialog*)parent);
-    auto okButton = questionbox.addButton(QObject::tr("OK"));
+    auto okButton = questionbox.addButton(QObject::tr("Clean the Trash"));
     questionbox.connect(okButton, &QPushButton::clicked, &questionbox, [&]{
         questionbox.accept();
     });

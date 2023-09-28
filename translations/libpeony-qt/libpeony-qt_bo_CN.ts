@@ -2,6 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="bo_CN">
 <context>
+    <name>ColorPushButton</name>
+    <message>
+        <source>label management ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>delete &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add  &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConnectServerDialog</name>
     <message>
         <source>Ok</source>
@@ -83,7 +98,7 @@
     </message>
     <message>
         <source>Gray</source>
-        <translation>སྐྱ་ཚད།</translation>
+        <translation type="vanished">སྐྱ་ཚད།</translation>
     </message>
     <message>
         <source>Error</source>
@@ -251,6 +266,10 @@
         <source>getting progress...</source>
         <translation>ཡར་རྒྱས་ཡོང་ཐབས་བྱེད་དགོས།...</translation>
     </message>
+    <message>
+        <source>Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>KyFileDialogRename</name>
@@ -304,7 +323,7 @@
     </message>
     <message>
         <source>Skip All</source>
-        <translation>མ་ཚང་མཆོངས་པ།</translation>
+        <translation type="vanished">མ་ཚང་མཆོངས་པ།</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -312,11 +331,63 @@
     </message>
     <message>
         <source>Please enter a new name</source>
-        <translation>ཡིག་ཆ་གསར་བའི་མིང་ནང་འཇུག་བྱེད་རོགས།</translation>
+        <translation type="vanished">ཡིག་ཆ་གསར་བའི་མིང་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>OK</source>
         <translation>གཏན་འཁེལ།</translation>
+    </message>
+    <message>
+        <source>Truncation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">ཉེར་སྤྱོད།</translation>
+    </message>
+    <message>
+        <source>Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Front truncation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post truncation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description: Skip copying files of the current type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>truncate interval</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explanation: Truncate the portion of the file name that exceeds 225 bytes and select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description: By default, save to &quot;%1/扩展&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>modify the name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1559,6 +1630,10 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <source>Burning does not support replacement</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The file name exceeds the limit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileDeleteOperation</name>
@@ -1703,6 +1778,17 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <message>
         <source>Peony File Labels Menu Extension</source>
         <translation type="vanished">ཡིག་ཆའི་མཚོན་རྟགས།</translation>
+    </message>
+    <message>
+        <source>label management ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Peony::FileLabelWidget</name>
+    <message>
+        <source>label management ...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1938,6 +2024,14 @@ Do you want to delete the link file?</source>
         <source>Burning does not support replacement</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid move operation, cannot move a file into its sub directories.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file name exceeds the limit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::FileOperationAfterProgressPage</name>
@@ -2152,6 +2246,10 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The long name file is saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2400,6 +2498,45 @@ Do you want to delete the link file?</source>
     <message>
         <source>Close</source>
         <translation>སྒོ་རྒྱག་པ་</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::LabelSettings</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SideBar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display the following items in the identification area: (maximum of 6)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="unfinished">མིང་བསྐྱར་འདོགས།</translation>
+    </message>
+    <message>
+        <source>Edit Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete This Label</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2883,6 +3020,13 @@ Do you want to delete the link file?</source>
     <message>
         <source>notify</source>
         <translation>དྲན་སྐུལ་གསལ་བརྡ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::TagManagement</name>
+    <message>
+        <source>Mark</source>
+        <translation type="unfinished">མཚོན་རྟགས།</translation>
     </message>
 </context>
 <context>
@@ -3372,6 +3516,14 @@ Do you want to unmount forcely?</source>
     <message>
         <source>Close</source>
         <translation>ཁ་རྒྱག</translation>
+    </message>
+    <message>
+        <source>label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Virtual file directories do not support move operations</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

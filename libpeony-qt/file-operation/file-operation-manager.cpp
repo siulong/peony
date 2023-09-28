@@ -29,6 +29,8 @@
 #include <QApplication>
 #include <QTimer>
 #include <QtConcurrent>
+#include <QDBusInterface>
+#include <QDBusConnection>
 
 #include "file-copy-operation.h"
 #include "file-delete-operation.h"
@@ -90,10 +92,33 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     if (pconnection) {
         g_dbus_connection_signal_subscribe(pconnection, "org.freedesktop.login1", "org.freedesktop.login1.Manager", "PrepareForSleep", "/org/freedesktop/login1", NULL, G_DBUS_SIGNAL_FLAGS_NONE, systemSleep, this, NULL);
     }
+
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (!conn.isConnected()) {
+        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
+        return;
+    }
+
+    m_iface = new QDBusInterface("org.ukui.peony", "/org/ukui/peony", "org.ukui.peony", QDBusConnection::sessionBus());
+    if (!m_iface->isValid()){
+        qCritical() << "Create /org/ukui/peony Interface Failed " << QDBusConnection::sessionBus().lastError();
+        return;
+    }
+
+    QDBusConnection::sessionBus().connect("org.ukui.peony",
+                                          "/org/ukui/peony",
+                                          "org.ukui.peony",
+                                          "opreateFinishedOfEngrampa",
+                                          this,
+                                          SLOT(slot_opreateFinishedOfEngrampa(QString, bool)));
 }
 
 FileOperationManager::~FileOperationManager()
 {
+    if(m_iface){
+        delete m_iface;
+        m_iface = nullptr;
+    }
 
 }
 
@@ -291,31 +316,31 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
     }
 
 start:
-
+    static bool oldQuitOnLastWindow = QApplication::quitOnLastWindowClosed();
     QApplication::setQuitOnLastWindowClosed(false);
 
     connect(operation, &FileOperation::operationFinished, this, [=]() {
         operation->notifyFileWatcherOperationFinished();
-        auto settings = GlobalSettings::getInstance();
-        bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
-        QApplication::setQuitOnLastWindowClosed(!runbackend);
-
-        QTimer::singleShot(1000, this, [=]() {
-            int last_op_count = m_thread_pool->children().count();
-            if (last_op_count == 0) {
-                if (qApp->allWidgets().isEmpty()) {
-                    if (!runbackend) {
-                        qApp->quit();
+        if (qApp->property("isPeony").toBool()) {
+            auto settings = GlobalSettings::getInstance();
+            bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
+            QApplication::setQuitOnLastWindowClosed(!runbackend);
+            QTimer::singleShot(1000, this, [=]() {
+                int last_op_count = m_thread_pool->children().count();
+                if (last_op_count == 0) {
+                    if (qApp->allWidgets().isEmpty()) {
+                        if (!runbackend) {
+                            qApp->quit();
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            QApplication::setQuitOnLastWindowClosed(oldQuitOnLastWindow);
+        }
     }, Qt::BlockingQueuedConnection);
 
-
-
     bool allowParallel = m_allow_parallel;
-
 
     connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
         // fix #171449
@@ -482,6 +507,9 @@ start:
    proc->connect(proc, &ProgressBar::resume, operation, &FileOperation::operationResume);
 
    operation->connect(operation, &FileOperation::errored, [=]() {
+       if (operation->getOperationInfo()->m_type == FileOperationInfo::Copy || operation->getOperationInfo()->m_type == FileOperationInfo::Move) {
+           return;
+       }
        operation->setHasError(true);
    });
 
@@ -815,6 +843,36 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
     }
 }
 
+void FileOperationManager::slot_opreateFinishedOfEngrampa(const QString &path, bool finish)
+{
+    if(!finish || path.isEmpty())
+        return;
+
+    if(!path.startsWith("smb://") && !path.startsWith("ftp://") && !path.startsWith("sftp://"))
+        return;
+
+    for (auto watcher : m_watchers) {
+        if(watcher->supportMonitor())
+            continue;
+        QString watcherUri = watcher->currentUri();
+        //'file:///run/user/1000/gvfs/smb-share:server=xxx,share=xxx/' converted to 'smb://xxx'
+        if(watcherUri.startsWith("file:///run/user/1000/gvfs/smb-share:")){
+            GFile * file  = g_file_new_for_uri(watcherUri.toUtf8().data());
+            char *uri = g_file_get_uri(file);
+            if (uri) {
+                watcherUri = uri;
+            }
+            g_object_unref(file);
+            g_free(uri);
+        }
+        //auto watcherDecodeUri = FileUtils::urlDecode(watcherUri);
+        //auto destDecodePath = FileUtils::urlDecode(path);
+        if (watcherUri == path || watcherUri == path + QString("/")){
+            watcher->requestUpdateDirectory();
+        }
+    }
+}
+
 //FIXME: get opposite info correcty.
 FileOperationInfo::FileOperationInfo(QStringList srcUris,
                                      QString destDirUri,
@@ -962,9 +1020,10 @@ void FileOperationInfo::trashOppositeInfoConstruct()
 
 std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperationInfo *info) {
 
-    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, m_opposite_type);
+    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, info->m_opposite_type);
+    oppositeInfo->m_drop_action = info->m_drop_action;
     if (info->m_drop_action == Qt::TargetMoveAction) {
-        oppositeInfo->m_drop_action = Qt::TargetMoveAction;
+        //oppositeInfo->m_drop_action = Qt::TargetMoveAction;
         oppositeInfo->m_type = FileOperationInfo::Move;
     }
     QMap<QString, QString> oppsiteMap;

@@ -35,6 +35,8 @@
 #include <QStandardPaths>
 #include <QProcess>
 
+#include "xdg-portal-helper.h"
+
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -94,6 +96,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    Peony::XdgPortalHelper::getInstance()->tryUnusePortal();
     initUkuiLog4qt("peony-desktop");
 //    qInstallMessageHandler(messageOutput);
     qDebug() << "desktop start time in main:" <<PeonyDesktopApplication::peony_desktop_start_time;
@@ -108,6 +111,7 @@ int main(int argc, char *argv[])
 
     QString id = "peony-qt-desktop" + qgetenv("DISPLAY");
     PeonyDesktopApplication a(argc, argv, id);
+    Peony::XdgPortalHelper::getInstance()->tryResetPortal();
     if (a.isRunning())
         return 0;
 

@@ -88,13 +88,14 @@ void PathBarModel::setRootUri(const QString &uri, bool force)
 
     m_info = FileInfo::fromUri(uri);
     auto infoJob = new FileInfoJob(m_info);
-    infoJob->setAutoDelete();
+    //infoJob->setAutoDelete();
     connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
         if (successed) {
             m_enumerator->cancel();
             m_enumerator->setEnumerateDirectory(m_info.get()->uri());
             m_enumerator->enumerateAsync();
         }
+        infoJob->deleteLater();
     });
     infoJob->queryAsync();
 
