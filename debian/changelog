@@ -1,190 +1,244 @@
-peony (4.0.0.0-ok3) unstable; urgency=medium
+peony (4.1.0.0-1) unstable; urgency=medium
 
-  * pbuilder
+  * New upstream release.
 
- -- xibowen <xibowen@kylinos.cn>  Wed, 30 Aug 2023 14:40:23 +0800
+ -- xibowen <xibowen@kylinos.cn>  Thu, 28 Sep 2023 09:32:01 +0800
 
-peony (4.0.0.0-ok2~0826) yangtze; urgency=medium
+peony (3.2.4-1) unstable; urgency=medium
 
-  * close-cd#I79G9Q【文件管理器】文件复制窗口界面文字显示折叠
+  * New upstream release.
 
- -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 25 Aug 2023 14:40:23 +0800
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 22 Feb 2022 16:11:28 +0800
 
-peony (4.0.0.0-ok2~0825) yangtze; urgency=medium
+peony (3.2.3-1) unstable; urgency=medium
 
-  * close #I6YFT4 删除文件到回收站确认弹窗未居中显示
-  * close #I79G9Q 文件复制窗口界面文字显示折叠
-  * close #I71SXV 重命名框没有限制输入超过255字节的文件名
+  * New upstream release.
 
- -- meihonghe <hemeihong@kylinos.cn>  Fri, 25 Aug 2023 11:00:10 +0800
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 17 Aug 2021 19:35:54 +0800
 
-peony (4.0.0.0-ok2~0704) yangtze; urgency=medium
+peony (3.0.6-1) unstable; urgency=medium
 
-  * close-cd#I7GW9E【设计走查】【文档管理器】选中某个文件后，拉伸窗口过程中，该文件出现抖动问题
+  * New upstream release.
 
- -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 04 Jul 2023 17:23:10 +0800
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Sat, 28 Nov 2020 15:53:31 +0800
 
-peony (4.0.0.0-ok2~0703) yangtze; urgency=medium
 
-  * close #I5M6A1 将文件拖放到桌面的图标显示不支持
+peony (3.0.5-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Mon, 03 Jul 2023 12:00:36 +0800
+  * New upstream bugfix release.
 
-peony (4.0.0.0-ok2~0625) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Sun, 27 Sep 2020 19:28:06 +0800
 
-  * 尝试修复wayland下窗管窗口移动处理异常问题
+peony (3.0.4-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Sun, 25 Jun 2023 11:25:22 +0800
+  * New upstream bugfix release.
 
-peony (4.0.0.0-ok2~0606) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Sat, 26 Sep 2020 20:26:06 +0800
 
-  * close-cd#I6YEV4【显示器】扩展模式副屏壁纸截断, 在x模式下，刚接入时获取的kscreen大小不对
+peony (3.0.3-1) unstable; urgency=medium
 
- -- yangyanwei <yangyanwei@kylinos.cn>  Tue, 06 Jun 2023 18:17:55 +0800
+  * New upstream bugfix release.
 
-peony (4.0.0.0-ok2~0526) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Mon, 07 Sep 2020 16:16:47 +0800
 
-  * close-cd #I64KVD【平板模式】【文件管理器】【次要】选项下拉菜单里仍存在复制，粘贴，剪切，删除的图标按钮
-  *【文件管理器】平板 & PC模式退出多选模式的交互不一致
-  *【文件管理器】竖屏下文件管理器显示界面不完全
-  *【文件管理器】多选情况下，多次点击取消不了
-  * 修改由于主题框架改动导致字体颜色消失
-  * 修改打开预览框拉动侧边栏关闭按钮被遮盖以及headerbar缩略图标显示不全
+peony (3.0.2-2) unstable; urgency=medium
 
- -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 26 May 2023 15:54:37 +0800
+  * debian/control:
+    - libpeony3: add breaks with libpeony2. (Closes: #968595)
 
-peony (4.0.0.0-ok2~0522) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 18 Aug 2020 13:11:28 +0000
 
-  * close-cd #I6YFFP【文件管理器】桌面文件被遮挡
-  * close-cd #I6YRLA【X】【桌面】桌面壁纸显示没有适配缩放率
-  * close-cd #I6YT1D【X】【桌面】应该添加桌面快捷方式桌面图标未自动排列（只显示一列）
+peony (3.0.2-1) unstable; urgency=medium
 
- -- yangyanwei <yangyanwei@kylinos.cn>  Mon, 22 May 2023 17:40:30 +0800
+  * New upstream release.
 
-peony (4.0.0.0-ok2~0414) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 12 Aug 2020 09:22:02 +0000
 
-  * close-cd #130104 属性tabs标签页悬停和点击的颜色显示非灰色系
+peony (3.0.1-1) unstable; urgency=medium
 
- -- xiangwenjie <xiangwenjie@kylinos.cn>  Fri, 14 Apr 2023 09:52:11 +0800
+  * New upstream release. (Closes: #957676)
+  * debian:
+    - drop libgtk2.0-dev and qt5-gtk2-platformtheme.
+    - update the install files.
+    - libpeony2 -> libpeony3.
+    - Update watch file.
 
-peony (4.0.0.0-ok2~0413) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Sat, 08 Aug 2020 14:22:20 +0800
 
-  * colse-cd #130425 【文件管理器】插拔手机后未退出手机目录
+peony (2.1.2-1) unstable; urgency=medium
 
- -- yangling <yangling@kylinos-src>  Wed, 12 Apr 2023 14:25:25 +0800
+  * New upstream bugfix release.
+    - Fix enter key as shortcut issues such as open selected file.
+    - Fix that file in drag state not show file name.
+    - Fix that file rename as empty and rename file change current sort.
+    - Fix that desktop app link show incorrect icon.
+    - Fix generate file thumbnail issue and ensure thread safety.
+    - Fix that screen mirror not show view.
+    - Fix file handle error.
 
-peony (4.0.0.0-ok2~0412) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Mon, 06 Apr 2020 19:57:13 +0800
 
-  * close-cd #128963 按钮悬停效果异常问题
+peony (2.1.1-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Wed, 12 Apr 2023 09:51:32 +0800
+  * New upstream bugfix release.
 
-peony (4.0.0.0-ok2~0331) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Mon, 30 Mar 2020 21:42:00 +0800
 
-  * 更新桌面翻译文件
+peony (2.1.0-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Fri, 31 Mar 2023 13:37:40 +0800
+  * New upstream release.
+    - Use custom header bar, and border rounded window.
+    - Remove current advance search page, and relpace it with file label
+      page.
+    - Improve the thumbnail frameworks.
+    - Improve the mouse right click interaction in desktop view.
+    - Allow unrelated trash or delete file operation executed when a
+      file operation is running.
+    - Refactor the desktop window background displaying process.
+  * debian/libpeony3.symbols:
+    - update symbols file.
 
-peony (4.0.0.0-ok1) yantze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Mon, 23 Mar 2020 17:56:24 +0800
 
-  * new upstream release.
-  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
-  * close-cd #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
-  * close #I65YUO 手指触摸拖拽文件到桌面异常
-  * close#I64SM9 修复重命名U盘后文件管理器退出问题
-  * 修改debian/install文件，适配新用户手册资料路径
-  * close-cd#131094【wayland】【控制面板】【显示器】连接2个显示器，设置主屏不生效(必现)
+peony (2.0.1-2) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Thu, 30 Mar 2023 16:40:40 +0800
+  * debian/libpeony3.symbols:
+    - fixed symbols for armel.
 
-peony (4.0.0.0-ok1~0330) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Thu, 20 Feb 2020 11:00:36 +0800
 
-  * new upstreame release.
+peony (2.0.1-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Thu, 30 Mar 2023 10:11:04 +0800
+  * New upstream release.
+  * debian/control:
+    - Add build-depends pkg-kde-tools.
+  * debian/rule:
+    - using pkgkde_symbolshelper.
+  * debian/libpeony3.symbols.
+    - Using pkg-kde-tools update the symbols file. (Closes: #951607)
 
-peony (3.22.0.0-ok3~0106) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 19 Feb 2020 14:15:38 +0800
 
-  * close #I64SM9 修复重命名U盘后文件管理器退出问题
-  * close #I65YUO 手指触摸拖拽文件到桌面异常
+peony (2.0.0-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Fri, 06 Jan 2023 11:43:25 +0800
+  * New upstream release.
+    - Refactor peony ui with Qt (from Gtk3).
+  * debian/control:
+    - Bump to compat 12.
+    - Bump Standards-Version to 4.5.0.
+    - Refresh the dependency.
+    - Set Rules-requires-Root to no.
+  * debian/copyright: Refreash the copyright entry.
 
-peony (3.22.0.0-ok3~0104) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 04 Feb 2020 11:09:14 +0800
 
-  * close #I64KZQ【文件管理器】文件管理器右键属性窗口有两层标题栏,修改复制窗口出现两层标题
-  * close #I678W5【文件管理器】侧边栏排列过于紧凑，与设计图不符
+peony (1.1.7-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Wed, 04 Jan 2023 17:52:11 +0800
+  * Fix that the outline of the file name label is incomplete.
 
-peony (3.22.0.0-ok2~1230) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 16 Oct 2019 16:44:58 +0800
 
-  * 更新桌面的翻译文件
-  * 属性窗口使用kysdk的stylehelper去除标题栏，以适配wayland场景
-  * close-cd#131094【wayland】【控制面板】【显示器】连接2个显示器，设置主屏不生效(必现)
+peony (1.1.6-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 13:43:36 +0800
+  * Add file path to the address bar that can click.
+  * Add drag directories to favorites and delete favorites directories
+    function.
+  * Add folder image and set location button size.
+  * Add search entry delete function.
+  * Modify sidebar, statusbar, locationbar style.
+  * Display picture according to its own width and height.
+  * Update zh_TW.po and zh_CN.po.
+  * Fix trash restore files error.
+  * Fix that computer, recent and trash is English in addressbar.
+  * Fix the location bar error.
+  * Reload window after desktop-is-home-dir changed. (LP: #1831857)
+  * Fix the crash when using listview mode. (LP: #1827994)
+  * debian/control:
+    - Drop engrampa from suggests.
+    - Fix symbols-file-missing-build-depends-package-field.
+    - Bump Standards-Version to 4.4.0.
 
-peony (3.22.0.0-ok1) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 06 Aug 2019 14:51:41 +0800
 
-  * 同步3.22.0.0的改动
+peony (1.1.5-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Wed, 07 Dec 2022 09:56:14 +0800
+  * Add the function of preview files.
+  * Add format function.
+  * Change the name style when copy files.
+  * Simplify disk label description.
+  * Update es.po, fr.po, pt.po, ru.po.
 
-peony (3.14.4.5-ok10) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Thu, 27 Dec 2018 20:43:29 +0800
 
-  * 同步平板版本改动和3.20.4.13改动
+peony (1.1.4-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Fri, 18 Nov 2022 16:36:17 +0800
+  * New upstream release
 
-peony (3.14.4.5-ok9) yangtze; urgency=medium
+ -- Aron Xu <aron@debian.org>  Mon, 22 Oct 2018 23:41:44 +0800
 
-  * 删除依赖udfclient.
+peony (1.1.3-1) unstable; urgency=medium
 
- -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 25 Oct 2022 11:52:51 +0800
+  * Adjust the size of the black cd icon.
 
-peony (3.14.4.5-ok8) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 11 Jul 2018 11:39:58 +0800
 
-  * 同步3.20.4.7版本的改动
+peony (1.1.2-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Fri, 21 Oct 2022 13:16:57 +0800
+  * Adjust the size of the blank cd icon in Desktop.
+  * Change the default font of desktop font.
 
-peony (3.14.4.5-ok7) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Thu, 26 Apr 2018 09:36:07 +0800
 
-  * close-cd #137305 【文件管理器】共享文件连接成功后无弹出标识 
+peony (1.1.1-1) unstable; urgency=medium
 
- -- xiangwenjie <xiangwenjie.kylinos.cn>  Wed, 31 Aug 2022 14:48:38 +0800
+  * Don't recommend peony-gksu which is being removed
 
-peony (3.14.4.5-ok6) yangtze; urgency=medium
+ -- Jeremy Bicha <jbicha@debian.org>  Wed, 18 Apr 2018 08:34:17 -0400
 
-  * close-cd #133469 同时选择多个文本，右键打开选中文本只能打开第一个
-  * 修复共享文件夹带空格文件夹不能共享问题
+peony (1.1.1-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Thu, 25 Aug 2022 10:21:54 +0800
+  * debian/control:
+    - Add peony-gksu, peony-image-converter, peony-open-terminal,
+      peony-sendto, peony-share, peony-wallpaper, peony-xattr-tags,
+      parchives to Recommends.
+  * Delete compact view.
+  * Add command to display file attributes.
+  * Modify the sidebar and the computer interface.
+  * Use PKG_PROG_PKG_CONFIG instead of AC_PATH_PROG.
+  * Change the desktop icon size according to different resolution.
+  * Improve the translation of 'delete' in right-click menu.
+  * Fix the two deleted issues in the recycle bin.
+  * Fix the bug that user cannot create launcher on the desktop.
 
-peony (3.14.4.5-ok6~0803) yangtze; urgency=medium
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 11 Apr 2018 09:24:38 +0800
 
-  * 修复弹出菜单有概率带标题栏的问题
-  * 适配appmanager接口
-  * 修复适配appmanager导致的其它打开方式不可用问题
-  * 修复scrollbar不可见的问题
-  * close-cd #126846 修复桌面双击打开两个相同窗口问题
-  * close-cd #127731 平板模式下重启后桌面带标题栏问题
-  * close-cd #125560 在平板模式重启重新登录进入桌面后，桌面显示错误（平板模式重启后应进入PC模式）
-  * close-cd #128746、#128734 修复文件标记属性页面的显示不全的问题
-  * close-cd #129037 【wayland】【文件管理器】从U盘中无法拖动复制文件到系统
-  * close-cd #128689 打开文管，插拔一次U盘后，再次插入U盘，文管侧边栏计算机下方的“文件系统”消失
-  * close-cd #128704 【文件管理器】菜单重命名为英文
-  * close-cd #128813 图片与视频在非桌面目录创建快捷方式后，快捷方式标识显示位置异常
-  * 修复openkylin上多屏场景桌面背景位置异常的问题
-  * close-cd #127644 【计算器】置顶功能不生效
-  * 修复dialog的双标题栏问题
-  * 适配wayland下工具栏和tab页的空白区域拖拽
-  * 优化触控逻辑，优化鼠标点击逻辑
-  * 优化左侧边栏和列表视图item列布局
-  * 处理编译依赖相关问题
-  * close-cd #130583 关于界面调用sdk
-  * close-cd #130787 【wayland】【桌面】【旋转】从PC模式切换到平板模式后设置屏幕旋转，平板模式桌面没有适配
-  * close-cd #131066 取消全局排序后选择不同排序方式不成功
+peony (1.1.0-1) unstable; urgency=medium
 
- -- Yue Lan <lanyue@kylinos.cn>  Wed, 22 Jun 2022 11:57:26 +0800
+  * Add tristate effect for the mouse.
+  * Enhandced the ability to find duplicate files.
+  * Add rename function when double-click.
+  * Add the function of adjust the desktop icon size.
+  * Add support for change the screen resolution.
+  * Add support for send shortcuts to the desktop or start menu.
+  * Adjust the location bar.
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Tue, 27 Feb 2018 15:37:38 +0800
+
+peony (1.0.4-1) unstable; urgency=medium
+
+  * Modify the BUG of multiple icon views in the upper right corner of
+    the My Computer interface.
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 13 Sep 2017 10:30:40 +0800
+
+peony (1.0.3-2) unstable; urgency=medium
+
+  * Use tracker.d.o team address (Closes: #899634)
+
+ -- Aron Xu <aron@debian.org>  Mon, 09 Jul 2018 14:31:26 +0800
+
+peony (1.0.3-1) unstable; urgency=medium
+
+  * Initial release to Debian (Closes: #872965)
+
+ -- Aron Xu <aron@debian.org>  Sat, 26 Aug 2017 15:46:53 +0800
