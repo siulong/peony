@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~0928) yangtze; urgency=medium
+
+  * close #I77XVR【arm】【树莓派】【打开方式】右键桌面上的desktop文件，打开方式选择文本编辑器，打开了应用
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 28 Sep 2023 15:22:05 +0800
+
 peony (4.0.0.0-ok2~0914) yangtze; urgency=medium
 
   * close #I6YT5F【文件管理器】用户手册部分内容与实际内容不一致
