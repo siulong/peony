@@ -1,6 +1,6 @@
 # peony
 
-peony is the filemanager application of UKUI3.0.
+peony is the default filemanager application of UKUI Desktop Environment.
 
 # About this project
 
@@ -9,9 +9,8 @@ peony is the filemanager application of UKUI3.0.
 - [zh_CN](GUIDE_ZH_CN.md)
 
 # Description
-Peony is intent to be the default FileManager application in UKUI3.0.
 
-It uses the same underlying layer as Peony(glib/gvfs/gio), but uses Qt to refactor or improve anything else. Peony can be roughly divided into the following parts:
+Peony uses the same underlying layer(glib/gvfs/gio) as old peony project(forked from caja), but uses Qt to refactor or improve anything else. Peony can be roughly divided into the following parts:
 
 > 1. peony-qt-core: the abstraction of glib/gvfs/gio object or method from glib/c to qt/c++.
 
@@ -30,9 +29,7 @@ Although Peony's documentation is limited and might be outdated, I still recomme
 
 ## Preparation
 
-The dependency of Peony is very "clean". It is not difficult to build pre-depends.
-
-### **In Debian/Ustable and Ubuntu 20.04**
+### **In Debian/Ustable and Ubuntu**
 
 Peony has been uploaded to debian/unstable, and downstreams can get the source in archive by:
 
@@ -58,7 +55,9 @@ This qpa plugin will let qt applications use system style in UbuntuKylin.
 
 ### **Porting to other distros**
 
-It is a little chalange for porting peony to other distros. If you want to try, please make sure the distro's qt's version is higher than 5.6, and glib's version is higher than 2.48.
+Peony provides some build options for trying to keep the build depencies simpler. For example, there are sevaral macros defined in [common.pri](common.pri). While building peony, it will attempt to find existed build depencies and set related macros for them. If a developer only wants to port peony without special depencies porivided by UKUI/KYSDK, or is porting whole UKUI/KYSDK, it's usually meaningful to help the developer know how peony handles the project building and implements function in different way.
+
+It is a little chalange for porting peony to other distros. If you want to try, please make sure the distro's qt's version is higher than 5.6, and glib's version is higher than 2.48. We recommend to build peony with Qt5.12 or later, glib2.0 2.64 or later, KF5(window system/screens) 5.68 or later.
 
 Note that although most of installtions of peony is implemented by qmake and make, I used some featrues provided by debhelper, which is the package tool in debian. That means it is better to know how to do those things without debhelper in other distros, too.
 
