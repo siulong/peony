@@ -760,7 +760,7 @@ void DesktopIconView::resolutionChange()
 
     // do not relayout items while screen size is empty.
     if (screenSize.isEmpty()) {
-        qWarning()<<"screen size is not avaliable";
+        qWarning()<<"screen size is not available";
         return;
     }
     if (m_item_rect_hash.isEmpty()) {
@@ -1515,7 +1515,7 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
         auto itemRect = QRect(m_item_rect_hash.value(uri).topLeft(), itemRectSize);
         if (notEmptyRegion.intersects(itemRect)) {
             // handle overlapped
-            qWarning()<<"unexpected overrlapped happend";
+            qWarning()<<"unexpected overrlapped happened";
             qDebug()<<"check item rect hash"<<m_item_rect_hash;
             QStringList fakeList;
             fakeList<<uri;

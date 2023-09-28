@@ -719,7 +719,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         tmp<<sortTypeMenu->addAction(tr("Modified Date"));
         tmp<<sortTypeMenu->addAction(tr("File Type"));
         tmp<<sortTypeMenu->addAction(tr("File Size"));
-        tmp<<sortTypeMenu->addAction(tr("Orignal Path"));
+        tmp<<sortTypeMenu->addAction(tr("Original Path"));
 
         if (m_top_window->getCurrentUri() != "trash:///") {
             tmp.last()->setVisible(false);

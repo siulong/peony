@@ -1363,7 +1363,7 @@ void MainWindow::setCurrentSelectionUris(const QStringList &uris)
 {
     m_tab->setCurrentSelections(uris);
     //move scrollToSelection to m_tab to try fix new unzip file show two same icon issue
-    //Fix me, unknow caused reason
+    //Fix me, Unknown caused reason
 //    if (uris.isEmpty())
 //        return;
 //    getCurrentPage()->getView()->scrollToSelection(uris.first());

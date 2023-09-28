@@ -800,8 +800,8 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
         }
         qInfo()<<"QScreen::destroyed screen name:"<<screen->name()<< m_bg_windows.count();
         window->invaidScreen();
-        bool sucess = m_bg_windows.removeOne(window);
-        qDebug()<<"QScreen::destroyed :"<<sucess;
+        bool success = m_bg_windows.removeOne(window);
+        qDebug()<<"QScreen::destroyed :"<<success;
         delete window;
     });
     //task#74174 更新图标大小

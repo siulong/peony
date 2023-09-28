@@ -55,7 +55,7 @@ const QString getModelDirectoryUri(FileItemProxyFilterSortModel *model)
 {
     FileItemModel *srcModel = qobject_cast<FileItemModel *>(model->sourceModel());
     if (!srcModel) {
-        qInfo()<<"source model not avaliable now";
+        qInfo()<<"source model not available now";
         return nullptr;
     }
     return srcModel->getRootUri();
