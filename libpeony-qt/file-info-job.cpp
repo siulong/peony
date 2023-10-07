@@ -40,10 +40,14 @@
 #include <QLocale>
 #include <QFileInfo>
 
+#include <QCoreApplication>
+
 using namespace Peony;
 
 FileInfoJob::FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent) : QObject(parent)
 {
+    connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfoJob::cancel);
+
     m_info = info;
     //connect(m_info.get(), &FileInfo::updated, this, &FileInfoJob::infoUpdated);
 
@@ -54,6 +58,8 @@ FileInfoJob::FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent) : QObj
 
 FileInfoJob::FileInfoJob(const QString &uri, QObject *parent) : QObject (parent)
 {
+    connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfoJob::cancel);
+
     auto info = FileInfo::fromUri(uri);
     m_info = info;
     //connect(m_info.get(), &FileInfo::updated, this, &FileInfoJob::infoUpdated);

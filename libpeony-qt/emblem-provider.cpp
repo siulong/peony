@@ -31,6 +31,8 @@
 #include <QThreadPool>
 #include <QRunnable>
 
+#include <QCoreApplication>
+
 #define QUERY_BATCH 500
 
 using namespace Peony;
@@ -147,6 +149,13 @@ EmblemProviderManager::EmblemProviderManager(QObject *parent)
 
     connect(this, &EmblemProviderManager::queueQueryFinished, this, &EmblemProviderManager::queryInternal);
     connect(m_timer, &QTimer::timeout, this, &EmblemProviderManager::queryInternal);
+
+    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]{
+        m_timer->stop();
+        m_mutex.lock();
+        m_queryQueue.clear();
+        m_mutex.unlock();
+    });
 }
 
 void EmblemProviderManager::queryInternal()
