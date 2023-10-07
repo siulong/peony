@@ -431,9 +431,11 @@ void FileItem::findChildrenAsync()
         });
     } else {
         enumerator->connect(enumerator, &Peony::FileEnumerator::childrenUpdated, this, [=](const QStringList &uris, bool isEnding) {
+            //qDebug()<<"FileEnumerator::childrenUpdated:"<<uris.size()<<isEnding;
             if (uris.isEmpty()) {
                 if (isEnding) {
                     //qDebug() << "enumerateFinished childrenUpdated:" <<isEnding;
+                    m_isEndOfEnumerate = isEnding;
                     Q_EMIT m_model->findChildrenFinished();
                     Q_EMIT m_model->updated();
                 }
@@ -444,35 +446,8 @@ void FileItem::findChildrenAsync()
                 delete enumerator;
                 return ;
             }
-            uris.toSet().toList();/* 去重 */
-            if(uris.size()<=0)
-                return;
 
-            if (isEnding) {
-                m_ending_uris.clear();
-                m_ending_uris = uris;
-            }
-            m_isEndOfEnumerate = isEnding;
-
-
-            QStringList originalList = uris; /* 原始列表 */
-            int chunkSize = 1000; /* 每个列表的大小 */
-            QList<QStringList> splitLists;
-            int numChunks = originalList.count() / chunkSize;
-            if (originalList.count() % chunkSize)
-                numChunks++;
-
-            for (int i = 0; i < numChunks; i++) {
-                QStringList chunkList;
-                for (int j = 0; j < chunkSize && ((i * chunkSize) + j) < originalList.count(); j++) {
-                    chunkList.append(originalList.at((i * chunkSize) + j));
-                }
-                splitLists.append(chunkList);
-            }
-            for(auto &queryUris : splitLists){
-                //qDebug()<<"childrenUpdated:"<<queryUris.size()<<m_ending_uris.size()<<this->uri()<<m_isEndOfEnumerate<<isEnding;
-                Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Enumerate, this);
-            }
+            childrenUpdateOfEnumerate(uris, isEnding);
         });
 
         enumerator->connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed) {
@@ -918,14 +893,15 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 void FileItem::connectFunc()
 {
     connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
+        /* 查询结果返回，更新数据 */
         //qDebug()<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
         if(parentItem && this != parentItem)
             return;
 
         FileInfoManager *info_manager = FileInfoManager::getInstance();
-        if(FileItemModel::OperateType::Enumerate == FileItemModel::OperateType(operateType)){
+        if(FileItemModel::OperateType::Enumerate == FileItemModel::OperateType(operateType)){/* 遍历或搜索 */
             m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count() + retFileInfos.size() -1);
-            for (auto info : retFileInfos) {
+            for (auto& info : retFileInfos) {
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
@@ -938,15 +914,15 @@ void FileItem::connectFunc()
             m_model->endInsertRows();
             Q_EMIT m_model->updated();/* 更新状态栏 */
             if (m_isEndOfEnumerate && m_ending_uris.isEmpty()) {
-                //qDebug()<<"findChildrenFinished"<<m_children->size()<<m_isEndOfEnumerate;
+                //qDebug()<<"findChildrenFinished"<<m_children->size()<<m_isEndOfEnumerate<<m_ending_uris.size();
                 if(this->uri().startsWith("search:///") && m_children->size()>30000)/* 搜索数量超过阈值不排序 */
                     return;
                 Q_EMIT m_model->findChildrenFinished();
             }
 
-        }else if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){
+        }else if(FileItemModel::OperateType::Add == FileItemModel::OperateType(operateType)){/* 新增 */
             m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count() + retFileInfos.size() -1);
-            for (auto info : retFileInfos) {
+            for (auto& info : retFileInfos) {
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
@@ -959,7 +935,7 @@ void FileItem::connectFunc()
             Q_EMIT m_model->updated();/* 更新状态栏 */
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
             m_model->updated();
-            for (auto info : retFileInfos) {
+            for (auto& info : retFileInfos) {
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
             }
         }
@@ -1057,6 +1033,56 @@ void FileItem::clearChildren()
     m_watcher = nullptr;
     m_rTypeDiscWatcher.reset();
     m_rTypeDiscWatcher = nullptr;
+}
+
+void FileItem::childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding)
+{
+    uris.toSet().toList();/* 去重 */
+    if(uris.size()<=0)
+        return;
+
+    if (isEnding) {
+        m_isEndOfEnumerate = isEnding;
+        m_ending_uris.clear();
+        m_ending_uris = uris;
+
+    }
+
+    QStringList originalList = uris; /* 原始列表 */
+    /* 遍历时第一次先加载100个显示在桌面上，其余按大批量查询 */
+    QStringList firstTimeUris;
+    int count = 100;
+    if(originalList.size() > count){
+        for(int idx = 0; idx < count; idx++){
+            QString uri = originalList.takeFirst();
+            firstTimeUris.append(uri);
+        }
+        Q_EMIT m_model->setUrisForBatchQueryInfos(firstTimeUris, FileItemModel::OperateType::Enumerate, this);
+    }//end
+
+    /* 大批量查询 */
+    int chunkSize = 1000; /* 每个列表的大小 */
+    QList<QStringList> splitLists;
+    if(originalList.size() > chunkSize){
+        int numChunks = originalList.count() / chunkSize;
+        if (originalList.count() % chunkSize)
+            numChunks++;
+
+        for (int i = 0; i < numChunks; i++) {
+            QStringList chunkList;
+            for (int j = 0; j < chunkSize && ((i * chunkSize) + j) < originalList.count(); j++) {
+                chunkList.append(originalList.at((i * chunkSize) + j));
+            }
+            splitLists.append(chunkList);
+        }
+    }else{
+        splitLists.append(originalList);
+    }
+
+    for(auto &queryUris : splitLists){
+        //qDebug()<<"childrenUpdated:"<<queryUris.size()<<m_ending_uris.size()<<this->uri()<<m_isEndOfEnumerate<<isEnding;
+        Q_EMIT m_model->setUrisForBatchQueryInfos(queryUris, FileItemModel::OperateType::Enumerate, this);
+    }//end
 }
 
 /* Func: if it isn't a vaild volume device,it should not be displayed.

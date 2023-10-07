@@ -153,6 +153,8 @@ protected:
 
 private:
     void connectFunc();
+    void childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding);
+
 
 private:
     FileItem *m_parent = nullptr;

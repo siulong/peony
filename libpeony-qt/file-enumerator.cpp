@@ -267,7 +267,7 @@ GAsyncReadyCallback FileEnumerator::prepare_enumerate_callback(GFile *file, GAsy
 
 void FileEnumerator::enumerateSync()
 {
-    m_idle->start(1000);
+    m_idle->start(500);
 
     GFile *target = enumerateTargetFile();
 
@@ -424,7 +424,7 @@ void FileEnumerator::handleError(GError *err)
 
 void FileEnumerator::enumerateAsync()
 {
-    m_idle->start(1000);
+    m_idle->start(500);
 
     // query directory info first
     auto infoJob = new FileInfoJob(m_uri);
