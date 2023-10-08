@@ -309,7 +309,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ)) {
         info->m_can_read = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ);
     } else {
-        // we assume an unknow access file is readable.
+        // we assume an Unknown access file is readable.
         info->m_can_read = true;
     }
 

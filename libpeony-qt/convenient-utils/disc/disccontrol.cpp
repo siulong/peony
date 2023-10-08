@@ -929,7 +929,7 @@ QString DiscControl::prepareFileBeforeBurn(const QString& srcFile){
         dirObject.setPath(hardLinkParentDir);
         if(!dirObject.exists()){
             if(!dirObject.mkpath(hardLinkParentDir)){
-                qInfo()<<"faild for mkdir:" + hardLinkParentDir;
+                qInfo()<<"failed for mkdir:" + hardLinkParentDir;
                 return QString();
             }
         }

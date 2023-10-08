@@ -78,7 +78,6 @@ Depends: dvd+rw-tools,
          gvfs,
          gvfs-backends,
          gvfs-fuse,
-         libblockdev-crypto2,
          ${misc:Depends},
          ${shlibs:Depends}
 Provides: libpeony

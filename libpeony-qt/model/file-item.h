@@ -120,7 +120,7 @@ protected:
      * \param uri
      * \return child item
      * \note
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     FileItem *getChildFromUri(QString uri);
@@ -131,7 +131,7 @@ protected:
      * Update the item info synchously.
      * </br>
      * \note
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     void updateInfoSync();
@@ -140,7 +140,7 @@ protected:
      * <br>
      * Update the item info asynchously.
      * </br>
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     void updateInfoAsync();

@@ -89,7 +89,7 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
     QString discType = m_discControl->discMediaType();
     QString discName = m_discControl->discLabel();
     if (discType.isEmpty()) {
-        m_discTypeEdit->setText(tr("Unknow"));
+        m_discTypeEdit->setText(tr("Unknown"));
     } else {
         m_discTypeEdit->setText(discType);
     }
