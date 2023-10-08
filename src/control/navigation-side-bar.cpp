@@ -178,13 +178,10 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 
             if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
                     && item->type() == SideBarAbstractItem::FavoriteItem
-                    && pIface->uriScheme() == "kmre://") {
-                auto tIndex = index.child(4, 0);
-                auto tItem = m_proxy_model->itemFromIndex(tIndex);
-                if (tItem && tItem->uri().startsWith("kmre:///")) {
-                    this->setRowHidden(tIndex.row(), tIndex.parent(), true);
-                    return;
-                }
+                    && pIface->uriScheme() == "kmre://"
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+                return;
             }
         }
 
@@ -395,11 +392,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                     }
                 }
 
-                auto tIndex = index.child(4, 0);
-                auto tItem = m_proxy_model->itemFromIndex(tIndex);
-                if (tItem && tItem->uri().startsWith("kmre:///")) {
-                    this->setRowHidden(tIndex.row(), tIndex.parent(), enable);
-                    return;
+                for (int j = 0; j < m_proxy_model->rowCount(index); ++j) {
+                    auto tIndex = m_proxy_model->index(j, 0, index);
+                    auto tItem = m_proxy_model->itemFromIndex(tIndex);
+                    if (tItem->uri().startsWith("kmre:///")) {
+                        this->setRowHidden(tIndex.row(), tIndex.parent(), enable);
+                        return;
+                    }
                 }
             }
         }
