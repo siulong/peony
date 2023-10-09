@@ -40,7 +40,6 @@ class FileWatcher;
 class FileItemProxyFilterSortModel;
 class FileEnumerator;
 class BatchProcessItems;
-class FileManagerThread;
 
 /*!
  * \brief The FileItem class

@@ -24,7 +24,8 @@ HEADERS += \
     $$PWD/bookmark-manager.h            \
     $$PWD/sync-thread.h                 \
     $$PWD/volumeManager.h               \
-    $$PWD/usershare-manager.h
+    $$PWD/usershare-manager.h           \
+    $$PWD/file-infos-job.h
 
 SOURCES += \
     $$PWD/custom-error-handler.cpp \
@@ -49,7 +50,9 @@ SOURCES += \
     $$PWD/bookmark-manager.cpp          \
     $$PWD/sync-thread.cpp               \
     $$PWD/volumeManager.cpp		\
-    $$PWD/usershare-manager.cpp
+    $$PWD/usershare-manager.cpp         \
+    $$PWD/file-infos-job.cpp
+
 
 FORMS += \
     $$PWD/connect-server-dialog.ui

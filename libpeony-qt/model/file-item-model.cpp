@@ -24,6 +24,7 @@
 #include "file-item.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-infos-job.h"
 #include "file-meta-info.h"
 
 #include "file-operation-manager.h"
@@ -65,9 +66,9 @@ FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
     m_fileManagerThread->moveToThread(m_fileManagerThread);
     connect(this, &FileItemModel::setUrisForBatchQueryInfos, this, [=] (const QStringList& uris, int operateType, FileItem *parentItem) {
         auto infos = FileInfo::fromUris(uris);
-        m_infosJob = new FileInfoJob(infos, parentItem);
-        m_infosJob->connect(m_root_item, &FileItem::cancelFindChildren, m_infosJob, &FileInfoJob::batchCancel);
-        m_infosJob->connect(this, &FileItemModel::cancelBatchQuery, m_infosJob, &FileInfoJob::batchCancel);
+        m_infosJob = new FileInfosJob(infos, parentItem);
+        m_infosJob->connect(m_root_item, &FileItem::cancelFindChildren, m_infosJob, &FileInfosJob::batchCancel);
+        m_infosJob->connect(this, &FileItemModel::cancelBatchQuery, m_infosJob, &FileInfosJob::batchCancel);
         Q_EMIT m_fileManagerThread->setParamForBatchQueryInfos(m_infosJob, operateType, parentItem);
     });
     m_fileManagerThread->start();
@@ -803,7 +804,7 @@ FileManagerThread::~FileManagerThread()
 {
 }
 
-void FileManagerThread::batchQueryFileInfos(FileInfoJob *infosJob,  /*FileItemModel::OperateType*/int operateType, FileItem *parentItem)
+void FileManagerThread::batchQueryFileInfos(FileInfosJob *infosJob,  /*FileItemModel::OperateType*/int operateType, FileItem *parentItem)
 {
     auto retFileInfos = infosJob->batchQuerySync();
     if(infosJob){

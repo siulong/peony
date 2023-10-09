@@ -67,7 +67,6 @@ public:
      */
     explicit FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent = nullptr);
     explicit FileInfoJob(const QString &uri, QObject *parent = nullptr);
-    explicit FileInfoJob(std::vector<std::shared_ptr<FileInfo> >infos, QObject *parent = nullptr);
 
     std::shared_ptr<FileInfo> getInfo() {
         return m_info;
@@ -75,7 +74,6 @@ public:
     ~FileInfoJob();
 
     bool querySync();
-    std::vector<std::shared_ptr<FileInfo> > batchQuerySync();
 
     void setAutoDelete(bool deleteWhenJobFinished = true) {
         m_auto_delete = deleteWhenJobFinished;
@@ -117,7 +115,6 @@ public Q_SLOTS:
      * </br>
      */
     void cancel();
-    void batchCancel();/* 批量取消查询时使用 */
 
     QString getAppName(QString desktopfp);
 
@@ -134,7 +131,6 @@ private:
 
 private:
     std::shared_ptr<FileInfo> m_info;
-    std::vector<std::shared_ptr<FileInfo> >m_infos;
 
     quint64 m_file_size_uint = 0;
     quint64 m_file_modify_uint = 0;
@@ -148,7 +144,6 @@ private:
 
     GCancellable *m_cancellable = nullptr;
     GCancellable *m_fs_cancellable = nullptr;
-    GCancellable *m_batchCanellable = nullptr;
 
 };
 

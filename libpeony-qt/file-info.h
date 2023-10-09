@@ -103,6 +103,7 @@ class PEONYCORESHARED_EXPORT FileInfo : public QObject
 {
     friend class FileInfoJob;
     friend class FileMetaInfo;
+    friend class FileInfosJob;
 
     Q_OBJECT
 public:
@@ -233,7 +234,6 @@ public:
     QList<QColor> getColors() {
         return m_colors;
     }
-
     bool canRead() {
         return m_can_read;
     }

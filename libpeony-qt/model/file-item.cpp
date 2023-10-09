@@ -31,6 +31,7 @@
 #include "file-item-model.h"
 
 #include "thumbnail-manager.h"
+#include "emblem-provider.h"
 #include "usershare-manager.h"
 
 #include "gerror-wrapper.h"
@@ -913,6 +914,8 @@ void FileItem::connectFunc()
                 m_uri_item_hash.insert(item->uri(), item);
                 m_ending_uris.removeOne(info->uri());
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                EmblemProviderManager::getInstance()->queryAsync(info->uri());
+
             }
             m_model->endInsertRows();
             Q_EMIT m_model->updated();/* 更新状态栏 */

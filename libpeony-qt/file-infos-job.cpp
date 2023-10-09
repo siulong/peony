@@ -1,27 +1,5 @@
-/*
- * Peony-Qt's Library
- *
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this library.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Authors: Yue Lan <lanyue@kylinos.cn>
- *
- */
-
+#include "file-infos-job.h"
 #include "file-info-job.h"
-
 #include "file-info.h"
 #include "file-meta-info.h"
 
@@ -40,171 +18,76 @@
 #include <QLocale>
 #include <QFileInfo>
 
-#include <QCoreApplication>
-
 using namespace Peony;
 
-FileInfoJob::FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent) : QObject(parent)
+FileInfosJob::FileInfosJob(std::vector<std::shared_ptr<FileInfo> > infos, QObject *parent)
 {
-    connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfoJob::cancel);
-
-    m_info = info;
-    //connect(m_info.get(), &FileInfo::updated, this, &FileInfoJob::infoUpdated);
-
-    m_cancellable = g_cancellable_new();
-    m_fs_cancellable = g_cancellable_new();
+    m_infos = infos;
+    m_batchCanellable = g_cancellable_new();
 }
 
-FileInfoJob::FileInfoJob(const QString &uri, QObject *parent) : QObject (parent)
+FileInfosJob::~FileInfosJob()
 {
-    connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfoJob::cancel);
-
-    auto info = FileInfo::fromUri(uri);
-    m_info = info;
-    //connect(m_info.get(), &FileInfo::updated, this, &FileInfoJob::infoUpdated);
-
-    m_cancellable = g_cancellable_new();
-    m_fs_cancellable = g_cancellable_new();
+    g_object_unref(m_batchCanellable);
 }
 
-FileInfoJob::~FileInfoJob()
+std::vector<std::shared_ptr<FileInfo> > FileInfosJob::batchQuerySync()
 {
-    g_object_unref(m_cancellable);
-    g_object_unref(m_fs_cancellable);
-}
+    std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
+    for (auto& fileInfo : m_infos) {
+        std::shared_ptr<FileInfo> info;
+        if (auto data = fileInfo.get()) {
+            info = fileInfo;
+        } else {
+            continue;
+        }
 
-void FileInfoJob::cancel()
-{
-    //NOTE: do not use same cancellble for cancelling, otherwise all job might be cancelled.
-    g_cancellable_cancel(m_cancellable);
-    g_object_unref(m_cancellable);
-    m_cancellable = g_cancellable_new();
+        GError *err = nullptr;
+        auto _info = g_file_query_info(info->m_file,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       m_batchCanellable,
+                                       &err);
 
-    g_cancellable_cancel(m_fs_cancellable);
-    g_object_unref(m_fs_cancellable);
-    m_fs_cancellable = g_cancellable_new();
-}
+        if (err) {
+            qDebug()<<err->code<<err->message<<info->uri();
+            g_error_free(err);
+            if(g_cancellable_is_cancelled(m_batchCanellable))
+                break;
+            continue;
+        }
 
-bool FileInfoJob::querySync()
-{
-    FileInfo *info = nullptr;
-    if (auto data = m_info.get()) {
-        info = data;
-    } else {
-        if (m_auto_delete)
-            deleteLater();
-        return false;
-    }
-    GError *err = nullptr;
-
-    auto _info = g_file_query_info(info->m_file,
-                                   "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
-                                   G_FILE_QUERY_INFO_NONE,
-                                   m_cancellable,
-                                   &err);
-
-    if (err) {
-        qDebug()<<err->code<<err->message;
-        g_error_free(err);
-        if (m_auto_delete)
-            deleteLater();
-        return false;
-    }
-
-    auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", m_fs_cancellable, &err);
-
-    if (err) {
-        qDebug()<<err->code<<err->message;
-        g_error_free(err);
-        if (m_auto_delete)
-            deleteLater();
-        return false;
-    }
-
-    refreshInfoContents(_info);
-    refreshFileSystemInfo(_fs_info);
-    g_object_unref(_info);
-
-    EmblemProviderManager::getInstance()->querySync(m_info->uri());
-
-    infoUpdated();
-
-    if (m_auto_delete)
-        deleteLater();
-
-    return true;
-}
-
-GAsyncReadyCallback FileInfoJob::query_info_async_callback(GFile *file, GAsyncResult *res, FileInfoJob *thisJob)
-{
-    //qDebug()<<"query_info_async_callback"<<thisJob->m_info->uri();
-
-    GError *err = nullptr;
-
-    GFileInfo *_info = g_file_query_info_finish(file, res, &err);
-
-    if (_info != nullptr) {
-        thisJob->refreshInfoContents(_info);
-        g_object_unref(_info);
-        Q_EMIT thisJob->queryAsyncFinished(true);
-        EmblemProviderManager::getInstance()->queryAsync(thisJob->m_info->uri());
-        Q_EMIT thisJob->infoUpdated();
-    } else {
+        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", m_batchCanellable, &err);
         if (err) {
             qDebug()<<err->code<<err->message;
             g_error_free(err);
+            if(g_cancellable_is_cancelled(m_batchCanellable))
+                break;
         }
-        Q_EMIT thisJob->queryAsyncFinished(false);
-        return nullptr;
-    }
 
-    return nullptr;
+        info = refreshInfoContents(info, _info);
+        if (_fs_info) {
+            info = refreshFileSystemInfo(info, _fs_info);
+            g_object_unref(_fs_info);
+
+        }
+        g_object_unref(_info);
+        fileInfoVec.push_back(info);
+    }
+    return fileInfoVec;
 }
 
-void FileInfoJob::refreshFileSystemInfo(GFileInfo *new_info)
+void FileInfosJob::batchCancel()
 {
-    FileInfo *info = nullptr;
-    if (auto data = m_info) {
-        info = data.get();
-    } else {
-        return;
-    }
+    g_cancellable_cancel(m_batchCanellable);
 
-    // fs type
-    m_info->m_fs_type = g_file_info_get_attribute_string (new_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-
-    Q_EMIT info->updated();
 }
 
-void FileInfoJob::queryAsync()
+std::shared_ptr<FileInfo> FileInfosJob::queryFileType(std::shared_ptr<FileInfo> info, GFileInfo *new_info)
 {
-    if (m_auto_delete)
-        connect(this, &FileInfoJob::queryAsyncFinished, this, &FileInfoJob::deleteLater, Qt::QueuedConnection);
+    if (!info)
+        return info;
 
-    FileInfo *info = nullptr;
-    if (auto data = m_info) {
-        info = data.get();
-        cancel();
-    } else {
-        Q_EMIT queryAsyncFinished(false);
-        return;
-    }
-    g_file_query_info_async(info->m_file,
-                            "standard::*," "time::*," "access::*," "mountable::*," "metadata::*,"  "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
-                            G_FILE_QUERY_INFO_NONE,
-                            G_PRIORITY_DEFAULT,
-                            m_cancellable,
-                            GAsyncReadyCallback(query_info_async_callback),
-                            this);
-}
-
-void FileInfoJob::queryFileType(GFileInfo* new_info){
-    FileInfo *info = nullptr;
-    if (auto data = m_info) {
-        info = data.get();
-    } else {
-        return;
-    }
     info->m_is_dir = false;
     info->m_is_volume = false;
     GFileType type = g_file_info_get_file_type (new_info);
@@ -220,69 +103,56 @@ void FileInfoJob::queryFileType(GFileInfo* new_info){
     default:
         break;
     }
+    return info;
 }
 
-void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
+std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<FileInfo> info, GFileInfo *new_info)
+{
     if (!g_file_info_get_display_name(new_info)) {
-        qWarning()<<m_info.get()->uri()<<"query file display name failed";
-        return;
+        qWarning()<<info.get()->uri()<<"query file display name failed";
+        return info;
     }
 
-    FileInfo *info = nullptr;
-    if (auto data = m_info) {
-        info = data.get();
-    } else {
-        return;
-    }
+    if (!info)
+        return info;
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
     info->m_finalDisplayName = info->getFinalDisplayName();
     if (info->isDesktopFile()) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
-        GKeyFile *desktop_key_file = g_key_file_new();
-        bool is_loaded = g_key_file_load_from_file(desktop_key_file, url.path().toUtf8(), G_KEY_FILE_NONE, nullptr);
-        if (!is_loaded) {
-            m_info->m_mutex.unlock();
+        GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
+        if (!desktop_info) {
+            info->m_mutex.unlock();
             info->updated();
-            return;
+            return info;
         }
-
-        qDebug() << "get name string:" << info->displayName();
+#if GLIB_CHECK_VERSION(2, 56, 0)
+        auto string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
+#else
+        //FIXME: should handle locale?
+        //change "Name" to QLocale::system().name(),
+        //try to fix Qt5.6 untranslated desktop file issue
+        auto key = "Name[" +  QLocale::system().name() + "]";
+        auto string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
+#endif
+        qDebug() << "get name string:"<<string <<info->uri()<<info->displayName();
         QString path = "/usr/share/applications/" + info->displayName();
-        if (QFileInfo::exists(url.path().toUtf8()) && QFileInfo::exists(path)) {
+        if(QFileInfo::exists(url.path().toUtf8()) && QFileInfo::exists(path))
+        {
             url = path;
-            g_key_file_free(desktop_key_file);
-            desktop_key_file = g_key_file_new();
-
-            is_loaded = g_key_file_load_from_file(desktop_key_file, url.path().toUtf8(), G_KEY_FILE_NONE, nullptr);
-            if (!is_loaded) {
-                qWarning() << "desktop file:" << path << "load failed";
-                info->updated();
-                return;
-            }
+            desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
+            string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
+            info->m_display_name = string;
         }
-
-        QString key = "Name[" +  QLocale::system().name() + "]";
-        gchar *name_char = nullptr;
-
-        if (g_key_file_has_key(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, key.toUtf8().constData(), nullptr)) {
-            name_char = g_key_file_get_string(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, key.toUtf8().constData(), nullptr);
-
-        } else {
-            name_char = g_key_file_get_string(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, nullptr);
-        }
-
-        if (name_char) {
-            QString name = name_char;
-            g_free(name_char);
-
-            info->m_display_name = name;
+        else{
+            info->m_display_name = string;
         }
         info->m_finalDisplayName = info->getFinalDisplayName();
 
-        g_key_file_free(desktop_key_file);
-
+        if (string)
+           g_free(string);
+        g_object_unref(desktop_info);
     } else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {
             info->m_display_name = tr("Trash");
@@ -294,21 +164,25 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
             info->m_display_name = tr("Recent");
         }
     }
+    return info;
 }
 
-void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
+std::shared_ptr<FileInfo> FileInfosJob::refreshFileSystemInfo(std::shared_ptr<FileInfo> info, GFileInfo *new_info)
 {
-//    if (!m_info->m_mutex.tryLock(300))
-//        return;
+    if (!info)
+        return info;
 
-    FileInfo *info = nullptr;
-    if (auto data = m_info) {
-        info = data.get();
-    } else {
-        return;
-    }
+    // fs type
+    info->m_fs_type = g_file_info_get_attribute_string (new_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+    return info;
+}
 
-    queryFileType(new_info);
+std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<FileInfo> info, GFileInfo *new_info)
+{
+    if (!info)
+        return info;
+
+    info = queryFileType(info, new_info);
 
     /* 获取info的G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN字段的值 */
     info->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
@@ -317,7 +191,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ)) {
         info->m_can_read = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ);
     } else {
-        // we assume an Unknown access file is readable.
+        // we assume an unknow access file is readable.
         info->m_can_read = true;
     }
 
@@ -354,23 +228,13 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     if (G_IS_THEMED_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
         if (icon_names) {
-            auto p = icon_names;
-            while (*p) {
-                QIcon icon = QIcon::fromTheme(*p);
-                if (!icon.isNull()) {
-                    info->m_icon_name = QString (*p);
-                    break;
-                } else {
-                    p++;
-                }
-            }
+            info->m_icon_name = QString(*icon_names);
         }
         //g_object_unref(g_icon);
     }
 
-
     //fix bug#163449, trash desktop file icon issue
-    auto uri = m_info.get()->uri();
+    auto uri = info.get()->uri();
     QUrl targetUrl = info->m_target_uri;
     if (uri.startsWith("trash:///") && uri != "trash:///" && QFile::exists(targetUrl.path())){
         if (info->m_icon_name == "application-x-desktop"){
@@ -407,7 +271,6 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     info->m_size = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
     info->m_modified_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
     info->m_access_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_ACCESS);
-    info->m_create_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_CREATED);
 
     info->m_mime_type_string = info->m_content_type;
     if (!info->m_mime_type_string.isEmpty()) {
@@ -440,10 +303,6 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         info->m_modified_date = nullptr;
     }
 
-    if (info->m_create_time) {
-        info->m_create_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_create_time);
-    }
-
     if (info->m_access_time) {
 //        date = QDateTime::fromMSecsSinceEpoch(info->m_access_time*1000);
 //        info->m_access_date = date.toString(systemTimeFormat);
@@ -466,16 +325,25 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         info->setProperty("orig-path", origPath);
     }
 
-    m_info->m_meta_info = FileMetaInfo::fromGFileInfo(m_info->uri(), new_info);
     // update peony qt color list after meta info updated.
-    m_info->m_colors = FileLabelModel::getGlobalModel()->getFileColors(m_info->uri());
+    info->m_meta_info = FileMetaInfo::fromGFileInfo(info->uri(), new_info);
+    QList<QColor> l;
+    auto labels = info->m_meta_info->getMetaInfoStringList(PEONY_FILE_LABEL_IDS);
+    for (auto& label : labels) {
+        auto id = label.toInt();
+        auto item = FileLabelModel::getGlobalModel()->itemFromId(id);
+        if (item) {
+            l<<item->color();
+        }
+    }
+    info->m_colors = l;
 
-    auto customIconName = m_info->m_meta_info.get()->getMetaInfoString("custom-icon");
+    auto customIconName = info->m_meta_info.get()->getMetaInfoString("custom-icon");
     if (!customIconName.isEmpty()/* && !customIconName.startsWith("/")*/) {
-        m_info->m_icon_name = customIconName;
+        info->m_icon_name = customIconName;
     }
 
-    queryFileDisplayName(new_info);
+    info = queryFileDisplayName(info, new_info);
 
     // fix #81862
     //fix bug#126974, related to trash link files, use this code when target exists
@@ -487,23 +355,6 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         info->m_display_name = targetInfo.get()->displayName();
     }
 
-    Q_EMIT info->updated();
-//    m_info->m_mutex.unlock();
+    return info;
 }
 
-QString FileInfoJob::getAppName(QString desktopfp)
-{
-    GError** error=nullptr;
-    GKeyFileFlags flags=G_KEY_FILE_NONE;
-    GKeyFile* keyfile=g_key_file_new ();
-
-    QByteArray fpbyte=desktopfp.toLocal8Bit();
-    char* filepath=fpbyte.data();
-    g_key_file_load_from_file(keyfile,filepath,flags,error);
-
-    char* name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
-    QString namestr=QString::fromLocal8Bit(name);
-
-    g_key_file_free(keyfile);
-    return namestr;
-}
