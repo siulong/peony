@@ -455,7 +455,7 @@ void MainWindow::setShortCuts()
 
                 bool isTrash = this->getCurrentUri() == "trash:///";
                 if (!isTrash && canTrash) {
-                    Peony::FileOperationUtils::trash(uris, true, m_is_search);
+                    Peony::FileOperationUtils::trash(uris, true, getCurrentUri().startsWith("search://"));
                 } else {
                     Peony::FileOperationUtils::executeRemoveActionWithDialog(uris);
                 }
@@ -832,7 +832,7 @@ void MainWindow::setShortCuts()
                 }
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
-                    if(m_is_search){
+                    if(getCurrentUri().startsWith("search://")){
                         auto selections = this->getCurrentSelections();
                         auto selectInfo = Peony::FileInfo::fromUri(selections.first());
                         if(!selectInfo->canWrite())
@@ -847,7 +847,7 @@ void MainWindow::setShortCuts()
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 if (! this->getCurrentSelections().contains(desktopUri) && ! this->getCurrentSelections().contains(homeUri))
                 {
-                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, m_is_search);
+                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, getCurrentUri().startsWith("search://"));
                    this->getCurrentPage()->getView()->repaintView();
                 }
             }
