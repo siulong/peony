@@ -832,7 +832,14 @@ void MainWindow::setShortCuts()
                 }
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
-                    return;
+                    if(m_is_search){
+                        auto selections = this->getCurrentSelections();
+                        auto selectInfo = Peony::FileInfo::fromUri(selections.first());
+                        if(!selectInfo->canWrite())
+                            return;
+                    }else{
+                        return;
+                    }
                 }
 
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);

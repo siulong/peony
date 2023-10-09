@@ -848,6 +848,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model)
             {
+                /* 经过讨论，对于搜索路径，如果当前操作目录可写时保留现有逻辑，不可写时和删除共用逻辑（即判断选中的第一个文件或文件夹的权限），这样改动影响比较小 */
                 bool canCut = true;
                 QString actualDir =  m_directory;
                 if(actualDir.startsWith("search://")){
@@ -856,6 +857,11 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 auto info = FileInfo::fromUri(actualDir);
                 if (!info->canWrite()) {
                     canCut = false;
+                    if(m_is_search && !m_selections.isEmpty()){
+                        auto selectInfo = FileInfo::fromUri(m_selections.first());
+                        if(selectInfo->canWrite())
+                            canCut = true;
+                    }//end
                 }
                 if (canCut) {
                     l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
