@@ -57,20 +57,21 @@ std::vector<std::shared_ptr<FileInfo> > FileInfosJob::batchQuerySync()
             continue;
         }
 
-        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", m_batchCanellable, &err);
-        if (err) {
-            qDebug()<<err->code<<err->message;
-            g_error_free(err);
-            if(g_cancellable_is_cancelled(m_batchCanellable))
-                break;
-        }
+        /* 暂时没用到，为了提升速度，先注释掉 */
+//        auto _fs_info = g_file_query_filesystem_info(info->m_file, "filesystem::*,", m_batchCanellable, &err);
+//        if (err) {
+//            qDebug()<<err->code<<err->message;
+//            g_error_free(err);
+//            if(g_cancellable_is_cancelled(m_batchCanellable))
+//                break;
+//        }
+//        if (_fs_info) {
+//            info = refreshFileSystemInfo(info, _fs_info);
+//            g_object_unref(_fs_info);
+
+//        }
 
         info = refreshInfoContents(info, _info);
-        if (_fs_info) {
-            info = refreshFileSystemInfo(info, _fs_info);
-            g_object_unref(_fs_info);
-
-        }
         g_object_unref(_info);
         fileInfoVec.push_back(info);
     }
