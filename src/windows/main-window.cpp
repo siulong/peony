@@ -229,7 +229,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
             &MainWindow::updateDateFormat);
 #endif
 
-    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, [this](const QString &key){
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [this](const QString &key){
         if (key == SHOW_CREATE_TIME) {
             this->refresh();
         }
