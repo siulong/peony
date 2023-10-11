@@ -1022,8 +1022,17 @@ void FileCopyOperation::run()
         if(szTempUri.startsWith("filesafe:///") && szTempUri.remove("filesafe:///").indexOf("/") == -1) {
             continue;
         }
-
         FileNode *node = new FileNode(uri, nullptr, m_reporter);
+        if (szTempUri.startsWith("trash:///")) {
+            auto file = g_file_new_for_uri(uri.toUtf8().constData());
+            auto info = g_file_query_info (file,
+                                      G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                      G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+            auto basename = g_path_get_basename (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+            if (basename) {
+                node->setDestFileName(basename);
+            }
+        }
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
         nodes << node;
