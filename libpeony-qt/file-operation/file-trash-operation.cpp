@@ -133,6 +133,7 @@ void FileTrashOperation::run()
     } else {
         int curSize = 0;
         for (auto src : m_src_uris) {
+            OperatorThreadPause();
             if (isCancelled())
                 break;
 
