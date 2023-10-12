@@ -118,12 +118,12 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
                         FileLabelModel::getGlobalModel()->removeFileLabel(uri);
-                        m_model->updated();
                         delete child;
                         break;
                     }
                 }
             }
+            m_model->updated();
             BookMarkManager::getInstance()->removeBookMark(favoriteUris);
             return;
         }
@@ -936,6 +936,7 @@ void FileItem::connectFunc()
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
                 ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
+                EmblemProviderManager::getInstance()->queryAsync(info->uri());
             }
             m_model->endInsertRows();
             Q_EMIT m_model->updated();/* 更新状态栏 */

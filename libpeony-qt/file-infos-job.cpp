@@ -349,11 +349,24 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
     // fix #81862
     //fix bug#126974, related to trash link files, use this code when target exists
     if (uri.startsWith("trash:///") && uri != "trash:///" && QFile::exists(targetUrl.path())) {
-        auto targetInfo = FileInfo::fromUri(info->m_target_uri);
-        FileInfoJob j(targetInfo);
-        j.querySync();
-        info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
-        info->m_display_name = targetInfo.get()->displayName();
+        std::shared_ptr<FileInfo> targetInfo = std::make_shared<FileInfo>();
+        targetInfo->m_uri = info->m_target_uri;
+        targetInfo->m_file = g_file_new_for_uri(info->m_target_uri.toUtf8().constData());
+        GError *err = nullptr;
+        auto gFileInfo = g_file_query_info(info->m_file,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       m_batchCanellable,
+                                       &err);
+
+        if (err) {
+            qDebug()<<err->code<<err->message;
+            g_error_free(err);
+        }else{
+            targetInfo = queryFileDisplayName(targetInfo, gFileInfo);
+            info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
+            info->m_display_name = targetInfo.get()->displayName();
+        }
     }
 
     return info;
