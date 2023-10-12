@@ -1037,7 +1037,7 @@ void DesktopIconView::saveAllItemPosistionInfos()
             //qDebug()<<"save real"<<index.data()<<topLeft;
             metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, topLeft);
 
-            QRect rect(mapToGlobal(indexRect.topLeft()), indexRect.size());
+            QRect rect(mapToGlobal(indexRect.topLeft())*qApp->devicePixelRatio(), indexRect.size()*qApp->devicePixelRatio());
             FileInfo::fromUri(index.data(Qt::UserRole).toString()).get()->setProperty("iconGeometry", rect);
         }
     }
@@ -1114,7 +1114,7 @@ void DesktopIconView::setFileMetaInfoPos(const QString &uri, const QPoint &pos)
     m_item_rect_hash.remove(uri);
     m_item_rect_hash.insert(uri, QRect(pos, iconSize));
 
-    QRect rect(mapToGlobal(pos), iconSize);
+    QRect rect(mapToGlobal(pos)*qApp->devicePixelRatio(), iconSize*qApp->devicePixelRatio());
     FileInfo::fromUri(uri).get()->setProperty("iconGeometry", rect);
 
     auto metaInfo = FileMetaInfo::fromUri(uri);
