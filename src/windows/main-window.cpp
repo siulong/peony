@@ -801,7 +801,10 @@ void MainWindow::setShortCuts()
                     connect(op, &Peony::FileOperation::operationFinished, this, [=](){
                         auto opInfo = op->getOperationInfo();
                         auto targetUirs = opInfo->dests();
-                        setCurrentSelectionUris(targetUirs);
+                        //fix bug#196528, selection files icon not update issue
+                        QTimer::singleShot(300, this, [=](){
+                            setCurrentSelectionUris(targetUirs);
+                        });
                     }, Qt::BlockingQueuedConnection);
                 }
                 else{
@@ -1816,7 +1819,12 @@ void MainWindow::initUI(const QString &uri)
     });
 
     connect(m_tab, &TabWidget::updateWindowSelectionRequest, this, [=](const QStringList &uris){
-        setCurrentSelectionUris(uris);
+        //setCurrentSelectionUris(uris);
+        //fix bug#196528, selection files icon not update issue
+        //修复拖拽拷贝情况下，未更新图标问题
+        QTimer::singleShot(300, this, [=](){
+            setCurrentSelectionUris(uris);
+        });
     });
     connect(m_tab, &TabWidget::currentSelectionChanged, this, [=](){
         int num = this->getCurrentPage()->getView()->getSelections().count();

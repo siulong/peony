@@ -979,7 +979,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                         connect(op, &Peony::FileOperation::operationFinished, window, [=](){
                             auto opInfo = op->getOperationInfo();
                             auto targetUirs = opInfo->dests();
-                            iface->setCurrentSelectionUris(targetUirs);
+                            //fix bug#196528, selection files icon not update issue
+                            QTimer::singleShot(300, window, [=](){
+                                iface->setCurrentSelectionUris(targetUirs);
+                            });
                         }, Qt::BlockingQueuedConnection);
                     }
                     else{

@@ -327,7 +327,10 @@ OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *pa
             connect(op, &Peony::FileOperation::operationFinished, window, [=](){
                 auto opInfo = op->getOperationInfo();
                 auto targetUirs = opInfo->dests();
-                window->setCurrentSelectionUris(targetUirs);
+                //fix bug#196528, selection files icon not update issue
+                QTimer::singleShot(300, window, [=](){
+                    window->setCurrentSelectionUris(targetUirs);
+                });
             }, Qt::BlockingQueuedConnection);
         }
         Q_EMIT operationAccepted();
