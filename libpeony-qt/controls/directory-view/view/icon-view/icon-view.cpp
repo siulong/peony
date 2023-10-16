@@ -1038,6 +1038,10 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     });
 
     connect(m_view, &IconView::customContextMenuRequested, this, [=](const QPoint &pos) {
+        if (m_view->m_delegate_editing) {
+            return;
+        }
+
         // we should clear the dirty rubber band due to call context menu.
         bool isDragSelecting = m_view->isDraggingState();
         if (isDragSelecting) {

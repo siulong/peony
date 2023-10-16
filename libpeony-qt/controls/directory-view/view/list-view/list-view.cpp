@@ -322,6 +322,9 @@ void ListView::mousePressEvent(QMouseEvent *e)
     }
 
     if (e->button() == Qt::RightButton) {
+        if (m_delegate_editing) {
+            return;
+        }
         if (this->state() == QTreeView::EditingState) {
             if (indexWidget(indexAt(e->pos())))
                 return;
