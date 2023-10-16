@@ -220,6 +220,8 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
     m_btn_layout->addSpacing(72);
     m_btn_layout->addWidget(m_btn_conn);
     m_btn_conn->setAutoDefault(true);
+    m_btn_conn->setEnabled(false);
+    m_btn_conn->setProperty("isImportant", true);
     m_btn_add->setAutoDefault(false);
     m_btn_del->setAutoDefault(false);
     //m_btn_conn->setStyle(ButtonStyle::getStyle());
@@ -306,6 +308,25 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
             addUri(uri());
         }
         Q_UNUSED(checked);
+    });
+
+    connect(m_ip_edit, &QLineEdit::textChanged, this, [=]() {
+        QString ipAddress = m_ip_edit->text().simplified();
+        QString port = m_port_editor->currentText().simplified();
+        if (ipAddress.size() > 0 && port.size() > 0) {
+            m_btn_conn->setEnabled(true);
+        } else {
+            m_btn_conn->setEnabled(false);
+        }
+    });
+    connect(m_port_editor, &QComboBox::editTextChanged, this, [=]() {
+        QString ipAddress = m_ip_edit->text().simplified();
+        QString port = m_port_editor->currentText().simplified();
+        if (port.size() > 0 && ipAddress.size() > 0) {
+            m_btn_conn->setEnabled(true);
+        } else {
+            m_btn_conn->setEnabled(false);
+        }
     });
 }
 
