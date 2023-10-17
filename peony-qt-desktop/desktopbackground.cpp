@@ -36,7 +36,8 @@
 
 #include <QDebug>
 
-#define BACKGROUND_SETTINGS "org.mate.background"
+//#define BACKGROUND_SETTINGS "org.mate.background"
+#define BACKGROUND_SETTINGS "org.ukui.interface"
 
 DesktopBackground::DesktopBackground(QWidget *parent) : QWidget(parent)
 {
