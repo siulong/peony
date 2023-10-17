@@ -104,6 +104,9 @@
 
 //Control the display of desktop standard icons
 #define DISPLAY_STANDARD_ICONS       "displayStandardIcons"
+#define HOME_ICON_VISIBLE            "homeIconVisible"
+#define TRASH_ICON_VISIBLE           "trashIconVisible"
+#define COMPUTER_ICON_VISIBLE        "computerIconVisible"
 
 //control the mobile device trash file issue, if be true can trash mobile files
 #define TRASH_MOBILE_FILES            "trashMobileFiles"
