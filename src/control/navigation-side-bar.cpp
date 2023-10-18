@@ -512,7 +512,7 @@ QSize NavigationSideBar::sizeHint() const
 
 void NavigationSideBar::JumpDirectory(const QString &uri)
 {
-    if(uri=="" && m_currSelectedItem && m_currSelectedItem->getDevice().startsWith("/dev/sd"))
+    if((uri=="" || uri.startsWith("computer://")) && m_currSelectedItem && m_currSelectedItem->getDevice().startsWith("/dev/sd"))
     {/* 异常U盘 */
         QMessageBox::information(nullptr, tr("Tips"), tr("This is an abnormal Udisk, please fix it or format it"));
         return;
