@@ -272,6 +272,7 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
     info->m_size = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
     info->m_modified_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
     info->m_access_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_ACCESS);
+    info->m_create_time = g_file_info_get_attribute_uint64(new_info, G_FILE_ATTRIBUTE_TIME_CREATED);
 
     info->m_mime_type_string = info->m_content_type;
     if (!info->m_mime_type_string.isEmpty()) {
@@ -310,6 +311,12 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
         info->m_access_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_access_time);
     } else {
         info->m_access_date = nullptr;
+    }
+
+    if (info->m_create_time) {
+        info->m_create_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_create_time);
+    } else {
+        info->m_create_date = nullptr;
     }
 
     if (g_file_info_has_attribute(new_info, "trash::deletion-date"))

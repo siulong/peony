@@ -208,7 +208,9 @@ public:
     QString deletionDate() {
         return m_deletion_date;
     }
-
+    QString createDate() {
+        return m_create_date;
+    }
 
     QString type() {
         return m_content_type;
@@ -229,6 +231,9 @@ public:
     }
     quint64 deletionTime() {
         return m_deletion_date_uint64;
+    }
+    quint64 createTime() {
+        return m_create_time;
     }
 
     QList<QColor> getColors() {
@@ -340,10 +345,6 @@ public:
 
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
-
-    guint64 getCreate_time() const;
-
-    QString getCreate_date() const;
 
 Q_SIGNALS:
     void updated();

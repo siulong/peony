@@ -325,8 +325,8 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 //use sdk interface to get time format
                 return QVariant(item->m_info->deletionDate());
             }
-            if (Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool()) {
-                return QVariant(item->m_info->getCreate_date());
+            if (Peony::GlobalSettings::getInstance()->getShowCreateTime()) {
+                return QVariant(item->m_info->createDate());
             }
 
             return QVariant(item->m_info->modifiedDate());

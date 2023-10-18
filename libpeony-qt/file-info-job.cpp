@@ -442,6 +442,8 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
 
     if (info->m_create_time) {
         info->m_create_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_create_time);
+    } else {
+        info->m_create_date = nullptr;
     }
 
     if (info->m_access_time) {

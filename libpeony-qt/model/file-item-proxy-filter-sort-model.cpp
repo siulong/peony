@@ -254,10 +254,10 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
             }
 
             if (Peony::GlobalSettings::getInstance()->getShowCreateTime()) {
-                if (leftItem->m_info->getCreate_time() == rightItem->m_info->getCreate_time()) {
+                if (leftItem->m_info->createTime() == rightItem->m_info->createTime()) {
                     goto default_sort;
                 }
-                return leftItem->m_info->getCreate_time() > rightItem->m_info->getCreate_time();
+                return leftItem->m_info->createTime() > rightItem->m_info->createTime();
             }
 
             //non trash files, use modifiedTime sort
