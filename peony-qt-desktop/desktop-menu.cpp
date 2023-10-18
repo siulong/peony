@@ -595,6 +595,9 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
         });
     }
 
+    if (m_selections.isEmpty())
+        addActions(FileOperationManager::getInstance()->getUndoRedoActions());
+
     return l;
 }
 

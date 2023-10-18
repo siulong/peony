@@ -63,6 +63,8 @@
 #include <QDebug>
 #include <unistd.h>
 
+#include <QAction>
+
 using namespace Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
 using namespace kdk;
@@ -1000,6 +1002,31 @@ void FileOperationManager::slot_moveFilesToAnotherProcCompleted(const QStringLis
 
 }
 
+QList<QAction *> FileOperationManager::getUndoRedoActions()
+{
+    QList<QAction *> l;
+    if (!qApp)
+        return l;
+    if (canUndo()) {
+        auto opInfo = m_undo_stack.top();
+        QString opName = opInfo->getOperationName();
+        auto action = new QAction(tr("Undo %1").arg(opName));
+        action->setShortcut(QKeySequence::Undo);
+        connect(action, &QAction::triggered, this, &FileOperationManager::undo);
+        l<<action;
+    }
+    if (canRedo()) {
+        auto opInfo = m_redo_stack.top();
+        QString opName = opInfo->getOperationName();
+        auto action = new QAction(tr("Redo %1").arg(opName));
+        action->setShortcut(QKeySequence::Redo);
+        connect(action, &QAction::triggered, this, &FileOperationManager::redo);
+        l<<action;
+    }
+    return l;
+}
+
+
 //FIXME: get opposite info correcty.
 FileOperationInfo::FileOperationInfo(QStringList srcUris,
                                      QString destDirUri,
@@ -1172,6 +1199,44 @@ void FileOperationInfo::setOperationRecording(bool state)
     if (m_operation_recording != state) {
         m_operation_recording = state;
     }
+}
+
+QString FileOperationInfo::getOperationName()
+{
+    QString opName;
+    switch (m_type) {
+    case FileOperationInfo::Copy:
+        opName = tr("Copy");
+        break;
+    case FileOperationInfo::Move:
+        opName = tr("Move");
+        break;
+    case FileOperationInfo::Rename:
+    case FileOperationInfo::BatchRename:
+    case FileOperationInfo::BatchRenameInternal:
+        opName = tr("Rename");
+        break;
+    case FileOperationInfo::Link:
+        opName = tr("Link");
+        break;
+    case FileOperationInfo::Trash:
+        opName = tr("Delete");
+        break;
+    case FileOperationInfo::Delete:
+        opName = tr("Delete Permanently");
+        break;
+    case FileOperationInfo::Untrash:
+        opName = tr("Restore");
+        break;
+    case FileOperationInfo::CreateFolder:
+    case FileOperationInfo::CreateTemplate:
+    case FileOperationInfo::CreateTxt:
+        opName = tr("New");
+        break;
+    default:
+        break;
+    }
+    return opName;
 }
 
 // S3/S4
