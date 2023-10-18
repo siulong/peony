@@ -85,12 +85,6 @@ static Peony::DesktopItemModel *desktop_model = nullptr;
 static int desktop_window_id = 0;
 static bool g_emitFinish = false;
 
-/*!
- * \brief virtualDesktopWindow
- * \deprecated
- */
-static DesktopBackground *virtualDesktopWindow = nullptr;
-
 //record of desktop start time
 qint64 PeonyDesktopApplication::peony_desktop_start_time = 0;
 

@@ -56,8 +56,7 @@ SOURCES += \
     primary-manager.cpp \
     user-dir-manager.cpp \
     waylandoutputmanager.cpp \
-    ukui-output-core.c \
-    desktopbackground.cpp
+    ukui-output-core.c
 
 HEADERS += \
     desktop-background-manager.h \
@@ -78,8 +77,7 @@ HEADERS += \
     primary-manager.h \
     user-dir-manager.h \
     waylandoutputmanager.h \
-    ukui-output-client.h \
-    desktopbackground.h
+    ukui-output-client.h
 
 target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
