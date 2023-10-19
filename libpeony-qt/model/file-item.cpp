@@ -941,10 +941,17 @@ void FileItem::connectFunc()
             m_model->endInsertRows();
             Q_EMIT m_model->updated();/* 更新状态栏 */
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
-            m_model->updated();
             for (auto& info : retFileInfos) {
+                auto item = m_uri_item_hash.value(info->uri());
+                info_manager->lock();
+                info_manager->updateFileInfo(info);
+                if (item)
+                    item->m_info = info;
+                info_manager->unlock();
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
+                EmblemProviderManager::getInstance()->queryAsync(info->uri());
             }
+            m_model->updated();
         }
     },Qt::UniqueConnection);
 
