@@ -18,10 +18,15 @@
 #include <QLocale>
 #include <QFileInfo>
 
+#include <QCoreApplication>
+
 using namespace Peony;
 
 FileInfosJob::FileInfosJob(std::vector<std::shared_ptr<FileInfo> > infos, QObject *parent)
 {
+    //sync bug#181067 change to batch file process
+    connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfosJob::batchCancel);
+
     m_infos = infos;
     m_batchCanellable = g_cancellable_new();
 }
