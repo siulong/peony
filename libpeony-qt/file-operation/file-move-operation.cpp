@@ -222,6 +222,7 @@ void FileMoveOperation::move()
         auto node = new FileNode(srcUri, nullptr, nullptr);
         node->setState(FileNode::Handling);
 
+        qDebug() << "==========" << __func__ << "m_dest_dir_uri:" << m_dest_dir_uri << "srcUri:" << srcUri;
         auto srcFile = wrapGFile(g_file_new_for_uri(srcUri.toUtf8().constData()));
         char *base_name = g_file_get_basename(srcFile.get()->get());
         auto destFile = wrapGFile(g_file_resolve_relative_path(destDir.get()->get(), base_name));

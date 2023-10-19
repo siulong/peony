@@ -44,13 +44,20 @@ void CreateTemplateOperation::handleDuplicate(const QString &uri)
 
 CreateTemplateOperation::CreateTemplateOperation(const QString &destDirUri, Type type, const QString &templateName, QObject *parent) : FileOperation(parent)
 {
-    m_target_uri = destDirUri + "/" + templateName;
+    QString tDestDirUri = destDirUri;
+    QString tmp = destDirUri.section(":", 0, -2) + ":///";
+    if (destDirUri == tmp) {
+        tDestDirUri.chop(1);
+    }
+
+    qDebug() << "============CreateTemplateOperation" << tDestDirUri;
+    m_target_uri = tDestDirUri + "/" + templateName;
     QStringList srcUris;
     m_src_uri = TEMPLATE_DIR + templateName;
     srcUris << m_src_uri;
-    m_dest_dir_uri = destDirUri;
+    m_dest_dir_uri = tDestDirUri;
     m_type = type;
-    m_info = std::make_shared<FileOperationInfo>(srcUris, destDirUri, FileOperationInfo::Type::Copy);
+    m_info = std::make_shared<FileOperationInfo>(srcUris, tDestDirUri, FileOperationInfo::Type::Copy);
 }
 
 void CreateTemplateOperation::run()

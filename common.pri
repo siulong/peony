@@ -61,3 +61,5 @@ exists(/usr/include/kysdk/diagnosetest/libkydatacollect.h) {
     message("diagnosetest find")
     DEFINES += KY_SDK_DATACOLLECT
 }
+
+DEFINES += VFS_CUSTOM_PLUGIN

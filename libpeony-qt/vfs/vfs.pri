@@ -10,6 +10,11 @@ HEADERS += \
     $$PWD/label-vfs-file.h \
     $$PWD/label-vfs-register.h \
     $$PWD/search-vfs-manager.h                                  \
+    $$PWD/test-vfs-file-enumerator.h \
+    $$PWD/test-vfs-file-monitor.h \
+    $$PWD/test-vfs-file.h                                       \
+    $$PWD/test-vfs-register.h                                   \
+    $$PWD/vfs-info-plugin-manager.h                             \
     $$PWD/vfs-plugin-manager.h                                  \
     $$PWD/recent-vfs-manager.h                                  \
     $$PWD/search-vfs-register.h                                 \
@@ -28,6 +33,11 @@ SOURCES += \
     $$PWD/label-vfs-file.cpp \
     $$PWD/label-vfs-register.cpp \
     $$PWD/search-vfs-manager.cpp                                \
+    $$PWD/test-vfs-file-enumerator.cpp \
+    $$PWD/test-vfs-file-monitor.cpp \
+    $$PWD/test-vfs-file.cpp                                     \
+    $$PWD/test-vfs-register.cpp                                 \
+    $$PWD/vfs-info-plugin-manager.cpp                           \
     $$PWD/vfs-plugin-manager.cpp                                \
     $$PWD/recent-vfs-manager.cpp                                \
     $$PWD/search-vfs-register.cpp                               \

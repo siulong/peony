@@ -244,6 +244,7 @@ GAsyncReadyCallback PermissionsPropertiesPage::async_query_permisson_callback(GO
             auto other_writeable = mode & S_IWOTH;
             auto other_executable = mode & S_IXOTH;
 
+            qDebug() << __func__ << mode << S_IRUSR << S_IWUSR << S_IXUSR << S_IRGRP << S_IWGRP << S_IXGRP << S_IROTH << S_IWOTH << S_IXOTH;
             p_this->m_permissions[2][0] = other_readable;
             p_this->m_permissions[2][1] = other_writeable;
             p_this->m_permissions[2][2] = other_executable;
@@ -465,6 +466,7 @@ void PermissionsPropertiesPage::savePermissions()
         }
     }
 
+    qDebug() << __func__ << mod;
     if (m_has_unix_mode) {
         g_autoptr(GFile) pfile = g_file_new_for_uri(m_uri.toUtf8().constData());
         g_file_set_attribute_uint32(pfile, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);

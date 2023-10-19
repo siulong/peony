@@ -25,6 +25,9 @@
 #include "favorite-vfs-register.h"
 #include "search-vfs-register.h"
 #include "label-vfs-register.h"
+#include "test-vfs-register.h"
+#include "vfs-info-plugin-manager.h"
+#include <QDebug>
 
 using namespace Peony;
 
@@ -91,4 +94,13 @@ VFSPluginManager::VFSPluginManager(QObject *parent) : QObject(parent)
 
     auto labelVFSPlugin = new LabelVFSInternalPlugin;
     registerPlugin(labelVFSPlugin);
+//    auto testVFSPlugin = new TestVFSInternalPlugin;
+//    registerPlugin(testVFSPlugin);
+
+    QStringList keys = VFSInfoPluginManager::getInstance()->getAllPluginKeys();
+    for (auto key : keys) {
+        auto testVFSPlugin = new TestVFSInternalPlugin(key);
+        registerPlugin(testVFSPlugin);
+    }
+    qDebug() << "==============keys" << __func__ << keys;
 }
