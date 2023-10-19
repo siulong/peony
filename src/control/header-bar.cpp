@@ -532,13 +532,13 @@ void HeaderBar::updatePreviewPageVisible()
 
 void HeaderBar::finishEdit()
 {
-    m_location_bar->finishEdit();
+    m_searchWidget->finishEdit();
 }
 
 void HeaderBar::quitSerachMode()
 {
-    if (m_search_mode)
-       m_location_bar->clearSearchBox();
+    if (m_searchWidget->isSearchMode())
+       m_searchWidget->clearSearchBox();
 }
 
 void HeaderBar::updateIcons()
@@ -560,7 +560,7 @@ void HeaderBar::updateIcons()
 
     int count = 0;
     if(m_window->getCurrentPage() && m_window->getCurrentPage()->getView()){
-        auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIfaceByDirectoryViewWidget(m_window->getCurrentPage()->getView());
+        auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_window->getCurrentPage()->getView());
         if(iface)
             count = iface->getAllDisplayFileCount();
     }

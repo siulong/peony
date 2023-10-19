@@ -61,7 +61,7 @@
 #include "file-info.h"
 
 #include "volume-manager.h"
-#include "directory-view-helper.h"
+#include "directoryviewhelper.h"
 
 #include "file-info-job.h"
 #include "file-meta-info.h"
@@ -1116,7 +1116,7 @@ const int TabWidget::getAllDisplayFileCount()
         return 0;
 
     int count = 0;
-    auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIfaceByDirectoryViewWidget(currentPage()->getView());
+    auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(currentPage()->getView());
     if(iface)
         count = iface->getAllDisplayFileCount();
 

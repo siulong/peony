@@ -877,10 +877,6 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe && !m_is_label_model) {
                 bool canTrash = true;
                 bool canDelete = true;
-                for (auto uri : m_selections) {
-                    auto info = FileInfo::fromUri(uri);
-                    if (! info->canTrash())
-                        canTrash = false;
 
                 /* 同一目录下文件夹和文件的info->cantrash()和info->canDelete()通常一样，采用m_selections.first()判断 */
                 auto info = FileInfo::fromUri(m_selections.first());

@@ -274,12 +274,12 @@ quint64 FileInfo::getDeletionDateUInt64()
     return m_deletion_date_uint64;
 }
 
-guint64 FileInfo::getCreate_time() const
+guint64 FileInfo::getCreateTime() const
 {
     return m_create_time;
 }
 
-QString FileInfo::getCreate_date() const
+QString FileInfo::getCreateDate() const
 {
     return m_create_date;
 }

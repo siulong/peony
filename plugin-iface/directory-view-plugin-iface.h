@@ -155,7 +155,6 @@ public:
 
     //children
     const virtual QStringList getAllFileUris() = 0;
-    const virtual int getAllDisplayFileCount() = 0;
 
     /*
     //loaction

@@ -40,6 +40,7 @@ public:
     virtual bool isEnableMultiSelect() = 0;
 
     virtual void setItemsVisible(bool visible) = 0;
+    virtual const int getAllDisplayFileCount() = 0;
 };
 
 class PEONYCORESHARED_EXPORT DirectoryViewHelper : public QObject

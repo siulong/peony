@@ -95,7 +95,6 @@ public:
 
     //children
     const QStringList getAllFileUris() override;
-    const int getAllDisplayFileCount();
 
     QRect visualRect(const QModelIndex &index) const override;
 
@@ -142,6 +141,8 @@ public Q_SLOTS:
     void doMultiSelect(bool isMultiSlelect);
 
     void setItemsVisible(bool visible) override;
+
+    const int getAllDisplayFileCount();
 
 protected:
     /*!

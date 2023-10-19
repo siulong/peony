@@ -79,7 +79,6 @@ public:
 
     //children
     const QStringList getAllFileUris() override;
-    const int getAllDisplayFileCount();
 
     int getCurrentCheckboxColumn();
 
@@ -133,6 +132,8 @@ public Q_SLOTS:
     void setSearchKey(const QString &key);
 
     void doMultiSelect(bool isMultiSlelect);
+
+    const int getAllDisplayFileCount();
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;

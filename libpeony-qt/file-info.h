@@ -343,6 +343,9 @@ public:
     quint64 getDeletionDateUInt64();
     const QString getFinalDisplayName();/* 通过m_display_name获取最终的显示名 */
 
+    guint64 getCreateTime() const;
+    QString getCreateDate() const;
+
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
 

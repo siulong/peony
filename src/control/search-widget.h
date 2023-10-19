@@ -38,6 +38,7 @@ public:
     void searchButtonClicked();
     void setSearchMode(bool mode);
     void updateCloseSearch(QString icon);
+    bool isSearchMode();
 
 Q_SIGNALS:
     void updateLocationRequest(const QString &uri, bool addHistory = true, bool force = true);

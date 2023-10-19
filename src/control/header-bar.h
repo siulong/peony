@@ -115,7 +115,6 @@ Q_SIGNALS:
     void setLocation(const QString &uri);
     void cancelEdit();
     void startEdit(bool bSearch = false);
-    void finishEdit();
     void updateSearchProgress(bool searching);
 
 protected:
@@ -140,6 +139,8 @@ private Q_SLOTS:
     bool CopyOrMoveTo(bool isCut);
     void quitMultiSelect();
     void setSearchMode(bool isSearching);
+    void quitSerachMode();
+    void finishEdit();
 
 private:
     const QString m_uri;

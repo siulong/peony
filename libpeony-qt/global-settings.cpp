@@ -159,7 +159,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
             bool sendChanged = false;
-            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING || SHOW_CREATE_TIME == key)) {
+            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING || SHOW_CREATE_TIME == key) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);
@@ -598,4 +598,9 @@ QString GlobalSettings::getProjectName()
 #else
     return "unknown-project-name";
 #endif // KYLIN_COMMON
+}
+
+bool GlobalSettings::getShowCreateTime() const
+{
+    return m_showCreateTime;
 }
