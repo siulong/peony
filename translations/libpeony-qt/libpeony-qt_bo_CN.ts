@@ -1469,6 +1469,25 @@
     </message>
 </context>
 <context>
+    <name>Peony::ExtensionsManagerWidget</name>
+    <message>
+        <source>Extensions Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available extensions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Peony::FMWindow</name>
     <message>
         <source>Redo</source>
@@ -1708,6 +1727,25 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
 </context>
 <context>
+    <name>Peony::FileInfosJob</name>
+    <message>
+        <source>Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation type="unfinished">ཉེ་ཆར།</translation>
+    </message>
+</context>
+<context>
     <name>Peony::FileItem</name>
     <message>
         <source>Error</source>
@@ -1763,6 +1801,10 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <message>
         <source>Original Path</source>
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
+    </message>
+    <message>
+        <source>Create Date</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

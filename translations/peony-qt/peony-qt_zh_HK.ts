@@ -183,8 +183,8 @@ p， li { 空白：預包裝; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="365"/>
-        <location filename="../../src/control/header-bar.cpp" line="830"/>
-        <location filename="../../src/control/header-bar.cpp" line="848"/>
+        <location filename="../../src/control/header-bar.cpp" line="850"/>
+        <location filename="../../src/control/header-bar.cpp" line="868"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -209,51 +209,51 @@ p， li { 空白：預包裝; }
         <translation>找不到任何終端，請至少安裝一個終端！</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="618"/>
+        <location filename="../../src/control/header-bar.cpp" line="638"/>
         <source>Restore</source>
         <translation>恢復</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="621"/>
+        <location filename="../../src/control/header-bar.cpp" line="641"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="633"/>
-        <location filename="../../src/control/header-bar.cpp" line="833"/>
-        <location filename="../../src/control/header-bar.cpp" line="843"/>
+        <location filename="../../src/control/header-bar.cpp" line="653"/>
+        <location filename="../../src/control/header-bar.cpp" line="853"/>
+        <location filename="../../src/control/header-bar.cpp" line="863"/>
         <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="643"/>
-        <location filename="../../src/control/header-bar.cpp" line="777"/>
-        <location filename="../../src/control/header-bar.cpp" line="816"/>
+        <location filename="../../src/control/header-bar.cpp" line="663"/>
+        <location filename="../../src/control/header-bar.cpp" line="797"/>
+        <location filename="../../src/control/header-bar.cpp" line="836"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="670"/>
+        <location filename="../../src/control/header-bar.cpp" line="690"/>
         <source>MoveTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="679"/>
+        <location filename="../../src/control/header-bar.cpp" line="699"/>
         <source>CopyTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="688"/>
+        <location filename="../../src/control/header-bar.cpp" line="708"/>
         <source>Delete</source>
         <translation type="unfinished">刪除</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="754"/>
+        <location filename="../../src/control/header-bar.cpp" line="774"/>
         <source>Select path</source>
         <translation type="unfinished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="819"/>
+        <location filename="../../src/control/header-bar.cpp" line="839"/>
         <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
@@ -269,7 +269,7 @@ p， li { 空白：預包裝; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1194"/>
+        <location filename="../../src/control/header-bar.cpp" line="1214"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -286,7 +286,7 @@ p， li { 空白：預包裝; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1206"/>
+        <location filename="../../src/control/header-bar.cpp" line="1226"/>
         <source>Close</source>
         <translation>關閉</translation>
     </message>
@@ -315,34 +315,32 @@ p， li { 空白：預包裝; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="859"/>
+        <location filename="../../src/windows/main-window.cpp" line="874"/>
         <source>File Manager</source>
         <translation>檔管理員</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="403"/>
+        <location filename="../../src/windows/main-window.cpp" line="409"/>
         <source>Undo</source>
         <translation>恢復</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="416"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="773"/>
-        <location filename="../../src/windows/main-window.cpp" line="824"/>
+        <location filename="../../src/windows/main-window.cpp" line="783"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="773"/>
-        <location filename="../../src/windows/main-window.cpp" line="824"/>
+        <location filename="../../src/windows/main-window.cpp" line="783"/>
         <source>This operation is not supported.</source>
         <translation>不支援此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="857"/>
+        <location filename="../../src/windows/main-window.cpp" line="872"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -371,7 +369,7 @@ p， li { 空白：預包裝; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="872"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>New Folder</source>
         <translation>新建資料夾</translation>
     </message>
@@ -387,50 +385,50 @@ p， li { 空白：預包裝; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="417"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="417"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
         <source>This operation is not supported.</source>
         <translation>不支援此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="205"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="455"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="473"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
         <source>Tips</source>
         <translation>技巧</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="205"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>設備處於繁忙狀態，請稍後執行此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="455"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>這是一個異常的Udisk，請修復或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="473"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>這是一個空驅動器，請插入光碟。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="233"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
         <source>Open In New Window</source>
         <translation>在新視窗中打開</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="249"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="283"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="306"/>
         <source>Can not open %1, %2</source>
         <translation>無法開啟 %1、%2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="267"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="290"/>
         <source>Open In New Tab</source>
         <translation>在新標籤頁中打開</translation>
     </message>
@@ -446,12 +444,12 @@ p， li { 空白：預包裝; }
         <translation type="vanished">所有分頁...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="679"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="741"/>
         <source>Manager tags...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="682"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="744"/>
         <source>More tags...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -475,88 +473,98 @@ p， li { 空白：預包裝; }
         <translation type="vanished">高级搜索</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="77"/>
+        <location filename="../../src/control/operation-menu.cpp" line="78"/>
         <source>Keep Allow</source>
         <translation>保持允許</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="89"/>
+        <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
         <translation>顯示隱藏</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="97"/>
+        <location filename="../../src/control/operation-menu.cpp" line="98"/>
         <source>Show File Extension</source>
         <translation>顯示檔擴展名</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="102"/>
+        <location filename="../../src/control/operation-menu.cpp" line="103"/>
+        <source>Show Create Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="109"/>
         <source>Forbid thumbnailing</source>
         <translation>禁止縮圖</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="111"/>
+        <location filename="../../src/control/operation-menu.cpp" line="118"/>
         <source>Resident in Backend</source>
         <translation>駐留在後端</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="120"/>
+        <location filename="../../src/control/operation-menu.cpp" line="127"/>
         <source>Parallel Operations</source>
         <translation>並行操作</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="126"/>
+        <location filename="../../src/control/operation-menu.cpp" line="133"/>
         <source>Set samba password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="140"/>
+        <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Tips</source>
         <translation type="unfinished">技巧</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="140"/>
+        <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="149"/>
+        <location filename="../../src/control/operation-menu.cpp" line="156"/>
         <source>Samba password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="151"/>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
         <source>Samba set user password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="159"/>
-        <location filename="../../src/control/operation-menu.cpp" line="170"/>
+        <location filename="../../src/control/operation-menu.cpp" line="166"/>
+        <location filename="../../src/control/operation-menu.cpp" line="177"/>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="159"/>
+        <location filename="../../src/control/operation-menu.cpp" line="166"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="170"/>
+        <location filename="../../src/control/operation-menu.cpp" line="177"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="179"/>
+        <location filename="../../src/control/operation-menu.cpp" line="186"/>
         <source>Open each folder in a new window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="188"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
+        <source>Plugin manager Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="200"/>
         <source>Help</source>
         <translation>説明</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="192"/>
+        <location filename="../../src/control/operation-menu.cpp" line="204"/>
         <source>About</source>
         <translation>大約</translation>
     </message>
@@ -564,27 +572,27 @@ p， li { 空白：預包裝; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="247"/>
+        <location filename="../../src/control/operation-menu.cpp" line="259"/>
         <source>Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="258"/>
+        <location filename="../../src/control/operation-menu.cpp" line="270"/>
         <source>copy</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="267"/>
+        <location filename="../../src/control/operation-menu.cpp" line="279"/>
         <source>paste</source>
         <translation>糊</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="276"/>
+        <location filename="../../src/control/operation-menu.cpp" line="288"/>
         <source>cut</source>
         <translation>切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="285"/>
+        <location filename="../../src/control/operation-menu.cpp" line="297"/>
         <source>trash</source>
         <translation>垃圾</translation>
     </message>
@@ -1015,65 +1023,55 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选中%1个</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="190"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>在%2中搜索%1</translation>
+        <translation type="vanished">在%2中搜索%1</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
-        <location filename="../../src/control/tab-status-bar.cpp" line="266"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
         <source>Searching for files ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="123"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
         <source> %1 items </source>
         <translation> %1 項 </translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="178"/>
-        <source>selected%1%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="207"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
         <source> selected %1 items    %2</source>
         <translation> 選定的 %1 專案 %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="209"/>
-        <source> %1 items    selected %2 items</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
         <source> selected %1 items</source>
-        <translation type="vanished"> 選定的 %1 個專案</translation>
+        <translation> 選定的 %1 個專案</translation>
     </message>
 </context>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="220"/>
+        <location filename="../../src/control/tab-widget.cpp" line="221"/>
         <source>Trash</source>
         <translation>垃圾</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="224"/>
+        <location filename="../../src/control/tab-widget.cpp" line="225"/>
         <source>Clear</source>
         <translation>清楚</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="229"/>
+        <location filename="../../src/control/tab-widget.cpp" line="230"/>
         <source>Recover</source>
         <translation>恢復</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="385"/>
+        <location filename="../../src/control/tab-widget.cpp" line="386"/>
         <source>Computer</source>
         <translation type="unfinished">计算机</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1603"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1617"/>
         <source>Opening such files is not currently supported</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1086,17 +1084,17 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">濾波器</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="460"/>
+        <location filename="../../src/control/tab-widget.cpp" line="461"/>
         <source>Select Path</source>
         <translation>選擇路徑</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1616"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1630"/>
         <source>Open failed</source>
         <translation>打開失敗</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1617"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1631"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打開目錄失敗，您沒有許可權！</translation>
     </message>
@@ -1105,7 +1103,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="375"/>
+        <location filename="../../src/control/tab-widget.cpp" line="376"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -1130,13 +1128,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="520"/>
-        <location filename="../../src/control/tab-widget.cpp" line="680"/>
+        <location filename="../../src/control/tab-widget.cpp" line="521"/>
+        <location filename="../../src/control/tab-widget.cpp" line="681"/>
         <source>is</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="555"/>
+        <location filename="../../src/control/tab-widget.cpp" line="556"/>
         <source>Please input key words...</source>
         <translation>請輸入關鍵字...</translation>
     </message>
@@ -1145,130 +1143,130 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="641"/>
-        <location filename="../../src/control/tab-widget.cpp" line="664"/>
+        <location filename="../../src/control/tab-widget.cpp" line="642"/>
+        <location filename="../../src/control/tab-widget.cpp" line="665"/>
         <source>contains</source>
         <translation>包含</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>name</source>
         <translation>名字</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>modify time</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="297"/>
+        <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>file size</source>
         <translation>檔大小</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
         <location filename="../../src/control/tab-widget.h" line="300"/>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>all</source>
         <translation>都</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>file folder</source>
         <translation>資料夾</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>image</source>
         <translation>圖像</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="298"/>
+        <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>video</source>
         <translation>視頻</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>text file</source>
         <translation>文字檔</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>audio</source>
         <translation>音訊</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>others</source>
         <translation>別人</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>wps file</source>
         <translation>WPS檔</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
         <source>today</source>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
         <source>this week</source>
         <translation>本週</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
         <source>this month</source>
         <translation>本月</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
         <source>this year</source>
         <translation>今年</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="302"/>
         <source>year ago</source>
         <translation>一年前</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>tiny(0-16K)</source>
         <translation>微小（0-16K）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>small(16k-1M)</source>
         <translation>小型（16k-1M）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>empty(0K)</source>
         <translation>空（0K）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>medium(1M-128M)</source>
         <translation>中型（1米-128米）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>big(128M-1G)</source>
         <translation>大（128M-1G）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>large(1-4G)</source>
         <translation>大（1-4G）</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>great(&gt;4G)</source>
         <translation>好（&gt;4G）</translation>
     </message>
@@ -1288,7 +1286,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="815"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="877"/>
         <source>Peony</source>
         <translation type="unfinished">文件管理器</translation>
     </message>
@@ -1296,17 +1294,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1001"/>
+        <location filename="../../src/control/header-bar.cpp" line="1021"/>
         <source>Option</source>
         <translation type="unfinished">選擇</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1014"/>
+        <location filename="../../src/control/header-bar.cpp" line="1034"/>
         <source>Minimize</source>
         <translation type="unfinished">最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1037"/>
+        <location filename="../../src/control/header-bar.cpp" line="1057"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>

@@ -600,12 +600,12 @@
 <context>
     <name>MessageDialog</name>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1761"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1763"/>
         <source>Peony</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1788"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1790"/>
         <source>Forcibly pulling out the device may cause data
  loss or device exceptions!</source>
         <translation>ᠠᠯᠪᠠᠳᠠᠯᠭ᠎ᠠ ᠪᠠᠷ ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠭᠠᠷᠭᠠᠬᠤ ᠨᠢ ᠲᠣᠭ᠎ᠠ ᠪᠠᠷᠢᠮᠲᠠ ᠡᠭᠦᠰᠭᠡᠬᠦ ᠪᠣᠯᠣᠮᠵᠢ ᠲᠠᠶ᠃
@@ -920,7 +920,7 @@
 <context>
     <name>Peony::BasicPropertiesPage</name>
     <message>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="921"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="922"/>
         <source>Choose a custom icon</source>
         <translation>ᠦᠪᠡᠷᠳᠡᠭᠡᠨ ᠲᠣᠭᠲᠠᠭᠠᠭᠰᠠᠨ ᠢᠺᠤᠨ ᠵᠢᠷᠤᠭ ᠢ᠋ ᠰᠣᠩᠭᠣᠬᠤ</translation>
     </message>
@@ -1059,9 +1059,14 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="748"/>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="962"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="976"/>
         <source>%1 (%2 Bytes)</source>
         <translation>%1 (%2 ᠪᠠᠢᠲ )</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="930"/>
+        <source>Please select a image that is smaller than 1MB.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Choose a new folder:</source>
@@ -1076,7 +1081,7 @@
         <translation type="vanished">ᠨᠢᠭᠡ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠲᠡᠭᠦᠨ᠎ᠦ᠌ ᠳᠤᠳᠤᠭᠠᠳᠤ ᠳ᠋ᠤ᠌ ᠰᠢᠯᠵᠢᠬᠦᠯᠵᠤ ᠪᠣᠯᠬᠤ ᠥᠬᠡᠢ!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="955"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="969"/>
         <source>%1 Bytes</source>
         <translation>%1 ᠪᠠᠢᠲ</translation>
     </message>
@@ -1093,15 +1098,15 @@
         <translation type="vanished">%1 GB (%2 字节)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="974"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="989"/>
         <source>%1 files, %2 folders</source>
         <translation>%1 ᠹᠠᠢᠯ᠂ %2 ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1090"/>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1092"/>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1097"/>
-        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1099"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1105"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1107"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1112"/>
+        <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1114"/>
         <source>Can&apos;t get remote file information</source>
         <translation>ᠠᠯᠤᠰ ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠰᠤᠷᠠᠭ ᠵᠠᠩᠭᠢ᠎ᠶ᠋ᠢ ᠣᠯᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
@@ -1261,14 +1266,14 @@
         <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="294"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="366"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
         <source>Ip input error, please re-enter!</source>
         <translation>ip ᠢ᠋/ ᠵᠢ ᠤᠷᠤᠭᠤᠯᠤᠭᠰᠠᠨ ᠨᠢ ᠪᠤᠷᠤᠭᠤ᠂ ᠳᠠᠬᠢᠵᠤ ᠣᠷᠣᠭᠤᠯᠤᠭᠠᠷᠠᠢ !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="298"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="370"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
         <source>Port input error, please re-enter!</source>
         <translation>ᠦᠵᠦᠬᠦᠷ ᠢ᠋ ᠤᠷᠤᠭᠤᠯᠤᠭᠰᠠᠨ ᠨᠢ ᠪᠤᠷᠤᠭᠤ᠂ ᠳᠠᠬᠢᠵᠤ ᠣᠷᠣᠭᠤᠯᠤᠭᠠᠷᠠᠢ !</translation>
     </message>
@@ -1286,10 +1291,10 @@
         <translation type="vanished">ᠴᠦᠷᠬᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="294"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="298"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="366"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="370"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
         <source>Warning</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
@@ -1305,42 +1310,42 @@
 <context>
     <name>Peony::ConnectServerLogin</name>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="466"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="487"/>
         <source>The login user</source>
         <translation>ᠨᠡᠪᠳᠡᠷᠡᠬᠦ ᠪᠡᠶ᠎ᠡ ᠵᠢᠨ ᠭᠠᠷᠤᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="475"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="496"/>
         <source>Please enter the %1&apos;s user name and password of the server.</source>
         <translation>%1 ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠦᠷ ᠤ᠋ᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ᠎ᠶ᠋ᠢᠨ ᠨᠡᠷ᠎ᠡ ᠪᠠ ᠨᠢᠭᠤᠴᠠ ᠺᠣᠳ᠋᠎ᠢ᠋ ᠣᠷᠣᠭᠤᠯᠤᠭᠠᠷᠠᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="482"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="503"/>
         <source>User&apos;s identity</source>
         <translation>ᠴᠦᠷᠬᠡᠯᠡᠬᠦ ᠪᠡᠶ᠎ᠡ ᠵᠢᠨ ᠭᠠᠷᠤᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="483"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="504"/>
         <source>Guest</source>
         <translation>ᠵᠤᠷᠴᠢᠭᠴᠢ (᠎ᠨᠡᠷ᠎ᠡ ᠪᠤᠷᠤᠭᠤᠯᠠᠨ ᠨᠡᠪᠳᠡᠷᠡᠬᠦ)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="499"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="520"/>
         <source>Name</source>
         <translation>ᠨᠡᠷᠡᠢᠳᠦᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="500"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="521"/>
         <source>Password</source>
         <translation>ᠨᠢᠭᠤᠴᠠ ᠺᠣᠳ᠋</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="521"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="542"/>
         <source>Cancel</source>
         <translation>ᠦᠬᠡᠢᠰᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="522"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="543"/>
         <source>OK</source>
         <translation>ᠪᠠᠳᠤᠯᠠᠬᠤ</translation>
     </message>
@@ -1349,7 +1354,7 @@
         <translation type="vanished">ᠵᠤᠷᠴᠢᠭᠴᠢ (᠎ᠨᠡᠷ᠎ᠡ ᠪᠤᠷᠤᠭᠤᠯᠠᠨ ᠨᠡᠪᠳᠡᠷᠡᠬᠦ)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="484"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="505"/>
         <source>Registered users</source>
         <translation>ᠳᠠᠩᠰᠠᠯᠠᠭᠤᠯᠤᠭᠰᠠᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ</translation>
     </message>
@@ -1362,7 +1367,7 @@
         <translation type="vanished">ᠨᠢᠭᠤᠴᠠ ᠺᠣᠳ᠋</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="501"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="522"/>
         <source>Remember the password</source>
         <translation>ᠨᠢᠭᠤᠴᠠ ᠺᠣᠳ᠋ ᠢ᠋ ᠴᠡᠭᠡᠵᠢᠯᠡᠬᠦ</translation>
     </message>
@@ -1378,17 +1383,17 @@
 <context>
     <name>Peony::CreateLinkInternalPlugin</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="123"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="132"/>
         <source>Create Link to Desktop</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠳ᠋ᠤ᠌ ᠢᠯᠡᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="149"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="158"/>
         <source>Create Link to...</source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠢᠯᠡᠬᠡᠬᠡᠳ ...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="152"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="161"/>
         <source>Choose a Directory to Create Link</source>
         <translation>ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠴᠦᠷᠬᠡᠯᠡᠬᠡ ᠵᠢᠨ ᠭᠠᠷᠴᠠᠭ᠎ᠢ᠋ ᠰᠣᠩᠭᠣᠬᠤ</translation>
     </message>
@@ -1404,7 +1409,7 @@
 <context>
     <name>Peony::CreateSharedFileLinkMenuPlugin</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="230"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="239"/>
         <source>Create Link to Desktop</source>
         <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠳ᠋ᠤ᠌ ᠢᠯᠡᠬᠡᠬᠦ</translation>
     </message>
@@ -1602,12 +1607,12 @@
         <translation type="vanished">图标视图</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="304"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="321"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="304"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="321"/>
         <source>This operation is not supported.</source>
         <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠥᠬᠡᠢ ᠃</translation>
     </message>
@@ -1626,12 +1631,12 @@
         <translation type="vanished">列表视图</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="557"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="562"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="557"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="562"/>
         <source>This operation is not supported.</source>
         <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠥᠬᠡᠢ ᠃</translation>
     </message>
@@ -1661,7 +1666,7 @@
         <translation type="vanished">在新标签页中打开(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="353"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="356"/>
         <source>Add to bookmark</source>
         <translation>ᠲᠦᠷᠭᠡᠨ ᠰᠤᠷᠪᠤᠯᠵᠢᠯᠠᠭ᠎ᠠ᠎ᠳ᠋ᠤ᠌ ᠨᠡᠮᠡᠬᠦ</translation>
     </message>
@@ -1710,7 +1715,7 @@
         <translation type="vanished">文件夹(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="661"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="669"/>
         <source>New Folder</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠬᠤ</translation>
     </message>
@@ -1731,17 +1736,17 @@
         <translation type="vanished">sort By...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="713"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="721"/>
         <source>Name</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠨᠡᠷ᠎ᠡ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="715"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="723"/>
         <source>File Type</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠲᠥᠷᠥᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="716"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="724"/>
         <source>File Size</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
     </message>
@@ -1750,83 +1755,83 @@
         <translation type="vanished">ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="315"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="406"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="318"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="409"/>
         <source>Open in New Window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ᠎ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="325"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="416"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="328"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="419"/>
         <source>Open in New Tab</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠱᠣᠰᠢᠭ᠎ᠠ᠎ᠶ᠋ᠢᠨ ᠬᠠᠭᠤᠳᠠᠰᠤᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="373"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="426"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="488"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="376"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="431"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="495"/>
         <source>Open</source>
         <translation>ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="384"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="442"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="387"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="447"/>
         <source>Open with...</source>
         <translation>ᠨᠡᠭᠡᠭᠡᠬᠦ ᠬᠡᠯᠪᠡᠷᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="399"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="479"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="402"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="484"/>
         <source>More applications...</source>
         <translation>ᠨᠡᠩ ᠣᠯᠠᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠡ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="497"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="504"/>
         <source>Open %1 selected files</source>
         <translation>%1 ᠰᠣᠩᠭᠣᠭᠳᠠᠭᠰᠠᠨ ᠹᠧᠢᠯ᠎ᠢ᠋ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="545"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="552"/>
         <source>New</source>
         <translation>ᠰᠢᠨ᠎ᠡ᠎ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="645"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="653"/>
         <source>Empty File</source>
         <translation>ᠬᠣᠭᠣᠰᠣᠨ ᠲᠧᠺᠰᠲ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="657"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="665"/>
         <source>Folder</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="687"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="695"/>
         <source>View Type</source>
         <translation>ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ᠎ᠤ᠋ᠨ ᠲᠥᠷᠥᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="707"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="715"/>
         <source>Sort By</source>
         <translation>ᠵᠢᠭᠰᠠᠭᠠᠬᠤ ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="714"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="722"/>
         <source>Modified Date</source>
         <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠬᠤᠭᠤᠴᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="717"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="725"/>
         <source>Original Path</source>
         <translation>ᠠᠩᠬᠠᠨ᠎ᠤ᠋ ᠵᠢᠮ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1334"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1347"/>
         <source>Peony File Labels Menu Extension</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠲᠡᠮᠳᠡᠭ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1366"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1379"/>
         <source>MultiSelect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1835,12 +1840,12 @@
         <translation type="vanished">Sıralama Düzeni...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="750"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="758"/>
         <source>Ascending Order</source>
         <translation>ᠥᠭᠰᠥᠬᠦ ᠶᠠᠪᠤᠴᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="749"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="757"/>
         <source>Descending Order</source>
         <translation>ᠪᠠᠭᠤᠷᠠᠬᠤ</translation>
     </message>
@@ -1849,37 +1854,36 @@
         <translation type="vanished">sort Preferences...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="768"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="776"/>
         <source>Folder First</source>
         <translation>` ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠤᠷᠢᠳᠠᠪᠡᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="777"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="785"/>
         <source>Chinese First</source>
         <translation>ᠬᠢᠲᠠᠳ ᠬᠡᠯᠡ ᠤᠷᠢᠳᠠᠪᠡᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="786"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="794"/>
         <source>Show Hidden</source>
         <translation>ᠨᠢᠭᠤᠭᠳᠠᠮᠠᠯ ᠹᠠᠢᠯ᠎ᠢ᠋ ᠢᠯᠡᠷᠡᠭᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="821"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="829"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="977"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1019"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1239"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="837"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="999"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1252"/>
         <source>Copy</source>
         <translation>ᠺᠣᠫᠢᠳᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1299"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1312"/>
         <source>File:&quot;%1&quot; is not exist, did you moved or deleted it?</source>
         <translation>ᠹᠠᠢᠯ:&quot;%1&quot; ᠣᠷᠣᠰᠢᠬᠤ ᠦᠭᠡᠢ ᠂ ᠲᠠ ᠨᠢᠭᠡᠨᠲᠡ ᠬᠠᠰᠤᠭᠰᠠᠨ ᠪᠤᠶᠤ ᠥᠭᠡᠷ᠎ᠡ ᠭᠠᠵᠠᠷ ᠰᠢᠯᠵᠢᠭᠦᠯᠦᠭᠰᠡᠨ ᠦᠦ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1334"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1344"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1347"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1357"/>
         <source>Peony-Qt filesafe menu Extension</source>
         <translation>ᠹᠠᠢᠯ ᠬᠠᠮᠠᠭᠠᠯᠠᠬᠤ ᠬᠠᠢᠷᠴᠠᠭ᠎ᠤ᠋ᠨ ᠥᠷᠭᠡᠳᠬᠡᠯ</translation>
     </message>
@@ -1888,66 +1892,66 @@
         <translation type="vanished">复制(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="849"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1244"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="867"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1257"/>
         <source>Cut</source>
         <translation>ᠬᠠᠢᠴᠢᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="879"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="894"/>
         <source>Delete to trash</source>
         <translation>ᠬᠠᠰᠤᠭᠠᠳ ᠬᠤᠭᠯᠠᠭᠤᠷ᠎ᠲᠤ᠌ ᠬᠢᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="935"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="953"/>
         <source>Paste</source>
         <translation>ᠨᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="990"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1012"/>
         <source>Refresh</source>
         <translation>ᠰᠢᠨᠡᠳᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1001"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1023"/>
         <source>Select All</source>
         <translation>ᠪᠦᠬᠦ ᠰᠣᠩᠭᠣᠯᠲᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1054"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1099"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1067"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1112"/>
         <source>Properties</source>
         <translation>ᠬᠠᠷᠢᠶᠠᠯᠠᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1137"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1150"/>
         <source>format</source>
         <translation>ᠹᠤᠷᠮᠠᠲ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1191"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1204"/>
         <source>Restore</source>
         <translation>ᠡᠬᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="891"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="971"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1219"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="906"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="993"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1232"/>
         <source>Delete</source>
         <translation>ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="742"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="750"/>
         <source>Sort Order</source>
         <translation>ᠵᠢᠭᠰᠠᠭᠠᠯᠳᠠ ᠵᠢᠨ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="763"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="771"/>
         <source>Sort Preferences</source>
         <translation>ᠵᠢᠭᠰᠠᠭᠠᠯᠳᠠ ᠰᠠᠢᠨ ᠰᠢᠭ᠋</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1298"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1311"/>
         <source>Error</source>
         <translation>ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
@@ -1968,14 +1972,14 @@
         <translation type="vanished">删除到回收站(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="894"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="905"/>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="913"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="909"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="920"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="928"/>
         <source>Delete forever</source>
         <translation>ᠥᠨᠢᠳᠡ ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="921"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="936"/>
         <source>Rename</source>
         <translation>ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠢᠳᠬᠦ</translation>
     </message>
@@ -1984,7 +1988,7 @@
         <translation type="vanished">全选(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1010"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1032"/>
         <source>Reverse Select</source>
         <translation>ᠭᠡᠳᠡᠷᠭᠦ ᠰᠤᠩᠭᠤᠬᠤ</translation>
     </message>
@@ -2013,7 +2017,7 @@
         <translation type="vanished">属性(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1164"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1177"/>
         <source>&amp;Clean the Trash</source>
         <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ᠎ᠢ᠋ ᠴᠡᠪᠡᠷᠯᠡᠬᠦ (&amp;C )</translation>
     </message>
@@ -2034,12 +2038,12 @@
         <translation type="vanished">还原(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1252"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1265"/>
         <source>Clean All</source>
         <translation>ᠪᠦᠬᠦᠨ᠎ᠢ᠋ ᠠᠷᠢᠯᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1269"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1282"/>
         <source>Open Parent Folder in New Window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ᠎ᠳ᠋ᠤ᠌ ᠹᠠᠢᠯ ᠪᠠᠢᠬᠤ ᠭᠠᠷᠴᠠᠭ᠎ᠢ᠋ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
@@ -2049,6 +2053,29 @@
     <message>
         <source>Directory View</source>
         <translation type="vanished">文件视图</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::ExtensionsManagerWidget</name>
+    <message>
+        <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="32"/>
+        <source>Extensions Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="36"/>
+        <source>Available extensions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="38"/>
+        <source>Ok</source>
+        <translation type="unfinished">ᠪᠠᠳᠤᠯᠠᠬᠤ</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="39"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2272,9 +2299,9 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="232"/>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="621"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1069"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1130"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1307"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1078"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1139"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1316"/>
         <source>File copy error</source>
         <translation>ᠹᠠᠢᠯ ᠢ᠋ ᠺᠤᠪᠢᠳᠠᠭᠰᠠᠨ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
@@ -2297,27 +2324,27 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation>ᠹᠠᠢᠯ᠎ᠢ᠋ ᠡᠷᠢᠵᠦ ᠣᠯᠤᠭᠰᠠᠨ ᠦᠭᠡᠢ：%1</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1056"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1065"/>
         <source>File System</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠰᠢᠰᠲ᠋ᠧᠮ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1058"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1067"/>
         <source>Data</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1064"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1073"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1175"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1184"/>
         <source>Link file error</source>
         <translation>ᠴᠦᠷᠬᠡᠯᠡᠭᠰᠡᠨ ᠹᠠᠢᠯ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1309"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1318"/>
         <source>Burning does not support replacement</source>
         <translation>ᠰᠡᠶᠢᠯᠦᠮᠡᠯ ᠦᠨ ᠲᠡᠮᠳᠡᠭᠯᠡᠯ ᠨᠢ ᠰᠣᠯᠢᠬᠤ ᠶᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠭᠡᠢ ᠃</translation>
     </message>
@@ -2352,17 +2379,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="567"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="573"/>
         <source>The password dialog box is canceled</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="569"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="575"/>
         <source>Message recipient disconnected from message bus without replying!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-enumerator.cpp" line="571"/>
+        <location filename="../../libpeony-qt/file-enumerator.cpp" line="577"/>
         <source>Error</source>
         <translation>ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
@@ -2374,24 +2401,24 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileInfo</name>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="319"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="303"/>
         <source>data</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="347"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="375"/>
         <source>folder</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="351"/>
-        <location filename="../../libpeony-qt/file-info.cpp" line="359"/>
-        <location filename="../../libpeony-qt/file-info.cpp" line="361"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="379"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="387"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="389"/>
         <source>file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="354"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="382"/>
         <source>text file</source>
         <translation>ᠲᠧᠺᠰᠲ</translation>
     </message>
@@ -2399,22 +2426,22 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileInfoJob</name>
     <message>
-        <location filename="../../libpeony-qt/file-info-job.cpp" line="280"/>
+        <location filename="../../libpeony-qt/file-info-job.cpp" line="288"/>
         <source>Trash</source>
         <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info-job.cpp" line="282"/>
+        <location filename="../../libpeony-qt/file-info-job.cpp" line="290"/>
         <source>Computer</source>
         <translation>ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info-job.cpp" line="284"/>
+        <location filename="../../libpeony-qt/file-info-job.cpp" line="292"/>
         <source>Network</source>
         <translation>ᠲᠣᠣᠷ ᠰᠦᠯᠵᠢᠶ᠎ᠡ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info-job.cpp" line="286"/>
+        <location filename="../../libpeony-qt/file-info-job.cpp" line="294"/>
         <source>Recent</source>
         <translation>ᠣᠷᠴᠢᠮ</translation>
     </message>
@@ -2435,36 +2462,59 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
 </context>
 <context>
+    <name>Peony::FileInfosJob</name>
+    <message>
+        <location filename="../../libpeony-qt/file-infos-job.cpp" line="164"/>
+        <source>Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-infos-job.cpp" line="166"/>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-infos-job.cpp" line="168"/>
+        <source>Network</source>
+        <translation type="unfinished">ᠲᠣᠣᠷ ᠰᠦᠯᠵᠢᠶ᠎ᠡ</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-infos-job.cpp" line="170"/>
+        <source>Recent</source>
+        <translation type="unfinished">ᠣᠷᠴᠢᠮ</translation>
+    </message>
+</context>
+<context>
     <name>Peony::FileItem</name>
     <message>
         <source>Delete file Warning</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="255"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="321"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="333"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="338"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="242"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="308"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="320"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="325"/>
         <source>Error</source>
         <translation>ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="308"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="295"/>
         <source>Open Link failed</source>
         <translation>ᠴᠦᠷᠬᠡᠯᠡᠭᠡ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="309"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="296"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>ᠬᠠᠷᠠᠯᠲᠠ ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠣᠷᠣᠰᠢᠬᠤ ᠦᠭᠡᠢ ᠂ ᠲᠤᠰ ᠬᠦᠴᠦᠨ ᠦᠭᠡᠢ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠬᠠᠰᠤᠬᠤ ᠤᠤ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="322"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="309"/>
         <source>Can not open path &quot;%1&quot;，permission denied.</source>
         <translation>&quot;%1&quot; ᠵᠢᠮ ᠢ᠋ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ ᠡᠷᠬᠡ ᠲᠡᠪᠴᠢᠭᠳᠡᠪᠡ᠃</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="332"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="319"/>
         <source>Can not find path &quot;%1&quot;，are you moved or renamed it?</source>
         <translation>ᠵᠢᠮ᠎ᠢ᠋ ᠡᠷᠢᠵᠦ ᠣᠯᠤᠭᠰᠠᠨ ᠦᠭᠡᠢ ᠄ &quot;%1&quot;᠂ ᠲᠠ ᠨᠢᠭᠡᠨᠲᠡ ᠰᠢᠯᠵᠢᠬᠦᠯᠦᠭᠰᠡᠨ ᠪᠤᠶᠤ ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠢᠳᠳᠦᠭᠰᠡᠨ ᠦᠦ ?</translation>
     </message>
@@ -2476,42 +2526,47 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileItemModel</name>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="326"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="355"/>
         <source>child(ren)</source>
         <translation>ᠰᠠᠯᠠᠭ᠎ᠠ ᠳᠦᠷᠦᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="313"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="342"/>
         <source>Symbol Link, </source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠂ </translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="372"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="401"/>
         <source>File Name</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠨᠡᠷ᠎ᠡ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="376"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="405"/>
         <source>Delete Date</source>
         <translation>ᠬᠠᠰᠤᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠬᠤᠭᠤᠴᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="381"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="407"/>
+        <source>Create Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="414"/>
         <source>File Size</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="383"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="416"/>
         <source>Original Path</source>
         <translation>ᠠᠩᠬᠠᠨ᠎ᠤ᠋ ᠵᠢᠮ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="379"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="412"/>
         <source>File Type</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠲᠥᠷᠥᠯ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="377"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="410"/>
         <source>Modified Date</source>
         <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠬᠤᠭᠤᠴᠠᠭ᠎ᠠ</translation>
     </message>
@@ -2539,7 +2594,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">菜单中增加标记功能.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="197"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="206"/>
         <source>label management ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2547,7 +2602,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileLabelWidget</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="381"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="390"/>
         <source>label management ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2668,23 +2723,23 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileLaunchAction</name>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="168"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="294"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="515"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="169"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="296"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="518"/>
         <source>Execute Directly</source>
         <translation>ᠰᠢᠭᠤᠳ ᠬᠦᠢᠴᠡᠳᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="169"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="295"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="516"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="170"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="297"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="519"/>
         <source>Execute in Terminal</source>
         <translation>ᠦᠵᠦᠭᠦᠷ᠎ᠲᠦ᠍ ᠬᠦᠢᠴᠡᠳᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="172"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="299"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="520"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="173"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="301"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="523"/>
         <source>Detected launching an executable file %1, you want?</source>
         <translation>ᠶᠠᠭ ᠨᠢᠭᠡᠨ ᠬᠡᠷᠡᠭᠵᠢᠭᠦᠯᠵᠦ ᠪᠣᠯᠬᠤ ᠹᠠᠢᠯ %1 ᠢ᠋/᠎ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠵᠦ ᠪᠠᠢᠨ᠎ᠠ᠂ ᠲᠠ ᠶᠠᠭᠤ ᠵᠢ ᠬᠦᠰᠡᠵᠦ ᠪᠠᠢᠨ᠎ᠠ ?</translation>
     </message>
@@ -2693,14 +2748,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="190"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="333"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="554"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="191"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="335"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="557"/>
         <source>Open Failed</source>
         <translation>ᠨᠡᠭᠡᠭᠡᠬᠦ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="190"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="191"/>
         <source>Can not open %1, file not exist, is it deleted?</source>
         <translation>%1 ᠢ᠋/᠎ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ᠎ᠶ᠋ᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠂ ᠹᠠᠢᠯ ᠣᠷᠣᠰᠢᠬᠤ ᠦᠭᠡᠢ ᠂ ᠨᠢᠭᠡᠨᠲᠡ ᠬᠠᠰᠤᠭᠳᠠᠭᠰᠠᠨ ᠡᠰᠡᠬᠦ᠎ᠶ᠋ᠢ ᠪᠠᠳᠤᠯᠠᠭᠠᠷᠠᠢ᠃</translation>
     </message>
@@ -2713,86 +2768,86 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">不能打开%1</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="142"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="265"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="143"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="267"/>
         <source>No Permission</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="142"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="265"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="143"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="267"/>
         <source>File is not readable. Please check if file has read permisson.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="293"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="514"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="295"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="517"/>
         <source>By Default App</source>
         <translation>ᠠᠶᠠᠳᠠᠯ ᠨᠡᠭᠡᠭᠡᠬᠦ ᠬᠡᠯᠪᠡᠷᠢ᠎ᠶ᠋ᠢ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="298"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="519"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="300"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="522"/>
         <source>Launch Options</source>
         <translation>ᠰᠣᠩᠭᠣᠯᠲᠠ ᠭᠦᠢᠴᠡᠳᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="322"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="543"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="324"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="546"/>
         <source>Open Link failed</source>
         <translation>ᠴᠦᠷᠬᠡᠯᠡᠭᠡ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="323"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="544"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="325"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="547"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>ᠬᠠᠷᠠᠯᠲᠠ ᠹᠠᠢᠯ ᠣᠷᠣᠰᠢᠬᠤ ᠦᠭᠡᠢ ᠂ ᠲᠠ ᠲᠤᠰ ᠴᠦᠷᠬᠡᠯᠡᠭᠡ᠎ᠶ᠋ᠢ ᠬᠠᠰᠤᠬᠤ ᠤᠤ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="334"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="555"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="336"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="558"/>
         <source>Can not open %1, Please confirm you have the right authority.</source>
         <translation>%1 ᠢ᠋/᠎ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ᠎ᠶ᠋ᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠂ ᠲᠠᠨ᠎ᠤ᠋ ᠣᠨᠣᠪᠴᠢᠲᠠᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ ᠡᠷᠬᠡ ᠬᠢᠵᠠᠭᠠᠷ᠎ᠲᠠᠢ᠎ᠶ᠋ᠢ ᠪᠠᠳᠤᠯᠠᠭᠠᠷᠠᠢ᠃</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="338"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="560"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="340"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="563"/>
         <source>Open App failed</source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠲᠠᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="339"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="561"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="341"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="564"/>
         <source>The linked app is changed or uninstalled, so it can not work correctly. 
 Do you want to delete the link file?</source>
         <translation>ᠲᠤᠰ ᠴᠦᠷᠬᠡᠯᠡᠭᠡ᠎ᠶ᠋ᠢᠨ ᠵᠢᠭᠠᠭᠰᠠᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠡ ᠨᠢ ᠨᠢᠭᠡᠨᠲᠡ ᠥᠭᠡᠷᠡᠴᠢᠯᠡᠭᠳᠡᠬᠦ ᠪᠤᠶᠤ ᠪᠠᠭᠤᠯᠭᠠᠭᠳᠠᠭᠰᠠᠨ ᠪᠣᠯᠬᠣᠷ ᠲᠤᠰ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠨᠢ ᠬᠡᠪ᠎ᠦ᠋ᠨ ᠶᠣᠰᠣᠭᠠᠷ ᠠᠵᠢᠯᠯᠠᠵᠤ ᠴᠢᠳᠠᠬᠤ ᠦᠭᠡᠢ ᠃
  ᠲᠤᠰ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠬᠠᠰᠤᠬᠤ ᠤᠤ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="353"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="358"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="572"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="355"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="360"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="575"/>
         <source>Error</source>
         <translation>ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="354"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="356"/>
         <source>File original path not exist, are you deleted or moved it?</source>
         <translation type="unfinished">文件原始路径未找到，您是否已经移动或删除了它？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="358"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="572"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="360"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="575"/>
         <source>Can not get a default application for opening %1, do you want open it with text format?</source>
         <translation>%1 ᠤ᠋ᠨ/ ᠵᠢᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠡ᠎ᠶ᠋ᠢ ᠠᠶᠠᠳᠠᠯ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ ᠲᠧᠺᠰᠲ ᠨᠠᠢᠷᠠᠭᠤᠯᠤᠭᠤᠷ᠎ᠢ᠋ᠶ᠋ᠠᠷ ᠨᠡᠭᠡᠭᠡᠨ᠎ᠡ ᠦᠦ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="886"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="889"/>
         <source>Warning</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="886"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="889"/>
         <source>Can not open the file, application is disabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2806,7 +2861,7 @@ Do you want to delete the link file?</source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="85"/>
+        <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="89"/>
         <source>Link file error</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠴᠦᠷᠬᠡᠯᠡᠬᠡ ᠪᠠᠢᠭᠤᠯᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
@@ -2830,84 +2885,84 @@ Do you want to delete the link file?</source>
         <translation type="vanished">文件创建</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="169"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="387"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="507"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="836"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1726"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="186"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="414"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="534"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="863"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1768"/>
         <source>Move file error</source>
         <translation>ᠹᠠᠢᠯ ᠰᠢᠯᠵᠢᠭᠦᠯᠬᠦ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="274"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="301"/>
         <source>File System</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠰᠢᠰᠲ᠋ᠧᠮ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="276"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="303"/>
         <source>Data</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="282"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="309"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="287"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1901"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="314"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1943"/>
         <source>File move error</source>
         <translation>ᠹᠠᠢᠯ ᠢ᠋ ᠰᠢᠯᠵᠢᠬᠦᠯᠦᠭᠰᠡᠨ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="800"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="810"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="827"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="837"/>
         <source>Invalid move operation, cannot move a file into its sub directories.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="854"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="885"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="938"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1207"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1231"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1362"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="881"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="912"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="965"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1234"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1258"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1389"/>
         <source>The file name exceeds the limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1184"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1211"/>
         <source>Create file error</source>
         <translation>ᠹᠠᠢᠯ ᠢ᠋ ᠪᠠᠢᠭᠤᠯᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1190"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1217"/>
         <source>Cannot opening file, permission denied!</source>
         <translation>ᠹᠠᠢᠯ᠎ᠢ᠋ ᠨᠡᠭᠡᠭᠡᠬᠦ᠎ᠶ᠋ᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ᠂ ᠡᠷᠬᠡ᠎ᠦᠭᠡᠢ !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1192"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1219"/>
         <source>File:%1 was not found.</source>
         <translation>ᠹᠠᠢᠯ᠎ᠢ᠋ ᠡᠷᠢᠵᠦ ᠣᠯᠤᠭᠰᠠᠨ ᠦᠭᠡᠢ ᠄ %1</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="801"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1638"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
         <source>Invalid Operation.</source>
         <translation>ᠬᠠᠤᠯᠢ ᠪᠤᠰᠤ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1693"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1735"/>
         <source>File delete error</source>
         <translation>ᠹᠠᠢᠯ ᠢ᠋ ᠬᠠᠰᠤᠭᠰᠠᠨ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1771"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1813"/>
         <source>Link file error</source>
         <translation>ᠹᠠᠢᠯ ᠢ᠋ ᠴᠦᠷᠬᠡᠯᠡᠭᠰᠡᠨ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1903"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1945"/>
         <source>Burning does not support replacement</source>
         <translation>ᠰᠡᠶᠢᠯᠦᠮᠡᠯ ᠦᠨ ᠲᠡᠮᠳᠡᠭᠯᠡᠯ ᠨᠢ ᠰᠣᠯᠢᠬᠤ ᠶᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠭᠡᠢ ᠃</translation>
     </message>
@@ -2916,8 +2971,8 @@ Do you want to delete the link file?</source>
         <translation type="vanished">文件删除</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="808"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1695"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="835"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1737"/>
         <source>Invalid Operation</source>
         <translation>ᠬᠠᠤᠯᠢ ᠪᠤᠰᠤ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ</translation>
     </message>
@@ -3124,8 +3179,8 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::FileOperationInfo</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="931"/>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="933"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1059"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1061"/>
         <source>Symbolic Link</source>
         <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ</translation>
     </message>
@@ -3141,12 +3196,12 @@ Do you want to delete the link file?</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="231"/>
         <source>Warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="231"/>
         <source>&apos;%1&apos; is occupied，you cannot operate!</source>
         <translation>&apos;%1&apos; ᠨᠢᠭᠡᠨᠲᠡ ᠡᠵᠡᠯᠡᠭᠳᠡᠭᠰᠡᠨ᠂ ᠲᠠ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠶᠠᠪᠤᠭᠳᠠᠭᠤᠯᠬᠤ᠎ᠶ᠋ᠢᠨ ᠠᠷᠭ᠎ᠠ ᠥᠬᠡᠢ !</translation>
     </message>
@@ -3155,67 +3210,67 @@ Do you want to delete the link file?</source>
         <translation type="vanished">no, go to settings</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="217"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="249"/>
         <source>OK</source>
         <translation>ᠪᠠᠳᠤᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="221"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="253"/>
         <source>Cancel</source>
         <translation>ᠦᠬᠡᠢᠰᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="226"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="258"/>
         <source>Do you want to put selected %1 item(s) into trash?</source>
         <translation>ᠰᠣᠩᠭᠣᠭᠰᠠᠨ %1 ᠵᠤᠷᠪᠤᠰ᠎ᠢ᠋ ᠬᠤᠭᠯᠠᠭᠤᠷ ᠲᠤ᠌ ᠬᠢᠬᠦ ᠵᠢ ᠪᠠᠳᠤᠯᠠᠬᠤ ᠤᠤ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="228"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="260"/>
         <source>Do not show again</source>
         <translation>ᠳᠠᠬᠢᠨ ᠢᠯᠡᠷᠡᠭᠦᠯᠬᠦ ᠦᠭᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="395"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="427"/>
         <source>File System</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠰᠢᠰᠲ᠋ᠧᠮ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="397"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="429"/>
         <source>Data</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="401"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="433"/>
         <source>Insufficient storage space</source>
         <translation>ᠬᠠᠳᠠᠭᠠᠯᠠᠬᠤ ᠣᠷᠣᠨ ᠵᠠᠶ ᠬᠦᠷᠦᠯᠴᠡᠬᠦ ᠦᠭᠡᠶ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="404"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="436"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="446"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="478"/>
         <source>Can&apos;t delete.</source>
         <translation>ᠬᠠᠰᠤᠵᠤ ᠪᠣᠯᠬᠤ ᠦᠭᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="447"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="479"/>
         <source>You can&apos;t delete a file whenthe file is doing another operation</source>
         <translation>ᠨᠢᠭᠡᠨ ᠶᠠᠭ ᠪᠤᠰᠤᠳ ᠠᠵᠢᠯᠯᠠᠭ᠎ᠠ ᠬᠢᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠹᠠᠢᠯ᠎ᠢ᠋ ᠬᠠᠰᠤᠵᠤ ᠪᠣᠯᠬᠤ ᠦᠭᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="564"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="600"/>
         <source>File Operation is Busy</source>
         <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠶᠠᠭᠠᠷᠠᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="565"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="601"/>
         <source>There have been one or more fileoperation(s) executing before. Youroperation will wait for executinguntil it/them done. If you really want to execute file operations parallelly anyway, you can change the default option &quot;Allow Parallel&quot; in option menu.</source>
         <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠭᠦᠢᠴᠡᠳᠬᠡᠬᠦ᠎ᠡᠴᠡ ᠡᠮᠦᠨ᠎ᠡ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠳᠠᠭᠤᠰᠤᠭᠠᠳᠤᠢ᠂ ᠲᠡᠷᠡ ᠨᠢ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠢᠭᠡ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠠᠭᠤᠰᠬᠠᠭᠰᠠᠨ᠎ᠤ᠋ ᠳᠠᠷᠠᠭ᠎ᠠ ᠳᠠᠬᠢᠨ ᠭᠦᠢᠴᠡᠳᠬᠡᠬᠦ ᠴᠢᠬᠤᠯᠠᠲᠠᠢ ᠃ ᠬᠡᠷᠪᠡ ᠲᠠ ᠹᠠᠢᠯ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠶᠠᠪᠤᠭᠤᠯᠬᠤ᠎ᠶ᠋ᠢ ᠬᠦᠰᠡᠪᠡᠯ ᠲᠣᠪᠶᠣᠭ ᠳᠠᠬᠢ 《 ᠪᠠᠢᠯᠭᠠᠬᠤ᠎ᠶ᠋ᠢ ᠵᠥᠪᠰᠢᠶᠡᠷᠡᠬᠦ ᠠᠵᠢᠯᠯᠠᠭ᠎ᠠ᠎ᠶ᠋ᠢ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠶᠠᠪᠤᠭᠳᠠᠭᠤᠯᠬᠤ 》 ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠤᠯᠲᠠ᠎ᠶ᠋ᠢ ᠥᠭᠡᠷᠡᠴᠢᠯᠡᠵᠦ ᠪᠣᠯᠤᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="588"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="624"/>
         <source>The long name file is saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3492,24 +3547,24 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::FileTrashOperation</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="68"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="91"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="72"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="95"/>
         <source>trash:///</source>
         <translation>ᠬᠣᠭ:///</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="71"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="94"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="75"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="98"/>
         <source>Trash file error</source>
         <translation>ᠹᠠᠢᠯ᠎ᠢ᠋ ᠬᠤᠭᠯᠠᠭᠤᠷ᠎ᠲᠤ᠌ ᠬᠢᠭᠰᠡᠨ ᠪᠤᠷᠤᠭᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="74"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="78"/>
         <source>Invalid Operation! Can not trash &quot;%1&quot;.</source>
         <translation>ᠬᠠᠤᠯᠢ ᠪᠤᠰᠤ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ! &quot;%1&quot; ᠢ᠋/᠎ᠶ᠋ᠢ ᠪᠤᠴᠠᠭᠠᠨ ᠬᠤᠷᠢᠶᠠᠵᠤ ᠪᠣᠯᠬᠤ ᠦᠭᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="197"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="202"/>
         <source>An unmanageable conflict exists. Please check the recycle bin.</source>
         <translation></translation>
     </message>
@@ -3562,23 +3617,23 @@ Do you want to delete the link file?</source>
     <name>Peony::GlobalSettings</name>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="101"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="512"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="516"/>
         <source>yyyy/MM/dd</source>
         <translation>yyyy/MM/dd</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="102"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="504"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="508"/>
         <source>HH:mm:ss</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="501"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="505"/>
         <source>AP hh:mm:ss</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="515"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="519"/>
         <source>yyyy-MM-dd</source>
         <translation>yyyy-MM-dd</translation>
     </message>
@@ -3661,12 +3716,12 @@ Do you want to delete the link file?</source>
         <translation type="obsolete">计算机</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="363"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="370"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
         <translation>&quot;%2&quot;᠎ᠠ᠋ᠴᠠ &quot;%1&quot; ᠢ᠋/᠎ᠶ᠋ᠢ ᠬᠠᠢᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="392"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="399"/>
         <source>File System</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤᠨ ᠱᠢᠰᠲ᠋ᠧᠮ</translation>
     </message>
@@ -3675,12 +3730,12 @@ Do you want to delete the link file?</source>
         <translation type="vanished">拷贝路径(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="484"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="491"/>
         <source>Open In New Tab</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠱᠣᠰᠢᠭ᠎ᠠ᠎ᠶ᠋ᠢᠨ ᠬᠠᠭᠤᠳᠠᠰᠤᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="488"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="495"/>
         <source>Open In New Window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ᠎ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
@@ -3693,7 +3748,7 @@ Do you want to delete the link file?</source>
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="482"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="489"/>
         <source>Copy Directory</source>
         <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ ᠵᠢᠮ</translation>
     </message>
@@ -4753,14 +4808,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="139"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1676"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1678"/>
         <source>Force unmount failed</source>
         <translation>ᠠᠯᠪᠠᠳᠠᠯᠭ᠎ᠠ᠎ᠪᠠᠷ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ ᠢᠯᠠᠭᠳᠠᠪᠠ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="139"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1676"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1678"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="539"/>
         <source>Error: %1
 </source>
@@ -4769,61 +4824,65 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="142"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1679"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1729"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1681"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1731"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ᠎ᠶ᠋ᠢ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠪᠡᠶᠡᠯᠡᠭᠦᠯᠪᠡ ᠂ ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠨᠢᠭᠡᠨᠲᠡ ᠠᠮᠵᠢᠯᠲᠠ᠎ᠲᠠᠢ ᠪᠠᠭᠤᠯᠭᠠᠪᠠ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1708"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1711"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1710"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1713"/>
         <source>Unmount failed</source>
         <translation>ᠠᠴᠢᠶ᠎ᠠ ᠪᠠᠭᠤᠯᠲᠠ ᠢᠯᠠᠭᠳᠠᠪᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1696"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1698"/>
         <source>Not authorized to perform operation.</source>
         <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠨᠢ ᠡᠷᠬᠡ ᠣᠯᠭᠣᠭᠰᠠᠨ ᠦᠭᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1708"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1710"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
         <translation>ᠪᠠᠭᠤᠯᠭᠠᠬᠤ᠎ᠶ᠋ᠢ ᠬᠠᠰᠤᠬᠤ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠂ ᠲᠠ ᠪᠠᠷᠤᠭ ᠤᠷᠢᠳᠠᠪᠡᠷ ᠵᠠᠷᠢᠮ ᠫᠷᠤᠭ᠌ᠷᠠᠮ᠎ᠢ᠋ ᠬᠠᠭᠠᠬᠤ ᠴᠢᠬᠤᠯᠠᠲᠠᠢ ᠂ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ ᠬᠤᠪᠢᠶᠠᠷᠢ ᠲᠤᠭᠤᠷᠢᠭ ᠤ᠋ᠨ ᠨᠠᠢᠷᠠᠭᠤᠯᠤᠭᠤᠷ ᠵᠡᠷᠭᠡ ᠃</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1711"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1713"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
         <translation>ᠪᠤᠷᠤᠭᠤ᠄ %1
  ᠠᠯᠪᠠᠳᠠᠯᠭ᠎ᠠ᠎ᠪᠠᠷ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ ᠤᠤ ?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="190"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="104"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
         <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="194"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="107"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
         <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="297"/>
-        <source>OK</source>
-        <translation>ᠪᠠᠳᠤᠯᠠᠬᠤ</translation>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
+        <source>Clean the Trash</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="301"/>
+        <source>OK</source>
+        <translation type="vanished">ᠪᠠᠳᠤᠯᠠᠬᠤ</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="315"/>
         <source>Cancel</source>
         <translation>ᠦᠬᠡᠢᠰᠬᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="306"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="320"/>
         <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
         <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ᠎ᠲᠠᠬᠢ ᠹᠠᠢᠯ᠎ᠢ᠋ ᠥᠨᠢᠳᠡ ᠬᠣᠭᠣᠰᠣᠯᠠᠬᠤ ᠤᠤ ? ᠬᠠᠰᠤᠭᠰᠠᠨ᠎ᠤ᠋ ᠳᠠᠷᠠᠭ᠎ᠠ ᠰᠡᠷᠭᠦᠭᠡᠬᠦ ᠵᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠃</translation>
     </message>
@@ -4832,24 +4891,24 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">无论如何弹出</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1178"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1180"/>
         <source>Failed to activate device: Incorrect passphrase</source>
         <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠢᠳᠡᠪᠬᠢᠵᠢᠭᠦᠯᠬᠦ᠎ᠶ᠋ᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠄ ᠪᠤᠷᠤᠭᠤ ᠨᠢᠭᠤᠴᠠ ᠺᠣᠳ᠋</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1188"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1190"/>
         <source>The device has been mount successfully!</source>
         <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠡᠯᠭᠦᠨ ᠠᠴᠢᠶᠠᠯᠠᠪᠠ !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1379"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1417"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1381"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1419"/>
         <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1385"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1424"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1387"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1426"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ᠎ᠶ᠋ᠢ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠪᠡᠶᠡᠯᠡᠭᠦᠯᠪᠡ ᠂ ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠠᠮᠤᠷ ᠲᠦᠪᠰᠢᠨ ᠰᠤᠭᠤᠯᠵᠤ ᠪᠣᠯᠤᠨ᠎ᠠ !</translation>
     </message>
@@ -4862,9 +4921,9 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">文件管理器通知</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1381"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1419"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1696"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1383"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1421"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1698"/>
         <source>Eject failed</source>
         <translation>ᠦᠰᠦᠷᠴᠤ ᠭᠠᠷᠴᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
@@ -5005,11 +5064,11 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="553"/>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="569"/>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="862"/>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="160"/>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="182"/>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="204"/>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="211"/>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="227"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="172"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="194"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="216"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="223"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="239"/>
         <source>duplicate</source>
         <translation>ᠬᠠᠭᠤᠯᠪᠤᠷᠢ ᠳᠡᠪᠲᠡᠷ</translation>
     </message>
@@ -5018,12 +5077,12 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">获取文件信息时出现错误：没有目标文件。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="351"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="363"/>
         <source>data</source>
         <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="369"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="381"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="345"/>
         <source>label</source>
         <translation type="unfinished"></translation>
@@ -5035,7 +5094,7 @@ Do you want to unmount forcely?</source>
         <translation>ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-utils.cpp" line="354"/>
+        <location filename="../../libpeony-qt/file-utils.cpp" line="366"/>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="250"/>
         <source>File System</source>
         <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠰᠢᠰᠲ᠋ᠧᠮ</translation>
@@ -5056,18 +5115,18 @@ Do you want to unmount forcely?</source>
         <translation>ᠹᠠᠢᠯ “%1” ᠣᠷᠣᠰᠢᠬᠤ ᠦᠭᠡᠢ ᠂ ᠹᠠᠢᠯ ᠨᠢ ᠬᠠᠰᠤᠭᠳᠠᠭᠰᠠᠨ ᠡᠰᠡᠬᠦ᠎ᠶ᠋ᠢ ᠪᠠᠢᠴᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1224"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="198"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="361"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="177"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1237"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="203"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="375"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="182"/>
         <source>Are you sure you want to permanently delete this file? Once deletion begins, the file will not be recoverable.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1228"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="202"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="365"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="181"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1241"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="207"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="379"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="186"/>
         <source>Are you sure you want to permanently delete these %1 files? Once deletion begins, these file will not be recoverable.</source>
         <translation></translation>
     </message>
