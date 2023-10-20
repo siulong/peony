@@ -56,6 +56,7 @@ public:
     static PreviewPageFactoryManager *getInstance();
 
     bool registerFactory(const QString &name, PreviewPagePluginIface* plugin);
+    bool unregisterFactory(const QString &name, PreviewPagePluginIface* plugin);
 
     const QStringList getPluginNames();
     PreviewPagePluginIface *getPlugin(const QString &name);

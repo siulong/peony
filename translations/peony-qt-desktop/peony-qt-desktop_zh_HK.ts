@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="mn">
+<TS version="2.1" language="zh">
 <context>
     <name>Peony::DesktopIconView</name>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.h" line="81"/>
         <source>Desktop Icon View</source>
-        <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ</translation>
+        <translation>桌面圖示檢視</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
         <source>New Folder</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>新建資料夾</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
         <source>set background</source>
-        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+        <translation>設置背景</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -25,22 +25,22 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
         <source>Open failed</source>
-        <translation>ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
+        <translation>打開失敗</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ, ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
+        <translation>打開目錄失敗，您沒有許可權！</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
         <source>Open Link failed</source>
-        <translation>ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
+        <translation>打開連結失敗</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation>ᠬᠠᠷᠠᠯᠳᠠᠳᠤ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠤᠷᠤᠰᠢᠬᠤ ᠦᠬᠡᠢ, ᠳᠤᠰ ᠬᠦᠴᠦᠨ ᠦᠬᠡᠢ ᠲᠦᠳᠡ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠬᠠᠰᠤᠬᠤ ᠤᠤ?</translation>
+        <translation>檔案不存在，是否要刪除連結檔？</translation>
     </message>
 </context>
 <context>
@@ -48,12 +48,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="624"/>
         <source>Computer</source>
-        <translation>ᠺᠤᠮᠫᠢᠦᠲᠸᠷ</translation>
+        <translation>計算機</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="626"/>
         <source>Trash</source>
-        <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ</translation>
+        <translation>垃圾</translation>
     </message>
 </context>
 <context>
@@ -97,7 +97,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="237"/>
         <source>Reverse Select</source>
-        <translation>ᠤᠷᠪᠠᠭᠤ ᠪᠡᠷ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation>反向選擇</translation>
     </message>
     <message>
         <source>&amp;New...</source>
@@ -105,7 +105,7 @@
     </message>
     <message>
         <source>New...</source>
-        <translation type="vanished">ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ...</translation>
+        <translation type="vanished">新建...</translation>
     </message>
     <message>
         <source>Empty &amp;File</source>
@@ -118,11 +118,11 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="338"/>
         <source>New Folder</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>新建資料夾</translation>
     </message>
     <message>
         <source>View Type...</source>
-        <translation type="vanished">ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ...</translation>
+        <translation type="vanished">视图类型...</translation>
     </message>
     <message>
         <source>&amp;Small</source>
@@ -143,12 +143,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="109"/>
         <source>Open in new Window</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠤᠩᠬᠤᠨ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>在新視窗中打開</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="114"/>
         <source>Select All</source>
-        <translation>ᠪᠦᠬᠦᠨ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation>全選</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="137"/>
@@ -156,103 +156,103 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="199"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="210"/>
         <source>Open</source>
-        <translation>ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="145"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="170"/>
         <source>Open with...</source>
-        <translation>ᠨᠡᠬᠡᠬᠡᠬᠦ ᠠᠷᠭ᠎ᠠ...</translation>
+        <translation>開啟方式...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="158"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="193"/>
         <source>More applications...</source>
-        <translation>ᠤᠯᠠᠮ ᠤᠯᠠᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠡ...</translation>
+        <translation>更多應用程式...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="213"/>
         <source>Open %1 selected files</source>
-        <translation>%1 ᠰᠤᠩᠭᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠢ᠋ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>開啟 %1 個選定的檔案</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ</translation>
+        <translation>新增功能</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="322"/>
         <source>Empty File</source>
-        <translation>ᠬᠤᠭᠤᠰᠤᠨ ᠲᠸᠺᠰᠲ</translation>
+        <translation>空檔</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="334"/>
         <source>Folder</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>資料夾</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
         <source>View Type</source>
-        <translation>ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ</translation>
+        <translation>視圖類型</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="363"/>
         <source>Small</source>
-        <translation>ᠵᠢᠵᠢᠭ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ</translation>
+        <translation>小</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="366"/>
         <source>Normal</source>
-        <translation>ᠳᠤᠮᠳᠠ ᠵᠡᠷᠭᠡ ᠵᠢᠨ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ</translation>
+        <translation>正常</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="369"/>
         <source>Large</source>
-        <translation>ᠲᠤᠮᠤ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ</translation>
+        <translation>大</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="372"/>
         <source>Huge</source>
-        <translation>ᠮᠠᠰᠢ ᠲᠤᠮᠤ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ</translation>
+        <translation>巨大</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="400"/>
         <source>Sort By</source>
-        <translation>ᠵᠢᠭᠰᠠᠭᠠᠬᠤ ᠠᠷᠭ᠎ᠠ ᠮᠠᠶ᠋ᠢᠭ ᠃</translation>
+        <translation>排序方式</translation>
     </message>
     <message>
         <source>Sort By...</source>
-        <translation type="vanished">sort By...</translation>
+        <translation type="vanished">排序方式...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="405"/>
         <source>Name</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠨᠡᠷᠡᠢᠳᠦᠯ</translation>
+        <translation>名字</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="407"/>
         <source>File Type</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠡᠯᠪᠡᠷᠢ</translation>
+        <translation>檔案類型</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="408"/>
         <source>File Size</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
+        <translation>檔大小</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="480"/>
         <source>Clean the trash</source>
-        <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ ᠢ᠋ ᠴᠡᠪᠡᠷᠯᠡᠬᠦ</translation>
+        <translation>清理垃圾</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="501"/>
         <source>Copy</source>
-        <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ</translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="526"/>
         <source>Delete to trash</source>
-        <translation>ᠬᠠᠰᠤᠵᠤ ᠬᠤᠭᠯᠠᠭᠤᠷ ᠲᠤ᠌ ᠤᠷᠤᠭᠤᠯᠬᠤ</translation>
+        <translation>刪除到廢紙簍</translation>
     </message>
     <message>
         <source>Error</source>
@@ -265,7 +265,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="406"/>
         <source>Modified Date</source>
-        <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠰᠠᠷ᠎ᠠ</translation>
+        <translation>修改日期</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -274,7 +274,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="505"/>
         <source>Cut</source>
-        <translation>ᠬᠠᠢᠴᠢᠯᠠᠬᠤ</translation>
+        <translation>切</translation>
     </message>
     <message>
         <source>&amp;Delete to trash</source>
@@ -283,28 +283,28 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="535"/>
         <source>Delete forever</source>
-        <translation>ᠦᠨᠢᠳᠡ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation>永久刪除</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="543"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="548"/>
         <source>Rename</source>
-        <translation>ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠢᠳᠬᠦ</translation>
+        <translation>重新命名</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="555"/>
         <source>Paste</source>
-        <translation>ᠨᠠᠭᠠᠬᠤ</translation>
+        <translation>糊</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
         <source>Refresh</source>
-        <translation>ᠰᠢᠨᠡᠴᠢᠯᠡᠬᠦ</translation>
+        <translation>刷新</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="576"/>
         <source>Properties</source>
-        <translation>ᠬᠠᠷᠢᠶᠠᠯᠠᠯ</translation>
+        <translation>性能</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
@@ -340,11 +340,11 @@
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">ᠦᠨᠢᠳᠡ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation type="vanished">永久删除</translation>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="vanished">ᠲᠠ ᠨᠡᠬᠡᠷᠡᠨ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠬᠠᠰᠤᠵᠤ ᠬᠠᠶᠠᠬᠤ ᠤᠤ? ᠬᠠᠰᠤᠵᠤ ᠡᠬᠢᠯᠡᠭᠰᠡᠬᠡᠷ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠳᠠᠬᠢᠵᠤ ᠰᠡᠷᠬᠦᠬᠡᠵᠤ ᠳᠡᠢᠯᠬᠦ ᠦᠬᠡᠢ.</translation>
+        <translation type="vanished">您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
@@ -399,7 +399,7 @@
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="226"/>
         <source>peony-qt-desktop</source>
-        <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ</translation>
+        <translation>文件管理器桌面</translation>
     </message>
     <message>
         <source>Peony-Qt Desktop</source>
@@ -412,27 +412,27 @@
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
         <source>Close the peony desktop window</source>
-        <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠤ᠋ᠨ ᠫᠡᠷᠦᠭᠷᠡᠮ ᠢ᠋ ᠬᠠᠭᠠᠬᠤ</translation>
+        <translation>關閉文件管理器桌面視窗</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
         <source>Take over the dbus service.</source>
-        <translation>dbus ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠵᠢ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ.</translation>
+        <translation>接管 dbus 服務。</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="566"/>
         <source>Take over the desktop displaying</source>
-        <translation>ᠰᠢᠷᠡᠭᠡᠨ ᠨᠢᠭᠤᠷ ᠢ᠋ ᠵᠠᠯᠭᠠᠵᠤ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ</translation>
+        <translation>接管桌面顯示</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="569"/>
         <source>Setup backgrounds</source>
-        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+        <translation>設置背景</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="572"/>
         <source>Clear standard icons</source>
-        <translation>ᠪᠠᠷᠢᠮᠵᠢᠶᠠᠳᠤ ᠰᠢᠪᠠᠭ᠎ᠠ ᠵᠢ ᠴᠡᠪᠡᠷᠯᠡᠬᠦ</translation>
+        <translation>清除標準圖示</translation>
     </message>
     <message>
         <source>set background</source>
@@ -444,16 +444,16 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>set background</source>
-        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+        <translation>設置背景</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>display settings</source>
-        <translation>ᠦᠵᠡᠭᠦᠯᠦᠯᠭᠡ ᠶᠢᠨ ᠪᠠᠶᠢᠷᠢᠯᠠᠭᠤᠯᠤᠯᠲᠠ ᠶᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
+        <translation>顯示設置</translation>
     </message>
     <message>
         <source>set resolution</source>
-        <translation type="vanished">Set resolution</translation>
+        <translation type="vanished">设置分辨率</translation>
     </message>
 </context>
 </TS>

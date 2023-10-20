@@ -530,6 +530,17 @@ void HeaderBar::updatePreviewPageVisible()
     }
 }
 
+void HeaderBar::finishEdit()
+{
+    m_searchWidget->finishEdit();
+}
+
+void HeaderBar::quitSerachMode()
+{
+    if (m_searchWidget->isSearchMode())
+       m_searchWidget->clearSearchBox();
+}
+
 void HeaderBar::updateIcons()
 {
     if(!m_window)
@@ -546,8 +557,17 @@ void HeaderBar::updateIcons()
     qDebug()<<"updateIcons:" <<m_window->getCurrentSortOrder();
     m_view_type_menu->setCurrentDirectory(m_window->getCurrentUri());
     m_view_type_menu->setCurrentView(m_window->getCurrentPage()->getView()->viewId(), true);
-    m_sort_type_menu->switchSortTypeRequest(m_window->getCurrentSortColumn());
-    m_sort_type_menu->switchSortOrderRequest(m_window->getCurrentSortOrder());
+
+    int count = 0;
+    if(m_window->getCurrentPage() && m_window->getCurrentPage()->getView()){
+        auto iface = Peony::DirectoryViewHelper::globalInstance()->getViewIface2ByDirectoryViewWidget(m_window->getCurrentPage()->getView());
+        if(iface)
+            count = iface->getAllDisplayFileCount();
+    }
+    if(!(m_window->getCurrentUri().startsWith("search:///") && count>30000)){/* 取消搜索时数量超过阈值不排序 */
+        m_sort_type_menu->switchSortTypeRequest(m_window->getCurrentSortColumn());
+        m_sort_type_menu->switchSortOrderRequest(m_window->getCurrentSortOrder());
+    }
     //use fixed icon mark-location-symbolic in close search button
     //m_searchWidget->updateCloseSearch(Peony::FileUtils::getFileIconName(m_window->getCurrentUri()));
     //go back & go forward

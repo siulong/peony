@@ -103,6 +103,7 @@ class PEONYCORESHARED_EXPORT FileInfo : public QObject
 {
     friend class FileInfoJob;
     friend class FileMetaInfo;
+    friend class FileInfosJob;
 
     Q_OBJECT
 public:
@@ -127,6 +128,7 @@ public:
      * \deprecated
      */
     static std::shared_ptr<FileInfo> fromUri(QString uri);
+    static std::vector<std::shared_ptr<FileInfo> > fromUris(QStringList uris);
     /*!
      * \brief fromPath
      * \param path
@@ -206,7 +208,9 @@ public:
     QString deletionDate() {
         return m_deletion_date;
     }
-
+    QString createDate() {
+        return m_create_date;
+    }
 
     QString type() {
         return m_content_type;
@@ -228,11 +232,13 @@ public:
     quint64 deletionTime() {
         return m_deletion_date_uint64;
     }
+    quint64 createTime() {
+        return m_create_time;
+    }
 
     QList<QColor> getColors() {
         return m_colors;
     }
-
     bool canRead() {
         return m_can_read;
     }
@@ -328,13 +334,17 @@ public:
     }
 
     const QString targetUri();
-    const QString displayName();
+    const QString displayName();/* 返回最终的显示名 */
     const QString symlinkTarget();
     const QString unixDeviceFile();
 
     const QString customIcon();
 
     quint64 getDeletionDateUInt64();
+    const QString getFinalDisplayName();/* 通过m_display_name获取最终的显示名 */
+
+    guint64 getCreateTime() const;
+    QString getCreateDate() const;
 
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
@@ -364,6 +374,7 @@ private:
     guint64 m_modified_time = 0;
     guint64 m_access_time = 0;
     guint64 m_deletion_date_uint64 = 0;
+
 
     /*!
      * \deprecated
@@ -415,6 +426,11 @@ private:
     QList<QColor> m_colors;
 
     QMutex m_mutex;
+
+    QString m_finalDisplayName; /* 最终的显示名，查询获取后缓存起来 */
+
+    guint64 m_create_time = 0;
+    QString m_create_date = nullptr;
 };
 
 }

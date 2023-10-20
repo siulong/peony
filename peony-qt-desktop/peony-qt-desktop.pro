@@ -33,7 +33,8 @@ TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_tr.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_cs.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts \
-                ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+                ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
 
 SOURCES += \
     desktop-background-manager.cpp \
@@ -55,8 +56,7 @@ SOURCES += \
     primary-manager.cpp \
     user-dir-manager.cpp \
     waylandoutputmanager.cpp \
-    ukui-output-core.c \
-    desktopbackground.cpp
+    ukui-output-core.c
 
 HEADERS += \
     desktop-background-manager.h \
@@ -77,8 +77,7 @@ HEADERS += \
     primary-manager.h \
     user-dir-manager.h \
     waylandoutputmanager.h \
-    ukui-output-client.h \
-    desktopbackground.h
+    ukui-output-client.h
 
 target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target

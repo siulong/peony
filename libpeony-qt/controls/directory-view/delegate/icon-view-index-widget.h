@@ -53,6 +53,7 @@ public:
     ~IconViewIndexWidget() override;
 
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void clearModelIndex();
 
 protected:
     void paintEvent(QPaintEvent *e) override;

@@ -93,6 +93,7 @@ public:
 
     //children
     const QStringList getAllFileUris();
+    const int getAllDisplayFileCount();
 
     int getSortType();
     int getSortOrder();

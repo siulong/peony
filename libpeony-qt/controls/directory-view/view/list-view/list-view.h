@@ -133,6 +133,8 @@ public Q_SLOTS:
 
     void doMultiSelect(bool isMultiSlelect);
 
+    const int getAllDisplayFileCount();
+
 protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
@@ -156,6 +158,7 @@ protected:
     void focusInEvent(QFocusEvent *e) override;
 
     void startDrag(Qt::DropActions flags) override;
+    void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
 

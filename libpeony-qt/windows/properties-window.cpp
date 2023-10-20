@@ -356,7 +356,7 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                 } else {
                     windowTitle = m_fileInfo.get()->displayName();
                 }  
-                //fix bug#182415, fix show unknow-icon issue, but basic info icon is correct
+                //fix bug#182415, fix show Unknown-icon issue, but basic info icon is correct
                 iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), true);
                 if (iconName.isEmpty()) {
                     iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);

@@ -62,7 +62,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         qDebug() << "default ALLOW_FILE_OP_PARALLEL:true";
         setValue(ALLOW_FILE_OP_PARALLEL, true);
     }
-    //if local languege is chinese, set chinese first as deafult
+    //if local languege is chinese, set chinese first as default
     if (QLocale::system().name().contains("zh") && !m_settings->allKeys().contains(SORT_CHINESE_FIRST))
         setValue(SORT_CHINESE_FIRST, true);
     for (auto key : m_settings->allKeys()) {
@@ -141,6 +141,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(SEND_URIS_OF_COPY_DSPS, false);
     m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
     m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
+    m_cache.insert(SHOW_CREATE_TIME, false);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         m_peony_gsettings = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 
@@ -158,7 +159,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
             bool sendChanged = false;
-            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING) {
+            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING || SHOW_CREATE_TIME == key) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);
@@ -171,15 +172,18 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
                 m_cache.remove(key);
                 m_cache.insert(key, m_peony_gsettings->get(key));
             }
+            m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
             if (sendChanged) {
                 Q_EMIT this->valueChanged(key);
             }
+
         });
 
         for (auto key : m_peony_gsettings->keys()) {
             m_cache.remove(key);
             m_cache.insert(key, m_peony_gsettings->get(key));
         }
+        m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);
@@ -224,7 +228,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             setValue(DEFAULT_WINDOW_WIDTH, default_width);
             setValue(DEFAULT_WINDOW_HEIGHT, default_height);
             setValue(DEFAULT_SIDEBAR_WIDTH, 292);
-            qDebug() << "deafult set DEFAULT_SIDEBAR_WIDTH:"<<210;
+            qDebug() << "default set DEFAULT_SIDEBAR_WIDTH:"<<210;
         }
     }
 
@@ -594,4 +598,9 @@ QString GlobalSettings::getProjectName()
 #else
     return "unknown-project-name";
 #endif // KYLIN_COMMON
+}
+
+bool GlobalSettings::getShowCreateTime() const
+{
+    return m_showCreateTime;
 }

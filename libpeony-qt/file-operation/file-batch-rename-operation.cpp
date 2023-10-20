@@ -117,9 +117,9 @@ void FileBatchRenameOperation::run()
     }
 
     for (QString uri :m_uris) {
+        OperatorThreadPause();
         if (isCancelled())
             break;
-        OperatorThreadPause();
         QString oldName = FileUtils::getFileDisplayName(uri);
         QString newName = m_new_name;
         auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(uri));

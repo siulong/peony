@@ -55,6 +55,8 @@ namespace Peony {
 class PEONYCORESHARED_EXPORT FileInfoManager
 {
     friend class FileInfo;
+    friend class FileItem;
+
 public:
     static FileInfoManager *getInstance();
     std::shared_ptr<FileInfo> findFileInfoByUri(const QString &uri); //{return global_info_list->value(uri);}
@@ -75,6 +77,7 @@ public:
 
 protected:
     std::shared_ptr<FileInfo> insertFileInfo(std::shared_ptr<FileInfo> info); //{global_info_list->insert(info->uri(), info);}
+    void updateFileInfo(std::shared_ptr<FileInfo> info); //{global_info_list->insert(info->uri(), info);}
 
 private:
     FileInfoManager();

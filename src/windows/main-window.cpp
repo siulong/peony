@@ -228,6 +228,12 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
             this,
             &MainWindow::updateDateFormat);
 #endif
+
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [this](const QString &key){
+        if (key == SHOW_CREATE_TIME) {
+            this->refresh();
+        }
+    });
 }
 
 MainWindow::~MainWindow()
@@ -419,8 +425,10 @@ void MainWindow::setShortCuts()
         trashAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_Delete<<QKeySequence(Qt::CTRL + Qt::Key_D));
         connect(trashAction, &QAction::triggered, [=]() {
             auto currentUri = getCurrentUri();
-            if (currentUri.startsWith("search://")
-                    || currentUri.startsWith("favorite://") || currentUri == "filesafe:///"
+            if(currentUri.startsWith("search://")){
+                currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
+            }
+            if (currentUri.startsWith("favorite://") || currentUri == "filesafe:///"
                     || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
                 return;
 
@@ -447,7 +455,7 @@ void MainWindow::setShortCuts()
 
                 bool isTrash = this->getCurrentUri() == "trash:///";
                 if (!isTrash && canTrash) {
-                    Peony::FileOperationUtils::trash(uris, true);
+                    Peony::FileOperationUtils::trash(uris, true, getCurrentUri().startsWith("search://"));
                 } else {
                     Peony::FileOperationUtils::executeRemoveActionWithDialog(uris);
                 }
@@ -460,8 +468,10 @@ void MainWindow::setShortCuts()
         addAction(deleteAction);
         connect(deleteAction, &QAction::triggered, [=]() {
             auto currentUri = getCurrentUri();
-            if (currentUri.startsWith("search://") || currentUri == "filesafe:///"
-                    || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
+            if(currentUri.startsWith("search://")){
+                currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
+            }
+            if (currentUri == "filesafe:///" || currentUri.startsWith("kmre://") || currentUri.startsWith("kydroid://"))
                 return;
 
             auto uris = this->getCurrentSelections();
@@ -791,7 +801,10 @@ void MainWindow::setShortCuts()
                     connect(op, &Peony::FileOperation::operationFinished, this, [=](){
                         auto opInfo = op->getOperationInfo();
                         auto targetUirs = opInfo->dests();
-                        setCurrentSelectionUris(targetUirs);
+                        //fix bug#196528, selection files icon not update issue
+                        QTimer::singleShot(300, this, [=](){
+                            setCurrentSelectionUris(targetUirs);
+                        });
                     }, Qt::BlockingQueuedConnection);
                 }
                 else{
@@ -816,18 +829,20 @@ void MainWindow::setShortCuts()
                     return ;
                 }
 
-                auto currentUri = getCurrentUri();
-                if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
-                    || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
-                    || currentUri.startsWith("search://") || currentUri == "filesafe:///") {
-                    /* Add hint information,link to bug#107640. */
-                    QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
-                    return;
+                QString currentUri = getCurrentUri();
+                if(currentUri.startsWith("search://")){
+                    currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
                 }
-
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
-                    return;
+                    if(getCurrentUri().startsWith("search://")){
+                        auto selections = this->getCurrentSelections();
+                        auto selectInfo = Peony::FileInfo::fromUri(selections.first());
+                        if(!selectInfo->canWrite())
+                            return;
+                    }else{
+                        return;
+                    }
                 }
 
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
@@ -835,7 +850,7 @@ void MainWindow::setShortCuts()
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 if (! this->getCurrentSelections().contains(desktopUri) && ! this->getCurrentSelections().contains(homeUri))
                 {
-                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true);
+                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, getCurrentUri().startsWith("search://"));
                    this->getCurrentPage()->getView()->repaintView();
                 }
             }
@@ -1363,7 +1378,7 @@ void MainWindow::setCurrentSelectionUris(const QStringList &uris)
 {
     m_tab->setCurrentSelections(uris);
     //move scrollToSelection to m_tab to try fix new unzip file show two same icon issue
-    //Fix me, unknow caused reason
+    //Fix me, Unknown caused reason
 //    if (uris.isEmpty())
 //        return;
 //    getCurrentPage()->getView()->scrollToSelection(uris.first());
@@ -1757,6 +1772,9 @@ void MainWindow::initUI(const QString &uri)
     //bind signals
     connect(m_tab, &TabWidget::searchRecursiveChanged, m_header_bar, &HeaderBar::updateSearchRecursive);
     connect(m_tab, &TabWidget::closeSearch, m_header_bar, &HeaderBar::closeSearch);
+    connect(m_tab, &TabWidget::closeSearch, this, [=](){
+        this->updateSearchStatus(false);
+    });
     connect(m_tab, &TabWidget::viewSelectStatus, m_header_bar, &HeaderBar::switchSelectStatus);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
     connect(m_tab,&TabWidget::globalSearch, m_header_bar, &HeaderBar::setGlobalFlag);
@@ -1801,7 +1819,12 @@ void MainWindow::initUI(const QString &uri)
     });
 
     connect(m_tab, &TabWidget::updateWindowSelectionRequest, this, [=](const QStringList &uris){
-        setCurrentSelectionUris(uris);
+        //setCurrentSelectionUris(uris);
+        //fix bug#196528, selection files icon not update issue
+        //修复拖拽拷贝情况下，未更新图标问题
+        QTimer::singleShot(300, this, [=](){
+            setCurrentSelectionUris(uris);
+        });
     });
     connect(m_tab, &TabWidget::currentSelectionChanged, this, [=](){
         int num = this->getCurrentPage()->getView()->getSelections().count();

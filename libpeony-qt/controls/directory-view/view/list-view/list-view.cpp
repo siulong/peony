@@ -35,6 +35,7 @@
 
 #include "file-meta-info.h"
 #include "search-vfs-uri-parser.h"
+#include "clipboard-utils.h"
 #include <QHeaderView>
 
 #include <QVBoxLayout>
@@ -64,6 +65,7 @@
 #include <QMessageBox>
 
 #include <QPainterPath>
+
 
 #define LISTVIEW_ITEM_BORDER_RADIUS 6
 
@@ -320,6 +322,9 @@ void ListView::mousePressEvent(QMouseEvent *e)
     }
 
     if (e->button() == Qt::RightButton) {
+        if (m_delegate_editing) {
+            return;
+        }
         if (this->state() == QTreeView::EditingState) {
             if (indexWidget(indexAt(e->pos())))
                 return;
@@ -569,10 +574,10 @@ void ListView::dropEvent(QDropEvent *e)
     if(m_current_uri == boxpath || m_current_uri == oldboxpath || m_current_uri == "filesafe:///"){
         return;
     }
-
     //move in current path, do nothing
     if (e->source() == this)
     {
+
         if (indexAt(e->pos()).isValid())
         {
             auto uri = m_proxy_model->itemFromIndex(proxy_index)->uri();
@@ -629,14 +634,10 @@ void ListView::reUpdateScrollBar()
     if (model()->rowCount() == 0) {
         return;
     }
-    int totalHeight = 0;
+
     int rowCount = model()->rowCount();
-    int rowHeight = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()).height();
-    totalHeight = rowCount * rowHeight;
-//    for (int row = 0; row < rowCount; row++) {
-//        auto index = model()->index(row, 0);
-//        totalHeight += sizeHintForIndex(index).height();
-//    }
+    auto index = model()->index(0, 0);
+    int totalHeight = sizeHintForIndex(index).height()*rowCount;
 
     int currentScrollBarValue = verticalScrollBar()->value();
     verticalScrollBar()->setSingleStep(iconSize().height());
@@ -696,7 +697,14 @@ void ListView::startDrag(Qt::DropActions flags)
         }
 
         auto drag = new QDrag(this);
-        drag->setMimeData(model()->mimeData(indexes));
+        if(m_current_uri.startsWith("search://")){
+            QMimeData* data = model()->mimeData(indexes);
+            QVariant isSearchData = QVariant(true);
+            data->setData("peony-qt/is-search", isSearchData.toByteArray());
+            drag->setMimeData(data);
+        }else{
+            drag->setMimeData(model()->mimeData(indexes));
+        }
 
         QRegion rect;
         QHash<QModelIndex, QRect> indexRectHash;
@@ -941,6 +949,11 @@ const QStringList ListView::getAllFileUris()
     return m_proxy_model->getAllFileUris();
 }
 
+const int ListView::getAllDisplayFileCount()
+{
+    return m_proxy_model->rowCount();
+}
+
 int ListView::getCurrentCheckboxColumn()
 {
     int section =header()->sectionViewportPosition(3);
@@ -1123,6 +1136,48 @@ void ListView::setSearchKey(const QString &key)
     auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
     viewItemDelegate->setSearchKeyword(key);
 }
+
+void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+
+    auto proxyModel = static_cast<FileItemProxyFilterSortModel*>(model());
+    auto sourceIndex = proxyModel->mapToSource(index);
+
+    FileItem *item = sourceIndex.isValid()? static_cast<FileItem*>(sourceIndex.internalPointer()): nullptr;
+#ifdef KY_UDF_BURN
+    if (item) {
+        /* R类型光盘，所有用于刻录的文件（夹）展示在挂载点时都应该半透明显示，区别于普通文件 ,linkto task#122470 */
+        if(item->property("isFileForBurning").toBool()){
+            painter->setOpacity(0.5);
+        }else{
+            painter->setOpacity(1.0);
+        }
+    }
+#endif
+
+    if (!m_model) {
+        painter->restore();
+        return QTreeView::drawRow(painter, option, index);
+    }
+
+    QString uri = m_model->getRootUri();
+    if (ClipboardUtils::isClipboardHasFiles() &&
+        FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
+        if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
+            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
+            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+                painter->setOpacity(0.5);
+            }
+            else {
+                painter->setOpacity(1.0);
+            }
+        }
+    }
+    QTreeView::drawRow(painter, option, index);
+    painter->restore();
+}
+
 
 void ListView::doMultiSelect(bool isMultiSlelect)
 {

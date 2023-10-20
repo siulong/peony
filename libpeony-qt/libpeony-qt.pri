@@ -33,6 +33,7 @@ contains(DEFINES, "KY_UKUI_SEARCH") {
 
 
 HEADERS += \
+    $$PWD/extensions-manager-widget.h \
     $$PWD/file-copy.h               \
     $$PWD/peony-log.h               \
     $$PWD/plugin-manager.h          \
@@ -42,6 +43,7 @@ HEADERS += \
     $$PWD/sound-effect.h
 
 SOURCES += \
+    $$PWD/extensions-manager-widget.cpp \
     $$PWD/file-copy.cpp             \
     $$PWD/plugin-manager.cpp        \
     $$PWD/global-settings.cpp       \

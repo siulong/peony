@@ -108,6 +108,23 @@ void FileMoveOperation::setAction(Qt::DropAction action)
     }
 }
 
+void FileMoveOperation::setUriSort(bool isSort, int type)
+{
+    if (isSort != m_is_sort) {
+        m_is_sort = isSort;
+    }
+    if (type != m_sort_type) {
+        m_sort_type = type;
+    }
+}
+
+void FileMoveOperation::setSearchOperation(const bool &isSearch)
+{
+    if (isSearch != m_is_search) {
+        m_is_search = isSearch;
+    }
+}
+
 void FileMoveOperation::progress_callback(goffset current_num_bytes,
         goffset total_num_bytes,
         FileMoveOperation *p_this)
@@ -210,6 +227,16 @@ void FileMoveOperation::move()
         auto destFile = wrapGFile(g_file_resolve_relative_path(destDir.get()->get(), base_name));
         g_autofree char* destUri = g_file_get_uri(destFile.get()->get());
         node->setDestUri(destUri);
+        if (srcUri.startsWith("trash:///")) {
+            auto file = g_file_new_for_uri(srcUri.toUtf8().constData());
+            auto info = g_file_query_info (file,
+                                      G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                      G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+            auto basename = g_path_get_basename (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+            if (basename) {
+                node->setDestFileName(basename);
+            }
+        }
 
         g_file_move(srcFile.get()->get(),
                     destFile.get()->get(),
@@ -1515,6 +1542,16 @@ void FileMoveOperation::moveForceUseFallback()
     bool hasFolder = false;
     for (auto uri : m_src_uris) {
         FileNode *node = new FileNode(uri, nullptr, m_reporter);
+        if (uri.startsWith("trash:///")) {
+            auto file = g_file_new_for_uri(uri.toUtf8().constData());
+            auto info = g_file_query_info (file,
+                                      G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                      G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+            auto basename = g_path_get_basename (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+            if (basename) {
+                node->setDestFileName(basename);
+            }
+        }
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
         nodes<<node;
@@ -1642,6 +1679,11 @@ bool FileMoveOperation::isValid()
 void FileMoveOperation::run()
 {
     Q_EMIT operationStarted();
+
+    if (m_is_sort && m_is_search) {
+        m_src_uris = sortUris(m_src_uris, m_sort_type);
+        m_info.get()->m_is_search = true;
+    }
 
     if (hook_check_operation_valid) {
         if (!hook_check_operation_valid(m_src_uris, m_dest_dir_uri, FILE_OPERATION_MOVE)) {
@@ -1817,7 +1859,7 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             if (!success) {
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(Invalid);
-                qWarning()<<"failed to remove orignal dest file";
+                qWarning()<<"failed to remove Original dest file";
                 return true;
             } else {
                 node->setState(FileNode::Invalid);
@@ -1832,7 +1874,7 @@ bool FileMoveOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
             if (!success) {
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(Invalid);
-                qWarning()<<"failed to remove orignal dest file";
+                qWarning()<<"failed to remove Original dest file";
                 return true;
             } else {
                 node->setState(FileNode::Invalid);

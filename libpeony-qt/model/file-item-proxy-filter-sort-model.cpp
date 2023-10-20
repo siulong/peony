@@ -55,7 +55,7 @@ const QString getModelDirectoryUri(FileItemProxyFilterSortModel *model)
 {
     FileItemModel *srcModel = qobject_cast<FileItemModel *>(model->sourceModel());
     if (!srcModel) {
-        qInfo()<<"source model not avaliable now";
+        qInfo()<<"source model not available now";
         return nullptr;
     }
     return srcModel->getRootUri();
@@ -253,6 +253,13 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
                 return leftItem->m_info->deletionDate() > rightItem->m_info->deletionDate();
             }
 
+            if (Peony::GlobalSettings::getInstance()->getShowCreateTime()) {
+                if (leftItem->m_info->createTime() == rightItem->m_info->createTime()) {
+                    goto default_sort;
+                }
+                return leftItem->m_info->createTime() > rightItem->m_info->createTime();
+            }
+
             //non trash files, use modifiedTime sort
             if (leftItem->m_info->modifiedTime() == rightItem->m_info->modifiedTime())
             {
@@ -318,7 +325,7 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         auto item = static_cast<FileItem*>(childIndex.internalPointer());
 
         /* task#63345 通过.hidden文件来设置隐藏文件和目录 */
-        FileInfo* fileInfo = FileInfo::fromUri(item->uri()).get();
+        FileInfo* fileInfo =  item->m_info.get();/*FileInfo::fromUri(item->uri()).get()*/;
         bool isHidden = fileInfo->property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN).toBool();
         //qDebug()<<"File view .hidden file hidden,uri:"<<item->uri()<<" isHidden:"<<isHidden;
         if(isHidden && !fileInfo->displayName().startsWith(".")){/* .xxx文件遵循是否显示隐藏文件的逻辑 */

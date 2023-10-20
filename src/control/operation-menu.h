@@ -45,6 +45,7 @@ private:
     QAction *m_forbid_thumbnailing = nullptr;
     QAction *m_resident_in_backend = nullptr;
     QAction *m_showFileExtension = nullptr;
+    QAction *m_showCreateTime = nullptr;
 
 private:
     MainWindow *m_window = nullptr;

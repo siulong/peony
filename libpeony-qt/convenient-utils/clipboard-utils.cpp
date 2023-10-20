@@ -68,6 +68,7 @@ static QList<QString> m_target_directory_uri;
 static const QMimeData *clipboardData = nullptr;
 static bool is_clipboard_has_files = false;
 static bool is_clipboard_files_be_cut = false;
+static bool is_search_tab = false;/* 是否在搜索tab中执行剪切或者移动操作 */
 static QStringList clipboard_file_uris;
 
 ClipboardUtils *ClipboardUtils::getInstance()
@@ -139,6 +140,11 @@ void ClipboardUtils::updateClipboardManually(bool force)
             } else {
                 is_clipboard_files_be_cut = false;
             }
+            if (clipboardData->hasFormat("peony-qt/is-search")) {
+                is_search_tab = QVariant(clipboardData->data("peony-qt/is-search")).toBool();
+            } else {
+                is_search_tab = false;
+            }
 
             QStringList l;
             auto mimeData = clipboardData;
@@ -171,11 +177,13 @@ void ClipboardUtils::updateClipboardManually(bool force)
         } else {
             is_clipboard_files_be_cut = false;
             clipboard_file_uris = QStringList();
+            is_search_tab = false;
         }
     } else {
         is_clipboard_files_be_cut = false;
         is_clipboard_has_files = false;
         clipboard_file_uris = QStringList();
+        is_search_tab = false;
     }
 }
 
@@ -224,6 +232,11 @@ void ClipboardUtils::onClipboardDataChanged()
 
 void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut)
 {
+    setClipboardFiles(uris, isCut, false);
+}
+
+void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut, bool isSearch)
+{
     if (!global_instance) {
         global_instance = new ClipboardUtils;
     }
@@ -253,6 +266,7 @@ void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut)
     auto data = new QMimeData;
     QVariant isCutData = QVariant(isCut);
     data->setData("peony-qt/is-cut", isCutData.toByteArray());
+
     QList<QUrl> urls;
     QStringList encodedUris;
     for (auto uri : uris) {
@@ -264,6 +278,10 @@ void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut)
     QString string = encodedUris.join(" ");
     data->setData("peony-qt/encoded-uris", string.toUtf8());
     data->setText(string);
+
+    QVariant isSearchData = QVariant(isSearch);
+    data->setData("peony-qt/is-search", isSearchData.toByteArray());
+
     QApplication::clipboard()->setMimeData(data);
 }
 
@@ -280,6 +298,11 @@ bool ClipboardUtils::isDesktopFilesBeCut()
 bool ClipboardUtils::isPeonyFilesBeCut()
 {
     return m_is_peony_cut;
+}
+
+bool ClipboardUtils::isSearchTab()
+{
+    return is_search_tab;
 }
 
 bool ClipboardUtils::isClipboardFilesBeCut()
@@ -337,6 +360,7 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
         qDebug()<<uris;
         auto moveOp = new FileMoveOperation(uris, targetDirUri);
         moveOp->setAction(Qt::TargetMoveAction);
+        moveOp->setSearchOperation(isSearchTab());
         op = moveOp;
         fileOpMgr->startOperation(moveOp, true);
         QApplication::clipboard()->clear();

@@ -48,6 +48,7 @@ class QSplitter;
 namespace Peony {
 class PreviewPageIface;
 class DirectoryViewContainer;
+class FileInfo;
 }
 
 /*!
@@ -80,6 +81,8 @@ public:
     const int getCurrentRowcount();
 
     const QStringList getAllFileUris();
+    const int getAllDisplayFileCount();
+
     const QList<std::shared_ptr<Peony::FileInfo>> getCurrentSelectionFileInfos();
     /* Function:Get all file information under the current path */
     const QList<std::shared_ptr<Peony::FileInfo>> getCurrentAllFileInfos();
@@ -222,6 +225,7 @@ protected:
     void updatePreviewButtonStatus(bool status);
 
     void paintEvent(QPaintEvent *e);
+    bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
 private:
     NavigationTabBar *m_tab_bar;
     QToolButton *m_add_page_button;

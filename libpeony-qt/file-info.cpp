@@ -138,6 +138,18 @@ std::shared_ptr<FileInfo> FileInfo::fromUri(QString uri)
     }
 }
 
+std::vector<std::shared_ptr<FileInfo> > FileInfo::fromUris(QStringList uris)
+{
+    std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
+    for (auto uri : uris) {
+        std::shared_ptr<FileInfo> newly_info = std::make_shared<FileInfo>();
+        newly_info->m_uri = uri;
+        newly_info->m_file = g_file_new_for_uri(uri.toUtf8().constData());
+        fileInfoVec.push_back(newly_info);
+    }
+    return fileInfoVec;
+}
+
 std::shared_ptr<FileInfo> FileInfo::fromPath(QString path)
 {
     QString uri = "file://" + path;
@@ -262,6 +274,57 @@ quint64 FileInfo::getDeletionDateUInt64()
     return m_deletion_date_uint64;
 }
 
+guint64 FileInfo::getCreateTime() const
+{
+    return m_create_time;
+}
+
+QString FileInfo::getCreateDate() const
+{
+    return m_create_date;
+}
+
+const QString FileInfo::getFinalDisplayName()
+{
+    if (isEmptyInfo())
+        return nullptr;
+
+    bool isMountPoint;
+    QString unixDevice,deviceName;
+
+    unixDevice = unixDeviceFile();
+    isMountPoint = FileUtils::isMountPoint(m_uri);
+
+    QString targetUri = FileUtils::getTargetUri(m_uri);
+    if(m_uri == "file:///DATA"
+            || m_uri == "file:///data"
+            || targetUri == "file:///data")
+    {
+        return tr("data");
+    }
+
+    if((nullptr != m_display_name)
+            && (!isMountPoint
+                || unixDevice.isEmpty()  /*@m_uri is like "computer:///xxx"*/
+                || !unixDevice.contains("/dev")  /*audio-cd*/
+                || unixDevice.contains("/dev/sr"))) { /*blank-cd or blank-dvd*/
+         return m_display_name;
+    }
+
+    if (m_uri.endsWith("/")) {
+        QString uri = m_uri;
+        if (!m_uri.endsWith(":///") && !m_uri.endsWith("://")) {
+            uri.chop(1);
+        }
+        return uri.split("/").last();
+    }
+
+    //@deviceName transcoding
+    deviceName = m_display_name;
+    FileUtils::handleVolumeLabelForFat32(deviceName,unixDevice);
+    return deviceName;
+}
+
 const QString FileInfo::unixDeviceFile()
 {
     GFile* file;
@@ -303,42 +366,7 @@ const QString FileInfo::unixDeviceFile()
 
 const QString FileInfo::displayName()
 {
-    if (isEmptyInfo())
-        return nullptr;
-    bool isMountPoint;
-    QString unixDevice,deviceName;
-
-    unixDevice = unixDeviceFile();
-    isMountPoint = FileUtils::isMountPoint(m_uri);
-
-    QString targetUri = FileUtils::getTargetUri(m_uri);
-    if(m_uri == "file:///DATA"
-            || m_uri == "file:///data"
-            || targetUri == "file:///data")
-    {
-        return tr("data");
-    }
-
-    if((nullptr != m_display_name)
-            && (!isMountPoint
-                || unixDevice.isEmpty()  /*@m_uri is like "computer:///xxx"*/
-                || !unixDevice.contains("/dev")  /*audio-cd*/
-                || unixDevice.contains("/dev/sr"))) { /*blank-cd or blank-dvd*/
-         return m_display_name;
-    }
-
-    if (m_uri.endsWith("/")) {
-        QString uri = m_uri;
-        if (!m_uri.endsWith(":///") && !m_uri.endsWith("://")) {
-            uri.chop(1);
-        }
-        return uri.split("/").last();
-    }
-
-    //@deviceName transcoding
-    deviceName = m_display_name;
-    FileUtils::handleVolumeLabelForFat32(deviceName,unixDevice);
-    return deviceName;
+    return m_finalDisplayName;
 }
 
 QString FileInfo::displayFileType()

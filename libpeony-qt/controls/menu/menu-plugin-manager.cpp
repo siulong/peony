@@ -77,6 +77,15 @@ bool MenuPluginManager::registerPlugin(MenuPluginInterface *plugin)
     return true;
 }
 
+bool MenuPluginManager::unregisterPlugin(MenuPluginInterface *plugin)
+{
+    if (m_hash.value(plugin->name())) {
+        m_hash.remove(plugin->name());
+        return true;
+    }
+    return false;
+}
+
 MenuPluginManager *MenuPluginManager::getInstance()
 {
     if (!global_instance) {

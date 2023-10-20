@@ -70,6 +70,18 @@ bool PreviewPageFactoryManager::registerFactory(const QString &name, PreviewPage
     return true;
 }
 
+bool PreviewPageFactoryManager::unregisterFactory(const QString &name, PreviewPagePluginIface *plugin)
+{
+    if (m_map->value(name)) {
+        auto p = m_map->value(name);
+        delete p;
+        p = nullptr;
+        m_map->remove(name);
+        return true;
+    }
+    return false;
+}
+
 PreviewPagePluginIface *PreviewPageFactoryManager::getPlugin(const QString &name)
 {
     m_last_preview_page_id = name;

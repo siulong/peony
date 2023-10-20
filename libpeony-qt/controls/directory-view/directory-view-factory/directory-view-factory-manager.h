@@ -45,6 +45,7 @@ public:
     static DirectoryViewFactoryManager2 *getInstance();
 
     void registerFactory(const QString &name, DirectoryViewPluginIface2 *factory);
+    void unregisterFactory(const QString &name, DirectoryViewPluginIface2 *factory);
     QStringList getFactoryNames();
     DirectoryViewPluginIface2 *getFactory(const QString &name);
 
@@ -52,6 +53,9 @@ public:
     const QString getDefaultViewId(int zoomLevel, const QString &uri = nullptr);
 
     const QStringList internalViews() {return m_internal_views;}
+
+Q_SIGNALS:
+    void updateViewEnable(const QString &name, DirectoryViewPluginIface2 *factory, const bool enable);
 
 public Q_SLOTS:
     void setDefaultViewId(const QString &viewId);

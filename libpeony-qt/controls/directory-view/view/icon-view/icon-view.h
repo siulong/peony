@@ -142,6 +142,8 @@ public Q_SLOTS:
 
     void setItemsVisible(bool visible) override;
 
+    const int getAllDisplayFileCount();
+
 protected:
     /*!
      * \brief changeZoomLevel
@@ -181,6 +183,8 @@ private Q_SLOTS:
     void slotRename();
 
 private:
+    void traverseNode();
+
     QTimer m_repaint_timer;
 
     bool  m_editValid;

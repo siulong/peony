@@ -429,7 +429,11 @@ bool SideBarModel::dropMimeData(const QMimeData *data, Qt::DropAction action, in
             if (FileUtils::containsStandardPath(srcUris)) {
                 return false;
             }
-            FileOperationUtils::move(uris, item->uri(), true, true);
+            bool bMoveFromSearchTab = false;
+            if (data->hasFormat("peony-qt/is-search")) {
+                bMoveFromSearchTab = QVariant(data->data("peony-qt/is-search")).toBool();
+            }
+            FileOperationUtils::moveWithAction(uris, item->uri(), true, Qt::MoveAction, bMoveFromSearchTab);
             //qDebug() << "sideBarModel moveOp";
         }
         else if (action == Qt::CopyAction)

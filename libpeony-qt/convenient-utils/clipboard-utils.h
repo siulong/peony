@@ -59,6 +59,7 @@ public:
      * \see ClipboardUtils::isClipboardFilesBeCut
      */
     static void setClipboardFiles(const QStringList &uris, bool isCut);
+    static void setClipboardFiles(const QStringList &uris, bool isCut, bool isSearch);
     static bool isClipboardHasFiles();
     /*!
      * \brief isClipboardFilesBeCut
@@ -69,6 +70,7 @@ public:
     static bool isClipboardFilesBeCut();
     static bool isDesktopFilesBeCut();
     static bool isPeonyFilesBeCut();
+    static bool isSearchTab();
     static QStringList getClipboardFilesUris();
     static FileOperation *pasteClipboardFiles(const QString &targetDirUri);
     static void clearClipboard();

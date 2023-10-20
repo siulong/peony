@@ -38,6 +38,12 @@
       <description>show file extension in peony </description>
     </key>
 
+    <key type="b" name="show-create-time">
+      <default>false</default>
+      <summary>show create time</summary>
+      <description>show file create time in peony </description>
+    </key>
+
     <key type="b" name="send-uris-of-copy-dsps">
       <default>false</default>
       <summary>send uris of copy dsps</summary>
@@ -132,6 +138,12 @@
       <default>''</default>
       <summary>templates dir</summary>
       <description>templates dir</description>
+    </key>
+
+    <key type="as" name="disabled-extensions">
+      <default>[  ]</default>
+      <summary>disabled list of extensions</summary>
+      <description>This list stores disabled extensions</description>
     </key>
 
     <!--directory-view-->

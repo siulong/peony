@@ -35,7 +35,6 @@
 #include "desktop-menu.h"
 #include "global-settings.h"
 #include "file-enumerator.h"
-#include "desktopbackground.h"
 #include "desktop-background-manager.h"
 #include "desktopbackgroundwindow.h"
 #include "desktop-item-model.h"
@@ -84,12 +83,6 @@ static QRect max_size = QRect(0, 0, 0, 0);
 static Peony::DesktopItemModel *desktop_model = nullptr;
 static int desktop_window_id = 0;
 static bool g_emitFinish = false;
-
-/*!
- * \brief virtualDesktopWindow
- * \deprecated
- */
-static DesktopBackground *virtualDesktopWindow = nullptr;
 
 //record of desktop start time
 qint64 PeonyDesktopApplication::peony_desktop_start_time = 0;

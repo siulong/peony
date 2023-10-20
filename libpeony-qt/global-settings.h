@@ -37,6 +37,7 @@
 #define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
 #define SHOW_IN_NEW_WINDOW          "showInNewWindow"
+#define DISABLED_EXTENSIONS         "disabledExtensions"
 
 //视图 - View
 #define DEFAULT_VIEW_ID             "defaultViewId"
@@ -55,6 +56,7 @@
 #define SORT_FOLDER_FIRST           "folderFirst"
 #define SORT_CHINESE_FIRST          "chineseFirst"
 #define USE_GLOBAL_DEFAULT_SORTING "useGlobalDefaultSorting"
+#define SHOW_CREATE_TIME            "showCreateTime"
 
 //窗口设置 - Window setting
 #define DEFAULT_WINDOW_WIDTH        "defaultWindowWidth"
@@ -166,6 +168,8 @@ public:
     bool initDateFormatDBus();
     QString getProjectName();
 
+    bool getShowCreateTime() const;
+
 Q_SIGNALS:
     void valueChanged(const QString &key);
     void updateHiddenFile(const QString &fileName);
@@ -227,6 +231,7 @@ private:
     QString                     m_system_time_format  = "";
 
     QDBusInterface*             mDbusDateServer = nullptr;
+    bool m_showCreateTime = false;
 };
 
 }

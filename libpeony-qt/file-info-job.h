@@ -72,6 +72,7 @@ public:
         return m_info;
     }
     ~FileInfoJob();
+
     bool querySync();
 
     void setAutoDelete(bool deleteWhenJobFinished = true) {
@@ -82,8 +83,8 @@ Q_SIGNALS:
     /*!
      * \brief queryAsyncFinished
      * \param successed
-     * \retval true if no error happend in queryAsync() and callback
-     * \retval false if error happend, it might be cancelled, or others.
+     * \retval true if no error happened in queryAsync() and callback
+     * \retval false if error happened, it might be cancelled, or others.
      * \note If you just want to get the info states, I recommend you connect to
      * Peony::FileInfo::updated signal, every query job of a info will send this signal
      * if query successfully.
@@ -127,6 +128,8 @@ private:
     void queryFileDisplayName(GFileInfo* new_info);
     void refreshFileSystemInfo (GFileInfo* new_info);
     void refreshInfoContents (GFileInfo *new_info);
+
+private:
     std::shared_ptr<FileInfo> m_info;
 
     quint64 m_file_size_uint = 0;
@@ -141,6 +144,7 @@ private:
 
     GCancellable *m_cancellable = nullptr;
     GCancellable *m_fs_cancellable = nullptr;
+
 };
 
 }

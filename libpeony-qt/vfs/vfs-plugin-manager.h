@@ -39,6 +39,8 @@ public:
 
     void registerPlugin(VFSPluginIface *plugin);
 
+    void unregisterPlugin(VFSPluginIface *plugin);
+
     QList<VFSPluginIface *> registeredPlugins();
 
     /*!
@@ -55,6 +57,9 @@ public:
      * \see supportExtraSchemes
      */
     GFile *newVFSFile(const QString &uri);
+
+Q_SIGNALS:
+    void updateVFSPlugin(VFSPluginIface *newPlugin, bool enable);
 
 private:
     explicit VFSPluginManager(QObject *parent = nullptr);

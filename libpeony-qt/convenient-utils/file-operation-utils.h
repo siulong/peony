@@ -42,6 +42,7 @@ public:
     static FileOperation *move(const QStringList &srcUris, const QString &destUri, bool addHistory, bool copyMove = false);
     static FileOperation *copy(const QStringList &srcUris, const QString &destUri, bool addHistory);
     static FileOperation *trash(const QStringList &uris, bool addHistory);
+    static FileOperation *trash(const QStringList &uris, bool addHistory, bool isFromSearchTab);
     static FileOperation *remove(const QStringList &uris);
     static FileOperation *rename(const QString &uri, const QString &newName, bool addHistory);
     static FileOperation *link(const QString &srcUri, const QString &destUri, bool addHistory);
@@ -80,6 +81,7 @@ public:
      * \return
      */
     static FileOperation *moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action = Qt::MoveAction);
+    static FileOperation *moveWithAction(const QStringList &srcUris, const QString &destUri, bool addHistory, Qt::DropAction action, bool bMoveFromSearchTab = false);
 
     static FileOperation *clearRecycleBinWithDialog(const QStringList &list);
 
