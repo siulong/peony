@@ -511,7 +511,8 @@ void HeaderBar::mouseMoveEvent(QMouseEvent *e)
 void HeaderBar::mouseDoubleClickEvent(QMouseEvent *e)
 {
     QToolBar::mouseDoubleClickEvent(e);
-    if(e->button() == Qt::LeftButton || e->button() == Qt::RightButton){
+    //fix bug#196512, RightButton double click in buttons can also maximizeOrRestore window issue
+    if(e->button() == Qt::LeftButton/* || e->button() == Qt::RightButton*/){
         m_window->maximizeOrRestore();
     }
 }
