@@ -50,7 +50,10 @@ QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
     if (QThread::currentThread() == uiThread) {
         metaInfo = FileMetaInfo::fromUri(uri);
     } else {
-        metaInfo = requestDupMetaInfo(uri);
+//        metaInfo = requestDupMetaInfo(uri);
+        // note: qt5.15 + peony通过block signals connect方式会导致死锁，这里只能先使用相对安全的dup方法
+        // 通过gdb分析主线程卡死在setWindowIcon()，qt增加了QT_USE_THREAD_PARALLEL_IMAGE_CONVERSIONS和相关处理代码，具体卡死原因还需要进一步分析
+        metaInfo = FileMetaInfo::dupFromUri(uri);
     }
     if(!metaInfo || !metaInfo.get())
         return QStringList();
