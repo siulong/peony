@@ -1,3 +1,9 @@
+peony (4.1.2.1-ok1~1020) nile; urgency=medium
+
+  * New upstream release.
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 20 Oct 2023 13:40:25 +0800
+
 peony (4.1.1.1-ok1~0919) nile; urgency=medium
 
   * New upstream release.
