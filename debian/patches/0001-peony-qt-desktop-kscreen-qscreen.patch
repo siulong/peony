@@ -12,7 +12,7 @@ Subject: =?utf-8?b?cGVvbnktcXQtZGVza3RvcDog5L2/55Soa3NjcmVlbuWQjuWPsOabvw==?=
  5 files changed, 249 insertions(+), 141 deletions(-)
 
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
-index a58f827..0550d66 100644
+index d9081bb..ae2ede3 100644
 --- a/peony-qt-desktop/desktopbackgroundwindow.cpp
 +++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
 @@ -41,7 +41,7 @@ static QTimeLine *gTimeLine = nullptr;
@@ -52,7 +52,7 @@ index a58f827..0550d66 100644
          QPoint relativePos = getRelativePos(pos);
          qInfo()<<pos;
          // fix #115384, context menu key issue
-@@ -122,6 +122,37 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
+@@ -126,6 +126,37 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
  //            }
          });
      });
@@ -90,7 +90,7 @@ index a58f827..0550d66 100644
  }
  
  DesktopBackgroundWindow::~DesktopBackgroundWindow()
-@@ -135,7 +166,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -139,7 +170,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
      if (!manager->getPaintBackground())
          return;
  
@@ -99,7 +99,7 @@ index a58f827..0550d66 100644
          return;
  
      QPainter p(this);
-@@ -147,19 +178,19 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -151,19 +182,19 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
          p.setRenderHint(QPainter::SmoothPixmapTransform);
          auto animation = manager->getAnimation();
          QPixmap frontPixmap = manager->getFrontPixmap();
@@ -124,7 +124,7 @@ index a58f827..0550d66 100644
                               frontPixmap);
              } else if (manager->getBackgroundOption() == "stretched") {
                  //拉伸
-@@ -180,12 +211,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -184,12 +215,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, backPixmap);
                          drawedWidth += backPixmap.width();
@@ -139,7 +139,7 @@ index a58f827..0550d66 100644
                          break;
                      }
                  }
-@@ -197,12 +228,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -201,12 +232,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                          drawedWidth += frontPixmap.width();
@@ -154,7 +154,7 @@ index a58f827..0550d66 100644
                          break;
                      }
                  }
-@@ -213,9 +244,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -217,9 +248,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                  p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
              } else if (manager->getBackgroundOption() == "spanned") {
                  //跨区
@@ -166,7 +166,7 @@ index a58f827..0550d66 100644
              } else {
                  p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
                  p.setOpacity(opacity);
-@@ -224,8 +255,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -228,8 +259,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
  
          } else {
              if (manager->getBackgroundOption() == "centered") {
@@ -177,7 +177,7 @@ index a58f827..0550d66 100644
                               frontPixmap);
              } else if (manager->getBackgroundOption() == "stretched") {
                  p.drawPixmap(this->rect(), frontPixmap, frontPixmap.rect());
-@@ -241,19 +272,20 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -245,19 +276,20 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                          drawedWidth += frontPixmap.width();
@@ -201,7 +201,7 @@ index a58f827..0550d66 100644
              } else {
                  p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
              }
-@@ -272,14 +304,28 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -276,14 +308,28 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
      }
  }
  
@@ -233,7 +233,7 @@ index a58f827..0550d66 100644
  }
  
  bool DesktopBackgroundWindow::event(QEvent *event)
-@@ -294,8 +340,8 @@ bool DesktopBackgroundWindow::event(QEvent *event)
+@@ -298,8 +344,8 @@ bool DesktopBackgroundWindow::event(QEvent *event)
                  m_shellSurface->setSkipSwitcher(true);
                  m_shellSurface->setSkipTaskbar(true);
                  // wayland中构造函数的move只能在这里生效
@@ -244,7 +244,7 @@ index a58f827..0550d66 100644
                  }
              }
              break;
-@@ -316,7 +362,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
+@@ -320,7 +366,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
  
  void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
  {
@@ -253,7 +253,7 @@ index a58f827..0550d66 100644
      if (gTimeLine->state() != QTimeLine::Running) {
          gTimeLine->start();
      } else {
-@@ -326,21 +372,22 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
+@@ -330,21 +376,22 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
  
  void DesktopBackgroundWindow::updateWindowGeometry()
  {
@@ -281,7 +281,7 @@ index a58f827..0550d66 100644
              qInfo()<<"has center widget, raise window";
              KWindowSystem::raiseWindow(this->winId());
          } else {
-@@ -364,11 +411,11 @@ void DesktopBackgroundWindow::setId(int id)
+@@ -368,11 +415,11 @@ void DesktopBackgroundWindow::setId(int id)
  //获取iconview中图标的相对位置
  QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
  {
@@ -295,7 +295,7 @@ index a58f827..0550d66 100644
          if (m_panelSetting) {
              int position = m_panelSetting->get("panelposition").toInt();
              int offset = m_panelSetting->get("panelsize").toInt();
-@@ -451,11 +498,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
+@@ -455,11 +502,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
  
  QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
  {
@@ -312,7 +312,7 @@ index a58f827..0550d66 100644
      qreal pixWidth = pixmap.width();
      qreal pixHeight = pixmap.height();
  
-@@ -530,3 +578,12 @@ Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
+@@ -534,3 +582,12 @@ Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
  {
      return m_desktopIconView;
  }
@@ -326,7 +326,7 @@ index a58f827..0550d66 100644
 +    setCentralWidget(m_desktopIconView);
 +}
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.h b/peony-qt-desktop/desktopbackgroundwindow.h
-index 3cff0cb..2618405 100644
+index 1485a26..705cc2e 100644
 --- a/peony-qt-desktop/desktopbackgroundwindow.h
 +++ b/peony-qt-desktop/desktopbackgroundwindow.h
 @@ -26,6 +26,7 @@
@@ -337,7 +337,7 @@ index 3cff0cb..2618405 100644
  
  namespace KWayland {
  namespace Client {
-@@ -37,25 +38,29 @@ class DesktopBackgroundWindow : public QMainWindow
+@@ -40,25 +41,29 @@ class DesktopBackgroundWindow : public QMainWindow
  {
      Q_OBJECT
  public:
@@ -371,7 +371,7 @@ index 3cff0cb..2618405 100644
  
  protected Q_SLOTS:
      void updateWindowGeometry();
-@@ -75,11 +80,12 @@ protected:
+@@ -78,11 +83,12 @@ protected:
  
  private:
      int m_id = -1;
@@ -382,14 +382,14 @@ index 3cff0cb..2618405 100644
  
      KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
 +    KScreen::OutputPtr m_output = nullptr;
+     Peony::DesktopMenu *m_menu = nullptr;
  };
  
- #endif // DESKTOPBACKGROUNDWINDOW_H
 diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
-index b0662f4..e29ca4b 100644
+index 4c5c90f..0a26d53 100644
 --- a/peony-qt-desktop/peony-desktop-application.cpp
 +++ b/peony-qt-desktop/peony-desktop-application.cpp
-@@ -345,10 +345,10 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const
+@@ -338,10 +338,10 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const
  
      }
  
@@ -404,7 +404,7 @@ index b0662f4..e29ca4b 100644
  
      //parse cmd
      qDebug()<<"parse cmd";
-@@ -400,14 +400,14 @@ Peony::DesktopItemModel *PeonyDesktopApplication::getModel()
+@@ -393,14 +393,14 @@ Peony::DesktopItemModel *PeonyDesktopApplication::getModel()
  Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
  {
      //获取当前屏幕的view,如果是镜像直接返回主屏
@@ -422,7 +422,7 @@ index b0662f4..e29ca4b 100644
          if (screenRegion.contains(pos)) {
              desktopIconView = window->getIconView();
              break;
-@@ -426,10 +426,20 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(int id)
+@@ -419,10 +419,20 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(int id)
      return m_bg_windows[0]->getIconView();
  }
  
@@ -445,7 +445,7 @@ index b0662f4..e29ca4b 100644
              return window->getIconView();
          }
      }
-@@ -514,20 +524,21 @@ void PeonyDesktopApplication::gotoSetResolution()
+@@ -507,20 +517,21 @@ void PeonyDesktopApplication::gotoSetResolution()
  
  }
  
@@ -470,7 +470,7 @@ index b0662f4..e29ca4b 100644
      if (0 < id) {
          for (auto window : m_bg_windows) {
              if (0 == window->id()) {
-@@ -537,12 +548,6 @@ void PeonyDesktopApplication::relocateIconView()
+@@ -530,12 +541,6 @@ void PeonyDesktopApplication::relocateIconView()
                  primaryWindow->setId(0);
                  window->getIconView()->clearItemRect();
                  primaryWindow->getIconView()->clearItemRect();
@@ -483,7 +483,7 @@ index b0662f4..e29ca4b 100644
              }
          }
      }
-@@ -550,10 +555,13 @@ void PeonyDesktopApplication::relocateIconView()
+@@ -543,10 +548,13 @@ void PeonyDesktopApplication::relocateIconView()
      for (auto window : m_bg_windows) {
          qDebug() << "screen name :" << window->screen()->name() << " id:" << window->id() ;
          Q_EMIT window->getIconView()->updateView();
@@ -499,7 +499,7 @@ index b0662f4..e29ca4b 100644
      }
      if(primaryWindow) {
          KWindowSystem::raiseWindow(primaryWindow->winId());
-@@ -640,12 +648,6 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
+@@ -633,12 +641,6 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
          }
  
          if (parser.isSet(desktopOption)) {
@@ -512,7 +512,7 @@ index b0662f4..e29ca4b 100644
              setupBgAndDesktop();
          }
  
-@@ -762,48 +764,20 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
+@@ -755,48 +757,20 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
  
  }
  
@@ -562,15 +562,15 @@ index b0662f4..e29ca4b 100644
 -        }
 -        qInfo()<<"QScreen::destroyed screen name:"<<screen->name()<< m_bg_windows.count();
 -        window->invaidScreen();
--        bool sucess = m_bg_windows.removeOne(window);
--        qDebug()<<"QScreen::destroyed :"<<sucess;
+-        bool success = m_bg_windows.removeOne(window);
+-        qDebug()<<"QScreen::destroyed :"<<success;
 -        delete window;
 -    });
 +
      //task#74174 更新图标大小
      connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
          for (auto bgWindow : m_bg_windows) {
-@@ -819,32 +793,45 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
+@@ -812,32 +786,45 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
              bgWindow->getIconView()->setSortType(sortType);
          }
      });
@@ -636,7 +636,7 @@ index b0662f4..e29ca4b 100644
  }
  
  void PeonyDesktopApplication::setupBgAndDesktop()
-@@ -1046,18 +1033,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
+@@ -1039,18 +1026,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
      return nullptr;
  }
  
@@ -767,7 +767,7 @@ index 10fda29..7483345 100644
  };
  
 diff --git a/peony-qt-desktop/peony-qt-desktop.pro b/peony-qt-desktop/peony-qt-desktop.pro
-index 8df8626..874991a 100644
+index d6f9dda..f0f241b 100644
 --- a/peony-qt-desktop/peony-qt-desktop.pro
 +++ b/peony-qt-desktop/peony-qt-desktop.pro
 @@ -4,7 +4,7 @@
