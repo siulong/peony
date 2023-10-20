@@ -21,6 +21,7 @@
  */
 
 #include "directory-view-widget.h"
+#include "clipboard-utils.h"
 
 #include <QApplication>
 
@@ -33,4 +34,6 @@ DirectoryViewWidget::DirectoryViewWidget(QWidget *parent) : QWidget (parent)
     connect(qApp, &QApplication::paletteChanged, this, [=]() {
         this->repaintView();
     });
+
+    connect(ClipboardUtils::getInstance(), &ClipboardUtils::clipboardChanged, this, &DirectoryViewWidget::repaintView);
 }

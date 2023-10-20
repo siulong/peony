@@ -111,6 +111,13 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
                                           "opreateFinishedOfEngrampa",
                                           this,
                                           SLOT(slot_opreateFinishedOfEngrampa(QString, bool)));
+
+    QDBusConnection::sessionBus().connect("",
+                                          "/org/ukui/peony",
+                                          "org.ukui.peony",
+                                          "moveFilesToAnotherProcCompleted",
+                                          this,
+                                          SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
 }
 
 FileOperationManager::~FileOperationManager()
@@ -550,6 +557,10 @@ start:
            if (info->m_type == FileOperationInfo::BatchRename) {
                info->m_type = FileOperationInfo::BatchRenameInternal;
            }
+           if (info->m_is_search) {
+               this->clearHistory();
+               return;
+           }
            if (info->operationType() != FileOperationInfo::Delete) {
                //fix bug#162024, play sound when operation finished
                if ((info->operationType() == FileOperationInfo::Copy ||
@@ -793,6 +804,7 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
 
     for (auto watcher : m_watchers) {
         if (!watcher->supportMonitor()) {
+
             auto srcDir = info->m_src_dir_uri;
             auto destDir = info->m_dest_dir_uri;
             auto firstUri = info->m_src_uris.first();
@@ -837,10 +849,50 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
                  || destDir.startsWith("smb://")
                  || destDir.startsWith("ftp://")
                  || destDir.startsWith("sftp://")) {
-                watcher->requestUpdateDirectory();
+                if(!(watcher->currentUri().startsWith("search:///") &&
+                     (info->operationType() == FileOperationInfo::Rename
+                      ||info->operationType() == FileOperationInfo::Delete
+                      || info->operationType() == FileOperationInfo::Trash
+                      ||info->operationType() == FileOperationInfo::Move))){
+                    watcher->requestUpdateDirectory();
+                }
             }
+
+            /* story23915 【文件管理器】搜索后的文件夹和文档右键剪切、删除、重命名选项 */
+            if(watcher->currentUri().startsWith("search:///")){
+                if(info->m_has_error){
+                    watcher->requestUpdateDirectory();
+                }else{
+                    if(info->operationType() == FileOperationInfo::Delete || info->operationType() == FileOperationInfo::Trash){
+                        for(auto& uri:info->sources()){
+                            Q_EMIT watcher->fileDeleted(uri);
+                        }
+                    }
+                    if(info->operationType() == FileOperationInfo::Rename){
+                        for(auto& uri:info->sources()){
+                            Q_EMIT watcher->fileRenamed(uri, destDir);
+                        }
+                    } else if (info->operationType() == FileOperationInfo::Move) {
+                        for(auto& uri:info->sources()){
+                            Q_EMIT watcher->fileDeleted(uri);
+                        }
+                    }
+                }
+            }//end
         }
     }
+
+    /* 跨进程move操作，例如从搜索页面剪切或拖拽到桌面 */
+    if (info->m_is_search && info->operationType() == FileOperationInfo::Move) {
+        QStringList uris;
+        if (!info->m_has_error) {
+            uris = info->sources();
+        }
+        qDebug()<<"send moveFilesToAnotherProcCompleted signal"<<uris.size();
+        QDBusMessage msg = QDBusMessage::createSignal("/org/ukui/peony", "org.ukui.peony", "moveFilesToAnotherProcCompleted");
+        msg << uris;
+        QDBusConnection::sessionBus().send(msg);
+    }//end
 }
 
 void FileOperationManager::slot_opreateFinishedOfEngrampa(const QString &path, bool finish)
@@ -871,6 +923,27 @@ void FileOperationManager::slot_opreateFinishedOfEngrampa(const QString &path, b
             watcher->requestUpdateDirectory();
         }
     }
+}
+
+void FileOperationManager::slot_moveFilesToAnotherProcCompleted(const QStringList &srcUris)
+{
+
+    for (auto& watcher : m_watchers) {
+        if(!watcher->currentUri().startsWith("search:///"))
+            continue;
+
+        if(watcher->supportMonitor())
+            continue;
+
+        if(srcUris.size()){
+            for(auto& uri:srcUris){
+                Q_EMIT watcher->fileDeleted(uri);
+            }
+        }else{
+            watcher->requestUpdateDirectory();
+        }
+    }
+
 }
 
 //FIXME: get opposite info correcty.

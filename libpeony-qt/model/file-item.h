@@ -29,12 +29,12 @@
 #include <QObject>
 #include <QVector>
 #include <QHash>
+
 class QTimer;
 
 namespace Peony {
 
 class FileInfo;
-class FileInfoManager;
 class FileItemModel;
 class FileWatcher;
 class FileItemProxyFilterSortModel;
@@ -120,7 +120,7 @@ protected:
      * \param uri
      * \return child item
      * \note
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     FileItem *getChildFromUri(QString uri);
@@ -131,7 +131,7 @@ protected:
      * Update the item info synchously.
      * </br>
      * \note
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     void updateInfoSync();
@@ -140,7 +140,7 @@ protected:
      * <br>
      * Update the item info asynchously.
      * </br>
-     * This is ususally used when fileCreated() and fileDeleted() happend,
+     * This is ususally used when fileCreated() and fileDeleted() happened,
      * and item must has parent item.
      */
     void updateInfoAsync();
@@ -151,6 +151,11 @@ protected:
     void showFilesForBurningOnRTypeDisc();/* udf刻录与文管适配，R类型光盘遍历家目录下的“.cache/KylinTransitBurner/”获取缓冲数据;将缓冲数据显示在光盘挂载目录下 */
 
 private:
+    void connectFunc();
+    void childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding);
+
+
+private:
     FileItem *m_parent = nullptr;
     std::shared_ptr<Peony::FileInfo> m_info;
     QVector<FileItem*> *m_children = nullptr;
@@ -159,6 +164,7 @@ private:
 
     bool m_expanded = false;
     bool m_isRTypeDisc = false;
+    bool m_isEndOfEnumerate = false;
 
     std::shared_ptr<FileWatcher> m_watcher = nullptr;
     std::shared_ptr<FileWatcher> m_rTypeDiscWatcher = nullptr;/* R类型光盘刻录缓冲数据的监听 */
@@ -167,9 +173,12 @@ private:
     QStringList m_ending_uris;
     QStringList m_waiting_add_queue;
     QStringList m_waiting_update_queue;
-
     QStringList m_uris_to_be_removed;
+
     QTimer *m_idle = nullptr;
+    QTimer *m_addChildTimer = nullptr;
+    QTimer *m_changeChildTimer = nullptr;
+
     QThread *m_batchProcessThread = nullptr;
     BatchProcessItems *m_batchProcessItems = nullptr;
 

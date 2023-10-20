@@ -24,6 +24,7 @@
 #include "file-item.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-infos-job.h"
 #include "file-meta-info.h"
 
 #include "file-operation-manager.h"
@@ -61,6 +62,16 @@ FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
 {
     setPositiveResponse(true);
 
+    m_fileManagerThread = new FileManagerThread();
+    m_fileManagerThread->moveToThread(m_fileManagerThread);
+    connect(this, &FileItemModel::setUrisForBatchQueryInfos, this, [=] (const QStringList& uris, int operateType, FileItem *parentItem) {
+        auto infos = FileInfo::fromUris(uris);
+        m_infosJob = new FileInfosJob(infos, parentItem);
+        m_infosJob->connect(m_root_item, &FileItem::cancelFindChildren, m_infosJob, &FileInfosJob::batchCancel);
+        m_infosJob->connect(this, &FileItemModel::cancelBatchQuery, m_infosJob, &FileInfosJob::batchCancel);
+        Q_EMIT m_fileManagerThread->setParamForBatchQueryInfos(m_infosJob, operateType, parentItem);
+    });
+    m_fileManagerThread->start();
 
     connect(EmblemProviderManager::getInstance(), &EmblemProviderManager::requestUpdateFile, this, &FileItemModel::updated);
     connect(EmblemProviderManager::getInstance(), &EmblemProviderManager::requestUpdateAllFiles, this, &FileItemModel::updated);
@@ -83,6 +94,12 @@ FileItemModel::~FileItemModel()
     disconnect();
     if (m_root_item)
         delete m_root_item;
+
+    if(m_fileManagerThread){
+        m_fileManagerThread->quit();
+        m_fileManagerThread->wait();
+        m_fileManagerThread->deleteLater();
+    }
 }
 
 const QString FileItemModel::getRootUri()
@@ -111,6 +128,12 @@ void FileItemModel::setRootItem(FileItem *item)
     m_root_item->deleteLater();
 
     m_root_item = item;
+
+    m_root_item->connectFunc();
+    if(m_infosJob){
+        Q_EMIT cancelBatchQuery();
+    }
+
     m_root_item->findChildrenAsync();
 
     endResetModel();
@@ -140,42 +163,44 @@ QModelIndex FileItemModel::firstColumnIndex(FileItem *item)
 {
     //root children
     if (item->m_parent == nullptr) {
-        for (int i = 0; i < m_root_item->m_children->count(); i++) {
-            //qDebug()<<i<<item->m_info->uri()<<m_root_item->m_children->at(i)->m_info->uri();
-            if (item == m_root_item->m_children->at(i)) {
-                //qDebug()<<i<<item->m_info->uri();
-                return createIndex(i, 0, item);
-            }
+        int index = m_root_item->m_children->indexOf(item);
+        if (index == -1) {
+            return QModelIndex();
+        } else {
+            return createIndex(index, 0, item);
         }
-        return QModelIndex();
     } else {
         //has parent item
-        for (int i = 0; i < item->m_parent->m_children->count(); i++) {
-            if (item == item->m_parent->m_children->at(i))
-                return createIndex(i, 0, item);
+        int index = item->m_parent->m_children->indexOf(item);
+        if (index == -1) {
+            return QModelIndex();
+        } else {
+            return createIndex(index, 0, item);
         }
-        return QModelIndex();
     }
 }
 
 QModelIndex FileItemModel::lastColumnIndex(FileItem *item)
 {
     if (!item->m_parent) {
-        for (int i = 0; i < m_root_item->m_children->count(); i++) {
-            //qDebug()<<i<<item->m_info->uri()<<m_root_item->m_children->at(i)->m_info->uri();
-            if (item == m_root_item->m_children->at(i)) {
-                //qDebug()<<i<<item->m_info->uri();
-                return createIndex(i, Other, item);
-            }
+        int index = m_root_item->m_children->indexOf(item);
+        if (index == -1) {
+            //qDebug()<< "item uri:" << item->uri()<< "is not in the QVector";
+            return QModelIndex();
+        } else {
+            //qDebug() << "item uri:" << item->uri() << "is at index" << index;
+            return createIndex(index, Other, item);
         }
-        return QModelIndex();
     } else {
         //has parent item
-        for (int i = 0; i < item->m_parent->m_children->count(); i++) {
-            if (item == item->m_parent->m_children->at(i))
-                return createIndex(i, Other, item);
+        int index = item->m_parent->m_children->indexOf(item);
+        if (index == -1) {
+            //qDebug()<< "item uri:" << item->uri()<< "is not in the QVector";
+            return QModelIndex();
+        } else {
+            //qDebug() << "item uri:" << item->uri() << "is at index" << index;
+            return createIndex(index, Other, item);
         }
-        return QModelIndex();
     }
 }
 
@@ -300,6 +325,10 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 //use sdk interface to get time format
                 return QVariant(item->m_info->deletionDate());
             }
+            if (Peony::GlobalSettings::getInstance()->getShowCreateTime()) {
+                return QVariant(item->m_info->createDate());
+            }
+
             return QVariant(item->m_info->modifiedDate());
         default:
             return QVariant();
@@ -374,6 +403,10 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             //trash files show delete Date
             if (m_root_uri.startsWith("trash:///"))
                 return tr("Delete Date");
+            if (Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool()) {
+                return tr("Create Date");
+            }
+
             return tr("Modified Date");
         case FileType:
             return tr("File Type");
@@ -656,6 +689,12 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
 
+
+    bool bMoveFromSearchTab = false;
+    if (data->hasFormat("peony-qt/is-search")) {
+        bMoveFromSearchTab = QVariant(data->data("peony-qt/is-search")).toBool();
+    }
+
     bool b_trash_item = false;
     for(auto path : srcUris)
     {
@@ -676,7 +715,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         // fix drag filesafe to trash error issue, #81938
         if(!(srcUris.first().startsWith("filesafe:///") &&
             (QString(srcUris.first()).remove("filesafe:///").indexOf("/") == -1))) {
-            FileOperationUtils::trash(srcUris, true);
+            FileOperationUtils::trash(srcUris, true, bMoveFromSearchTab);
         }
         return true;
     }
@@ -700,7 +739,7 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (srcUris.first().startsWith("filesafe:///"))
         action = Qt::CopyAction;
 
-    auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
+    auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action, bMoveFromSearchTab);
     connect(op, &FileOperation::operationFinished, this, [=](){
         auto opInfo = op->getOperationInfo();
         if (! opInfo->m_has_error){
@@ -754,4 +793,28 @@ const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QStri
         return item->firstColumnIndex();
     }
     return QModelIndex();
+}
+
+FileManagerThread::FileManagerThread()
+{
+    connect(this, &FileManagerThread::setParamForBatchQueryInfos, this, &FileManagerThread::batchQueryFileInfos);
+}
+
+FileManagerThread::~FileManagerThread()
+{
+}
+
+void FileManagerThread::batchQueryFileInfos(FileInfosJob *infosJob,  /*FileItemModel::OperateType*/int operateType, FileItem *parentItem)
+{
+    auto retFileInfos = infosJob->batchQuerySync();
+    if(infosJob){
+        infosJob->deleteLater();
+    }
+    Q_EMIT finishQueryFileInfos(retFileInfos, operateType, parentItem);
+
+}
+
+void FileManagerThread::run()
+{
+    exec();
 }

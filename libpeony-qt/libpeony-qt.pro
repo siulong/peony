@@ -63,7 +63,8 @@ TRANSLATIONS += ../translations/libpeony-qt/libpeony-qt_zh_CN.ts \
                 ../translations/libpeony-qt/libpeony-qt_tr.ts \
                 ../translations/libpeony-qt/libpeony-qt_cs.ts \
                 ../translations/libpeony-qt/libpeony-qt_bo_CN.ts \
-                ../translations/libpeony-qt/libpeony-qt_mn.ts
+                ../translations/libpeony-qt/libpeony-qt_mn.ts \
+                ../translations/libpeony-qt/libpeony-qt_zh_HK.ts
 
 DESTDIR += $$PWD
 

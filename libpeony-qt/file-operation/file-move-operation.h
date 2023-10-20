@@ -111,6 +111,10 @@ public:
         return m_copy_move;
     }
 
+    void setUriSort(bool isSort, int type = 0);
+
+    void setSearchOperation(const bool &isSearch);
+
 public Q_SLOTS:
     void cancel() override;
 
@@ -209,9 +213,15 @@ private:
 
     bool m_is_udf_warning = false;
 
+    bool m_is_search = false;
+
     QStringList m_burn_uris;
 
     int m_cate_type = 0;
+
+    bool m_is_sort = true;
+
+    int m_sort_type = 0;
 
     /*!
      * \brief m_prehandle_hash

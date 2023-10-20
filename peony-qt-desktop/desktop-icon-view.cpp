@@ -760,7 +760,7 @@ void DesktopIconView::resolutionChange()
 
     // do not relayout items while screen size is empty.
     if (screenSize.isEmpty()) {
-        qWarning()<<"screen size is not avaliable";
+        qWarning()<<"screen size is not available";
         return;
     }
     if (m_item_rect_hash.isEmpty()) {
@@ -1037,7 +1037,7 @@ void DesktopIconView::saveAllItemPosistionInfos()
             //qDebug()<<"save real"<<index.data()<<topLeft;
             metaInfo->setMetaInfoStringList(ITEM_POS_ATTRIBUTE, topLeft);
 
-            QRect rect(mapToGlobal(indexRect.topLeft()), indexRect.size());
+            QRect rect(mapToGlobal(indexRect.topLeft())*qApp->devicePixelRatio(), indexRect.size()*qApp->devicePixelRatio());
             FileInfo::fromUri(index.data(Qt::UserRole).toString()).get()->setProperty("iconGeometry", rect);
         }
     }
@@ -1114,7 +1114,7 @@ void DesktopIconView::setFileMetaInfoPos(const QString &uri, const QPoint &pos)
     m_item_rect_hash.remove(uri);
     m_item_rect_hash.insert(uri, QRect(pos, iconSize));
 
-    QRect rect(mapToGlobal(pos), iconSize);
+    QRect rect(mapToGlobal(pos)*qApp->devicePixelRatio(), iconSize*qApp->devicePixelRatio());
     FileInfo::fromUri(uri).get()->setProperty("iconGeometry", rect);
 
     auto metaInfo = FileMetaInfo::fromUri(uri);
@@ -1183,6 +1183,13 @@ const QStringList DesktopIconView::getAllFileUris()
         uris<<index.data(Qt::UserRole).toString();
     }
     return uris;
+}
+
+const int DesktopIconView::getAllDisplayFileCount()
+{
+    if(m_proxy_model)
+        return m_proxy_model->rowCount();
+    return 0;
 }
 
 void DesktopIconView::setSelections(const QStringList &uris)
@@ -1515,7 +1522,7 @@ void DesktopIconView::rowsInserted(const QModelIndex &parent, int start, int end
         auto itemRect = QRect(m_item_rect_hash.value(uri).topLeft(), itemRectSize);
         if (notEmptyRegion.intersects(itemRect)) {
             // handle overlapped
-            qWarning()<<"unexpected overrlapped happend";
+            qWarning()<<"unexpected overrlapped happened";
             qDebug()<<"check item rect hash"<<m_item_rect_hash;
             QStringList fakeList;
             fakeList<<uri;

@@ -834,6 +834,10 @@
         <source>Time Create:</source>
         <translation>གསར་བཟོའི་དུས་ཚོད།</translation>
     </message>
+    <message>
+        <source>Please select a image that is smaller than 1MB.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Peony::ComputerPropertiesPage</name>
@@ -1432,7 +1436,7 @@
         <translation>ཡིག་ཆ་སྲུང་སྐྱོབ་སྒམ་རྒྱ་བསྐྱེད་པ།</translation>
     </message>
     <message>
-        <source>Orignal Path</source>
+        <source>Original Path</source>
         <translation>གདོད་མའི་འགྲོ་ལམ།</translation>
     </message>
     <message>
@@ -1462,6 +1466,25 @@
     <message>
         <source>MultiSelect</source>
         <translation>ཡིག་ཆ་མང་པོ་འདེམ་པ།</translation>
+    </message>
+</context>
+<context>
+    <name>Peony::ExtensionsManagerWidget</name>
+    <message>
+        <source>Extensions Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available extensions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished">གཏན་འཁེལ་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1568,7 +1591,7 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ་པ།</translation>
     </message>
     <message>
-        <source>Write file error: There is no avaliable disk space for device!</source>
+        <source>Write file error: There is no available disk space for device!</source>
         <translation>ཡིག་ཆ་འབྲི་ནོར་ཤོར་བ་སྟེ། སྒྲིག་ཆས་ལ་གོ་མི་སྲིད་པའི་ཁབ་ལེན་གྱི་བར་སྟོང་མེད།</translation>
     </message>
     <message>
@@ -1704,6 +1727,25 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     </message>
 </context>
 <context>
+    <name>Peony::FileInfosJob</name>
+    <message>
+        <source>Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation type="unfinished">ཉེ་ཆར།</translation>
+    </message>
+</context>
+<context>
     <name>Peony::FileItem</name>
     <message>
         <source>Error</source>
@@ -1759,6 +1801,10 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <message>
         <source>Original Path</source>
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
+    </message>
+    <message>
+        <source>Create Date</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3459,7 +3505,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>OK</source>
-        <translation>གཏན་འཁེལ།</translation>
+        <translation type="vanished">གཏན་འཁེལ།</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3525,6 +3571,10 @@ Do you want to unmount forcely?</source>
         <source>Virtual file directories do not support move operations</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Clean the Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UdfBurn::UdfAppendBurnDataDialog</name>
@@ -3549,7 +3599,7 @@ Do you want to unmount forcely?</source>
         <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
@@ -3620,7 +3670,7 @@ Do you want to unmount forcely?</source>
         <translation>ཁ་རྒྱག་པ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>
@@ -3683,7 +3733,7 @@ Do you want to unmount forcely?</source>
         <translation>དོར་བ།</translation>
     </message>
     <message>
-        <source>Unknow</source>
+        <source>Unknown</source>
         <translation>མ་ཤེས་པའི་རིགས།</translation>
     </message>
     <message>

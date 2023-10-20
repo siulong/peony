@@ -88,6 +88,7 @@ SideBarPersonalItem::SideBarPersonalItem(QString uri,
     connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
         Q_EMIT this->queryInfoFinished();
     });
+    connect(this, &SideBarPersonalItem::destroyed, infoJob, &FileInfoJob::cancel);
     infoJob->queryAsync();
 }
 

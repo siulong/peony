@@ -45,8 +45,9 @@ const QString MetadataEmblemProvider::emblemKey()
 
 QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 {
+    static QThread *uiThread = qApp->thread();
     std::shared_ptr<Peony::FileMetaInfo> metaInfo = nullptr;
-    if (QThread::currentThread() == qApp->thread()) {
+    if (QThread::currentThread() == uiThread) {
         metaInfo = FileMetaInfo::fromUri(uri);
     } else {
         metaInfo = requestDupMetaInfo(uri);
@@ -59,6 +60,14 @@ QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 MetadataEmblemProvider::MetadataEmblemProvider(QObject *parent) : EmblemProvider(parent)
 {
     connect(this, &MetadataEmblemProvider::requestDupMetaInfo, this, &MetadataEmblemProvider::getDupMetaInfo, Qt::BlockingQueuedConnection);
+
+    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]{
+        // note:
+        // 目前发现使用blockqueueconnection和emblemjob交互会影响app退出，这里尝试断开连接并且处理所有待处理事件解决此问题
+        // 这个改动对解决#181067 【音乐】音乐进程卡死 有一定帮助
+        disconnect(this, &MetadataEmblemProvider::requestDupMetaInfo, 0, 0);
+        qApp->processEvents();
+    });
 }
 
 std::shared_ptr<FileMetaInfo> MetadataEmblemProvider::getDupMetaInfo(const QString &uri)

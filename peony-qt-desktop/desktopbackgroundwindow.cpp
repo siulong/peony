@@ -88,17 +88,21 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
 
         QTimer::singleShot(1, [=]() {
            //task#74174  扩展屏设置菜单
-            DesktopMenu menu(m_desktopIconView, this);
-            connect(&menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
-            connect(&menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
+            if (m_menu) {
+                delete m_menu;
+                m_menu = nullptr;
+            }
+            m_menu = new DesktopMenu(m_desktopIconView, this);
+            connect(m_menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
+            connect(m_menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
 
             if (m_desktopIconView->getSelections().isEmpty()) {
-                auto action = menu.addAction(QObject::tr("set background"));
+                auto action = m_menu->addAction(QObject::tr("set background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
                 });
-                auto action1 = menu.addAction(QObject::tr("display settings"));
+                auto action1 = m_menu->addAction(QObject::tr("display settings"));
                 connect(action1, &QAction::triggered, [=]() {
                     //go to control center set resolution ratio
                     PeonyDesktopApplication::gotoSetResolution();
@@ -110,8 +114,8 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
                 if (screen->geometry().contains(relativePos));
                 //menu.windowHandle()->setScreen(screen);
             }
-            menu.exec(mapToGlobal(pos));
-            auto urisToEdit = menu.urisToEdit();
+            m_menu->exec(mapToGlobal(pos));
+            auto urisToEdit = m_menu->urisToEdit();
             m_desktopIconView->UpdateToEditUris(urisToEdit);
 //            if (urisToEdit.count() >= 1) {
 //                QTimer::singleShot(

@@ -877,10 +877,12 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                             volumeItem->setHidden(false);
                         }
                     }
-                }else if(uuid.isEmpty()){
+                }
+                /* 该代码段是解决前场问题时新增，影响了异常U盘显示，经讨论后先注释此处；hotfix bug#174631 关闭文件管理器时，插入异常U盘，侧边栏没有U盘图标 */
+                /*else if(uuid.isEmpty()){
                     //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
                     volumeItem->setHidden(true);
-                }
+                }*/
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
                 volumeItem->setHidden(true);

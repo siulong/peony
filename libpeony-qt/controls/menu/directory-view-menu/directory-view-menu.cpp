@@ -78,6 +78,7 @@
 #include <recent-vfs-manager.h>
 
 #include <QDebug>
+#include <QMessageBox>
 
 using namespace Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
@@ -118,74 +119,76 @@ void DirectoryViewMenu::setHiddenActionsByObjectName(const QStringList &actionNa
 
 void DirectoryViewMenu::fillActions()
 {
+    QString actualDir =  m_directory;
+    if(actualDir.startsWith("search://")){
+        m_is_search = true;
+        actualDir = FileUtils::getActualDirFromSearchUri(m_directory);
+    }
+
     QString tmpUri;
-    g_autoptr (GFile) tmp_file = g_file_new_for_uri(m_directory.toUtf8().constData());
+    g_autoptr (GFile) tmp_file = g_file_new_for_uri(actualDir.toUtf8().constData());
     g_autofree gchar* tmp_uri = g_file_get_uri(tmp_file);
     tmpUri = tmp_uri;
 
-    if (m_directory == "computer:///") {
+    if (actualDir == "computer:///") {
         m_is_computer = true;
     }
 
-    if (m_directory == "network:///") {
+    if (actualDir == "network:///") {
         m_is_network = true;
     }
 
-    if (m_directory == "trash:///") {
+    if (actualDir == "trash:///") {
         m_is_trash = true;
     }
 
-    if (m_directory.startsWith("search://")) {
-        m_is_search = true;
-    }
-
-    if (m_directory.startsWith("burn://")) {
+    if (actualDir.startsWith("burn://")) {
         m_is_cd = true;
     }
 
-    if (m_directory.startsWith("recent://")) {
+    if (actualDir.startsWith("recent://")) {
         m_is_recent = true;
     }
 
-    if (m_directory.startsWith("favorite://")) {
+    if (actualDir.startsWith("favorite://")) {
         m_is_favorite = true;
     }
 
-    if (m_directory.startsWith("kydroid:///") || m_directory.startsWith("kmre:///") || m_directory.startsWith("mult://")) {
+    if (actualDir.startsWith("kydroid:///") || actualDir.startsWith("kmre:///") || actualDir.startsWith("mult://")) {
         m_is_kydroid = true;
     }
 
-    if (m_directory.startsWith("ftp://")
-            || m_directory.startsWith("sftp://") || tmpUri.startsWith("ftp://") || tmpUri.startsWith("sftp://")) {
+    if (actualDir.startsWith("ftp://")
+            || actualDir.startsWith("sftp://") || tmpUri.startsWith("ftp://") || tmpUri.startsWith("sftp://")) {
         m_is_ftp = true;
     }
 
-    if (m_directory.startsWith("filesafe:///")){
+    if (actualDir.startsWith("filesafe:///")){
         m_is_filebox_file = true;
     }
 
-    if(m_directory == "filesafe:///" || m_directory.startsWith("search:///search_uris=filesafe:///&")) {
+    if(actualDir == "filesafe:///" || m_directory.startsWith("search:///search_uris=filesafe:///&")) {
         m_is_filesafe = true;
     }
 
-    if(m_directory.startsWith("smb://") || tmpUri.startsWith("smb://")){
+    if(actualDir.startsWith("smb://") || tmpUri.startsWith("smb://")){
         m_is_smb_file = true;
     }
 
     QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
-    if(m_directory == boxpath) {
+    if(actualDir == boxpath) {
         m_is_boxpath = true;
     }
 
-    if (m_directory.startsWith("label://")){
+    if (actualDir.startsWith("label://")){
         m_is_label_model = true;
     }
 
-    if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){
+    if (actualDir.startsWith("mtp://") || actualDir.startsWith("gphoto2://")){
         m_is_mtp_ptp = true;
     }
 
-    auto dev = VolumeManager::getDriveFromUri(m_directory);
+    auto dev = VolumeManager::getDriveFromUri(actualDir);
     if(dev != nullptr){
         bool canEject = g_drive_can_eject(dev.get()->getGDrive());
         bool canStop = g_drive_can_stop(dev.get()->getGDrive());
@@ -422,7 +425,9 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     });
                 }
             } else if (!info->isVolume()) {
-                bool needDisable = isMultVideoOrAudio(info);
+#ifdef MULTI_DISABLE
+                bool needDisable = isMultFile(info);
+#endif
                 l<<addAction(QIcon::fromTheme("document-open-symbolic"), tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
                 connect(l.last(), &QAction::triggered, [=]() {
@@ -432,11 +437,11 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     else
                         FileLaunchManager::openAsync(uri, false, false);
                 });
-
+#ifdef MULTI_DISABLE
                 if (needDisable) {
                     l.last()->setEnabled(false);
                 }
-
+#endif
                 if (m_is_network)
                     return l;
                 auto openWithAction = addAction(tr("Open with..."));
@@ -481,9 +486,11 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     d.exec();
                 });
                 openWithAction->setMenu(openWithMenu);
+#ifdef MULTI_DISABLE
                 if (needDisable) {
                     openWithAction->setEnabled(false);
                 }
+#endif
             } else {
                 l<<addAction(tr("Open"));
                 l.last()->setObjectName(OPEN_ACTION);
@@ -541,7 +548,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
 const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
 {
     QList<QAction *> l;
-    if (!m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash && !m_is_label_model) {
+    if (!m_is_search && !m_is_favorite && m_selections.isEmpty() && !m_is_filesafe && !m_is_trash && !m_is_label_model) {
         auto createAction = new QAction(tr("New"), this);
         createAction->setObjectName(CREATE_ACTION);
         if (m_is_cd) {
@@ -715,7 +722,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         tmp<<sortTypeMenu->addAction(tr("Modified Date"));
         tmp<<sortTypeMenu->addAction(tr("File Type"));
         tmp<<sortTypeMenu->addAction(tr("File Size"));
-        tmp<<sortTypeMenu->addAction(tr("Orignal Path"));
+        tmp<<sortTypeMenu->addAction(tr("Original Path"));
 
         if (m_top_window->getCurrentUri() != "trash:///") {
             tmp.last()->setVisible(false);
@@ -802,7 +809,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 {
     QList<QAction *> l;
 
-    if (!m_is_trash && !m_is_search && !m_is_computer) {
+    if (!m_is_trash && !m_is_computer) {
         QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         bool hasStandardPath = FileUtils::containsStandardPath(m_selections);
         //qDebug() << "constructFileOpActions hasStandardPath:" <<hasStandardPath;
@@ -841,16 +848,26 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 
             if (!hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model)
             {
+                /* 经过讨论，对于搜索路径，如果当前操作目录可写时保留现有逻辑，不可写时和删除共用逻辑（即判断选中的第一个文件或文件夹的权限），这样改动影响比较小 */
                 bool canCut = true;
-                auto info = FileInfo::fromUri(m_directory);
+                QString actualDir =  m_directory;
+                if(actualDir.startsWith("search://")){
+                    actualDir =  FileUtils::getActualDirFromSearchUri(m_directory);
+                }
+                auto info = FileInfo::fromUri(actualDir);
                 if (!info->canWrite()) {
                     canCut = false;
+                    if(m_is_search && !m_selections.isEmpty()){
+                        auto selectInfo = FileInfo::fromUri(m_selections.first());
+                        if(selectInfo->canWrite())
+                            canCut = true;
+                    }//end
                 }
                 if (canCut) {
                     l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
                     l.last()->setObjectName(CUT_ACTION);
                     connect(l.last(), &QAction::triggered, [=]() {
-                        ClipboardUtils::setClipboardFiles(m_selections, true);
+                        ClipboardUtils::setClipboardFiles(m_selections, true, m_is_search);
                         m_view->repaintView();
                     });
                 }
@@ -860,19 +877,16 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (!m_is_recent && !m_is_favorite && !hasStandardPath && !m_is_filesafe && !m_is_label_model) {
                 bool canTrash = true;
                 bool canDelete = true;
-                for (auto uri : m_selections) {
-                    auto info = FileInfo::fromUri(uri);
-                    if (! info->canTrash())
-                        canTrash = false;
 
-                    if (! info->canDelete() && (!uri.startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
-                        canDelete = false;
-
-                    if(FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
-                        canTrash = false;
-                        break;
-                    }
-                }
+                /* 同一目录下文件夹和文件的info->cantrash()和info->canDelete()通常一样，采用m_selections.first()判断 */
+                auto info = FileInfo::fromUri(m_selections.first());
+                if (! info->canTrash())
+                    canTrash = false;
+                if (! info->canDelete() && (!m_selections.first().startsWith("ftp://")))/* 由于gio info 的can_delete=false,hotfix bug#98208【用例 100365】匿名访问ftp服务器，右键没有删除选项 */
+                    canDelete = false;
+                if(FileUtils::isLongNameFileOfNotDel2Trash(m_selections.first())){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
+                    canTrash = false;
+                }//end
 
                 //fix unencrypted box file can delete to trash issue, link to bug#72948
                 if (canTrash && ! m_is_filebox_file && !m_is_mobile_file)
@@ -880,7 +894,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                     l<<addAction(QIcon::fromTheme("edit-delete-symbolic"), tr("Delete to trash"));
                     l.last()->setObjectName(TRASH_ACTION);
                     connect(l.last(), &QAction::triggered, [=]() {
-                        FileOperationUtils::trash(m_selections, true);
+                        FileOperationUtils::trash(m_selections, true, m_is_search);
                     });
                 }
                 else if(m_can_delete && canDelete)
@@ -921,6 +935,9 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
                 l.last()->setObjectName(RENAME_ACTION);
+                if(m_is_search && m_selections.count() > 1){/* 搜索页面暂时不支持批量重命名,菜单置灰 */
+                    l.last()->setEnabled(false);
+                }
                 connect(l.last(), &QAction::triggered, [=]() {
                     if (m_selections.count() == 1) {
                         m_view->editUri(m_selections.first());
@@ -931,7 +948,7 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             }
 
         } else {
-            if (!m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd && !m_is_label_model)
+            if (!m_is_search && !m_is_recent && !m_is_favorite && !m_is_kydroid && !m_is_filesafe && !m_is_cd && !m_is_label_model)
             {
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
@@ -958,7 +975,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                         connect(op, &Peony::FileOperation::operationFinished, window, [=](){
                             auto opInfo = op->getOperationInfo();
                             auto targetUirs = opInfo->dests();
-                            iface->setCurrentSelectionUris(targetUirs);
+                            //fix bug#196528, selection files icon not update issue
+                            QTimer::singleShot(300, window, [=](){
+                                iface->setCurrentSelectionUris(targetUirs);
+                            });
                         }, Qt::BlockingQueuedConnection);
                     }
                     else{
@@ -1015,15 +1035,6 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
             //qDebug() << "Reverse select";
             m_view->invertSelections();
         });
-
-        if (m_is_search && m_selections.count() >0)
-        {
-            l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
-            l.last()->setObjectName(COPY_ACTION);
-            connect(l.last(), &QAction::triggered, [=]() {
-                ClipboardUtils::setClipboardFiles(m_selections, false);
-            });
-        }
     }
 
     return l;
@@ -1246,7 +1257,7 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
             l<<addAction(QIcon::fromTheme("edit-cut-symbolic"),tr("Cut"));
             l.last()->setObjectName(CUT_ACTION);
             connect(l.last(), &QAction::triggered, [=]() {
-                ClipboardUtils::setClipboardFiles(m_selections, true);
+                ClipboardUtils::setClipboardFiles(m_selections, true, m_is_search);
                 m_view->repaintView();
             });
         }
@@ -1306,7 +1317,7 @@ const QList<QAction *> DirectoryViewMenu::constructSearchActions()
     return l;
 }
 
-bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
+bool DirectoryViewMenu::isMultFile(std::shared_ptr<FileInfo> info)
 {
     if (!info) {
         qDebug() << "file info not valid";
@@ -1314,7 +1325,7 @@ bool DirectoryViewMenu::isMultVideoOrAudio(std::shared_ptr<FileInfo> info)
     }
 
     QString uri = info->uri();
-    if (uri.startsWith("mult:///") && (info->isAudioFile() || info->isVideoFile())) {
+    if (uri.startsWith("mult:///") && (!info->isDir())) {
         return true;
     }
 

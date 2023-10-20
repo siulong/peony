@@ -39,6 +39,8 @@
 #include "gerror-wrapper.h"
 
 #include "file-utils.h"
+#include "plugin-manager.h"
+#include "vfs-plugin-manager.h"
 
 #include "x11-window-manager.h"
 #include "tag-management.h"
@@ -162,6 +164,27 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             this->setRowHidden(index.row(), index.parent(), true);
             return;
         }
+
+        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
+        for (auto extensions : disExtensions) {
+            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FileSystemItem
+                    && !item->uri().contains("computer:///")
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+                return;
+            }
+
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FavoriteItem
+                    && pIface->uriScheme() == "kmre://"
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+                return;
+            }
+        }
+
         item->findChildrenAsync();
     });
 
@@ -342,6 +365,45 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         }
     });
 
+    connect(VFSPluginManager::getInstance(), &VFSPluginManager::updateVFSPlugin, this, [=](VFSPluginIface *vfsPIface, bool enable){
+        qDebug() << __func__ << vfsPIface->name() << enable;
+        for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+            auto index = m_proxy_model->index(i, 0);
+            auto item = m_proxy_model->itemFromIndex(index);
+            if (item->type() == SideBarAbstractItem::FileSystemItem
+                    && item->uri().contains(vfsPIface->uriScheme())
+                    && !item->uri().contains("computer:///")
+                    && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
+                if (m_currSelectedItem) {
+                    if (!m_currSelectedItem->uri().startsWith("file://") && enable) {
+                        JumpDirectory("computer:///");
+                    }
+                }
+                this->setRowHidden(index.row(), index.parent(), enable);
+                return;
+            }
+            //hide kmre
+            if (item->type() == SideBarAbstractItem::FavoriteItem
+                    && vfsPIface->uriScheme() == "kmre://"
+                    && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
+                if (m_currSelectedItem) {
+                    if (!m_currSelectedItem->uri().startsWith("file:///") && enable) {
+                        JumpDirectory("computer:///");
+                    }
+                }
+
+                for (int j = 0; j < m_proxy_model->rowCount(index); ++j) {
+                    auto tIndex = m_proxy_model->index(j, 0, index);
+                    auto tItem = m_proxy_model->itemFromIndex(tIndex);
+                    if (tItem->uri().startsWith("kmre:///")) {
+                        this->setRowHidden(tIndex.row(), tIndex.parent(), enable);
+                        return;
+                    }
+                }
+            }
+        }
+    });
+
     connect(m_model, &SideBarModel::signal_collapsedChildren, this, [=](const QModelIndex &index){
         QModelIndex modelIndex = m_proxy_model->mapFromSource(index);
         collapse(modelIndex);
@@ -450,7 +512,7 @@ QSize NavigationSideBar::sizeHint() const
 
 void NavigationSideBar::JumpDirectory(const QString &uri)
 {
-    if(uri=="" && m_currSelectedItem && m_currSelectedItem->getDevice().startsWith("/dev/sd"))
+    if((uri=="" || uri.startsWith("computer://")) && m_currSelectedItem && m_currSelectedItem->getDevice().startsWith("/dev/sd"))
     {/* 异常U盘 */
         QMessageBox::information(nullptr, tr("Tips"), tr("This is an abnormal Udisk, please fix it or format it"));
         return;

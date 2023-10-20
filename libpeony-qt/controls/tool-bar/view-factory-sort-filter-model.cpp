@@ -108,7 +108,10 @@ const QIcon ViewFactorySortFilterModel2::iconFromViewId(const QString &viewId)
 {
     auto manager = DirectoryViewFactoryManager2::getInstance();
     auto factory = manager->getFactory(viewId);
-    return factory->icon();
+    if (factory) {
+        return factory->icon();
+    }
+    return QIcon();
 }
 
 const QString ViewFactorySortFilterModel2::getViewDisplayNameFromId(const QString &viewId)

@@ -73,7 +73,7 @@ protected:
     const QList<QAction *> constructMultiSelectActions();
 
 private:
-    bool isMultVideoOrAudio(std::shared_ptr<FileInfo> info);
+    bool isMultFile(std::shared_ptr<FileInfo> info);
 
 private:
     FMWindowIface *m_top_window;

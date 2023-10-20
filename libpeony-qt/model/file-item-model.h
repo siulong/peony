@@ -25,11 +25,17 @@
 
 #include <QAbstractItemModel>
 #include "peony-core_global.h"
+#include <QThread>
+
+
 
 namespace Peony {
-
+class GlobalSettings;
 class FileItem;
 class FileItemProxyFilterSortModel;
+class FileInfo;
+class FileManagerThread;
+class FileInfosJob;
 
 /*!
  * \brief The FileItemModel class
@@ -67,6 +73,13 @@ public:
         UriRole = Qt::UserRole
     };
     Q_ENUM(ItemRole)
+
+    enum OperateType {
+        Enumerate,
+        Add,
+        Change
+    };
+    Q_ENUM(OperateType)
 
     explicit FileItemModel(QObject *parent = nullptr);
     ~FileItemModel() override;
@@ -250,6 +263,9 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void thumbnailUpdated(const QString& uri);
 
+    void setUrisForBatchQueryInfos(const QStringList& uris, /*OperateType*/int operateType, FileItem *parentItem);
+    void cancelBatchQuery();
+
 public Q_SLOTS:
     /*!
      * \brief onFoundChildren
@@ -280,7 +296,28 @@ private:
     bool m_can_expand = false;
     QString m_root_uri = "file:///";
     bool m_showFileExtension = true;
+
+    FileManagerThread *m_fileManagerThread = nullptr;
+    FileInfosJob *m_infosJob = nullptr;
 };
+
+class PEONYCORESHARED_EXPORT FileManagerThread : public QThread{
+Q_OBJECT
+public:
+    explicit FileManagerThread();
+    ~FileManagerThread();
+
+    void batchQueryFileInfos(FileInfosJob *infosJob, /*FileItemModel::OperateType*/ int operateType, FileItem *parentItem);
+
+protected:
+    void run() override;
+
+
+Q_SIGNALS:
+    void finishQueryFileInfos(std::vector<std::shared_ptr<FileInfo> >& fileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem);
+    void setParamForBatchQueryInfos(/*std::shared_ptr<FileInfoJob>*/ FileInfosJob *infosJob, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem);
+};
+
 
 }
 

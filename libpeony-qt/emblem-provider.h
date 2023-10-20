@@ -68,6 +68,7 @@ public:
     static EmblemProviderManager *getInstance();
 
     void registerProvider(EmblemProvider *provider);
+    void unregisterProvider(EmblemProvider *provider);
 
     QStringList getAllEmblemsForUri(const QString &uri);
     QStringList getEmblemsByNameForUri(const QString &uri, const QString &name);

@@ -401,6 +401,14 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>Open each folder in a new window</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Create Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugin manager Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OperationMenuEditWidget</name>
@@ -688,23 +696,15 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source> selected %1 items</source>
-        <translation type="vanished">%1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
+        <translation>%1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
     </message>
     <message>
         <source> selected %1 items    %2</source>
         <translation>%1རྣམ་གྲངས་སྒེར་འདེམ་པ།    %2</translation>
     </message>
     <message>
-        <source>selected%1%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation type="unfinished">%2ཁྲོད་%1འཚོལ་ཞིབ།</translation>
-    </message>
-    <message>
-        <source> %1 items    selected %2 items</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">%2ཁྲོད་%1འཚོལ་ཞིབ།</translation>
     </message>
     <message>
         <source>Searching for files ...</source>
@@ -871,6 +871,10 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening such files is not currently supported</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

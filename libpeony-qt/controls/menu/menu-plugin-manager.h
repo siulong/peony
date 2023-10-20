@@ -40,6 +40,7 @@ class PEONYCORESHARED_EXPORT MenuPluginManager : public QObject
     Q_OBJECT
 public:
     bool registerPlugin(MenuPluginInterface *plugin);
+    bool unregisterPlugin(MenuPluginInterface *plugin);
 
     static MenuPluginManager *getInstance();
     const QStringList getPluginIds();

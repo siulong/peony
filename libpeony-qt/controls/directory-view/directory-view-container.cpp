@@ -95,6 +95,28 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
               refresh();
         });
     }
+
+    connect(DirectoryViewFactoryManager2::getInstance(), &DirectoryViewFactoryManager2::updateViewEnable, this, [=](const QString &name, DirectoryViewPluginIface2* factory, const bool enable){
+        QString currentUri = getCurrentUri();
+
+        int zoomLevel = -1;
+
+        if (currentUri.isNull())
+            return;
+
+        auto viewId = DirectoryViewFactoryManager2::getInstance()->getDefaultViewId(zoomLevel, currentUri);
+        switchViewType(viewId);
+
+        //update status bar zoom level
+        updateStatusBarSliderStateRequest();
+        if (zoomLevel < 0)
+            zoomLevel = getView()->currentZoomLevel();
+
+        setZoomLevelRequest(zoomLevel);
+        //qDebug() << "setZoomLevelRequest:" <<zoomLevel;
+        if (m_view)
+            m_view->setCurrentZoomLevel(zoomLevel);
+    });
 }
 
 DirectoryViewContainer::~DirectoryViewContainer()
@@ -433,6 +455,7 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
         auto selections = m_view->getSelections();
 
         bool hasStandardPath = FileUtils::containsStandardPath(selections);
+        bool isSearchTab = m_view->getDirectoryUri().startsWith("search:///");
         if (selections.count() == 1 && !hasStandardPath) {
             QString one = selections.first();
             if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1 || one.startsWith("label://")) {
@@ -441,7 +464,7 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
             //修复在选中文件不可见时，重命名操作不会跳转显示重命名文件问题，link to bug#160799
             m_view->scrollToSelection(selections.first());
             m_view->editUri(selections.first());
-        } else if (selections.count() > 1 && !hasStandardPath) {
+        } else if (selections.count() > 1 && !hasStandardPath && !isSearchTab) {/* 搜索tab页面中暂时不允许执行批量重命名操作 */
             for (auto uri : selections) {
                 QString one = uri;
                 if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {

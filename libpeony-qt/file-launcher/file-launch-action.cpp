@@ -126,6 +126,7 @@ bool FileLaunchAction::isExcuteableFile(QString fileType)
 
 void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -192,7 +193,7 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -248,6 +249,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
 
 void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -395,7 +397,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 #endif
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -467,6 +469,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 
 void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(files.isEmpty())
         return;
 
@@ -592,7 +595,7 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus success name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -711,7 +714,7 @@ bool FileLaunchAction::launchAppWithDBus()
     //mavis不通过session而通过AppMgr
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
 
-    if (isDesktopFileAction()) {
+    if (isDesktopFileAction() && !m_force_with_arg) {
         bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
         if (intel && mavis) {
             return launchAppWithAppMgr();

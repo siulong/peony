@@ -41,7 +41,8 @@
 
 static DesktopBackgroundManager *global_instance = nullptr;
 
-#define BACKGROUND_SETTINGS "org.mate.background"
+#define BACKGROUND_MATE_SETTINGS "org.mate.background"
+#define BACKGROUND_SETTINGS "org.ukui.interface"
 
 DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(parent)
 {
@@ -73,6 +74,13 @@ void DesktopBackgroundManager::initGSettings()
         m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
 
+//        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+        g_autoptr (GSettings) settings = g_settings_new_with_path("org.ukui.interface", "/org/ukui/interface/");
+        if (settings) {
+            bool writable = g_settings_is_writable(settings, "picture-filename");
+            m_shouldSyncAccountBackground = writable;
+        }
+    } else if (QGSettings::isSchemaInstalled(BACKGROUND_MATE_SETTINGS)){
         g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
         if (settings) {
             bool writable = g_settings_is_writable(settings, "picture-filename");

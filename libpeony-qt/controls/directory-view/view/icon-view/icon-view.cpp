@@ -27,6 +27,7 @@
 #include "icon-view-style.h"
 
 #include "directory-view-menu.h"
+#include "icon-view-index-widget.h"
 #include "file-info.h"
 #include "file-utils.h"
 
@@ -205,6 +206,7 @@ const QString IconView::getDirectoryUri()
 
 void IconView::beginLocationChange()
 {
+    traverseNode();
     m_editValid = false;
     m_model->setRootUri(m_current_uri);
 }
@@ -212,6 +214,21 @@ void IconView::beginLocationChange()
 void IconView::stopLocationChange()
 {
     m_model->cancelFindChildren();
+}
+
+void IconView::traverseNode()
+{
+    //fix bug 194738, clear model index
+    QList<IconViewIndexWidget *> widgets = this->findChildren<IconViewIndexWidget *>("peony_icon_view_index_widget");
+    if (!widgets.isEmpty()) {
+        for (int i = 0; i < widgets.size(); ++i) {
+            auto node = widgets.at(i);
+            if (node) {
+                node->setUpdatesEnabled(false);
+                node->clearModelIndex();
+            }
+        }
+    }
 }
 
 //other
@@ -513,21 +530,15 @@ void IconView::updateGeometries()
         return;
     }
 
-    if (model()->columnCount() == 0 || model()->rowCount() == 0)
-        return;
-    //bug#120710 文件未占满一屏时，不需要展示滑动条
-    int itemCount = model()->rowCount();
-    QRegion itemRegion;
-    for (int row = 0; row < itemCount; row++) {
-        auto index = model()->index(row, 0);
-        itemRegion += visualRect(index);
-    }
-    if (itemRegion.boundingRect().bottom() + gridSize().height() < viewport()->height()) {
+    int itemRowCount = model()->rowCount();
+    auto index = model()->index(0, 0);
+    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+
+    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         int vertiacalMax = verticalScrollBar()->maximum();
-        verticalScrollBar()->setMaximum(vertiacalMax + BOTTOM_STATUS_MARGIN);
-        int verticalValue = verticalOffset();
+        verticalScrollBar()->setMaximum(vertiacalMax + gridSize().height());
         verticalScrollBar()->setValue(verticalValue);
     }
 #else
@@ -542,18 +553,16 @@ void IconView::updateGeometries()
         return;
     }
 
-    int itemCount = model()->rowCount();
-    QRegion itemRegion;
-    for (int row = 0; row < itemCount; row++) {
-        auto index = model()->index(row, 0);
-        itemRegion += visualRect(index);
-    }
-    if (itemRegion.boundingRect().bottom() + gridSize().height() < viewport()->height()) {
+    int itemRowCount = model()->rowCount();
+    auto index = model()->index(0, 0);
+    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+
+    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         verticalScrollBar()->setSingleStep(gridSize().height()/2);
         verticalScrollBar()->setPageStep(viewport()->height());
-        verticalScrollBar()->setRange(0, itemRegion.boundingRect().bottom() - viewport()->height() + gridSize().height());
+        verticalScrollBar()->setRange(0, itemRowsHeight - viewport()->height() + gridSize().height());
     }
 #endif
 }
@@ -592,7 +601,14 @@ void IconView::startDrag(Qt::DropActions supportedActions)
         }
 
         auto drag = new QDrag(this);
-        drag->setMimeData(model()->mimeData(indexes));
+        if(m_current_uri.startsWith("search://")){
+            QMimeData* data = model()->mimeData(indexes);
+            QVariant isSearchData = QVariant(true);
+            data->setData("peony-qt/is-search", isSearchData.toByteArray());
+            drag->setMimeData(data);
+        }else{
+            drag->setMimeData(model()->mimeData(indexes));
+        }
 
         QRegion rect;
         QHash<QModelIndex, QRect> indexRectHash;
@@ -829,6 +845,11 @@ const QStringList IconView::getAllFileUris()
     return m_sort_filter_proxy_model->getAllFileUris();
 }
 
+const int IconView::getAllDisplayFileCount()
+{
+    return m_sort_filter_proxy_model->rowCount();
+}
+
 void IconView::editUri(const QString &uri)
 {
     setState(QListView::NoState);
@@ -1017,6 +1038,10 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     });
 
     connect(m_view, &IconView::customContextMenuRequested, this, [=](const QPoint &pos) {
+        if (m_view->m_delegate_editing) {
+            return;
+        }
+
         // we should clear the dirty rubber band due to call context menu.
         bool isDragSelecting = m_view->isDraggingState();
         if (isDragSelecting) {

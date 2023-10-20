@@ -214,6 +214,11 @@ void SearchWidget::updateCloseSearch(QString icon)
 
 }
 
+bool SearchWidget::isSearchMode()
+{
+    return m_searchMode;
+}
+
 void SearchWidget::updateTabletModeValue(bool isTabletMode)
 {
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，去掉搜索
