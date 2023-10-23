@@ -98,7 +98,8 @@ FileItemModel::~FileItemModel()
     if(m_fileManagerThread){
         m_fileManagerThread->quit();
         m_fileManagerThread->wait();
-        m_fileManagerThread->deleteLater();
+        // 无法使用deleteLater()删除，因为此线程已经被移入自身，而且已经退出无法处理事件
+        delete m_fileManagerThread;
     }
 }
 
@@ -795,7 +796,7 @@ const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QStri
     return QModelIndex();
 }
 
-FileManagerThread::FileManagerThread()
+FileManagerThread::FileManagerThread():QThread(nullptr)
 {
     connect(this, &FileManagerThread::setParamForBatchQueryInfos, this, &FileManagerThread::batchQueryFileInfos);
 }

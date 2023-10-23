@@ -59,7 +59,7 @@ FileEnumerator::FileEnumerator(QObject *parent) : QObject(parent)
 
     m_cache_uris = new QStringList();
 
-    m_idle = new QTimer(this);
+    m_idle = new QTimer;
     m_idle->setSingleShot(false);
 
     connect(this, &FileEnumerator::enumerateFinished, this, [=]() {
@@ -109,6 +109,8 @@ FileEnumerator::~FileEnumerator()
     delete m_children_uris;
 
     delete m_cache_uris;
+
+    delete m_idle;
 }
 
 void FileEnumerator::setEnumerateDirectory(QString uri)
@@ -447,7 +449,7 @@ void FileEnumerator::enumerateAsync()
                                         this);
         infoJob->deleteLater();
     });
-    connect(this, &FileEnumerator::cancelled, infoJob, &FileInfoJob::cancel);
+    infoJob->connect(this, &FileEnumerator::cancelled, infoJob, &FileInfoJob::cancel);
     infoJob->queryAsync();
 }
 
@@ -668,8 +670,8 @@ GAsyncReadyCallback FileEnumerator::enumerator_next_files_async_ready_callback(G
     while (l) {
         GFileInfo *info = static_cast<GFileInfo*>(l->data);
         GFile *file = g_file_enumerator_get_child(enumerator, info);
-        char *uri = g_file_get_uri(file);
-        char *path = g_file_get_path(file);
+        g_autofree char *uri = g_file_get_uri(file);
+        g_autofree char *path = g_file_get_path(file);
         g_object_unref(file);
         //qDebug()<<uri;
 
@@ -679,7 +681,7 @@ GAsyncReadyCallback FileEnumerator::enumerator_next_files_async_ready_callback(G
             QString localUri = QString("file://%1").arg(path);
             uriList<<localUri;
             *(p_this->m_cache_uris)<<localUri;
-            g_free(path);
+            //g_free(path);
         } else {
             uriList<<uri;
             auto urldecode = url.toDisplayString();
@@ -701,7 +703,7 @@ GAsyncReadyCallback FileEnumerator::enumerator_next_files_async_ready_callback(G
         }
         p_this->m_cached_infos<<fileInfo;
 
-        g_free(uri);
+        //g_free(uri);
         files_count++;
         l = l->next;
     }

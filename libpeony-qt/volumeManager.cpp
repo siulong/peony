@@ -798,6 +798,13 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     mountCount = mounts.count();
     volumeCount = volumes.count();
 
+    if (m_volumeList) {
+        for (auto volume : *m_volumeList) {
+            delete volume;
+        }
+        delete m_volumeList;
+    }
+
     m_volumeList = new QHash<QString,Volume*>();
     //根文件系统
     Volume* rootVolume = new Volume(nullptr);
@@ -812,6 +819,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
         m_volumeList->remove(volumeItem->device());
         m_volumeList->insert(volumeItem->device(),volumeItem);
+        delete mounts.at(i);
     }
 
     //qDebug()<<__func__<<__LINE__<<m_gpartedIsOpening<<mounts.count()<<" "<<volumes.count()<<m_volumeList->count()<<endl;
@@ -819,10 +827,13 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         for(int i=0; i<volumeCount; ++i){
             Volume* volumeItem = volumes.at(i);
             //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<endl;
-            if(m_volumeList->contains(volumeItem->device()))
+            if(m_volumeList->contains(volumeItem->device())) {
+                delete volumeItem;
                 continue;
+            }
             //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
-            m_volumeList->remove(volumeItem->device());
+            auto oldVolume = m_volumeList->take(volumeItem->device());
+            delete oldVolume;
             m_volumeList->insert(volumeItem->device(),volumeItem);
         }
     }
@@ -845,11 +856,17 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         }
 
         QString device = volumeItem->device();
-        if(m_volumeList->contains(device))
+        if(m_volumeList->contains(device)) {
+            delete volumeItem;
+            delete entry;
             continue;
+        }
 
+        bool shouldDeleteItem = true;
         if(device.contains("/dev/sr")){/* 判断是否为光驱设备 */
-            m_volumeList->remove(volumeItem->device());
+            shouldDeleteItem = false;
+            auto oldVolume = m_volumeList->take(volumeItem->device());
+            delete oldVolume;
             m_volumeList->insert(volumeItem->device(), volumeItem);
             /* hotfix bug#158557 【文件管理器】【安全密钥】文件管理器将ukey设备识别为光驱，显示在了文管侧边栏 */
             if(device.contains("/dev/sr")){
@@ -861,7 +878,9 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
             }//end
         }
         if(volumeItem->canEject() && device.contains("/dev/sd")){/* 异常U盘设备 */
-            m_volumeList->remove(volumeItem->device());
+            shouldDeleteItem = false;
+            auto oldVolume = m_volumeList->take(volumeItem->device());
+            delete oldVolume;
             m_volumeList->insert(volumeItem->device(), volumeItem);
 
             // try fix #90641, a docking station should be hidden.
@@ -888,7 +907,9 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                 volumeItem->setHidden(true);
             }
         }
-
+        if (shouldDeleteItem)
+            delete volumeItem;
+        delete entry;
     }
 
 
@@ -1308,10 +1329,12 @@ void Drive::initDriveInfo(){
     if(!m_drive)
         return;
 
-    m_device = g_drive_get_identifier(m_drive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+    g_autofree gchar* unix_device = g_drive_get_identifier(m_drive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+    m_device = unix_device;
     m_canEject = g_drive_can_eject(m_drive);
     m_canStop = g_drive_can_stop(m_drive);
-    m_name=g_drive_get_name(m_drive);
+    g_autofree gchar* drive_name = g_drive_get_name(m_drive);
+    m_name = drive_name;
     GIcon* gicon = g_drive_get_icon(m_drive);
     m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, m_device);
     // fix #81852, refer to #57660, #70014, #96652, task #25343
@@ -1514,7 +1537,8 @@ void Mount::initMountInfo(){
     }
 
     //3、name 设备名、挂载点名
-    m_name = g_mount_get_name(m_mount);
+    g_autofree gchar* mount_name = g_mount_get_name(m_mount);
+    m_name = mount_name;
 
     //4、can eject? 是否可弹出
     GDrive* gdrive = g_mount_get_drive(m_mount);/* gdrive为nullptr表示gparted打开状态 */

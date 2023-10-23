@@ -369,8 +369,8 @@ start:
         }
 
         // Get the destination path of the operation
-        auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
-        auto destPath = g_file_get_path(destGfile);
+        g_autoptr (GFile) destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
+        g_autofree gchar* destPath = g_file_get_path(destGfile);
 
         //Get the available disk space using QStorageInfo
         QStorageInfo storage(destPath);

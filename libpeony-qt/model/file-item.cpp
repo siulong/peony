@@ -177,6 +177,14 @@ FileItem::~FileItem()
 
     delete m_children;
     m_uri_item_hash.clear();
+
+    if (m_batchProcessThread->isRunning()) {
+        m_batchProcessThread->quit();
+        m_batchProcessThread->wait();
+    }
+    m_batchProcessThread->deleteLater();
+
+    disconnect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, nullptr);
 }
 
 bool FileItem::operator==(const FileItem &item)
@@ -319,11 +327,13 @@ void FileItem::findChildrenAsync()
                     QString errorInfo = tr("Can not find path \"%1\"，are you moved or renamed it?").arg(fileInfo->uri().unicode());
                     QMessageBox::critical(nullptr, tr("Error"), errorInfo);
                 }
+                enumerator->deleteLater();
                 return;
             }
             else {
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
                 enumerator->cancel();
+                enumerator->deleteLater();
+                QMessageBox::critical(nullptr, tr("Error"), err->message());
                 return;
             }
         }

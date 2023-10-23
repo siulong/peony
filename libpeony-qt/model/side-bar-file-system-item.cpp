@@ -65,7 +65,7 @@ SideBarFileSystemItem::SideBarFileSystemItem(QString uri, const Experimental_Peo
             initDirInfo(uri);
         }
     }
-    m_children = new QVector<SideBarAbstractItem*>();
+    //m_children = new QVector<SideBarAbstractItem*>();
 }
 
 SideBarFileSystemItem::~SideBarFileSystemItem()
@@ -154,7 +154,6 @@ void SideBarFileSystemItem::initDirInfo(const QString &uri)
    if(uri.isEmpty())
        return;
 
-   m_children    = nullptr;
    m_watcher     = nullptr;
    m_iconName    = "folder";
    m_device      = m_mountPoint = "";
@@ -591,6 +590,8 @@ void SideBarFileSystemItem::findChildren()
             m_model->endInsertRows();
         }
 
+        // 不删除数据，仅删除list本身
+        delete volumeList;
     }else{
         //对挂载点进行已存在文件的枚举操作
         QString enumdir = m_uri;

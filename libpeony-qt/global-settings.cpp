@@ -551,7 +551,7 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
     //set date and time show format, task #101605
     auto ret = kdk_system_timeformat_transform(m_tm);
-    auto formatDate = kdk_system_shortformat_transform(m_tm);
+    g_autofree char* formatDate = kdk_system_shortformat_transform(m_tm);
     //sdk接口会改变结构体数据，需要重初始化要使用的日期数据
     //属于接口缺陷，已跟SDK接口负责人沟通，先使用此方式
     m_tm->tm_year = date.year();
@@ -560,7 +560,8 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     if (longFormat)
         formatDate = kdk_system_longformat_transform(m_tm);
     if (ret && formatDate){
-        QString dateStr = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        g_autofree gchar *date_str = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        QString dateStr = date_str;
         //qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
         //释放结构体
         kdk_free_timeinfo(ret);

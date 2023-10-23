@@ -74,14 +74,14 @@ QString FileUtils::getFileUri(const GFileWrapperPtr &file)
     if (!G_IS_FILE (file.get()->get())) {
         return nullptr;
     }
-    char *uri = g_file_get_uri(file.get()->get());
+    g_autofree char *uri = g_file_get_uri(file.get()->get());
     QString urlString = QString(uri);
     QUrl url = urlString;
-    g_free(uri);
-    char *path = g_file_get_path(file.get()->get());
+    //g_free(uri);
+    g_autofree char *path = g_file_get_path(file.get()->get());
     if (path && !url.isLocalFile()) {
         QString urlString = QString("file://%1").arg(path);
-        g_free(path);
+        //g_free(path);
         return urlString;
     }
 
@@ -485,7 +485,8 @@ QString FileUtils::getTargetUri(const QString &uri)
 QString FileUtils::getEncodedUri(const QString &uri)
 {
     GFile *file = g_file_new_for_uri(uri.toUtf8().constData());
-    QString encodedUri = g_file_get_uri(file);
+    g_autofree gchar *tmp_uri = g_file_get_uri(file);
+    QString encodedUri = tmp_uri;
     g_object_unref(file);
 
     return encodedUri;
@@ -981,7 +982,8 @@ QString FileUtils::getUnixDevice(const QString &uri)
 
     //query device path by "mountable::unix-device-file"
     fileInfo = g_file_query_info(file,"*",G_FILE_QUERY_INFO_NONE,cancel,NULL);
-    tmpPath = g_file_info_get_attribute_as_string(fileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+    g_autofree gchar* tmp_path = g_file_info_get_attribute_as_string(fileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+    tmpPath = tmp_path;
     devicePath = tmpPath;
     if(!devicePath.isEmpty()){
         g_object_unref(fileInfo);

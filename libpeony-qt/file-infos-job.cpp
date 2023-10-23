@@ -156,13 +156,13 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
             return info;
         }
 #if GLIB_CHECK_VERSION(2, 56, 0)
-        auto string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
+        g_autofree gchar* string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
 #else
         //FIXME: should handle locale?
         //change "Name" to QLocale::system().name(),
         //try to fix Qt5.6 untranslated desktop file issue
         auto key = "Name[" +  QLocale::system().name() + "]";
-        auto string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
+        g_autofree gchar* string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
 #endif
         qDebug() << "get name string:"<<string <<info->uri()<<info->displayName();
         QString path = "/usr/share/applications/" + info->displayName();
@@ -178,8 +178,6 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         }
         info->m_finalDisplayName = info->getFinalDisplayName();
 
-        if (string)
-           g_free(string);
         g_object_unref(desktop_info);
     } else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {

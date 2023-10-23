@@ -1267,21 +1267,14 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
         auto enumerator = new Peony::FileEnumerator;
         enumerator->setEnumerateDirectory(rootDir);
-        enumerator->setAutoDelete();
-        connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed){
-            if (!successed) {
-                if (!currentPage()) {
-                    QTimer::singleShot(100, topLevelWidget(), &QWidget::close);
-                }
-                return;
-            }
-        });
+        //enumerator->setAutoDelete();
         connect(enumerator, &Peony::FileEnumerator::cancelled, this, [=](){
             if (!currentPage()) {
                 QTimer::singleShot(100, topLevelWidget(), &QWidget::close);
             }else{
                 this->refresh();
             }
+            enumerator->deleteLater();
         });
         connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
             if (critical) {
@@ -1291,6 +1284,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 if (!currentPage()) {
                     this->topLevelWidget()->close();
                 }
+                enumerator->deleteLater();
                 return;
             }
             auto viewContainer = new Peony::DirectoryViewContainer(m_stack);
@@ -1373,6 +1367,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
             m_tab_bar->addPage(realUri, jumpTo);
             updateTabBarGeometry();
+            enumerator->deleteLater();
         });
         enumerator->prepare();
     });

@@ -153,6 +153,7 @@ void UserdirManager::getUserdir()
 //    QString templateDir = homePath + "/模板/";
 //    GlobalSettings::getInstance()->setValue(TEMPLATES_DIR, templateDir);
 
+    settings->deleteLater();
 }
 
 //rename the old paths to overwrire new one.
