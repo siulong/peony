@@ -491,10 +491,13 @@ void MainWindow::setShortCuts()
         });
 
         auto searchAction = new QAction(this);
-        searchAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::Key_F));
+        //UI improve bug#197559, add Ctrl + E to active search status, and not quit when trigger again
+        searchAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::Key_F)<<QKeySequence(Qt::CTRL + Qt::Key_E));
         connect(searchAction, &QAction::triggered, this, [=]() {
-            m_is_search = ! m_is_search;
-            m_header_bar->startEdit(m_is_search);
+            if (! m_is_search){
+                m_is_search = true;
+                m_header_bar->startEdit(m_is_search);
+            }
         });
         addAction(searchAction);
 
