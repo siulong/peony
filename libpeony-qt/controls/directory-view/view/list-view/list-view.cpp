@@ -514,7 +514,8 @@ void ListView::dragMoveEvent(QDragMoveEvent *e)
         QHoverEvent he(QHoverEvent::HoverLeave, e->posF(), e->posF());
         viewportEvent(&he);
     }
-    if (this == e->source()) {
+
+    if (this == e->source() || !QModelIndex().flags().testFlag(Qt::ItemIsDropEnabled)) {
         return QTreeView::dragMoveEvent(e);
     }
     e->setDropAction(action);

@@ -439,7 +439,7 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
         auto item = itemFromIndex(index);
-        if (item->m_info->isDir()) {
+        if (item->m_info->isDir() && item->m_info->canWrite()) {
             flags |= Qt::ItemIsDropEnabled;
         }
         if (index.column() == FileName) {
@@ -453,6 +453,13 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         }
         return flags;
     } else {
+        if (m_root_item) {
+            if (m_root_item->m_info->canWrite()) {
+                return Qt::ItemIsDropEnabled;
+            } else {
+                return Qt::ItemIsEnabled;
+            }
+        }
         return Qt::ItemIsDropEnabled;
     }
 }
