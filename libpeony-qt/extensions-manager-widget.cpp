@@ -65,9 +65,9 @@ void Peony::ExtensionsManagerWidget::initUI()
     hBoxLayout->setContentsMargins(22, 0, 22, 0);
     hBoxLayout->setSpacing(0);
     hBoxLayout->addStretch(1);
-    hBoxLayout->addWidget(m_okBtn);
-    hBoxLayout->addSpacing(16);
     hBoxLayout->addWidget(m_cancelBtn);
+    hBoxLayout->addSpacing(16);
+    hBoxLayout->addWidget(m_okBtn);
 
     this->initExtensionInfo();
     this->initTableWidget();
