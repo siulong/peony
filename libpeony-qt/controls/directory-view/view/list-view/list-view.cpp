@@ -331,6 +331,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
         }
         Q_EMIT customContextMenuRequested(e->pos());
         m_rubberBand->hide();
+        m_lastPressedLogicPoint = QPoint(-1, -1);
         return;
     }
 
@@ -416,6 +417,7 @@ void ListView::mouseReleaseEvent(QMouseEvent *e)
 {
     QTreeView::mouseReleaseEvent(e);
     m_rubberBand->hide();
+    m_lastPressedLogicPoint = QPoint(-1, -1);
 }
 
 void ListView::mouseMoveEvent(QMouseEvent *e)
@@ -438,7 +440,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         doAutoScroll();
     }
 
-    if (e->buttons() & Qt::LeftButton) {
+    if (e->buttons() & Qt::LeftButton && m_lastPressedLogicPoint.x() >= 0 && m_lastPressedLogicPoint.y() >= 0) {
         auto pos = e->pos();
         auto offset = QPoint(horizontalOffset(), verticalOffset());
         auto logicPos = pos + offset;
@@ -454,6 +456,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         m_rubberBand->setGeometry(realRect);
     } else {
         m_rubberBand->hide();
+        m_lastPressedLogicPoint = QPoint(-1, -1);
     }
 
     // fix #115124, drag selection can not trigger auto scroll in view.
@@ -685,6 +688,8 @@ void ListView::focusInEvent(QFocusEvent *e)
 
 void ListView::startDrag(Qt::DropActions flags)
 {
+    m_rubberBand->hide();
+    m_lastPressedLogicPoint = QPoint(-1, -1);
     auto indexes = selectedIndexes();
     if (indexes.count() > 0) {
         auto pos = mapFromGlobal(QCursor::pos());
