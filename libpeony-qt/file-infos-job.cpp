@@ -385,7 +385,7 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
         targetInfo->m_uri = info->m_target_uri;
         targetInfo->m_file = g_file_new_for_uri(info->m_target_uri.toUtf8().constData());
         GError *err = nullptr;
-        auto gFileInfo = g_file_query_info(info->m_file,
+        auto gFileInfo = g_file_query_info(targetInfo->m_file,
                                        "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
                                        G_FILE_QUERY_INFO_NONE,
                                        m_batchCanellable,
@@ -395,6 +395,11 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
             qDebug()<<err->code<<err->message;
             g_error_free(err);
         }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE)) {
+                targetInfo->m_can_excute = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+            } else {
+                targetInfo->m_can_excute = true;
+            }
             targetInfo = queryFileDisplayName(targetInfo, gFileInfo);
             info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
             info->m_display_name = targetInfo.get()->displayName();
