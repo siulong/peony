@@ -651,7 +651,7 @@ void IconView::slotRename()
     if (getDirectoryUri().startsWith("trash://")
         || getDirectoryUri().startsWith("recent://")
         || getDirectoryUri().startsWith("favorite://")
-        || getDirectoryUri().startsWith("search://")
+//        || getDirectoryUri().startsWith("search://")   //comment fix in search result can not click to rename issue
         || getDirectoryUri().startsWith("network://")
         || getDirectoryUri().startsWith("label://"))
         return;
