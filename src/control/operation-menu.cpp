@@ -190,7 +190,8 @@ setPasswd:
     showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
 
     addAction(tr("Plugin manager Settings"), this, [=](){
-        Peony::ExtensionsManagerWidget *widget = new Peony::ExtensionsManagerWidget;
+        Peony::ExtensionsManagerWidget *widget = Peony::ExtensionsManagerWidget::getInstance();
+        widget->raise();
         widget->show();
     });
 

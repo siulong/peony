@@ -31,6 +31,16 @@
 #include <QDebug>
 #include <QHBoxLayout>
 
+static Peony::ExtensionsManagerWidget *global_instance = nullptr;
+
+Peony::ExtensionsManagerWidget *Peony::ExtensionsManagerWidget::getInstance()
+{
+    if (!global_instance) {
+        global_instance = new Peony::ExtensionsManagerWidget;
+    }
+    return global_instance;
+}
+
 Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
     :QWidget(parent)
 {
