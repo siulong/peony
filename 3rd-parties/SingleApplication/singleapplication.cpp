@@ -179,3 +179,10 @@ bool SingleApplication::sendMessage( QByteArray message, int timeout )
     d->socket->flush();
     return dataWritten;
 }
+
+void SingleApplication::startPrimary()
+{
+    Q_D(SingleApplication);
+
+    d->startPrimary();
+}
