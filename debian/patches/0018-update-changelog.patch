@@ -1,0 +1,30 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Mon, 30 Oct 2023 11:16:33 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-launcher/file-launch-action.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libpeony-qt/file-launcher/file-launch-action.cpp b/libpeony-qt/file-launcher/file-launch-action.cpp
+index b6e97f6..30861e2 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.cpp
++++ b/libpeony-qt/file-launcher/file-launch-action.cpp
+@@ -779,7 +779,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
+             QString uri = fileInfo->uri();
+             QUrl url = uri;
+ 
+-            if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
++            if (G_IS_DESKTOP_APP_INFO(m_app_info) && false) {
+                 auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
+                 QString desktopFile = g_desktop_app_info_get_filename(desktop_app_info);
+ 
+@@ -793,7 +793,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
+                     return true;
+                 }
+                 qDebug() << "[FileLaunchAction::LaunchAppWithArguments] failed, uri:" << uri;
+-            } else {
++            } else if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
+                 QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", url.toString());
+                 qDebug() << "[FileLaunchAction::LaunchDefaultAppWithUrl]  uri:" << url.toString();
+ 
