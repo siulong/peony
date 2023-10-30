@@ -779,7 +779,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
             QString uri = fileInfo->uri();
             QUrl url = uri;
 
-            if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
+            if (G_IS_DESKTOP_APP_INFO(m_app_info) && false) {
                 auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
                 QString desktopFile = g_desktop_app_info_get_filename(desktop_app_info);
 
@@ -793,7 +793,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
                     return true;
                 }
                 qDebug() << "[FileLaunchAction::LaunchAppWithArguments] failed, uri:" << uri;
-            } else {
+            } else if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
                 QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", url.toString());
                 qDebug() << "[FileLaunchAction::LaunchDefaultAppWithUrl]  uri:" << url.toString();
 
