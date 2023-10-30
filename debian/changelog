@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok2~1030) yangtze; urgency=medium
+
+  * close #I851VT 系统使用|通过局域网访问其它设备上的文件时无法打开文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 30 Oct 2023 11:16:02 +0800
+
 peony (4.0.0.0-ok2~0928) yangtze; urgency=medium
 
   * close #I77XVR【arm】【树莓派】【打开方式】右键桌面上的desktop文件，打开方式选择文本编辑器，打开了应用
