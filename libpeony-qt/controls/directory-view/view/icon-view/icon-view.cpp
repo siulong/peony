@@ -473,6 +473,15 @@ void IconView::keyPressEvent(QKeyEvent *e)
     QListView::keyPressEvent(e);
     if (e->key() == Qt::Key_Control)
         m_ctrl_key_pressed = true;
+
+    if(e->key() == Qt::Key_F10 && e->modifiers() == Qt::ShiftModifier) {
+        if (getSelections().count() == 1 ) {
+            auto currentIndex = selectionModel()->selection().indexes();
+            QPoint menuPos = this->visualRect(currentIndex.first()).center();
+            Q_EMIT customContextMenuRequested(menuPos);
+            return;
+        }
+    }
 }
 
 void IconView::keyReleaseEvent(QKeyEvent *e)

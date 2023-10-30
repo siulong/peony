@@ -263,6 +263,15 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
 void ListView::keyPressEvent(QKeyEvent *e)
 {
     QTreeView::keyPressEvent(e);
+
+    if(e->key() == Qt::Key_F10 && e->modifiers() == Qt::ShiftModifier) {
+        if (getSelections().count() == 1 ) {
+            auto currentIndex = selectionModel()->selection().indexes();
+            QPoint menuPos = this->visualRect(currentIndex.first()).center();
+            Q_EMIT customContextMenuRequested(menuPos);
+            return;
+        }
+    }
    //if(e->key() == Qt::Key_Down||e->key() == Qt::Key_Up)
     //{
      //   QStringList selections = getSelections();

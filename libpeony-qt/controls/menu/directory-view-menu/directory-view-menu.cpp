@@ -1384,3 +1384,11 @@ const QList<QAction *> DirectoryViewMenu::constructMultiSelectActions()
     return l;
 
 }
+
+void DirectoryViewMenu::keyPressEvent(QKeyEvent *e)
+{
+    QMenu::keyPressEvent(e);
+    if(e->key() == Qt::Key_F10 && e->modifiers() == Qt::ShiftModifier) {
+        close();
+    }
+}
