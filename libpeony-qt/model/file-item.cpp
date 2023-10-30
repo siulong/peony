@@ -1003,8 +1003,9 @@ void FileItem::connectFunc()
                 });
 
                 infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
-
-                infoJob->queryAsync();
+                QTimer::singleShot(100, this, [=](){/* 加延时避免查询结果有误；linkto bug#197886 */
+                    infoJob->queryAsync();
+                });
             }
 
         }else{
@@ -1024,6 +1025,7 @@ void FileItem::connectFunc()
             }
         }
     },Qt::UniqueConnection);
+
 
     connect(m_changeChildTimer, &QTimer::timeout, this, [=]{
         m_waiting_update_queue.removeDuplicates(); /* 去重 */
