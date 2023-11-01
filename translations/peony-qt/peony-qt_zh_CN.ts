@@ -188,8 +188,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="365"/>
-        <location filename="../../src/control/header-bar.cpp" line="850"/>
-        <location filename="../../src/control/header-bar.cpp" line="868"/>
+        <location filename="../../src/control/header-bar.cpp" line="851"/>
+        <location filename="../../src/control/header-bar.cpp" line="869"/>
         <source>Deselect All</source>
         <translation>取消全选</translation>
     </message>
@@ -209,51 +209,51 @@ p, li { white-space: pre-wrap; }
         <translation>没有找到任何终端插件，请确认您至少安装了一个！</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="653"/>
-        <location filename="../../src/control/header-bar.cpp" line="853"/>
-        <location filename="../../src/control/header-bar.cpp" line="863"/>
+        <location filename="../../src/control/header-bar.cpp" line="654"/>
+        <location filename="../../src/control/header-bar.cpp" line="854"/>
+        <location filename="../../src/control/header-bar.cpp" line="864"/>
         <source>Select All Item</source>
         <translation>全部选择</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="663"/>
-        <location filename="../../src/control/header-bar.cpp" line="797"/>
-        <location filename="../../src/control/header-bar.cpp" line="836"/>
+        <location filename="../../src/control/header-bar.cpp" line="664"/>
+        <location filename="../../src/control/header-bar.cpp" line="798"/>
+        <location filename="../../src/control/header-bar.cpp" line="837"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="638"/>
+        <location filename="../../src/control/header-bar.cpp" line="639"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="641"/>
+        <location filename="../../src/control/header-bar.cpp" line="642"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="839"/>
+        <location filename="../../src/control/header-bar.cpp" line="840"/>
         <source>Select Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="690"/>
+        <location filename="../../src/control/header-bar.cpp" line="691"/>
         <source>MoveTo</source>
         <translation>移动到</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="699"/>
+        <location filename="../../src/control/header-bar.cpp" line="700"/>
         <source>CopyTo</source>
         <translation>复制到</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="708"/>
+        <location filename="../../src/control/header-bar.cpp" line="709"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="774"/>
+        <location filename="../../src/control/header-bar.cpp" line="775"/>
         <source>Select path</source>
         <translation>选择路径</translation>
     </message>
@@ -273,7 +273,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">选项</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1214"/>
+        <location filename="../../src/control/header-bar.cpp" line="1215"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -290,7 +290,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1226"/>
+        <location filename="../../src/control/header-bar.cpp" line="1227"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -319,7 +319,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="874"/>
+        <location filename="../../src/windows/main-window.cpp" line="877"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -334,17 +334,17 @@ p, li { white-space: pre-wrap; }
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="783"/>
+        <location filename="../../src/windows/main-window.cpp" line="786"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="783"/>
+        <location filename="../../src/windows/main-window.cpp" line="786"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="872"/>
+        <location filename="../../src/windows/main-window.cpp" line="875"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -373,7 +373,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="887"/>
+        <location filename="../../src/windows/main-window.cpp" line="890"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -563,12 +563,12 @@ p, li { white-space: pre-wrap; }
         <translation>插件管理设置</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="200"/>
+        <location filename="../../src/control/operation-menu.cpp" line="201"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="204"/>
+        <location filename="../../src/control/operation-menu.cpp" line="205"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -576,27 +576,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="259"/>
+        <location filename="../../src/control/operation-menu.cpp" line="260"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="270"/>
+        <location filename="../../src/control/operation-menu.cpp" line="271"/>
         <source>copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="279"/>
+        <location filename="../../src/control/operation-menu.cpp" line="280"/>
         <source>paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="288"/>
+        <location filename="../../src/control/operation-menu.cpp" line="289"/>
         <source>cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="297"/>
+        <location filename="../../src/control/operation-menu.cpp" line="298"/>
         <source>trash</source>
         <translation>删除</translation>
     </message>
@@ -754,12 +754,12 @@ p, li { white-space: pre-wrap; }
         <translation>[文件1，文件2...]</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="216"/>
+        <location filename="../../src/peony-application.cpp" line="222"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="216"/>
+        <location filename="../../src/peony-application.cpp" line="222"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
@@ -772,12 +772,12 @@ p, li { white-space: pre-wrap; }
 2.你使用的系统主题不是qt默认支持的主题，并且你没有安装相关的平台插件。如果你正在使用Gtk主题作为系统主题，尝试安装qt5-gtk2-platformtheme以解决此问题。</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="477"/>
+        <location filename="../../src/peony-application.cpp" line="483"/>
         <source>Peony Qt</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="478"/>
+        <location filename="../../src/peony-application.cpp" line="484"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -1097,17 +1097,17 @@ Do you want to unmount forcely?</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1617"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1612"/>
         <source>Opening such files is not currently supported</source>
         <translation>暂时不支持打开此类文件</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1630"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1625"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1631"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1626"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
@@ -1307,17 +1307,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1021"/>
+        <location filename="../../src/control/header-bar.cpp" line="1022"/>
         <source>Option</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1034"/>
+        <location filename="../../src/control/header-bar.cpp" line="1035"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1057"/>
+        <location filename="../../src/control/header-bar.cpp" line="1058"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
