@@ -74,28 +74,23 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="207"/>
-        <source>View Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="270"/>
-        <source>Sort Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="423"/>
-        <source>Operate Tips</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/control/header-bar.cpp" line="163"/>
         <source>Go Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/control/header-bar.cpp" line="207"/>
+        <source>View Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/control/header-bar.cpp" line="216"/>
         <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="270"/>
+        <source>Sort Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -152,22 +147,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/control/header-bar.cpp" line="423"/>
+        <source>Operate Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/control/header-bar.cpp" line="424"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="654"/>
-        <location filename="../../src/control/header-bar.cpp" line="854"/>
-        <location filename="../../src/control/header-bar.cpp" line="864"/>
-        <source>Select All Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="664"/>
-        <location filename="../../src/control/header-bar.cpp" line="798"/>
-        <location filename="../../src/control/header-bar.cpp" line="837"/>
-        <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -181,8 +167,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Büyüt</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="840"/>
-        <source>Select Done</source>
+        <location filename="../../src/control/header-bar.cpp" line="654"/>
+        <location filename="../../src/control/header-bar.cpp" line="854"/>
+        <location filename="../../src/control/header-bar.cpp" line="864"/>
+        <source>Select All Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="664"/>
+        <location filename="../../src/control/header-bar.cpp" line="798"/>
+        <location filename="../../src/control/header-bar.cpp" line="837"/>
+        <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -203,6 +198,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="775"/>
         <source>Select path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="840"/>
+        <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -435,13 +435,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="158"/>
-        <source>Samba set user password</source>
+        <location filename="../../src/control/operation-menu.cpp" line="156"/>
+        <source>Samba password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="156"/>
-        <source>Samba password:</source>
+        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <source>Samba set user password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -894,13 +894,13 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
-        <source> selected %1 items</source>
+        <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
+        <source> selected %1 items    %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
-        <source> selected %1 items    %2</source>
+        <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
+        <source> selected %1 items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

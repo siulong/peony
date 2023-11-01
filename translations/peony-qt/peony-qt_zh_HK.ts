@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh">
+<TS version="2.1" language="zh_Hant">
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation>對話</translation>
+        <translation>視窗</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -17,14 +17,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p， li { 空白：預包裝; }
+p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation>文本標籤</translation>
+        <translation>標籤</translation>
     </message>
     <message>
         <source>Offical Website: </source>
@@ -38,14 +38,14 @@ p， li { 空白：預包裝; }
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation>服務與支援： </translation>
+        <translation>服務與支持團隊： </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation>文件管理器</translation>
+        <translation>檔管理員</translation>
     </message>
     <message>
         <source>peony</source>
@@ -55,7 +55,7 @@ p， li { 空白：預包裝; }
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>文件管理器是一個圖形軟體，以幫助使用者管理系統檔。為使用者提供常見的檔操作功能，如檔查看、檔案複製、粘貼、剪切、刪除、重命名、檔選擇、應用打開、檔搜索、檔排序、檔預覽等。方便使用者在介面上直觀地管理系統檔。</translation>
+        <translation>檔管理員是一款説明使用者管理系統文件的圖形化的軟體，為使用者提供常用的檔操作功能，比如檔查看，檔複製、粘貼、剪切、刪除、重命名，檔打開方式選擇，檔搜索，檔排序，檔預覽等，方便使用者在介面上直觀地管理系統檔。</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -94,11 +94,11 @@ p， li { 空白：預包裝; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="vanished">刪除</translation>
+        <translation type="vanished">刪除標記</translation>
     </message>
     <message>
         <source>Create New Label</source>
-        <translation type="vanished">創建新標籤</translation>
+        <translation type="vanished">創建標記</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="136"/>
         <source>Go Back</source>
-        <translation>回去</translation>
+        <translation>後退</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="144"/>
@@ -148,7 +148,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="307"/>
         <source>Option</source>
-        <translation>選擇</translation>
+        <translation>選項</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="320"/>
@@ -201,17 +201,17 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="423"/>
         <source>Operate Tips</source>
-        <translation>操作技巧</translation>
+        <translation>操作提示</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="424"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation>找不到任何終端，請至少安裝一個終端！</translation>
+        <translation>沒有找到任何終端外掛程式，請確認您至少安裝了一個！</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="639"/>
         <source>Restore</source>
-        <translation>恢復</translation>
+        <translation>還原</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="642"/>
@@ -245,7 +245,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="709"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation type="unfinished">刪除標記</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="775"/>
@@ -322,7 +322,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/windows/main-window.cpp" line="409"/>
         <source>Undo</source>
-        <translation>恢復</translation>
+        <translation>撤銷</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="416"/>
@@ -399,22 +399,22 @@ p， li { 空白：預包裝; }
         <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
         <source>Tips</source>
-        <translation>技巧</translation>
+        <translation>提示</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation>設備處於繁忙狀態，請稍後執行此操作。</translation>
+        <translation>設備處於忙碌狀態，請稍後執行此操作。</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation>這是一個異常的Udisk，請修復或格式化</translation>
+        <translation>這是個異常U盤，請將其修復或格式化</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation>這是一個空驅動器，請插入光碟。</translation>
+        <translation>這是一個空光碟機， 請插入光碟.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
@@ -425,7 +425,7 @@ p， li { 空白：預包裝; }
         <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="306"/>
         <source>Can not open %1, %2</source>
-        <translation>無法開啟 %1、%2</translation>
+        <translation>無法開啟%1， %2</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="290"/>
@@ -441,7 +441,7 @@ p， li { 空白：預包裝; }
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation type="vanished">所有分頁...</translation>
+        <translation type="vanished">所有標籤...</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="741"/>
@@ -463,7 +463,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/navigation-tab-bar.cpp" line="124"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>在“%2”中搜索“%1”</translation>
+        <translation>在%2中搜尋%1</translation>
     </message>
 </context>
 <context>
@@ -475,12 +475,12 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="78"/>
         <source>Keep Allow</source>
-        <translation>保持允許</translation>
+        <translation>置頂視窗</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>顯示隱藏</translation>
+        <translation>顯示隱藏檔案</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
@@ -495,17 +495,17 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="109"/>
         <source>Forbid thumbnailing</source>
-        <translation>禁止縮圖</translation>
+        <translation>禁用縮圖</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="118"/>
         <source>Resident in Backend</source>
-        <translation>駐留在後端</translation>
+        <translation>常駐後台</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="127"/>
         <source>Parallel Operations</source>
-        <translation>並行操作</translation>
+        <translation>允許操作並行</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="133"/>
@@ -515,7 +515,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Tips</source>
-        <translation type="unfinished">技巧</translation>
+        <translation type="unfinished">提示</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="147"/>
@@ -566,7 +566,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="205"/>
         <source>About</source>
-        <translation>大約</translation>
+        <translation>關於</translation>
     </message>
 </context>
 <context>
@@ -584,17 +584,17 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="280"/>
         <source>paste</source>
-        <translation>糊</translation>
+        <translation>粘貼</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="289"/>
         <source>cut</source>
-        <translation>切</translation>
+        <translation>剪切</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="298"/>
         <source>trash</source>
-        <translation>垃圾</translation>
+        <translation>刪除</translation>
     </message>
 </context>
 <context>
@@ -720,7 +720,7 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
         <source>Delete</source>
-        <translation type="unfinished">刪除</translation>
+        <translation type="unfinished">刪除標記</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="115"/>
@@ -737,17 +737,17 @@ p， li { 空白：預包裝; }
     <message>
         <location filename="../../src/peony-application.cpp" line="168"/>
         <source>peony-qt</source>
-        <translation>文件管理器</translation>
+        <translation>檔管理員</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="175"/>
         <source>Files or directories to open</source>
-        <translation>要打開的檔或目錄</translation>
+        <translation>需要打開的檔或資料夾</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="175"/>
         <source>[FILE1, FILE2,...]</source>
-        <translation>[檔1，檔2,...]</translation>
+        <translation>[檔1，檔2...]</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="222"/>
@@ -761,16 +761,16 @@ p， li { 空白：預包裝; }
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation>文件管理器無法獲取系統的圖示主題。有 2 個原因可能導致此問題：
+        <translation>檔案管理員無法取得系統圖示主題，可能的原因是：
 
-1. 牡丹Qt可能以root身份運行，這意味著您擁有更高的許可權，可以做一些通常禁止的事情。但是，您應該瞭解，如果您在root中，虛擬文件系統將失去一些功能，例如您無法使用“我的電腦”，主題和圖示也可能出錯。因此，不建議在根中運行牡丹qt。
+1.正在以管理員使用者運行檔管理器，雖然這意味著你擁有更高的許可權，但是你必須瞭解你同時也失去了一些在普通使用者下才能夠擁有的特徵，例如“我的電腦”以及系統主題。 如果不是特殊情況，請不要使用管理員使用者打開檔管理員。
 
-2. 您正在為系統使用非qt主題，但您沒有為qt的應用程式安裝平台主題外掛程式。如果您使用的是 gtk-theme，請嘗試安裝 qt5-gtk2-platformtheme 包來解決此問題。</translation>
+2.你使用的系統主題不是qt默認支援的主題，並且你沒有安裝相關的平臺外掛程式。 如果你正在使用Gtk主題作為系統主題，嘗試安裝qt5-gtk2-platformtheme以解決此問題。</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="483"/>
         <source>Peony Qt</source>
-        <translation>文件管理器</translation>
+        <translation>檔管理員</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="484"/>
@@ -780,10 +780,10 @@ p， li { 空白：預包裝; }
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
         <translation>作者：
-	岳蘭&lt;lanyue@kylinos.cn&gt;
-	何美紅&lt;hemeihong@kylinos.cn&gt;
+	蘭悅 &lt;lanyue@kylinos.cn&gt;
+	 何美宏 &lt;hemeihong@kylinos.cn&gt;
 
-版權所有（C）：2020，麒麟軟體有限公司</translation>
+版權所有（C）： 2020， 麒麟軟體有限公司.</translation>
     </message>
     <message>
         <source>Author:
@@ -836,22 +836,22 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/peony-application.h" line="67"/>
         <source>Close all peony-qt windows and quit</source>
-        <translation>關閉所有牡丹窗並退出</translation>
+        <translation>關閉所有視窗並退出</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="68"/>
         <source>Show items</source>
-        <translation>顯示專案</translation>
+        <translation>打開檔所在目錄並選取中它們</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="69"/>
         <source>Show folders</source>
-        <translation>顯示資料夾</translation>
+        <translation>顯示資料夾下的內容</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="70"/>
         <source>Show properties</source>
-        <translation>顯示屬性</translation>
+        <translation>打開檔案屬性視窗</translation>
     </message>
 </context>
 <context>
@@ -942,7 +942,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>File Name</source>
-        <translation>檔名</translation>
+        <translation>檔名稱</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="46"/>
@@ -976,12 +976,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="71"/>
         <source>Ascending</source>
-        <translation>上升</translation>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
         <source>Descending</source>
-        <translation>降</translation>
+        <translation>降序</translation>
     </message>
 </context>
 <context>
@@ -1035,17 +1035,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
         <source> %1 items </source>
-        <translation> %1 項 </translation>
+        <translation> %1 個專案 </translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
         <source> selected %1 items    %2</source>
-        <translation> 選定的 %1 專案 %2</translation>
+        <translation> 選取 %1 個專案 %2</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
         <source> selected %1 items</source>
-        <translation> 選定的 %1 個專案</translation>
+        <translation> 選取 %1 個專案</translation>
     </message>
 </context>
 <context>
@@ -1053,17 +1053,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="221"/>
         <source>Trash</source>
-        <translation>垃圾</translation>
+        <translation>回收站</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="225"/>
         <source>Clear</source>
-        <translation>清楚</translation>
+        <translation>清空</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="230"/>
         <source>Recover</source>
-        <translation>恢復</translation>
+        <translation>還原</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="386"/>
@@ -1071,22 +1071,22 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished">计算机</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1612"/>
-        <source>Opening such files is not currently supported</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Close Filter.</source>
-        <translation type="vanished">關閉過濾器。</translation>
+        <translation type="vanished">關閉篩選。</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="vanished">濾波器</translation>
+        <translation type="vanished">篩選</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="461"/>
         <source>Select Path</source>
         <translation>選擇路徑</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.cpp" line="1612"/>
+        <source>Opening such files is not currently supported</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1625"/>
@@ -1096,7 +1096,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1626"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>打開目錄失敗，您沒有許可權！</translation>
+        <translation>打開資料夾失敗，您沒有該目錄的許可權！</translation>
     </message>
     <message>
         <source>Close advance search.</source>
@@ -1109,7 +1109,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Choose other path to search.</source>
-        <translation type="vanished">選擇要搜索的其他路徑。</translation>
+        <translation type="vanished">選擇其他搜尋路徑。</translation>
     </message>
     <message>
         <source>Search recursively</source>
@@ -1151,7 +1151,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="299"/>
         <source>name</source>
-        <translation>名字</translation>
+        <translation>名稱</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="299"/>
@@ -1173,7 +1173,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/tab-widget.h" line="302"/>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>all</source>
-        <translation>都</translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="300"/>
@@ -1183,7 +1183,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="300"/>
         <source>image</source>
-        <translation>圖像</translation>
+        <translation>圖片</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="300"/>
@@ -1193,7 +1193,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>text file</source>
-        <translation>文字檔</translation>
+        <translation>文本文檔</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="301"/>
@@ -1203,7 +1203,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="301"/>
         <source>others</source>
-        <translation>別人</translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="301"/>
@@ -1238,12 +1238,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>tiny(0-16K)</source>
-        <translation>微小（0-16K）</translation>
+        <translation>極小（0-16K）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>small(16k-1M)</source>
-        <translation>小型（16k-1M）</translation>
+        <translation>很小（16k-1M）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
@@ -1253,7 +1253,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>medium(1M-128M)</source>
-        <translation>中型（1米-128米）</translation>
+        <translation>中等（1M-128M）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
@@ -1263,12 +1263,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>large(1-4G)</source>
-        <translation>大（1-4G）</translation>
+        <translation>巨大（1-4G）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="303"/>
         <source>great(&gt;4G)</source>
-        <translation>好（&gt;4G）</translation>
+        <translation>極大（&gt;4G）</translation>
     </message>
     <message>
         <source>medium(1M-100M)</source>
@@ -1288,7 +1288,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="877"/>
         <source>Peony</source>
-        <translation type="unfinished">文件管理器</translation>
+        <translation type="unfinished">檔管理員</translation>
     </message>
 </context>
 <context>
@@ -1296,7 +1296,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1022"/>
         <source>Option</source>
-        <translation type="unfinished">選擇</translation>
+        <translation type="unfinished">選項</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1035"/>

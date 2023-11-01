@@ -302,6 +302,12 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
         <source>Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,12 +324,6 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="361"/>
         <source>Data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
-        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -429,6 +429,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="140"/>
         <source>Truncation</source>
         <translation type="unfinished"></translation>
@@ -438,6 +443,11 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="213"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="142"/>
+        <source>Rename</source>
+        <translation type="unfinished">Yeniden Adlandır</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="171"/>
@@ -473,6 +483,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="273"/>
+        <source>OK</source>
+        <translation type="unfinished">Tamam</translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="321"/>
         <source>Description: Skip copying files of the current type</source>
         <translation type="unfinished"></translation>
@@ -501,21 +516,6 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="346"/>
         <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
-        <source>Skip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="142"/>
-        <source>Rename</source>
-        <translation type="unfinished">Yeniden Adlandır</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="273"/>
-        <source>OK</source>
-        <translation type="unfinished">Tamam</translation>
     </message>
 </context>
 <context>
@@ -1222,6 +1222,14 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
         <source>Ip input error, please re-enter!</source>
         <translation type="unfinished"></translation>
@@ -1243,14 +1251,6 @@
     <message>
         <source>connect</source>
         <translation type="vanished">bağlan</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1755,8 +1755,13 @@
         <translation>Değiştirme Saati</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="725"/>
-        <source>Original Path</source>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1347"/>
+        <source>Peony File Labels Menu Extension</source>
+        <translation type="unfinished">Peony Dosya Etiketleri Menü Uzantısı</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1379"/>
+        <source>MultiSelect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1767,11 +1772,6 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="758"/>
         <source>Ascending Order</source>
         <translation>Artan Düzen</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1379"/>
-        <source>MultiSelect</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="757"/>
@@ -1815,11 +1815,6 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1357"/>
         <source>Peony-Qt filesafe menu Extension</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1347"/>
-        <source>Peony File Labels Menu Extension</source>
-        <translation type="unfinished">Peony Dosya Etiketleri Menü Uzantısı</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
@@ -1872,6 +1867,11 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="993"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1232"/>
         <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="725"/>
+        <source>Original Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2169,18 +2169,8 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="388"/>
-        <source>Please check whether the device has been removed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="390"/>
         <source>Write file error: There is no available disk space for device!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="466"/>
-        <source>File opening failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2191,6 +2181,16 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="477"/>
         <source>Failed to create %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="388"/>
+        <source>Please check whether the device has been removed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="466"/>
+        <source>File opening failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2843,6 +2843,22 @@ Bağlantı dosyasını silmek istiyor musunuz?</translation>
         <translation>Dosya oluşturma hatası</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1813"/>
+        <source>Link file error</source>
+        <translation type="unfinished">Link dosya hatası</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1945"/>
+        <source>Burning does not support replacement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
+        <source>Invalid Operation.</source>
+        <translation>Geçersiz İşlem.</translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1217"/>
         <source>Cannot opening file, permission denied!</source>
         <translation type="unfinished"></translation>
@@ -2853,25 +2869,9 @@ Bağlantı dosyasını silmek istiyor musunuz?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
-        <source>Invalid Operation.</source>
-        <translation>Geçersiz İşlem.</translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1735"/>
         <source>File delete error</source>
         <translation>Dosya silme hatası</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1813"/>
-        <source>Link file error</source>
-        <translation type="unfinished">Link dosya hatası</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1945"/>
-        <source>Burning does not support replacement</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>File delete</source>
@@ -3038,14 +3038,14 @@ Bağlantı dosyasını silmek istiyor musunuz?</translation>
 <context>
     <name>Peony::FileOperationErrorDialogNotSupported</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="320"/>
-        <source>Yes</source>
-        <translation>Evet</translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="312"/>
         <source>No</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="320"/>
+        <source>Yes</source>
+        <translation>Evet</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3438,13 +3438,13 @@ Bağlantı dosyasını silmek istiyor musunuz?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Can not trash</source>
-        <translation type="obsolete">Çöp Silinemez</translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="202"/>
         <source>An unmanageable conflict exists. Please check the recycle bin.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can not trash</source>
+        <translation type="obsolete">Çöp Silinemez</translation>
     </message>
     <message>
         <source>The user does not have read and write rights to the file &apos;%1&apos; and cannot delete it to the Recycle Bin.</source>
@@ -4515,32 +4515,6 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="vanished">Bu dosyalar çöp kutusuna gönderilemiyor. Bunları kalıcı olarak silebilirsiniz. Bunu yaptığınızdan emin misiniz?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
-        <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
-        <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
-        <source>Clean the Trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">Tamam</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="320"/>
-        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Delete Permanently</source>
         <translation type="vanished">Kalıcı Olarak Sil</translation>
     </message>
@@ -4723,9 +4697,31 @@ Zorla ayrılmak ister misin?</translation>
         <translation>Çıkarma hatalı</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
+        <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
+        <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
+        <source>Clean the Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="315"/>
         <source>Cancel</source>
         <translation>İptal</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="320"/>
+        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Eject Anyway</source>
@@ -4941,16 +4937,6 @@ Zorla ayrılmak ister misin?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
-        <source>burn operation has been cancelled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="85"/>
-        <source> is busy!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1237"/>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="203"/>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="375"/>
@@ -4964,6 +4950,16 @@ Zorla ayrılmak ister misin?</translation>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="379"/>
         <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="186"/>
         <source>Are you sure you want to permanently delete these %1 files? Once deletion begins, these file will not be recoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
+        <source>burn operation has been cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="85"/>
+        <source> is busy!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

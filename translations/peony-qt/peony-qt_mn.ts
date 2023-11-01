@@ -206,7 +206,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="424"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation>ᠶᠠᠮᠠᠷ ᠴᠤ᠌ ᠦᠵᠦᠬᠦᠷ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠡᠷᠢᠵᠤ ᠤᠤᠯᠤᠭᠰᠠᠨ ᠦᠬᠡᠢ, ᠲᠠ ᠠᠳᠠᠭ ᠲᠤ᠌ ᠪᠡᠨ ᠨᠢᠭᠡ ᠵᠢ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠪᠠᠢᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ!</translation>
+        <translation>ᠶᠠᠮᠠᠷ ᠴᠤ᠌ ᠦᠵᠦᠬᠦᠷ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠡᠷᠢᠵᠤ ᠤᠤᠯᠤᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠ ᠠᠳᠠᠭ ᠲᠤ᠌ ᠪᠡᠨ ᠨᠢᠭᠡ ᠵᠢ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠪᠠᠢᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ!</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="639"/>
@@ -337,7 +337,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/windows/main-window.cpp" line="786"/>
         <source>This operation is not supported.</source>
-        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ.</translation>
+        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ᠂</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="875"/>
@@ -392,7 +392,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
         <source>This operation is not supported.</source>
-        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ.</translation>
+        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ᠂</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
@@ -404,17 +404,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳᠤ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠢ ᠬᠡᠷᠡᠭ᠍ᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
+        <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳ᠋ᠦ᠍ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤᠳᠠᠭᠰᠠᠨ ᠤ᠋ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠶ᠋ᠢ ᠬᠡᠷᠡᠭᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤU ᠲᠠᠪᠠᠭ, ᠳᠡᠬᠦᠨ ᠢ᠋ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠠᠩᠬᠠᠵᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ</translation>
+        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤ U ᠲᠠᠪᠠᠭ᠂ᠳᠡᠬᠦᠨ ᠢ᠋ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠠᠩᠬᠠᠵᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠨᠢᠭᠡᠨ ᠬᠤᠭᠤᠰᠤᠨ ᠬᠡᠷᠡᠯᠯᠢᠭ ᠬᠦᠳᠡᠯᠭᠡᠬᠦᠷ,CD ᠢ᠋/ ᠵᠢ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ.</translation>
+        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠨᠢᠭᠡᠨ ᠬᠤᠭᠤᠰᠤᠨ ᠬᠡᠷᠡᠯᠯᠢᠭ ᠬᠦᠳᠡᠯᠭᠡᠬᠦᠷ᠂CD ᠢ᠋/ ᠵᠢ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
@@ -441,7 +441,7 @@ p, li { white-space: pre-wrap; }
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation type="vanished">ᠪᠦᠬᠦᠢᠯᠡ ᠳᠡᠮᠳᠡᠭ...</translation>
+        <translation type="vanished">ᠪᠦᠬᠦᠢᠯᠡ ᠳᠡᠮᠳᠡᠭ ᠁</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="741"/>
@@ -485,7 +485,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
         <source>Show File Extension</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠳᠡᠯᠡᠭᠰᠡᠨ ᠨᠡᠷ᠎ᠡ ᠵᠢ ᠢᠯᠡᠷᠡᠬᠦᠯᠬᠦ</translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠥᠷᠭᠡᠳᠭᠡᠭᠰᠡᠨ ᠨᠡᠷ᠎ᠡ ᠵᠢ ᠢᠯᠡᠷᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="103"/>
@@ -500,7 +500,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="118"/>
         <source>Resident in Backend</source>
-        <translation>ᠠᠷᠤ ᠵᠢᠨ ᠳᠠᠪᠴᠠᠩ ᠳ᠋ᠤ᠌ ᠪᠠᠢᠬᠤ ᠰᠠᠭᠤᠬᠤ</translation>
+        <translation>ᠠᠷᠤ ᠵᠢᠨ ᠳᠠᠪᠴᠠᠩ ᠳ᠋ᠤ᠌ ᠪᠠᠢᠩᠭᠤ ᠰᠠᠭᠤᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="127"/>
@@ -510,48 +510,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="133"/>
         <source>Set samba password</source>
-        <translation>ᠰᠠᠩᠪᠠ ᠶᠢᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠤᠨ᠎ᠠ ᠃</translation>
+        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Tips</source>
-        <translation>ᠮᠡᠷᠭᠡᠵᠢᠯ ᠃</translation>
+        <translation>ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠨᠢᠭᠡᠨᠲᠡ ᠰᠠᠩᠪᠠ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠠᠢ ᠪᠣᠯᠵᠠᠢ ᠂ ᠰᠠᠩᠪᠠ ᠶᠢᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠴᠢᠬᠤᠯᠠ ᠲᠠᠢ ᠤᠤ ?</translation>
+        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠨᠢᠭᠡᠨᠲᠡ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠠᠢ ᠪᠣᠯᠵᠠᠢ ᠂ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠴᠢᠬᠤᠯᠠ ᠲᠠᠢ ᠤᠤ ?</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="156"/>
         <source>Samba password:</source>
-        <translation>ᠰᠠᠩᠪᠠ ᠶᠢᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ</translation>
+        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="158"/>
         <source>Samba set user password</source>
-        <translation>ᠰᠠᠩᠪᠠ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠦᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠤᠨ᠎ᠠ ᠃</translation>
+        <translation>Samba ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠤ᠋ᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="166"/>
         <location filename="../../src/control/operation-menu.cpp" line="177"/>
         <source>Warning</source>
-        <translation>ᠰᠡᠷᠡᠮᠵᠢ ᠥᠭ᠍ᠬᠦ</translation>
+        <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠭᠦᠯᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="166"/>
         <source>Samba set password failed, Please re-enter!</source>
-        <translation>ᠰᠠᠩᠪᠠ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠵᠤ ᠢᠯᠠᠭᠳᠠᠯ ᠳᠤ ᠣᠷᠣᠭᠤᠯᠵᠠᠢ ᠂ ᠳᠠᠬᠢᠨ ᠣᠷᠣᠭᠤᠯᠬᠤ ᠪᠣᠯᠪᠠᠤ !</translation>
+        <translation>Samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠳ᠋ᠦ᠍ ᠢᠯᠠᠭᠳᠠᠪᠠ᠂ ᠳᠠᠬᠢᠨ ᠣᠷᠣᠭᠤᠯᠬᠤ ᠪᠣᠯᠪᠠᠤ !</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="177"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation>ᠬᠠᠮᠲᠤᠪᠠᠷ ᠡᠳᠯᠡᠵᠦ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠨᠢ ᠬᠡᠪ ᠦᠨ ᠪᠤᠰᠤ ᠂ ᠶᠠᠭ ᠬᠢᠵᠦ ᠪᠠᠶᠢᠭ᠎ᠠ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠡᠳᠯᠡᠬᠦ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠤᠯᠲᠠ ᠶᠢᠨ ᠠᠵᠢᠯ ᠪᠠᠶᠢᠬᠤ ᠡᠰᠡᠬᠦ ᠶᠢ ᠨᠤᠲᠠᠯᠠᠬᠤ ᠪᠤᠶᠤ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠵᠤ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠡᠳ᠋ᠯᠡᠬᠦ ᠶᠢ ᠨᠤᠲᠠᠯᠠᠭᠠᠷᠠᠢ !</translation>
+        <translation>ᠬᠠᠮᠲᠤᠪᠠᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠨᠢ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤ ᠂ ᠶᠠᠭ ᠬᠢᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠠᠵᠢᠯ ᠪᠠᠢᠬᠤ ᠡᠰᠡᠬᠦ ᠶ᠋ᠢ ᠨᠤᠲᠠᠯᠠᠬᠤ ᠪᠤᠶᠤ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠵᠤ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠡᠳ᠋ᠯᠡᠬᠦ ᠶᠢ ᠨᠤᠲᠠᠯᠠᠭᠠᠷᠠᠢ !</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="186"/>
         <source>Open each folder in a new window</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠨᠢᠭᠡᠪᠦᠷᠢ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ᠃</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠲᠠᠰᠤ ᠨᠢᠭᠡᠪᠦᠷᠢ ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
@@ -761,11 +761,11 @@ p, li { white-space: pre-wrap; }
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠰᠢᠪᠠᠭ᠎ᠠ ᠵᠢᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠤᠯᠵᠤ ᠴᠢᠳᠠᠬᠤ ᠦᠬᠡᠢ ᠵᠢᠨ ᠰᠢᠯᠳᠠᠭᠠᠨ ᠨᠢ:
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠤᠯᠵᠤ ᠴᠢᠳᠠᠬᠤ ᠦᠬᠡᠢ ᠵᠢᠨ ᠰᠢᠯᠳᠠᠭᠠᠨ ᠨᠢ:
 
-1.ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠢ᠋ ᠠᠵᠢᠯᠯᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠨ᠎ᠠ᠂ ᠡᠨᠡ ᠨᠢ ᠬᠡᠳᠦᠢᠪᠡᠷ ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠩ ᠶᠡᠬᠡ ᠡᠷᠭᠡ ᠲᠠᠢ ᠭᠡᠳᠡᠭ ᠢ᠋ ᠬᠠᠷᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠪᠤᠯᠪᠠᠴᠤ ᠲᠠ ᠵᠠᠪᠠᠯ ᠡᠩ ᠤ᠋ᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠵᠢᠨ ᠳᠤᠤᠷ᠎ᠠ ᠰᠠᠶᠢ ᠪᠠᠢᠳᠠᠭ ᠤᠨᠴᠠᠯᠢᠭ ᠤ᠋ᠳ ᠵᠢᠨᠨ ᠠᠯᠳᠠᠭᠰᠠᠨ ᠵᠢᠨᠨ ᠤᠢᠯᠠᠭᠠᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ᠃ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ &quot; ᠮᠢᠨᠤ ᠺᠤᠮᠫᠢᠦ᠋ᠲᠸᠷ&quot; ᠵᠢᠴᠢ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ᠃ ᠬᠡᠷᠪᠡ ᠤᠨᠴᠠᠭᠠᠢ ᠪᠠᠢᠳᠠᠯ ᠪᠢᠰᠢ ᠪᠤᠯ ᠪᠢᠳᠡᠬᠡᠢ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠷᠡᠢ.
+1.ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠢ᠋ ᠠᠵᠢᠯᠯᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠨ᠎ᠠ᠂ ᠡᠨᠡ ᠨᠢ ᠬᠡᠳᠦᠢᠪᠡᠷ ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠩ ᠶᠡᠬᠡ ᠡᠷᠭᠡ ᠲᠠᠢ ᠭᠡᠳᠡᠭ ᠢ᠋ ᠬᠠᠷᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠪᠤᠯᠪᠠᠴᠤ ᠲᠠ ᠵᠠᠪᠠᠯ ᠡᠩ ᠤ᠋ᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠵᠢᠨ ᠳᠤᠤᠷ᠎ᠠ ᠰᠠᠶᠢ ᠪᠠᠢᠳᠠᠭ ᠤᠨᠴᠠᠯᠢᠭ ᠤ᠋ᠳ ᠵᠢᠨᠨ ᠠᠯᠳᠠᠭᠰᠠᠨ ᠵᠢᠨᠨ ᠤᠢᠯᠠᠭᠠᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ᠃ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ &quot; ᠮᠢᠨᠤ ᠺᠤᠮᠫᠢᠦ᠋ᠲᠸᠷ&quot; ᠵᠢᠴᠢ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ᠃ ᠬᠡᠷᠪᠡ ᠤᠨᠴᠠᠭᠠᠢ ᠪᠠᠢᠳᠠᠯ ᠪᠢᠰᠢ ᠪᠤᠯ ᠪᠢᠳᠡᠬᠡᠢ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠷᠡᠢ᠃
 
-2. ᠲᠠᠨ ᠤ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯ qt ᠠᠶᠠᠳᠠᠯ ᠳᠡᠮᠵᠢᠬᠦ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠢᠰᠢ᠂ ᠳᠡᠬᠡᠬᠦ ᠮᠦᠷᠳᠡᠭᠡᠨ ᠲᠠ ᠬᠠᠮᠢᠶᠠᠳᠠᠢ ᠳᠠᠪᠴᠠᠩ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠃ ᠬᠡᠷᠪᠡ ᠲᠠ ᠶᠠᠭ Gtk ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯᠭᠠᠭᠰᠠᠨ ᠪᠤᠯ qt5-gtk2-platformtheme ᠢ᠋/ ᠵᠢ ᠤᠭᠰᠠᠷᠴᠤ ᠲᠤᠰ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠢ᠋ ᠰᠢᠢᠳᠪᠦᠷᠢᠯᠡᠬᠦ ᠪᠡᠷ ᠳᠤᠷᠰᠢᠵᠤ ᠪᠤᠯᠤᠨ᠎ᠠ.</translation>
+2. ᠲᠠᠨ ᠤ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯ qt ᠠᠶᠠᠳᠠᠯ ᠳᠡᠮᠵᠢᠬᠦ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠢᠰᠢ᠂ ᠳᠡᠬᠡᠬᠦ ᠮᠦᠷᠳᠡᠭᠡᠨ ᠲᠠ ᠬᠠᠮᠢᠶᠠᠳᠠᠢ ᠳᠠᠪᠴᠠᠩ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠃ ᠬᠡᠷᠪᠡ ᠲᠠ ᠶᠠᠭ Gtk ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯᠭᠠᠭᠰᠠᠨ ᠪᠤᠯ qt5-gtk2-platformtheme ᠢ᠋/ ᠵᠢ ᠤᠭᠰᠠᠷᠴᠤ ᠲᠤᠰ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠢ᠋ ᠰᠢᠢᠳᠪᠦᠷᠢᠯᠡᠬᠦ ᠪᠡᠷ ᠳᠤᠷᠰᠢᠵᠤ ᠪᠤᠯᠤᠨ᠎ᠠ᠃</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="483"/>
@@ -783,7 +783,7 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
 Yue Lan &lt;lanyue@kylinos.cn&gt;
 Meihong He &lt;hemeihong@kylinos.cn&gt;
 
- ᠬᠡᠪᠯᠡᠯ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠲᠠᠢ(C): 2020, ᠴᠢ ᠯᠢᠨ ᠰᠤᠹᠲ ᠤ᠋ᠨ ᠬᠢᠵᠠᠭᠠᠷᠳᠤ ᠺᠤᠮᠫᠠᠨᠢ.</translation>
+ ᠬᠡᠪᠯᠡᠯ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠲᠠᠢ(C): 2020᠂ ᠴᠢ ᠯᠢᠨ ᠰᠤᠹᠲ ᠤ᠋ᠨ ᠬᠢᠵᠠᠭᠠᠷᠳᠤ ᠺᠤᠮᠫᠠᠨᠢ</translation>
     </message>
     <message>
         <source>Author:
@@ -952,7 +952,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="50"/>
         <source>Original Path</source>
-        <translation>ᠤᠭ ᠤ᠋ᠨ ᠵᠠᠮ ᠱᠤᠭᠤᠮ</translation>
+        <translation>ᠤᠭ ᠤ᠋ᠨ ᠵᠢᠮ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
@@ -1030,7 +1030,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
         <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
         <source>Searching for files ...</source>
-        <translation>ᠶᠠᠭ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠡᠷᠢᠵᠦ ᠪᠠᠶᠢᠨ᠎ᠠ ᠁</translation>
+        <translation>ᠶᠠᠭ ᠹᠠᠢᠯ ᠤ᠋ᠳ ᠢ᠋ ᠡᠷᠢᠵᠦ ᠪᠠᠢᠨ᠎ᠠ ᠁</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
@@ -1077,7 +1077,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Close Filter.</source>
-        <translation type="vanished">ᠰᠢᠯᠢᠯᠳᠠ ᠵᠢ ᠬᠠᠭᠠᠬᠤ.</translation>
+        <translation type="vanished">ᠰᠢᠯᠢᠯᠳᠠ ᠵᠢ ᠬᠠᠭᠠᠬᠤ᠃</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -1086,15 +1086,15 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="461"/>
         <source>Select Path</source>
-        <translation>ᠵᠠᠮ ᠱᠤᠭᠤᠮ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation>ᠵᠢᠮ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
     </message>
     <message>
         <source>Current path: %1, %2</source>
-        <translation type="vanished">ᠣᠳᠣᠬᠠᠨ ᠤ ᠵᠠᠮ ᠮᠥᠷ ᠄ 1 ᠂ 2 ᠃</translation>
+        <translation type="vanished">ᠤᠳᠤ ᠬᠡᠷᠡᠭᠯᠡᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠵᠢᠮ᠄ 1 ᠂ 2 ᠃</translation>
     </message>
     <message>
         <source>click to select other search path.</source>
-        <translation type="vanished">ᠭᠠᠭᠴᠠ ᠴᠣᠬᠢᠯᠲᠠ ᠪᠠᠷ ᠪᠤᠰᠤᠳ ᠡᠷᠢᠬᠦ ᠠᠷᠭ᠎ᠠ ᠵᠠᠮ ᠢ ᠰᠣᠩᠭᠣᠨ᠎ᠠ ᠃</translation>
+        <translation type="vanished">ᠲᠣᠭᠰᠢᠬᠤ ᠪᠠᠷ ᠳᠠᠮᠵᠢᠨ ᠪᠤᠰᠤᠳ ᠰᠣᠩᠭᠣᠯᠲᠠ ᠶ᠋ᠢᠨ ᠵᠢᠮ ᠰᠣᠩᠭᠣᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1625"/>
@@ -1104,7 +1104,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1626"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ, ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠲᠠᠰᠤᠨ ᠤ᠋ ᠵᠢᠮ ᠢ᠋ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
     </message>
     <message>
         <source>Close advance search.</source>
@@ -1117,7 +1117,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Choose other path to search.</source>
-        <translation type="vanished">ᠪᠤᠰᠤᠳ ᠬᠠᠢᠬᠤ ᠵᠠᠮ ᠱᠤᠭᠤᠮ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ.</translation>
+        <translation type="vanished">ᠪᠤᠰᠤᠳ ᠬᠠᠢᠬᠤ ᠵᠢᠮ ᠢ᠋ ᠰᠣᠩᠭᠣᠭᠠᠷᠠᠢ᠃</translation>
     </message>
     <message>
         <source>Search recursively</source>
@@ -1144,7 +1144,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="556"/>
         <source>Please input key words...</source>
-        <translation>ᠵᠠᠩᠭᠢᠯᠠᠭ᠎ᠠ ᠦᠭᠡᠰ ᠢ᠋ ᠤᠷᠤᠭᠤᠯᠬᠤ...</translation>
+        <translation>ᠵᠠᠩᠭᠢᠯᠠᠭ᠎ᠠ ᠦᠭᠡᠰ ᠢ᠋ ᠤᠷᠤᠭᠤᠯᠬᠤ ᠁</translation>
     </message>
     <message>
         <source>Please input kay words...</source>

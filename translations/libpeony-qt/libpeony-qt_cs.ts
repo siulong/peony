@@ -254,6 +254,12 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
         <source>Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive</source>
         <translation type="unfinished"></translation>
     </message>
@@ -270,12 +276,6 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="361"/>
         <source>Data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
-        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -381,6 +381,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
+        <source>Skip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="140"/>
         <source>Truncation</source>
         <translation type="unfinished"></translation>
@@ -389,6 +394,11 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="141"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="213"/>
         <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="142"/>
+        <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -425,6 +435,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="273"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="321"/>
         <source>Description: Skip copying files of the current type</source>
         <translation type="unfinished"></translation>
@@ -452,21 +467,6 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="346"/>
         <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
-        <source>Skip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="142"/>
-        <source>Rename</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="273"/>
-        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1043,6 +1043,14 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
         <source>Ip input error, please re-enter!</source>
         <translation type="unfinished"></translation>
@@ -1051,14 +1059,6 @@
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
         <source>Port input error, please re-enter!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
-        <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
-        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1476,11 +1476,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="725"/>
-        <source>Original Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="758"/>
         <source>Ascending Order</source>
         <translation type="unfinished"></translation>
@@ -1581,6 +1576,11 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="993"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1232"/>
         <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="725"/>
+        <source>Original Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1834,18 +1834,8 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="388"/>
-        <source>Please check whether the device has been removed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="390"/>
         <source>Write file error: There is no available disk space for device!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="466"/>
-        <source>File opening failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1856,6 +1846,16 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="477"/>
         <source>Failed to create %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="388"/>
+        <source>Please check whether the device has been removed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="466"/>
+        <source>File opening failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2444,6 +2444,22 @@ Do you want to delete the link file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1813"/>
+        <source>Link file error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1945"/>
+        <source>Burning does not support replacement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
+        <source>Invalid Operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1217"/>
         <source>Cannot opening file, permission denied!</source>
         <translation type="unfinished"></translation>
@@ -2454,24 +2470,8 @@ Do you want to delete the link file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
-        <source>Invalid Operation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1735"/>
         <source>File delete error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1813"/>
-        <source>Link file error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1945"/>
-        <source>Burning does not support replacement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2611,13 +2611,13 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::FileOperationErrorDialogNotSupported</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="320"/>
-        <source>Yes</source>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="312"/>
+        <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="312"/>
-        <source>No</source>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="320"/>
+        <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3869,33 +3869,6 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
-        <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
-        <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
-        <source>Clean the Trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="315"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="320"/>
-        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page-factory.h" line="41"/>
         <source>Computer Properties</source>
         <translation type="unfinished"></translation>
@@ -4027,8 +4000,19 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1201"/>
+        <source>Failed to activate device: Incorrect passphrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1211"/>
         <source>The device has been mount successfully!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1404"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1442"/>
+        <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4036,17 +4020,6 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</translation
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1444"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1722"/>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1201"/>
-        <source>Failed to activate device: Incorrect passphrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1404"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1442"/>
-        <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4245,16 +4218,6 @@ Do you want to unmount forcely?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
-        <source>burn operation has been cancelled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="85"/>
-        <source> is busy!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1237"/>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="203"/>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="375"/>
@@ -4268,6 +4231,43 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="379"/>
         <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="186"/>
         <source>Are you sure you want to permanently delete these %1 files? Once deletion begins, these file will not be recoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
+        <source>burn operation has been cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="85"/>
+        <source> is busy!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
+        <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
+        <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
+        <source>Clean the Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="315"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="320"/>
+        <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

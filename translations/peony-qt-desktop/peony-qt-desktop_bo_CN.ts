@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Open Link failed</source>
-        <translation>མྱུར་ལམ་རི་མོ་ཁ་ཕྱེ་བ་ཕམ་ཉེས་བྱུང་།</translation>
+        <translation>མགྱོགས་མྱུར་བྱེད་ཐབས་ཁ་ཕྱེ་ནས་ཕམ་ཁ་བྱུང་།</translation>
     </message>
     <message>
         <source>Open failed</source>
@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation>དམིགས་བཟུང་ཡིག་ཁུག་བསྡད་མི་འདུག ཕན་མེད་མྱུར་ལམ་རི་མོ་འདི་གསུབ་རྒྱུ་ཡིན་ནམ།</translation>
+        <translation>དམིགས་བཟུང་ཡིག་ཁུག་བསྡད་མི་འདུག ཕན་མེད་མྱུར་ལམ་རི་མོ་འདི་བསུབ་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>set background</source>
@@ -40,7 +40,7 @@
     </message>
     <message>
         <source>Trash</source>
-        <translation>གད་སྙིགས་བླུགས་སྣོད།</translation>
+        <translation>གད་སྙིགས་བླུགས་སྣ</translation>
     </message>
 </context>
 <context>
@@ -55,11 +55,11 @@
     </message>
     <message>
         <source>Huge</source>
-        <translation>རྒྱ་ཆེ།</translation>
+        <translation>དཔེ་རིས་ཆེན་པོ།</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>མིང་།</translation>
+        <translation>ཡིག་ཆའི་མིང་།</translation>
     </message>
     <message>
         <source>Open</source>
@@ -71,7 +71,7 @@
     </message>
     <message>
         <source>Large</source>
-        <translation>ཆེ།</translation>
+        <translation>རི་མོ་ཆེན་པོ།</translation>
     </message>
     <message>
         <source>Paste</source>
@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>Small</source>
-        <translation>ཡིག་གཟུགས་ཆུང་བ།</translation>
+        <translation>རི་མོ་ཆུང་ཆུང་།</translation>
     </message>
     <message>
         <source>Delete forever</source>
@@ -111,7 +111,7 @@
     </message>
     <message>
         <source>Normal</source>
-        <translation>སྤྱིར་བཏང་།</translation>
+        <translation>རི་མོ་འབྲིང་བ།</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -119,7 +119,7 @@
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
+        <translation type="vanished">བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Sort By...</source>
@@ -131,7 +131,7 @@
     </message>
     <message>
         <source>Refresh</source>
-        <translation>/གསར་སྒྱུར།</translation>
+        <translation>གསར་སྒྱུར།</translation>
     </message>
     <message>
         <source>Reverse Select</source>
@@ -139,11 +139,11 @@
     </message>
     <message>
         <source>Open with...</source>
-        <translation>&apos;ཁ་འབྱེད་སྟངས་...&apos;</translation>
+        <translation>ཁ་འབྱེད་སྟངས་...</translation>
     </message>
     <message>
         <source>Open %1 selected files</source>
-        <translation>གདམ་ཟིནཡིག་ཆ%1ཁ་ཕྱེ་བ།</translation>
+        <translation>གདམ་ཟིན་པའི་ཡིག་ཆ%1ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
         <source>Select All</source>
@@ -151,11 +151,11 @@
     </message>
     <message>
         <source>Empty File</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཚགས།།(_E)</translation>
+        <translation>ཡིག་ཆ་སྟོང་བ།</translation>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="vanished">ཁྱོད་ཀྱིས་ཡིག་ཆ་འདི་དག་གསུབ་རྒྱུ་ཡིན་ནམ། གལ་ཏར་སུབ་ཚར་ན། ཡིག་ཆ་འདི་དག་ནམ་ཡང་སླར་གསོ་མི་ཐུབ།</translation>
+        <translation type="vanished">ཁྱེད་ཀྱིས་ཡིག་ཆ་འདི་དག་བསུབ་རྒྱུ་ཡིན་ནམ་།བསུབ་མགོ་བརྩམས་མ་ཐག་ཡིག་ཆ་འདི་དག་སླར་གསོ་བྱེད་མི་ཐུབ།</translation>
     </message>
     <message>
         <source>Clean the trash</source>
@@ -175,15 +175,15 @@
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">གསར་འཛུགས།</translation>
     </message>
     <message>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">མཐོང་རིས་རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Sort By</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">རིམ་སྒྲིག་བྱེད་སྟངས།</translation>
     </message>
 </context>
 <context>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>Take over the desktop displaying</source>
-        <translation>སྒྲོག་ངོས་བདག་དམ་བླངས།</translation>
+        <translation>རྩིས་ལེན་བདག་སྤྲོད་ཅོག་ངོས།</translation>
     </message>
     <message>
         <source>set background</source>
@@ -217,22 +217,26 @@
     </message>
     <message>
         <source>Setup backgrounds</source>
-        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
+        <translation>Setup backgrounds</translation>
     </message>
     <message>
         <source>Clear standard icons</source>
-        <translation>དྭངས་གཙང་ཚད་གཞི་རིས་རྟགས་</translation>
+        <translation>Clear standard icons</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>set background</source>
-        <translation>རྒྱབ་ལྗོངས་འཛུགས་པ།</translation>
+        <translation>རྒྱབ་ལྗོངས་བཀོད་སྒྲིག</translation>
+    </message>
+    <message>
+        <source>set resolution</source>
+        <translation type="vanished">གཏན་འཁེལ་བྱས་པའི་འབྱེད་ཕྱོད།</translation>
     </message>
     <message>
         <source>display settings</source>
-        <translation>བཀོད་སྒྲིག་བྱས་ཚུལ་གསལ་པོར་མངོན་པ།</translation>
+        <translation>འགྲེམས་སྟོན་གྱི་སྒྲིག་བཀོད།</translation>
     </message>
 </context>
 </TS>

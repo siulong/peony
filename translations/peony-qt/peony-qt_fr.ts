@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialogue</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -18,34 +18,50 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt; &lt;head&gt; &lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt; &lt;style type=&quot;text/css&quot;&gt;
+p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
+&lt;/style&gt; &lt;/head&gt; &lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;br /&gt; &lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</translation>
+    </message>
+    <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>TextLabel (Libellé textuel)</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation type="unfinished"></translation>
+        <translation>Service après-vente et assistance : </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation type="unfinished"></translation>
+        <translation>Pivoine</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="50"/>
         <location filename="../../src/windows/about-dialog.cpp" line="117"/>
         <source>Version number: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Numéro de version : %1</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation type="unfinished"></translation>
+        <translation>Peony est un logiciel graphique pour aider les utilisateurs à gérer les fichiers système. Il fournit des fonctions courantes d’opération de fichier pour les utilisateurs, telles que l’affichage de fichiers, la copie de fichiers, le collage, la coupe, la suppression, le renommage, la sélection de fichiers, l’ouverture d’applications, la recherche de fichiers, le tri de fichiers, l’aperçu de fichiers, etc. Il est pratique pour les utilisateurs de gérer les fichiers système de manière intuitive sur l’interface.</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation type="vanished">aucun</translation>
     </message>
 </context>
 <context>
@@ -313,6 +329,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Chercher</translation>
     </message>
     <message>
+        <source>Tips info</source>
+        <translation type="vanished">Conseils info</translation>
+    </message>
+    <message>
+        <source>Trash has no file need to be cleaned.</source>
+        <translation type="vanished">La corbeille n’a pas besoin d’être nettoyée.</translation>
+    </message>
+    <message>
         <source>Delete file Warning</source>
         <translation type="obsolete">Dosya Silme Uyarısı</translation>
     </message>
@@ -363,18 +387,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
         <source>Open In New Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir dans une nouvelle fenêtre</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="306"/>
         <source>Can not open %1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d’ouvrir %1, %2</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="290"/>
         <source>Open In New Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir dans un nouvel onglet</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
@@ -1212,7 +1236,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="877"/>
         <source>Peony</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivoine</translation>
     </message>
 </context>
 <context>
