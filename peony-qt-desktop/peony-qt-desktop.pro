@@ -32,6 +32,12 @@ LIBS += -L$$PWD/../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
 TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_tr.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_cs.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_de.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_es.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_fr.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_kk_KZ.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_ug_CN.ts \
+                ../translations/peony-qt-desktop/peony-qt-desktop_ky_KG.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts

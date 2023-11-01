@@ -62,6 +62,12 @@ include(libpeony-qt.pri)
 TRANSLATIONS += ../translations/libpeony-qt/libpeony-qt_zh_CN.ts \
                 ../translations/libpeony-qt/libpeony-qt_tr.ts \
                 ../translations/libpeony-qt/libpeony-qt_cs.ts \
+                ../translations/libpeony-qt/libpeony-qt_de.ts \
+                ../translations/libpeony-qt/libpeony-qt_es.ts \
+                ../translations/libpeony-qt/libpeony-qt_fr.ts \
+                ../translations/libpeony-qt/libpeony-qt_kk_KZ.ts \
+                ../translations/libpeony-qt/libpeony-qt_ug_CN.ts \
+                ../translations/libpeony-qt/libpeony-qt_ky_KG.ts \
                 ../translations/libpeony-qt/libpeony-qt_bo_CN.ts \
                 ../translations/libpeony-qt/libpeony-qt_mn.ts \
                 ../translations/libpeony-qt/libpeony-qt_zh_HK.ts
