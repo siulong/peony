@@ -123,6 +123,8 @@
 
 #define SHOW_NETWORK                "showNetwork"
 
+#define SHOW_RELATIVE_DATE          "showRelativeDate"
+
 //intel 个性化设置，透明度...
 //schema
 #define UKUI_CONTROL_CENTER_PERSONALISE             "org.ukui.control-center.personalise"
@@ -232,6 +234,7 @@ private:
 
     QDBusInterface*             mDbusDateServer = nullptr;
     bool m_showCreateTime = false;
+    bool m_showRelativeTime = false;
 };
 
 }

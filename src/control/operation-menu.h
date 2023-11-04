@@ -46,6 +46,7 @@ private:
     QAction *m_resident_in_backend = nullptr;
     QAction *m_showFileExtension = nullptr;
     QAction *m_showCreateTime = nullptr;
+    QAction *m_showRelativeTime = nullptr;
 
 private:
     MainWindow *m_window = nullptr;
