@@ -493,78 +493,83 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="109"/>
+        <location filename="../../src/control/operation-menu.cpp" line="110"/>
+        <source>Show Relative Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="123"/>
         <source>Forbid thumbnailing</source>
         <translation>ᠠᠪᠴᠢᠭᠤᠯᠤᠯ ᠵᠢᠷᠤᠭ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ ᠵᠢ ᠴᠠᠭᠠᠵᠠᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="118"/>
+        <location filename="../../src/control/operation-menu.cpp" line="132"/>
         <source>Resident in Backend</source>
         <translation>ᠠᠷᠤ ᠵᠢᠨ ᠳᠠᠪᠴᠠᠩ ᠳ᠋ᠤ᠌ ᠪᠠᠢᠩᠭᠤ ᠰᠠᠭᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="127"/>
+        <location filename="../../src/control/operation-menu.cpp" line="141"/>
         <source>Parallel Operations</source>
         <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠡᠷᠭᠡᠳᠡ ᠶᠠᠪᠤᠭᠳᠠᠬᠤ ᠵᠢ ᠵᠦᠪᠰᠢᠶᠡᠷᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="133"/>
+        <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Set samba password</source>
         <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>Tips</source>
         <translation>ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
         <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠨᠢᠭᠡᠨᠲᠡ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠠᠢ ᠪᠣᠯᠵᠠᠢ ᠂ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠴᠢᠬᠤᠯᠠ ᠲᠠᠢ ᠤᠤ ?</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="156"/>
+        <location filename="../../src/control/operation-menu.cpp" line="170"/>
         <source>Samba password:</source>
         <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <location filename="../../src/control/operation-menu.cpp" line="172"/>
         <source>Samba set user password</source>
         <translation>Samba ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠤ᠋ᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Warning</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠭᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation>Samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠳ᠋ᠦ᠍ ᠢᠯᠠᠭᠳᠠᠪᠠ᠂ ᠳᠠᠬᠢᠨ ᠣᠷᠣᠭᠤᠯᠬᠤ ᠪᠣᠯᠪᠠᠤ !</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation>ᠬᠠᠮᠲᠤᠪᠠᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠨᠢ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤ ᠂ ᠶᠠᠭ ᠬᠢᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠠᠵᠢᠯ ᠪᠠᠢᠬᠤ ᠡᠰᠡᠬᠦ ᠶ᠋ᠢ ᠨᠤᠲᠠᠯᠠᠬᠤ ᠪᠤᠶᠤ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠵᠤ ᠬᠠᠮᠲᠤᠪᠠᠷ ᠡᠳ᠋ᠯᠡᠬᠦ ᠶᠢ ᠨᠤᠲᠠᠯᠠᠭᠠᠷᠠᠢ !</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="186"/>
+        <location filename="../../src/control/operation-menu.cpp" line="200"/>
         <source>Open each folder in a new window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠲᠠᠰᠤ ᠨᠢᠭᠡᠪᠦᠷᠢ ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="192"/>
+        <location filename="../../src/control/operation-menu.cpp" line="206"/>
         <source>Plugin manager Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="201"/>
+        <location filename="../../src/control/operation-menu.cpp" line="215"/>
         <source>Help</source>
         <translation>ᠳᠤᠰᠠᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="205"/>
+        <location filename="../../src/control/operation-menu.cpp" line="219"/>
         <source>About</source>
         <translation>ᠲᠤᠬᠠᠢ</translation>
     </message>
@@ -572,27 +577,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="260"/>
+        <location filename="../../src/control/operation-menu.cpp" line="274"/>
         <source>Edit</source>
         <translation>ᠨᠠᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="271"/>
+        <location filename="../../src/control/operation-menu.cpp" line="285"/>
         <source>copy</source>
         <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="280"/>
+        <location filename="../../src/control/operation-menu.cpp" line="294"/>
         <source>paste</source>
         <translation>ᠨᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="289"/>
+        <location filename="../../src/control/operation-menu.cpp" line="303"/>
         <source>cut</source>
         <translation>ᠬᠠᠢᠴᠢᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="298"/>
+        <location filename="../../src/control/operation-menu.cpp" line="312"/>
         <source>trash</source>
         <translation>ᠬᠠᠰᠤᠬᠤ</translation>
     </message>

@@ -473,78 +473,83 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="109"/>
+        <location filename="../../src/control/operation-menu.cpp" line="110"/>
+        <source>Show Relative Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="123"/>
         <source>Forbid thumbnailing</source>
         <translation>Interdire la vignette</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="118"/>
+        <location filename="../../src/control/operation-menu.cpp" line="132"/>
         <source>Resident in Backend</source>
         <translation>Résident dans l&apos;arrière-plan</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="127"/>
+        <location filename="../../src/control/operation-menu.cpp" line="141"/>
         <source>Parallel Operations</source>
         <translation>Opérations parallèles</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="133"/>
+        <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Set samba password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>Tips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="156"/>
+        <location filename="../../src/control/operation-menu.cpp" line="170"/>
         <source>Samba password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <location filename="../../src/control/operation-menu.cpp" line="172"/>
         <source>Samba set user password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Warning</source>
         <translation type="unfinished">Attention</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="186"/>
+        <location filename="../../src/control/operation-menu.cpp" line="200"/>
         <source>Open each folder in a new window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="192"/>
+        <location filename="../../src/control/operation-menu.cpp" line="206"/>
         <source>Plugin manager Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="201"/>
+        <location filename="../../src/control/operation-menu.cpp" line="215"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="205"/>
+        <location filename="../../src/control/operation-menu.cpp" line="219"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
@@ -552,27 +557,27 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="260"/>
+        <location filename="../../src/control/operation-menu.cpp" line="274"/>
         <source>Edit</source>
         <translation>Éditer</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="271"/>
+        <location filename="../../src/control/operation-menu.cpp" line="285"/>
         <source>copy</source>
         <translation>copier</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="280"/>
+        <location filename="../../src/control/operation-menu.cpp" line="294"/>
         <source>paste</source>
         <translation>coller</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="289"/>
+        <location filename="../../src/control/operation-menu.cpp" line="303"/>
         <source>cut</source>
         <translation>couper</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="298"/>
+        <location filename="../../src/control/operation-menu.cpp" line="312"/>
         <source>trash</source>
         <translation>corbeille</translation>
     </message>

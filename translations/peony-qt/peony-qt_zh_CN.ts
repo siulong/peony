@@ -497,78 +497,83 @@ p, li { white-space: pre-wrap; }
         <translation>显示创建时间</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="109"/>
+        <location filename="../../src/control/operation-menu.cpp" line="110"/>
+        <source>Show Relative Time</source>
+        <translation>显示相对时间</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="123"/>
         <source>Forbid thumbnailing</source>
         <translation>禁用缩略图</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="118"/>
+        <location filename="../../src/control/operation-menu.cpp" line="132"/>
         <source>Resident in Backend</source>
         <translation>常驻后台</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="127"/>
+        <location filename="../../src/control/operation-menu.cpp" line="141"/>
         <source>Parallel Operations</source>
         <translation>允许操作并行</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="133"/>
+        <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Set samba password</source>
         <translation>设置samba共享密码</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
         <translation>用户已经设置了samba共享密码, 是否希望重新设置?</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="158"/>
+        <location filename="../../src/control/operation-menu.cpp" line="172"/>
         <source>Samba set user password</source>
         <translation>设置samba共享密码</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="156"/>
+        <location filename="../../src/control/operation-menu.cpp" line="170"/>
         <source>Samba password:</source>
         <translation>共享密码:</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="166"/>
+        <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation>设置共享密码失败, 请重新输入</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="177"/>
+        <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation>共享设置服务异常, 请确认是否已经有正在进行的共享设置操作, 或者重新设置共享!</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="186"/>
+        <location filename="../../src/control/operation-menu.cpp" line="200"/>
         <source>Open each folder in a new window</source>
         <translation>在新窗口打开文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="192"/>
+        <location filename="../../src/control/operation-menu.cpp" line="206"/>
         <source>Plugin manager Settings</source>
         <translation>插件管理设置</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="201"/>
+        <location filename="../../src/control/operation-menu.cpp" line="215"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="205"/>
+        <location filename="../../src/control/operation-menu.cpp" line="219"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -576,27 +581,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="260"/>
+        <location filename="../../src/control/operation-menu.cpp" line="274"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="271"/>
+        <location filename="../../src/control/operation-menu.cpp" line="285"/>
         <source>copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="280"/>
+        <location filename="../../src/control/operation-menu.cpp" line="294"/>
         <source>paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="289"/>
+        <location filename="../../src/control/operation-menu.cpp" line="303"/>
         <source>cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="298"/>
+        <location filename="../../src/control/operation-menu.cpp" line="312"/>
         <source>trash</source>
         <translation>删除</translation>
     </message>
