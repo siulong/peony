@@ -397,6 +397,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>Plugin manager Settings</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Relative Time</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OperationMenuEditWidget</name>
