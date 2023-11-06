@@ -79,7 +79,7 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
 
     addSeparator();
 
-    auto useGlobalSortAction = new QAction(tr("Use global sorting"), this);
+    auto useGlobalSortAction = new QAction(tr("Use current sorting for all folders"), this);
     useGlobalSortAction->setCheckable(true);
     useGlobalSortAction->setChecked(Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool());
     connect(useGlobalSortAction, &QAction::triggered, this, [=](bool checked){

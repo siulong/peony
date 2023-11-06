@@ -961,8 +961,12 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
+        <source>Use current sorting for all folders</source>
+        <translation>所有文件夹使用当前排序</translation>
+    </message>
+    <message>
         <source>Use global sorting</source>
-        <translation>使用全局排序</translation>
+        <translation type="vanished">使用全局排序</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="42"/>
