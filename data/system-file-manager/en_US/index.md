@@ -258,6 +258,23 @@ The content that can be set contains multiple aspects, and the functions corresp
 | Ctrl+Z |Revoke|
 | Ctrl+A|All|
 | F2| Rename|
+| Alt+D | Active address field |
+| Ctrl+E or Ctrl+F or F3 | Activate the search box in peony|
+| Ctrl+P | Show/hide the preview Window |
+| Ctrl+Shift+N | New folder |
+| Home | Keyboard focus fixed focus content area first item |
+| End | Keyboard focus fixed focus content area last item |
+| Ctrl+Mouse Wheel | Adjust the content area view mode |
+| Backspace | Return to the previous folder |
+| Alt+ ← | Return by history |
+| Alt+ → | Go with the history |
+| Ctrl+N | Create a peony window |
+| Ctrl+W | Close the peony Windows on the desktop one by one |
+| F11 | Maximize/restore, peony window |
+| Ctrl+D or Delete | Move the selected item to the recycle bin |
+| Shift+F10 | Open/close the right-click menu |
+| Shift+ ←  →  ↑ ↓ | Select multiple items in a row in peony or desktop |
+| Alt+Enter | Displays the properties of the selected item |
 
 ### 2 Wildcard Descriptions
 
