@@ -106,6 +106,20 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     m_showCreateTime->setCheckable(true);
     m_showCreateTime->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool());
 
+
+    m_showRelativeTime = addAction(tr("Show Relative Time"), this, [](bool checked){
+        Peony::GlobalSettings::getInstance()->setGSettingValue(SHOW_RELATIVE_DATE, checked);
+    });
+    m_showRelativeTime->setCheckable(true);
+    m_showRelativeTime->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_RELATIVE_DATE).toBool());
+
+    //显示相对时间，只在中文或者繁体语言生效
+    if ("zh_CN" == QLocale::system().name() || "zh_HK" == QLocale::system().name()) {
+        m_showRelativeTime->setDisabled(false);
+    } else {
+        m_showRelativeTime->setDisabled(true);
+    }
+
     auto forbidThumbnailing = addAction(tr("Forbid thumbnailing"), this, [=](bool checked) {
         //FIXME:
         Peony::GlobalSettings::getInstance()->setValue(FORBID_THUMBNAIL_IN_VIEW, checked);

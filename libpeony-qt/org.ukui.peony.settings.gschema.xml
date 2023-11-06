@@ -165,6 +165,12 @@
       <description>default view zoom level</description>
     </key>
 
+    <key type="b" name="show-relative-date">
+      <default>true</default>
+      <summary>show relative date</summary>
+      <description>Whether to show relative date format in list view</description>
+    </key>
+
     <!--remote-server-->
     <key type="b" name="show-network">
       <default>true</default>

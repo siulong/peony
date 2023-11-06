@@ -3479,23 +3479,23 @@ Bağlantı dosyasını silmek istiyor musunuz?</translation>
     <name>Peony::GlobalSettings</name>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="101"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="516"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="520"/>
         <source>yyyy/MM/dd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="102"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="508"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="512"/>
         <source>HH:mm:ss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="505"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="509"/>
         <source>AP hh:mm:ss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="519"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="523"/>
         <source>yyyy-MM-dd</source>
         <translation type="unfinished"></translation>
     </message>
