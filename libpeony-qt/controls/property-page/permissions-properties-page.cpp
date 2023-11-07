@@ -316,14 +316,17 @@ GAsyncReadyCallback PermissionsPropertiesPage::async_query_permisson_callback(GO
                 table->setItem(0, 0, nullptr);
                 QTableWidgetItem* itemR0C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-personal"), userNameDisplayString);
                 table->setItem(0, 0, itemR0C0);
+                itemR0C0->setToolTip(userNameDisplayString);
 
                 table->setItem(1, 0, nullptr);
                 QTableWidgetItem* itemR1C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-people"), groupName);
                 table->setItem(1, 0, itemR1C0);
+                itemR1C0->setToolTip(groupName);
 
                 table->setItem(2, 0, nullptr);
                 QTableWidgetItem* itemR2C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-people"), tr("Others"));
                 table->setItem(2, 0, itemR2C0);
+                itemR2C0->setToolTip(tr("Others"));
 
                 table->showRow(0);
                 table->showRow(1);
