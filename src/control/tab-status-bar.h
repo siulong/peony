@@ -32,6 +32,9 @@ class TabWidget;
 class ElidedLabel;
 class QSlider;
 class QVariantAnimation;
+class QAction;
+class QToolButton;
+class QToolBar;
 
 class TabStatusBar : public QStatusBar
 {
@@ -43,6 +46,8 @@ public:
     ~TabStatusBar() override;
 
     int currentZoomLevel();
+    void updatePreviewStatus(bool check);
+    void updatePreviewPageVisible();
 
 Q_SIGNALS:
     void zoomLevelChangedRequest(int zoomLevel);
@@ -70,6 +75,9 @@ private:
     QSlider *m_slider;
     bool m_searching = false;
     QVariantAnimation* m_animation;
+    QAction *m_preview_action = nullptr;
+    QToolButton *m_preview_button = nullptr;
+    QToolBar *m_preview_bar = nullptr;
 };
 
 class ElidedLabel : public QWidget

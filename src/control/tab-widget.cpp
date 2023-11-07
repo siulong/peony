@@ -759,6 +759,30 @@ QStringList TabWidget::getCurrentClassify(int rowCount)
     return currentList;
 }
 
+void TabWidget::updateStatusBarPreviewPageVisible()
+{
+    auto currentUri = getCurrentUri();
+    if (currentUri.startsWith("computer://")) {
+        m_status_bar->m_preview_action->setVisible(false);
+    } else {
+        m_status_bar->m_preview_action->setVisible(true);
+    }
+
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
+    for (auto name : pluginNames) {
+        auto factory = manager->getPlugin(name);
+        if (!m_status_bar->m_preview_action->text().compare(name)) {
+            if (m_status_bar->m_preview_action->isChecked()
+                    && m_status_bar->m_preview_action->isVisible()) {
+                this->setPreviewPage(factory->createPreviewPage());
+            } else {
+                this->setPreviewPage(nullptr);
+            }
+        }
+    }
+}
+
 void TabWidget::updateStatusBarSliderState()
 {
     if (currentPage() && currentPage()->getView()) {
@@ -1408,6 +1432,7 @@ void TabWidget::updateTabPageTitle()
     //m_tab_bar->updateLocation(m_tab_bar->currentIndex(), QUrl::fromPercentEncoding(getCurrentUri().toLocal8Bit()));
     updateTrashBarVisible(getCurrentUri());
     updateStatusBarSliderState();
+    updateStatusBarPreviewPageVisible();
 }
 
 void TabWidget::switchViewType(const QString &viewId)
@@ -1819,6 +1844,7 @@ void TabWidget::updateTabletModeValue(bool isTabletMode)
     m_tab_bar->setVisible(!isTabletMode);
     m_add_page_button->setVisible(!isTabletMode);
     m_status_bar->m_slider->hide();
+    m_status_bar->m_preview_action->setVisible(!isTabletMode);
 }
 
 PreviewPageContainer::PreviewPageContainer(QWidget *parent) : QStackedWidget(parent)

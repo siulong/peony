@@ -28,6 +28,8 @@
 #include "file-info.h"
 
 #include "global-settings.h"
+#include "preview-page-factory-manager.h"
+#include "preview-page-plugin-iface.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -41,6 +43,7 @@
 #include <QSlider>
 #include <QDebug>
 #include <QVariantAnimation>
+#include <QToolButton>
 
 TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
 {
@@ -60,6 +63,48 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
     m_slider = new QSlider(Qt::Horizontal, this);
     m_slider->setFocusPolicy(Qt::FocusPolicy(Qt::WheelFocus & ~Qt::TabFocus));
     m_slider->setRange(0, 100);
+
+    m_preview_action = new QAction(this);
+    m_preview_action->setCheckable(true);
+
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
+    for (auto name : pluginNames) {
+        auto factory = manager->getPlugin(name);
+        m_preview_action->setIcon(factory->icon());
+        m_preview_action->setText(factory->name());
+        break;
+    }
+
+    m_preview_bar = new QToolBar(this);
+    m_preview_bar->setMovable(false);
+    m_preview_bar->setAttribute(Qt::WA_TranslucentBackground);
+    m_preview_bar->setAutoFillBackground(false);
+    m_preview_bar->setIconSize(QSize(16, 16));
+    m_preview_bar->addAction(m_preview_action);
+
+    m_preview_button = qobject_cast<QToolButton*>(m_preview_bar->widgetForAction(m_preview_action));
+    m_preview_button->setFixedSize(26, 26);
+    m_preview_button->setIconSize(QSize(16, 16));
+    m_preview_button->setProperty("isWindowButton", 1);
+    m_preview_button->setProperty("fillIconSymbolicColor", true);
+
+    connect(m_preview_action, &QAction::triggered, this, [=](bool checked){
+        m_tab->setTriggeredPreviewPage(checked);
+        for (auto name : pluginNames) {
+            if (checked) {
+                auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+                m_tab->setPreviewPage(plugin->createPreviewPage());
+            } else {
+                m_tab->setPreviewPage(nullptr);
+            }
+        }
+    });
+
+    auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
+    m_tab->setTriggeredPreviewPage(check);
+    m_preview_action->setChecked(check);
+
     //设置状态栏下的搜索进度
     m_animation = new QVariantAnimation(this);
     m_animation->setDuration(1000);
@@ -91,6 +136,8 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
 TabStatusBar::~TabStatusBar()
 {
     m_styled_toolbar->deleteLater();
+    bool check = m_preview_action->isChecked();
+    Peony::GlobalSettings::getInstance()->setValue(DEFAULT_DETAIL, check);
 }
 
 int TabStatusBar::currentZoomLevel()
@@ -99,6 +146,26 @@ int TabStatusBar::currentZoomLevel()
         m_slider->value();
     }
     return -1;
+}
+
+void TabStatusBar::updatePreviewStatus(bool check)
+{
+    m_preview_action->setChecked(check);
+    m_preview_action->triggered(check);
+}
+
+void TabStatusBar::updatePreviewPageVisible()
+{
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
+    for (auto name : pluginNames) {
+        if (m_preview_action->isVisible() && m_preview_action->isChecked()) {
+            auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+            m_tab->setPreviewPage(plugin->createPreviewPage());
+        } else {
+            m_tab->setPreviewPage(nullptr);
+        }
+    }
 }
 
 void TabStatusBar::update()
@@ -205,7 +272,8 @@ void TabStatusBar::resizeEvent(QResizeEvent *e)
     QStatusBar::resizeEvent(e);
     auto pos = this->rect().topRight();
     auto size = m_slider->size();
-    m_slider->move(pos.x() - size.width() - 20, this->size().height()/2 - size.height()/2);
+    m_slider->move(pos.x() - size.width() - 70, this->size().height()/2 - size.height()/2);
+    m_preview_bar->move(pos.x() - size.width() + 50, this->size().height()/2 - size.height()/2);
 }
 
 void TabStatusBar::updateSearchProgress(bool searching)

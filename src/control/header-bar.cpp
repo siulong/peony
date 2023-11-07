@@ -39,8 +39,6 @@
 #include "file-info-job.h"
 #include "file-utils.h"
 #include "tab-widget.h"
-#include "preview-page-factory-manager.h"
-#include "preview-page-plugin-iface.h"
 
 #include "clipboard-utils.h"
 #include "file-operation-utils.h"
@@ -213,11 +211,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     viewType->setPopupMode(QToolButton::InstantPopup);
 
     m_view_type_menu = new ViewTypeMenu(viewType);
-    m_preview_action = new QAction(tr("Details"));
-    connect(m_view_type_menu,&QMenu::aboutToShow,m_view_type_menu,[=](){
-        m_view_type_menu->addSeparator();
-        m_view_type_menu->insertAction(0,m_preview_action);
-    });
 
     //fix bug#128963, QToolButton not update status issue
     connect(m_view_type_menu, &QMenu::aboutToHide, this, [=](){
@@ -227,28 +220,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         viewType->update();
     });
 
-    m_preview_action->setCheckable(true);
-
     a->setMenu(m_view_type_menu);
-
-    auto manager = Peony::PreviewPageFactoryManager::getInstance();
-    auto pluginNames = manager->getPluginNames();
-
-    connect(m_preview_action,&QAction::triggered,[=](bool checked){
-        m_window->m_tab->setTriggeredPreviewPage(checked);
-        for (auto name : pluginNames) {
-            if (checked) {
-                auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
-                m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
-            } else {
-                m_window->m_tab->setPreviewPage(nullptr);
-            }
-        }
-    });
-
-    auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
-    m_window->m_tab->setTriggeredPreviewPage(check);
-    m_preview_action->setChecked(check);
 
     connect(m_view_type_menu, &ViewTypeMenu::switchViewRequest, this, [=](const QString &id, const QIcon &icon, bool resetToZoomLevel) {
         viewType->setText(id);
@@ -389,8 +361,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
 
 HeaderBar::~HeaderBar()
 {
-    bool check = m_preview_action->isChecked();
-    Peony::GlobalSettings::getInstance()->setValue(DEFAULT_DETAIL, check);
 }
 
 void HeaderBar::findDefaultTerminal()
@@ -514,20 +484,6 @@ void HeaderBar::mouseDoubleClickEvent(QMouseEvent *e)
     //fix bug#196512, RightButton double click in buttons can also maximizeOrRestore window issue
     if(e->button() == Qt::LeftButton/* || e->button() == Qt::RightButton*/){
         m_window->maximizeOrRestore();
-    }
-}
-
-void HeaderBar::updatePreviewPageVisible()
-{
-    auto manager = Peony::PreviewPageFactoryManager::getInstance();
-    auto pluginNames = manager->getPluginNames();
-    for (auto name : pluginNames) {
-        if (m_view_type_menu->menuAction()->isVisible() && m_preview_action->isChecked()) {
-            auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
-            m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
-        } else {
-            m_window->m_tab->setPreviewPage(nullptr);
-        }
     }
 }
 
@@ -759,7 +715,6 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
             m_actions.find(HeaderBarAction::GoForward).value()->setVisible(true);
         }
     }
-    m_preview_action->setVisible(!isTabletMode);
 }
 
 bool HeaderBar::CopyOrMoveTo(bool isCut)
@@ -869,12 +824,6 @@ void HeaderBar::updateSelectStatus(bool autoUpdate)
             selectAll->setText(tr("Deselect All"));
         }
     }
-}
-
-void HeaderBar::updatePreviewStatus(bool check)
-{
-    m_preview_action->setChecked(check);
-    m_preview_action->triggered(check);
 }
 
 //HeaderBarToolButton
