@@ -159,24 +159,17 @@ void LocationBar::setRootUri(const QString &uri)
 
     Q_EMIT aboutToSetRootUri();
 
-    //when is the same uri and has buttons return
-    if (FileUtils::isSamePath(m_current_uri, uri) && m_buttons.count() >0)
-        return;
-
+    bool isSamePath = false;
+    if (FileUtils::isSamePath(m_current_uri, uri)  && m_buttons.count() > 0) {
+        isSamePath = true;
+    }
     m_current_uri = uri;
-
     //clear buttons
-    clearButtons();
-    if (m_current_uri.startsWith("search://") ) {
+    if (m_current_uri.startsWith("search://")) {
+        clearButtons();
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
         //fix bug 94229, show button
-        doLayout();
-        return;
-    }
-
-    if (m_current_uri.startsWith("label://")) {
-        addButton(m_current_uri);
         doLayout();
         return;
     }
@@ -193,6 +186,21 @@ void LocationBar::setRootUri(const QString &uri)
 //            m_buttons_info.prepend(FileInfo::fromUri("mult:///"));
 //        }
         tmpUri = FileUtils::getParentUri(tmpUri);
+    }
+
+    //when is the same uri and has buttons return
+    if (isSamePath && m_buttons.count() == m_buttons_info.count()) {
+        int i = 0 ;
+        for (auto button : m_buttons) {
+            QString uri = m_buttons_info[i].get()->uri().toLocal8Bit();
+            if (uri != button->property("uri").toString()) {
+                isSamePath = false;
+            }
+            i++;
+        }
+
+        if (isSamePath)
+            return;
     }
 
     m_querying_buttons_info = m_buttons_info;
