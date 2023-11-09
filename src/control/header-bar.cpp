@@ -245,12 +245,17 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     m_actions.insert(HeaderBarAction::SortType, a);
     auto sortType = qobject_cast<QToolButton *>(widgetForAction(a));
     sortType->setAutoRaise(false);
-    sortType->setFixedWidth(57);
+    sortType->setFixedWidth(167);
     sortType->setIconSize(QSize(16, 16));
     sortType->setPopupMode(QToolButton::InstantPopup);
+    sortType->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     m_sort_type_menu = new SortTypeMenu(this);
     a->setMenu(m_sort_type_menu);
+
+    QString sortTypeName = m_sort_type_menu->getSortTypeName(m_window->getCurrentSortColumn());
+    m_sort_type_menu->updateSortOrderName(m_window->getCurrentSortColumn());
+    a->setText(sortTypeName);
 
     connect(m_sort_type_menu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
     connect(m_sort_type_menu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
@@ -300,6 +305,11 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
     m_window->m_tab->setTriggeredPreviewPage(check);
     m_preview_action->setChecked(check);
+
+    connect(m_sort_type_menu, &SortTypeMenu::switchSortTypeRequest, this, [=](int type){
+        a->setText(m_sort_type_menu->getSortTypeName(type));
+        m_sort_type_menu->updateSortOrderName(type);
+    });
 
     addSpacing(3);
 
