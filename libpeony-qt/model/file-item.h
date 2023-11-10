@@ -40,6 +40,7 @@ class FileWatcher;
 class FileItemProxyFilterSortModel;
 class FileEnumerator;
 class BatchProcessItems;
+class ExtraInfoRecorder;
 
 /*!
  * \brief The FileItem class
@@ -161,6 +162,7 @@ private:
     QVector<FileItem*> *m_children = nullptr;
     QHash<QString, FileItem*> m_uri_item_hash; /* <key:uri,value:fileItem> 必须与m_children同增减！！！ */
     FileItemModel *m_model = nullptr;
+    std::shared_ptr<ExtraInfoRecorder> m_extraInfoRecorder = nullptr;/* 记录文件缩略图和角标等附加信息的引用 */
 
     bool m_expanded = false;
     bool m_isRTypeDisc = false;
@@ -223,6 +225,19 @@ private:
     QVector<FileItem*> *m_children = nullptr;
 };
 
+/* 该类暂用于为了兼容性能优化 批量处理后析构缩略图和角标 */
+class ExtraInfoRecorder{
+public:
+    explicit ExtraInfoRecorder(const QString &uri);
+    ~ExtraInfoRecorder();
+
+public:
+    const QString uri();
+
+private:
+    QString m_uri;
+
+};
 }
 
 #endif // FILEITEM_H

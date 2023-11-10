@@ -77,8 +77,6 @@ FileInfo::FileInfo(const QString &uri, QObject *parent) : QObject (parent)
 
 FileInfo::~FileInfo()
 {
-    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
-    EmblemProviderManager::getInstance()->cancelQuery(m_uri);
     //qDebug()<<"~FileInfo"<<m_uri;
     disconnect();
 
