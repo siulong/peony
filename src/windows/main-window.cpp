@@ -631,7 +631,7 @@ void MainWindow::setShortCuts()
         connect(this,&MainWindow::tabletModeChanged,previewPageAction,[=](bool isTabletMode){
             if(isTabletMode){
                 previewPageAction->setEnabled(false);
-                m_tab->m_status_bar->updatePreviewStatus(false);
+                m_header_bar->updatePreviewStatus(false);
            }else{
                 previewPageAction->setEnabled(true);
            }
@@ -639,7 +639,7 @@ void MainWindow::setShortCuts()
         previewPageAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::ALT + Qt::Key_P));
         connect(previewPageAction, &QAction::triggered, this, [=]() {
             bool triggered = m_tab->getTriggeredPreviewPage();
-            m_tab->m_status_bar->updatePreviewStatus(!triggered);
+            m_header_bar->updatePreviewStatus(!triggered);
         });
         addAction(previewPageAction);
 
@@ -1098,6 +1098,7 @@ void MainWindow::updateHeaderBar()
     //fix bug#66336, 83711
     m_header_bar->updateViewTypeEnable();
     //m_status_bar->update();
+    m_header_bar->updatePreviewPageVisible();
 }
 
 void MainWindow::updateWindowIcon()
@@ -1794,7 +1795,6 @@ void MainWindow::initUI(const QString &uri)
     connect(m_tab, &TabWidget::activePageChanged, this, [=](){
         // check slider zoom level
         setCurrentViewZoomLevel(currentViewZoomLevel());
-        m_tab->m_status_bar->updatePreviewPageVisible();
     });
 
     connect(m_tab, &TabWidget::signal_itemAdded, this, [=](const QString& uri){
@@ -1988,7 +1988,6 @@ void MainWindow::updateTabletModeValue(bool isTabletMode)
     m_tab->updateTabletModeValue(isTabletMode);
     m_tab->menuWidget()->setVisible(!isTabletMode);
     m_header_bar->updateTabletModeValue(isTabletMode);
-    m_tab->m_status_bar->updatePreviewStatus(isTabletMode);
     Q_EMIT tabletModeChanged(isTabletMode);
 
     if (iface2) {

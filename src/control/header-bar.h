@@ -93,6 +93,9 @@ class HeaderBar : public QToolBar
         TabletClose
     };
 
+public:
+    void updatePreviewStatus(bool check);
+
 private:
     explicit HeaderBar(MainWindow *parent = nullptr);
     ~HeaderBar();
@@ -131,6 +134,7 @@ private Q_SLOTS:
     void cancleSelect();
     void updateSortTypeEnable();
     void updateViewTypeEnable();
+    void updatePreviewPageVisible();
     void updateTabletModeValue(bool isTabletMode);
     bool CopyOrMoveTo(bool isCut);
     void quitMultiSelect();
@@ -161,6 +165,7 @@ private:
     QHash<HeaderBarAction, QAction*> m_actions;
 
     QToolButton *m_maximize_restore_button;
+    QAction *m_preview_action = nullptr;
 };
 
 class HeaderBarToolButton : public QToolButton
