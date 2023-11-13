@@ -136,124 +136,119 @@ p, li { white-space: pre-wrap; }
         <translation>ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="216"/>
-        <source>Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="270"/>
+        <location filename="../../src/control/header-bar.cpp" line="244"/>
         <source>Sort Type</source>
         <translation>ᠳᠠᠷᠠᠭᠠᠯᠠᠯ ᠤ᠋ᠨ ᠬᠡᠯᠪᠡᠷᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="307"/>
+        <location filename="../../src/control/header-bar.cpp" line="316"/>
         <source>Option</source>
         <translation>ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="320"/>
+        <location filename="../../src/control/header-bar.cpp" line="329"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="323"/>
+        <location filename="../../src/control/header-bar.cpp" line="332"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="335"/>
+        <location filename="../../src/control/header-bar.cpp" line="344"/>
         <source>&amp;Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="338"/>
+        <location filename="../../src/control/header-bar.cpp" line="347"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="344"/>
+        <location filename="../../src/control/header-bar.cpp" line="353"/>
         <source>&amp;Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="348"/>
-        <location filename="../../src/control/header-bar.cpp" line="360"/>
+        <location filename="../../src/control/header-bar.cpp" line="357"/>
+        <location filename="../../src/control/header-bar.cpp" line="369"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="365"/>
-        <location filename="../../src/control/header-bar.cpp" line="851"/>
-        <location filename="../../src/control/header-bar.cpp" line="869"/>
+        <location filename="../../src/control/header-bar.cpp" line="374"/>
+        <location filename="../../src/control/header-bar.cpp" line="867"/>
+        <location filename="../../src/control/header-bar.cpp" line="885"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="370"/>
+        <location filename="../../src/control/header-bar.cpp" line="379"/>
         <source>&amp;Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="373"/>
+        <location filename="../../src/control/header-bar.cpp" line="382"/>
         <source>Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="423"/>
+        <location filename="../../src/control/header-bar.cpp" line="432"/>
         <source>Operate Tips</source>
         <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢᠨ ᠰᠠᠨᠠᠭᠤᠯᠭ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="424"/>
+        <location filename="../../src/control/header-bar.cpp" line="433"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
         <translation>ᠶᠠᠮᠠᠷ ᠴᠤ᠌ ᠦᠵᠦᠬᠦᠷ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠡᠷᠢᠵᠤ ᠤᠤᠯᠤᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠ ᠠᠳᠠᠭ ᠲᠤ᠌ ᠪᠡᠨ ᠨᠢᠭᠡ ᠵᠢ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠪᠠᠢᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ!</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="639"/>
+        <location filename="../../src/control/header-bar.cpp" line="655"/>
         <source>Restore</source>
         <translation>ᠪᠤᠴᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="642"/>
+        <location filename="../../src/control/header-bar.cpp" line="658"/>
         <source>Maximize</source>
         <translation>ᠬᠠᠮᠤᠭ ᠎ᠤᠨ ᠶᠡᠬᠡᠴᠢᠯᠡᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="654"/>
-        <location filename="../../src/control/header-bar.cpp" line="854"/>
-        <location filename="../../src/control/header-bar.cpp" line="864"/>
+        <location filename="../../src/control/header-bar.cpp" line="670"/>
+        <location filename="../../src/control/header-bar.cpp" line="870"/>
+        <location filename="../../src/control/header-bar.cpp" line="880"/>
         <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="664"/>
-        <location filename="../../src/control/header-bar.cpp" line="798"/>
-        <location filename="../../src/control/header-bar.cpp" line="837"/>
+        <location filename="../../src/control/header-bar.cpp" line="680"/>
+        <location filename="../../src/control/header-bar.cpp" line="814"/>
+        <location filename="../../src/control/header-bar.cpp" line="853"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="691"/>
+        <location filename="../../src/control/header-bar.cpp" line="707"/>
         <source>MoveTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="700"/>
+        <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>CopyTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="709"/>
+        <location filename="../../src/control/header-bar.cpp" line="725"/>
         <source>Delete</source>
         <translation type="unfinished">ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="775"/>
+        <location filename="../../src/control/header-bar.cpp" line="791"/>
         <source>Select path</source>
         <translation type="unfinished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="840"/>
+        <location filename="../../src/control/header-bar.cpp" line="856"/>
         <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
@@ -269,7 +264,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1215"/>
+        <location filename="../../src/control/header-bar.cpp" line="1231"/>
         <source>Minimize</source>
         <translation>ᠬᠠᠮᠤᠭ ᠎ᠤᠨ ᠪᠠᠭᠠᠴᠢᠯᠠᠯ</translation>
     </message>
@@ -286,7 +281,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1227"/>
+        <location filename="../../src/control/header-bar.cpp" line="1243"/>
         <source>Close</source>
         <translation>ᠬᠠᠭᠠᠬᠤ</translation>
     </message>
@@ -961,8 +956,37 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
+        <source>Use current sorting for all folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="102"/>
+        <source>By %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="111"/>
+        <source>Newest to oldest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="112"/>
+        <source>Oldest to newest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="114"/>
+        <source>Files from large to small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="115"/>
+        <source>Files from small to large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Use global sorting</source>
-        <translation>ᠪᠦᠬᠦ ᠪᠠᠢᠳᠠᠯ ᠤ᠋ᠨ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ ᠢ᠋ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ</translation>
+        <translation type="vanished">ᠪᠦᠬᠦ ᠪᠠᠢᠳᠠᠯ ᠤ᠋ᠨ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ ᠢ᠋ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="42"/>
@@ -980,11 +1004,13 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="71"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="118"/>
         <source>Ascending</source>
         <translation>ᠦᠭᠰᠦᠬᠦ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="117"/>
         <source>Descending</source>
         <translation>ᠪᠠᠭᠠᠰᠬᠠᠬᠤ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ</translation>
     </message>
@@ -1307,17 +1333,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1022"/>
+        <location filename="../../src/control/header-bar.cpp" line="1038"/>
         <source>Option</source>
         <translation type="unfinished">ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1035"/>
+        <location filename="../../src/control/header-bar.cpp" line="1051"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1058"/>
+        <location filename="../../src/control/header-bar.cpp" line="1074"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
