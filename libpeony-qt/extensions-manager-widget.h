@@ -43,13 +43,16 @@ class PEONYCORESHARED_EXPORT ExtensionsManagerWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ExtensionsManagerWidget(QWidget *parent = nullptr);
-    ~ExtensionsManagerWidget();
+    static ExtensionsManagerWidget *getInstance();
     void initUI();
     void initTableWidget();
     void initExtensionInfo();
     bool updateCheckBox(const QString &path);
     void addSeparator();
+
+private:
+    explicit ExtensionsManagerWidget(QWidget *parent = nullptr);
+    ~ExtensionsManagerWidget();
 
 private:
     QVBoxLayout *m_mainLayout = nullptr;

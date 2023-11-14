@@ -106,6 +106,20 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     m_showCreateTime->setCheckable(true);
     m_showCreateTime->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool());
 
+
+    m_showRelativeTime = addAction(tr("Show Relative Time"), this, [](bool checked){
+        Peony::GlobalSettings::getInstance()->setGSettingValue(SHOW_RELATIVE_DATE, checked);
+    });
+    m_showRelativeTime->setCheckable(true);
+    m_showRelativeTime->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_RELATIVE_DATE).toBool());
+
+    //显示相对时间，只在中文或者繁体语言生效
+    if ("zh_CN" == QLocale::system().name() || "zh_HK" == QLocale::system().name()) {
+        m_showRelativeTime->setDisabled(false);
+    } else {
+        m_showRelativeTime->setDisabled(true);
+    }
+
     auto forbidThumbnailing = addAction(tr("Forbid thumbnailing"), this, [=](bool checked) {
         //FIXME:
         Peony::GlobalSettings::getInstance()->setValue(FORBID_THUMBNAIL_IN_VIEW, checked);
@@ -183,14 +197,15 @@ setPasswd:
     });
 
     //task#147390  设置是否新建窗口打开文件夹
-    auto showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
+    m_showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
         Peony::GlobalSettings::getInstance()->setValue(SHOW_IN_NEW_WINDOW, checked);
     });
-    showFoldersInNewWindow->setCheckable(true);
-    showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
+    m_showFoldersInNewWindow->setCheckable(true);
+    m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
 
     addAction(tr("Plugin manager Settings"), this, [=](){
-        Peony::ExtensionsManagerWidget *widget = new Peony::ExtensionsManagerWidget;
+        Peony::ExtensionsManagerWidget *widget = Peony::ExtensionsManagerWidget::getInstance();
+        widget->raise();
         widget->show();
     });
 
@@ -238,6 +253,9 @@ void OperationMenu::updateMenu()
                                       Peony::GlobalSettings::getInstance()->getValue(RESIDENT_IN_BACKEND).toBool():
                                       false);
 
+    m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_IN_NEW_WINDOW)?
+                                      Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool():
+                                      false);
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
 

@@ -230,7 +230,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
 #endif
 
     connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [this](const QString &key){
-        if (key == SHOW_CREATE_TIME) {
+        if (key == SHOW_CREATE_TIME || key == SHOW_RELATIVE_DATE) {
             this->refresh();
         }
     });
@@ -491,10 +491,13 @@ void MainWindow::setShortCuts()
         });
 
         auto searchAction = new QAction(this);
-        searchAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::Key_F));
+        //UI improve bug#197559, add Ctrl + E to active search status, and not quit when trigger again
+        searchAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::CTRL + Qt::Key_F)<<QKeySequence(Qt::CTRL + Qt::Key_E)<<Qt::Key_F3);
         connect(searchAction, &QAction::triggered, this, [=]() {
-            m_is_search = ! m_is_search;
-            m_header_bar->startEdit(m_is_search);
+            if (! m_is_search){
+                m_is_search = true;
+                m_header_bar->startEdit(m_is_search);
+            }
         });
         addAction(searchAction);
 
@@ -633,7 +636,7 @@ void MainWindow::setShortCuts()
                 previewPageAction->setEnabled(true);
            }
         });
-        previewPageAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_F3<<QKeySequence(Qt::ALT + Qt::Key_P));
+        previewPageAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::ALT + Qt::Key_P));
         connect(previewPageAction, &QAction::triggered, this, [=]() {
             bool triggered = m_tab->getTriggeredPreviewPage();
             m_header_bar->updatePreviewStatus(!triggered);

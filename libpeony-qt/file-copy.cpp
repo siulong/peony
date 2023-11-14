@@ -90,7 +90,9 @@ FileCopy::Status FileCopy::getStatus()
 
 void FileCopy::detailError (GError** error)
 {
-    if (nullptr == error || nullptr == *error || nullptr == mError) {
+    g_clear_error (mError);
+
+    if (nullptr == error || nullptr == *error) {
         return;
     }
 

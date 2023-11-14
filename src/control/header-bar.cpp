@@ -204,6 +204,33 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     addTabletMenu();
     addSpacing(2);
 
+    auto iconView = addAction(QIcon::fromTheme("view-grid-symbolic"), tr("Icon View"));
+    iconView->setData("Icon View");
+    m_actions.insert(HeaderBarAction::IconView, iconView);
+    iconView->setCheckable(true);
+    auto iconViewButton = qobject_cast<QToolButton *>(widgetForAction(iconView));
+    iconViewButton->setIconSize(QSize(16, 16));
+    iconViewButton->setProperty("isWindowButton", 1);
+    iconViewButton->setProperty("fillIconSymbolicColor", true);
+
+    auto listView = addAction(QIcon::fromTheme("view-list-symbolic"), tr("List View"));
+    listView->setData("List View");
+    m_actions.insert(HeaderBarAction::ListView, listView);
+    listView->setCheckable(true);
+    auto listViewButton = qobject_cast<QToolButton *>(widgetForAction(listView));
+    listViewButton->setIconSize(QSize(16, 16));
+    listViewButton->setProperty("isWindowButton", 1);
+    listViewButton->setProperty("fillIconSymbolicColor", true);
+
+    m_view_actions = new QActionGroup(this);
+    m_view_actions->setExclusive(true);
+    m_view_actions->addAction(iconView);
+    m_view_actions->addAction(listView);
+    connect(m_view_actions, &QActionGroup::triggered, this, [=](QAction *action) {
+        auto viewId = action->data().toString();
+        m_window->beginSwitchView(viewId);
+    });
+
     a = addAction(QIcon::fromTheme("view-grid-symbolic"), tr("View Type"));
     m_actions.insert(HeaderBarAction::ViewType, a);
     auto viewType = qobject_cast<QToolButton *>(widgetForAction(a));
@@ -213,11 +240,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     viewType->setPopupMode(QToolButton::InstantPopup);
 
     m_view_type_menu = new ViewTypeMenu(viewType);
-    m_preview_action = new QAction(tr("Details"));
-    connect(m_view_type_menu,&QMenu::aboutToShow,m_view_type_menu,[=](){
-        m_view_type_menu->addSeparator();
-        m_view_type_menu->insertAction(0,m_preview_action);
-    });
 
     //fix bug#128963, QToolButton not update status issue
     connect(m_view_type_menu, &QMenu::aboutToHide, this, [=](){
@@ -227,28 +249,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         viewType->update();
     });
 
-    m_preview_action->setCheckable(true);
-
     a->setMenu(m_view_type_menu);
-
-    auto manager = Peony::PreviewPageFactoryManager::getInstance();
-    auto pluginNames = manager->getPluginNames();
-
-    connect(m_preview_action,&QAction::triggered,[=](bool checked){
-        m_window->m_tab->setTriggeredPreviewPage(checked);
-        for (auto name : pluginNames) {
-            if (checked) {
-                auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
-                m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
-            } else {
-                m_window->m_tab->setPreviewPage(nullptr);
-            }
-        }
-    });
-
-    auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
-    m_window->m_tab->setTriggeredPreviewPage(check);
-    m_preview_action->setChecked(check);
 
     connect(m_view_type_menu, &ViewTypeMenu::switchViewRequest, this, [=](const QString &id, const QIcon &icon, bool resetToZoomLevel) {
         viewType->setText(id);
@@ -271,12 +272,17 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     m_actions.insert(HeaderBarAction::SortType, a);
     auto sortType = qobject_cast<QToolButton *>(widgetForAction(a));
     sortType->setAutoRaise(false);
-    sortType->setFixedWidth(57);
+    sortType->setFixedWidth(167);
     sortType->setIconSize(QSize(16, 16));
     sortType->setPopupMode(QToolButton::InstantPopup);
+    sortType->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     m_sort_type_menu = new SortTypeMenu(this);
     a->setMenu(m_sort_type_menu);
+
+    QString sortTypeName = m_sort_type_menu->getSortTypeName(m_window->getCurrentSortColumn());
+    m_sort_type_menu->updateSortOrderName(m_window->getCurrentSortColumn());
+    a->setText(sortTypeName);
 
     connect(m_sort_type_menu, &SortTypeMenu::switchSortTypeRequest, m_window, &MainWindow::setCurrentSortColumn);
     connect(m_sort_type_menu, &SortTypeMenu::switchSortOrderRequest, m_window, [=](Qt::SortOrder order) {
@@ -300,6 +306,36 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         sortType->setDown(false);
         sortType->releaseMouse();
         sortType->update();
+    });
+
+    auto manager = Peony::PreviewPageFactoryManager::getInstance();
+    auto pluginNames = manager->getPluginNames();
+    for (auto name : pluginNames) {
+        auto factory = manager->getPlugin(name);
+        m_preview_action = addAction(factory->icon(), factory->name());
+        break;
+    }
+
+    m_preview_action->setCheckable(true);
+    connect(m_preview_action,&QAction::triggered,[=](bool checked){
+        m_window->m_tab->setTriggeredPreviewPage(checked);
+        for (auto name : pluginNames) {
+            if (checked) {
+                auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+                m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
+            } else {
+                m_window->m_tab->setPreviewPage(nullptr);
+            }
+        }
+    });
+
+    auto check = Peony::GlobalSettings::getInstance()->getValue(DEFAULT_DETAIL).toBool();
+    m_window->m_tab->setTriggeredPreviewPage(check);
+    m_preview_action->setChecked(check);
+
+    connect(m_sort_type_menu, &SortTypeMenu::switchSortTypeRequest, this, [=](int type){
+        a->setText(m_sort_type_menu->getSortTypeName(type));
+        m_sort_type_menu->updateSortOrderName(type);
     });
 
     addSpacing(3);
@@ -479,7 +515,7 @@ void HeaderBar::switchSelectStatus(bool select)
     }
     else {
         m_actions.find(HeaderBarAction::SortType).value()->setVisible(true);
-        m_actions.find(HeaderBarAction::ViewType).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::ViewType).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Copy).value()->setVisible(false);
         m_actions.find(HeaderBarAction::Cut).value()->setVisible(false);
         m_actions.find(HeaderBarAction::SeletcAll).value()->setVisible(false);
@@ -511,13 +547,21 @@ void HeaderBar::mouseMoveEvent(QMouseEvent *e)
 void HeaderBar::mouseDoubleClickEvent(QMouseEvent *e)
 {
     QToolBar::mouseDoubleClickEvent(e);
-    if(e->button() == Qt::LeftButton || e->button() == Qt::RightButton){
+    //fix bug#196512, RightButton double click in buttons can also maximizeOrRestore window issue
+    if(e->button() == Qt::LeftButton/* || e->button() == Qt::RightButton*/){
         m_window->maximizeOrRestore();
     }
 }
 
 void HeaderBar::updatePreviewPageVisible()
 {
+    auto currentUri = m_window->getCurrentUri();
+    if (currentUri == "computer:///") {
+        m_preview_action->setVisible(false);
+    } else {
+        m_preview_action->setVisible(true);
+    }
+
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
     for (auto name : pluginNames) {
@@ -599,21 +643,39 @@ void HeaderBar::updateIcons()
 
     //maximize & restore
     //updateMaximizeState();
+    
+    QString viewId = m_window->getCurrentPage()->getView()->viewId();
+    for (auto action : m_view_actions->actions()) {
+        if (action->data().toString() == viewId) {
+            action->setChecked(true);
+        }
+    }
 }
 
 void HeaderBar::updateViewTypeEnable()
 {
     auto url = m_window->getCurrentUri();
-    //qDebug() << "updateViewTypeEnable url:" << url;
-    if(url == "computer:///"){
-        m_view_type_menu->setEnabled(false);
-        m_view_type_menu->menuAction()->setVisible(false);
-    }else{
-        m_view_type_menu->setEnabled(true);
-        m_view_type_menu->menuAction()->setVisible(true);
-        //bug#118439 修改切换成列表视图后，图标仍然是图标视图
-        m_actions.find(HeaderBarAction::ViewType).value()->setIcon(m_view_type_menu->getCurrentIconFromViewId());
+    if (url == "computer:///") {
+        m_actions.find(HeaderBarAction::IconView).value()->setVisible(false);
+        m_actions.find(HeaderBarAction::ListView).value()->setVisible(false);
+    } else {
+        m_actions.find(HeaderBarAction::IconView).value()->setVisible(true);
+        m_actions.find(HeaderBarAction::ListView).value()->setVisible(true);
     }
+
+    m_view_type_menu->setEnabled(false);
+    m_view_type_menu->menuAction()->setVisible(false);
+//    auto url = m_window->getCurrentUri();
+//    //qDebug() << "updateViewTypeEnable url:" << url;
+//    if(url == "computer:///"){
+//        m_view_type_menu->setEnabled(false);
+//        m_view_type_menu->menuAction()->setVisible(false);
+//    }else{
+//        m_view_type_menu->setEnabled(true);
+//        m_view_type_menu->menuAction()->setVisible(true);
+//        //bug#118439 修改切换成列表视图后，图标仍然是图标视图
+//        m_actions.find(HeaderBarAction::ViewType).value()->setIcon(m_view_type_menu->getCurrentIconFromViewId());
+//    }
 }
 
 void HeaderBar::updateSortTypeEnable()
@@ -733,6 +795,7 @@ void HeaderBar::updateTabletModeValue(bool isTabletMode)
     if(url != "computer:///"){
         noComputer = true;
     }
+    m_view_type_menu->menuAction()->setVisible(false);
     m_actions.find(HeaderBarAction::SortType).value()->setVisible(noComputer);
     m_actions.find(HeaderBarAction::ViewType).value()->setVisible(noComputer);
     if (isTabletMode) {

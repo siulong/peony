@@ -39,6 +39,7 @@ class NavigationTabBar : public QTabBar
     Q_OBJECT
 public:
     explicit NavigationTabBar(QWidget *parent = nullptr);
+    QStringList getCurrentUris();
 
 Q_SIGNALS:
     void pageAdded(const QString &uri);
@@ -73,6 +74,7 @@ private:
     QPoint m_press_pos;
     QDrag *m_drag = nullptr;
     bool m_should_trigger_drop = false;
+    QStringList m_has_uris;
 
     const int ELIDE_TEXT_LENGTH = 16;
 };

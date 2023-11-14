@@ -79,7 +79,7 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
 
     addSeparator();
 
-    auto useGlobalSortAction = new QAction(tr("Use global sorting"), this);
+    auto useGlobalSortAction = new QAction(tr("Use current sorting for all folders"), this);
     useGlobalSortAction->setCheckable(true);
     useGlobalSortAction->setChecked(Peony::GlobalSettings::getInstance()->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool());
     connect(useGlobalSortAction, &QAction::triggered, this, [=](bool checked){
@@ -93,6 +93,34 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
 void SortTypeMenu::setOriginPathVisible(bool visible)
 {
     m_origin_path->setVisible(visible);
+}
+
+QString SortTypeMenu::getSortTypeName(int type)
+{
+    QString sortTypeName = "";
+    if (m_sort_types->actions().at(type)) {
+        sortTypeName = QString(tr("By %1")).arg(m_sort_types->actions().at(type)->text());
+    }
+    return sortTypeName;
+}
+
+void SortTypeMenu::updateSortOrderName(int type)
+{
+    QStringList names;
+    if (type == 1) {
+        names.append(tr("Newest to oldest"));
+        names.append(tr("Oldest to newest"));
+    } else if (type == 3) {
+        names.append(tr("Files from large to small"));
+        names.append(tr("Files from small to large"));
+    } else {
+        names.append(tr("Descending"));
+        names.append(tr("Ascending"));
+    }
+    if (m_sort_orders->actions().count() >= 2) {
+        m_sort_orders->actions().at(0)->setText(names.at(0));
+        m_sort_orders->actions().at(1)->setText(names.at(1));
+    }
 }
 
 void SortTypeMenu::setSortType(int type)

@@ -31,6 +31,16 @@
 #include <QDebug>
 #include <QHBoxLayout>
 
+static Peony::ExtensionsManagerWidget *global_instance = nullptr;
+
+Peony::ExtensionsManagerWidget *Peony::ExtensionsManagerWidget::getInstance()
+{
+    if (!global_instance) {
+        global_instance = new Peony::ExtensionsManagerWidget;
+    }
+    return global_instance;
+}
+
 Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
     :QWidget(parent)
 {
@@ -65,9 +75,9 @@ void Peony::ExtensionsManagerWidget::initUI()
     hBoxLayout->setContentsMargins(22, 0, 22, 0);
     hBoxLayout->setSpacing(0);
     hBoxLayout->addStretch(1);
-    hBoxLayout->addWidget(m_okBtn);
-    hBoxLayout->addSpacing(16);
     hBoxLayout->addWidget(m_cancelBtn);
+    hBoxLayout->addSpacing(16);
+    hBoxLayout->addWidget(m_okBtn);
 
     this->initExtensionInfo();
     this->initTableWidget();

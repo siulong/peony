@@ -43,6 +43,7 @@
 #include <QSplitter>
 #include <QStringListModel>
 #include <QFileDialog>
+#include <QHeaderView>
 
 #include <QAction>
 
@@ -75,6 +76,8 @@
 #include <QDebug>
 #include <QPainter>
 #include <QPainterPath>
+
+#include <QWidgetAction>
 
 #define PUSH_BUTTON_TOTAL_PADDING 14
 
@@ -180,11 +183,13 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     connect(m_tab_bar, &QTabBar::tabMoved, this, &TabWidget::moveTab);
     connect(m_tab_bar, &QTabBar::tabCloseRequested, this, &TabWidget::removeTab);
     connect(m_tab_bar, &NavigationTabBar::pageRemoved, this, [this]{
+        updateTabAllPages();
         updateTabBarGeometry();
     });
     connect(m_tab_bar, &NavigationTabBar::addPageRequest, this, &TabWidget::addPage);
     connect(m_tab_bar, &NavigationTabBar::locationUpdated, this, &TabWidget::updateSearchPathButton);
     connect(m_tab_bar, &NavigationTabBar::locationUpdated, this, [this]{
+        updateTabAllPages();
         updateTabBarGeometry();
     });
 
@@ -208,6 +213,60 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     connect(m_add_page_button, &QToolButton::clicked, this, [=](){
         QString str = m_tab_bar->tabData(m_tab_bar->currentIndex()).toString();
         m_tab_bar->addPageRequest(str, true);
+    });
+
+    m_show_page_button = new QToolButton(this);
+    m_show_page_button->setPopupMode(QToolButton::DelayedPopup);
+    m_show_page_button->setFixedSize(QSize(48, 48));
+    m_show_page_button->setIconSize(QSize(16, 16));
+    m_show_page_button->setIcon(QIcon::fromTheme("ukui-all-tabs-symbolic"));
+    m_show_page_button->setAutoRaise(true);
+    m_show_page_button->setObjectName("toolButton");
+    m_show_page_button->setStyle(TabBarStyle::getStyle());
+
+    m_model = new QStandardItemModel;
+    auto action = new QWidgetAction(this);
+    m_treeView = new QTreeView(this);
+    m_treeView->setWindowFlag(Qt::Popup);
+    m_treeView->move(m_show_page_button->x(), m_tab_bar->sizeHint().height());
+    m_treeView->setFixedSize(QSize(162, 212));
+    m_treeView->setHeaderHidden(true);
+    m_treeView->header()->setStretchLastSection(true);
+    m_treeView->header()->setSectionResizeMode(QHeaderView::Fixed);
+    m_treeView->header()->setMinimumSectionSize(2);
+    m_treeView->setSelectionBehavior(QTreeView::SelectRows);
+    m_treeView->setEditTriggers(QTreeView::NoEditTriggers);
+    m_treeView->setAttribute(Qt::WA_TranslucentBackground);
+    m_treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_treeView->setFrameStyle(QFrame::Sunken);
+    action->setDefaultWidget(m_treeView);
+    auto menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_TranslucentBackground);
+    menu->addAction(action);
+
+    connect(m_show_page_button, &QToolButton::clicked, this, [=](){
+        updateTabAllPages();
+        m_treeView->header()->resizeSection(0, 115);
+        m_treeView->header()->resizeSection(1, 30);
+        connect(m_treeView, &QTreeView::clicked, this, [=](const QModelIndex &index) {
+            switch (index.column()) {
+            case 0: {
+                changeCurrentIndex(index.row());
+                menu->hide();
+                break;
+            }
+            case 1: {
+                removeTab(index.row());
+                menu->hide();
+                break;
+            }
+            default:
+                break;
+            }
+        });
+        auto pTabBar = m_tab_bar->mapToGlobal(m_tab_bar->pos());
+        QPoint pos(pTabBar.x() + m_show_page_button->x(), pTabBar.y() + m_tab_bar->sizeHint().height() - 8);
+        menu->exec(pos);
     });
 
     updateTabBarGeometry();
@@ -1267,21 +1326,14 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
         auto enumerator = new Peony::FileEnumerator;
         enumerator->setEnumerateDirectory(rootDir);
-        enumerator->setAutoDelete();
-        connect(enumerator, &Peony::FileEnumerator::enumerateFinished, this, [=](bool successed){
-            if (!successed) {
-                if (!currentPage()) {
-                    QTimer::singleShot(100, topLevelWidget(), &QWidget::close);
-                }
-                return;
-            }
-        });
+        //enumerator->setAutoDelete();
         connect(enumerator, &Peony::FileEnumerator::cancelled, this, [=](){
             if (!currentPage()) {
                 QTimer::singleShot(100, topLevelWidget(), &QWidget::close);
             }else{
                 this->refresh();
             }
+            enumerator->deleteLater();
         });
         connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
             if (critical) {
@@ -1291,6 +1343,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 if (!currentPage()) {
                     this->topLevelWidget()->close();
                 }
+                enumerator->deleteLater();
                 return;
             }
             auto viewContainer = new Peony::DirectoryViewContainer(m_stack);
@@ -1372,7 +1425,9 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             }
 
             m_tab_bar->addPage(realUri, jumpTo);
+            updateTabAllPages();
             updateTabBarGeometry();
+            enumerator->deleteLater();
         });
         enumerator->prepare();
     });
@@ -1547,6 +1602,26 @@ void TabWidget::clearConditions()
     currentPage()->clearConditions();
 }
 
+void TabWidget::updateTabAllPages()
+{
+    m_model->clear();
+    auto uris = m_tab_bar->getCurrentUris();
+    for(int i = 0; i < uris.size(); ++i) {
+        auto uri = uris.at(i);
+        QList<QStandardItem*> items1;
+        QStandardItem *item1 = new QStandardItem;
+        QStandardItem *item2 = new QStandardItem(QIcon::fromTheme("window-close-symbolic"),"");
+        item1->setIcon(QIcon::fromTheme(Peony::FileUtils::getFileIconName(uri)));
+        item1->setText(Peony::FileUtils::getFileDisplayName(uri));
+        items1.append(item1);
+        items1.append(item2);
+        m_model->appendRow(items1);
+    }
+    if (m_treeView) {
+        m_treeView->setModel(m_model);
+    }
+}
+
 void TabWidget::updateFilter()
 {
     if(!currentPage())
@@ -1680,6 +1755,10 @@ void TabWidget::removeTab(int index)
     m_stack->removeWidget(widget);
     widget->deleteLater();
     m_tab_bar->removeTab(index);
+//    m_tab_bar->removeTabUris(index);
+    if (m_model) {
+        m_model->removeRow(index);
+    }
     if (m_stack->count() > 0)
         Q_EMIT activePageChanged();
 }
@@ -1759,13 +1838,26 @@ void TabWidget::updateTabBarGeometry()
 
     if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
         m_add_page_button->move(addPageX, 0);
+        if (tabBarWidth == addPageX) {
+            m_show_page_button->show();
+            m_show_page_button->move(addPageX + 40, 0);
+        } else {
+            m_show_page_button->hide();
+        }
     } else {
         auto lastTabRect =  m_tab_bar->rect();
         int fixedY = lastTabRect.center().y() - m_add_page_button->height()/2;
         m_add_page_button->move(addPageX, fixedY);
+        if (tabBarWidth == addPageX) {
+            m_show_page_button->show();
+            m_show_page_button->move(addPageX + 40, fixedY);
+        } else {
+            m_show_page_button->hide();
+        }
     }
 
     m_add_page_button->raise();
+    m_show_page_button->raise();
 }
 
 void TabWidget::updateStatusBarGeometry()

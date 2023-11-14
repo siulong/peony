@@ -99,7 +99,7 @@ QString FileOperationHelper::matchingUnixDevice(QString uri)
     g_object_unref(file);
     if (mount) {
         GVolume *volume = g_mount_get_volume(mount);
-        char *device = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        g_autofree gchar *device = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
         m_unix_device = device;
     }
     return m_unix_device;
