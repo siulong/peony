@@ -65,7 +65,7 @@ SideBarFileSystemItem::SideBarFileSystemItem(QString uri, const Experimental_Peo
             initDirInfo(uri);
         }
     }
-    m_children = new QVector<SideBarAbstractItem*>();
+    //m_children = new QVector<SideBarAbstractItem*>();
 }
 
 SideBarFileSystemItem::~SideBarFileSystemItem()
@@ -154,7 +154,6 @@ void SideBarFileSystemItem::initDirInfo(const QString &uri)
    if(uri.isEmpty())
        return;
 
-   m_children    = nullptr;
    m_watcher     = nullptr;
    m_iconName    = "folder";
    m_device      = m_mountPoint = "";
@@ -211,13 +210,21 @@ void SideBarFileSystemItem::initVolumeInfo(const Experimental_Peony::Volume &vol
             m_uri = "computer:///" + volumeItem.name() + ".volume";/* 手机(mtp、gphoto2) */
             m_mounted = true;
         }
-        else if(m_device.contains("/dev/sr") &&
-                (FileUtils::isEmptyDisc(m_device) /* 空光盘linkto bug#127947 */
-                 || Experimental_Peony::VolumeManager::getInstance()->isEmptyDrive(volumeItem)))/* 空光驱,linkto bug#133362 */
-        {
-            m_mounted=true;
-            m_unmountable = m_mountable=false;
-            m_uri = "burn://";
+        else if(m_device.contains("/dev/sr")){
+                bool bEmptyDisc = FileUtils::isEmptyDisc(m_device); /* 空光盘linkto bug#127947 */
+                bool bEmptyDrive =Experimental_Peony::VolumeManager::getInstance()->isEmptyDrive(volumeItem);/* 空光驱,linkto bug#133362 */
+                QString targetUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(m_device);
+                if(bEmptyDisc || ("burn:///" == targetUri)){/* 当某些特殊情况下bEmptyDisc获取不对时，通过targeturi或者挂载点来比较；linkto bug#188145 */
+                    m_mounted=true;
+                    m_unmountable = m_mountable=false;
+                    m_uri = "burn:///";
+                }
+                if(bEmptyDrive){
+                    m_mounted=true;
+                    m_unmountable = m_mountable=false;
+                    m_uri = "burn://";
+                }
+
         } else {
             /* 未挂载的volume尝试匹配computer:///的uri */
             auto itemUris = FileUtils::getChildrenUris("computer:///");
@@ -337,7 +344,9 @@ void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Vol
             /* 更新uri,为了枚举操作 */
             if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                 item->m_uri = "computer:///" + volume.name() + ".volume";
-            else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
+            else if(item->m_device.contains("/dev/sr")
+                    && (FileUtils::isEmptyDisc(item->m_device)
+                        || "burn:///" == item->m_mountPoint))/* 空光盘 */
             {
                 item->m_uri="burn:///";
             }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
@@ -420,7 +429,9 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
                 /* 更新uri,为了枚举操作 */
                 if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                     item->m_uri = "computer:///" + updateDevice.name() + ".volume";
-                else if(item->m_device.contains("/dev/sr") && FileUtils::isEmptyDisc(item->m_device))/* 空光盘 */
+                else if(item->m_device.contains("/dev/sr")
+                        && (FileUtils::isEmptyDisc(item->m_device)
+                            || "burn:///" == item->m_mountPoint))/* 空光盘 */
                 {
                     item->m_uri="burn:///";
                 }else if(mountPoint.startsWith("cdda://sr")){/* 音乐光盘的targeturi无需加"file://"，例如：target-uri: cdda://sr0/ */
@@ -591,6 +602,8 @@ void SideBarFileSystemItem::findChildren()
             m_model->endInsertRows();
         }
 
+        // 不删除数据，仅删除list本身
+        delete volumeList;
     }else{
         //对挂载点进行已存在文件的枚举操作
         QString enumdir = m_uri;

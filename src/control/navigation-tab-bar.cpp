@@ -103,12 +103,19 @@ void NavigationTabBar::addPages(const QStringList &uri)
 
 }
 
+QStringList NavigationTabBar::getCurrentUris()
+{
+     return m_has_uris;
+}
+
 void NavigationTabBar::updateLocation(int index, const QString &uri)
 {
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
     //infoJob->setAutoDelete();
     setTabData(index, uri);
+    if (index < m_has_uris.count() && count() > 0)
+        m_has_uris.replace(index, uri);
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
         infoJob->deleteLater();
@@ -158,6 +165,7 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
         }
         addTab(displayName);        
         setTabData(count() - 1, uri);
+        m_has_uris.append(uri);
         if (jumpToNewTab)
             setCurrentIndex(count() - 1);
         Q_EMIT this->pageAdded(uri);
@@ -175,6 +183,8 @@ void NavigationTabBar::tabRemoved(int index)
 {
     //qDebug()<<"tab removed"<<index;
     QTabBar::tabRemoved(index);
+
+    m_has_uris.removeAt(index);
 
     Q_EMIT pageRemoved();
     if (count() == 0) {

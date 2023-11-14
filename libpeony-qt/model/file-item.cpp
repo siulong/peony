@@ -80,12 +80,12 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
     m_info = info;
     m_children = new QVector<FileItem*>();
     m_uri_item_hash.clear();
-
     m_model = model;
 
     m_backend_enumerator = new FileEnumerator(this);
 
     m_batchProcessThread = new QThread();
+    m_extraInfoRecorder = FileInfoManager::getInstance()->getExtraInfoRecorderByUri(m_info.get()->uri());
 
     m_addChildTimer = new QTimer(this);
     m_addChildTimer->setSingleShot(true);
@@ -177,6 +177,15 @@ FileItem::~FileItem()
 
     delete m_children;
     m_uri_item_hash.clear();
+
+    if (m_batchProcessThread->isRunning()) {
+        m_batchProcessThread->quit();
+        m_batchProcessThread->wait();
+    }
+    m_batchProcessThread->deleteLater();
+
+    disconnect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, nullptr);
+
 }
 
 bool FileItem::operator==(const FileItem &item)
@@ -319,11 +328,13 @@ void FileItem::findChildrenAsync()
                     QString errorInfo = tr("Can not find path \"%1\"，are you moved or renamed it?").arg(fileInfo->uri().unicode());
                     QMessageBox::critical(nullptr, tr("Error"), errorInfo);
                 }
+                enumerator->deleteLater();
                 return;
             }
             else {
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
                 enumerator->cancel();
+                enumerator->deleteLater();
+                QMessageBox::critical(nullptr, tr("Error"), err->message());
                 return;
             }
         }
@@ -909,6 +920,7 @@ void FileItem::connectFunc()
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
+
                 auto item = new FileItem(info, this, m_model);
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
@@ -932,6 +944,7 @@ void FileItem::connectFunc()
                 info_manager->lock();
                 info_manager->updateFileInfo(info);
                 info_manager->unlock();
+
                 auto item = new FileItem(info, this, m_model);
                 m_children->append(item);
                 m_uri_item_hash.insert(item->uri(), item);
@@ -943,10 +956,11 @@ void FileItem::connectFunc()
         }else if(FileItemModel::OperateType::Change == FileItemModel::OperateType(operateType)){
             for (auto& info : retFileInfos) {
                 auto item = m_uri_item_hash.value(info->uri());
+                if (!item)
+                    continue;
                 info_manager->lock();
+                item->m_info = info;
                 info_manager->updateFileInfo(info);
-                if (item)
-                    item->m_info = info;
                 info_manager->unlock();
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
                 EmblemProviderManager::getInstance()->queryAsync(info->uri());
@@ -984,17 +998,18 @@ void FileItem::connectFunc()
                         /* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
                         Q_EMIT m_model->signal_itemAdded(uri);//end
 
-                        QTimer::singleShot(1000, this, [=](){
+                        //QTimer::singleShot(1000, this, [=](){
                             ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
-                        });
+                       // });
                     } else {
                         qInfo()<<"file"<<uri<<"has arealy in file item model";
                     }
                 });
 
                 infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
-
-                infoJob->queryAsync();
+                QTimer::singleShot(100, this, [=](){/* 加延时避免查询结果有误；linkto bug#197886 */
+                    infoJob->queryAsync();
+                });
             }
 
         }else{
@@ -1014,6 +1029,7 @@ void FileItem::connectFunc()
             }
         }
     },Qt::UniqueConnection);
+
 
     connect(m_changeChildTimer, &QTimer::timeout, this, [=]{
         m_waiting_update_queue.removeDuplicates(); /* 去重 */
@@ -1177,4 +1193,22 @@ void BatchProcessItems::slot_removeItems()
     }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
     qDebug()<<"execute deletion finished, cost"<<time1 - time0;
+}
+
+
+ExtraInfoRecorder::ExtraInfoRecorder(const QString &uri)
+    :m_uri(uri)
+{
+
+}
+
+ExtraInfoRecorder::~ExtraInfoRecorder()
+{
+    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
+    EmblemProviderManager::getInstance()->cancelQuery(m_uri);
+}
+
+const QString ExtraInfoRecorder::uri()
+{
+    return m_uri;
 }

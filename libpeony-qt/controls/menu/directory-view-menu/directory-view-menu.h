@@ -71,6 +71,7 @@ protected:
     const QList<QAction *> constructTrashActions();
     const QList<QAction *> constructSearchActions();
     const QList<QAction *> constructMultiSelectActions();
+    void keyPressEvent(QKeyEvent *e) override;
 
 private:
     bool isMultFile(std::shared_ptr<FileInfo> info);

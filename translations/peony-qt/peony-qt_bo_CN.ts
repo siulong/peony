@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>Service &amp; Support: </source>
-        <translation>ཞབས་ཞུ་དང་རྒྱབ་སྐྱོར་ཚོགས་པ།：</translation>
+        <translation>ཞབས་ཞུ་དང་རྒྱབ་སྐྱོར་ཚོགས་པ།： </translation>
     </message>
     <message>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>ཡིག་རྐྱང་ཕྲེང་བ།</translation>
+        <translation>གདོང་འཛར།</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -103,14 +103,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Maximize</source>
-        <translation>ཚད་གཞི་མཐོ་ཤོས་ཀྱི་སྒོ་ནས</translation>
+        <translation>ཆེས་ཆེ་བསྒྱུར།</translation>
     </message>
     <message>
         <source>Go Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -138,6 +134,10 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Deselect All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&amp;Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -146,11 +146,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select</source>
+        <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select Done</source>
+        <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -162,28 +162,24 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation type="unfinished">བསུབ་པ།</translation>
+    </message>
+    <message>
         <source>Select path</source>
         <translation type="unfinished">རྒྱུ་ལམ་གདམ་གསེས།</translation>
     </message>
     <message>
-        <source>Minimize</source>
-        <translation type="obsolete">ཆེས་ཆུང་འགྱུར།</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="obsolete">ཁ་རྒྱག་པ།</translation>
-    </message>
-    <message>
-        <source>Deselect All</source>
+        <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select All Item</source>
+        <source>Icon View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="unfinished">བསུབ་པ།</translation>
+        <source>List View</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -199,10 +195,6 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     <message>
         <source>Maximize/Restore</source>
         <translation type="vanished">ཆེས་ཆེ་བ/སླར་གསོ།</translation>
-    </message>
-    <message>
-        <source>Option</source>
-        <translation type="obsolete">འདེམས་ཚན།</translation>
     </message>
 </context>
 <context>
@@ -247,7 +239,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">བརྟན་འདོར།(_D)</translation>
+        <translation type="vanished">བརྟན་འདོར།</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -267,14 +259,14 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>This operation is not supported.</source>
-        <translation>གཤགས་བཅོས་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
+        <translation>བཀོལ་སྤྱོད་འདི་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
 </context>
 <context>
     <name>NavigationSideBar</name>
     <message>
         <source>Open In New Tab</source>
-        <translation>དོང་འཛར་གསར་པའི་ཁ་འབྱེད་པ།</translation>
+        <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ།</translation>
     </message>
     <message>
         <source>Can not open %1, %2</source>
@@ -290,7 +282,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Udiskཡིན་པས་ཞིག་གསོ་བྱེད་རོགས།</translation>
+        <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Uསྡེར་ཞིག་ཡིན་པས་ཞིག་གསོ་དང་རྣམ་གཞག་ཅན་དུ་གཏོང་རོགས།</translation>
     </message>
     <message>
         <source>This is an empty drive, please insert a Disc.</source>
@@ -306,7 +298,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒྲིག་ཆས་འདི་བྲེལ་བ་ཆེ་བས་རྗེས་སུ་གཤགས་བཅོས་འདི་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>
@@ -355,7 +347,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Parallel Operations</source>
-        <translation>བཀོལ་སྤྱོད་བྱེད་ཆོག</translation>
+        <translation>བཀོལ་སྤྱོད་དང་ལག་བསྟར་བྱེད་ཆོག</translation>
     </message>
     <message>
         <source>Forbid thumbnailing</source>
@@ -363,7 +355,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Show File Extension</source>
-        <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བའི</translation>
+        <translation>ཡིག་ཆ་ཁྱབ་གདལ་དུ་གཏོང་བ་མངོན་པ།</translation>
+    </message>
+    <message>
+        <source>Show Create Time</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Set samba password</source>
@@ -378,11 +374,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Samba set user password</source>
+        <source>Samba password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Samba password:</source>
+        <source>Samba set user password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -402,11 +398,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Create Time</source>
+        <source>Plugin manager Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Plugin manager Settings</source>
+        <source>Show Relative Time</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -430,7 +426,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>trash</source>
-        <translation>སྙིགས་སྒམ།</translation>
+        <translation>བསུབ་པ།</translation>
     </message>
 </context>
 <context>
@@ -567,7 +563,7 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Files or directories to open</source>
-        <translation>ཡིག་ཆའམ་ཡིག་ཁུག་ཁ་ཕྱེ་དགོས།</translation>
+        <translation>ཁ་ཕྱེ་དགོས་པའི་ཡིག་ཆའམ་ཡིག་ཁུག།</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -583,7 +579,9 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱིས་རྒྱུད་ཁོངས་པར་རྟགས་བརྗོད་གཞི་རྙེད་མ་ཐུབ་པའི་རྒྱུ་རྐྱེན་ནི། ༡ དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་སྤྱོད་པའི་སྐབས་ལ་འཁེལ་བ། འདི་ལས་ཁྱེད་ཀྱི་དབང་ཚད་གཞན་ལས་མཐོ་བ་མཚོན་མོང། འོན་ཀྱང་ཁྱེད་ཀྱིས་ངེས་པར་རང་ཉིད་ཀྱིས་སྤྱོད་མཁན་ཕལ་བའི་དབང་ཚད་འགའ་ཤས་ཤོར་བ་འང་ངོས་ཟིན་ཐུབ་དགོས། དཔེར་ན། བདག་གི་རྩིས་འཁོརའམ་རྒྱུད་ཁོངས་བརྗོད་གཞི། གལ་ཏེ་གནས་ཚུལ་ཁྱད་པར་ཅན་མིན་ན། ཁྱོད་ཀྱིས་དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་ཁ་མ་འབྱེད། ༢ ཁྱོད་ཀྱིས་བཀོལ་བའི་རྒྱུད་ཁོངས་བརྗོད་གཞིར་qtསོར་བཞག་བརྗོད་གཞིས་རྒྱབ་སྐྱོར་མི་བྱེད་པ་དང་། ཁྱོད་ལ་གཞན་གྱི་འབྲེལ་ཡོད་སྟེགས་བུ་ནང་འཇུག་བྱས་མེད་ན། གལ་སྲིད་ཁྱོས་Gtkབརྗོད་གཞི་རྒྱུད་ཁོངས་ཀྱི་བརྗོད་གཞིར་བེད་སྤྱོད་བྱེད་བཞིན་ཡོད་ན། qt5-gtk2-platformthemeསྒྲིག་འཇུག་བྱས་ན་གནད་དོན་ཐག་གཅོད་བྱེད་ཐུབ།</translation>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱིས་རྒྱུད་ཁོངས་པར་རྟགས་བརྗོད་གཞི་རྙེད་མ་ཐུབ་པའི་རྒྱུ་རྐྱེན་ནི།
+ ༡ དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་སྤྱོད་པའི་སྐབས་ལ་འཁེལ་བ། འདི་ལས་ཁྱེད་ཀྱི་དབང་ཚད་གཞན་ལས་མཐོ་བ་མཚོན་མོང། འོན་ཀྱང་ཁྱེད་ཀྱིས་ངེས་པར་རང་ཉིད་ཀྱིས་སྤྱོད་མཁན་ཕལ་བའི་དབང་ཚད་འགའ་ཤས་ཤོར་བ་འང་ངོས་ཟིན་ཐུབ་དགོས། དཔེར་ན། བདག་གི་རྩིས་འཁོརའམ་རྒྱུད་ཁོངས་བརྗོད་གཞི། གལ་ཏེ་གནས་ཚུལ་ཁྱད་པར་ཅན་མིན་ན། ཁྱོད་ཀྱིས་དོ་དམ་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆ་དོ་དམ་ཆས་ཁ་མ་འབྱེད། 
+༢ ཁྱོད་ཀྱིས་བཀོལ་བའི་རྒྱུད་ཁོངས་བརྗོད་གཞིར་qtསོར་བཞག་བརྗོད་གཞིས་རྒྱབ་སྐྱོར་མི་བྱེད་པ་དང་། ཁྱོད་ལ་གཞན་གྱི་འབྲེལ་ཡོད་སྟེགས་བུ་ནང་འཇུག་བྱས་མེད་ན། གལ་སྲིད་ཁྱོས་Gtkབརྗོད་གཞི་རྒྱུད་ཁོངས་ཀྱི་བརྗོད་གཞིར་བེད་སྤྱོད་བྱེད་བཞིན་ཡོད་ན། qt5-gtk2-platformthemeསྒྲིག་འཇུག་བྱས་ན་གནད་དོན་ཐག་གཅོད་བྱེད་ཐུབ།</translation>
     </message>
     <message>
         <source>Author:
@@ -591,7 +589,8 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
-        <translation>རྩོམ་པ་པོ།  Yue Lan &lt;lanyue@kylinos.cn&gt;
+        <translation>རྩོམ་པ་པོ།  
+Yue Lan &lt;lanyue@kylinos.cn&gt;
  Meihong He &lt;hemeihong@kylinos.cn&gt;
 པར་དབང་ཡོད་ཚད (C): 2020 ཆི་ལིན་མཉེན་ཆས་ཚད་ཡོད་ཀུང་ཟི།</translation>
     </message>
@@ -681,30 +680,50 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Use global sorting</source>
-        <translation>གོ་ལ་ཧྲིལ་པོའི་རིགས་འབྱེད་</translation>
+        <translation type="vanished">ཁྱོན་ཡོངས་ཀྱི་གོ་རིམ་བེད་སྤྱོད།</translation>
     </message>
     <message>
         <source>Original Path</source>
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
+    </message>
+    <message>
+        <source>Use current sorting for all folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Newest to oldest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Oldest to newest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files from large to small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files from small to large</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TabStatusBar</name>
     <message>
         <source> %1 items </source>
-        <translation>%1རྣམ་གྲངས་སྒེར།</translation>
+        <translation> %1རྣམ་གྲངས་སྒེར། </translation>
     </message>
     <message>
         <source> selected %1 items</source>
-        <translation>%1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
+        <translation> %1རྣམ་གྲངས་སྒེར་འདེམ་པ།</translation>
     </message>
     <message>
         <source> selected %1 items    %2</source>
-        <translation>%1རྣམ་གྲངས་སྒེར་འདེམ་པ།    %2</translation>
-    </message>
-    <message>
-        <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation type="obsolete">%2ཁྲོད་%1འཚོལ་ཞིབ།</translation>
+        <translation> %1རྣམ་གྲངས་སྒེར་འདེམ་པ།    %2</translation>
     </message>
     <message>
         <source>Searching for files ...</source>
@@ -727,7 +746,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>type</source>
-        <translation> རིགས་རྣམ།</translation>
+        <translation>རིགས་རྣམ།</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -751,7 +770,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>image</source>
-        <translation>པར་རིས།།</translation>
+        <translation>པར་རིས།</translation>
     </message>
     <message>
         <source>today</source>
@@ -771,7 +790,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="vanished">གནད་ཡིག</translation>
+        <translation type="vanished">འཚག་འདེམས།</translation>
     </message>
     <message>
         <source>medium(1M-128M)</source>
@@ -795,7 +814,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Close Filter.</source>
-        <translation type="vanished">གདམ་གསེས་སྒོ་རྒྱག་པ།</translation>
+        <translation type="vanished">འཚག་འདེམས་སྒོ་རྒྱག་པ།</translation>
     </message>
     <message>
         <source>wps file</source>
@@ -851,11 +870,11 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>text file</source>
-        <translation>ཡིག་རྐྱང་ཡིག་ཆ།</translation>
+        <translation>ཡིག་ཆའི་ཡིག་ཚགས།</translation>
     </message>
     <message>
         <source>Select Path</source>
-        <translation>ལམ་ཕྲན་བདམས་པ།</translation>
+        <translation>ལམ་བུ་བདམས་པ།</translation>
     </message>
     <message>
         <source>Open failed</source>
@@ -863,7 +882,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ཁ་ཕྱེ་བའི་དཀར་ཆག་ལ་ཕམ་ཉེས་བྱུང་ན་ཁྱེད་ལ་ཆོག་མཆན་མ་ཐོབ།</translation>
+        <translation>ཡིག་ཁུག་གི་ཁ་ཕྱེ་ནས་ཕམ་སོང་། ཁྱོད་ལ་དཀར་ཆག་འདིའི་དབང་ཆ་མེད།</translation>
     </message>
     <message>
         <source>Search</source>

@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QStackedWidget>
+#include <QStandardItemModel>
 #include <QPushButton>
 #include <QLabel>
 #include <QComboBox>
@@ -34,6 +35,7 @@
 #include <QSignalMapper>
 #include <QProxyStyle>
 #include <QActionGroup>
+#include <QTreeView>
 #include "navigation-tab-bar.h"
 #include "file-info.h"
 #include "tab-status-bar.h"
@@ -223,12 +225,18 @@ protected:
     void updatePreviewPageVisible();
     void updateStatusBarSliderState();
     void updatePreviewButtonStatus(bool status);
+    void updateTabAllPages();
 
     void paintEvent(QPaintEvent *e);
     bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
+
 private:
     NavigationTabBar *m_tab_bar;
     QToolButton *m_add_page_button;
+    QToolButton *m_show_page_button;
+
+    QTreeView *m_treeView;
+    QStandardItemModel *m_model;
 
     //QWidget *m_tab_bar_bg;
     QWidget *m_header_bar_bg;

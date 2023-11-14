@@ -14,6 +14,24 @@
       <description>Control the display of desktop standard icons</description>
     </key>
 
+    <key type="b" name="home-icon-visible">
+      <default>true</default>
+      <summary>display desktop home icon</summary>
+      <description>Control the display of desktop home icon</description>
+    </key>
+
+    <key type="b" name="trash-icon-visible">
+      <default>true</default>
+      <summary>display desktop trash icon</summary>
+      <description>Control the display of desktop trash icon</description>
+    </key>
+
+    <key type="b" name="computer-icon-visible">
+      <default>true</default>
+      <summary>display desktop computer icon</summary>
+      <description>Control the display of desktop computer icon</description>
+    </key>
+
     <key type="b" name="show-trash-dialog">
       <default>false</default>
       <summary>show trash dialog</summary>
@@ -163,6 +181,12 @@
       <default>25</default>
       <summary>default view zoom level</summary>
       <description>default view zoom level</description>
+    </key>
+
+    <key type="b" name="show-relative-date">
+      <default>true</default>
+      <summary>show relative date</summary>
+      <description>Whether to show relative date format in list view</description>
     </key>
 
     <!--remote-server-->

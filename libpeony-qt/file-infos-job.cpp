@@ -156,13 +156,13 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
             return info;
         }
 #if GLIB_CHECK_VERSION(2, 56, 0)
-        auto string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
+        g_autofree gchar* string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
 #else
         //FIXME: should handle locale?
         //change "Name" to QLocale::system().name(),
         //try to fix Qt5.6 untranslated desktop file issue
         auto key = "Name[" +  QLocale::system().name() + "]";
-        auto string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
+        g_autofree gchar* string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
 #endif
         qDebug() << "get name string:"<<string <<info->uri()<<info->displayName();
         QString path = "/usr/share/applications/" + info->displayName();
@@ -178,8 +178,6 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         }
         info->m_finalDisplayName = info->getFinalDisplayName();
 
-        if (string)
-           g_free(string);
         g_object_unref(desktop_info);
     } else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {
@@ -387,7 +385,7 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
         targetInfo->m_uri = info->m_target_uri;
         targetInfo->m_file = g_file_new_for_uri(info->m_target_uri.toUtf8().constData());
         GError *err = nullptr;
-        auto gFileInfo = g_file_query_info(info->m_file,
+        auto gFileInfo = g_file_query_info(targetInfo->m_file,
                                        "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
                                        G_FILE_QUERY_INFO_NONE,
                                        m_batchCanellable,
@@ -397,6 +395,11 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
             qDebug()<<err->code<<err->message;
             g_error_free(err);
         }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE)) {
+                targetInfo->m_can_excute = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+            } else {
+                targetInfo->m_can_excute = true;
+            }
             targetInfo = queryFileDisplayName(targetInfo, gFileInfo);
             info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
             info->m_display_name = targetInfo.get()->displayName();

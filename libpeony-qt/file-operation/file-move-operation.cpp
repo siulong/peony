@@ -285,8 +285,8 @@ void FileMoveOperation::move()
     delete total_size;
 
     //判断剩余空间是否满足拷贝所需空间
-    auto destGfile = g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData());
-    auto destPath = g_file_get_path(destGfile);
+    g_autoptr (GFile) destGfile = g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData());
+    g_autofree gchar* destPath = g_file_get_path(destGfile);
     QStorageInfo storage(destPath);
     if (!storage.isValid()) {
         qWarning() << "The file path is not mounted correctly";

@@ -121,6 +121,8 @@ public:
      */
     bool sendMessage( QByteArray message, int timeout = 100 );
 
+    void startPrimary();
+
 Q_SIGNALS:
     void instanceStarted();
     void receivedMessage( quint32 instanceId, QByteArray message );

@@ -186,19 +186,25 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
             args<<"peony"<<dir;
             g_free(dir);
             auto message = getUriMessage(args).toUtf8();
-            sendMessage(message);
-            return;
+            bool msgSent = sendMessage(message);
+            if (msgSent)
+                return;
         }
         parser.process(arguments());
         QStringList allArgs = arguments();
         auto message = getUriMessage(allArgs).toUtf8();
-        sendMessage(message);
-        return;
+        bool msgSent = sendMessage(message);
+        if (msgSent)
+            return;
     }
 
     if (this->isPrimary()) {
         connect(this, &SingleApplication::receivedMessage, this, &PeonyApplication::parseCmd);
         Peony::SideBarFactoryManager::getInstance()->registerFactory(new Peony::Intel::TabletSideBarFactory);
+    } else {
+        qCritical()<<"secondary process send message to old primary process failed, try changed this process to primary one";
+        this->startPrimary();
+        connect(this, &SingleApplication::receivedMessage, this, &PeonyApplication::parseCmd);
     }
 
     //parse cmd

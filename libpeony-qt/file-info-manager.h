@@ -24,6 +24,7 @@
 #define FILEINFOMANAGER_H
 
 #include "file-info.h"
+#include "file-item.h"
 
 #include <QMutex>
 
@@ -78,6 +79,8 @@ public:
 protected:
     std::shared_ptr<FileInfo> insertFileInfo(std::shared_ptr<FileInfo> info); //{global_info_list->insert(info->uri(), info);}
     void updateFileInfo(std::shared_ptr<FileInfo> info); //{global_info_list->insert(info->uri(), info);}
+    std::shared_ptr<ExtraInfoRecorder> getExtraInfoRecorderByUri(const QString &uri); /* <uri, ExtraInfoRecorder>,暂时只允许在fileitem中使用！ */
+
 
 private:
     FileInfoManager();

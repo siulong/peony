@@ -90,7 +90,9 @@ class HeaderBar : public QToolBar
         TabletCopyTo,
         TabletDelete,
         TabletMin,
-        TabletClose
+        TabletClose,
+        IconView,
+        ListView
     };
 
 public:
@@ -166,6 +168,7 @@ private:
 
     QToolButton *m_maximize_restore_button;
     QAction *m_preview_action = nullptr;
+    QActionGroup *m_view_actions;
 };
 
 class HeaderBarToolButton : public QToolButton

@@ -32,6 +32,8 @@ public:
     explicit SortTypeMenu(QWidget *parent = nullptr);
 
     void setOriginPathVisible(bool visible);
+    QString getSortTypeName(int type);
+    void updateSortOrderName(int type);
 
 Q_SIGNALS:
     void switchSortTypeRequest(int type);

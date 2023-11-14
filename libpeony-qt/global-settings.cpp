@@ -70,6 +70,9 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 
     m_cache.insert(DISPLAY_STANDARD_ICONS, true);
+    m_cache.insert(HOME_ICON_VISIBLE, true);
+    m_cache.insert(TRASH_ICON_VISIBLE, true);
+    m_cache.insert(COMPUTER_ICON_VISIBLE, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -142,6 +145,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(DOC_IS_OCCUPIED_BY_WPS, false);
     m_cache.insert(USE_GLOBAL_DEFAULT_SORTING, true);
     m_cache.insert(SHOW_CREATE_TIME, false);
+    m_cache.insert(SHOW_RELATIVE_DATE, true);  //默认显示相对日期
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         m_peony_gsettings = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 
@@ -159,7 +163,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
             bool sendChanged = false;
-            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING || SHOW_CREATE_TIME == key) {
+            if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING ||
+                 SHOW_CREATE_TIME == key || SHOW_RELATIVE_DATE == key) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);
@@ -173,6 +178,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
                 m_cache.insert(key, m_peony_gsettings->get(key));
             }
             m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
+            m_showRelativeTime = m_cache.value(SHOW_RELATIVE_DATE).toBool();
             if (sendChanged) {
                 Q_EMIT this->valueChanged(key);
             }
@@ -184,6 +190,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             m_cache.insert(key, m_peony_gsettings->get(key));
         }
         m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
+        m_showRelativeTime = m_cache.value(SHOW_RELATIVE_DATE).toBool();
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);
@@ -533,34 +540,32 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     QString systemTimeFormat = GlobalSettings::getInstance()->getSystemTimeFormat();
 
 #ifdef KY_SDK_DATE
-    struct tm *m_tm;
     time_t lt;
     lt = time(NULL);
-    m_tm = localtime(&lt);
+    struct tm m_tm = *localtime(&lt);
 
     QDate date = dateTime.date();
     QTime qtime = dateTime.time();
 
-    m_tm->tm_year = date.year();
-    m_tm->tm_mon = date.month();
-    m_tm->tm_mday = date.day();
+    m_tm.tm_year = date.year();
+    m_tm.tm_mon = date.month();
+    m_tm.tm_mday = date.day();
 
-    m_tm->tm_hour = qtime.hour();
-    m_tm->tm_min = qtime.minute();
-    m_tm->tm_sec = qtime.second();
+    m_tm.tm_hour = qtime.hour();
+    m_tm.tm_min = qtime.minute();
+    m_tm.tm_sec = qtime.second();
     //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
     //set date and time show format, task #101605
-    auto ret = kdk_system_timeformat_transform(m_tm);
-    auto formatDate = kdk_system_shortformat_transform(m_tm);
-    //sdk接口会改变结构体数据，需要重初始化要使用的日期数据
-    //属于接口缺陷，已跟SDK接口负责人沟通，先使用此方式
-    m_tm->tm_year = date.year();
-    m_tm->tm_mon = date.month();
-    m_tm->tm_mday = date.day();
-    if (longFormat)
-        formatDate = kdk_system_longformat_transform(m_tm);
+    auto ret = kdk_system_timeformat_transform(&m_tm);
+    g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
+    if (m_showRelativeTime){
+       formatDate = kdk_system_tran_absolute_date(&m_tm);
+    }
+    else if (longFormat)
+        formatDate = kdk_system_longformat_transform(&m_tm);
     if (ret && formatDate){
-        QString dateStr = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        g_autofree gchar *date_str = g_strdup_printf("%s %s", formatDate, ret->timesec);
+        QString dateStr = date_str;
         //qDebug() << "transToSystemTimeFormat:"<<dateStr<<systemTimeFormat;
         //释放结构体
         kdk_free_timeinfo(ret);

@@ -104,6 +104,9 @@
 
 //Control the display of desktop standard icons
 #define DISPLAY_STANDARD_ICONS       "displayStandardIcons"
+#define HOME_ICON_VISIBLE            "homeIconVisible"
+#define TRASH_ICON_VISIBLE           "trashIconVisible"
+#define COMPUTER_ICON_VISIBLE        "computerIconVisible"
 
 //control the mobile device trash file issue, if be true can trash mobile files
 #define TRASH_MOBILE_FILES            "trashMobileFiles"
@@ -122,6 +125,8 @@
 #define PERSONAL_EFFECT_TRANSPARENCY "transparency"
 
 #define SHOW_NETWORK                "showNetwork"
+
+#define SHOW_RELATIVE_DATE          "showRelativeDate"
 
 //intel 个性化设置，透明度...
 //schema
@@ -232,6 +237,7 @@ private:
 
     QDBusInterface*             mDbusDateServer = nullptr;
     bool m_showCreateTime = false;
+    bool m_showRelativeTime = false;
 };
 
 }

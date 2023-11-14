@@ -246,7 +246,8 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     mCancelBtn = new QPushButton(tr("Cancel"));
     mFormatBtn = new QPushButton(tr("OK"));
     mCancelBtn->setStyle(new ButtonStyle());
-
+    mFormatBtn->setDefault(true);
+    mFormatBtn->setProperty("isImportant", true);
     mainLayout->addWidget(mCancelBtn, 6, 7, 1, 3, Qt::AlignRight);
     mainLayout->addWidget(mFormatBtn, 6, 10, 1, 3, Qt::AlignRight);
 
@@ -1054,6 +1055,7 @@ bool Format_Dialog::format_makesure_dialog(){
     message_format->setWindowTitle(QObject::tr("Format"));
 
     QPushButton *okButton = message_format->addButton(QObject::tr("Begin Format"),QMessageBox::YesRole);
+    okButton->setDefault(true);
 
     QPushButton *cancelButton = message_format->addButton(QObject::tr("Close"),QMessageBox::NoRole);
 

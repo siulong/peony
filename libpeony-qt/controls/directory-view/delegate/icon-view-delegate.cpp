@@ -70,7 +70,7 @@ IconViewDelegate::IconViewDelegate(QObject *parent) : QStyledItemDelegate (paren
 {
     m_styled_button = new QPushButton;
     m_isStartDrag = false;
-    m_watcher = new QFileSystemWatcher;
+    //m_watcher = new QFileSystemWatcher;
 }
 
 IconViewDelegate::~IconViewDelegate()

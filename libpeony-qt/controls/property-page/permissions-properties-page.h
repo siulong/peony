@@ -74,6 +74,8 @@ public:
 
     void addAdvancedLayout();
 
+    void updateLabelShow(const QString &str);
+
 protected:
     static GAsyncReadyCallback async_query_permisson_callback(GObject *obj,
             GAsyncResult *res,

@@ -245,7 +245,8 @@ GFileInfo* vfs_favorite_file_query_info(GFile *file, const char *attributes, GFi
 
     GFileInfo* info = nullptr;
     QString trueUri = nullptr;
-    QUrl url(vfs_favorite_file_get_uri(file));
+    g_autofree gchar* vfs_url = vfs_favorite_file_get_uri(file);
+    QUrl url(vfs_url);
 
     if ("favorite:///" != url.toString()) {
         QStringList querys = url.query().split("&");
@@ -391,7 +392,8 @@ GFile* vfs_favorite_file_get_parent (GFile* file)
 
     Q_UNUSED(file);
 
-    QString uri = g_file_get_uri(file);
+    g_autofree gchar* vfs_uri = g_file_get_uri(file);
+    QString uri = vfs_uri;
 
     if ("favorite:///" == uri) {
         return nullptr;
