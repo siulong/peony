@@ -132,123 +132,133 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="207"/>
+        <source>Icon View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="215"/>
+        <source>List View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="232"/>
         <source>View Type</source>
         <translation>كۆرۈش تىپى</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="244"/>
+        <location filename="../../src/control/header-bar.cpp" line="269"/>
         <source>Sort Type</source>
         <translation>تۈر تۈرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="316"/>
+        <location filename="../../src/control/header-bar.cpp" line="341"/>
         <source>Option</source>
         <translation>تاللانما</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="329"/>
+        <location filename="../../src/control/header-bar.cpp" line="354"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="332"/>
+        <location filename="../../src/control/header-bar.cpp" line="357"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="344"/>
+        <location filename="../../src/control/header-bar.cpp" line="369"/>
         <source>&amp;Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="347"/>
+        <location filename="../../src/control/header-bar.cpp" line="372"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="353"/>
+        <location filename="../../src/control/header-bar.cpp" line="378"/>
         <source>&amp;Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="357"/>
-        <location filename="../../src/control/header-bar.cpp" line="369"/>
+        <location filename="../../src/control/header-bar.cpp" line="382"/>
+        <location filename="../../src/control/header-bar.cpp" line="394"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="374"/>
-        <location filename="../../src/control/header-bar.cpp" line="867"/>
-        <location filename="../../src/control/header-bar.cpp" line="885"/>
+        <location filename="../../src/control/header-bar.cpp" line="399"/>
+        <location filename="../../src/control/header-bar.cpp" line="911"/>
+        <location filename="../../src/control/header-bar.cpp" line="929"/>
         <source>Deselect All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="379"/>
+        <location filename="../../src/control/header-bar.cpp" line="404"/>
         <source>&amp;Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="382"/>
+        <location filename="../../src/control/header-bar.cpp" line="407"/>
         <source>Delete to trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="432"/>
+        <location filename="../../src/control/header-bar.cpp" line="457"/>
         <source>Operate Tips</source>
         <translation>مەشغۇلات ئەسكەرتىشلىرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="433"/>
+        <location filename="../../src/control/header-bar.cpp" line="458"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
         <translation>ھىچقانداق تېرمىنال تاپماڭ، ئەڭ ئاز دېگەندە بىر تېرمىنال قاچىلاڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="655"/>
+        <location filename="../../src/control/header-bar.cpp" line="698"/>
         <source>Restore</source>
         <translation>ئەسلىگە كەلتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="658"/>
+        <location filename="../../src/control/header-bar.cpp" line="701"/>
         <source>Maximize</source>
         <translation>ئەڭ چوڭ چەككە</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="670"/>
-        <location filename="../../src/control/header-bar.cpp" line="870"/>
-        <location filename="../../src/control/header-bar.cpp" line="880"/>
+        <location filename="../../src/control/header-bar.cpp" line="713"/>
+        <location filename="../../src/control/header-bar.cpp" line="914"/>
+        <location filename="../../src/control/header-bar.cpp" line="924"/>
         <source>Select All Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="680"/>
-        <location filename="../../src/control/header-bar.cpp" line="814"/>
-        <location filename="../../src/control/header-bar.cpp" line="853"/>
+        <location filename="../../src/control/header-bar.cpp" line="723"/>
+        <location filename="../../src/control/header-bar.cpp" line="858"/>
+        <location filename="../../src/control/header-bar.cpp" line="897"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="707"/>
+        <location filename="../../src/control/header-bar.cpp" line="750"/>
         <source>MoveTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="716"/>
+        <location filename="../../src/control/header-bar.cpp" line="759"/>
         <source>CopyTo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="725"/>
+        <location filename="../../src/control/header-bar.cpp" line="768"/>
         <source>Delete</source>
         <translation type="unfinished">ئۆچۈر</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="791"/>
+        <location filename="../../src/control/header-bar.cpp" line="835"/>
         <source>Select path</source>
         <translation type="unfinished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="856"/>
+        <location filename="../../src/control/header-bar.cpp" line="900"/>
         <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
@@ -264,7 +274,7 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1231"/>
+        <location filename="../../src/control/header-bar.cpp" line="1275"/>
         <source>Minimize</source>
         <translation>كىچىكلىتىش</translation>
     </message>
@@ -281,7 +291,7 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1243"/>
+        <location filename="../../src/control/header-bar.cpp" line="1287"/>
         <source>Close</source>
         <translation>ياپ</translation>
     </message>
@@ -456,7 +466,7 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
         <translation type="vanished">计算机</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-tab-bar.cpp" line="124"/>
+        <location filename="../../src/control/navigation-tab-bar.cpp" line="131"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
         <translation>&quot;٪1&quot; نى ئىزدەش &quot;٪2&quot;</translation>
     </message>
@@ -1082,22 +1092,22 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="221"/>
+        <location filename="../../src/control/tab-widget.cpp" line="280"/>
         <source>Trash</source>
         <translation>ئەخلەت ساندۇقى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="225"/>
+        <location filename="../../src/control/tab-widget.cpp" line="284"/>
         <source>Clear</source>
         <translation>تازىلاش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="230"/>
+        <location filename="../../src/control/tab-widget.cpp" line="289"/>
         <source>Recover</source>
         <translation>ئەسلىگە كەلتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="386"/>
+        <location filename="../../src/control/tab-widget.cpp" line="445"/>
         <source>Computer</source>
         <translation type="unfinished">计算机</translation>
     </message>
@@ -1110,22 +1120,22 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">سۈزگۈچ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="461"/>
+        <location filename="../../src/control/tab-widget.cpp" line="520"/>
         <source>Select Path</source>
         <translation>يول تاللاش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1612"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1692"/>
         <source>Opening such files is not currently supported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1625"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
         <source>Open failed</source>
         <translation>ئېچىش مەغلۇپ بولدى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1626"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1706"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>ئوچۇق مۇندەرىجە مەغلۇپ بولدى، رۇخسەتىڭىز يوق!</translation>
     </message>
@@ -1134,7 +1144,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="376"/>
+        <location filename="../../src/control/tab-widget.cpp" line="435"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -1159,13 +1169,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="521"/>
-        <location filename="../../src/control/tab-widget.cpp" line="681"/>
+        <location filename="../../src/control/tab-widget.cpp" line="580"/>
+        <location filename="../../src/control/tab-widget.cpp" line="740"/>
         <source>is</source>
         <translation>،</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="556"/>
+        <location filename="../../src/control/tab-widget.cpp" line="615"/>
         <source>Please input key words...</source>
         <translation>ئاچقۇچلۇق سۆزلەرنى كىرگۈزۈڭلار...</translation>
     </message>
@@ -1174,130 +1184,130 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="642"/>
-        <location filename="../../src/control/tab-widget.cpp" line="665"/>
+        <location filename="../../src/control/tab-widget.cpp" line="701"/>
+        <location filename="../../src/control/tab-widget.cpp" line="724"/>
         <source>contains</source>
         <translation>ئۆز ئىچىگە ئالغان</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>name</source>
         <translation>ئىسىم</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>type</source>
         <translation>تۈرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>modify time</source>
         <translation>ۋاقىتنى ئۆزگەرتىش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="299"/>
+        <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>file size</source>
         <translation>ھۆججەت چوڭلۇقى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>all</source>
         <translation>بارلىق</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="308"/>
         <source>file folder</source>
         <translation>ھۆججەت قىسقۇچ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="308"/>
         <source>image</source>
         <translation>رەسىم</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="300"/>
+        <location filename="../../src/control/tab-widget.h" line="308"/>
         <source>video</source>
         <translation>ۋىدېئو</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>text file</source>
         <translation>تېكىست ھۆججىتى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>audio</source>
         <translation>ئاۋاز</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>others</source>
         <translation>باشقىلار</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="301"/>
+        <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>wps file</source>
         <translation>wps ھۆججىتى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>today</source>
         <translation>تارىخ-بۈگۈن</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this week</source>
         <translation>بۇ ھەپتە</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this month</source>
         <translation>مۇشۇ ئاي</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this year</source>
         <translation>بۇ يىل</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="302"/>
+        <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>year ago</source>
         <translation>1 يىل ئىلگىرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>tiny(0-16K)</source>
         <translation>كىچىك (0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>small(16k-1M)</source>
         <translation>كىچىك (16 k- 1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>empty(0K)</source>
         <translation>بوش(0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>medium(1M-128M)</source>
         <translation>ئوتتۇراھال(1M-128M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>big(128M-1G)</source>
         <translation>چوڭ(128M-1G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>large(1-4G)</source>
         <translation>چوڭ (1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="303"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>great(&gt;4G)</source>
         <translation>ئۇلۇغ (&gt;4G)</translation>
     </message>
@@ -1325,17 +1335,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1038"/>
+        <location filename="../../src/control/header-bar.cpp" line="1082"/>
         <source>Option</source>
         <translation type="unfinished">تاللانما</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1051"/>
+        <location filename="../../src/control/header-bar.cpp" line="1095"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1074"/>
+        <location filename="../../src/control/header-bar.cpp" line="1118"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>

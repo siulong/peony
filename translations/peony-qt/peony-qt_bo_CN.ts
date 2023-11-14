@@ -173,6 +173,14 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <source>Select Done</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Icon View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List View</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HeaderBarContainer</name>
