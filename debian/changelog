@@ -1,3 +1,10 @@
+peony (4.1.3.0-ok1~1114) nile; urgency=medium
+
+  * New upstream release. 
+  * prepare for new patch list.
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 14 Nov 2023 10:19:31 +0800
+
 peony (4.1.2.0-ok1~1020.1) nile; urgency=medium
 
   * 修复自测的死锁问题
