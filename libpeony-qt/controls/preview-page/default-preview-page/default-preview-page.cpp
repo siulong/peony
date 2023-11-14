@@ -236,6 +236,8 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     setLayout(m_layout);
 
     m_icon = new IconContainer(this);
+    //fix bug#201023,200758, 200393 pure picture preview issue
+    m_icon->setProperty("useIconHighlightEffect", 0x0);
     m_icon->setIconSize(QSize(96, 96));
     m_layout->addWidget(m_icon);
     m_layout->addSpacing(24);
