@@ -205,6 +205,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     addSpacing(2);
 
     auto iconView = addAction(QIcon::fromTheme("view-grid-symbolic"), tr("Icon View"));
+    iconView->setData("Icon View");
     m_actions.insert(HeaderBarAction::IconView, iconView);
     iconView->setCheckable(true);
     auto iconViewButton = qobject_cast<QToolButton *>(widgetForAction(iconView));
@@ -213,6 +214,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     iconViewButton->setProperty("fillIconSymbolicColor", true);
 
     auto listView = addAction(QIcon::fromTheme("view-list-symbolic"), tr("List View"));
+    listView->setData("List View");
     m_actions.insert(HeaderBarAction::ListView, listView);
     listView->setCheckable(true);
     auto listViewButton = qobject_cast<QToolButton *>(widgetForAction(listView));
@@ -225,7 +227,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     m_view_actions->addAction(iconView);
     m_view_actions->addAction(listView);
     connect(m_view_actions, &QActionGroup::triggered, this, [=](QAction *action) {
-        auto viewId = action->text();
+        auto viewId = action->data().toString();
         m_window->beginSwitchView(viewId);
     });
 
@@ -644,7 +646,7 @@ void HeaderBar::updateIcons()
     
     QString viewId = m_window->getCurrentPage()->getView()->viewId();
     for (auto action : m_view_actions->actions()) {
-        if (action->text() == viewId) {
+        if (action->data().toString() == viewId) {
             action->setChecked(true);
         }
     }
