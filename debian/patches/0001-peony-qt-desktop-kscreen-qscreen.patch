@@ -767,7 +767,7 @@ index 10fda29..7483345 100644
  };
  
 diff --git a/peony-qt-desktop/peony-qt-desktop.pro b/peony-qt-desktop/peony-qt-desktop.pro
-index d6f9dda..f0f241b 100644
+index fc80c0a..af22aff 100644
 --- a/peony-qt-desktop/peony-qt-desktop.pro
 +++ b/peony-qt-desktop/peony-qt-desktop.pro
 @@ -4,7 +4,7 @@
