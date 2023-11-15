@@ -58,6 +58,7 @@ public:
 
     QSize sizeHint() const;
     void JumpDirectory(const QString& uri);/* 跳转目录 */
+    void sendKdkDataAsync();  //异步上传数据埋点信息
 
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
