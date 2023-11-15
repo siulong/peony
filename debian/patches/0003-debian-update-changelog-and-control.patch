@@ -1,0 +1,117 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 15 Nov 2023 15:14:38 +0800
+Subject: debian: update changelog and control.
+
+---
+ common.pri                          |  5 +++++
+ src/control/navigation-side-bar.cpp | 30 +++++++++++++++++++++++++++++-
+ src/control/navigation-side-bar.h   |  1 +
+ src/src.pro                         |  4 ++++
+ 4 files changed, 39 insertions(+), 1 deletion(-)
+
+diff --git a/common.pri b/common.pri
+index 04d8676..4e7b0a6 100644
+--- a/common.pri
++++ b/common.pri
+@@ -56,3 +56,8 @@ exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
+     message("kysysinfo find")
+     DEFINES += KY_SDK_SYSINFO
+ }
++
++exists(/usr/include/kysdk/diagnosetest/libkydatacollect.h) {
++    message("diagnosetest find")
++    DEFINES += KY_SDK_DATACOLLECT
++}
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 944b766..8001761 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -70,9 +70,14 @@
+ 
+ #include <QDebug>
+ #include <QToolTip>
++#include <QtConcurrent>
+ 
+ #include <QApplication>
+ 
++#ifdef KY_SDK_DATACOLLECT
++#include <kysdk/diagnosetest/libkydatacollect.h>
++#endif
++
+ #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
+ #define MINIMUM_COLUMN_SIZE 2
+ 
+@@ -217,6 +222,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+                 m_currSelectedItem->mount();
+             else{
+                 JumpDirectory(m_currSelectedItem->uri());
++#ifdef KY_SDK_DATACOLLECT
++                auto parent = index.parent();
++                //三级或以下子树跳转才收集数据，分析侧边栏树结构用户使用率
++                if (parent.isValid() && parent.parent().isValid()){
++                    sendKdkDataAsync();
++                }
++#endif
+             }
+             break;
+ 
+@@ -234,8 +246,9 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+             } else {
+                 // if item is not unmountable, just be same with first column.
+                 // fix #39716
+-                if (!item->uri().isNull())
++                if (!item->uri().isNull()) {
+                     Q_EMIT this->updateWindowLocationRequest(item->uri());
++                }
+             }
+             break;
+         }
+@@ -425,6 +438,21 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+     }
+ }
+ 
++void NavigationSideBar::sendKdkDataAsync()
++{
++#ifdef KY_SDK_DATACOLLECT
++    QtConcurrent::run([=]() {
++        //story 24997, collet second level tree child click event
++        KTrackData *node = kdk_dia_data_init(KEVENTSOURCE_DESKTOP,KEVENT_CLICK);
++        //传入事件描述“点击侧边栏展开子树”，上传点击事件，收集使用二级以上子树跳转数据
++        kdk_dia_upload_default(node,"peony","secondLevelChildClick");
++
++        //释放内存
++        kdk_dia_data_free(node);
++    });
++#endif
++}
++
+ bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
+ {
+     return false;
+diff --git a/src/control/navigation-side-bar.h b/src/control/navigation-side-bar.h
+index 807125f..672f15d 100644
+--- a/src/control/navigation-side-bar.h
++++ b/src/control/navigation-side-bar.h
+@@ -58,6 +58,7 @@ public:
+ 
+     QSize sizeHint() const;
+     void JumpDirectory(const QString& uri);/* 跳转目录 */
++    void sendKdkDataAsync();  //异步上传数据埋点信息
+ 
+ Q_SIGNALS:
+     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool force = false);
+diff --git a/src/src.pro b/src/src.pro
+index b4c4c34..8b8426a 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -25,6 +25,10 @@ PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udi
+ LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
+ CONFIG += c++11 link_pkgconfig no_keywords lrelease
+ 
++contains(DEFINES, KY_SDK_DATACOLLECT) {
++    PKGCONFIG += kysdk-datacollect
++}
++
+ LIBS += -L$$PWD/../libpeony-qt/ -lpeony
+ 
+ contains(DEFINES, KY_SDK_QT_WIDGETS) {

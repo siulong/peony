@@ -38,7 +38,8 @@ Build-Depends: debhelper-compat (=12),
                libkysdk-sysinfo-dev,
                libkf5screen-dev,
                libukui-search-dev,
-               libkysdk-systime-dev
+               libkysdk-systime-dev,
+               libkysdk-datacollect-dev
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Homepage: https://www.ukui.org/
