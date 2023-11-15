@@ -197,11 +197,11 @@ setPasswd:
     });
 
     //task#147390  设置是否新建窗口打开文件夹
-    auto showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
+    m_showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
         Peony::GlobalSettings::getInstance()->setValue(SHOW_IN_NEW_WINDOW, checked);
     });
-    showFoldersInNewWindow->setCheckable(true);
-    showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
+    m_showFoldersInNewWindow->setCheckable(true);
+    m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
 
     addAction(tr("Plugin manager Settings"), this, [=](){
         Peony::ExtensionsManagerWidget *widget = Peony::ExtensionsManagerWidget::getInstance();
@@ -253,6 +253,9 @@ void OperationMenu::updateMenu()
                                       Peony::GlobalSettings::getInstance()->getValue(RESIDENT_IN_BACKEND).toBool():
                                       false);
 
+    m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_IN_NEW_WINDOW)?
+                                      Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool():
+                                      false);
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
 

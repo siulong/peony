@@ -77,8 +77,6 @@ FileInfo::FileInfo(const QString &uri, QObject *parent) : QObject (parent)
 
 FileInfo::~FileInfo()
 {
-    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
-    EmblemProviderManager::getInstance()->cancelQuery(m_uri);
     //qDebug()<<"~FileInfo"<<m_uri;
     disconnect();
 
@@ -295,10 +293,9 @@ const QString FileInfo::getFinalDisplayName()
     unixDevice = unixDeviceFile();
     isMountPoint = FileUtils::isMountPoint(m_uri);
 
-    QString targetUri = FileUtils::getTargetUri(m_uri);
     if(m_uri == "file:///DATA"
             || m_uri == "file:///data"
-            || targetUri == "file:///data")
+            || m_target_uri == "file:///data")
     {
         return tr("data");
     }

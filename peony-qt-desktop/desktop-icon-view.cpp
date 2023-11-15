@@ -330,7 +330,10 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
     setMouseTracking(true);//追踪鼠标
 
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString &key) {
-        if (key == DISPLAY_STANDARD_ICONS) {
+        if (key == DISPLAY_STANDARD_ICONS ||
+            key == HOME_ICON_VISIBLE ||
+            key == TRASH_ICON_VISIBLE ||
+            key == COMPUTER_ICON_VISIBLE) {
             //this->refresh();
             m_proxy_model->invalidate();
             this->resolutionChange();

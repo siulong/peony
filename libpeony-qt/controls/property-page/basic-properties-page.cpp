@@ -760,13 +760,26 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
 void BasicPropertiesPage::onFileCountOne(const QString &uri, quint64 size)
 {
     //...FIX:第一版本在当前位置对文件夹进行统计,慢
-    std::shared_ptr<FileInfo> l_fileInfo = FileInfo::fromUri(uri);
-    FileInfoJob *fileInfoJob = new FileInfoJob(l_fileInfo);
-    fileInfoJob->setAutoDelete();
-    fileInfoJob->querySync();
-    bool a = l_fileInfo.get()->isDir();
+//    std::shared_ptr<FileInfo> l_fileInfo = FileInfo::fromUri(uri);
+//    FileInfoJob *fileInfoJob = new FileInfoJob(l_fileInfo);
+//    fileInfoJob->setAutoDelete();
+//    fileInfoJob->querySync();
+//    bool a = l_fileInfo.get()->isDir();
 
-    if (a)
+    bool isDir = false;
+    g_autoptr (GFile) file = g_file_new_for_uri(uri.toUtf8().constData());
+    g_autoptr (GFileInfo) info = g_file_query_info(file,
+                                        "standard::*",
+                                        G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                        nullptr,
+                                        nullptr);
+    GFileType fileType = g_file_info_get_file_type(info);
+    QString contentType = g_file_info_get_content_type (info);
+    if (fileType == G_FILE_TYPE_DIRECTORY || contentType == "inode/directory") {
+        isDir = true;
+    }
+
+    if (isDir)
         m_folderContainFolders ++;
     else
         m_folderContainFiles ++;

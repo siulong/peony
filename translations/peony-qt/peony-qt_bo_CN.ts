@@ -110,10 +110,6 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -175,6 +171,14 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Select Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List View</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -676,11 +680,35 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Use global sorting</source>
-        <translation>ཁྱོན་ཡོངས་ཀྱི་གོ་རིམ་བེད་སྤྱོད།</translation>
+        <translation type="vanished">ཁྱོན་ཡོངས་ཀྱི་གོ་རིམ་བེད་སྤྱོད།</translation>
     </message>
     <message>
         <source>Original Path</source>
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
+    </message>
+    <message>
+        <source>Use current sorting for all folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Newest to oldest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Oldest to newest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files from large to small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files from small to large</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

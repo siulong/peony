@@ -70,6 +70,9 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 
     m_cache.insert(DISPLAY_STANDARD_ICONS, true);
+    m_cache.insert(HOME_ICON_VISIBLE, true);
+    m_cache.insert(TRASH_ICON_VISIBLE, true);
+    m_cache.insert(COMPUTER_ICON_VISIBLE, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);

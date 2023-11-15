@@ -48,6 +48,7 @@
 
 #include <QDebug>
 #include <QFileInfo>
+#include <QGSettings>
 
 using namespace Peony;
 
@@ -81,13 +82,7 @@ PermissionsPropertiesPage::PermissionsPropertiesPage(const QStringList &uris, QW
     m_label = new QLabel(this);
 
     QString str = tr("Target: %1").arg(url.path());
-    int fontSize = m_label->fontMetrics().width(str);
-
-    if(fontSize > TARGET_LABEL_WIDTH) {
-        m_label->setToolTip(str);
-        str = m_label->fontMetrics().elidedText(str, Qt::ElideMiddle, TARGET_LABEL_WIDTH);
-    }
-    m_label->setText(str);
+    updateLabelShow(str);
 
     m_label->setMinimumHeight(60);
     m_label->setContentsMargins(16, 0, 16, 0);
@@ -109,6 +104,15 @@ PermissionsPropertiesPage::PermissionsPropertiesPage(const QStringList &uris, QW
     queryPermissionsAsync(nullptr, m_uri);
 
     this->addAdvancedLayout();
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *gSetting = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(gSetting, &QGSettings::changed, this, [=](const QString &key) {
+            if ("systemFontSize" == key) {
+                updateLabelShow(str);
+            }
+        });
+    }
 }
 
 PermissionsPropertiesPage::~PermissionsPropertiesPage()
@@ -316,14 +320,17 @@ GAsyncReadyCallback PermissionsPropertiesPage::async_query_permisson_callback(GO
                 table->setItem(0, 0, nullptr);
                 QTableWidgetItem* itemR0C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-personal"), userNameDisplayString);
                 table->setItem(0, 0, itemR0C0);
+                itemR0C0->setToolTip(userNameDisplayString);
 
                 table->setItem(1, 0, nullptr);
                 QTableWidgetItem* itemR1C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-people"), groupName);
                 table->setItem(1, 0, itemR1C0);
+                itemR1C0->setToolTip(groupName);
 
                 table->setItem(2, 0, nullptr);
                 QTableWidgetItem* itemR2C0 = new QTableWidgetItem(QIcon::fromTheme("emblem-people"), tr("Others"));
                 table->setItem(2, 0, itemR2C0);
+                itemR2C0->setToolTip(tr("Others"));
 
                 table->showRow(0);
                 table->showRow(1);
@@ -602,6 +609,18 @@ void PermissionsPropertiesPage::addAdvancedLayout()
     hboxLayout->addWidget(m_advancedBtn);
     hboxLayout->addStretch(2);
     m_layout->addLayout(hboxLayout);
+}
+
+void PermissionsPropertiesPage::updateLabelShow(const QString &str)
+{
+    int fontSize = m_label->fontMetrics().width(str);
+    QString tmp = str;
+
+    if(fontSize > TARGET_LABEL_WIDTH) {
+        m_label->setToolTip(str);
+        tmp = m_label->fontMetrics().elidedText(str, Qt::ElideMiddle, TARGET_LABEL_WIDTH);
+    }
+    m_label->setText(tmp);
 }
 
 QWidget *PermissionsPropertiesPage::createCellWidget(QWidget *parent, QIcon icon, QString text)

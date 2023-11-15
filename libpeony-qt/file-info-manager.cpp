@@ -25,11 +25,14 @@
 #include <gio/gio.h>
 #include <QMap>
 #include <QDebug>
+#include <QMutexLocker>
 
 using namespace Peony;
 
 static FileInfoManager* global_file_info_manager = nullptr;
 static QHash<QString, std::weak_ptr<FileInfo>> *global_info_list = nullptr;
+static QHash<QString, std::weak_ptr<ExtraInfoRecorder>> *global_extraInfo_list = nullptr;/* <uri, ExtraInfoRecorder>,暂时只允许在fileitem中使用，慎用！！！ */
+
 static bool g_is_auto_parted = false;
 
 static QMutex m_op_lock;
@@ -37,6 +40,8 @@ static QMutex m_op_lock;
 FileInfoManager::FileInfoManager()
 {
     global_info_list = new QHash<QString, std::weak_ptr<FileInfo>>();
+    global_extraInfo_list = new QHash<QString, std::weak_ptr<ExtraInfoRecorder>>();
+
     GFile *file = g_file_new_for_uri("file:///data/usershare");
     g_is_auto_parted = g_file_query_exists(file, nullptr);
     g_object_unref(file);
@@ -45,6 +50,7 @@ FileInfoManager::FileInfoManager()
 FileInfoManager::~FileInfoManager()
 {
     delete global_info_list;
+    delete global_extraInfo_list;
 }
 
 FileInfoManager *FileInfoManager::getInstance()
@@ -95,6 +101,19 @@ void FileInfoManager::updateFileInfo(std::shared_ptr<FileInfo> info)
     m_op_lock.unlock();
 
     return;
+
+}
+
+std::shared_ptr<ExtraInfoRecorder> FileInfoManager::getExtraInfoRecorderByUri(const QString &uri)
+{
+    Q_ASSERT(global_extraInfo_list);
+    QMutexLocker mtx(&m_op_lock);
+    auto tmp = global_extraInfo_list->value(uri).lock();
+    if (!tmp) {
+        tmp = std::make_shared<ExtraInfoRecorder>(uri);
+        global_extraInfo_list->insert(uri, tmp);
+    }
+    return tmp;
 }
 
 void FileInfoManager::showState()

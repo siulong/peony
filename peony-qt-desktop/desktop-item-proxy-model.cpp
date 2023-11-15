@@ -122,14 +122,35 @@ bool DesktopItemProxyModel::filterAcceptsRow(int source_row, const QModelIndex &
            return false;
     }
 
-    if (!GlobalSettings::getInstance()->getValue(DISPLAY_STANDARD_ICONS).toBool()) {
-        if (uri == "computer:///"
-            || uri == "trash:///"
-            || uri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
+//    if (!GlobalSettings::getInstance()->getValue(DISPLAY_STANDARD_ICONS).toBool()) {
+//        if (uri == "computer:///"
+//            || uri == "trash:///"
+//            || uri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
+//            || uri == QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
+//        {
+//            return false;
+//        }
+//    }
+
+    //家目录图标显示隐藏，只要DISPLAY_STANDARD_ICONS 或者 HOME_ICON_VISIBLE 其中任意1个为false值即可
+    //但是如果改为隐藏后，需要显示，必须保证两个值都为true, 回收站和计算机图标为同样逻辑
+    bool display_standard_icons = GlobalSettings::getInstance()->getValue(DISPLAY_STANDARD_ICONS).toBool();
+    if (! GlobalSettings::getInstance()->getValue(HOME_ICON_VISIBLE).toBool() || ! display_standard_icons) {
+        if (uri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
             || uri == QStandardPaths::writableLocation(QStandardPaths::HomeLocation))
         {
             return false;
         }
+    }
+
+    if (((! GlobalSettings::getInstance()->getValue(TRASH_ICON_VISIBLE).toBool() || ! display_standard_icons)
+         && uri == "trash:///")) {
+       return false;
+    }
+
+    if (((! GlobalSettings::getInstance()->getValue(COMPUTER_ICON_VISIBLE).toBool() || ! display_standard_icons)
+         && uri == "computer:///")) {
+       return false;
     }
 
     if (info->isDesktopFile() && nullptr != info->desktopName()){
