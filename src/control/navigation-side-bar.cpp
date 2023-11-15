@@ -70,8 +70,13 @@
 
 #include <QDebug>
 #include <QToolTip>
+#include <QtConcurrent>
 
 #include <QApplication>
+
+#ifdef KY_SDK_DATACOLLECT
+#include <kysdk/diagnosetest/libkydatacollect.h>
+#endif
 
 #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
 #define MINIMUM_COLUMN_SIZE 2
@@ -217,6 +222,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 m_currSelectedItem->mount();
             else{
                 JumpDirectory(m_currSelectedItem->uri());
+#ifdef KY_SDK_DATACOLLECT
+                auto parent = index.parent();
+                //三级或以下子树跳转才收集数据，分析侧边栏树结构用户使用率
+                if (parent.isValid() && parent.parent().isValid()){
+                    sendKdkDataAsync();
+                }
+#endif
             }
             break;
 
@@ -234,8 +246,9 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             } else {
                 // if item is not unmountable, just be same with first column.
                 // fix #39716
-                if (!item->uri().isNull())
+                if (!item->uri().isNull()) {
                     Q_EMIT this->updateWindowLocationRequest(item->uri());
+                }
             }
             break;
         }
@@ -423,6 +436,21 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
+}
+
+void NavigationSideBar::sendKdkDataAsync()
+{
+#ifdef KY_SDK_DATACOLLECT
+    QtConcurrent::run([=]() {
+        //story 24997, collet second level tree child click event
+        KTrackData *node = kdk_dia_data_init(KEVENTSOURCE_DESKTOP,KEVENT_CLICK);
+        //传入事件描述“点击侧边栏展开子树”，上传点击事件，收集使用二级以上子树跳转数据
+        kdk_dia_upload_default(node,"peony","secondLevelChildClick");
+
+        //释放内存
+        kdk_dia_data_free(node);
+    });
+#endif
 }
 
 bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
