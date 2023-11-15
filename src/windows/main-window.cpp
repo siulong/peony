@@ -133,7 +133,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
 {
     // try fix #162452, filedialog changes peony main windows view type and sort options.
     setObjectName("_peony_mainwindow");
-
+    setAttribute(Qt::WA_AlwaysShowToolTips);
     setContextMenuPolicy(Qt::CustomContextMenu);
     installEventFilter(this);
 
