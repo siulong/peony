@@ -132,6 +132,7 @@ private:
 Q_SIGNALS:
     void zoomLevelChanged(ZoomLevel level);
     void updateView();
+    void resetGridSize(const QSize &size);
 
 public Q_SLOTS:
     //location

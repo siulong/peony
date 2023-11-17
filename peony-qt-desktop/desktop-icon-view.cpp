@@ -243,18 +243,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
         // check if there are items overlapped.
         QTimer::singleShot(150, this, [=](){
             initViewport();
-            checkItemsOver();
 
-            // check icon is out of screen
-            auto geo = viewport()->rect();
-            if (geo.width() != 0 && geo.height() != 0) {
-                for (auto rec : m_item_rect_hash.values()) {
-                    if (!geo.contains(rec)) {
-                        resolutionChange();
-                        break;
-                    }
-                }
-            }
             auto app = static_cast<PeonyDesktopApplication *>(qApp);
             Q_EMIT app->emitFinish();
             qInfo()<<"desktop finish";
@@ -2969,7 +2958,9 @@ void DesktopIconView::modifyGridSize()
             return;
         }
     }
-
+    if (0 == m_item_rect_hash.size()) {
+        return;
+    }
     QList<int> positionX;
     QList<int> positionY;
     for (auto i = m_item_rect_hash.constBegin(); i != m_item_rect_hash.constEnd(); ++i) {
@@ -2990,6 +2981,7 @@ void DesktopIconView::modifyGridSize()
     if (settings) {
         settings->setValue(DEFAULT_GRID_SIZE, size);
     }
+    Q_EMIT resetGridSize(size);
 }
 
 void DesktopIconView::initViewport()
