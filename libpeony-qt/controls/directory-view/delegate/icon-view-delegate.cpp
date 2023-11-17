@@ -731,7 +731,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     if (!regFindKeyWords.isEmpty()) {
         //对特殊字符进行处理
         QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
-        QRegularExpression regex(escapedKeywords);
+        QRegularExpression regex(escapedKeywords, QRegularExpression::CaseInsensitiveOption);
         QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
 
         while (matchIterator.hasNext()) {
@@ -841,14 +841,14 @@ qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem
     if (!regFindKeyWords.isEmpty()) {
         //对特殊字符进行处理
         QString escapedKeywords = QRegularExpression::escape(regFindKeyWords);
-        QRegularExpression regex(escapedKeywords);
+        QRegularExpression regex(escapedKeywords, QRegularExpression::CaseInsensitiveOption);
         QRegularExpressionMatchIterator matchIterator = regex.globalMatch(option.text);
 
         while (matchIterator.hasNext()) {
             QRegularExpressionMatch match = matchIterator.next();
             int startPos = match.capturedStart();
             int endPos = match.capturedEnd();
-          int oo = elidedText.size();
+
             // 判断是否关键字被省略
             if (isElided && startPos >= elidedText.size() - 1) {
                 break; // 关键字被完全省略，退出循环
