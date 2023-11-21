@@ -243,10 +243,22 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
         // check if there are items overlapped.
         QTimer::singleShot(150, this, [=](){
             initViewport();
+            checkItemsOver();
 
+            // check icon is out of screen
+            auto geo = viewport()->rect();
+            if (geo.width() != 0 && geo.height() != 0) {
+                for (auto rec : m_item_rect_hash.values()) {
+                    if (!geo.contains(rec)) {
+                        resolutionChange();
+                        break;
+                    }
+                }
+            }
             auto app = static_cast<PeonyDesktopApplication *>(qApp);
             Q_EMIT app->emitFinish();
             qInfo()<<"desktop finish";
+
         });
 
         return;
@@ -2977,7 +2989,7 @@ void DesktopIconView::modifyGridSize()
         Q_EMIT updateView();
         return ;
     }
-    setGridSize(size);
+
     if (settings) {
         settings->setValue(DEFAULT_GRID_SIZE, size);
     }
@@ -2988,10 +3000,11 @@ void DesktopIconView::initViewport()
 {
     if (!m_initialized) {
         qInfo()<<"desktop icon view model inited";
-        m_initialized = true;
 
-        if (!QGSettings::isSchemaInstalled(PANEL_SETTINGS))
+        if (!QGSettings::isSchemaInstalled(PANEL_SETTINGS)) {
+            m_initialized = true;
             return;
+        }
         //panel
         QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
         int position = panelSetting->get("panelposition").toInt();
@@ -3018,18 +3031,7 @@ void DesktopIconView::initViewport()
         modifyGridSize();
         resolutionChange();
         setAllRestoreInfo();
-    }
-    checkItemsOver();
-
-    // check icon is out of screen
-    auto geo = viewport()->rect();
-    if (geo.width() != 0 && geo.height() != 0) {
-        for (auto rec : m_item_rect_hash.values()) {
-            if (!geo.contains(rec)) {
-                resolutionChange();
-                break;
-            }
-        }
+        m_initialized = true;
     }
 }
 
