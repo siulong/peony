@@ -541,10 +541,11 @@ void IconView::updateGeometries()
     }
 
     int itemRowCount = model()->rowCount();
-    auto index = model()->index(0, 0);
-    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+    auto lastIndex = model()->index(itemRowCount - 1, 0);
+    QRegion itemRegion = visualRect(lastIndex);
+    int lastItemBottom = itemRegion.boundingRect().bottom();
 
-    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
+    if ((lastItemBottom + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         int vertiacalMax = verticalScrollBar()->maximum();
@@ -564,15 +565,16 @@ void IconView::updateGeometries()
     }
 
     int itemRowCount = model()->rowCount();
-    auto index = model()->index(0, 0);
-    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+    auto lastIndex = model()->index(itemRowCount - 1, 0);
+    QRegion itemRegion = visualRect(lastIndex);
+    int lastItemBottom = itemRegion.boundingRect().bottom();
 
-    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
+    if ((lastItemBottom + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         verticalScrollBar()->setSingleStep(gridSize().height()/2);
         verticalScrollBar()->setPageStep(viewport()->height());
-        verticalScrollBar()->setRange(0, itemRowsHeight - viewport()->height() + gridSize().height());
+        verticalScrollBar()->setRange(0, lastItemBottom - viewport()->height() + gridSize().height());
     }
 #endif
 }
