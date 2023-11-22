@@ -40,7 +40,7 @@
 #include "file-label-model.h"
 #include "file-info-job.h"
 #include "file-launch-action.h"
-#include "open-with-properties-page.h"
+//#include "open-with-properties-page.h"
 
 class QVBoxLayout;
 class QListWidget;
