@@ -38,6 +38,7 @@
 #include <QUrl>
 
 #include <QCheckBox>
+#include <QtConcurrent>
 #include <gio/gdesktopappinfo.h>
 
 using namespace Peony;

@@ -31,7 +31,6 @@
 #include <QGridLayout>
 #include <QThread>
 #include <memory>
-#include <QtConcurrent>
 #include <QProxyStyle>
 #include <QComboBox>
 #include <QDBusInterface>

@@ -29,7 +29,6 @@
 #include <QDebug>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QtConcurrent>
 #include <QLabel>
 #include <QHash>
 #include <QFileDialog>
