@@ -35,6 +35,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLabel>
+#include <QtConcurrent/QtConcurrent>
 
 namespace Peony {
 

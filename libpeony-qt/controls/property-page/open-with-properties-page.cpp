@@ -31,8 +31,6 @@
 #include <QDebug>
 #include <gio/gdesktopappinfo.h>
 
-#include <QtConcurrent>
-
 #ifdef KY_SDK_QT_WIDGETS
 #include "kborderlessbutton.h"
 using namespace kdk;
