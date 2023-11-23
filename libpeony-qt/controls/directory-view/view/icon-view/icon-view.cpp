@@ -519,6 +519,7 @@ void IconView::wheelEvent(QWheelEvent *e)
         } else {
             zoomLevelChangedRequest(false);
         }
+        e->accept();
         return;
     }
 

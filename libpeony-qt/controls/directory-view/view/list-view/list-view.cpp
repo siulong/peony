@@ -671,6 +671,7 @@ void ListView::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier) {
         zoomLevelChangedRequest(e->delta() > 0);
+        e->accept();
         return;
     }
     QTreeView::wheelEvent(e);
