@@ -1837,6 +1837,9 @@ void MainWindow::initUI(const QString &uri)
     connect(Peony::ThumbnailManager::getInstance(), &Peony::ThumbnailManager::updateFileThumbnail, this, [=](){
         this->refresh();
     });
+
+    setTabOrder(m_side_bar, m_tab);
+
 //    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
 //        m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 //        connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {

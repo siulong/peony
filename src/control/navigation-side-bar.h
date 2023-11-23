@@ -126,7 +126,8 @@ private:
     QGSettings *m_gSettings;
 };
 
-class LabelButton : public QWidget
+#include <QPushButton>
+class LabelButton : public QPushButton
 {
     Q_OBJECT
 public:
@@ -134,13 +135,15 @@ public:
     void setLastIcon(const QString &symbolic);
     void setFirstIcon(const QString &symbolic);
     void setText(QString text);
+    void setShow(bool isShow);
+    bool getShow();
 
 Q_SIGNALS:
     void clicked (bool show);
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
+//    void mousePressEvent(QMouseEvent *event) override;
+//    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QLabel *m_firstSymbolic = nullptr;
@@ -149,5 +152,6 @@ private:
     QHBoxLayout *m_mainLayout = nullptr;
     bool m_isPress = false;
     bool m_show = false;
+
 };
 #endif // NAVIGATIONSIDEBAR_H
