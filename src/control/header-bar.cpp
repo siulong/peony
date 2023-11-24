@@ -1172,6 +1172,11 @@ void TopMenuBar::addWindowButtons()
     close->setMouseTracking(true);
     close->installEventFilter(this);
 
+    optionButton->setFocusPolicy(Qt::FocusPolicy(optionButton->focusPolicy() &  ~Qt::TabFocus));
+    minimize->setFocusPolicy(Qt::FocusPolicy(minimize->focusPolicy() & ~Qt::TabFocus));
+    maximizeAndRestore->setFocusPolicy(Qt::FocusPolicy(maximizeAndRestore->focusPolicy() & ~Qt::TabFocus));
+    close->setFocusPolicy(Qt::FocusPolicy(close->focusPolicy() & ~Qt::TabFocus));
+
     for (int i = 0; i < layout->count(); i++) {
         auto w = layout->itemAt(i)->widget();
         w->setProperty("isWindowButton", 1);
