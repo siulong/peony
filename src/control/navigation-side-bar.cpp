@@ -436,8 +436,6 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
-
-
     /* 打开文件管理器默认在‘个人’上 */
     QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QItemSelectionModel *selectionModel = this->selectionModel();
@@ -605,7 +603,7 @@ void NavigationSideBar::keyPressEvent(QKeyEvent *event)
 
     QTreeView::keyPressEvent(event);
 
-    if (event->key() == Qt::Key_Return) {
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Space) {
         if (!selectedIndexes().isEmpty()) {
             auto index = selectedIndexes().first();
             auto uri = index.data(Qt::UserRole).toString();

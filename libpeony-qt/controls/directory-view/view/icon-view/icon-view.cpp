@@ -471,6 +471,11 @@ void IconView::mouseDoubleClickEvent(QMouseEvent *event)
 void IconView::keyPressEvent(QKeyEvent *e)
 {
     QListView::keyPressEvent(e);
+
+    if(e->key() == Qt::Key_Space){
+        Q_EMIT QListView::activated(currentIndex());/* 与按下enter键效果一样 */
+    }
+
     if (e->key() == Qt::Key_Control)
         m_ctrl_key_pressed = true;
 
