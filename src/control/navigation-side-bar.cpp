@@ -452,6 +452,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             Q_EMIT clicked(index);
         }
     }//end
+}
 
 void NavigationSideBar::sendKdkDataAsync()
 {
