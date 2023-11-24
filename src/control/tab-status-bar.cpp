@@ -58,7 +58,7 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
     addWidget(m_label, 1);
 
     m_slider = new QSlider(Qt::Horizontal, this);
-    m_slider->setFocusPolicy(Qt::FocusPolicy(Qt::WheelFocus));
+    m_slider->setFocusPolicy(Qt::FocusPolicy(Qt::WheelFocus & ~Qt::TabFocus));
     m_slider->setRange(0, 100);
     //设置状态栏下的搜索进度
     m_animation = new QVariantAnimation(this);
