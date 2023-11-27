@@ -56,7 +56,7 @@ void Peony::FavoriteVFSRegister::registFavoriteVFS()
 
     const gchar* const* p = schemes;
     while (*p) {
-        qDebug() << *p;
+        qDebug() <<"registFavoriteVFS:" << *p;
         p++;
     }
 
