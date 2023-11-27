@@ -436,7 +436,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
-    /* 打开文件管理器默认在‘个人’上 */
+    /* 打开文件管理器默认聚焦在家目录上 */
     QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QItemSelectionModel *selectionModel = this->selectionModel();
     for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
@@ -444,10 +444,10 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         auto item = m_proxy_model->itemFromIndex(index);
         if (item->uri() == homeUri) {
             auto index1 = m_proxy_model->index(i, 1);
+            this->setCurrentIndex(index);
             /* 通过QItemSelection设置选中项 */
             QItemSelection selection(index, index1);
             selectionModel->select(selection, QItemSelectionModel::Select);
-            Q_EMIT clicked(index);
         }
     }//end
 }
