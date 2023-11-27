@@ -29,6 +29,9 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QUrl>
+#include <QGSettings>
+
+#define FILE_LABEL_WIDTH    150
 
 using namespace Peony;
 
@@ -50,6 +53,25 @@ MarkPropertiesPage::MarkPropertiesPage(const QString &uri, QWidget *parent) : Pr
     this->initTableData();
 
     this->setLayout(m_layout);
+
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *gSetting = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(gSetting, &QGSettings::changed, this, [=](const QString &key) {
+            if ("systemFontSize" == key) {
+                for (int row = 0; row < m_tableWidget->rowCount(); row++) {
+                    for (int col = 0; col < m_tableWidget->columnCount(); col++) {
+                        QWidget* w = m_tableWidget->cellWidget(row, col);
+                        QLabel* label = w->findChild<QLabel*>();
+                        auto items = m_fileLabelModel->getAllFileLabelItems();
+                        int index = m_tableWidget->columnCount() * row + col;
+                        if (!label->text().isEmpty() && index < items.count()) {
+                            updateTableLabelShow(label, items.at(index)->name());
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
 void MarkPropertiesPage::initTableWidget()
@@ -142,7 +164,7 @@ void MarkPropertiesPage::initTableData()
         boxLayout->addWidget(button);
 
         QLabel *label = new QLabel(widget);
-        label->setText(item->name());
+        updateTableLabelShow(label, item->name());
         boxLayout->addWidget(label);
         connect(checkBox,&QCheckBox::clicked,this,[=](bool checked){
             this->changeLabel(item->id(),checked);
@@ -180,4 +202,13 @@ QString MarkPropertiesPage::convertRGB16HexStr(const QColor color)
     QString blueStr = QString("%1").arg(color.blue(),2,16,QChar('0'));
     QString hexStr = "#" + redStr + greenStr + blueStr;
     return hexStr;
+}
+
+void MarkPropertiesPage::updateTableLabelShow(QLabel *label, const QString &str)
+{
+    QString tmp = str;
+    QFontMetrics fontWidth(label->font());
+    QString elideNote = fontWidth.elidedText(tmp, Qt::ElideRight, FILE_LABEL_WIDTH);
+    label->setText(elideNote);
+    label->setToolTip(tmp);
 }
