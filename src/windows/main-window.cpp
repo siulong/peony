@@ -133,7 +133,7 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
 {
     // try fix #162452, filedialog changes peony main windows view type and sort options.
     setObjectName("_peony_mainwindow");
-
+    setAttribute(Qt::WA_AlwaysShowToolTips);
     setContextMenuPolicy(Qt::CustomContextMenu);
     installEventFilter(this);
 
@@ -1837,6 +1837,9 @@ void MainWindow::initUI(const QString &uri)
     connect(Peony::ThumbnailManager::getInstance(), &Peony::ThumbnailManager::updateFileThumbnail, this, [=](){
         this->refresh();
     });
+
+    setTabOrder(m_side_bar, m_tab);
+
 //    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
 //        m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 //        connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {

@@ -575,6 +575,7 @@ inputpasswd:
         QInputDialog dlg;
         dlg.setLabelText(tr("Enter Password:"));
         dlg.setTextEchoMode(QLineEdit::Password);
+        dlg.setFixedSize(370, 150);
         auto lineEdit = dlg.findChild<QLineEdit *>();
         lineEdit->setMaxLength(16);
         if (lineEdit) {

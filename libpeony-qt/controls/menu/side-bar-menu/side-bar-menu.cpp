@@ -38,6 +38,9 @@
 #include "format_dialog.h"
 #include "format-dlg-create-delegate.h"
 
+#include <QApplication>
+#include <QProcess>
+
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
 #include "udfFormatDialog.h"

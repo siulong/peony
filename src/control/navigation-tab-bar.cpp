@@ -153,7 +153,7 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 
 void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
 {
-    setFocus();
+    //setFocus();
     if (uri.isEmpty())
         return;
     //m_info = Peony::FileInfo::fromUri(uri);

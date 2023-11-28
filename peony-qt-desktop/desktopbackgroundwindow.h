@@ -88,8 +88,8 @@ private:
     Peony::DesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
-    KScreen::OutputPtr m_output = nullptr;
     Peony::DesktopMenu *m_menu = nullptr;
+    KScreen::OutputPtr m_output = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H

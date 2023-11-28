@@ -36,7 +36,6 @@
 #include <QMutex>
 #include <QSize>
 #include <QProxyStyle>
-#include <QtConcurrent>
 #include <file-info.h>
 
 namespace Peony {

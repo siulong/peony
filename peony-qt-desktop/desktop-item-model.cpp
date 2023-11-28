@@ -173,6 +173,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             int isUpdateIconGeometry = false;
             if (!view->isRenaming()) {
                 view->setFileMetaInfoPos(uri, QPoint(-1, -1));
+
+                auto metaInfo = FileMetaInfo::fromUri(uri);
+                if (metaInfo) {
+                    QStringList restoreInfo;
+                    restoreInfo<<"";
+                    metaInfo->setMetaInfoStringList("metadata::peony-qt-desktop-restore-singlescreen-item-position", restoreInfo);
+                }
+
             } else {
                 m_items_need_relayout.removeOne(uri);
                 view->setRenaming(false);
@@ -309,6 +317,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
+        m_destoryItems.removeOne(uri);
         std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri);
         Peony::DesktopIconView *view = nullptr;
         if (info.get()->isEmptyInfo()) {

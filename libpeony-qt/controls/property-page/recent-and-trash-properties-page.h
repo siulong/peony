@@ -24,11 +24,11 @@
 #define RECENTANDTRASHPROPERTIESPAGE_H
 
 #include <QWidget>
-#include <QtConcurrent>
 
 #include "file-info.h"
 #include "properties-window-tab-iface.h"
 #include "peony-core_global.h"
+#include <QtConcurrent/QtConcurrent>
 
 class QFormLayout;
 

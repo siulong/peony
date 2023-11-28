@@ -34,6 +34,7 @@
 
 #include <QAction>
 #include <QModelIndex>
+#include <QProcess>
 #include <format_dialog.h>
 
 #include <QDebug>

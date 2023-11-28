@@ -112,8 +112,6 @@ public:
     void clearAllRestoreInfo();
     void refreshResolutionChange();
 
-    DesktopItemProxyModel *getProxyModel();
-
     void saveExtendItemInfo();
     void resetExtendItemInfo();
     void clearItemRect();
@@ -134,6 +132,7 @@ private:
 Q_SIGNALS:
     void zoomLevelChanged(ZoomLevel level);
     void updateView();
+    void resetGridSize(const QSize &size);
 
 public Q_SLOTS:
     //location
@@ -306,6 +305,8 @@ private:
     QPoint m_press_pos;
 
     int m_id = 0;
+
+    QStringList m_storageBox;
 };
 
 }

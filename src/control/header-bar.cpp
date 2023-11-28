@@ -212,6 +212,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     iconViewButton->setIconSize(QSize(16, 16));
     iconViewButton->setProperty("isWindowButton", 1);
     iconViewButton->setProperty("fillIconSymbolicColor", true);
+    iconViewButton->setFocusPolicy(Qt::StrongFocus);
 
     auto listView = addAction(QIcon::fromTheme("view-list-symbolic"), tr("List View"));
     listView->setData("List View");
@@ -221,6 +222,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     listViewButton->setIconSize(QSize(16, 16));
     listViewButton->setProperty("isWindowButton", 1);
     listViewButton->setProperty("fillIconSymbolicColor", true);
+    listViewButton->setFocusPolicy(Qt::StrongFocus);
 
     m_view_actions = new QActionGroup(this);
     m_view_actions->setExclusive(true);
@@ -238,6 +240,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     viewType->setFixedWidth(57);
     viewType->setIconSize(QSize(16, 16));
     viewType->setPopupMode(QToolButton::InstantPopup);
+    viewType->setFocusPolicy(Qt::StrongFocus);
 
     m_view_type_menu = new ViewTypeMenu(viewType);
 
@@ -276,6 +279,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     sortType->setIconSize(QSize(16, 16));
     sortType->setPopupMode(QToolButton::InstantPopup);
     sortType->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    sortType->setFocusPolicy(Qt::StrongFocus);
 
     m_sort_type_menu = new SortTypeMenu(this);
     a->setMenu(m_sort_type_menu);
@@ -317,6 +321,8 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     }
 
     m_preview_action->setCheckable(true);
+    auto previewBtnt = qobject_cast<QToolButton *>(widgetForAction(m_preview_action));
+    previewBtnt->setFocusPolicy(Qt::TabFocus);
     connect(m_preview_action,&QAction::triggered,[=](bool checked){
         m_window->m_tab->setTriggeredPreviewPage(checked);
         for (auto name : pluginNames) {
@@ -1165,6 +1171,11 @@ void TopMenuBar::addWindowButtons()
     maximizeAndRestore->installEventFilter(this);
     close->setMouseTracking(true);
     close->installEventFilter(this);
+
+    optionButton->setFocusPolicy(Qt::FocusPolicy(optionButton->focusPolicy() &  ~Qt::TabFocus));
+    minimize->setFocusPolicy(Qt::FocusPolicy(minimize->focusPolicy() & ~Qt::TabFocus));
+    maximizeAndRestore->setFocusPolicy(Qt::FocusPolicy(maximizeAndRestore->focusPolicy() & ~Qt::TabFocus));
+    close->setFocusPolicy(Qt::FocusPolicy(close->focusPolicy() & ~Qt::TabFocus));
 
     for (int i = 0; i < layout->count(); i++) {
         auto w = layout->itemAt(i)->widget();
