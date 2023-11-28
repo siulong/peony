@@ -6,10 +6,10 @@ Subject: =?utf-8?b?cGVvbnktcXQtZGVza3RvcDog5L2/55Soa3NjcmVlbuWQjuWPsOabvw==?=
 ---
  peony-qt-desktop/desktopbackgroundwindow.cpp   | 137 +++++++++++-----
  peony-qt-desktop/desktopbackgroundwindow.h     |  16 +-
- peony-qt-desktop/peony-desktop-application.cpp | 216 ++++++++++++++-----------
+ peony-qt-desktop/peony-desktop-application.cpp | 218 ++++++++++++++-----------
  peony-qt-desktop/peony-desktop-application.h   |  19 ++-
  peony-qt-desktop/peony-qt-desktop.pro          |   2 +-
- 5 files changed, 249 insertions(+), 141 deletions(-)
+ 5 files changed, 250 insertions(+), 142 deletions(-)
 
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
 index d9081bb..ae2ede3 100644
@@ -326,7 +326,7 @@ index d9081bb..ae2ede3 100644
 +    setCentralWidget(m_desktopIconView);
 +}
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.h b/peony-qt-desktop/desktopbackgroundwindow.h
-index 1485a26..705cc2e 100644
+index 1485a26..9252d42 100644
 --- a/peony-qt-desktop/desktopbackgroundwindow.h
 +++ b/peony-qt-desktop/desktopbackgroundwindow.h
 @@ -26,6 +26,7 @@
@@ -371,7 +371,7 @@ index 1485a26..705cc2e 100644
  
  protected Q_SLOTS:
      void updateWindowGeometry();
-@@ -78,11 +83,12 @@ protected:
+@@ -78,12 +83,13 @@ protected:
  
  private:
      int m_id = -1;
@@ -381,15 +381,24 @@ index 1485a26..705cc2e 100644
      Peony::DesktopIconView *m_desktopIconView = nullptr;
  
      KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
-+    KScreen::OutputPtr m_output = nullptr;
      Peony::DesktopMenu *m_menu = nullptr;
++    KScreen::OutputPtr m_output = nullptr;
  };
  
+ #endif // DESKTOPBACKGROUNDWINDOW_H
 diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
-index 4c5c90f..0a26d53 100644
+index 661def5..2168aeb 100644
 --- a/peony-qt-desktop/peony-desktop-application.cpp
 +++ b/peony-qt-desktop/peony-desktop-application.cpp
-@@ -338,10 +338,10 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const
+@@ -35,6 +35,7 @@
+ #include "desktop-menu.h"
+ #include "global-settings.h"
+ #include "file-enumerator.h"
++#include "desktopbackground.h"
+ #include "desktop-background-manager.h"
+ #include "desktopbackgroundwindow.h"
+ #include "desktop-item-model.h"
+@@ -338,10 +339,10 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const
  
      }
  
@@ -404,7 +413,7 @@ index 4c5c90f..0a26d53 100644
  
      //parse cmd
      qDebug()<<"parse cmd";
-@@ -393,14 +393,14 @@ Peony::DesktopItemModel *PeonyDesktopApplication::getModel()
+@@ -393,14 +394,14 @@ Peony::DesktopItemModel *PeonyDesktopApplication::getModel()
  Peony::DesktopIconView *PeonyDesktopApplication::getIconView(QPoint pos)
  {
      //获取当前屏幕的view,如果是镜像直接返回主屏
@@ -422,7 +431,7 @@ index 4c5c90f..0a26d53 100644
          if (screenRegion.contains(pos)) {
              desktopIconView = window->getIconView();
              break;
-@@ -419,10 +419,20 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(int id)
+@@ -419,10 +420,20 @@ Peony::DesktopIconView *PeonyDesktopApplication::getIconView(int id)
      return m_bg_windows[0]->getIconView();
  }
  
@@ -445,7 +454,7 @@ index 4c5c90f..0a26d53 100644
              return window->getIconView();
          }
      }
-@@ -507,20 +517,21 @@ void PeonyDesktopApplication::gotoSetResolution()
+@@ -507,20 +518,21 @@ void PeonyDesktopApplication::gotoSetResolution()
  
  }
  
@@ -470,7 +479,7 @@ index 4c5c90f..0a26d53 100644
      if (0 < id) {
          for (auto window : m_bg_windows) {
              if (0 == window->id()) {
-@@ -530,12 +541,6 @@ void PeonyDesktopApplication::relocateIconView()
+@@ -530,12 +542,6 @@ void PeonyDesktopApplication::relocateIconView()
                  primaryWindow->setId(0);
                  window->getIconView()->clearItemRect();
                  primaryWindow->getIconView()->clearItemRect();
@@ -483,7 +492,7 @@ index 4c5c90f..0a26d53 100644
              }
          }
      }
-@@ -543,10 +548,13 @@ void PeonyDesktopApplication::relocateIconView()
+@@ -543,10 +549,13 @@ void PeonyDesktopApplication::relocateIconView()
      for (auto window : m_bg_windows) {
          qDebug() << "screen name :" << window->screen()->name() << " id:" << window->id() ;
          Q_EMIT window->getIconView()->updateView();
@@ -499,7 +508,7 @@ index 4c5c90f..0a26d53 100644
      }
      if(primaryWindow) {
          KWindowSystem::raiseWindow(primaryWindow->winId());
-@@ -633,12 +641,6 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
+@@ -633,12 +642,6 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
          }
  
          if (parser.isSet(desktopOption)) {
@@ -512,7 +521,7 @@ index 4c5c90f..0a26d53 100644
              setupBgAndDesktop();
          }
  
-@@ -755,48 +757,20 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
+@@ -755,49 +758,20 @@ void PeonyDesktopApplication::updateVirtualDesktopGeometryByWindows()
  
  }
  
@@ -553,6 +562,7 @@ index 4c5c90f..0a26d53 100644
 -        if (m_mode == 2) {
 -            if (m_bg_windows.count() > 2) {
 -                //task#74174 销毁时保存扩展屏元素的坐标点
+-                getIconView(screen)->getAllRestoreInfo();
 -                getIconView(screen)->saveExtendItemInfo();
 -                Q_EMIT getIconView(qApp->primaryScreen())->updateView();
 -            } else if (m_bg_windows.count() == 2) {
@@ -570,7 +580,7 @@ index 4c5c90f..0a26d53 100644
      //task#74174 更新图标大小
      connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
          for (auto bgWindow : m_bg_windows) {
-@@ -812,32 +786,45 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
+@@ -813,18 +787,36 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
              bgWindow->getIconView()->setSortType(sortType);
          }
      });
@@ -583,32 +593,23 @@ index 4c5c90f..0a26d53 100644
 -             } else if (2 == mode) {
 -                multiscreenMode();
 -            }
--        }
--        m_mode = mode;
--        window->setWindowGeometry(geometry);
--    });
 +    //task#74174 恢复扩展屏
 +    m_mode = checkScreenMode(output->geometry());
 +    if (2 == m_mode) {
 +        multiscreenMode();
 +    }
- 
--    relocateIconView();
++
 +    relocateIconView(output);
- }
- 
--void PeonyDesktopApplication::setupDesktop()
++}
++
 +void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
- {
--    DesktopBackgroundManager::globalInstance();
--    for (auto screen : qApp->screens()) {
--        addBgWindow(screen);
++{
 +    for (auto bgWindow : m_bg_windows) {
 +        if (output == bgWindow->screen()) {
 +            qWarning("DesktopBackgroundWindow already exists and cannot be added");
 +            return;
 +        }
-     }
++    }
 +    if (output.isNull()) {
 +        return;
 +    }
@@ -621,14 +622,29 @@ index 4c5c90f..0a26d53 100644
 +            });
 +        } else {
 +            outputRemoved(output->id());
-+        }
-+    });
-+}
+         }
+-        m_mode = mode;
+-        window->setWindowGeometry(geometry);
+     });
  
+     connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+@@ -832,19 +824,14 @@ void PeonyDesktopApplication::addBgWindow(QScreen *screen)
+             bgWindow->getIconView()->setGridSize(gridSize);
+         }
+     });
+-
+-    relocateIconView();
+ }
+ 
+ void PeonyDesktopApplication::setupDesktop()
+ {
+-    DesktopBackgroundManager::globalInstance();
+-    for (auto screen : qApp->screens()) {
+-        addBgWindow(screen);
+-    }
+-
 -    connect(qApp, &QApplication::screenAdded, this, &PeonyDesktopApplication::addBgWindow);
 -    connect(this, &PeonyDesktopApplication::primaryScreenChanged, this, &PeonyDesktopApplication::relocateIconView);
-+void PeonyDesktopApplication::setupDesktop()
-+{
 +    KScreen::GetConfigOperation *op = new KScreen::GetConfigOperation();
 +    connect(op, &KScreen::GetConfigOperation::finished, this, [this](KScreen::ConfigOperation *op) {
 +        setConfig(op);
@@ -636,7 +652,7 @@ index 4c5c90f..0a26d53 100644
  }
  
  void PeonyDesktopApplication::setupBgAndDesktop()
-@@ -1039,18 +1026,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
+@@ -1048,18 +1035,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
      return nullptr;
  }
  
