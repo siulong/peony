@@ -471,6 +471,11 @@ void IconView::mouseDoubleClickEvent(QMouseEvent *event)
 void IconView::keyPressEvent(QKeyEvent *e)
 {
     QListView::keyPressEvent(e);
+
+    if(e->key() == Qt::Key_Space){
+        Q_EMIT QListView::activated(currentIndex());/* 与按下enter键效果一样 */
+    }
+
     if (e->key() == Qt::Key_Control)
         m_ctrl_key_pressed = true;
 
@@ -519,6 +524,7 @@ void IconView::wheelEvent(QWheelEvent *e)
         } else {
             zoomLevelChangedRequest(false);
         }
+        e->accept();
         return;
     }
 
@@ -540,10 +546,11 @@ void IconView::updateGeometries()
     }
 
     int itemRowCount = model()->rowCount();
-    auto index = model()->index(0, 0);
-    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+    auto lastIndex = model()->index(itemRowCount - 1, 0);
+    QRegion itemRegion = visualRect(lastIndex);
+    int lastItemBottom = itemRegion.boundingRect().bottom();
 
-    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
+    if ((lastItemBottom + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         int vertiacalMax = verticalScrollBar()->maximum();
@@ -563,15 +570,16 @@ void IconView::updateGeometries()
     }
 
     int itemRowCount = model()->rowCount();
-    auto index = model()->index(0, 0);
-    int itemRowsHeight = visualRect(index).height()*itemRowCount;
+    auto lastIndex = model()->index(itemRowCount - 1, 0);
+    QRegion itemRegion = visualRect(lastIndex);
+    int lastItemBottom = itemRegion.boundingRect().bottom();
 
-    if ((itemRowsHeight + gridSize().height()) < viewport()->height()) {
+    if ((lastItemBottom + gridSize().height()) < viewport()->height()) {
         verticalScrollBar()->setRange(0, 0);
     } else {
         verticalScrollBar()->setSingleStep(gridSize().height()/2);
         verticalScrollBar()->setPageStep(viewport()->height());
-        verticalScrollBar()->setRange(0, itemRowsHeight - viewport()->height() + gridSize().height());
+        verticalScrollBar()->setRange(0, lastItemBottom - viewport()->height() + gridSize().height());
     }
 #endif
 }
@@ -1016,7 +1024,12 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     connect(model, &FileItemModel::findChildrenFinished, this, &DirectoryViewWidget::viewDirectoryChanged);
     //connect(m_model, &FileItemModel::dataChanged, m_view, &IconView::clearIndexWidget);
     //connect(m_model, &FileItemModel::updated, m_view, &IconView::resort);
-    connect(m_model, &FileItemModel::updated, m_view->viewport(), QOverload<>::of(&QWidget::update));
+    connect(m_model, &FileItemModel::updated, m_view->viewport(), [=]{
+        if (this->cursor().shape() == Qt::BusyCursor || this->cursor().shape() == Qt::WaitCursor) {
+            return;
+        }
+        this->update();
+    });
 
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
         Q_EMIT viewSelectionChanged();

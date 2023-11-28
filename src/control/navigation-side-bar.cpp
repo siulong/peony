@@ -70,8 +70,13 @@
 
 #include <QDebug>
 #include <QToolTip>
-
+#include <QtConcurrent>
+#include <QStandardPaths>
 #include <QApplication>
+
+#ifdef KY_SDK_DATACOLLECT
+#include <kysdk/diagnosetest/libkydatacollect.h>
+#endif
 
 #define NAVIGATION_SIDEBAR_ITEM_BORDER_RADIUS 4
 #define MINIMUM_COLUMN_SIZE 2
@@ -217,6 +222,13 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 m_currSelectedItem->mount();
             else{
                 JumpDirectory(m_currSelectedItem->uri());
+#ifdef KY_SDK_DATACOLLECT
+                auto parent = index.parent();
+                //三级或以下子树跳转才收集数据，分析侧边栏树结构用户使用率
+                if (parent.isValid() && parent.parent().isValid()){
+                    sendKdkDataAsync();
+                }
+#endif
             }
             break;
 
@@ -234,8 +246,9 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             } else {
                 // if item is not unmountable, just be same with first column.
                 // fix #39716
-                if (!item->uri().isNull())
+                if (!item->uri().isNull()) {
                     Q_EMIT this->updateWindowLocationRequest(item->uri());
+                }
             }
             break;
         }
@@ -423,6 +436,35 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
+    /* 打开文件管理器默认聚焦在家目录上 */
+    QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QItemSelectionModel *selectionModel = this->selectionModel();
+    for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
+        auto index = m_proxy_model->index(i, 0);
+        auto item = m_proxy_model->itemFromIndex(index);
+        if (item->uri() == homeUri) {
+            auto index1 = m_proxy_model->index(i, 1);
+            this->setCurrentIndex(index);
+            /* 通过QItemSelection设置选中项 */
+            QItemSelection selection(index, index1);
+            selectionModel->select(selection, QItemSelectionModel::Select);
+        }
+    }//end
+}
+
+void NavigationSideBar::sendKdkDataAsync()
+{
+#ifdef KY_SDK_DATACOLLECT
+    QtConcurrent::run([=]() {
+        //story 24997, collet second level tree child click event
+        KTrackData *node = kdk_dia_data_init(KEVENTSOURCE_DESKTOP,KEVENT_CLICK);
+        //传入事件描述“点击侧边栏展开子树”，上传点击事件，收集使用二级以上子树跳转数据
+        kdk_dia_upload_default(node,"peony","secondLevelChildClick");
+
+        //释放内存
+        kdk_dia_data_free(node);
+    });
+#endif
 }
 
 bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
@@ -561,7 +603,7 @@ void NavigationSideBar::keyPressEvent(QKeyEvent *event)
 
     QTreeView::keyPressEvent(event);
 
-    if (event->key() == Qt::Key_Return) {
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Space) {
         if (!selectedIndexes().isEmpty()) {
             auto index = selectedIndexes().first();
             auto uri = index.data(Qt::UserRole).toString();
@@ -728,14 +770,13 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
 
     LabelButton *labelButton = new LabelButton(this);
-
     labelButton->setProperty("useIconHighlightEffect", 0x2);
     labelButton->setProperty("iconHighlightEffectMode", 1);
     labelButton->setProperty("fillIconSymbolicColor", true);
     labelButton->setProperty("isWindowButton", 0x1);
     //m_label_button->setCheckable(true);
 
-    labelButton->setFocusPolicy(Qt::FocusPolicy(labelButton->focusPolicy() & ~Qt::TabFocus));
+    labelButton->setFocusPolicy(Qt::FocusPolicy(labelButton->focusPolicy()));
     labelButton->setLastIcon(":/icons/ukui-down-symbolic");
     labelButton->setFirstIcon(":/icons/sign");
     labelButton->setText(tr("Manager tags..."));
@@ -744,7 +785,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     control->setText(tr("More tags..."));
     control->hide();
 
-    connect(control, &LabelButton::clicked, this, [=](bool checked){
+    connect(control, &QPushButton::clicked, this, [=](bool checked){
         Peony::TagManagement::getInstance()->show();
     });
 
@@ -752,12 +793,14 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     l->addWidget(control);
     l->addWidget(labelButton);
-    connect(labelButton, &LabelButton::clicked, this, [=](bool checked){
+    connect(labelButton, &QPushButton::clicked, this, [=](){
+        bool checked = !labelButton->getShow();
         if (checked) {
             labelButton->setLastIcon(":/icons/ukui-up-symbolic");
         } else {
             labelButton->setLastIcon(":/icons/ukui-down-symbolic");
         }
+        labelButton->setShow(checked);
         m_labelDialog->setFloatWidgetVisible(checked);
     });
 
@@ -769,6 +812,8 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     w->setLayout(l);
     m_layout->addWidget(w);
     setLayout(m_layout);
+
+    setTabOrder(m_sidebar, labelButton);
 }
 
 QSize NavigationSideBarContainer::sizeHint() const
@@ -884,7 +929,7 @@ TitleLabel::TitleLabel(QWidget *parent):QWidget(parent)
     this->setFixedHeight(sizeHint().height());
 }
 
-LabelButton::LabelButton(QWidget *parent) : QWidget(parent)
+LabelButton::LabelButton(QWidget *parent) : QPushButton(parent)
 {
     this->setAttribute(Qt::WA_TranslucentBackground);
     m_mainLayout = new QHBoxLayout(this);
@@ -898,25 +943,26 @@ LabelButton::LabelButton(QWidget *parent) : QWidget(parent)
     setLayout(m_mainLayout);
 }
 
-void LabelButton::mousePressEvent(QMouseEvent *event)
-{
-    if (!m_isPress) {
-        m_isPress = true;
-    }
-    Q_UNUSED(event);
-}
+//void LabelButton::mousePressEvent(QMouseEvent *event)
+//{
+//    if (!m_isPress) {
+//        m_isPress = true;
+//    }
+//    Q_UNUSED(event);
+//}
 
-void LabelButton::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (m_isPress) {
-        m_show = !m_show;
-        Q_EMIT clicked(m_show);
-    }
+//void LabelButton::mouseReleaseEvent(QMouseEvent *event)
+//{
+//    if (m_isPress) {
+//        m_show = !m_show;
+//        Q_EMIT clicked(m_show);
+//    }
 
-    m_isPress = false;
+//    m_isPress = false;
 
-    Q_UNUSED(event);
-}
+//    Q_UNUSED(event);
+//}
+
 
 void LabelButton::setLastIcon(const QString &symbolic)
 {
@@ -931,4 +977,14 @@ void LabelButton::setFirstIcon(const QString &symbolic)
 void LabelButton::setText(QString text)
 {
      m_text->setText(text);
+}
+
+void LabelButton::setShow(bool isShow)
+{
+    m_show = isShow;
+}
+
+bool LabelButton::getShow()
+{
+    return m_show;
 }

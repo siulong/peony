@@ -80,6 +80,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include <QApplication>
+
 using namespace Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
 using namespace kdk;

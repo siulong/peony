@@ -56,3 +56,8 @@ exists(/usr/include/kysdk/kysdk-system/libkysysinfo.h) {
     message("kysysinfo find")
     DEFINES += KY_SDK_SYSINFO
 }
+
+exists(/usr/include/kysdk/diagnosetest/libkydatacollect.h) {
+    message("diagnosetest find")
+    DEFINES += KY_SDK_DATACOLLECT
+}

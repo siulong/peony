@@ -29,6 +29,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QMainWindow>
+#include <QtConcurrent>
 
 #include "file-lauch-dialog.h"
 #include "properties-window.h"
