@@ -264,6 +264,10 @@ void ListView::keyPressEvent(QKeyEvent *e)
 {
     QTreeView::keyPressEvent(e);
 
+    if(e->key() == Qt::Key_Space){
+        Q_EMIT QTreeView::activated(currentIndex());/* 与按下enter键效果一样 */
+    }
+
     if(e->key() == Qt::Key_F10 && e->modifiers() == Qt::ShiftModifier) {
         if (getSelections().count() == 1 ) {
             auto currentIndex = selectionModel()->selection().indexes();
@@ -671,6 +675,7 @@ void ListView::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier) {
         zoomLevelChangedRequest(e->delta() > 0);
+        e->accept();
         return;
     }
     QTreeView::wheelEvent(e);

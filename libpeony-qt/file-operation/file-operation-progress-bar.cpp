@@ -686,6 +686,7 @@ void MainProgressBar::paintContent(QPainter &painter)
             this->setToolTip(m_file_name);
             QString display_name;
             display_name = elideText(this->font(), m_file_name_w, m_file_name);
+            //修改藏文下显示不全的问题
             int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
             int fileNameHeight = qMax(m_file_name_height, fontHeight);
             int textY = m_fix_height / 2 - fileNameHeight / 2;
@@ -920,7 +921,8 @@ void ProgressBar::paintEvent(QPaintEvent *event)
     } else {
         this->setToolTip(m_dest_uri);
         QString display_name;
-        display_name = elideText(this->font(),335,m_dest_uri);
+        display_name = elideText(this->font(), m_text_w, m_dest_uri);
+        //修改藏文下显示不全的问题
         int fontHeight = painter.fontMetrics().boundingRect(display_name).height() * 2;
         int fileNameHeight = qMax(m_text_height, fontHeight);
         int textY = (m_fix_height - m_margin_ud * 2 - fileNameHeight) / 2 + m_margin_ud;

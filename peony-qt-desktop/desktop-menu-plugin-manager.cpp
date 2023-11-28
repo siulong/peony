@@ -68,7 +68,7 @@ void DesktopMenuPluginManager::loadAsync()
         qDebug()<<pluginsDir.entryList().count();
         Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
             qDebug()<<fileName;
-            if (/*"libpeony-filesafe-vfs-plugin.so" == fileName || */"libpeony-filesafe-menu-plugin.so" == fileName)
+            if ("libpeony-filesafe-menu-plugin.so" == fileName)
                 continue;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             qDebug()<<pluginLoader.fileName();

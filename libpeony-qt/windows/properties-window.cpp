@@ -62,6 +62,8 @@
 
 #include <QApplication>
 #include <QGSettings>
+#include <QtConcurrent>
+
 #include "file-info-job.h"
 
 #include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>

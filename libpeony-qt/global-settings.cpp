@@ -490,8 +490,10 @@ void GlobalSettings::forceSync(const QString &key)
         m_cache.remove(key);
         if (m_settings->allKeys().contains(key)) {
             m_cache.insert(key, m_settings->value(key));
-        } else {
+        } else if (m_peony_gsettings->keys().contains(key)) {
             m_cache.insert(key, m_peony_gsettings ? m_peony_gsettings->get(key) : QVariant());
+        } else {
+            qWarning()<<"key"<<key<<"doesn't exsit either qsettings and gsettings";
         }
     }
 }
