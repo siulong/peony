@@ -1,0 +1,38 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 28 Nov 2023 13:50:39 +0800
+Subject: update changelog.
+
+---
+ peony-qt-desktop/peony-desktop-application.cpp | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index bffbaea..b57b139 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -792,6 +792,12 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
+         multiscreenMode();
+     }
+ 
++    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
++        for (auto bgWindow : m_bg_windows) {
++            bgWindow->getIconView()->setGridSize(gridSize);
++        }
++    });
++
+     relocateIconView(output);
+ }
+ 
+@@ -817,12 +823,6 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
+             outputRemoved(output->id());
+         }
+     });
+-
+-    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+-        for (auto bgWindow : m_bg_windows) {
+-            bgWindow->getIconView()->setGridSize(gridSize);
+-        }
+-    });
+ }
+ 
+ void PeonyDesktopApplication::setupDesktop()
