@@ -35,7 +35,6 @@
 #include "desktop-menu.h"
 #include "global-settings.h"
 #include "file-enumerator.h"
-#include "desktopbackground.h"
 #include "desktop-background-manager.h"
 #include "desktopbackgroundwindow.h"
 #include "desktop-item-model.h"
