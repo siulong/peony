@@ -696,6 +696,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
             if (elidedLastLine != lastLine) {
+                elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width - 2);
                 isElided = true;
             }
             elidedText = option.text.left(line.textStart()) + elidedLastLine;
