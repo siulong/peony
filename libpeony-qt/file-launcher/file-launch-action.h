@@ -54,6 +54,17 @@ public:
     GAppInfo *gAppInfo() {
         return m_app_info;
     }
+    /*!
+     * \brief tryGetDesktopFilePath
+     * try getting launch action's desktop file path, this may
+     * return nullptr if app info is not a desktop app info.
+     *
+     * if you want to get more infomation about the app info,
+     * try using g_app_info_get_xxx() which provided by gio.
+     * \return
+     * desktop file path, maybe nullptr
+     */
+    QString tryGetDesktopFilePath();
 
 protected:
     bool isValid();

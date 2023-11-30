@@ -116,6 +116,15 @@ const QString FileLaunchAction::getAppInfoDisplayName()
     return m_info_display_name;
 }
 
+QString FileLaunchAction::tryGetDesktopFilePath()
+{
+    if (G_IS_DESKTOP_APP_INFO (m_app_info)) {
+        return g_desktop_app_info_get_filename(G_IS_DESKTOP_APP_INFO (m_app_info));
+    }
+    //return g_app_info_get_commandline(m_app_info);
+    return nullptr;
+}
+
 bool FileLaunchAction::isExcuteableFile(QString fileType)
 {
     if (m_executable_type.contains(fileType))
