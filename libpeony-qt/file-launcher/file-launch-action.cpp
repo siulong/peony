@@ -30,6 +30,8 @@
 #include "audio-play-manager.h"
 #include "global-settings.h"
 
+#include "file-launch-manager.h"
+
 #include <QMessageBox>
 #include <QPushButton>
 #include <QDir>
@@ -53,6 +55,19 @@ using namespace Peony;
 #define USE_STARTUP_INFO true
 
 bool launchAppWithArguments(QString desktopFile, QStringList args);
+
+static GAppLaunchContext *getAppContext()
+{
+    auto context = g_app_launch_context_new();
+    auto env_list = g_listenv();
+    auto p = env_list;
+    while (*p) {
+        g_app_launch_context_setenv(context, *p, g_getenv(*p));
+        p++;
+    }
+     g_strfreev(env_list);
+     return context;
+}
 
 FileLaunchAction::FileLaunchAction(const QString &uri, GAppInfo *app_info, bool forceWithArg, QObject *parent) : QAction(parent)
 {
@@ -119,7 +134,7 @@ const QString FileLaunchAction::getAppInfoDisplayName()
 QString FileLaunchAction::tryGetDesktopFilePath()
 {
     if (G_IS_DESKTOP_APP_INFO (m_app_info)) {
-        return g_desktop_app_info_get_filename(G_IS_DESKTOP_APP_INFO (m_app_info));
+        return g_desktop_app_info_get_filename(G_DESKTOP_APP_INFO (m_app_info));
     }
     //return g_app_info_get_commandline(m_app_info);
     return nullptr;
