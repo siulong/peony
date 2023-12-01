@@ -30,15 +30,12 @@
 #include "audio-play-manager.h"
 #include "global-settings.h"
 
-#include "file-launch-manager.h"
-
 #include <QMessageBox>
 #include <QPushButton>
 #include <QDir>
 #include <QUrl>
 #include <QFile>
 #include <QProcess>
-#include <QtDBus/QtDBus>
 #include <recent-vfs-manager.h>
 #include <QApplication>
 
@@ -52,11 +49,35 @@
 
 using namespace Peony;
 
-#define USE_STARTUP_INFO true
+static void launchAsyncCallback(GAppInfo *source_object,
+                                GAsyncResult *res,
+                                gpointer user_data)
+{
+    g_app_info_launch_uris_finish (source_object, res, nullptr);
+    KStartupInfoId* startInfoId = static_cast<KStartupInfoId*>(user_data);
+    if (!startInfoId)
+        return;
+    delete startInfoId;
+}
 
-bool launchAppWithArguments(QString desktopFile, QStringList args);
+static void contextLaunchedCallback(GAppLaunchContext *context,
+                                    GAppInfo          *info,
+                                    GVariant          *platform_data,
+                                    gpointer           user_data)
+{
+    KStartupInfoId* startInfoId = static_cast<KStartupInfoId*>(user_data);
+    if (!startInfoId)
+        return;
+    gint pid = -1;
+    g_variant_lookup (platform_data, "pid", "i", &pid);
+    KStartupInfoData data;
+    data.addPid(pid);
+    data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
+    KStartupInfo::sendChange(*startInfoId, data);
+    KStartupInfo::resetStartupEnv();
+}
 
-static GAppLaunchContext *getAppContext()
+static GAppLaunchContext *getAppContext(FileLaunchAction *action = nullptr)
 {
     auto context = g_app_launch_context_new();
     auto env_list = g_listenv();
@@ -65,8 +86,18 @@ static GAppLaunchContext *getAppContext()
         g_app_launch_context_setenv(context, *p, g_getenv(*p));
         p++;
     }
-     g_strfreev(env_list);
-     return context;
+    g_strfreev(env_list);
+    if (action) {
+        auto app_info = action->gAppInfo();
+        if (!G_IS_DESKTOP_APP_INFO (app_info))
+            return context;
+        auto desktop_app_info = G_DESKTOP_APP_INFO (app_info);
+        auto desktop_filename = g_desktop_app_info_get_filename(desktop_app_info);
+        g_app_launch_context_setenv(context, "APPLICATION_ID", desktop_filename);
+        g_app_launch_context_setenv(context, "DESKTOP_STARTUP_ID", g_app_info_get_name(app_info));
+        g_app_launch_context_setenv(context, "TIMESTAMP",  QString::number(QX11Info::getTimestamp()).toUtf8().constData());
+    }
+    return context;
 }
 
 FileLaunchAction::FileLaunchAction(const QString &uri, GAppInfo *app_info, bool forceWithArg, QObject *parent) : QAction(parent)
@@ -131,15 +162,6 @@ const QString FileLaunchAction::getAppInfoDisplayName()
     return m_info_display_name;
 }
 
-QString FileLaunchAction::tryGetDesktopFilePath()
-{
-    if (G_IS_DESKTOP_APP_INFO (m_app_info)) {
-        return g_desktop_app_info_get_filename(G_DESKTOP_APP_INFO (m_app_info));
-    }
-    //return g_app_info_get_commandline(m_app_info);
-    return nullptr;
-}
-
 bool FileLaunchAction::isExcuteableFile(QString fileType)
 {
     if (m_executable_type.contains(fileType))
@@ -151,9 +173,6 @@ bool FileLaunchAction::isExcuteableFile(QString fileType)
 void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
 {
     m_force_with_arg = forceWithArg;
-    if(checkAppDisabled()) {
-        return;
-    }
 
     //FIXME: replace BLOCKING api in ui thread.
     auto fileInfo = FileInfo::fromUri(m_uri);
@@ -216,13 +235,6 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
         return;
     }
 
-    if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus success name:" << fileInfo->displayName();
-        //fix bug#143664, use launchAppWithDBus not show in recent issue
-        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
-        return;
-    }
-
     if (isDesktopFileAction() && !forceWithArg) {
         g_app_info_launch(m_app_info, nullptr, nullptr, nullptr);
     } else {
@@ -237,59 +249,15 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     }
 
     return;
-    if (isDesktopFileAction() && !forceWithArg) {
-        auto desktop_info = G_DESKTOP_APP_INFO(m_app_info);
-        g_desktop_app_info_launch_uris_as_manager (desktop_info,
-                nullptr,
-                nullptr,
-                G_SPAWN_DEFAULT,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr);
-    } else {
-        g_app_info_launch_default_for_uri(m_uri.toUtf8().constData(),
-                                          nullptr,
-                                          nullptr);
-    }
 }
-
-#if USE_STARTUP_INFO
-void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
-    KStartupInfoId* startInfoId = static_cast<KStartupInfoId*>(user_data);
-    if (!startInfoId)
-        return;
-
-    KStartupInfoData data;
-    data.addPid(pid);
-//    data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
-
-    KStartupInfo::sendChange(*startInfoId, data);
-    KStartupInfo::resetStartupEnv();
-    delete startInfoId;
-}
-#endif
 
 void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 {
-    m_force_with_arg = forceWithArg;
-    if(checkAppDisabled()) {
-        return;
-    }
-
     //FIXME: replace BLOCKING api in ui thread.
     auto fileInfo = FileInfo::fromUri(m_uri);
     if (fileInfo->isEmptyInfo()) {
         FileInfoJob j(fileInfo);
         j.querySync();
-    }
-
-    bool readable = fileInfo->canRead();
-    bool isSymbolLink = fileInfo->isSymbolLink();
-    if (!readable && !isSymbolLink) {
-        QMessageBox::critical(0, tr("No Permission"), tr("File is not readable. Please check if file has read permisson."));
-        return;
     }
 
     bool executable = fileInfo->canExecute();
@@ -401,38 +369,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         return;
     }
 
-#if USE_STARTUP_INFO
-    // send startup info to kwindowsystem
-    bool needCleanStartInfoId = true;
-    quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
-    KStartupInfoId* startInfoId = new KStartupInfoId();
-    startInfoId->initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
-    startInfoId->setupStartupEnv();
-    KStartupInfoData data;
-    data.setHostname();
-    float scale = qApp->devicePixelRatio();
-    QRect rect = fileInfo.get()->property("iconGeometry").toRect();
-    rect.moveTo(rect.x() * scale, rect.y() * scale);
-//    if (rect.isValid())
-//        data.setIconGeometry(rect);
-    data.setLaunchedBy(getpid());
-
-    KStartupInfo::sendStartup(*startInfoId, data);
-#endif
-
-    if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus success name:" << fileInfo->displayName();
-        //fix bug#143664, use launchAppWithDBus not show in recent issue
-        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
-        return;
-    }
-
     if (isDesktopFileAction() && !forceWithArg) {
-#if USE_STARTUP_INFO
-        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), nullptr, nullptr,
-                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr,
-                                                  pid_callback, (gpointer)startInfoId, nullptr);
-#elif GLIB_CHECK_VERSION(2, 60, 0)
+#if GLIB_CHECK_VERSION(2, 60, 0)
         g_app_info_launch_uris_async(m_app_info, nullptr,
                                      nullptr, nullptr,
                                      nullptr, nullptr);
@@ -443,51 +381,36 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         GList *l = nullptr;
         char *uri = g_strdup(m_uri.toUtf8().constData());
         l = g_list_prepend(l, uri);
-#if USE_STARTUP_INFO
-        needCleanStartInfoId = !g_desktop_app_info_launch_uris_as_manager(G_DESKTOP_APP_INFO(m_app_info), l, nullptr, 
-                                                  GSpawnFlags::G_SPAWN_DEFAULT, nullptr, nullptr, 
-                                                  pid_callback, (gpointer)startInfoId, nullptr);
-        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
-#elif GLIB_CHECK_VERSION(2, 60, 0)
-        g_app_info_launch_uris_async(m_app_info, l,
-                                     nullptr, nullptr,
-                                     nullptr, nullptr);
 
-        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
+#if GLIB_CHECK_VERSION(2, 60, 0)
+        // send startup info to kwindowsystem
+        quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+        KStartupInfoId* startInfoId = new KStartupInfoId();
+        startInfoId->initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+        startInfoId->setupStartupEnv();
+        KStartupInfoData data;
+        data.setHostname();
+        float scale = qApp->devicePixelRatio();
+        QRect rect = fileInfo.get()->property("iconGeometry").toRect();
+        rect.moveTo(rect.x()/* * scale*/, rect.y()/* * scale*/);
+        if (rect.isValid())
+            data.setIconGeometry(rect);
+        data.setLaunchedBy(getpid());
+
+        KStartupInfo::sendStartup(*startInfoId, data);
+
+        auto context = getAppContext(this);
+        g_signal_connect(context, "launched", G_CALLBACK(contextLaunchedCallback), startInfoId);
+        g_app_info_launch_uris_async(m_app_info, l,
+                                     context, nullptr,
+                                     GAsyncReadyCallback(launchAsyncCallback), startInfoId);
+
+        g_object_unref(context);
 #else
         g_app_info_launch_uris(m_app_info, l, nullptr, nullptr);
 #endif
+        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         g_list_free_full(l, g_free);
-#if USE_STARTUP_INFO
-        if (needCleanStartInfoId && startInfoId)
-            delete startInfoId;
-#endif
-    }
-
-    return;
-    if (isDesktopFileAction() && !forceWithArg) {
-        auto desktop_info = G_DESKTOP_APP_INFO(m_app_info);
-        g_desktop_app_info_launch_uris_as_manager (desktop_info,
-                nullptr,
-                nullptr,
-                G_SPAWN_DEFAULT,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr);
-    } else {
-#if GLIB_CHECK_VERSION(2, 50, 0)
-        g_app_info_launch_default_for_uri_async(m_uri.toUtf8().constData(),
-                                                nullptr,
-                                                nullptr,
-                                                nullptr,
-                                                nullptr);
-#else
-        g_app_info_launch_default_for_uri(m_uri.toUtf8().constData(),
-                                          nullptr,
-                                          nullptr);
-#endif
     }
 }
 
@@ -496,18 +419,6 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     m_force_with_arg = forceWithArg;
     if(files.isEmpty())
         return;
-
-    if(checkAppDisabled()) {
-        return;
-    }
-
-    if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
-        auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
-        auto path = g_desktop_app_info_get_filename(desktop_app_info);
-        if (launchAppWithArguments(path, files)) {
-            return;
-        }
-    }
 
     //FIXME: replace BLOCKING api in ui thread.
     auto fileInfo = FileInfo::fromUri(m_uri);
@@ -618,13 +529,6 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
         return;
     }
 
-    if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus success name:" << fileInfo->displayName();
-        //fix bug#143664, use launchAppWithDBus not show in recent issue
-        RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
-        return;
-    }
-
     if (isDesktopFileAction() && !forceWithArg) {
 #if GLIB_CHECK_VERSION(2, 60, 0)
         g_app_info_launch_uris_async(m_app_info, nullptr,
@@ -649,30 +553,6 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     }
 
     return;
-    if (isDesktopFileAction() && !forceWithArg) {
-        auto desktop_info = G_DESKTOP_APP_INFO(m_app_info);
-        g_desktop_app_info_launch_uris_as_manager (desktop_info,
-                nullptr,
-                nullptr,
-                G_SPAWN_DEFAULT,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr,
-                nullptr);
-    } else {
-#if GLIB_CHECK_VERSION(2, 50, 0)
-        g_app_info_launch_default_for_uri_async(m_uri.toUtf8().constData(),
-                                                nullptr,
-                                                nullptr,
-                                                nullptr,
-                                                nullptr);
-#else
-        g_app_info_launch_default_for_uri(m_uri.toUtf8().constData(),
-                                          nullptr,
-                                          nullptr);
-#endif
-    }
 }
 
 bool FileLaunchAction::isValid()
@@ -704,241 +584,4 @@ void FileLaunchAction::execFileInterm()
     QDir::setCurrent(QDir::homePath());
     g_object_unref(app_info);
     g_free(quote);
-}
-
-void FileLaunchAction::preCheck()
-{
-    if (property("isMdmApp").isNull()) {
-        // 不是从default action初始化的，需要在此做判断
-        if (m_app_info) {
-            auto execmd = g_app_info_get_commandline(m_app_info);
-            QString settingsPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.cache/ukui-menu/ukui-menu.ini";
-            QSettings settings(settingsPath, QSettings::IniFormat);
-            auto g = settings.childGroups();
-            auto k = settings.allKeys();
-            settings.setIniCodec(QTextCodec::codecForName("utf-8"));
-            settings.beginGroup("application");
-            bool isExist = settings.contains(execmd);
-            bool notDisable = true;
-            if (isExist) {
-                notDisable = settings.value(execmd).toBool();
-            }
-            settings.endGroup();
-
-            if (isExist && !notDisable) {
-                setProperty("isMdmApp", true);
-            }
-        }
-    }
-}
-
-bool FileLaunchAction::launchAppWithDBus()
-{
-#ifdef KYLIN_COMMON
-    //mavis不通过session而通过AppMgr
-    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
-
-    if (isDesktopFileAction() && !m_force_with_arg) {
-        bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
-        if (intel && mavis) {
-            return launchAppWithAppMgr();
-        } else if (intel) {
-            return launchAppWithSession();
-        }
-
-        //TODO 以下判断方式不能覆盖全部情况，后期还需要根据ukui3.1项目的os-release进行调整
-        //see peony-qt-desktop/settings/desktop-global-settings.cpp -> getProductFeatures();
-        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
-        if (features == 2 || features == 3) {
-            return launchAppWithAppMgr();
-        }
-
-        qDebug() << "[FileLaunchAction::launchAppWithDBus] can't launch app with DBus, features:" << features << ", is intel:" << intel;
-    } else {
-        int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
-        if (features == 2 || features == 3 || mavis) {
-            return launchDefaultAppWithUrl();
-        }
-    }
-#endif // KYLIN_COMMON
-
-    return false;
-}
-
-bool FileLaunchAction::launchAppWithAppMgr()
-{
-    qDebug() << "[FileLaunchAction::launchAppWithAppMgr]  uri:" << m_uri;
-    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
-        QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
-        if (session.isValid()) {
-            auto fileInfo = FileInfo::fromUri(m_uri);
-            if (fileInfo->isEmptyInfo()) {
-                FileInfoJob j(fileInfo);
-                j.querySync();
-            }
-
-            auto desktopFile = fileInfo->filePath();
-
-            QDBusReply<bool> result = session.call("LaunchApp", desktopFile);
-
-            if (result.isValid()) {
-                return true;
-            }
-            qDebug() << "[FileLaunchAction::launchAppWithAppMgr] failed, desktopFile:" << desktopFile;
-        }
-    }
-
-    return false;
-}
-
-bool FileLaunchAction::launchDefaultAppWithUrl()
-{
-    qDebug() << "[FileLaunchAction::launchDefaultAppWithUrl] start" ;
-    if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
-        QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
-        if (session.isValid()) {
-            auto fileInfo = FileInfo::fromUri(m_uri);
-            if (fileInfo->isEmptyInfo()) {
-                FileInfoJob j(fileInfo);
-                j.querySync();
-            }
-
-            QString uri = fileInfo->uri();
-            QUrl url = uri;
-
-            if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
-                auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
-                QString desktopFile = g_desktop_app_info_get_filename(desktop_app_info);
-
-                QString path = url.path();
-                QStringList args ;
-                args << path;
-                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
-                qDebug() << "[FileLaunchAction::LaunchAppWithArguments]  desktopFile:" << desktopFile <<" args:" <<args;
-
-                if (result.isValid()) {
-                    return true;
-                }
-                qDebug() << "[FileLaunchAction::LaunchAppWithArguments] failed, uri:" << uri;
-            } else {
-                QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", url.toString());
-                qDebug() << "[FileLaunchAction::LaunchDefaultAppWithUrl]  uri:" << url.toString();
-
-                if (result.isValid()) {
-                    return true;
-                }
-                qDebug() << "[FileLaunchAction::LaunchDefaultAppWithUrl] failed, uri:" << url.toString();
-            }
-        }
-    }
-
-    return false;
-}
-
-bool FileLaunchAction::launchAppWithSession()
-{
-    auto fileInfo = FileInfo::fromUri(m_uri);
-    if (fileInfo->isEmptyInfo()) {
-        FileInfoJob j(fileInfo);
-        j.querySync();
-    }
-
-    //intel应用禁用
-    if (fileInfo->isExecDisable()) {
-        return false;
-    }
-
-    QDBusInterface session("org.gnome.SessionManager", "/com/ukui/app", "com.ukui.app");
-
-    if (session.isValid()) {
-        //! \note Sometimes garbled characters appear when QSettings reads Chinese,
-        //! even though QSettings::setIniCodec("UTF8") is used
-        GKeyFileFlags flags = G_KEY_FILE_NONE;
-        GKeyFile *keyfile = g_key_file_new();
-        QByteArray fpbyte = fileInfo->filePath().toLocal8Bit();
-        const char *filepath = fpbyte.constData();
-        g_key_file_load_from_file(keyfile, filepath, flags, nullptr);
-        char *name = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Exec", nullptr, nullptr);
-        QString exe = QString::fromLocal8Bit(name);
-        g_key_file_free(keyfile);
-        g_free(name);
-
-        if (exe.isEmpty()) {
-            qDebug() << "Get desktop file Exec value error";
-            return false;
-        }
-
-        QStringList parameters;
-        // 首先把exec整个截取成 path+parameter形式
-        if (exe.contains(" ")) {
-            //排除参数之间多个空格分隔的情况
-            parameters = exe.split(QRegExp("\\s+"));
-            exe = parameters[0];
-            parameters.removeAt(0);
-        }
-
-        // 优先判断path里有没有带%U等，如果存在的话，删除%和后面紧跟的字符
-        if (exe.contains("%")) {
-            exe = exe.left(exe.indexOf("%"));
-        }
-
-        for (auto begin = parameters.begin(); begin != parameters.end(); ++begin) {
-            if (begin->contains("%")) {
-                // 命令行最多可包含一个％f，％u，％F或％U字段代码
-                if (begin->count() == 2)
-                    parameters.removeOne(*begin);
-                else {
-                    begin->remove(begin->indexOf("%"), 2);
-                }
-                break;
-            }
-        }
-
-        session.call("app_open", exe, parameters);
-        return true;
-    }
-    qDebug() << "[FileLaunchAction::launchAppWithSession] failed, session isValid:" << session.isValid() << "\nuri:" << m_uri;
-    return false;
-}
-
-bool FileLaunchAction::checkAppDisabled()
-{
-#ifdef KYLIN_COMMON
-    bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
-    if (intel) {
-        preCheck();
-
-        bool isMdmApp = this->property("isMdmApp").toBool();
-        if (isMdmApp) {
-            QMessageBox::warning(0, tr("Warning"), tr("Can not open the file, application is disabled"));
-            return true;
-        }
-    }
-#endif // KYLIN_COMMON
-
-    return false;
-}
-
-bool launchAppWithArguments(QString desktopFile, QStringList args)
-{
-#ifdef KYLIN_COMMON
-    bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
-    int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
-    if (features == 2 || features == 3 || mavis) {
-        if (QDBusConnection::connectToBus(QDBusConnection::SessionBus, QString("com.kylin.AppManager")).isConnected()) {
-            QDBusInterface session("com.kylin.AppManager", "/com/kylin/AppManager", "com.kylin.AppManager");
-            if (session.isValid()) {
-                QDBusReply<bool> result = session.call("LaunchAppWithArguments", desktopFile, args);
-                qDebug() << "[DesktopIconView::LaunchAppWithArguments]  desktopFile:" << desktopFile << "args:" <<args;
-
-                if (result.isValid()) {
-                    return true;
-                }
-                qDebug() << "[DesktopIconView::LaunchAppWithArguments] failed, desktopFile:" << desktopFile <<  "args:" <<args;
-            }
-        }
-        return true;
-    }
-#endif // KYLIN_COMMON
-    return false;
 }
