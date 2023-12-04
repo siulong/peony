@@ -62,4 +62,12 @@ exists(/usr/include/kysdk/diagnosetest/libkydatacollect.h) {
     DEFINES += KY_SDK_DATACOLLECT
 }
 
+USE_SET_ICON=$$(USE_SET_ICON_GEOMETRY)
+equals(USE_SET_ICON,1) {
+    message("USE_SET_ICON_GEOMETRY is set")
+    DEFINES += KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+} else {
+    message("USE_SET_ICON_GEOMETRY is not set")
+}
+
 DEFINES += VFS_CUSTOM_PLUGIN
