@@ -256,6 +256,12 @@ void OperationMenu::updateMenu()
     m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_IN_NEW_WINDOW)?
                                       Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool():
                                       false);
+
+    //fix bug#200297, menu status update issue
+    m_showCreateTime->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_CREATE_TIME)?
+                                     Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool():
+                                     false);
+
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
 
