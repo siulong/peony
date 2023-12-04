@@ -1008,8 +1008,10 @@ void DesktopIconView::openFileByUri(QString uri)
             data.setHostname();
             data.addPid(pid);
             QRect rect = info.get()->property("iconGeometry").toRect();
-//            if (rect.isValid())
-//                data.setIconGeometry(rect);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+            if (rect.isValid())
+                data.setIconGeometry(rect);
+#endif
             data.setLaunchedBy(getpid());
             KStartupInfo::sendStartup(startInfoId, data);
 #else
@@ -2639,10 +2641,12 @@ bool DesktopIconView::execSharedFileLink(const QString uri)
                     KStartupInfoData data;
                     data.setHostname();
                     data.addPid(pid);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
                     QRect rect = info.get()->property("iconGeometry").toRect();
-//                    if (rect.isValid()) {
-//                        data.setIconGeometry(rect);
-//                    }
+                    if (rect.isValid()) {
+                        data.setIconGeometry(rect);
+                    }
+#endif
                     data.setLaunchedBy(getpid());
                     KStartupInfo::sendStartup(startInfoId, data);
 #else

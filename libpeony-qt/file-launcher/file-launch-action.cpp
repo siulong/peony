@@ -72,7 +72,9 @@ static void contextLaunchedCallback(GAppLaunchContext *context,
     g_variant_lookup (platform_data, "pid", "i", &pid);
     KStartupInfoData data;
     data.addPid(pid);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
     data.setIconGeometry(QRect(0, 0, 1, 1));  // ugly
+#endif
     KStartupInfo::sendChange(*startInfoId, data);
     KStartupInfo::resetStartupEnv();
 }
@@ -393,8 +395,10 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         float scale = qApp->devicePixelRatio();
         QRect rect = fileInfo.get()->property("iconGeometry").toRect();
         rect.moveTo(rect.x()/* * scale*/, rect.y()/* * scale*/);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
         if (rect.isValid())
             data.setIconGeometry(rect);
+#endif
         data.setLaunchedBy(getpid());
 
         KStartupInfo::sendStartup(*startInfoId, data);
