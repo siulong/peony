@@ -119,7 +119,6 @@ static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable
 
     if (!eq->isEmpty()) {
         GFile* file = g_file_new_for_uri(eq->dequeue().toUtf8());
-        qDebug() << "=========2222222222" << g_file_get_uri(file);
         if (nullptr != file) {
             fileInfo = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
             g_object_unref(file);
@@ -138,7 +137,6 @@ static gboolean enumerator_close(GFileEnumerator *enumerator, GCancellable *canc
 
 static void vfs_favorites_file_enumerator_next_files_async (GFileEnumerator* enumerator, int num_files, int io_priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data)
 {
-    qDebug() << "-------------" << __func__;
     GTask* task = g_task_new (enumerator, cancellable, callback, user_data);
     g_task_set_source_tag (task, (gpointer) vfs_favorites_file_enumerator_next_files_async);
     g_task_set_task_data (task, GINT_TO_POINTER (num_files), NULL);
@@ -153,7 +151,6 @@ static void vfs_favorites_file_enumerator_next_files_async (GFileEnumerator* enu
 
 static GList* vfs_favorites_file_enumerator_next_files_finished(GFileEnumerator* enumerator, GAsyncResult* result, GError** error)
 {
-    qDebug() << "---------------" << __func__;
     g_return_val_if_fail (g_task_is_valid (result, enumerator), NULL);
 
     return (GList*)g_task_propagate_pointer (G_TASK (result), error);
@@ -161,7 +158,6 @@ static GList* vfs_favorites_file_enumerator_next_files_finished(GFileEnumerator*
 
 static void next_files_thread (GTask* task, gpointer source_object, gpointer task_data, GCancellable *cancellable)
 {
-    qDebug() << "---------------" << __func__;
     auto enumerator = G_FILE_ENUMERATOR(source_object);
     int num_files = GPOINTER_TO_INT (task_data);
 

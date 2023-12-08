@@ -52,7 +52,7 @@ void vfs_test_file_monitor_dir(TestVFSFileMonitor *obj, const QString &filepath)
     }
 
     obj->add = QObject::connect(transfer, &Peony::HanderTransfer::fileCreate, [=](const QString &path){
-        qDebug() << "+++++++++++++" << path;
+        qDebug() << __func__ << "fileCreate:" << path;
         if (!path.isEmpty()) {
             QString tScheme = scheme + "://";
             QString realUri = tScheme + path;
@@ -63,7 +63,7 @@ void vfs_test_file_monitor_dir(TestVFSFileMonitor *obj, const QString &filepath)
     });
 
     obj->remove = QObject::connect(transfer, &Peony::HanderTransfer::fileDelete, [=](const QString &path){
-        qDebug() << "+++++++++++++" << path;
+        qDebug() << __func__ << "fileDelete:" << path;
         if (!path.isEmpty()) {
             QString tScheme = scheme + "://";
             QString realUri = tScheme + path;
@@ -74,7 +74,7 @@ void vfs_test_file_monitor_dir(TestVFSFileMonitor *obj, const QString &filepath)
     });
 
     obj->change = QObject::connect(transfer, &Peony::HanderTransfer::fileChanged, [=](const QString &path){
-        qDebug() << "+++++++++++++" << path;
+        qDebug() << __func__ << "fileChanged:" << path;
         if (!path.isEmpty()) {
             QString tScheme = scheme + "://";
             QString realUri = tScheme + path;

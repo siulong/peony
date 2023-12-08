@@ -207,7 +207,6 @@ GFile* vfs_favorite_file_new_for_uri(const char* turi)
         quri = "favorite:///" + path2.join("/") + schemaInfo;
     }
 
-    //qDebug() << "1111111111111===========" << __func__ << quri << QString(turi);
     vfsfile->priv->uri = g_strdup(Peony::FileUtils::urlEncode(quri).toUtf8().constData());
 
     return G_FILE(vfsfile);
@@ -331,7 +330,6 @@ GFileInfo* vfs_favorite_file_query_info(GFile *file, const char *attributes, GFi
 
 GFileEnumerator* vfs_favorite_file_enumerate_children(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error)
 {
-    qDebug() << "==========" << __func__;
     g_return_val_if_fail(VFS_IS_FAVORITES_FILE(file), nullptr);
 
     return vfs_favorite_file_enumerate_children_internal(file, attribute, flags, cancellable, error);

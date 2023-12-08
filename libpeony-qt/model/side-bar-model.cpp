@@ -63,8 +63,6 @@ SideBarModel::SideBarModel(QObject *parent)
         if (plugin->holdInSideBar()) {
             m_root_children->append(new SideBarVFSItem(plugin->uriScheme() + "/", nullptr, this));
         }
-
-        qDebug() << "===========" << plugin->uriScheme() << plugin->holdInSideBar();
     }
 
 //    SideBarSeparatorItem *separator1 = new SideBarSeparatorItem(SideBarSeparatorItem::Large, nullptr, this, this);

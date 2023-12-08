@@ -220,7 +220,6 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
         QString uri = "file://" + path;
         auto search_vfs_info = g_file_info_new();
         QString realUriSuffix = "real-uri:" + uri;
-        qDebug() << "===========" << realUriSuffix;
         g_file_info_set_name(search_vfs_info, realUriSuffix.toUtf8().constData());
 
         if (search_enumerator->priv->save_result) {

@@ -22,7 +22,6 @@ void VFSInfoPluginManager::registerPlugin(Peony::VFSInfoPluginIface *plugin)
 
     m_pluginsMap.insert(plugin->pathScheme(), plugin);
     m_support_path.append(plugin->pathScheme());
-    qDebug() << "============" << m_support_path;
 }
 
 VFSInfoPluginIface *VFSInfoPluginManager::userSchemeGetPlugin(QString &scheme)

@@ -50,7 +50,6 @@ CreateTemplateOperation::CreateTemplateOperation(const QString &destDirUri, Type
         tDestDirUri.chop(1);
     }
 
-    qDebug() << "============CreateTemplateOperation" << tDestDirUri;
     m_target_uri = tDestDirUri + "/" + templateName;
     QStringList srcUris;
     m_src_uri = TEMPLATE_DIR + templateName;

@@ -56,10 +56,8 @@ static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable
 
     if (!eq->isEmpty()) {
         GFile* file = g_file_new_for_uri(eq->dequeue().toUtf8());
-        //qDebug() << "=========33333333" << g_file_get_uri(file);
         if (nullptr != file) {
             fileInfo = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
-            //qDebug() << "===========enumerate_next_file" << g_file_info_get_display_name(fileInfo);
             g_object_unref(file);
         }
     }
