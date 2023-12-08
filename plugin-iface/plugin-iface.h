@@ -47,6 +47,7 @@ public:
         VFSPlugin,
         EmblemPlugin,
         SideBarPlugin,
+        VFSINFOPlugin,
         Other
     };
 

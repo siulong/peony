@@ -247,8 +247,13 @@ void FileItem::findChildrenAsync()
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
         if (critical) {
+            if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
+                QMessageBox::warning(nullptr, tr("Warning"), err->message());
+            } else {
+                QMessageBox::critical(nullptr, tr("Error"), err->message());
+            }
+            //QMessageBox::critical(nullptr, tr("Error"), err->message());
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
-            QMessageBox::critical(nullptr, tr("Error"), err->message());
             enumerator->cancel();
             //fix bug#77594
             enumerator->deleteLater();

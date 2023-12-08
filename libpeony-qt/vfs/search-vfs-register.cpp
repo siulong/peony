@@ -70,7 +70,7 @@ void SearchVFSRegister::registSearchVFS()
     const gchar * const *p;
     p = schemes;
     while (*p) {
-        qDebug()<<*p;
+        qDebug() << "registSearchVFS:" << *p;
         p++;
     }
 

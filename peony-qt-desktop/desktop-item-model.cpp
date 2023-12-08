@@ -627,15 +627,15 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
             return QVariant(displayName);
     }
     case Qt::ToolTipRole: {
-        // fix #80257
-        switch (index.row()) {
-        case 0:
-            return tr("Computer");
-        case 1:
-            return tr("Trash");
-        default:
-            break;
-        }
+//        // fix #80257
+//        switch (index.row()) {
+//        case 0:
+//            return tr("Computer");
+//        case 1:
+//            return tr("Trash");
+//        default:
+//            break;
+//        }
 
         //fix bug#53504, desktop files not show same name issue
         if (info->isDesktopFile())

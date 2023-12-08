@@ -25,7 +25,8 @@ HEADERS += \
     $$PWD/sync-thread.h                 \
     $$PWD/volumeManager.h               \
     $$PWD/usershare-manager.h           \
-    $$PWD/file-infos-job.h
+    $$PWD/file-infos-job.h              \
+    $$PWD/file-tmp-info.h
 
 SOURCES += \
     $$PWD/custom-error-handler.cpp \
@@ -51,8 +52,8 @@ SOURCES += \
     $$PWD/sync-thread.cpp               \
     $$PWD/volumeManager.cpp		\
     $$PWD/usershare-manager.cpp         \
-    $$PWD/file-infos-job.cpp
-
+    $$PWD/file-infos-job.cpp           \
+    $$PWD/file-tmp-info.cpp
 
 FORMS += \
     $$PWD/connect-server-dialog.ui

@@ -405,6 +405,9 @@ QVariant FileLabelModel::data(const QModelIndex &index, int role) const
     case Qt::UserRole: {
         return m_labels.at(index.row())->id();
     }
+    case Qt::ToolTipRole: {
+        return m_labels.at(index.row())->name();
+    }
     default:
         return QVariant();
     }

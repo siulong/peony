@@ -1337,7 +1337,12 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
         });
         connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
             if (critical) {
-                QMessageBox::critical(0, 0, err.get()->message());
+                if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
+                    QMessageBox::warning(nullptr, tr("Warning"), err->message());
+                } else {
+                    QMessageBox::critical(nullptr, tr("Error"), err->message());
+                }
+                //QMessageBox::critical(0, 0, err.get()->message());
                 setCursor(QCursor(Qt::ArrowCursor));
                 // if there is no active page, window should be closed to avoid crash. link to: #48031
                 if (!currentPage()) {

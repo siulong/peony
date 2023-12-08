@@ -23,6 +23,7 @@
 #include "label-box-delegate.h"
 
 #include <QStyleOptionViewItem>
+#include <QLineEdit>
 #include <QDebug>
 
 LabelBoxDelegate::LabelBoxDelegate(QObject *parent) : QStyledItemDelegate(parent)
@@ -36,4 +37,28 @@ void LabelBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     auto opt = option;
     opt.decorationSize = QSize();
     QStyledItemDelegate::paint(painter, opt, index);
+}
+
+QWidget *LabelBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(option);
+    Q_UNUSED(index);
+
+    QLineEdit* editor = new QLineEdit(parent);
+    editor->setMaxLength(14);
+    return editor;
+}
+
+void LabelBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    QString text = index.model()->data(index, Qt::EditRole).toString();
+    QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
+    lineEdit->setText(text);
+}
+
+void LabelBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+{
+    QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
+    QString text = lineEdit->text();
+    model->setData(index, text, Qt::EditRole);
 }

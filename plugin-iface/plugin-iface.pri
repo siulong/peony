@@ -12,6 +12,7 @@ HEADERS += \
     $$PWD/properties-window-tab-page-plugin-iface.h \
     $$PWD/style-plugin-iface.h \
     $$PWD/directory-view-plugin-iface2.h \
+    $$PWD/vfs-info-plugin-iface.h \
     $$PWD/vfs-plugin-iface.h
 
 SOURCES +=

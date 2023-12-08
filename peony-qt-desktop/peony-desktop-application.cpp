@@ -35,6 +35,7 @@
 #include "desktop-menu.h"
 #include "global-settings.h"
 #include "file-enumerator.h"
+#include "desktopbackground.h"
 #include "desktop-background-manager.h"
 #include "desktopbackgroundwindow.h"
 #include "desktop-item-model.h"
@@ -792,12 +793,6 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
         multiscreenMode();
     }
 
-    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
-        for (auto bgWindow : m_bg_windows) {
-            bgWindow->getIconView()->setGridSize(gridSize);
-        }
-    });
-
     relocateIconView(output);
 }
 
@@ -821,6 +816,12 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
             });
         } else {
             outputRemoved(output->id());
+        }
+    });
+
+    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+        for (auto bgWindow : m_bg_windows) {
+            bgWindow->getIconView()->setGridSize(gridSize);
         }
     });
 }
