@@ -33,6 +33,8 @@
 
 #include <udisks/udisks.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
@@ -74,6 +76,20 @@ QString getDeviceUUID(const char *device) {
     const gchar *uuid = udisks_block_get_id_uuid(block);
     return uuid;
 }
+
+static bool driveHasMedia(GDrive *gdrive){
+    /* 此方式替代g_drive_has_media只对evice.startsWith("/dev/sd")生效！Linkto Bug#205118插入拓展坞后文件管理器侧边栏多出了两个移动设备 */
+    g_autofree gchar* unix_device = g_drive_get_identifier(gdrive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+    g_object_unref(gdrive);
+    QString device = unix_device;
+    int fd = open(device.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
+    if(-1==fd){/* open失败 */
+        return false;
+    }
+    close(fd);
+    return true;
+}
+
 
 void VolumeManager::printVolumeList(){
     qDebug()<<endl<<endl<<endl;
@@ -403,7 +419,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                         addItem->setHidden(true);
                         // if drive has media, it is not represent a docking station.
                         // so it should not be hidden.
-                        if (g_drive_has_media(gdrive)) {
+                        if (driveHasMedia(gdrive)) {
                             addItem->setHidden(false);
                         }
                     }else if(uuid.isEmpty()){
@@ -676,7 +692,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 volume->setHidden(true);
                 // if drive has media, it is not represent a docking station.
                 // so it should not be hidden.
-                if (g_drive_has_media(gdrive)) {
+                if (driveHasMedia(gdrive)) {
                     volume->setHidden(false);
                 }
             }
@@ -908,7 +924,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     // if drive has media, it is not represent a docking station.
                     // so it should not be hidden.
                     if (entry->getGDrive()) {
-                        if (g_drive_has_media(entry->getGDrive())) {
+                        if (driveHasMedia(entry->getGDrive())) {
                             volumeItem->setHidden(false);
                         }
                     }
