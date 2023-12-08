@@ -60,6 +60,22 @@ FileLauchDialog::FileLauchDialog(const QString &uri, QWidget *parent) : QDialog(
     this->setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint );
     init(uri);
 }
+
+void FileLauchDialog::setDoLaunch(bool doLaunch)
+{
+    setProperty("doLaunch", doLaunch);
+}
+
+FileLaunchAction *FileLauchDialog::selectedAction()
+{
+    FileLaunchAction *action = nullptr;
+    if (m_hash.value(m_view->currentItem())) {
+        action = m_hash.value(m_view->currentItem());
+    } else {
+        action = FileLaunchManager::getDefaultAction(m_info->uri());
+    }
+    return action;
+}
 void FileLauchDialog::getFIleInfo(QString uri)
 {
     std::shared_ptr<FileInfo> fileInfo = FileInfo::fromUri(uri);
@@ -341,19 +357,27 @@ void FileLauchDialog::initFloorFour()
 
     connect(cancelButton, &QPushButton::clicked, this, &QMainWindow::close);
     connect(okButton, &QPushButton::clicked, this, [=]() {
+        bool doLaunch = true;
+        auto var = this->property("doLaunch");
+        if (var.isValid() && !var.toBool()) {
+            doLaunch = false;
+        }
+
         if (m_hash.value(m_view->currentItem())) {
             auto action = m_hash.value(m_view->currentItem());
             if (m_check_box->isChecked()) {
                 FileLauchDialog::saveChange();
             }
-            action->lauchFileAsync(true);
+            if (doLaunch)
+                action->lauchFileAsync(true);
         }
         else {
             FileLaunchAction *action = FileLaunchManager::getDefaultAction(m_info->uri());
             if (m_check_box->isChecked()) {
                 FileLauchDialog::saveChange();
             }
-            action->lauchFileAsync(true);
+            if (doLaunch)
+                action->lauchFileAsync(true);
 //            FileLaunchManager::openAsync(m_uri);
         }
     });

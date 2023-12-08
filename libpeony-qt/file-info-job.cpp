@@ -283,7 +283,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
 
         g_key_file_free(desktop_key_file);
 
-    } else if (!info->uri().startsWith("file:///")) {
+    }/* else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {
             info->m_display_name = tr("Trash");
         } else if (info->uri() == "computer:///") {
@@ -293,7 +293,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
         } else if (info->uri() == "recent:///") {
             info->m_display_name = tr("Recent");
         }
-    }
+    }*/
 }
 
 void FileInfoJob::refreshInfoContents(GFileInfo *new_info)

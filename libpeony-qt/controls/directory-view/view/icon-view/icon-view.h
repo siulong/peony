@@ -188,7 +188,7 @@ private:
     QTimer m_repaint_timer;
 
     bool  m_editValid;
-    bool  m_ctrl_key_pressed;
+    bool  m_ctrl_key_pressed = false;
     QTimer* m_renameTimer;
 
     QTimer *m_touch_active_timer = nullptr;

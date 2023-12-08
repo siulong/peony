@@ -311,8 +311,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 
                 if (geo.width() != 0 && geo.height() != 0) {
                     QRect itemRect = QListView::visualRect(index);
-                    QSize icon = gridSize();
-                    itemRect.setSize(icon);
+                    itemRect.moveTo(itemRect.topLeft()+offset());
                     if (!geo.contains(itemRect)) {
                         isFull = true;
                     }
@@ -807,7 +806,7 @@ void DesktopIconView::resolutionChange()
         QList<QPair<QRect, QString>> needChanged;
         for (auto pair : newPosition) {
             QRect itemRect = pair.first;
-            itemRect.setWidth(icon.width());
+            itemRect.moveTo(itemRect.topLeft()+offset());
             if (!screenRect.contains(itemRect)) {
                 needChanged.append(pair);
                 if (!m_resolution_item_rect.contains(pair.second)) {
@@ -832,7 +831,7 @@ void DesktopIconView::resolutionChange()
         while (marginLeft - iconWidth >= 0) {
             marginLeft -= iconWidth;
         }
-        marginTop = marginTop < 0? 0: marginTop;
+        marginTop = marginTop <= 0? offset().y(): marginTop;
         marginLeft = marginLeft < 0? 0: marginLeft;
 
         if (!needChanged.isEmpty()) {
@@ -871,7 +870,7 @@ void DesktopIconView::resolutionChange()
                     continue;
                 }
                 QRect itemRect = originalRect;
-                itemRect.setSize(icon);
+                itemRect.moveTo(itemRect.topLeft()+offset());
                 if (screenRect.contains(itemRect)) {
                     m_item_rect_hash.insert(uri, originalRect);
                     m_resolution_item_rect.remove(uri);
@@ -1008,8 +1007,10 @@ void DesktopIconView::openFileByUri(QString uri)
             data.setHostname();
             data.addPid(pid);
             QRect rect = info.get()->property("iconGeometry").toRect();
-//            if (rect.isValid())
-//                data.setIconGeometry(rect);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+            if (rect.isValid())
+                data.setIconGeometry(rect);
+#endif
             data.setLaunchedBy(getpid());
             KStartupInfo::sendStartup(startInfoId, data);
 #else
@@ -1261,8 +1262,7 @@ void DesktopIconView::setSortType(int sortType)
             m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), QListView::visualRect(index));
             updateItemPosByUri(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
             QRect itemRect = QListView::visualRect(index);
-            QSize icon = gridSize();
-            itemRect.setSize(icon);
+            itemRect.moveTo(itemRect.topLeft()+offset());
             if (!geo.contains(itemRect)) {
                 isFull = true;
             }
@@ -1654,7 +1654,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
         marginLeft -= grid.width();
     }
     marginLeft = marginLeft < 0? 0: marginLeft;
-    marginTop = marginTop < 0? 0: marginTop;
+    marginTop = marginTop <= 0? offset().y(): marginTop;
 
     for (auto uri : uris) {
         if (!allFileUris.contains(uri))
@@ -1678,7 +1678,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     //put item to next column first row
                     next.moveTo(next.x() + grid.width(), top);
                     //如果满了，就放到（0，0） 位置
-                    if (next.left()+grid.width() > viewRect.right()) {
+                    if (next.right() + offset().x() > viewRect.right()) {
                         if (!m_storageBox.contains(uri)) {
                             m_storageBox.append(uri);
                         }
@@ -1756,22 +1756,22 @@ void DesktopIconView::checkItemsOver()
         marginLeft -= gridWidth;
     }
     marginLeft = marginLeft < 0? 0: marginLeft;
-    marginTop = marginTop < 0? 0: marginTop;
+    marginTop = marginTop <= 0? offset().y(): marginTop;
     int posX = marginLeft;
     int posY = marginTop;
     qDebug()<<"need relayout items:"<<needRelayoutItems;
     bool isFull = false;
     for (auto item : needRelayoutItems) {
-        QRect itemRect = QRect(posX, posY, gridWidth, gridHeight);
+        QRect itemRect = QRect(QPoint(posX, posY), m_item_rect_hash.values().first().size());
         while (notEmptyRegion.contains(itemRect) && !isFull) {
-            if (posY + 2*gridHeight > this->viewport()->height()) {
+            if (posY + gridHeight + itemRect.size().height() > this->viewport()->height()) {
                 posY = marginTop;
                 posX += gridWidth;
             } else {
                 posY += gridHeight;
             }
             itemRect.moveTo(posX, posY);
-            if (itemRect.left()+gridWidth  > this->viewport()->rect().right()) {
+            if (itemRect.right() + offset().x() > this->viewport()->rect().right()) {
                 itemRect.moveTo(0, 0);
                 posX = 0;
                 posY = 0;
@@ -1843,7 +1843,7 @@ void DesktopIconView::setDefaultZoomLevel(ZoomLevel level)
     m_zoom_level = level;
     switch (level) {
     case Small:
-        setIconSize(QSize(24, 24));  
+        setIconSize(QSize(24, 24));
         setGridSize(QSize(5, 5) + itemDelegate()->sizeHint(viewOptions(), QModelIndex()));
         break;
     case Large:
@@ -2215,7 +2215,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                     bool isEmptyPos = false;
                     while (!isEmptyPos) {
                         next.translate(0, grid.height());
-                        if (next.bottom() > viewRect.bottom()) {
+                        if (next.bottom() + offset().y() > viewRect.bottom()) {
                             int top = next.y();
                             while (true) {
                                 if (top < gridSize().height()) {
@@ -2226,7 +2226,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                             //put item to next column first column
                             next.moveTo(next.x() + grid.width(), top);
                             //如果满了，就放到（0，0） 位置
-                            if (next.left()+grid.width() > viewRect.right()) {
+                            if (next.right() + offset().x() > viewRect.right()) {
                                 next.moveTo(0, 0);
                                 isEmptyPos = true;
                                 setPositionForIndex(next.topLeft(), dragedIndex);
@@ -2252,7 +2252,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             // check if there is any item out of view
             for (auto index : m_drag_indexes) {
                 auto indexRect = QListView::visualRect(index);
-                indexRect.setSize(grid);
+                indexRect.moveTo(indexRect.topLeft() + offset());
                 if (this->viewport()->rect().contains(indexRect)) {
                     continue;
                 }
@@ -2280,7 +2280,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                 next.setSize(dataRect.size());
                 while (notEmptyRegion.intersects(next)) {
                     next.translate(0, grid.height());
-                    if (next.bottom() > viewRect.bottom()) {
+                    if (next.top() + indexRect.size().height() + offset().y() > viewRect.bottom()) {
                         int top = next.y();
                         while (true) {
                             if (top < gridSize().height()) {
@@ -2291,7 +2291,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
                         //put item to next column first column
                         next.moveTo(next.x() + grid.width(), top);
                         //如果满了，就放到（0，0） 位置
-                        if (next.left()+grid.width() > viewRect.right()) {
+                        if (next.left() + indexRect.size().width() + offset().x() > viewRect.right()) {
                             next.moveTo(0, 0);
                             qDebug() << "满屏 " << index.data(Qt::UserRole).toString() << " point:" <<next.topLeft();
                             break;
@@ -2476,6 +2476,17 @@ QRect DesktopIconView::visualRect(const QModelIndex &index) const
 
     return rect;
 }
+
+QPoint DesktopIconView::offset()
+{
+    QSize interval = (gridSize() - itemDelegate()->sizeHint(viewOptions(), QModelIndex()))/2;
+    if (interval.isEmpty()) {
+        return QPoint(0, 0);
+    }
+    QPoint p(interval.width(), interval.height());
+    return p;
+}
+
 QRect DesktopIconView::getViewRect()
 {
     QRect rect = viewport()->rect();
@@ -2639,10 +2650,12 @@ bool DesktopIconView::execSharedFileLink(const QString uri)
                     KStartupInfoData data;
                     data.setHostname();
                     data.addPid(pid);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
                     QRect rect = info.get()->property("iconGeometry").toRect();
-//                    if (rect.isValid()) {
-//                        data.setIconGeometry(rect);
-//                    }
+                    if (rect.isValid()) {
+                        data.setIconGeometry(rect);
+                    }
+#endif
                     data.setLaunchedBy(getpid());
                     KStartupInfo::sendStartup(startInfoId, data);
 #else
@@ -2867,6 +2880,20 @@ bool DesktopIconView::isFull()
     //bug#123045 主屏桌面空间不足，新建的文件未放置到扩展屏桌面上
     int colNum = viewport()->width()/gridSize().width();
     int rowNum = viewport()->height()/gridSize().height();
+
+    if (m_proxy_model->rowCount() > 1) {
+        auto index = m_proxy_model->index(0, 0);
+        auto indexRect = QListView::visualRect(index);
+        auto left = viewport()->width() - colNum * gridSize().width() - offset().x();
+        if (left >= indexRect.width()) {
+            colNum++;
+        }
+        auto bottom = viewport()->height() - rowNum * gridSize().height() - offset().y();
+        if (bottom >= indexRect.height()) {
+            rowNum++;
+        }
+    }
+
     qDebug() << "colNum:" <<colNum << "rowNum:"<< rowNum << "total:" << m_proxy_model->rowCount();
     if (colNum * rowNum <= m_proxy_model->rowCount()) {
         return true;

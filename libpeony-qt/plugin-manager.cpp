@@ -32,6 +32,8 @@
 #include "style-plugin-iface.h"
 #include "vfs-plugin-manager.h"
 #include "emblem-plugin-iface.h"
+#include "vfs-info-plugin-iface.h"
+#include "vfs-info-plugin-manager.h"
 
 #include "properties-window.h" //properties factory manager define is in this header
 #include "properties-window-tab-page-plugin-iface.h"
@@ -63,6 +65,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
     DirectoryViewFactoryManager2::getInstance();
     PreviewPageFactoryManager::getInstance();
     VFSPluginManager::getInstance();
+    VFSInfoPluginManager::getInstance();
 
     QDir pluginsDir(PLUGIN_INSTALL_DIRS);
 //    if (COMMERCIAL_VERSION)
@@ -165,6 +168,11 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         case PluginInterface::EmblemPlugin: {
             auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
             EmblemProviderManager::getInstance()->registerProvider(p->create());
+            break;
+        }
+        case PluginInterface::VFSINFOPlugin: {
+            auto p = dynamic_cast<VFSInfoPluginIface *>(plugin);
+            VFSInfoPluginManager::getInstance()->registerPlugin(p);
             break;
         }
         default:

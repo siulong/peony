@@ -179,7 +179,7 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         info->m_finalDisplayName = info->getFinalDisplayName();
 
         g_object_unref(desktop_info);
-    } else if (!info->uri().startsWith("file:///")) {
+    }/* else if (!info->uri().startsWith("file:///")) {
         if (info->uri() == "trash:///") {
             info->m_display_name = tr("Trash");
         } else if (info->uri() == "computer:///") {
@@ -189,7 +189,7 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         } else if (info->uri() == "recent:///") {
             info->m_display_name = tr("Recent");
         }
-    }
+    }*/
     return info;
 }
 

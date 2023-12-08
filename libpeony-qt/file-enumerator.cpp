@@ -399,7 +399,7 @@ void FileEnumerator::handleError(GError *err)
         break;
     case G_IO_ERROR_EXISTS:
     {
-        QString str_error = QObject::tr("file not found");
+        QString str_error = QObject::tr("Unable to discover the file, it may have been removed or deleted.");
         Q_EMIT prepared(GErrorWrapper::wrapFrom(g_error_new(G_IO_ERROR, G_IO_ERROR_EXISTS, "%s\n", str_error.toUtf8().constData())), nullptr, true);
         break;
     }
@@ -412,7 +412,7 @@ void FileEnumerator::handleError(GError *err)
     }
     case G_IO_ERROR_NOT_FOUND:
     {
-        QString str_error = QObject::tr("file not found");
+        QString str_error = QObject::tr("Unable to discover the file, it may have been removed or deleted.");
         Q_EMIT prepared(GErrorWrapper::wrapFrom(g_error_new(G_IO_ERROR, G_IO_ERROR_NOT_FOUND, "%s\n", str_error.toUtf8().constData())), nullptr, true);
         //processed in file-item, comment to fix duplicated prompt
         //QMessageBox::critical(nullptr, tr("Error"), tr("Did not find target path, do you move or deleted it?"));

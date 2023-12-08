@@ -119,6 +119,28 @@ public:
     QSize sizeHint() const override {
         return QSize(400, 600);
     }
+
+    /*!
+     * \brief setDoLaunch
+     * set dialog action while dialog accepted.
+     * default action will do launch and this can be changed by
+     * set do launch argument with false.
+     *
+     * \param doLaunch
+     * weither launch app after choice an action.
+     */
+    void setDoLaunch(bool doLaunch = true);
+
+    /*!
+     * \brief selectedAction
+     * after dialog apply with do not launch accepted action,
+     * we may need to get selected action for next custom steps
+     * for launching.
+     *
+     * \return
+     * an file launch action contains application info.
+     */
+    FileLaunchAction *selectedAction();
 Q_SIGNALS:
     void open(FileLaunchAction *action);
 
