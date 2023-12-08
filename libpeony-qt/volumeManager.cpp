@@ -116,8 +116,6 @@ void VolumeManager::printVolumeList(){
 }
 #include "file-enumerator.h"
 #include "file-info.h"
-#include "file-info-job.h"
-#include "file-utils.h"
 QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     /* volume item,遍历方式获取uri */
     Peony::FileEnumerator e;
@@ -125,13 +123,37 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     e.enumerateSync();
     QString uri;
     for (auto fileInfo : e.getChildren()) {
-        Peony::FileInfoJob infoJob(fileInfo);
-        infoJob.querySync();
+        QString uriStr = fileInfo.get()->uri();
+        GFile* gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
+        GError *err = nullptr;
+        QString device;
+        QString targetUri;
+        GFileInfo* gFileInfo = g_file_query_info(gFile,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       g_cancellable_new(),
+                                       &err);
+
+        if (err) {
+            qDebug()<<err->code<<err->message;
+            g_error_free(err);
+            g_object_unref(gFile);
+            g_object_unref(gFileInfo);
+            continue;
+        }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)) {
+               targetUri = g_file_info_get_attribute_string(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+            }
+            if(g_file_info_has_attribute(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE)){
+                device = g_file_info_get_attribute_string(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+            }
+        }
+        g_object_unref(gFile);
+        g_object_unref(gFileInfo);
+
         /* 由volume的unixDevice获取target uri */
-        auto info = infoJob.getInfo();
-        QString device = fileInfo.get()->unixDeviceFile();
         if(device==unixDevice){
-            uri = fileInfo.get()->targetUri();
+            uri = targetUri;
             break;
         }
     }
