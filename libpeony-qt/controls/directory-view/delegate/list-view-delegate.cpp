@@ -89,7 +89,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     if (index.column() == 0 && colors.count() >0) {
         if (!view->isDragging() || !view->selectionModel()->selectedIndexes().contains(index)) {
-            paintLabel(opt, view->m_labelAlignment, colors, painter);
+            paintLabel(opt, view->getLabelAlignment(), colors, painter);
         }
     }
 
@@ -491,7 +491,6 @@ void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 void ListViewDelegate::paintLabel(QStyleOptionViewItem &opt, int aalignment, QList<QColor> colors, QPainter *painter) const
 {
     //修改标记个数最多为3个，以及标记位置
-    int alignement = qApp->property("labelAlignment").toInt();
     int xOffSet = 0;
     int yOffSet = 0;
     int labelSize = 12;

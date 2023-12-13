@@ -1595,7 +1595,7 @@ void MainWindow::initUI(const QString &uri)
     });
 //    auto view = getCurrentPage()->getView();
 //    Q_EMIT Peony::DirectoryViewHelper::globalInstance()->setLabelAlignment(0);
-    qApp->setProperty("labelAlignment", 0);
+    Peony::GlobalSettings::getInstance()->setValue(LABLE_ALIGNMENT, 0);
     connect(views->tabBar(), &QTabBar::tabBarDoubleClicked, this, [=](int index) {
         if (index == -1)
             maximizeOrRestore();

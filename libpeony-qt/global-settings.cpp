@@ -281,6 +281,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(DEFAULT_GRID_SIZE, QSize());
     }
 
+    if (m_cache.value(LABLE_ALIGNMENT).isNull()) {
+        setValue(LABLE_ALIGNMENT, 1);
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
@@ -570,7 +574,7 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     auto ret = kdk_system_timeformat_transform(&m_tm);
     g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
     if (m_showRelativeTime){
-        formatDate = kdk_system_tran_absolute_date(&m_tm);
+       formatDate = kdk_system_tran_absolute_date(&m_tm);
     }
     else if (longFormat)
         formatDate = kdk_system_longformat_transform(&m_tm);

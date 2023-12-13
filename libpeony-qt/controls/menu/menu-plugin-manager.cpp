@@ -192,28 +192,12 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
         return l;
     }
     if (types == DirectoryView) {
-            //not allow in trash path
-            if (uri.startsWith("trash://") || uri.startsWith("smb://")
-                || uri.startsWith("recent://") || uri.startsWith("computer://"))
-                return l;
-            QString version = qApp->property("version").toString();
-            if (version == "ukui4.0") {
-                auto labelWidgetContainer = new QWidgetAction(this);
-                auto labelWidget = new FileLabelWidget(selectionUris);
-                labelWidgetContainer->setDefaultWidget(labelWidget);
-                l<<labelWidgetContainer;
-
-                QAction *tagAction = new QAction(tr("label management ..."), this);
-                connect(tagAction, &QAction::triggered, this, [=]() {
-                    TagManagement *managent = TagManagement::getInstance();
-                    managent->show();
-                });
-                l<<tagAction;
-
-               connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
-                tagAction->setText(text);
-           });
-        } else {
+        //not allow in trash path
+        if (uri.startsWith("trash://") || uri.startsWith("smb://")
+            || uri.startsWith("recent://") || uri.startsWith("computer://"))
+            return l;
+        QString version = qApp->property("version").toString();
+        if (version == "ukui3.0") {
             if (selectionUris.count() == 1) {
                 auto action = new QAction(tr("Add File Label"), nullptr);
                 auto uri = selectionUris.first();
@@ -243,7 +227,23 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
                 });
                 action->setMenu(menu);
                 l<<action;
-             }
+            }
+        } else {
+            auto labelWidgetContainer = new QWidgetAction(this);
+            auto labelWidget = new FileLabelWidget(selectionUris);
+            labelWidgetContainer->setDefaultWidget(labelWidget);
+            l<<labelWidgetContainer;
+
+            QAction *tagAction = new QAction(tr("label management ..."), this);
+            connect(tagAction, &QAction::triggered, this, [=]() {
+                TagManagement *managent = TagManagement::getInstance();
+                managent->show();
+            });
+            l<<tagAction;
+
+           connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
+            tagAction->setText(text);
+           });
         }
     }
     return l;

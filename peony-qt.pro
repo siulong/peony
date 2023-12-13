@@ -16,4 +16,4 @@ CONFIG(release,debug|release){
 src.depends = libpeony-qt
 peony-qt-plugin-test.depends = libpeony-qt
 peony-qt-desktop.depends = libpeony-qt
-properties-window-devel.depends = libpeony-qt
+stable-properties-window.depends = libpeony-qt

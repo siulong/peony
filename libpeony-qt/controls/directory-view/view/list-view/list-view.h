@@ -94,7 +94,9 @@ public:
     bool getDelegateEditFlag();
 
     void setItemsVisible(bool visible) override;
-    int m_labelAlignment = 0;
+
+    int getLabelAlignment() const;
+
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
     void updateSelectStatus(bool status);
@@ -199,6 +201,7 @@ private:
     bool m_multi_select = false;
     bool m_mouse_release_unselect = false;
     bool m_header_section_resized_manually = false;
+    int m_labelAlignment = 0;
 };
 
 //ListView2

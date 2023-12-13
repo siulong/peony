@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Authors: Yue Lan <lanyue@kylinos.cn>
+ * Authors: Yan Wei Yang <yangyanwei@kylinos.cn>
  *
  */
 

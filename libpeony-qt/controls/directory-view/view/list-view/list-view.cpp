@@ -160,6 +160,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
 
     m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
 
+    m_labelAlignment = GlobalSettings::getInstance()->getValue(LABLE_ALIGNMENT).toInt();
+
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
     setItemDelegate(delegate);
@@ -1218,6 +1220,11 @@ void ListView::doMultiSelect(bool isMultiSlelect)
 void ListView::setLabelAlignment(int alignment)
 {
     m_labelAlignment = alignment;
+}
+
+int ListView::getLabelAlignment() const
+{
+    return m_labelAlignment;
 }
 
 //List View 2

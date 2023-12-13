@@ -1648,7 +1648,7 @@ void MainWindow::initUI(const QString &uri)
 //    m_tab->m_header_bar_layout->insertWidget(0,headerBarContainer);
     m_tab->addToolBar(m_headerBarContainer);
     //m_header_bar->setVisible(false);
-    qApp->setProperty("labelAlignment", 1);
+    Peony::GlobalSettings::getInstance()->setValue(LABLE_ALIGNMENT, 1);
     connect(m_header_bar, &HeaderBar::updateLocationRequest, this, &MainWindow::goToUri);
     connect(m_header_bar, &HeaderBar::viewTypeChangeRequest, this, &MainWindow::beginSwitchView);
     connect(m_header_bar, &HeaderBar::updateZoomLevelHintRequest, this, [=](int zoomLevelHint) {
