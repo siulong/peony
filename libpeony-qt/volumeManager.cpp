@@ -643,9 +643,6 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
             if (volume->getGVolume() == gvolume) {
                 // 加密U盘的device name可能改变，列表需要按之前的调整
                 device = volume->originalDevice();
-                /* 此处更新volume的icon，优先使用gmount的icon；解决先打开文件管理器在插入启动光盘，先打开的文件管理器启动光盘图标未正确显示问题 */
-                volume->setIconName(mountItem->icon());
-                Q_EMIT pThis->volumeUpdate(Volume(*volume),"name");//end
                 break;
             }
         }
@@ -1612,7 +1609,7 @@ void Mount::initMountInfo(){
     GIcon* gicon = g_mount_get_icon(m_mount);
     m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
     // fix #81852, refer to #57660, #70014, #96652, task #25343
-    if (QString(m_icon) == "drive-harddisk-usb") {
+    if (m_device.startsWith("/dev/sd") && m_icon.endsWith(".ico") || QString(m_icon) == "drive-harddisk-usb") {/* 镜像U盘或移动硬盘的图标处理，linkto bug#174770 */
         double size = 0.0;
         if(!tmpDevice.isEmpty()){
             size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
@@ -1622,6 +1619,9 @@ void Mount::initMountInfo(){
         if (size < 128) {
             m_icon = "drive-removable-media-usb";
         }
+    }
+    if(m_device.startsWith("/dev/sr") && m_icon.endsWith(".ico")){/* 镜像光盘的图标处理,linkto bug#174770 */
+        m_icon = "media-optical";
     }
 
     g_object_unref (gicon);
