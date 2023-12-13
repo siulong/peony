@@ -43,7 +43,8 @@
 #include "directory-view-container.h"
 #include "tab-widget.h"
 #include "x11-window-manager.h"
-#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
+//#include "properties-window.h"
 #include "preview-page-factory-manager.h"
 #include "preview-page-plugin-iface.h"
 
@@ -358,7 +359,7 @@ Peony::FMWindowIface *MainWindow::createWithZoomLevel(const QStringList &uris, i
 
 Peony::FMWindowFactory *MainWindow::getFactory()
 {
-    return MainWindowFactory::getInstance();
+    return nullptr;//MainWindowFactory::getInstance();
 }
 
 Peony::DirectoryViewContainer *MainWindow::getCurrentPage()
@@ -604,8 +605,8 @@ void MainWindow::setShortCuts()
             {
                 uris<<getCurrentUri();
             }
-
-            Peony::PropertiesWindow *w = new Peony::PropertiesWindow(uris);
+            QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
+            //Peony::PropertiesWindow *w = new Peony::PropertiesWindow(uris);
             w->setAttribute(Qt::WA_DeleteOnClose);
             w->show();
         });
@@ -1647,7 +1648,7 @@ void MainWindow::initUI(const QString &uri)
 //    m_tab->m_header_bar_layout->insertWidget(0,headerBarContainer);
     m_tab->addToolBar(m_headerBarContainer);
     //m_header_bar->setVisible(false);
-
+    qApp->setProperty("labelAlignment", 1);
     connect(m_header_bar, &HeaderBar::updateLocationRequest, this, &MainWindow::goToUri);
     connect(m_header_bar, &HeaderBar::viewTypeChangeRequest, this, &MainWindow::beginSwitchView);
     connect(m_header_bar, &HeaderBar::updateZoomLevelHintRequest, this, [=](int zoomLevelHint) {

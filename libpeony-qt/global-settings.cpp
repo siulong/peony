@@ -570,7 +570,7 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     auto ret = kdk_system_timeformat_transform(&m_tm);
     g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
     if (m_showRelativeTime){
-       formatDate = kdk_system_tran_absolute_date(&m_tm);
+        formatDate = kdk_system_tran_absolute_date(&m_tm);
     }
     else if (longFormat)
         formatDate = kdk_system_longformat_transform(&m_tm);

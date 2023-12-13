@@ -58,6 +58,7 @@ public:
     }
     //QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const override;
     void setSearchKeyword(QString regFindKeyWords);
+    void paintLabel(QStyleOptionViewItem &opt, int aalignment, QList<QColor> colors, QPainter *painter) const;
 
 Q_SIGNALS:
     void isEditing(bool editing) const;

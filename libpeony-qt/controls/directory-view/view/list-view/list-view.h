@@ -30,7 +30,7 @@
 #include "directory-view-widget.h"
 #include "global-settings.h"
 #include "directoryviewhelper.h"
-
+#include <QApplication>
 #include <QTimer>
 
 namespace Peony {
@@ -51,6 +51,10 @@ class PEONYCORESHARED_EXPORT ListView : public QTreeView, public DirectoryViewIf
     friend class ListViewDelegate;
     Q_OBJECT
 public:
+    enum LabelAlignment{
+        AlignVertical=0,
+        AlignHorizontal
+    };
     explicit ListView(QWidget *parent = nullptr);
 
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
@@ -90,7 +94,7 @@ public:
     bool getDelegateEditFlag();
 
     void setItemsVisible(bool visible) override;
-
+    int m_labelAlignment = 0;
 Q_SIGNALS:
     void zoomLevelChangedRequest(bool zoomIn);
     void updateSelectStatus(bool status);
@@ -134,6 +138,8 @@ public Q_SLOTS:
     void doMultiSelect(bool isMultiSlelect);
 
     const int getAllDisplayFileCount();
+
+    void setLabelAlignment(int alignment);
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
@@ -184,7 +190,7 @@ private:
     DirectoryViewProxyIface *m_proxy = nullptr;
 
     QString m_current_uri;
-
+    QString m_version;
     QSize m_last_size;
 
     const int BOTTOM_STATUS_MARGIN = 200;
@@ -237,6 +243,12 @@ public:
         return 0;
     }
     int maximumZoomLevel() {
+        QString version = qApp->property("version").toString();
+        if (version == "ukui4.0") {
+            return 40;
+        } else if (version == "ukui3.0") {
+             return 20;
+        }
         return 40;
     }
 

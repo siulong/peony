@@ -81,6 +81,7 @@ private:
 
     DirectoryViewWidget *m_view;
     QString m_directory;
+    QString m_version;
     QStringList m_selections;
 
     bool m_is_cd = false;

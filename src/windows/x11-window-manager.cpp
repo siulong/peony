@@ -147,7 +147,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
                     }
                 }
 
-                if (qobject_cast<NavigationTabBar *>(m_current_widget)) {
+                if (qobject_cast<QTabBar *>(m_current_widget)) {
                     m_current_widget->hide();
                     m_current_widget->show();
                 }

@@ -1,0 +1,12 @@
+#ifndef DEVELCONTROL_GLOBAL_H
+#define DEVELCONTROL_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(DEVELCONTROL_LIBRARY)
+#  define DEVELCONTROL_EXPORT Q_DECL_EXPORT
+#else
+#  define DEVELCONTROL_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // DEVELCONTROL_GLOBAL_H

@@ -35,6 +35,7 @@
 #include "file-utils.h"
 #include "vfs-plugin-manager.h"
 #include "xatom-helper.h"
+//#include "properties-window-factory.h"
 
 #include <QToolBar>
 #include <QPushButton>

@@ -25,8 +25,8 @@
 #include "side-bar-file-system-item.h"
 
 #include "bookmark-manager.h"
-#include "properties-window.h"
-
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 #include "menu-plugin-manager.h"
 
 #include "file-utils.h"
@@ -115,7 +115,8 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
     }
 
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
-        PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
         w->show();
     });
     if (!m_item->firstColumnIndex().parent().isValid()) {
@@ -130,7 +131,8 @@ const QList<QAction *> SideBarMenu::constructPersonalActions()
     QList<QAction *> l;
 
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
-        PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
         w->show();
     });
 
@@ -308,7 +310,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             gotoAboutComputer();
         }
         else{
-            PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+            QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+            //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
             w->show();
         }
     });
@@ -367,14 +370,16 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
 
                     if(sourceUrl.scheme()==targetUrl.scheme() && sourceUrl.host()==targetUrl.host()){/* 相同scheme和host，但port不同时怎么处理呢？ */
                         QString uri = fileInfo.get()->uri();
-                        PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+                        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+                        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
                         w->show();
                         break;
                     }
                 }
             }else{
                 /* 共享文件夹 */
-                PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+                QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+                //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
                 w->show();
             }
         });

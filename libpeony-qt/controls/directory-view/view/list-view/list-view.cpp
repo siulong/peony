@@ -78,13 +78,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     m_touch_active_timer->setInterval(2000);
     m_touch_active_timer->setSingleShot(true);
 
-    setFrameShape(QFrame::NoFrame);
+    //setFrameShape(QFrame::NoFrame);
 
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    m_version = qApp->property("version").toString();
+    if (m_version == "ukui3.0") {
+        setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    } else {
+        setFrameShape(QFrame::NoFrame);
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    } 
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
@@ -1208,6 +1213,11 @@ void ListView::doMultiSelect(bool isMultiSlelect)
     }
 
     viewport()->update();
+}
+
+void ListView::setLabelAlignment(int alignment)
+{
+    m_labelAlignment = alignment;
 }
 
 //List View 2

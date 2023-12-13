@@ -67,8 +67,6 @@ public:
                       const QString &text,
                       QPalette::ColorRole textRole = QPalette::NoRole) const override;
 
-    int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override;
-
 private:
     explicit IconViewStyle(QStyle *style = nullptr);
     ~IconViewStyle() override {}
