@@ -1,0 +1,21 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 13 Dec 2023 17:34:48 +0800
+Subject: update changelog.
+
+---
+ stable/ukui3/properties-window/properties-window.pro | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/stable/ukui3/properties-window/properties-window.pro b/stable/ukui3/properties-window/properties-window.pro
+index 0d7550a..beec33a 100644
+--- a/stable/ukui3/properties-window/properties-window.pro
++++ b/stable/ukui3/properties-window/properties-window.pro
+@@ -27,7 +27,7 @@ INCLUDEPATH += $$PWD/../../../libpeony-qt/thumbnail
+ DISTFILES += $$PWD/common.json
+ 
+ PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt libcanberra libnotify udisks2 openssl dconf
+-LIBS +=-L$$PWD/../../../  -lpeony -lX11 -lukui-log4qt
++LIBS +=-L$$PWD/../../../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
+ 
+ CONFIG += debug link_pkgconfig plugin no_keywords
+ TARGET = stable-properties-window
