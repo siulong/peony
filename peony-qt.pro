@@ -5,8 +5,7 @@ SUBDIRS = src libpeony-qt \ # plugin #libpeony-qt/test \ #plugin-iface
     #libpeony-qt/file-operation/file-operation-test \
     #peony-qt-plugin-test \
     peony-qt-desktop \
-    stable/ukui3/windows\
-    stable/ukui3/properties-window
+    stable
 
 CONFIG += debug_and_release
 CONFIG(release,debug|release){
@@ -16,4 +15,4 @@ CONFIG(release,debug|release){
 src.depends = libpeony-qt
 peony-qt-plugin-test.depends = libpeony-qt
 peony-qt-desktop.depends = libpeony-qt
-stable-properties-window.depends = libpeony-qt
+stable = libpeony-qt
