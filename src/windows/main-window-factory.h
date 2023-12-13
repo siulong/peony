@@ -24,22 +24,34 @@
 #define MAINWINDOWFACTORY_H
 
 #include <QObject>
-#include "fm-window-factory.h"
+#include "main-window-factory-iface.h"
+#include <QMainWindow>
 
 /*!
  * \brief The MainWindowFactory class
  * \deprecated
  */
-class PEONYCORESHARED_EXPORT MainWindowFactory : public Peony::FMWindowFactory
+class PEONYCORESHARED_EXPORT MainWindowFactory : public QObject, public Peony::MainWindowFactoryIface
 {
     Q_OBJECT
+//    Q_PLUGIN_METADATA(IID MainWindowFactoryIface_iid)
+//    Q_INTERFACES(Peony::MainWindowFactoryIface)
+
 public:
-    static Peony::FMWindowFactory *getInstance();
+    const QString name()
+    {
+        return "ukui4.0";
+    }
+
+    static Peony::MainWindowFactoryIface *getInstance();
 
     Peony::FMWindowIface *create(const QString &uri);
     Peony::FMWindowIface *create(const QStringList &uris);
+    QWidget *createWindow(const QString &uri = nullptr);
+    QWidget *createWindow(const QStringList &uris);
+    QWidget *createWindow(const QString &uri, QStringList selectUris);
 
-private:
+//private:
     explicit MainWindowFactory(QObject *parent = nullptr);
 };
 

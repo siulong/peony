@@ -106,6 +106,7 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
 
     void tabletModeChanged(bool isTabletMode);
+    void setSelection(QStringList selectionUris);
 
 public Q_SLOTS:
     void maximizeOrRestore();

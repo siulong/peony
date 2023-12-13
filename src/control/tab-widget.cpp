@@ -32,7 +32,8 @@
 #include "file-info-job.h"
 #include "file-launch-manager.h"
 #include "search-vfs-uri-parser.h"
-#include "properties-window.h"
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 #include "file-enumerator.h"
 
 #include <QStackedWidget>
@@ -1700,7 +1701,8 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
 #endif
 
     if (info->uri().startsWith("trash://")) {
-        auto w = new Peony::PropertiesWindow(QStringList()<<uri);
+        QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+        //auto w = new Peony::PropertiesWindow(QStringList()<<uri);
         w->show();
         return;
     }

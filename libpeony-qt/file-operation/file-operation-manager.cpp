@@ -48,7 +48,7 @@
 #include "file-watcher.h"
 #include "audio-play-manager.h"
 
-#include "properties-window.h"
+//#include "properties-window.h"
 #include "sound-effect.h"
 #include <kballontip.h>
 #ifdef KY_SDK_SOUND_EFFECTS

@@ -44,6 +44,9 @@ schemes.path = /usr/share/glib-2.0/schemas/
 PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/peony-extensions
 DEFINES += PLUGIN_INSTALL_DIRS='\\"$${PLUGIN_INSTALL_DIRS}\\"'
 
+PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/peony-properties-window
+DEFINES += PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS='\\"$${PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS}\\"'
+
 QMAKE_CXXFLAGS += -execution-charset:utf-8
 
 # The following define makes your compiler emit warnings if you use

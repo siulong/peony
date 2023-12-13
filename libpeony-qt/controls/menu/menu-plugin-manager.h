@@ -123,7 +123,6 @@ public:
 
 private:
     bool m_enable = true;
-    FileLabelWidget* m_label = nullptr;
 };
 
 class FileLabelWidget : public QWidget

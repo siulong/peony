@@ -71,7 +71,8 @@ public:
     DirectoryViewIface *create() override;
 
     int zoom_level_hint() override {
-        return 24;
+        return m_zoomLevelHint;
+        //return 24;
     }
     int priority(const QString &) override {
         return 0;
@@ -80,6 +81,7 @@ public:
 private:
     explicit ListViewFactory(QObject *parent = nullptr);
     ~ListViewFactory() override;
+    int m_zoomLevelHint = 24;
 };
 
 class PEONYCORESHARED_EXPORT ListViewFactory2 : public QObject, public DirectoryViewPluginIface2
@@ -125,13 +127,15 @@ public:
     DirectoryViewWidget *create() override;
 
     int zoom_level_hint() override {
-        return 24;
+        return m_zoomLevelHint;
+        //return 24;
     }
     int minimumSupportedZoomLevel() override {
         return 0;
     }
     int maximumSupportedZoomLevel() override {
-        return 40;
+        return m_maximumSupportedZoomLevel;
+        //return 40;
     }
 
     int priority(const QString &) override {
@@ -141,9 +145,17 @@ public:
         return true;
     }
 
+    void setMaximumSupportedZoomLevel(int maximumSupportedZoomLevel) {
+        m_maximumSupportedZoomLevel = maximumSupportedZoomLevel;
+    }
+    void setZoomLevelhint(int zoomLevelhint) {
+        m_zoomLevelHint = zoomLevelhint;
+    }
 private:
     explicit ListViewFactory2(QObject *parent = nullptr);
     ~ListViewFactory2() override;
+    int m_zoomLevelHint = 24;
+    int m_maximumSupportedZoomLevel = 40;
 };
 
 }

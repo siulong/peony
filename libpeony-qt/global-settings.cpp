@@ -281,6 +281,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(DEFAULT_GRID_SIZE, QSize());
     }
 
+    if (m_cache.value(LABLE_ALIGNMENT).isNull()) {
+        setValue(LABLE_ALIGNMENT, 1);
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {

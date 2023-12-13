@@ -69,7 +69,8 @@ public:
     DirectoryViewIface *create() override;
 
     int zoom_level_hint() override {
-        return 70;
+        return m_zoomLevelHint;
+        //return 70;
     }
     int priority(const QString &) override {
         return 0;
@@ -78,6 +79,7 @@ public:
 private:
     explicit IconViewFactory(QObject *parent = nullptr);
     ~IconViewFactory() override;
+    int m_zoomLevelHint = 70;
 };
 
 class IconViewFactory2 : public QObject, public DirectoryViewPluginIface2
@@ -123,10 +125,12 @@ public:
     DirectoryViewWidget *create() override;
 
     int zoom_level_hint() override {
-        return 70;
+        return m_zoomLevelHint;
+        //return 70;
     }
     int minimumSupportedZoomLevel() override {
-        return 41;
+        return m_minimunSupportZoomLevel;
+        //return 41;
     }
     int maximumSupportedZoomLevel() override {
         return 100;
@@ -139,9 +143,19 @@ public:
         return true;
     }
 
+    void setZoomLevelHint(int zoomLevelHint) {
+        m_zoomLevelHint = zoomLevelHint;
+    }
+
+    void setMinimunSupportZoomLevel(int minimunSupportZoomLevel) {
+        m_minimunSupportZoomLevel = minimunSupportZoomLevel;
+    }
+
 private:
     explicit IconViewFactory2(QObject *parent = nullptr);
     ~IconViewFactory2() override;
+    int m_zoomLevelHint = 70;
+    int m_minimunSupportZoomLevel = 41;    
 };
 
 }

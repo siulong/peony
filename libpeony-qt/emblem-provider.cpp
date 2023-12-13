@@ -139,7 +139,7 @@ void EmblemProviderManager::cancelQuery(const QString &uri)
     m_mutex.unlock();
 }
 
-EmblemProviderManager::EmblemProviderManager(QObject *parent)
+EmblemProviderManager::EmblemProviderManager(QObject *parent) : QObject(parent)
 {
     registerProvider(MetadataEmblemProvider::getInstance());
 

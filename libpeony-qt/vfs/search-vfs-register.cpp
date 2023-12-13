@@ -37,6 +37,8 @@ test_vfs_parse_name (GVfs       *vfs,
                      const char *parse_name,
                      gpointer    user_data)
 {
+    Q_UNUSED(vfs)
+    Q_UNUSED(user_data)
     QString tmp = parse_name;
     if (tmp.contains("real-uri:")) {
         QString realUri = tmp.split("real-uri:").last();
@@ -63,7 +65,6 @@ void SearchVFSRegister::registSearchVFS()
 
     GVfs *vfs;
     const gchar * const *schemes;
-    gboolean res;
 
     vfs = g_vfs_get_default ();
     schemes = g_vfs_get_supported_uri_schemes(vfs);
@@ -75,9 +76,11 @@ void SearchVFSRegister::registSearchVFS()
     }
 
 #if GLIB_CHECK_VERSION(2, 50, 0)
+    gboolean res;
     res = g_vfs_register_uri_scheme (vfs, "search",
                                      test_vfs_lookup, NULL, NULL,
                                      test_vfs_parse_name, NULL, NULL);
+    Q_UNUSED(res)
 #else
     //FIXME: how to implement search operation in old glib?
 #endif
@@ -86,6 +89,11 @@ void SearchVFSRegister::registSearchVFS()
 SearchVFSRegister::SearchVFSRegister()
 {
 
+}
+
+void SearchVFSInternalPlugin::setEnable(bool enable)
+{
+    Q_UNUSED(enable)
 }
 
 void SearchVFSInternalPlugin::initVFS()

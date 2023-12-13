@@ -78,13 +78,18 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     m_touch_active_timer->setInterval(2000);
     m_touch_active_timer->setSingleShot(true);
 
-    setFrameShape(QFrame::NoFrame);
+    //setFrameShape(QFrame::NoFrame);
 
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    m_version = qApp->property("version").toString();
+    if (m_version == "ukui3.0") {
+        setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    } else {
+        setFrameShape(QFrame::NoFrame);
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    } 
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
@@ -154,6 +159,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setMouseTracking(true);//追踪鼠标
 
     m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
+
+    m_labelAlignment = GlobalSettings::getInstance()->getValue(LABLE_ALIGNMENT).toInt();
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -1208,6 +1215,16 @@ void ListView::doMultiSelect(bool isMultiSlelect)
     }
 
     viewport()->update();
+}
+
+void ListView::setLabelAlignment(int alignment)
+{
+    m_labelAlignment = alignment;
+}
+
+int ListView::getLabelAlignment() const
+{
+    return m_labelAlignment;
 }
 
 //List View 2

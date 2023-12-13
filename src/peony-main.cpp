@@ -22,7 +22,7 @@
 
 #include "peony-application.h"
 
-#include "main-window.h"
+//#include "main-window.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,8 +33,8 @@
 #include <QStandardPaths>
 
 #include <ukui-log4qt.h>
-#include "navigation-tab-bar.h"
-#include "tab-widget.h"
+//#include "navigation-tab-bar.h"
+//#include "tab-widget.h"
 
 #include "global-settings.h"
 

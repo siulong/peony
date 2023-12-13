@@ -9,7 +9,8 @@ HEADERS += \
     $$PWD/ky-udf-format-dialog.h \
     $$PWD/properties-window.h \
     $$PWD/udfFormatDialog.h \
-    $$PWD/udfAppendBurnDataDialog.h
+    $$PWD/udfAppendBurnDataDialog.h \
+    $$PWD/properties-window-factory.h
 
 SOURCES += \
     $$PWD/fm-window-factory.cpp \
@@ -19,7 +20,8 @@ SOURCES += \
     $$PWD/ky-udf-format-dialog.cpp \
     $$PWD/properties-window.cpp \
     $$PWD/udfFormatDialog.cpp \
-    $$PWD/udfAppendBurnDataDialog.cpp
+    $$PWD/udfAppendBurnDataDialog.cpp \
+    $$PWD/properties-window-factory.cpp
 
 FORMS += \
     $$PWD/format_dialog.ui

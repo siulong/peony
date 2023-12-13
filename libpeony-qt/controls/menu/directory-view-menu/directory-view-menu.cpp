@@ -51,8 +51,8 @@
 
 #include "volume-manager.h"
 
-#include "properties-window.h"
-
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 #include "windows/format_dialog.h"
 #include "file-launch-manager.h"
 #include "file-launch-action.h"
@@ -121,6 +121,7 @@ void DirectoryViewMenu::setHiddenActionsByObjectName(const QStringList &actionNa
 
 void DirectoryViewMenu::fillActions()
 {
+    m_version = qApp->property("version").toString();
     QString actualDir =  m_directory;
     if(actualDir.startsWith("search://")){
         m_is_search = true;
@@ -182,7 +183,7 @@ void DirectoryViewMenu::fillActions()
         m_is_boxpath = true;
     }
 
-    if (actualDir.startsWith("label://")){
+    if (actualDir.startsWith("label://") && m_version != "ukui3.0"){
         m_is_label_model = true;
     }
 
@@ -1073,7 +1074,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
             if (m_selections.isEmpty()) {
                 QStringList uris;
                 uris<<m_directory;
-                PropertiesWindow *p = new PropertiesWindow(uris);
+                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
+                //PropertiesWindow *p = new PropertiesWindow(uris);
                 p->setAttribute(Qt::WA_DeleteOnClose);
                 p->show();
             } else {
@@ -1084,18 +1086,20 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                         || m_selections.at(uriIndex) == "favorite:///?schema=recent") {
                             QStringList urisList;
                             urisList << FileUtils::getTargetUri(m_selections.at(uriIndex));
-                            PropertiesWindow *p = new PropertiesWindow(urisList);
+                            //PropertiesWindow *p = new PropertiesWindow(urisList);
+                            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
                             p->setAttribute(Qt::WA_DeleteOnClose);
                             p->show();
                         } else {
                             selectUriList<< m_selections.at(uriIndex);
                         }
                     }
-                }else if(m_selections.first().startsWith("label:///")){
+                }else if(m_selections.first().startsWith("label:///") && m_version != "ukui3.0"){
                     for(auto &labelUri : m_selections){/* 标记模式页面为不同目录下的文件（夹），所以每个都需要一个属性对话框 */
                         QStringList urisList;
                         urisList.append(labelUri);
-                        PropertiesWindow *p = new PropertiesWindow(urisList);
+                        QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                        //PropertiesWindow *p = new PropertiesWindow(urisList);
                         p->setAttribute(Qt::WA_DeleteOnClose);
                         p->show();
                     }
@@ -1104,7 +1108,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                 }
 
                 if (selectUriList.count() > 0) {
-                    PropertiesWindow *p = new PropertiesWindow(selectUriList);
+                    QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList);
+                    //PropertiesWindow *p = new PropertiesWindow(selectUriList);
                     p->setAttribute(Qt::WA_DeleteOnClose);
                     p->show();
                 }
@@ -1114,7 +1119,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
         l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"));
         l.last()->setObjectName(PROPERTIES_ACTION);
         connect(l.last(), &QAction::triggered, [=]() {
-            PropertiesWindow *p = new PropertiesWindow(m_selections);
+            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections);
+            //PropertiesWindow *p = new PropertiesWindow(m_selections);
             p->setAttribute(Qt::WA_DeleteOnClose);
             p->show();
         });
@@ -1364,7 +1370,7 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                         action->setObjectName(plugin->name());
                         addAction(action);
                         qDebug()<< id<<"-==================-";
-                        if(id == "Peony File Labels Menu Extension"){
+                        if(id == "Peony File Labels Menu Extension" && m_version != "ukui3.0"){
                             l<<addSeparator();
                         }
                     }
@@ -1378,6 +1384,9 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
 const QList<QAction *> DirectoryViewMenu::constructMultiSelectActions()
 {
     QList<QAction *> l;
+    if (m_version == "ukui3.0") {
+        return l;
+    }
     auto MultiSelectAction = addAction(tr("MultiSelect"));
     l<<MultiSelectAction;
     connect(l.last(), &QAction::triggered, [=]() {
