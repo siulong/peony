@@ -242,6 +242,7 @@ void VolumeManager::initManagerInfo(){
 /*gparted应用是否打开*/
 bool VolumeManager::gpartedIsOpening(){
     GList* volumes = nullptr;
+    Q_UNUSED(volumes)
     GList* drives = nullptr;
     GList* l;
     GDrive* drive;
@@ -273,12 +274,16 @@ bool VolumeManager::gpartedIsOpening(){
 /*使用volume-changed信号处理设备的name属性更新*/
 void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
+
     if(!pThis->m_volumeList)
         return;
     QString device,name;
     char *gdevice,*gname;
 
     QHash<QString,Volume*>::iterator findItem,end;
+    Q_UNUSED(findItem)
+    Q_UNUSED(end)
     //情景：使用其他工具修改卷标后，卷标需要更新
     gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
     gname = g_volume_get_name(gvolume);
@@ -307,10 +312,12 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     bool itemIsExisted = false;
     int volumeCount = pThis->m_volumeList->count();
+    Q_UNUSED(volumeCount)
     GVolume* volume = (GVolume*)g_object_ref(gvolume);
     Volume *addItem = new Volume(volume);
 
@@ -355,6 +362,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
@@ -417,6 +425,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         g_autofree char *gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
         if (pThis->m_volumeList->contains(gdevice)) {
             auto volumeItem = pThis->m_volumeList->value(gdevice);
+            Q_UNUSED(volumeItem)
             pThis->m_volumeList->remove(gdevice);
             Q_EMIT pThis->volumeRemove(gdevice);
         }
@@ -443,6 +452,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
     phoneFlag = device.contains("/dev/bus");
     blankCDFlag = device.contains("/dev/sr") && pThis->m_volumeList->value(device)->mountPoint().isEmpty();
     phoneOrCD = device.contains("/dev/bus") || device.contains("/dev/sr");
+    Q_UNUSED(phoneOrCD)
     qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
     if(gmount){
         if(!phoneFlag && !blankCDFlag){
@@ -473,6 +483,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
 //收到mount-removed时使用挂载点属性更新设备的状态
 void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         GMount *gmount,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     //情景1、卸载或弹出操作（不区分有无gparted进程）
@@ -522,6 +533,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
         GMount *gmount,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     //情景1、未打开gparted时插入新设备的自动挂载操作
@@ -615,6 +627,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
 
 void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
@@ -633,6 +646,7 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
 void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                                          GDrive *gdrive,VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     /* 添加光驱设备，例如空光驱插入 */
@@ -688,6 +702,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
 */
 void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
                                             GDrive *gdrive,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     char* gdevice = g_drive_get_identifier(gdrive,G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
@@ -718,6 +733,7 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::driveChangedCallback(GVolumeMonitor *monitor, GDrive *gdrive, VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
@@ -1824,7 +1840,7 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 #include"file-utils.h"
-GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent)
+GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent) : QThread(parent)
 {
 
 }
@@ -1837,9 +1853,11 @@ void GetOccupiedAppsInfoThread::run()
 
 void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char *message, GArray *processes, char **choices, gpointer user_data)
 {
+    Q_UNUSED(MountOp)
+    Q_UNUSED(choices)
     qDebug()<<"len of processes:"<<processes->len;
     std::map<QString,QIcon> occupiedAppMap;
-    for(int i=0; i< processes->len; i++)
+    for(guint i=0; i< processes->len; i++)
     {
         GPid pid = g_array_index(processes, GPid ,i);
         QProcess *process =new QProcess();
