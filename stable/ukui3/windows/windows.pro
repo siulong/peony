@@ -21,7 +21,7 @@ DISTFILES += $$PWD/common.json
 DEFINES += QAPPLICATION_CLASS=QApplication
 
 PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf
-LIBS +=-L$$PWD/../../../libpeony-qt/ -lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
+LIBS +=-L$$PWD/../../../libpeony-qt/ -lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt -lpeony
 #CONFIG += c++11 link_pkgconfig no_keywords lrelease
 CONFIG += debug link_pkgconfig plugin
 TARGET = stable-main-window
