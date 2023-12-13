@@ -820,11 +820,11 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
         }
     });
 
-    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
-        for (auto bgWindow : m_bg_windows) {
-            bgWindow->getIconView()->setGridSize(gridSize);
-        }
-    });
+//    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+//        for (auto bgWindow : m_bg_windows) {
+//            bgWindow->getIconView()->setGridSize(gridSize);
+//        }
+//    });
 }
 
 void PeonyDesktopApplication::setupDesktop()
