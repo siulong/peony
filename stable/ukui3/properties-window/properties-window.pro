@@ -27,7 +27,7 @@ INCLUDEPATH += $$PWD/../../../libpeony-qt/thumbnail
 DISTFILES += $$PWD/common.json
 
 PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt libcanberra libnotify udisks2 openssl dconf
-LIBS +=-L$$PWD/../../../  -lpeony -lX11 -lukui-log4qt
+LIBS +=-L$$PWD/../../../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
 
 CONFIG += debug link_pkgconfig plugin no_keywords
 TARGET = stable-properties-window
