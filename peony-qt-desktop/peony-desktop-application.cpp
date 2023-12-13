@@ -771,6 +771,12 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
     qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
     window->show();
 
+    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+        for (auto bgWindow : m_bg_windows) {
+            bgWindow->getIconView()->setGridSize(gridSize);
+        }
+    });
+
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
         for (auto bgWindow : m_bg_windows) {
@@ -817,12 +823,6 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
             outputRemoved(output->id());
         }
     });
-
-//    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
-//        for (auto bgWindow : m_bg_windows) {
-//            bgWindow->getIconView()->setGridSize(gridSize);
-//        }
-//    });
 }
 
 void PeonyDesktopApplication::setupDesktop()
