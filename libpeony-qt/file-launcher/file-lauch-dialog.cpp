@@ -32,7 +32,7 @@
 #include <QtConcurrent>
 
 #include "file-lauch-dialog.h"
-#include "properties-window.h"
+//#include "properties-window.h"
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
 

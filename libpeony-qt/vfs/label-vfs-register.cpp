@@ -29,12 +29,19 @@ bool Label_is_registed = false;
 
 static GFile* test_vfs_parse_name (GVfs* vfs, const char* parse_name, gpointer user_data)
 {
+    Q_UNUSED(vfs)
+    Q_UNUSED(user_data)
     return vfs_label_file_new_for_uri(parse_name);
 }
 
 static GFile* test_vfs_lookup (GVfs* vfs, const char *uri, gpointer user_data)
 {
     return test_vfs_parse_name(vfs, uri, user_data);
+}
+
+void Peony::LabelVFSInternalPlugin::setEnable(bool enable)
+{
+    Q_UNUSED(enable)
 }
 
 void Peony::LabelVFSInternalPlugin::initVFS()
@@ -54,7 +61,6 @@ void Peony::LabelVFSRegister::registLabelVFS()
     }
 
     GVfs* vfs = nullptr;
-    gboolean res = false;
     const gchar * const *schemes;
 
     vfs = g_vfs_get_default ();
@@ -67,7 +73,9 @@ void Peony::LabelVFSRegister::registLabelVFS()
     }
 
 #if GLIB_CHECK_VERSION(2, 50, 0)
+    gboolean res = false;
     res = g_vfs_register_uri_scheme (vfs, "label", test_vfs_lookup, NULL, NULL, test_vfs_parse_name, NULL, NULL);
+    Q_UNUSED(res)
 #else
 #endif
 }

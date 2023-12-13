@@ -77,13 +77,19 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     m_touch_active_timer = new QTimer(this);
     m_touch_active_timer->setSingleShot(true);
 
-    setFrameShape(QFrame::NoFrame);
+    //setFrameShape(QFrame::NoFrame);
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
+    QString version = qApp->property("version").toString();
+    if (version == "ukui3.0"){
+        setStyle(IconViewStyle::getStyle());
+    } else {
+        setFrameShape(QFrame::NoFrame);
+    } 
 
     //setStyle(IconViewStyle::getStyle());
     //FIXME: do not create proxy in view itself.
@@ -115,8 +121,11 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     //setWordWrap(true);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-
-    setIconSize(QSize(86, 86));
+    if (version == "ukui3.0"){
+        setIconSize(QSize(64, 64));
+    } else {
+        setIconSize(QSize(86, 86));
+    } 
     setGridSize(itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));
 
     m_renameTimer = new QTimer(this);
@@ -980,6 +989,11 @@ IconView2::IconView2(QWidget *parent) : DirectoryViewWidget(parent)
     layout->setSpacing(0);
     m_view = new IconView(this);
 
+    QString version = qApp->property("version").toString();
+    if (version == "ukui3.0") {
+        m_zoom_level = 25;
+    }
+
     DirectoryViewHelper * viewHelper = DirectoryViewHelper::globalInstance();
     viewHelper->addIconViewWithDirectoryViewWidget(m_view, this);
     connect(m_view, &IconView::updateSelectStatus, viewHelper, &DirectoryViewHelper::updateSelectStatus);
@@ -1113,6 +1127,10 @@ void IconView2::setCurrentZoomLevel(int zoomLevel)
         m_zoom_level = zoomLevel;
         //FIXME: implement zoom
         int base = 16; //50
+        QString version = qApp->property("version").toString();
+        if (version == "ukui3.0") {
+             base = 64 - 25;
+        }
         int adjusted = base + zoomLevel;
         m_view->setIconSize(QSize(adjusted, adjusted));
         m_view->setGridSize(m_view->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex()) + QSize(20, 20));

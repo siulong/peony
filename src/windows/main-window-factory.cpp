@@ -25,7 +25,7 @@
 
 MainWindowFactory *global_instance = nullptr;
 
-Peony::FMWindowFactory *MainWindowFactory::getInstance()
+Peony::MainWindowFactoryIface *MainWindowFactory::getInstance()
 {
     auto g = global_instance;
     if (!global_instance)
@@ -51,7 +51,34 @@ Peony::FMWindowIface *MainWindowFactory::create(const QStringList &uris)
     return window;
 }
 
-MainWindowFactory::MainWindowFactory(QObject *parent) : Peony::FMWindowFactory(parent)
+QWidget *MainWindowFactory::createWindow(const QString &uri)
+{
+    auto window = new MainWindow(uri);
+    return window;
+}
+
+QWidget *MainWindowFactory::createWindow(const QStringList &uris)
+{
+    if (uris.isEmpty())
+        return new MainWindow;
+    auto uri = uris.first();
+    auto l = uris;
+    l.removeAt(0);
+    auto window = new MainWindow(uri);
+    window->addNewTabs(l);
+    return window;
+}
+
+QWidget *MainWindowFactory::createWindow(const QString &uri, QStringList selectUris)
+{
+    auto window = new MainWindow(uri);
+    connect(window, &MainWindow::locationChangeEnd, [=]() {
+        Q_EMIT window->setSelection(selectUris);
+    });
+    return window;
+}
+
+MainWindowFactory::MainWindowFactory(QObject *parent) : Peony::MainWindowFactoryIface()
 {
 
 }

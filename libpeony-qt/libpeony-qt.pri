@@ -6,6 +6,7 @@ include(model/model.pri)
 include(vfs/vfs.pri)
 #plugin interface
 include(../plugin-iface/plugin-iface.pri)
+include(../plugin-iface/unstable/window-plugin-iface.pri)
 include(effects/effects.pri)
 
 include(convenient-utils/convenient-utils.pri)
@@ -34,6 +35,7 @@ contains(DEFINES, "KY_UKUI_SEARCH") {
 
 HEADERS += \
     $$PWD/extensions-manager-widget.h \
+    $$PWD/properties-window-factory-plugin-manager.h \
     $$PWD/file-copy.h               \
     $$PWD/peony-log.h               \
     $$PWD/plugin-manager.h          \
@@ -44,6 +46,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/extensions-manager-widget.cpp \
+    $$PWD/properties-window-factory-plugin-manager.cpp \
     $$PWD/file-copy.cpp             \
     $$PWD/plugin-manager.cpp        \
     $$PWD/global-settings.cpp       \

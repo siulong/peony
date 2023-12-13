@@ -43,6 +43,7 @@
 #define DEFAULT_VIEW_ID             "defaultViewId"
 #define DEFAULT_VIEW_ZOOM_LEVEL     "defaultViewZoomLevel"
 #define DEFAULT_DETAIL              "detail"
+#define LABLE_ALIGNMENT             "labelAlignment"
 
 //排序类型 - Sort type
 // fix 112308, sort type option does no effect issue.

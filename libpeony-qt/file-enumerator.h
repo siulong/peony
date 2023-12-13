@@ -99,7 +99,7 @@ public:
     }
 
     void setAutoDelete(bool autoDelete = true) {
-        m_auto_delete = true;
+        m_auto_delete = autoDelete;
     }
 
 Q_SIGNALS:

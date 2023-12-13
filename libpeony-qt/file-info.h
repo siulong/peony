@@ -41,7 +41,7 @@ namespace Peony {
 class FileInfoJob;
 class FileMetaInfo;
 
-static char *office_mime_types[] = {
+static const char *office_mime_types[] = {
     "application/wps-office.doc",
     "application/msword",
     "application/vnd.ms-word",

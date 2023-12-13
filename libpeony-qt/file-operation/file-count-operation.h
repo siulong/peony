@@ -29,7 +29,7 @@ namespace Peony {
 
 class FileNodeReporter;
 
-class FileCountOperation : public FileOperation
+class PEONYCORESHARED_EXPORT FileCountOperation : public FileOperation
 {
     Q_OBJECT
 public:
