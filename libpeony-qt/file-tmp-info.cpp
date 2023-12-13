@@ -27,7 +27,7 @@ FileTmpInfo::FileTmpInfo(QObject *parent) : QObject(parent)
 
 }
 
-FileTmpInfo::FileTmpInfo(const FileTmpInfo &fileInfo)
+FileTmpInfo::FileTmpInfo(const FileTmpInfo &fileInfo) : QObject(nullptr)
 {
     m_uri = fileInfo.m_uri;
     m_is_dir = fileInfo.m_is_dir;

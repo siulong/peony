@@ -18,6 +18,7 @@
  *
  */
 
+#include "vfs-info-plugin-iface.h"
 #include "vfs-info-plugin-manager.h"
 #include "test-vfs-register.h"
 #include <QDebug>
@@ -67,4 +68,9 @@ VFSInfoPluginManager::VFSInfoPluginManager(QObject *parent)
     auto local2 = new LocalVFSInfoInternalPlugin2;
     registerPlugin(local2);
 #endif
+}
+
+HanderTransfer::HanderTransfer(QObject *parent) : QObject(parent)
+{
+
 }

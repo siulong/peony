@@ -92,7 +92,7 @@ struct VFSError
 class PEONYCORESHARED_EXPORT HanderTransfer : public QObject {
     Q_OBJECT
 public:
-    explicit HanderTransfer(QObject* parent = nullptr){}
+    explicit HanderTransfer(QObject* parent = nullptr);
 
 Q_SIGNALS:
     void fileCreate(const QString &path);

@@ -71,6 +71,11 @@ Peony::FavoriteVFSRegister::FavoriteVFSRegister()
 
 }
 
+void FavoriteVFSInternalPlugin::setEnable(bool enable)
+{
+    Q_UNUSED(enable)
+}
+
 void FavoriteVFSInternalPlugin::initVFS()
 {
     FavoriteVFSRegister::registFavoriteVFS();
