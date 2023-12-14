@@ -1636,7 +1636,12 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
     }
 
     QRegion notEmptyRegion;
-    for (auto rect : ensuredItemRectHash.values()) {
+    QSize size = m_item_rect_hash.values().first().size();
+    for (auto uri : ensuredItemRectHash.keys()) {
+        QModelIndex srcIndex = m_model->indexFromUri(uri);
+        QModelIndex index = m_proxy_model->mapFromSource(srcIndex);
+        QRect rect = getDataRect(index);
+        size = rect.size();
         notEmptyRegion += rect;
     }
 
@@ -1659,7 +1664,7 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
     for (auto uri : uris) {
         if (!allFileUris.contains(uri))
             continue;
-        auto indexRect = QRect(QPoint(marginLeft, marginTop), m_item_rect_hash.values().first().size());
+        auto indexRect = QRect(QPoint(marginLeft, marginTop), size);
         if (notEmptyRegion.intersects(indexRect)) {
 
             // move index to closest empty grid.
