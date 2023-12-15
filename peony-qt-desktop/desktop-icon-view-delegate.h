@@ -45,6 +45,9 @@ public:
 
     DesktopIconView *getView() const;
 
+    //初始化option
+     void initIndexOption(QStyleOptionViewItem *option,
+                          const QModelIndex &index) const;
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 

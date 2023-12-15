@@ -2352,8 +2352,8 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
 
         // fix #78263, text displayment is not completed.
         //realRect.adjust(-5, -5, 5, 5);
-        realRect.adjust(-15, -15, 15, 15);
 
+        //realRect.adjust(-15, -15, 15, 15);
         QPixmap pixmap(realRect.size() * scale);
         pixmap.fill(Qt::transparent);
         pixmap.setDevicePixelRatio(scale);
@@ -2368,7 +2368,11 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
                 painter.setBrush(qApp->palette().highlight());
                 painter.drawRoundedRect(QRect(0, 0, this->gridSize().width(), this->gridSize().height()).adjusted(1, 1, -1, -1), 6, 6);
             }
-            itemDelegate()->paint(&painter, viewOptions(), index);
+            QStyleOptionViewItem opt = viewOptions();
+            auto viewItemDelegate = static_cast<DesktopIconViewDelegate *>(itemDelegate());
+            viewItemDelegate->initIndexOption(&opt, index);
+            opt.rect.setSize(visualRect(index).size());
+            itemDelegate()->paint(&painter, opt, index);
             painter.restore();
         }
 

@@ -626,3 +626,8 @@ DesktopIconView *DesktopIconViewDelegate::getView() const
     auto view = qobject_cast<Peony::DesktopIconView*>(parent());
     return view;
 }
+
+void DesktopIconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    return initStyleOption(option, index);
+}
