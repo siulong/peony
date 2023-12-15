@@ -410,6 +410,9 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     auto info = Peony::FileInfo::fromUri(currentDirUri);
     if (!info->isEmptyInfo()) {
         isDirectoryCanWrite = info->canWrite();
+        if (!isDirectoryCanWrite && info.get()->fileSystemType().contains("udf")) {
+            isDirectoryCanWrite = true;
+        }
     }
     //comment to fix bug#191108, huawei phone can paste file success
 //    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){

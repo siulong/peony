@@ -963,6 +963,9 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 bool isDirectoryCanWrite = true;
                 if (!info->isEmptyInfo()) {
                     isDirectoryCanWrite = info->canWrite();
+                    if (!isDirectoryCanWrite && info.get()->fileSystemType().contains("udf")) {
+                        isDirectoryCanWrite = true;
+                    }
                 }
                 //comment to fix bug#191108, huawei phone can paste file success
 //                if (m_directory.startsWith("mtp://") || m_directory.startsWith("gphoto2://")){

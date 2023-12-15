@@ -791,7 +791,7 @@ void MainWindow::setShortCuts()
             //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
             auto info = Peony::FileInfo::fromUri(currentUri);
             //comment to fix bug#191108, huawei phone can paste file success
-            if (!info->canWrite() /*|| currentUri.startsWith("mtp://")
+            if (!info->canWrite() && !info.get()->fileSystemType().contains("udf")/*|| currentUri.startsWith("mtp://")
                 || currentUri.startsWith("gphoto2://")*/) {
                 return;
             }
