@@ -1,3 +1,9 @@
+peony (4.10.0.0-ok1~1215) nile; urgency=medium
+
+  * hotfix bug#203460 【文件管理器】频繁进行U盘弹出接入操作时，文管高概率卡死1/3
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 15 Dec 2023 16:59:36 +0800
+
 peony (4.10.0.0-ok1~1213.7) nile; urgency=medium
 
   * 修复编译问题
