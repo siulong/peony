@@ -2989,7 +2989,7 @@ QRect DesktopIconView::getDataRect(const QModelIndex &index)
     QFont font = qApp->font();
     auto fm = QFontMetrics(font);
     int lineSpacing = fm.lineSpacing();
-    int textHeight = lineSpacing*2 + 5;
+    int textHeight = lineSpacing + 5;
     QRect iconRect = style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, widget);
     QRect rect = opt.rect;
     rect.setHeight(iconRect.height() + textHeight);
@@ -3023,6 +3023,9 @@ void DesktopIconView::modifyGridSize()
        //重新排序
         setDefaultZoomLevel(zoomLevel());
         Q_EMIT updateView();
+        if (settings) {
+            settings->setValue(DEFAULT_GRID_SIZE, gridSize());
+        }
         return ;
     }
 
