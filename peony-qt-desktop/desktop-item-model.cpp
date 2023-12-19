@@ -997,6 +997,9 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         op->connect(op, &FileOperation::operationFinished, this, [=](){
             //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
             //Task#152997, use sdk play sound
+            if (op->hasError()) {
+                return;
+            }
 #ifdef KY_SDK_SOUND_EFFECTS
             kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
 #endif
