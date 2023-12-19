@@ -1042,7 +1042,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         if (this->cursor().shape() == Qt::BusyCursor || this->cursor().shape() == Qt::WaitCursor) {
             return;
         }
-        this->update();
+        repaintView();
     });
 
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
