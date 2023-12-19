@@ -94,14 +94,14 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
         }
     });
 
-    connect(this, &ThumbnailManager::updateFileThemedIconFromThread, this, [=](const QString &uri, const QString &themedIcon){
-        auto icon = QIcon::fromTheme(themedIcon);
-        if (icon.isNull()) {
-            return false;
-        }
-        this->insertOrUpdateThumbnail(uri, icon);
-        return true;
-    }, Qt::BlockingQueuedConnection);
+//    connect(this, &ThumbnailManager::updateFileThemedIconFromThread, this, [=](const QString &uri, const QString &themedIcon){
+//        auto icon = QIcon::fromTheme(themedIcon);
+//        if (icon.isNull()) {
+//            return false;
+//        }
+//        this->insertOrUpdateThumbnail(uri, icon);
+//        return true;
+//    }, Qt::BlockingQueuedConnection);
 }
 
 ThumbnailManager::~ThumbnailManager()
@@ -155,7 +155,11 @@ void ThumbnailManager::createImagePdfFileThumbnail(const QString &uri, std::shar
     QIcon thumbnail;
 
     ImagePdfThumbnail officeThumbnail(uri);
-    ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, "atril");
+//    ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, "atril");
+    auto job = new UpdateThemedIconJob(uri, "atril");
+    job->start();
+    job->wait();
+    delete job;
     if (watcher) {
         watcher->fileChanged(uri);
     }
@@ -282,8 +286,13 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
         }
     }
 
-    bool successed = ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, string);
+    auto job = new UpdateThemedIconJob(uri, string);
+    job->start();
+    job->wait();
+//    bool successed = ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, string);
+    bool successed = job->successed();
     successed = !thumbnail.isNull() || successed;
+    delete job;
 
     //fix desktop file set customer icon issue, link to bug#77638
 //    auto info = FileInfo::fromUri(uri);
@@ -485,4 +494,29 @@ bool ThumbnailManager::hasThumbnailThreadSafety(const QString &uri)
     bool res = hasThumbnail(uri);
     m_semaphore->release();
     return res;
+}
+
+UpdateThemedIconJob::UpdateThemedIconJob(const QString &uri, const QString &themeIcon, QObject *parent) : QThread(parent)
+{
+    m_uri = uri;
+    m_themeIconName = themeIcon;
+
+    connect(this, &UpdateThemedIconJob::updateFileThemedIconFromThread, ThumbnailManager::getInstance(), [=](const QString &uri, const QString &themeIcon){
+        auto icon = QIcon::fromTheme(themeIcon);
+        if (icon.isNull()) {
+            return false;
+        }
+        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri, icon);
+        return true;
+    }, Qt::BlockingQueuedConnection);
+}
+
+void UpdateThemedIconJob::run()
+{
+    m_successed = updateFileThemedIconFromThread(m_uri, m_themeIconName);
+}
+
+bool UpdateThemedIconJob::successed() const
+{
+    return m_successed;
 }
