@@ -1816,7 +1816,15 @@ void MainWindow::initUI(const QString &uri)
         if (! m_is_show_menu){
             m_is_show_menu = true;
             Peony::DirectoryViewMenu menu(this, this);
+            /* 菜单执行弹出操作时停止更新，超过1s或者结束菜单都启用更新;linkto bug#205332【文件管理器】选中一万个文本文件后，点击鼠标右键，右键菜单会闪烁 */
+            m_tab->setUpdatesEnabled(false);
+            QTimer::singleShot(1000, this, [=](){
+                if(!m_tab->updatesEnabled()){
+                    m_tab->setUpdatesEnabled(true);
+                }
+            });
             menu.exec(pos);
+            m_tab->setUpdatesEnabled(true);//end
             m_uris_to_edit = menu.urisToEdit();
             m_is_show_menu = false;
         }
