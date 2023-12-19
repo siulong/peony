@@ -1003,7 +1003,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 #ifdef KY_SDK_SOUND_EFFECTS
             kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
 #endif
-        });
+        }, Qt::BlockingQueuedConnection);
     }
 
     //NOTE:
