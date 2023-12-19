@@ -66,6 +66,7 @@ void FileRenameOperation::run()
     QString destUri;
     Q_EMIT operationStarted();
 
+    bool needHidden = false;
     if (m_new_name == "/" || m_new_name == "." || !nameIsValid(m_new_name)) {
         FileOperationError except;
         except.srcUri = m_uri;
@@ -103,6 +104,7 @@ void FileRenameOperation::run()
                 return;
             }else{
                 //fix bug#174512, can not hide file immediately
+                needHidden = true;
                 qDebug() << "Q_EMIT updateHiddenFile："<<m_new_name;
                 Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
             }
@@ -134,6 +136,9 @@ void FileRenameOperation::run()
             getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
             Q_EMIT operationFinished();
             return;
+        }else if (needHidden) {
+            //fix bug#205715, 同时修改为隐藏文件和设置隐藏，需要及时隐藏该文件
+            Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
         }
     }
 
