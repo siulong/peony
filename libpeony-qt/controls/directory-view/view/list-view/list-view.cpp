@@ -1064,9 +1064,9 @@ int ListView::getSortType()
 void ListView::setSortType(int sortType)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    QTimer::singleShot(0, this, [=]{
-        header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
-    });
+    header()->blockSignals(true);
+    header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
+    header()->blockSignals(false);
     m_proxy_model->sort(sortType, Qt::SortOrder(getSortOrder()));
 }
 
@@ -1078,9 +1078,9 @@ int ListView::getSortOrder()
 void ListView::setSortOrder(int sortOrder)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    QTimer::singleShot(0, this, [=]{
-        header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
-    });
+    header()->blockSignals(true);
+    header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
+    header()->blockSignals(false);
     m_proxy_model->sort(getSortType(), Qt::SortOrder(sortOrder));
 }
 
