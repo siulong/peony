@@ -140,6 +140,15 @@ std::vector<std::shared_ptr<FileInfo> > FileInfo::fromUris(QStringList uris)
 {
     std::vector<std::shared_ptr<FileInfo> > fileInfoVec;
     for (auto uri : uris) {
+        // note that FileInfo::fromUri() will replace file:///data/home to file:///home
+        // for auto parted installation, it't not good for model performance. however,
+        // if we do not relpace uri here, will lead #206224.
+//        FileInfoManager *info_manager = FileInfoManager::getInstance();
+//        if (info_manager->isAutoParted()) {
+//            if (uri.contains("file:///data/home")) {
+//                uri.replace("file:///data/home", "file:///home");
+//            }
+//        }
         std::shared_ptr<FileInfo> newly_info = std::make_shared<FileInfo>();
         newly_info->m_uri = uri;
         newly_info->m_file = g_file_new_for_uri(uri.toUtf8().constData());

@@ -65,6 +65,7 @@
 #include "volume-manager.h"
 #include "directoryviewhelper.h"
 
+#include "file-info-manager.h"
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "global-settings.h"
@@ -1690,7 +1691,12 @@ void TabWidget::editUris(const QStringList &uris)
 void TabWidget::onViewDoubleClicked(const QString &uri)
 {
     qDebug()<<"tab widget double clicked"<<uri;
-    auto info = Peony::FileInfo::fromUri(uri);
+    //auto info = Peony::FileInfo::fromUri(uri);
+    // fix #206224
+    auto info = Peony::FileInfoManager::getInstance()->findFileInfoByUri(uri);
+    if (!info) {
+        info = Peony::FileInfo::fromUri(uri);
+    }
 
 #ifdef MULTI_DISABLE
     if (isMultFile(info)) {
