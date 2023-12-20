@@ -45,6 +45,7 @@ static bool m_is_loading = false;
 DesktopMenuPluginManager::DesktopMenuPluginManager(QObject *parent) : QObject(parent)
 {
     m_is_loading = true;
+    EmblemProviderManager::getInstance();
     loadAsync();
 }
 
