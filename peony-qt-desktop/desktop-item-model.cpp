@@ -537,7 +537,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
         }
     });
 
-    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, [=](){
+    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, this, [=](){
        QTimer::singleShot(1000, this, [=]{
            for (auto file : m_files) {
                EmblemProviderManager::getInstance()->queryAsync(file->uri());
