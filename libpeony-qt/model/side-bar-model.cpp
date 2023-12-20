@@ -254,7 +254,7 @@ QVariant SideBarModel::data(const QModelIndex &index, int role) const
         if(!iconName.endsWith("-symbolic")){
             iconName += "-symbolic";
         }
-        qDebug()<<"print side bar icon name, uri"<<FileUtils::urlEncode(item->uri())<<" icon name:"<<iconName;
+        //qDebug()<<"print side bar icon name, uri"<<FileUtils::urlEncode(item->uri())<<" icon name:"<<iconName;
         return QIcon::fromTheme(iconName, QIcon::fromTheme(item->iconName()));
     }
     case Qt::DisplayRole:
