@@ -444,10 +444,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                         if (driveHasMedia(gdrive)) {
                             addItem->setHidden(false);
                         }
-                    }else if(uuid.isEmpty()){
-                        qDebug()<<__func__<<__LINE__<<device<<uuid;
-                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                        addItem->setHidden(true);
                     }
                 }//end
                 pThis->m_volumeList->remove(device);
@@ -948,11 +944,13 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                         }
                     }
                 }
-                /* 该代码段是解决前场问题时新增，影响了异常U盘显示，经讨论后先注释此处；hotfix bug#174631 关闭文件管理器时，插入异常U盘，侧边栏没有U盘图标 */
-                /*else if(uuid.isEmpty()){
-                    //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                    volumeItem->setHidden(true);
-                }*/
+                else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
+                    qDebug()<<"the icon of volume"<<volumeItem->device()<<volumeItem->icon();
+                    if("drive-removable-media" == volumeItem->icon()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
+                        volumeItem->setHidden(true);
+                    }
+                }
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
                 volumeItem->setHidden(true);
