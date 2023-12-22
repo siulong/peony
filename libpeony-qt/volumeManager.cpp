@@ -905,7 +905,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         QString device = volumeItem->device();
         if(m_volumeList->contains(device)) {
             delete volumeItem;
-            delete entry;
+            //delete entry;
             continue;
         }
 
@@ -958,7 +958,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         }
         if (shouldDeleteItem)
             delete volumeItem;
-        delete entry;
+        //delete entry;
     }
 
 
