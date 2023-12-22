@@ -75,6 +75,9 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
     auto item = model->itemFromIndex(index);
+    if (!item) {
+        return;
+    }
     auto info = item->info();
     auto colors = info->getColors();
 
