@@ -280,17 +280,17 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     m_trash_bar = trashButtons;
 
     QLabel *Label = new QLabel(tr("Trash"), trashButtons);
-    Label->setFixedHeight(TRASH_BUTTON_HEIGHT);
-    Label->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    Label->setFixedHeight(TRASH_BUTTON_HEIGHT);
+//    Label->setFixedWidth(TRASH_BUTTON_WIDTH);
     m_trash_label = Label;
     QPushButton *clearAll = new QPushButton(tr("Clear"), trashButtons);
-    clearAll->setFixedWidth(TRASH_BUTTON_WIDTH);
-    clearAll->setFixedHeight(TRASH_BUTTON_HEIGHT);/* Fix the bug:62841,the font of the clear button is not displayed completely */
+//    clearAll->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    clearAll->setFixedHeight(TRASH_BUTTON_HEIGHT);/* Fix the bug:62841,the font of the clear button is not displayed completely */
     clearAll->setStyle(PushButtonStyle::getStyle());
     m_clear_button = clearAll;
     QPushButton *recover = new QPushButton(tr("Recover"), trashButtons);
-    recover->setFixedWidth(TRASH_BUTTON_WIDTH);
-    recover->setFixedHeight(TRASH_BUTTON_HEIGHT);
+//    recover->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    recover->setFixedHeight(TRASH_BUTTON_HEIGHT);
     recover->setStyle(PushButtonStyle::getStyle());
     m_recover_button = recover;
     //hide trash button to fix bug 31322, according to designer advice
@@ -300,9 +300,10 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     trash->addWidget(Label, Qt::AlignLeft);
     trash->setContentsMargins(10, 0, 10, 0);
     trash->addWidget(trashButtons);
-    trash->addWidget(recover, Qt::AlignLeft);
+    trash->addStretch();
+    trash->addWidget(recover);
     trash->addSpacing(10);
-    trash->addWidget(clearAll, Qt::AlignLeft);
+    trash->addWidget(clearAll);
     updateTrashBarVisible();
 
     connect(clearAll, &QPushButton::clicked, this, [=]()
