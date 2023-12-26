@@ -348,11 +348,13 @@ public:
 
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
+    FileInfo &operator=(const FileInfo &other);
 
 Q_SIGNALS:
     void updated();
 
 private:
+    /* 如果新增了成员变量，需按需更新“&operator=、fileInfoJob::refreshInfoContents、fileInfosJob::refreshInfoContents”等接口！！！后续考虑优化。 */
     QString m_uri = nullptr;
     bool m_is_valid = false;
     bool m_is_dir = false;

@@ -331,6 +331,58 @@ const QString FileInfo::getFinalDisplayName()
     return deviceName;
 }
 
+FileInfo &FileInfo::operator=(const FileInfo &other)
+{
+    if(this != &other){
+        this->m_uri = other.m_uri;
+        this->m_is_valid = other.m_is_valid;
+        this->m_is_dir = other.m_is_dir;
+        this->m_is_volume = other.m_is_volume;
+        this->m_is_remote = other.m_is_remote;
+        this->m_is_symbol_link = other.m_is_symbol_link;
+        this->m_is_virtual = other.m_is_virtual;
+        this->m_is_loaded = other.m_is_loaded;
+        this->m_display_name = other.m_display_name;
+        this->m_desktop_name = other.m_desktop_name;
+        this->m_icon_name = other.m_icon_name;
+        this->m_symbolic_icon_name = other.m_symbolic_icon_name;
+        this->m_file_id = other.m_file_id;
+        this->m_path = other.m_path;
+        this->m_content_type = other.m_content_type;
+        this->m_size = other.m_size;
+        this->m_modified_time = other.m_modified_time;
+        this->m_access_time = other.m_access_time;
+        this->m_deletion_date_uint64 = other.m_deletion_date_uint64;
+        this->m_mime_type_string = other.m_mime_type_string;
+        this->m_file_type = other.m_file_type;
+        this->m_file_size = other.m_file_size;
+        this->m_modified_date = other.m_modified_date;
+        this->m_access_date = other.m_access_date;
+        this->m_deletion_date = other.m_deletion_date;
+        this->m_can_read = other.m_can_read;
+        this->m_can_write = other.m_can_write;
+        this->m_can_excute = other.m_can_excute;
+        this->m_can_delete = other.m_can_delete;
+        this->m_can_trash = other.m_can_trash;
+        this->m_can_rename = other.m_can_rename;
+        this->m_can_mount = other.m_can_mount;
+        this->m_can_unmount = other.m_can_unmount;
+        this->m_can_eject = other.m_can_eject;
+        this->m_can_start = other.m_can_start;
+        this->m_can_stop = other.m_can_stop;
+        this->m_unix_device_file = other.m_unix_device_file;
+        this->m_target_uri = other.m_target_uri;
+        this->m_symlink_target = other.m_symlink_target;
+        this->m_fs_type = other.m_fs_type;
+        this->m_meta_info = std::make_shared<FileMetaInfo>(FileMetaInfo(other.m_meta_info.get()));
+        this->m_colors = other.m_colors;
+        this->m_finalDisplayName = other.m_finalDisplayName;
+        this->m_create_time = other.m_create_time;
+        this->m_create_date = other.m_create_date;
+    }
+    return *this;
+}
+
 const QString FileInfo::unixDeviceFile()
 {
     GFile* file;
