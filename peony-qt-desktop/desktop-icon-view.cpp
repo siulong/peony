@@ -1290,7 +1290,6 @@ void DesktopIconView::editUri(const QString &uri)
     qDebug() << "editUri clearAllIndexWidgets";
     auto origin = FileUtils::getOriginalUri(uri);
     QTimer::singleShot(100, this, [=]() {
-        edit(m_proxy_model->mapFromSource(m_model->indexFromUri(origin)));
         auto index = m_proxy_model->mapFromSource(m_model->indexFromUri(origin));
         edit(index);
         qDebug() << "editUri index:"<<index<<uri;
