@@ -92,20 +92,17 @@ std::shared_ptr<FileInfo> FileInfoManager::insertFileInfo(std::shared_ptr<FileIn
     return info;
 }
 
-void FileInfoManager::updateFileInfo(std::shared_ptr<FileInfo> info)
+void FileInfoManager::updateFileInfo(std::shared_ptr<FileInfo>& info)
 {
     Q_ASSERT(global_info_list);
-    m_op_lock.lock();
+    QMutexLocker mtx(&m_op_lock);
     QString uri = info->uri();
     if(global_info_list->value(uri).lock()){
         std::shared_ptr<FileInfo> fileInfo = global_info_list->value(uri).lock();
-        fileInfo->FileInfo::operator=(*info.get());/* update file info */
-        global_info_list->insert(uri, fileInfo);
-    }else{
-        global_info_list->insert(uri, info);
+        fileInfo.get()->FileInfo::operator=(*info.get());/* update file info */
+        info = fileInfo;
     }
-    m_op_lock.unlock();
-
+    global_info_list->insert(uri, info);
     return;
 
 }
