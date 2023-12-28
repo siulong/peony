@@ -396,6 +396,10 @@ void IconView::mousePressEvent(QMouseEvent *e)
     }
 
     m_allow_set_index_widget = true;
+    if (e->modifiers() & Qt::ControlModifier)
+        m_ctrl_key_pressed = true;
+    else
+        m_ctrl_key_pressed = false;
 
     QModelIndex itemIndex = indexAt(e->pos());
     if (itemIndex.isValid() && m_multi_select) {
