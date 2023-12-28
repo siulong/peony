@@ -1171,6 +1171,9 @@ void DesktopIconView::updateItemPosByUri(const QString &uri, const QPoint &pos)
         setPositionForIndex(pos, index);
         m_item_rect_hash.remove(uri);
         m_item_rect_hash.insert(uri, QRect(pos, iconSize));
+
+        QRect rect(mapToGlobal(pos)*qApp->devicePixelRatio(), iconSize*qApp->devicePixelRatio());
+        FileInfo::fromUri(uri).get()->setProperty("iconGeometry", rect);
         //qDebug()<<"DesktopIconView::updateItemPosByUri"<<m_item_rect_hash[uri]<<" uri:"<<uri;
     }
 }

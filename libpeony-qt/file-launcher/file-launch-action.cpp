@@ -396,8 +396,10 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         QRect rect = fileInfo.get()->property("iconGeometry").toRect();
         rect.moveTo(rect.x()/* * scale*/, rect.y()/* * scale*/);
 #ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
-        if (rect.isValid())
+        if (rect.isValid()) {
             data.setIconGeometry(rect);
+            qDebug() << "KStartupInfoData iconGeometry:" << m_uri <<rect ;
+        }
 #endif
         data.setLaunchedBy(getpid());
 
