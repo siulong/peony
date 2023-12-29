@@ -1,0 +1,38 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Fri, 29 Dec 2023 15:27:00 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0k4SUVOWeOAkOaWh+S7tueuoeeQhuWZqOOAkemAiQ==?=
+ =?utf-8?b?5Lit5Zu+54mH5Y+z6ZSu6YCJ5oup6K6+572u5aOB57q477yM5pyq55Sf5pWI?=
+
+---
+ peony-qt-desktop/desktop-background-manager.cpp | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/peony-qt-desktop/desktop-background-manager.cpp b/peony-qt-desktop/desktop-background-manager.cpp
+index 44bd067..9fbee9a 100644
+--- a/peony-qt-desktop/desktop-background-manager.cpp
++++ b/peony-qt-desktop/desktop-background-manager.cpp
+@@ -40,9 +40,7 @@
+ #include <QDebug>
+ 
+ static DesktopBackgroundManager *global_instance = nullptr;
+-
+-#define BACKGROUND_MATE_SETTINGS "org.mate.background"
+-#define BACKGROUND_SETTINGS "org.ukui.interface"
++#define BACKGROUND_SETTINGS "org.mate.background"
+ 
+ DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(parent)
+ {
+@@ -74,13 +72,6 @@ void DesktopBackgroundManager::initGSettings()
+         m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
+         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+ 
+-//        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+-        g_autoptr (GSettings) settings = g_settings_new_with_path("org.ukui.interface", "/org/ukui/interface/");
+-        if (settings) {
+-            bool writable = g_settings_is_writable(settings, "picture-filename");
+-            m_shouldSyncAccountBackground = writable;
+-        }
+-    } else if (QGSettings::isSchemaInstalled(BACKGROUND_MATE_SETTINGS)){
+         g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+         if (settings) {
+             bool writable = g_settings_is_writable(settings, "picture-filename");
