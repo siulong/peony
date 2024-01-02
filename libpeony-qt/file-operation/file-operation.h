@@ -27,7 +27,6 @@
 #include <QObject>
 #include <QMetaType>
 #include <QRunnable>
-#include <QWaitCondition>
 
 #include "gerror-wrapper.h"
 #include "gobject-template.h"
@@ -337,14 +336,6 @@ Q_SIGNALS:
      */
     void operationCancel();
 
-    void operationTotalFileSize(const qint64& total_file_size);
-
-    void operationWithoutRecording();
-
-    void operationSaveAsLongNameFile(const QString &uri);
-
-    void operationInfoMsgBox(const QString &uri);
-
 public Q_SLOTS:
     virtual void cancel();
 
@@ -352,7 +343,6 @@ protected:
     void fileSync (QString srcFile, QString destFile);
     bool nameIsValid (QString& uri);
     bool makeFileNameValidForDestFS (QString& srcPath, QString& destPath, QString* newFileName);
-    void OperatorThreadPause();
 
     GCancellableWrapperPtr getCancellable() {
         return m_cancellable_wrapper;
@@ -368,10 +358,8 @@ protected:
     void sendSrcAndDestUrisOfCopyDspsFiles();
 
 protected:
-    QAtomicInteger<bool>        m_is_pause = false;
+    bool                        m_is_pause = false;
     QStringList                 m_src_uris;
-    QMutex                      m_mutex;
-    QWaitCondition              m_wait_condition;
 
     QStringList                 m_srcUrisOfCopyDspsFiles;/* 复制dsps文件的源路径列表 */
     QStringList                 m_destUrisOfCopyDspsFiles;/* 复制dsps文件的目的路径列表 */

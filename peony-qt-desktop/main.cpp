@@ -35,8 +35,6 @@
 #include <QStandardPaths>
 #include <QProcess>
 
-#include "xdg-portal-helper.h"
-
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -90,13 +88,12 @@ int main(int argc, char *argv[])
     if (!QFile::exists(xdgUserDirsUri)) {
         if (QFile::exists("/usr/bin/xdg-user-dirs-update")) {
             QProcess p;
-            p.setProgram("/usr/bin/xdg-user-dirs-update");
+            p.setProgram("xdg-user-dirs-update");
             p.start();
             p.waitForFinished();
         }
     }
 
-    Peony::XdgPortalHelper::getInstance()->tryUnusePortal();
     initUkuiLog4qt("peony-desktop");
 //    qInstallMessageHandler(messageOutput);
     qDebug() << "desktop start time in main:" <<PeonyDesktopApplication::peony_desktop_start_time;
@@ -111,7 +108,6 @@ int main(int argc, char *argv[])
 
     QString id = "peony-qt-desktop" + qgetenv("DISPLAY");
     PeonyDesktopApplication a(argc, argv, id);
-    Peony::XdgPortalHelper::getInstance()->tryResetPortal();
     if (a.isRunning())
         return 0;
 
@@ -122,15 +118,15 @@ int main(int argc, char *argv[])
 //    QObject::connect(&a, &PeonyDesktopApplication::requestSetUKUIOutputEnable, &waylandOutputManager, &WaylandOutputManager::setUKUIOutputEnable);
 //    waylandThread.start();
 
-//    QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
-//                                                          "/org/gnome/SessionManager",
-//                                                          "org.gnome.SessionManager",
-//                                                          "startupfinished");
-//    QList<QVariant> args;
-//    args.append("peony-qt-desktop");
-//    args.append("startupfinished");
-//    message.setArguments(args);
-//    QDBusConnection::sessionBus().send(message);
+    QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
+                                                          "/org/gnome/SessionManager",
+                                                          "org.gnome.SessionManager",
+                                                          "startupfinished");
+    QList<QVariant> args;
+    args.append("peony-qt-desktop");
+    args.append("startupfinished");
+    message.setArguments(args);
+    QDBusConnection::sessionBus().send(message);
 
     return a.exec();
 }

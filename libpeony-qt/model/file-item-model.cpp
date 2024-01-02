@@ -24,7 +24,6 @@
 #include "file-item.h"
 #include "file-info.h"
 #include "file-info-job.h"
-#include "file-meta-info.h"
 
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
@@ -39,9 +38,6 @@
 
 #include "emblem-provider.h"
 #include "sound-effect.h"
-#ifdef KY_SDK_SOUND_EFFECTS
-#include "ksoundeffects.h"
-#endif
 
 #include <QIcon>
 #include <QMimeData>
@@ -53,9 +49,6 @@
 #include <QGSettings>
 
 using namespace Peony;
-#ifdef KY_SDK_SOUND_EFFECTS
-using namespace kdk;
-#endif
 
 FileItemModel::FileItemModel(QObject *parent) : QAbstractItemModel (parent)
 {
@@ -291,14 +284,12 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
     }
     case ModifiedDate: {
         switch (role) {
-        case Qt::ToolTipRole:
         case Qt::DisplayRole:
             //trash files show delete Date
             if (m_root_uri.startsWith("trash://") && !item->m_info->deletionDate().isNull()) {
-//                QDateTime deleteTime = QDateTime::fromMSecsSinceEpoch(item->m_info->deletionTime (), Qt::LocalTime);
-//                QString format = GlobalSettings::getInstance()->getSystemTimeFormat();
-                //use sdk interface to get time format
-                return QVariant(item->m_info->deletionDate());
+                QDateTime deleteTime = QDateTime::fromMSecsSinceEpoch(item->m_info->deletionTime (), Qt::LocalTime);
+                QString format = GlobalSettings::getInstance()->getSystemTimeFormat();
+                return QVariant(deleteTime.toString(format));
             }
             return QVariant(item->m_info->modifiedDate());
         default:
@@ -307,7 +298,6 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
     }
     case FileType:
         switch (role) {
-        case Qt::ToolTipRole:
         case Qt::DisplayRole: {
             if (item->m_info->isSymbolLink()) {
                 return QVariant(tr("Symbol Link, ") + item->m_info->fileType());
@@ -319,7 +309,6 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         }
     case FileSize: {
         switch (role) {
-        case Qt::ToolTipRole:
         case Qt::DisplayRole: {
             if (item->hasChildren()) {
                 if (item->m_expanded) {
@@ -337,18 +326,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         switch (role) {
         case Qt::DisplayRole:
         case Qt::ToolTipRole: {
-            QString originPath = item->m_info->property("orig-path").toString();
-            if (originPath.isEmpty()) {
-                auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
-                if (targetInfo->isEmptyInfo()) {
-                    FileInfoJob j(targetInfo);
-                    j.querySync();
-                    originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
-                    item->m_info->setProperty("orig-path", originPath);
-                }
-                return originPath;
-            }
-            return originPath;
+            return item->m_info->property("orig-path");
             break;
         }
         default:
@@ -364,8 +342,7 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
 {
     if (orientation == Qt::Vertical)
         return QVariant();
-
-    if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
+    if (role == Qt::DisplayRole) {
         //qDebug() <<"headerData:" <<section;
         switch (section) {
         case FileName:
@@ -381,7 +358,6 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Size");
         case TrashOriginPath:
             return tr("Original Path");
-
         default:
             return QVariant();
         }
@@ -500,8 +476,6 @@ void FileItemModel::onItemRemoved(FileItem *item)
 void FileItemModel::cancelFindChildren()
 {
     qDebug()<<"cancel";
-    // try fix #164883, error cusor while searching
-    m_root_item->setProperty("isCancelled", true);
     m_root_item->cancelFindChildren();
 }
 
@@ -702,14 +676,8 @@ bool FileItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, addHistory, action);
     connect(op, &FileOperation::operationFinished, this, [=](){
+        Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         auto opInfo = op->getOperationInfo();
-        if (! opInfo->m_has_error){
-            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
-            //Task#152997, use sdk play sound
-#ifdef KY_SDK_SOUND_EFFECTS
-            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
-#endif
-        }
         auto targetUris = opInfo.get()->dests();
         Q_EMIT this->selectRequest(targetUris);
 //            auto selectionModel = new QItemSelectionModel(this);

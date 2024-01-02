@@ -250,7 +250,7 @@ bool VolumeManager::gpartedIsOpening(){
         drives = g_volume_monitor_get_connected_drives(m_volumeMonitor);
     }
 
-   // m_gpartedIsOpening = true;  /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
+    m_gpartedIsOpening = true;
 
     for(l = drives; l!=nullptr; l=l->next){
         drive = (GDrive*) l->data;
@@ -748,7 +748,7 @@ QList<GVolume*> VolumeManager::allGVolumes(){
     if(m_volumeMonitor)
         volumes = g_volume_monitor_get_volumes(m_volumeMonitor);
 
-    //m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr /* hotfix bug#164497 【文件管理器】左侧目录，手动弹出空光盘时数据盘、光驱消失 */
+    m_gpartedIsOpening = (volumes == nullptr);    //gparted打开时volumes为nullptr
     for(l = volumes; l != nullptr; l = l->next){
         gvolume = (GVolume*)l->data;
         volumeList.push_back(gvolume);
@@ -1372,14 +1372,9 @@ static GAsyncReadyCallback eject_cb(GDrive *gDrive, GAsyncResult *result, QStrin
             //QMessageBox::warning(nullptr,QObject::tr("Eject failed"),QObject::tr("Not authorized to perform operation."), QMessageBox::Ok);
             return nullptr;
         }
+        QMessageBox warningBox(QMessageBox::Warning,QObject::tr("Eject failed"), QString(error->message), QMessageBox::Ok);
+        warningBox.exec();        
 
-        //fix bug#104482, pull device immediately when eject it, error message not translated issue
-        QString errMessage = error->message;
-        if (error->code == G_IO_ERROR_FAILED){
-            errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
-        }
-        QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
-        warningBox.exec();
     } else {
         /* 弹出完成信息提示 */
         QString ejectNotify = QObject::tr("Data synchronization is complete and the device can be safely unplugged!");
@@ -1410,14 +1405,9 @@ static void ejectDevicebyDrive(GObject* object,GAsyncResult* result, QString* ta
             if(! strcmp(error->message,"Not authorized to perform operation")){/* gmountOperation会弹出授权框，防止二次弹框 */
                 return;
             }
-
-            //fix bug#104482, pull device immediately when eject it, error message not translated issue
-            QString errMessage = error->message;
-            if (error->code == G_IO_ERROR_FAILED){
-                errMessage = QObject::tr("Eject device failed, the reason may be that the device has been removed, etc.");
-            }
-            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), errMessage, QMessageBox::Ok);
+            QMessageBox warningBox(QMessageBox::Warning, QObject::tr("Eject failed"), error->message, QMessageBox::Ok);
             warningBox.exec();
+
         }
     }else {
         /* 弹出完成信息提示 */
@@ -1437,17 +1427,14 @@ void Drive::eject(GMountUnmountFlags ejectFlag)
     // drive will do operation without user interaction.
     auto mount_op = VolumeManager::getInstance()->getOccupiedInfoThread()->getMountOp();
     QString *targetUri = new QString(VolumeManager::getInstance()->getTargetUriFromUnixDevice(m_device));
-    qDebug()<<"eject flag: "<<ejectFlag<<m_device<<m_canEject<<g_drive_can_stop(m_drive)<<g_drive_is_removable(m_drive);
+    qDebug()<<"eject flag: "<<ejectFlag<<m_device;
     if(m_canEject && !m_device.startsWith("/dev/sd")){ /* U盘使用安全移除 */
         g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
-    else if(g_drive_can_stop(m_drive) || (g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))){// for mobile harddisk.
-        /* 加"(g_drive_is_removable(m_drive) && !m_device.startsWith("/dev/mmc"))"这个判断是为了解决bug#184111和bug#149182；有些U盘的can-stop为false,其中为一款sd卡的devicename */
+    else if(g_drive_can_stop(m_drive) || g_drive_is_removable(m_drive)){//for mobile harddisk.
         g_drive_stop(m_drive, ejectFlag, mount_op, NULL, GAsyncReadyCallback(ejectDevicebyDrive), targetUri);
-    }else if(g_drive_is_removable(m_drive)){
-        //fix bug#149182, SD card eject can not recgonize issue
-        g_drive_eject_with_operation(m_drive, ejectFlag, mount_op, nullptr, GAsyncReadyCallback(eject_cb), targetUri);
     }
+
 }
 
 void Drive::setMountPath(const QString &mountPath)
@@ -1758,7 +1745,6 @@ MessageDialog::MessageDialog(QWidget *parent):
     QDialog(parent)
 {    
     //setWindowTitle("Volume is occupied");
-    setWindowTitle(tr("Peony"));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setMinimumSize(QSize(350,200));
@@ -1769,7 +1755,7 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
     QVBoxLayout *layout = new QVBoxLayout();
     QFont font;
     font.setBold(true);
-    QLabel* massageLabel = new QLabel(message.toStdString().data());
+    QLabel* massageLabel = new QLabel(tr(message.toStdString().data()));
     massageLabel->setFont(font);
     massageLabel->setContentsMargins(40,10,0,0);
 
@@ -1817,7 +1803,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
     {
         GPid pid = g_array_index(processes, GPid ,i);
         QProcess *process =new QProcess();
-        QString cmd =QString("/usr/bin/ps -p %1 o comm=").arg(pid);
+        QString cmd =QString("ps -p %1 o comm=").arg(pid);
         process->start(cmd);
         process->waitForFinished();
         QString application = QString(process->readAll()).replace("\n","");
@@ -1853,7 +1839,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
 
         if (application == "ffmpeg") {
             QProcess p;
-            p.start(QString("/usr/bin/kill -9 %1").arg(pid));
+            p.start(QString("kill -9 %1").arg(pid));
             p.waitForFinished(-1);
             p.close();
         }
@@ -1871,32 +1857,3 @@ GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const
 {
     return m_mountOp;
 }
-
-#ifdef KY_UDF_BURN
-#include <libkyudfburn/disccontrol.h>
-#include "ky-udf-format-dialog.h"
-#include "udfAppendBurnDataDialog.h"
-
-UdfBurn::UdfFormatDialogWrapper::UdfFormatDialogWrapper(const QString &uri, UdfBurn::DiscControl *discControl, QWidget *parent)
-{
-    m_dialog = new UdfFormatDialog(uri, discControl, parent);
-}
-
-UdfBurn::UdfFormatDialogWrapper::~UdfFormatDialogWrapper()
-{
-    delete m_dialog;
-}
-
-void UdfBurn::UdfFormatDialogWrapper::raise()
-{
-    m_dialog->raise();
-}
-
-void UdfBurn::UdfFormatDialogWrapper::show()
-{
-    m_dialog->show();
-}
-
-#endif
-
-

@@ -39,7 +39,7 @@ class PEONYCORESHARED_EXPORT ThumbnailJob : public QObject, public QRunnable
     Q_OBJECT
 public:
     enum Type {
-        Unknown = 0,
+        Unkown = 0,
         Invalid = 1,
         Image = 2,
         Pdf = 3,

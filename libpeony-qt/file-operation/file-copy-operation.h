@@ -73,11 +73,6 @@ protected:
      */
     void rollbackNodeRecursively(FileNode *node);
 
-    bool copyLinkedFile(FileNode *node, GFileInfo *info, GFileWrapperPtr file);
-
-    ExceptionResponse udfCopyWarningDialog();
-
-    bool saveAsOtherPath();
 private:
     /*!
      * \brief m_is_duplicated_copy
@@ -102,20 +97,15 @@ private:
     QSet<QString> m_conflict_files;
     QString m_current_src_uri = nullptr;
     QString m_current_dest_dir_uri = nullptr;
-    QString m_save_as_other_uri= nullptr;
 
     goffset m_current_offset = 0;
-    goffset m_total_size = 0;
+    goffset m_total_szie = 0;
 
     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS);
 
     FileNodeReporter *m_reporter = nullptr;
 
     bool m_is_udf_burn_work = false;
-    bool m_is_udf_warning = false;
-    bool m_is_long_name_file_operation = false;
-    bool m_is_long_name_error_msg_show = false;
-    int m_cate_type = 0;
     /*!
      * \brief m_prehandle_hash
      * \details

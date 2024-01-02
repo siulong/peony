@@ -30,7 +30,6 @@
 #include <QUrl>
 
 #include <QProcess>
-#include <QFileInfo>
 
 static QString set_desktop_name (QString file, QString& name, GError** error);
 
@@ -89,7 +88,7 @@ void FileRenameOperation::run()
             except.op = FileOpRenameToHideFile;
             except.dlgType = ED_WARNING;
             except.title = tr("File Rename warning");
-            except.errorStr = tr("Are you sure to hidden this file?");
+            except.errorStr = tr("The file %1%2%3 will be hidden when you refresh or change directory!").arg("\“").arg(m_new_name).arg("\”");
 
             Q_EMIT errored(except);
 
@@ -101,42 +100,9 @@ void FileRenameOperation::run()
                 getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
                 Q_EMIT operationFinished();
                 return;
-            }else{
-                //fix bug#174512, can not hide file immediately
-                qDebug() << "Q_EMIT updateHiddenFile："<<m_new_name;
-                Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
             }
         }
     }
-
-    //task#144488, support cancel rename operation when change file type
-    //修改了文件类型后缀名，提示用户改变文件类型可能导致文件不可用
-    //修复新建文件夹改名错误弹框提示问题，无后缀名的文件不处理
-    bool isFolder = FileUtils::getFileIsFolder(m_uri);
-    if (! isFolder && (m_new_name.split(".").length() >1 || m_old_name.split(".").length() >1) &&
-        m_new_name.split(".").last() != m_old_name.split(".").last()){
-        FileOperationError except;
-        except.srcUri = m_uri;
-        except.errorType = ET_GIO;
-        except.op = FileOpRenameChangeType;
-        except.dlgType = ED_WARNING;
-        except.title = tr("File Rename warning");
-        except.errorStr = tr("When change the file suffix, the file may be invalid. "
-                             "Are you sure to change it ?");
-
-        Q_EMIT errored(except);
-
-        //support cancel rename operation when change file type
-        if (except.respCode == Cancel) {
-            cancel();
-            setHasError(true);
-            //未做重命名操作，恢复之前的目标文件，仍然选中原来的文件
-            getOperationInfo().get()->m_dest_dir_uri = getOperationInfo().get()->sources().first();
-            Q_EMIT operationFinished();
-            return;
-        }
-    }
-
     std::shared_ptr<FileInfo> fileinfo = FileInfo::fromUri(m_uri);
     if(fileinfo && !fileinfo->isDir()){
         bool showFileExtension = Peony::GlobalSettings::getInstance()->isExist(SHOW_FILE_EXTENSION)?
@@ -359,6 +325,7 @@ cancel:
 
 }
 
+#include <QFileInfo>
 QString FileRenameOperation::getFileExtensionOfFile(const QString& file)
 {   
     /* 一些常见扩展名处理，特殊情况以后待完善 */

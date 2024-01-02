@@ -35,16 +35,10 @@ class ColorPushButton : public QPushButton
 public:
     explicit ColorPushButton(QColor color,QWidget *parent = nullptr);
 
-    void setName(const QString& name);
 
-Q_SIGNALS:
-    void changeText(const QString &colorName);
-
+//Q_SIGNALS:
 protected:
     void paintEvent(QPaintEvent *e);
-
-public:
-    bool m_checkInMultiSelect = true;
 
 private:
     QColor m_color = nullptr;
@@ -54,7 +48,6 @@ private:
     QRectF m_bigpathrect;
     double m_bigpathrectwidth;
     double m_bigpathrectheigth;
-    QString m_name;
 };
 
 #endif // COLORPUSHBUTTON_H

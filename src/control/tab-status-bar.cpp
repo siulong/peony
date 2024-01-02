@@ -40,7 +40,6 @@
 #include <QToolBar>
 #include <QSlider>
 #include <QDebug>
-#include <QVariantAnimation>
 
 TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
 {
@@ -60,19 +59,6 @@ TabStatusBar::TabStatusBar(TabWidget *tab, QWidget *parent) : QStatusBar(parent)
     m_slider = new QSlider(Qt::Horizontal, this);
     m_slider->setFocusPolicy(Qt::FocusPolicy(Qt::WheelFocus & ~Qt::TabFocus));
     m_slider->setRange(0, 100);
-    //设置状态栏下的搜索进度
-    m_animation = new QVariantAnimation;
-    m_animation->setDuration(1000);
-    m_animation->setStartValue(0.0);
-    m_animation->setEndValue(360.0);
-    connect(m_animation,&QVariantAnimation::valueChanged, m_label, [=](){
-        m_label->setValue(m_animation->currentValue().toDouble());
-    });
-    connect(m_animation, &QVariantAnimation::finished, this, [=](){
-        if(m_searching) {
-            m_animation->start();
-        }
-    });
 
     auto mainWindow = qobject_cast<MainWindow *>(this->topLevelWidget());
     auto settings = Peony::GlobalSettings::getInstance();
@@ -105,10 +91,7 @@ void TabStatusBar::update()
 {
     if (!m_tab)
         return;
-    if (m_searching) {
-        m_label->setText(tr("Searching for files ..."));
-        return;
-    }
+
     //qDebug() << "TabStatusBar::update";
     auto selections = m_tab->getCurrentSelectionFileInfos();
     auto uri = m_tab->getCurrentUri();
@@ -256,44 +239,16 @@ void TabStatusBar::resizeEvent(QResizeEvent *e)
     m_slider->move(pos.x() - size.width() - 20, this->size().height()/2 - size.height()/2);
 }
 
-void TabStatusBar::updateSearchProgress(bool searching)
-{
-    m_searching = searching;
-    if(m_searching) {
-        if(m_animation->state() != QAbstractAnimation::Running) {
-            m_animation->start();
-        }
-        m_label->setText(tr("Searching for files ..."));
-    } else {
-        m_animation->stop();
-        update();
-    }
-    m_label->setSearch(searching);
-}
-
 ElidedLabel::ElidedLabel(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setContentsMargins(30, 0, 120, 0);
-    QIcon icon = QIcon::fromTheme("ukui-loading-2.symbolic");
-    m_disc = icon.pixmap(QSize(16,16));
 }
 
 void ElidedLabel::setText(const QString &text)
 {
     m_text = text;
     this->update();
-}
-
-void ElidedLabel::setValue(double value)
-{
-    m_val = value;
-    this->update();
-}
-
-void ElidedLabel::setSearch(bool searching)
-{
-    m_searching = searching;
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)
@@ -334,24 +289,6 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 
     p.fillPath(path, base);
 
-    if (m_searching) {
-        p.save();
-        QRect rect = this->rect().adjusted(0, 0, adjustedY2 - this->height() + 14, 0);
-        QRect adjustedRect = rect.adjusted(30, 0, -120, 0);
-        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        p.translate(adjustedRect.topLeft().x(), this->rect().height()/2 - m_disc.height()/2);
-        p.translate(m_disc.width()/2,m_disc.height()/2);
-        /* 旋转的角度 */
-        p.rotate(m_val);
-        /* 恢复中心点 */
-        p.translate(-m_disc.width()/2,-m_disc.height()/2);
-
-        /* 画图操作 */
-        p.drawPixmap(0,0 ,m_disc.width(),m_disc.height(), m_disc);
-        p.restore();
-
-        p.translate(m_disc.width()+5 , 0);
-    }
 //    QPainterPath path2;
 
 //    int radius = this->height();

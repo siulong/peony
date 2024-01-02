@@ -40,11 +40,6 @@
 #include "global-settings.h"
 #include <gio/gdesktopappinfo.h>
 
-#ifdef KY_SDK_QT_WIDGETS
-#include "kborderlessbutton.h"
-using namespace kdk;
-#endif
-
 #define DESKTOPPATH           "/usr/share/applications/"
 
 using namespace Peony;
@@ -258,18 +253,19 @@ void FileLauchDialog::initFloorThree()
     floor3->setLayout(layout3);
     floor3->setMaximumHeight(60);
     layout3->setContentsMargins(10,0,0,0);
-#ifdef KY_SDK_QT_WIDGETS
-    KBorderlessButton *allOpenLabel = new KBorderlessButton(tr("Choose other application"), floor3);
-    KBorderlessButton *otherOpenLabel = new KBorderlessButton(tr("Go to application center"), floor3);
-    connect(allOpenLabel, &KBorderlessButton::clicked, this, &FileLauchDialog::chooseOtherApp);
-    connect(otherOpenLabel, &KBorderlessButton::clicked, this, &FileLauchDialog::openAppCenter);
-#else
+
     QString str1;
     str1 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
           + tr("Choose other application")
           + "</a>";
     QLabel *allOpenLabel = new QLabel(str1, floor3);
     allOpenLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+    connect(allOpenLabel, &QLabel::linkActivated, this, [=]() {
+        FileLauchDialog::moreAction();
+    });
+
+    layout3->addWidget(allOpenLabel);
 
     QString str2;
     str2 = "<a href=\"ukui-software-center\" style=\"color: #3D6BE5;text-decoration: none;\">"
@@ -278,9 +274,26 @@ void FileLauchDialog::initFloorThree()
     QLabel *otherOpenLabel = new QLabel(str2, floor3);
     otherOpenLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    connect(allOpenLabel, &QLabel::linkActivated, this, &FileLauchDialog::chooseOtherApp);
-    connect(otherOpenLabel, &QLabel::linkActivated, this, &FileLauchDialog::openAppCenter);
+    connect(otherOpenLabel, &QLabel::linkActivated, this, [=]() {
+        QtConcurrent::run([=]() {
+            QProcess p;
+            if (COMMERCIAL_VERSION || (GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU))
+                p.setProgram("kylin-software-center");
+            else
+                p.setProgram("ubuntu-kylin-software-center");
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+            p.startDetached();
+#else
+            if (COMMERCIAL_VERSION)
+                p.startDetached("kylin-software-center");
+            else
+                p.startDetached("ubuntu-kylin-software-center");
+
 #endif
+        });
+    });
+
     bool isVisible = false;
     if(QFileInfo::exists("/usr/bin/kylin-software-center")
             || QFileInfo::exists("/usr/bin/ubuntu-kylin-software-center")){
@@ -288,36 +301,10 @@ void FileLauchDialog::initFloorThree()
     }
 
     otherOpenLabel->setVisible(isVisible);
-    layout3->addWidget(allOpenLabel);
     layout3->addWidget(otherOpenLabel);
     layout3->addStretch(1);
 
     this->m_layout->addWidget(floor3);
-}
-
-void FileLauchDialog::chooseOtherApp()
-{
-    FileLauchDialog::moreAction();
-}
-
-void FileLauchDialog::openAppCenter()
-{
-    QtConcurrent::run([=]() {
-        QProcess p;
-        if (COMMERCIAL_VERSION || (GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU))
-            p.setProgram("kylin-software-center");
-        else
-            p.setProgram("ubuntu-kylin-software-center");
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-        p.startDetached();
-#else
-        if (COMMERCIAL_VERSION)
-            p.startDetached("kylin-software-center");
-        else
-            p.startDetached("ubuntu-kylin-software-center");
-#endif
-    });
 }
 
 void FileLauchDialog::initFloorFour()
@@ -371,13 +358,12 @@ void FileLauchDialog::paintEvent(QPaintEvent *event)
 bool FileLauchDialog::event(QEvent *event)
 {
     //失去焦点即关闭窗口
-    //comment this code, fix bug#164644, open other app auto close issue
-//    if (event->type() == QEvent::ActivationChange) {
-//        if (QApplication::activeWindow() != this) {
-//            this->close();
-//            return false;
-//        }
-//    }
+    if (event->type() == QEvent::ActivationChange) {
+        if (QApplication::activeWindow() != this) {
+            this->close();
+            return false;
+        }
+    }
     return QWidget::event(event);
 }
 

@@ -238,7 +238,7 @@ int DataCDROM::checkRWSupport()
                 qDebug()<< "Removable CDROM.";
                 break;
             default:
-                qDebug()<<"Unknown medium type" << ((result[i + 12] << 8) | result[i + 13]);
+                qDebug()<<"Unkown medium type" << ((result[i + 12] << 8) | result[i + 13]);
                 break;
         }
     }
@@ -534,7 +534,7 @@ void DataCDROM::DVDRWCapacity()
     QStringList deviceName;
     deviceName<<m_oBlockName;
 
-    process.start("/usr/bin/dvd+rw-mediainfo", deviceName);
+    process.start("dvd+rw-mediainfo", deviceName);
     process.waitForFinished(10000);
     QString result = process.readAllStandardOutput();
     QStringList ss = result.split("\n");

@@ -24,9 +24,6 @@
 #include "metadata-emblem-provider.h"
 #include "file-meta-info.h"
 
-#include <QApplication>
-#include <QThread>
-
 using namespace Peony;
 
 static MetadataEmblemProvider *global_instance = nullptr;
@@ -45,12 +42,7 @@ const QString MetadataEmblemProvider::emblemKey()
 
 QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 {
-    std::shared_ptr<Peony::FileMetaInfo> metaInfo = nullptr;
-    if (QThread::currentThread() == qApp->thread()) {
-        metaInfo = FileMetaInfo::fromUri(uri);
-    } else {
-        metaInfo = requestDupMetaInfo(uri);
-    }
+    auto metaInfo = FileMetaInfo::dupFromUri(uri);
     if(!metaInfo || !metaInfo.get())
         return QStringList();
     return metaInfo->getMetaInfoStringListV1("emblems");
@@ -58,10 +50,5 @@ QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 
 MetadataEmblemProvider::MetadataEmblemProvider(QObject *parent) : EmblemProvider(parent)
 {
-    connect(this, &MetadataEmblemProvider::requestDupMetaInfo, this, &MetadataEmblemProvider::getDupMetaInfo, Qt::BlockingQueuedConnection);
-}
 
-std::shared_ptr<FileMetaInfo> MetadataEmblemProvider::getDupMetaInfo(const QString &uri)
-{
-    return FileMetaInfo::dupFromUri(uri);
 }

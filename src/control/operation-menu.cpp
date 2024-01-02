@@ -46,7 +46,6 @@
 #include "directory-view-widget.h"
 #include "directory-view-container.h"
 #include "file-meta-info.h"
-#include "file-utils.h"
 
 OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent)
 {
@@ -145,13 +144,7 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                     } else {
 setPasswd:
                         bool ok = false;
-                        QInputDialog dlg;
-                        dlg.setLabelText(tr("Samba password:"));
-                        dlg.setTextEchoMode(QLineEdit::Password);
-                        dlg.setWindowTitle(tr("Samba set user password"));
-                        dlg.setFixedSize(470,150);
-                        ok = dlg.exec();
-                        QString text = dlg.textValue();
+                        QString text = QInputDialog::getText(nullptr, tr("Samba set user password"), tr("Samba password:"), QLineEdit::Password, "", &ok);
                         if (ok && !text.isNull() && !text.isEmpty()) {
                             QDBusReply<bool> setPasswdReply = interFace->call("setPasswd", text);
                             if (setPasswdReply.isValid()) {
@@ -174,13 +167,6 @@ setPasswd:
         }
         interFace->call("finished");
     });
-
-    //task#147390  设置是否新建窗口打开文件夹
-    auto showFoldersInNewWindow = addAction(tr("Open each folder in a new window"), this, [=](bool checked) {
-        Peony::GlobalSettings::getInstance()->setValue(SHOW_IN_NEW_WINDOW, checked);
-    });
-    showFoldersInNewWindow->setCheckable(true);
-    showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool());
 
     addSeparator();
 
@@ -358,30 +344,11 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     bool isTrash = currentDirUri.startsWith("trash://");
     bool isComputer = currentDirUri.startsWith("computer:///");
     bool isFileBox = currentDirUri == "filesafe:///";
-    bool hasLongFileName = false;
-    for (auto uri : selections) {
-        if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除,所以该菜单置灰，link bug#188864 */
-            hasLongFileName = true;
-            break;
-        }
-    }
-
-    //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
-    bool isDirectoryCanWrite = true;
-    auto info = Peony::FileInfo::fromUri(currentDirUri);
-    if (!info->isEmptyInfo()) {
-        isDirectoryCanWrite = info->canWrite();
-    }
-    //comment to fix bug#191108, huawei phone can paste file success
-//    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
-//        isDirectoryCanWrite = false;
-//    }
 
     m_copy->setEnabled(!isSelectionEmpty && !isSearch && !isRecent && !isTrash && !isComputer);
-    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
-    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer && isDirectoryCanWrite && !hasLongFileName);
+    m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isRecent && !isTrash && !isComputer);
+    m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isSearch && !isComputer);
 
-    Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
-    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && isDirectoryCanWrite);
+    m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox);
 }

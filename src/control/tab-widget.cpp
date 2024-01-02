@@ -75,8 +75,6 @@
 #include <QPainter>
 #include <QPainterPath>
 
-#define PUSH_BUTTON_TOTAL_PADDING 14
-
 static PushButtonStyle *global_instance = nullptr;
 
 PushButtonStyle *PushButtonStyle::getStyle()
@@ -320,32 +318,6 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
             }
         }
     });
-
-    //fix bug#166060, 将监听字体变化的处理放在构造函数中，避免重复调用或者闪退等问题
-    //监听字体大小改变
-    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
-        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
-            double fontSize = fontSetting->get("systemFontSize").toDouble();
-            for(int index=0;index<m_classify_list.length();index++){
-                if(fontSize < 12){
-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-                    //fix bug#166969, Tibetan language not show complete issue
-                    if ("bo_CN" == QLocale::system().name())
-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
-                }else{
-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 +45);
-                    if ("bo_CN" == QLocale::system().name())
-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
-                }
-            }
-            //fix #185743
-            auto realDisplayName = m_current_search->property("realDisplayName").toString();
-            auto displayName = fontMetrics().elidedText(realDisplayName, Qt::ElideMiddle, /*m_current_search->width()*/200 - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
-            m_current_search->setText(displayName);
-            m_current_search->adjustSize();
-        });
-    }
 }
 
 void TabWidget::initAdvanceSearch()
@@ -490,8 +462,6 @@ void TabWidget::addNewConditionBar()
     m_conditions_list.append(conditionCombox);
     conditionCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
     conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-    if ("bo_CN" == QLocale::system().name())
-        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
     auto conditionModel = new QStringListModel(optionBar);
     conditionModel->setStringList(m_option_list);
     conditionCombox->setModel(conditionModel);
@@ -515,17 +485,25 @@ void TabWidget::addNewConditionBar()
         double fontSize = fontSetting->get("systemFontSize").toDouble();
         if(fontSize < 12){
             classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-            if ("bo_CN" == QLocale::system().name())
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
         }else{
             //最大字体最长字符串所需宽度
             classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
-            if ("bo_CN" == QLocale::system().name())
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
         }
     }
     else{
         classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+    }
+    //监听字体大小改变
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+            double fontSize = fontSetting->get("systemFontSize").toDouble();
+            if(fontSize < 12){
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+            }else{
+                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+            }
+        });
     }
 
     auto classifyModel = new QStringListModel(optionBar);
@@ -539,8 +517,6 @@ void TabWidget::addNewConditionBar()
     inputBox->setFixedWidth(TRASH_BUTTON_WIDTH *4);
     inputBox->setPlaceholderText(tr("Please input key words..."));
     inputBox->setText("");
-    //fix bug#180920, contents and icon overlap issue
-    inputBox->setTextMargins(0, 0, 20, 0);
 
     //bug#93521 添加清除按钮
     QToolButton* clearButton = new QToolButton(inputBox);
@@ -557,7 +533,7 @@ void TabWidget::addNewConditionBar()
     inputBox->setLayout(clearlayout);
     clearButton->setIcon(QIcon::fromTheme("edit-clear-symbolic"));
     clearButton->setProperty("isWindowButton", 1);
-    //clearButton->setProperty("useIconHighlightEffect", 0x2);
+    clearButton->setProperty("useIconHighlightEffect", 0x2);
     //clearButton->setAutoRaise(true);
     clearButton->hide();
 
@@ -582,7 +558,7 @@ void TabWidget::addNewConditionBar()
     addButton->setFixedWidth(20);
     addButton->setFlat(true);
     addButton->setProperty("isWindowButton", 1);
-    //addButton->setProperty("useIconHighlightEffect", 2);
+    addButton->setProperty("useIconHighlightEffect", 2);
     addButton->setProperty("isIcon", true);
     connect(addButton, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
 
@@ -592,7 +568,7 @@ void TabWidget::addNewConditionBar()
     removeButton->setFixedWidth(20);
     removeButton->setFlat(true);
     removeButton->setProperty("isWindowButton", 1);
-    //removeButton->setProperty("useIconHighlightEffect", 2);
+    removeButton->setProperty("useIconHighlightEffect", 2);
     removeButton->setProperty("isIcon", true);
     //mapper for button clicked parse index
     auto signalMapper = new QSignalMapper(this);
@@ -884,7 +860,7 @@ void TabWidget::updateSearchBar(bool showSearch)
         m_home_search->show();
         m_add_filter_button->show();
         m_search_bar_layout->setContentsMargins(10, 5, 10, 5);
-        updateSearchPathButton(getCurrentUri());
+        updateSearchPathButton();
         m_jumpToComputer = false;
         switchSearchPath(true);
     }
@@ -949,13 +925,11 @@ void TabWidget::updateCurrentSearchPath()
         currentUri = g_file_peek_path (file);
         QString displayName = currentUri.right(currentUri.count() - currentUri.lastIndexOf("/") - 1);
         m_current_search->setText(displayName);
-        m_current_search->adjustSize();
         g_object_unref(file);
     }
     else {
         QString displayName = currentUri.left(currentUri.indexOf(":"));
         m_current_search->setText(displayName);
-        m_current_search->adjustSize();
     }
 }
 
@@ -1001,15 +975,16 @@ void TabWidget::updateSearchPathButton(const QString &uri)
     auto displayName = Peony::FileUtils::getFileDisplayName(curUri);
     qDebug() << "goToUri iconName:" <<iconName <<displayName<<curUri;
 
+    //elide text if it is too long
+    if (displayName.length() > ELIDE_TEXT_LENGTH)
+    {
+        int  charWidth = fontMetrics().averageCharWidth();
+        displayName = fontMetrics().elidedText(displayName, Qt::ElideRight, ELIDE_TEXT_LENGTH * charWidth);
+    }
     if (displayName.contains("&")) {
         displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
-    //elide text if it is too long, Use ElideMiddle mode to design
-    //related bug#155126, #185743
-    m_current_search->setProperty("realDisplayName", displayName);
-    displayName = fontMetrics().elidedText(displayName, Qt::ElideMiddle, /*m_current_search->width()*/200 - m_search_bar->iconSize().width() - PUSH_BUTTON_TOTAL_PADDING);
     m_current_search->setText(displayName);
-    m_current_search->adjustSize();
 }
 
 void TabWidget::updateSearchList()
@@ -1227,10 +1202,9 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
 
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
-    //infoJob->setAutoDelete();
+    infoJob->setAutoDelete();
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
-        infoJob->deleteLater();
         QString rootDir = info.get()->uri();
         if (info.get()->uri().startsWith("file:///") && !info.get()->isDir()) {
             rootDir = Peony::FileUtils::getParentUri(rootDir);
@@ -1296,17 +1270,8 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             auto realUri = uri;
             if (info->isSymbolLink() && info->symlinkTarget().length() >0 && uri.startsWith("file://")) {
                 realUri = "file://" + info->symlinkTarget();
-            } else if (!info->isDir() && !realUri.startsWith("smb://") && !realUri.startsWith("label://") ) {
+            } else if (!info->isDir() && !realUri.startsWith("smb://") ) {
                 realUri = Peony::FileUtils::getParentUri(uri);
-            }
-
-            //Fix bug#132638, special # character use in symbolic link open fail issue
-            if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
-                realUri = Peony::FileUtils::urlEncode(realUri);
-
-            // fix #174653
-            if (realUri.isEmpty()) {
-                realUri = "file:///";
             }
 
             //m_stack->addWidget(viewContainer);
@@ -1367,19 +1332,16 @@ void TabWidget::goToUri(const QString &uri, bool addHistory, bool forceUpdate)
 void TabWidget::updateTabPageTitle()
 {
     qDebug() << "updateTabPageTitle:" <<getCurrentUri();
-
-/* hotfix bug#169196 【文件管理器】插入/弹出U盘，文件管理器当前界面显示异常 */
-//    //fix error for glib2 signal: G_FILE_MONITOR_EVENT_DELETED
-//    if("trash:///" == getCurrentUri()){
-//        Peony::VolumeManager* vm = Peony::VolumeManager::getInstance();
-//        connect(vm,&Peony::VolumeManager::volumeRemoved,this,[=](const std::shared_ptr<Peony::Volume> &volume){
-//            refresh();
-//        });
-//        connect(vm,&Peony::VolumeManager::volumeAdded,this,[=](const std::shared_ptr<Peony::Volume> &volume){
-//            refresh();
-//        });
-//    }
-
+    //fix error for glib2 signal: G_FILE_MONITOR_EVENT_DELETED
+    if("trash:///" == getCurrentUri()){
+        Peony::VolumeManager* vm = Peony::VolumeManager::getInstance();
+        connect(vm,&Peony::VolumeManager::volumeRemoved,this,[=](const std::shared_ptr<Peony::Volume> &volume){
+            refresh();
+        });
+        connect(vm,&Peony::VolumeManager::volumeAdded,this,[=](const std::shared_ptr<Peony::Volume> &volume){
+            refresh();
+        });
+    }
     m_tab_bar->updateLocation(m_tab_bar->currentIndex(), getCurrentUri().toLocal8Bit());
     //m_tab_bar->updateLocation(m_tab_bar->currentIndex(), QUrl::fromPercentEncoding(getCurrentUri().toLocal8Bit()));
     updateTrashBarVisible(getCurrentUri());
@@ -1593,16 +1555,7 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
                                   tr("Open directory failed, you have no permission!"));
             return;
         }
-
-        bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
-        if (check && info->isDir()) {
-            //task#147390  新建窗口来打开文件夹
-            auto window = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
-            auto newWindow = dynamic_cast<QWidget *>(window->create(uri));
-            newWindow->show();
-        } else {
-            Q_EMIT this->updateWindowLocationRequest(uri, true);
-        }
+        Q_EMIT this->updateWindowLocationRequest(uri, true);
     } else {
         Peony::FileLaunchManager::openAsync(uri, false, false);
     }

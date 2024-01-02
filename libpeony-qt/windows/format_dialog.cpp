@@ -31,13 +31,6 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "global-settings.h"
-#include "format-dlg-create-delegate.h"
-
-#ifdef KY_SDK_SOUND_EFFECTS
-#include "ksoundeffects.h"
-#endif
-
-#include "format-dlg-create-delegate.h"
 
 #include <QObject>
 #include <QMessageBox>
@@ -51,10 +44,6 @@
 #include <QTime>
 
 using namespace  Peony;
-#ifdef KY_SDK_SOUND_EFFECTS
-using namespace kdk;
-#endif
-
 static bool b_finished = false;
 static bool b_failed = false;
 static bool b_canClose = true;
@@ -235,7 +224,6 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     connect(mFSCombox, &QComboBox::currentTextChanged, this, [=]{
         if (mFSCombox->currentText() == "ext4") {
-            QMessageBox::warning(nullptr, tr("Warning"), tr("Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive"), QMessageBox::Ok);
             cryptCheckBox->setEnabled(true);
         } else {
             cryptCheckBox->setChecked(false);
@@ -446,16 +434,12 @@ void Format_Dialog::slot_format(bool enable)
         QString romType = mFSCombox->currentText();
         if (QString("vfat/fat32") == romType) {
             romType = "vfat";
-            if (mNameEdit->text().trimmed ().toUtf8().length() <= 11){
-               strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
-            }                    
-        } else {
-            strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
         }
 
         //get values from ui
         strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
         strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
+        strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
 
         //disable name and rom size list
         //ui->comboBox_rom_size->setDisabled(true);
@@ -979,9 +963,10 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
         // rename fail
         // fixme: deal with crypt volume.
         // fixme: send to device is enabled for crypt volume
-        if (!curName.isEmpty() && data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
+        if (data->dl->mNameEdit->text ().trimmed () != curName && data->dl->property("password").isNull()) {
             data->dl->renameOK = false;
         }
+
         end_flag = 1;
         *(data->format_finish) =  1; //format success
     }
@@ -1012,10 +997,6 @@ void Format_Dialog::format_cb (GObject *source_object, GAsyncResult *res ,gpoint
 
 void Format_Dialog::format_ok_dialog()
 {
-    //fix bug#177146, play finish sound
-#ifdef KY_SDK_SOUND_EFFECTS
-    kdk::KSoundEffects::playSound(SoundType::COMPLETE);
-#endif
     if (renameOK) {
         QMessageBox::about(this,QObject::tr("format"),QObject::tr("Format operation has been finished successfully."));
     } else {
@@ -1033,9 +1014,6 @@ void Format_Dialog::format_ok_dialog()
 
 void Format_Dialog::format_err_dialog()
 {
-#ifdef KY_SDK_SOUND_EFFECTS
-    kdk::KSoundEffects::playSound(SoundType::DIALOG_ERROR);
-#endif
     QMessageBox::warning(this,QObject::tr("qmesg_notify"),QObject::tr("Sorry, the format operation is failed!"));
     mCancelBtn->setEnabled(true);
 
@@ -1051,21 +1029,17 @@ bool Format_Dialog::format_makesure_dialog(){
 
     message_format->setText(QObject::tr("Formatting this volume will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?"));
 
-    message_format->setWindowTitle(QObject::tr("Format"));
+    message_format->setWindowTitle(QObject::tr("format"));
 
-    QPushButton *okButton = message_format->addButton(QObject::tr("Begin Format"),QMessageBox::YesRole);
+    QPushButton *okButton = message_format->addButton(QObject::tr("begin format"),QMessageBox::YesRole);
 
-    QPushButton *cancelButton = message_format->addButton(QObject::tr("Close"),QMessageBox::NoRole);
+    QPushButton *cancelButton = message_format->addButton(QObject::tr("close"),QMessageBox::NoRole);
 
     message_format->connect (this, &QDialog::finished, message_format, [=] (int) {
         Q_EMIT cancelButton->clicked ();
         message_format->deleteLater ();
     });
 
-    //fix bug#177143, play warning sound
-#ifdef KY_SDK_SOUND_EFFECTS
-    kdk::KSoundEffects::playSound(SoundType::DIALOG_WARNING);
-#endif
     message_format->exec();
 
     if(message_format->clickedButton() == cancelButton)
@@ -1286,7 +1260,6 @@ void Format_Dialog::kdisk_format(const gchar * device_name,const gchar *format_t
 
 Format_Dialog::~Format_Dialog()
 {
-    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
     g_signal_handlers_disconnect_by_data(mVolumeMonitor, this);
 //    delete ui;
     if (mTimer)             mTimer->deleteLater();
@@ -1327,8 +1300,6 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
-
-    FormatDlgCreateDelegate::getInstance()->removeFromUdiskMap(this->fm_uris);
 }
 
 void Format_Dialog::resizeEvent(QResizeEvent *event)

@@ -19,16 +19,11 @@
  * Authors: Ding Jing <dingjing@kylinos.cn>
  *
  */
-#include <sys/stat.h>
-#include <sys/sendfile.h>
-#include <sys/mman.h>
 #include "file-copy.h"
 #include "file-utils.h"
 #include <stdio.h>
-#include <fcntl.h>
 #include <cstring>
 #include <QString>
-#include <mutex>
 #include <mntent.h>
 #include <QProcess>
 #include "file-info.h"
@@ -36,9 +31,6 @@
 
 #define BUF_SIZE        1024000
 #define SYNC_INTERVAL   10
-#define BIG_FILE_SIZE   300 * 1024 * 1024
-const size_t BUFFER_SIZE = 4096;
-std::mutex fileMutex;
 
 using namespace Peony;
 
@@ -83,11 +75,6 @@ void FileCopy::cancel()
     mPause.unlock();
 }
 
-FileCopy::Status FileCopy::getStatus()
-{
-    return mStatus;
-}
-
 void FileCopy::detailError (GError** error)
 {
     if (nullptr == error || nullptr == *error || nullptr == mError) {
@@ -95,7 +82,9 @@ void FileCopy::detailError (GError** error)
     }
 
     g_set_error(mError, (*error)->domain, (*error)->code, "%s", (*error)->message);
-    g_clear_error(error);
+    g_error_free(*error);
+
+    *error = nullptr;
 }
 
 void FileCopy::sync(const GFile* destFile)
@@ -112,21 +101,12 @@ void FileCopy::sync(const GFile* destFile)
         return;
     }
 
-    if(mTotalSize < BUF_SIZE * SYNC_INTERVAL || mIsDestFileLocal) {
-        return;
-    }
-
     // execute sync
-    int fromfd = open(path, O_SYNC);
-    if (-1 != fromfd) {
-        fsync(fromfd);
-        close(fromfd);
-    } else {
-        auto lastError = strerror(errno);
-        qWarning() << "Failed to open the source file, path:" << path
-                   << "error code:" << errno
-                   << "error msg:" << lastError;
-    }
+    QProcess p;
+    p.setProgram("sync");
+    p.setArguments(QStringList() << "-f" << path);
+    p.start();
+    p.waitForFinished(-1);
 }
 
 
@@ -178,15 +158,6 @@ void FileCopy::run ()
         goto out;
     }
 
-    //fix copy special file stuck issue, will skip these type files: socket, fifo, blockdev, chardev
-    //fix bug#162130, 参照nautilus提示修改
-    if (G_FILE_TYPE_SPECIAL == srcFileType) {
-        //qWarning() << "skip G_FILE_TYPE_SPECIAL type file copy srcFile: " << mSrcUri;
-        error = g_error_new(1, G_IO_ERROR_NOT_REGULAR_FILE, "%s", tr("Error when copy file: %1, can not copy special files, skip this file and continue?").arg(mSrcUri.replace("file://", "")).toUtf8().constData());
-        detailError(&error);
-        goto out;
-    }
-
     destFileType = g_file_query_file_type(destFile, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr);
     if (G_FILE_TYPE_DIRECTORY == destFileType) {
         mDestUri = mDestUri + "/" + mSrcUri.split("/").last();
@@ -201,14 +172,6 @@ void FileCopy::run ()
 
     // check file status
     if (FileUtils::isFileExsit(mDestUri)) {
-        bool src_file_exists = g_file_query_exists(srcFile, mCancel);
-        if (!src_file_exists) {
-            qWarning()<<__FUNCTION__<<"query src file doesn't exist"<<mSrcUri;
-            g_clear_error(&error);
-            error = g_error_new_literal(g_io_error_quark(), G_IO_ERROR_NOT_FOUND, tr("Can not copy %1, file doesn't exist. Has the file been renamed or moved?").arg(mSrcUri).toUtf8().constData());
-            detailError(&error);
-            return;
-        }
         if (mCopyFlags & G_FILE_COPY_OVERWRITE) {
             g_file_delete(destFile,  nullptr, &error);
             if (nullptr != error) {
@@ -244,7 +207,6 @@ void FileCopy::run ()
 
     // check dest filesystem
     destDir = g_file_get_parent (destFile);
-    mIsDestFileLocal = isFileOnLocal(destDir);
     if (destDir) {
         g_autoptr (GMount) destMount = g_file_find_enclosing_mount (destDir, NULL, NULL);
         if (destMount) {
@@ -260,30 +222,6 @@ void FileCopy::run ()
                             goto out;
                         }
                     }
-                }
-            }
-        }
-    }
-
-    if (mTotalSize > BIG_FILE_SIZE) {
-        if (!mSrcUri.startsWith("ftp://") && !mSrcUri.startsWith("sftp://")) {
-            auto SrcPath = g_file_get_path(srcFile);
-            auto destPath = g_file_get_path(destFile);
-
-            if(-1 != doCopyBigFile(SrcPath, destPath)){
-                if (CANCEL == mStatus) {
-                    error = g_error_new(1, G_IO_ERROR_CANCELLED, "%s", tr("operation cancel").toUtf8().constData());
-                    detailError(&error);
-                    g_file_delete(destFile, nullptr, nullptr);
-                } else {
-                    mStatus = FINISHED;
-                }
-                goto out;
-            } else {
-                if (ERROR == mStatus) {
-                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Error writing to file: Input/output error").toUtf8().constData());
-                    detailError(&error);
-                    goto out;
                 }
             }
         }
@@ -320,7 +258,7 @@ void FileCopy::run ()
 
     if (notSupportInputStream || notSupportOutputStream) {
         qInfo()<<"stream io not supported, use g_file_copy instead";
-        g_file_copy(srcFile, destFile, (writeIO? GFileCopyFlags(mCopyFlags|G_FILE_COPY_OVERWRITE): mCopyFlags), mCancel, mProgress, mProgressData, &error);
+        g_file_copy(srcFile, destFile, mCopyFlags, mCancel, mProgress, mProgressData, &error);
         sync(destFile);
         if (error) {
             qWarning() << "g_file_copy error:" << error->code << " -- " << error->message;
@@ -352,11 +290,9 @@ void FileCopy::run ()
             if (0 == readSize && nullptr == error) {
                 mStatus = FINISHED;
                 mPause.unlock();
-                if (mTotalSize == 0) {
-                    mTotalSize = 1024;
-                    mOffset = mTotalSize;
-                    updateProgress ();
-                }
+                mTotalSize = 1024;
+                mOffset = mTotalSize;
+                updateProgress ();
                 continue;
             } else if (nullptr != error) {
                 detailError(&error);
@@ -385,7 +321,7 @@ void FileCopy::run ()
                 if (!existed) {
                     error = g_error_new (1, G_IO_ERROR_FAILED, "%s", tr("Please check whether the device has been removed!").toUtf8().constData());
                 } else {
-                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Write file error: There is no available disk space for device!").toUtf8().constData());
+                    error = g_error_new(1, G_IO_ERROR_FAILED, "%s", tr("Write file error: There is no avaliable disk space for device!").toUtf8().constData());
                 }
 
                 detailError(&error);
@@ -405,8 +341,7 @@ void FileCopy::run ()
             g_file_delete (destFile, nullptr, nullptr);
             break;
         } else if (ERROR == mStatus) {
-            // 在一些特殊场景下可能会导致数据丢失问题，所以屏蔽
-            //g_file_delete (destFile, nullptr, nullptr);
+            g_file_delete (destFile, nullptr, nullptr);
             break;
         } else if (FINISHED == mStatus) {
             break;
@@ -456,24 +391,12 @@ out:
         }
         sync(destFile);
     } else {
-        // some special detail for mtp,  gphoto2, or other cases.
-        if (mSrcUri.startsWith("mtp://") || mDestUri.startsWith("mtp://")) {
+        // some special detail for mtp
+        if (mSrcUri.startsWith("mtp:///") || mDestUri.startsWith("mtp:///")) {
             if (mError) {
                 g_error_free(*mError);
                 *mError = nullptr;
-                g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
-            }else if (mDestUri.startsWith("gphoto2://")) {
-                if (mError) {
-                    g_error_free(*mError);
-                    *mError = nullptr;
-                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("Failed to create %1. Please ensure if it is in root directory, or if the device supports gphoto2 protocol correctly.").arg(mDestUri).toUtf8().constData());
-                }
-            } else {
-                if (mError) {
-                    g_error_free(*mError);
-                    *mError = nullptr;
-                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("Failed to create %1.").arg(mDestUri).toUtf8().constData());
-                }
+                g_set_error(mError, 1, G_IO_ERROR_NOT_SUPPORTED, "%s", tr("File opening failure").toUtf8().constData());
             }
         }
     }
@@ -507,86 +430,6 @@ out:
     if (nullptr != destFileInfo) {
         g_object_unref(destFileInfo);
     }
-}
-
-int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
-{
-    mStatus = RUNNING;
-    int in_fd, out_fd, ret(-1);
-    struct stat stat_buf;
-    off_t offset = 0;
-    int syncCount = 0;
-
-    std::unique_lock<std::mutex> lock(fileMutex, std::defer_lock);
-    lock.lock();
-    in_fd = open(srcPath, O_RDONLY);
-    if (in_fd == -1) {
-        qDebug() << "Failed to open the source file";
-        return ret;
-    }
-
-    if  (fstat(in_fd, &stat_buf) == -1) {
-        qDebug() << "Failed to get the source file status";
-        return ret;
-    }
-    lock.unlock();
-    out_fd = open(destPath, O_WRONLY | O_CREAT, stat_buf.st_mode);
-    if (out_fd == -1) {
-        qDebug() << "Failed to open the destination file";
-        return ret;
-    }
-
-    off_t buf = 10 * 1024 * 1024;
-    ssize_t sendSize = 0;
-    ssize_t size = 0;
-    while(size < stat_buf.st_size) {
-        if (nullptr != mCancel && g_cancellable_is_cancelled(mCancel)) {
-            mStatus = CANCEL;
-            break;
-        }
-
-        if (RUNNING == mStatus) {
-            sendSize = sendfile(out_fd, in_fd, &offset, buf);
-            if (sendSize == -1) {
-                size = sendSize;
-                if (0 != offset) {
-                    mStatus = ERROR;
-                }
-                qWarning() << "send file error";
-                break;
-            }
-            size += sendSize;
-            if (mOffset <= mTotalSize) {
-                mOffset = size;
-            }
-            if (!mIsDestFileLocal) {
-                if (++syncCount > SYNC_INTERVAL) {
-                    syncCount = 0;
-                    fsync(out_fd);
-                }
-            }
-            updateProgress ();
-        } else if (PAUSE == mStatus) {
-            if (mPause.tryLock(3000)) {
-                if (RESUME == mStatus) {
-                    mPause.unlock();
-                }
-                mStatus = RUNNING;
-            }
-        }
-    }
-    close(in_fd);
-    close(out_fd);
-    return size;
-}
-
-bool FileCopy::isFileOnLocal(const GFile* destFile)
-{
-    GMount* mount = g_file_find_enclosing_mount(const_cast<GFile*>(destFile), NULL, NULL);
-    if (mount) {
-        return !g_mount_can_unmount(mount);
-    }
-    return true;
 }
 
 /**

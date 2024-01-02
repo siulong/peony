@@ -39,15 +39,10 @@ FileOperation::FileOperation(QObject *parent) : QObject (parent)
     m_cancellable_wrapper = wrapGCancellable(g_cancellable_new());
     setAutoDelete(true);
     connect(this, &FileOperation::operationPause, this, [=] () {
-        m_is_pause.store(true);
+        m_is_pause = true;
     });
     connect(this, &FileOperation::operationResume, this, [=] () {
-        m_is_pause.store(false);
-        m_wait_condition.wakeOne();
-    });
-    connect(this, &FileOperation::operationCancel, this, [=] () {
-        m_is_pause.store(false);
-        m_wait_condition.wakeOne();
+        m_is_pause = false;
     });
 }
 
@@ -73,14 +68,6 @@ void FileOperation::cancel()
     m_is_cancelled = true;
 }
 
-void FileOperation::OperatorThreadPause()
-{
-    m_mutex.lock();
-    while (m_is_pause) {
-        m_wait_condition.wait(&m_mutex);
-    }
-    m_mutex.unlock();
-}
 
 bool FileOperation::nameIsValid (QString& name)
 {
@@ -162,7 +149,7 @@ void FileOperation::fileSync(QString srcFile, QString destDir)
             QProcess p;
             auto shellPath = g_shell_quote(path);
             qDebug() << "DJ- start execute: " << QString("sync -f %1").arg(shellPath);
-            p.start(QString("/usr/bin/sync -f %1").arg(shellPath));
+            p.start(QString("sync -f %1").arg(shellPath));
             qDebug() << "DJ- execute: " << QString("sync -f %1  ok!!!").arg(shellPath);
             g_free(path);
             g_free(shellPath);

@@ -70,7 +70,6 @@ void EmblemProviderManager::registerProvider(EmblemProvider *provider)
     connect(provider, &EmblemProvider::visibleChanged, this, [=](bool visible){
         this->visibleChanged(provider->emblemKey().toUtf8().constData(), visible);
     });
-    connect(this, &EmblemProviderManager::queueQueryFinished, this, &EmblemProviderManager::requestUpdateAllFiles);
 }
 
 QStringList EmblemProviderManager::getAllEmblemsForUri(const QString &uri)

@@ -34,7 +34,6 @@
 #include <QtConcurrent>
 #include <QProxyStyle>
 #include <QComboBox>
-#include <QDBusInterface>
 
 #include "properties-window-tab-iface.h"
 #include "open-with-properties-page.h"
@@ -145,7 +144,6 @@ protected Q_SLOTS:
     void onFileCountOne(const QString &uri, quint64 size);
     void cancelCount();
     void updateInfo(const QString &uri);
-    void updateDateFormat(QString dateFormat);
 
 private:
     QVBoxLayout                 *m_layout = nullptr;
@@ -205,9 +203,6 @@ private:
 
     QTimer *m_timer = nullptr;
     bool m_isReadOnly = false;
-
-    QString m_date_format = "";
-    QDBusInterface  *mDbusDateServer;
 };
 
 class PushButtonStyle : public QProxyStyle

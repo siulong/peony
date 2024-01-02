@@ -53,12 +53,9 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
 {
     m_uri = uri;
     m_layout = new QFormLayout(this);
-    m_layout->setContentsMargins(24, 16, 24, 16);
     m_layout->setRowWrapPolicy(QFormLayout::WrapLongRows);
     m_layout->setFormAlignment(Qt::AlignLeft);
-    m_layout->setVerticalSpacing(8);
-    m_layout->setHorizontalSpacing(24);
-    //m_layout->setLabelAlignment(Qt::AlignRight);
+    m_layout->setLabelAlignment(Qt::AlignRight);
     setLayout(m_layout);
 
     if (uri == "computer:///") {
@@ -262,7 +259,7 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
                 auto pushbutton = new QPushButton(tr("Kylin Burner"));
                 connect(pushbutton, &QPushButton::clicked, pushbutton, [=](){
                     QProcess p;
-                    p.startDetached("/usr/bin/kylin-burner");
+                    p.startDetached("kylin-burner");
                     p.waitForStarted();
                 });
                 m_layout->addRow(new QLabel(tr("Open with: \t")), pushbutton);

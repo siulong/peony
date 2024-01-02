@@ -19,23 +19,19 @@ PKGCONFIG += glib-2.0 gio-2.0 gio-unix-2.0 poppler-qt5 gsettings-qt udisks2 libn
 DEFINES += PEONYCORE_LIBRARY
 
 contains(DEFINES, KY_FILE_DIALOG) {
-    PKGCONFIG += kysdk-applications
+    PKGCONFIG += kysdk-qtwidgets
 }
 
 contains(DEFINES, KY_SDK_SYSINFO) {
-    PKGCONFIG += kysdk-system
+    PKGCONFIG += kysdk-sysinfo
 }
 
 contains(DEFINES, KY_SDK_QT_WIDGETS) {
-    PKGCONFIG += kysdk-applications
+    PKGCONFIG += kysdk-qtwidgets
 }
 
 contains(DEFINES, KY_SDK_WAYLANDHELPER) {
-    PKGCONFIG += kysdk-applications
-}
-
-contains(DEFINES, KY_SDK_SYSINFO) {
-    PKGCONFIG += kysdk-system
+    PKGCONFIG += kysdk-waylandhelper
 }
 
 schemes.files += org.ukui.peony.settings.gschema.xml
@@ -62,8 +58,7 @@ include(libpeony-qt.pri)
 TRANSLATIONS += ../translations/libpeony-qt/libpeony-qt_zh_CN.ts \
                 ../translations/libpeony-qt/libpeony-qt_tr.ts \
                 ../translations/libpeony-qt/libpeony-qt_cs.ts \
-                ../translations/libpeony-qt/libpeony-qt_bo_CN.ts \
-                ../translations/libpeony-qt/libpeony-qt_mn.ts
+                ../translations/libpeony-qt/libpeony-qt_bo_CN.ts
 
 DESTDIR += $$PWD
 
@@ -85,7 +80,7 @@ unix {
     # fixme:// format_dialog.h
     header.path = /usr/include/peony-qt
     header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h windows/FMWindowIface.h \
-                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h windows/udfAppendBurnDataDialog.h windows/format-dlg-create-delegate.h
+                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h windows/udfAppendBurnDataDialog.h
 #    header.depends = header2
     header.files += development-files/header-files/*
     INSTALLS += header

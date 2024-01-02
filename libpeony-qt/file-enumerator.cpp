@@ -428,13 +428,8 @@ void FileEnumerator::enumerateAsync()
 
     // query directory info first
     auto infoJob = new FileInfoJob(m_uri);
-    //infoJob->setAutoDelete(true);
-    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
-        if (!successed) {
-            Q_EMIT enumerateFinished(false);
-            infoJob->deleteLater();
-            return;
-        }
+    infoJob->setAutoDelete(true);
+    connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
         //auto uri = g_file_get_uri(m_root_file);
         //auto path = g_file_get_path(m_root_file);
         g_file_enumerate_children_async(m_root_file,
@@ -445,9 +440,8 @@ void FileEnumerator::enumerateAsync()
                                         m_cancellable,
                                         GAsyncReadyCallback(find_children_async_ready_callback),
                                         this);
-        infoJob->deleteLater();
+
     });
-    connect(this, &FileEnumerator::cancelled, infoJob, &FileInfoJob::cancel);
     infoJob->queryAsync();
 }
 
@@ -564,15 +558,12 @@ GAsyncReadyCallback FileEnumerator::mount_enclosing_volume_callback(GFile *file,
                 if (finished_err) {
                     qDebug()<<"finished err:"<<finished_err->code()<<finished_err->message();
                     if (finished_err->code() == G_IO_ERROR_PERMISSION_DENIED
-                            || finished_err->code() == G_IO_ERROR_FAILED_HANDLED
-                            || finished_err->code() == G_IO_ERROR_NOT_DIRECTORY) {
+                            || finished_err->code() == G_IO_ERROR_FAILED_HANDLED) {
                         p_this->enumerateFinished(false);
                         Peony::AudioPlayManager::getInstance()->playWarningAudio();
                         QString strErr = finished_err->message();
                         if (finished_err->code() == G_IO_ERROR_FAILED_HANDLED) {
                             strErr = tr("The password dialog box is canceled");
-                        } else if (finished_err->code() == G_IO_ERROR_NOT_DIRECTORY) {
-                            strErr = tr("Message recipient disconnected from message bus without replying!");
                         }
                         QMessageBox::critical(nullptr, tr("Error"), strErr);
                         return;
@@ -602,7 +593,7 @@ GAsyncReadyCallback FileEnumerator::find_children_async_ready_callback(GFile *fi
         qDebug()<<"find children async err:"<<err->code<<err->message;
         //NOTE: if the enumerator file has target uri, but target uri is not mounted,
         //it should be handled.
-        //This nearly won't happened in local, but in a network server it might.
+        //This nearly won't happend in local, but in a network server it might.
         if (err->code == G_IO_ERROR_NOT_MOUNTED) {
             g_object_unref(p_this->m_root_file);
             p_this->m_root_file = g_file_dup(file);

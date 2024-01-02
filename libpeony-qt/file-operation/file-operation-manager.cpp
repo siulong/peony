@@ -29,15 +29,12 @@
 #include <QApplication>
 #include <QTimer>
 #include <QtConcurrent>
-#include <QDBusInterface>
-#include <QDBusConnection>
 
 #include "file-copy-operation.h"
 #include "file-delete-operation.h"
 #include "file-link-operation.h"
 #include "file-move-operation.h"
 #include "file-rename-operation.h"
-#include "file-batch-rename-operation.h"
 #include "file-trash-operation.h"
 #include "file-untrash-operation.h"
 
@@ -50,10 +47,6 @@
 
 #include "properties-window.h"
 #include "sound-effect.h"
-#include <kballontip.h>
-#ifdef KY_SDK_SOUND_EFFECTS
-#include "ksoundeffects.h"
-#endif
 
 #include <QVector4D>
 
@@ -61,9 +54,6 @@
 #include <unistd.h>
 
 using namespace Peony;
-#ifdef KY_SDK_SOUND_EFFECTS
-using namespace kdk;
-#endif
 
 static FileOperationManager *global_instance = nullptr;
 
@@ -75,8 +65,7 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<Peony::GErrorWrapperPtr>("Peony::GErrorWrapperPtr&");
     m_thread_pool = new QThreadPool(this);
     m_progressbar = FileOperationProgressBar::getInstance();
-    m_mount_operation_list = new QHash<QString, totalOperationInfo>;
-    m_operation_use_list = new QHash<FileOperation*, currentOpertionInfo>;
+
     if (!m_allow_parallel) {
         //Imitating queue execution.
         m_thread_pool->setMaxThreadCount(1);
@@ -92,33 +81,10 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
     if (pconnection) {
         g_dbus_connection_signal_subscribe(pconnection, "org.freedesktop.login1", "org.freedesktop.login1.Manager", "PrepareForSleep", "/org/freedesktop/login1", NULL, G_DBUS_SIGNAL_FLAGS_NONE, systemSleep, this, NULL);
     }
-
-    QDBusConnection conn = QDBusConnection::sessionBus();
-    if (!conn.isConnected()) {
-        qCritical()<<"failed to init mDbusDateServer, can not connect to session dbus";
-        return;
-    }
-
-    m_iface = new QDBusInterface("org.ukui.peony", "/org/ukui/peony", "org.ukui.peony", QDBusConnection::sessionBus());
-    if (!m_iface->isValid()){
-        qCritical() << "Create /org/ukui/peony Interface Failed " << QDBusConnection::sessionBus().lastError();
-        return;
-    }
-
-    QDBusConnection::sessionBus().connect("org.ukui.peony",
-                                          "/org/ukui/peony",
-                                          "org.ukui.peony",
-                                          "opreateFinishedOfEngrampa",
-                                          this,
-                                          SLOT(slot_opreateFinishedOfEngrampa(QString, bool)));
 }
 
 FileOperationManager::~FileOperationManager()
 {
-    if(m_iface){
-        delete m_iface;
-        m_iface = nullptr;
-    }
 
 }
 
@@ -159,7 +125,7 @@ QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
     QStringList occupiedFiles;
 
     QProcess process;
-    QString cmd = QString("/usr/bin/lsof -c %1").arg(procName);
+    QString cmd = QString("lsof -c %1").arg(procName);
     process.start(cmd);
     process.waitForFinished();
     QString infos = QString(process.readAll());
@@ -226,6 +192,7 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         }
     }
     //end
+
 
     if (operationInfo.get()->operationType() == FileOperationInfo::Trash) {
         auto value = GlobalSettings::getInstance()->getValue("showTrashDialog");
@@ -316,140 +283,30 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
     }
 
 start:
-    static bool oldQuitOnLastWindow = QApplication::quitOnLastWindowClosed();
+
     QApplication::setQuitOnLastWindowClosed(false);
 
     connect(operation, &FileOperation::operationFinished, this, [=]() {
         operation->notifyFileWatcherOperationFinished();
-        if (qApp->property("isPeony").toBool()) {
-            auto settings = GlobalSettings::getInstance();
-            bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
-            QApplication::setQuitOnLastWindowClosed(!runbackend);
-            QTimer::singleShot(1000, this, [=]() {
-                int last_op_count = m_thread_pool->children().count();
-                if (last_op_count == 0) {
-                    if (qApp->allWidgets().isEmpty()) {
-                        if (!runbackend) {
-                            qApp->quit();
-                        }
+        auto settings = GlobalSettings::getInstance();
+        bool runbackend = settings->getInstance()->getValue(RESIDENT_IN_BACKEND).toBool();
+        QApplication::setQuitOnLastWindowClosed(!runbackend);
+
+        QTimer::singleShot(1000, this, [=]() {
+            int last_op_count = m_thread_pool->children().count();
+            if (last_op_count == 0) {
+                if (qApp->allWidgets().isEmpty()) {
+                    if (!runbackend) {
+                        qApp->quit();
                     }
                 }
-            });
-        } else {
-            QApplication::setQuitOnLastWindowClosed(oldQuitOnLastWindow);
-        }
+            }
+        });
     }, Qt::BlockingQueuedConnection);
+
+
 
     bool allowParallel = m_allow_parallel;
-
-    connect(operation, &FileOperation::operationTotalFileSize, this, [=](const qint64& total_file_size) {
-        // fix #171449
-        if (m_progressbar->isHidden()) {
-            m_progressbar->m_error = true;
-        }
-
-        //story 19796 空间不足时预处理
-        // Check if the operation is a copy or move operation
-        auto info = operation->getOperationInfo();
-        if (!info || (info->operationType() != FileOperationInfo::Copy
-                && info->operationType() != FileOperationInfo::Move)) {
-            return;
-        }
-        // Check if the operation is already in the list of operations
-        if (m_operation_use_list->contains(operation)) {
-            qWarning() << "this operation already exist";
-            return;
-        }
-
-        // Get the destination path of the operation
-        auto destGfile = g_file_new_for_uri(info->target().toUtf8().constData());
-        auto destPath = g_file_get_path(destGfile);
-
-        //Get the available disk space using QStorageInfo
-        QStorageInfo storage(destPath);
-
-        // Check if the file path is mounted correctly
-        if (!storage.isValid()) {
-            if (m_progressbar->m_error) {
-                m_progressbar->m_error = false;
-            }
-            qWarning() << "The file path is not mounted correctly";
-            return;
-        }
-
-        quint64 diskFreeSpace = storage.bytesAvailable();
-
-        // Check if there is an error getting the disk free space
-        if (0 >= diskFreeSpace) {
-            if (m_progressbar->m_error) {
-                m_progressbar->m_error = false;
-            }
-            qWarning() << "get disk free space error!";
-            return;
-        }
-
-        QString mountRootName = storage.rootPath();
-
-        // Calculate the total size of the operation
-        qint64 currentTotalSize = 0;
-        totalOperationInfo totalInfo;
-
-        // Check if the mount root name is already in the list of mount operations
-        if (m_mount_operation_list->contains(mountRootName)) {
-            qint64 currentUseSize = m_mount_operation_list->value(mountRootName).totalSize;
-            currentTotalSize = currentUseSize + total_file_size;
-            totalInfo.totalSize = currentTotalSize;
-            totalInfo.preoccupationSize = m_mount_operation_list->value(mountRootName).preoccupationSize;
-        } else {
-            currentTotalSize = total_file_size;
-            totalInfo.totalSize = currentTotalSize;
-            totalInfo.preoccupationSize = diskFreeSpace;
-        }
-
-        // Check if there is enough disk space for the operation
-        if(currentTotalSize > diskFreeSpace) {
-            // Cancel the operation
-            operation->cancel();
-
-            // Create an error message
-            FileOperationError except;
-            FileOperationErrorDialogWarning dialog;
-            QString name;
-
-            if (mountRootName == "/") {
-                name = tr("File System");
-            } else if (mountRootName == "/data") {
-                name = tr("Data");
-            } else {
-                name = storage.name();
-            }
-            except.title = tr("Insufficient storage space");
-            double total_file_size_gb = (double)total_file_size / (1024 * 1024 * 1024);
-            double need_total_size_gb = (double)(total_file_size - totalInfo.preoccupationSize) / (1024 * 1024 * 1024);
-            except.errorStr = tr("%1 no space left on device. "
-                                 "Copy file size: %2 GB, "
-                                 "Space needed: %3 GB.").arg(name).arg(QString::number(total_file_size_gb, 'f', 3))
-                    .arg(QString::number(need_total_size_gb, 'f', 3));
-
-            // Display the error message
-            dialog.handle(except);
-            if (m_progressbar->m_error) {
-                m_progressbar->m_error = false;
-            }
-            return;
-        }
-
-        // Record the operation information
-        currentOpertionInfo opertionInfo;
-        opertionInfo.mountRootName = mountRootName;
-        opertionInfo.opertionFileSize = total_file_size;
-        totalInfo.preoccupationSize -= total_file_size;
-        m_mount_operation_list->insert(mountRootName, totalInfo);
-        m_operation_use_list->insert(operation, opertionInfo);
-
-        m_progressbar->m_error = false;
-        m_progressbar->showDelay(300);
-    }, Qt::BlockingQueuedConnection);
 
     auto opType = operationInfo->operationType();
     switch (opType) {
@@ -507,36 +364,11 @@ start:
    proc->connect(proc, &ProgressBar::resume, operation, &FileOperation::operationResume);
 
    operation->connect(operation, &FileOperation::errored, [=]() {
-       if (operation->getOperationInfo()->m_type == FileOperationInfo::Copy || operation->getOperationInfo()->m_type == FileOperationInfo::Move) {
-           return;
-       }
        operation->setHasError(true);
    });
 
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
-       //story 19796,后续数据处理
-       if (m_operation_use_list->contains(operation)) {
-           // Get the operation info
-           currentOpertionInfo operationInfo = m_operation_use_list->value(operation);
-           // Get the mount root name and total size of the operation
-           QString name = operationInfo.mountRootName;
-           quint64 size = operationInfo.opertionFileSize;
-           // Calculate the new size of the mount operation list
-           size = m_mount_operation_list->value(name).totalSize - size;
-           if (size == 0){
-               m_mount_operation_list->remove(name);
-           } else {
-               totalOperationInfo info;
-               info.totalSize = size;
-               info.preoccupationSize = m_mount_operation_list->value(name).preoccupationSize;
-               if (operation->isCancelled()) {
-                   info.preoccupationSize += operationInfo.opertionFileSize;
-               }
-               m_mount_operation_list->insert(name, info);
-           }
-           m_operation_use_list->remove(operation);
-       }
        Q_EMIT this->operationFinished(operation->getOperationInfo(), !operation->hasError());
        if (operation->hasError()) {
            this->clearHistory();
@@ -547,24 +379,15 @@ start:
            auto info = operation->getOperationInfo();
            if (!info)
                return;
-           if (info->m_type == FileOperationInfo::BatchRename) {
-               info->m_type = FileOperationInfo::BatchRenameInternal;
-           }
            if (info->operationType() != FileOperationInfo::Delete) {
                //fix bug#162024, play sound when operation finished
-               if ((info->operationType() == FileOperationInfo::Copy ||
-                   info->operationType() == FileOperationInfo::Move) &&
-                    ! info->m_has_error){
-                   //SoundEffect::getInstance()->copyOrMoveSucceedMusic();
-                   //Task#152997, use sdk play sound
-#ifdef KY_SDK_SOUND_EFFECTS
-                   kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
-#endif
+               if (info->operationType() == FileOperationInfo::Copy ||
+                   info->operationType() == FileOperationInfo::Move){
+                   SoundEffect::getInstance()->copyOrMoveSucceedMusic();
                }
-               if(info->getOperationRecording()) {
-                   m_undo_stack.push(info);
-                   m_redo_stack.clear();
-               }
+
+               m_undo_stack.push(info);
+               m_redo_stack.clear();
            } else {
                this->clearHistory();
            }
@@ -603,20 +426,6 @@ start:
         m_thread_pool->start(operation);
     }
 
-    connect(operation, &FileOperation::operationWithoutRecording, this, [=]() {
-        auto info = operation->getOperationInfo();
-        if (info->getOperationRecording()) {
-            info->setOperationRecording(false);
-        }
-    }, Qt::BlockingQueuedConnection);
-    connect(operation, &FileOperation::operationSaveAsLongNameFile, this, [=](const QString &uri){
-        QString text = QString(tr("The long name file is saved to %1")).arg(uri);
-        QMessageBox::information(nullptr,nullptr,text);
-    }, Qt::BlockingQueuedConnection);
-    connect(operation, &FileOperation::operationInfoMsgBox, this, [=](const QString &msg){
-        QString text = msg;
-        QMessageBox::information(nullptr,nullptr,text);
-    }, Qt::BlockingQueuedConnection);
     Q_EMIT this->operationStarted(operation->getOperationInfo());
 
     m_progressbar->showDelay();
@@ -662,10 +471,6 @@ void FileOperationManager::startUndoOrRedo(std::shared_ptr<FileOperationInfo> in
     }
     case FileOperationInfo::Untrash: {
         op = new FileUntrashOperation(info->m_src_uris);
-        break;
-    }
-    case FileOperationInfo::BatchRenameInternal: {
-        op = new FileBatchRenameInternalOperation(info);
         break;
     }
     default:
@@ -843,36 +648,6 @@ void FileOperationManager::manuallyNotifyDirectoryChanged(FileOperationInfo *inf
     }
 }
 
-void FileOperationManager::slot_opreateFinishedOfEngrampa(const QString &path, bool finish)
-{
-    if(!finish || path.isEmpty())
-        return;
-
-    if(!path.startsWith("smb://") && !path.startsWith("ftp://") && !path.startsWith("sftp://"))
-        return;
-
-    for (auto watcher : m_watchers) {
-        if(watcher->supportMonitor())
-            continue;
-        QString watcherUri = watcher->currentUri();
-        //'file:///run/user/1000/gvfs/smb-share:server=xxx,share=xxx/' converted to 'smb://xxx'
-        if(watcherUri.startsWith("file:///run/user/1000/gvfs/smb-share:")){
-            GFile * file  = g_file_new_for_uri(watcherUri.toUtf8().data());
-            char *uri = g_file_get_uri(file);
-            if (uri) {
-                watcherUri = uri;
-            }
-            g_object_unref(file);
-            g_free(uri);
-        }
-        //auto watcherDecodeUri = FileUtils::urlDecode(watcherUri);
-        //auto destDecodePath = FileUtils::urlDecode(path);
-        if (watcherUri == path || watcherUri == path + QString("/")){
-            watcher->requestUpdateDirectory();
-        }
-    }
-}
-
 //FIXME: get opposite info correcty.
 FileOperationInfo::FileOperationInfo(QStringList srcUris,
                                      QString destDirUri,
@@ -951,11 +726,6 @@ void FileOperationInfo::oppositeInfoConstruct(Type type)
             commonOppositeInfoConstruct();
             break;
         }
-        case BatchRenameInternal:
-        case BatchRename: {
-            m_opposite_type = BatchRenameInternal;
-            break;
-        }
         default: {
             m_opposite_type = Other;
         }
@@ -996,13 +766,6 @@ void FileOperationInfo::RenameOppositeInfoConstruct()
     m_dest_uris<<src;
     m_src_dir_uri = m_dest_dir_uri;
 }
-
-void FileOperationInfo::BatchRenameOppositeInfoConstruct()
-{
-    m_dest_dir_uris = m_src_uris;
-    m_src_dir_uri = m_dest_dir_uri;
-}
-
 void FileOperationInfo::UntrashOppositeInfoConstruct()
 {
     m_dest_uris = m_dest_dir_uris;
@@ -1020,10 +783,9 @@ void FileOperationInfo::trashOppositeInfoConstruct()
 
 std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperationInfo *info) {
 
-    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, info->m_opposite_type);
-    oppositeInfo->m_drop_action = info->m_drop_action;
+    auto oppositeInfo = std::make_shared<FileOperationInfo>(info->m_dest_uris, info->m_src_dir_uri, m_opposite_type);
     if (info->m_drop_action == Qt::TargetMoveAction) {
-        //oppositeInfo->m_drop_action = Qt::TargetMoveAction;
+        oppositeInfo->m_drop_action = Qt::TargetMoveAction;
         oppositeInfo->m_type = FileOperationInfo::Move;
     }
     QMap<QString, QString> oppsiteMap;
@@ -1034,17 +796,8 @@ std::shared_ptr<FileOperationInfo> FileOperationInfo::getOppositeInfo(FileOperat
     oppositeInfo->m_node_map = oppsiteMap;
     oppositeInfo->m_newname = this->m_oldname;
     oppositeInfo->m_oldname = this->m_newname;
-    oppositeInfo->m_newnames = this->m_newnames;
-    oppositeInfo->m_oldnames = this->m_oldnames;
 
     return oppositeInfo;
-}
-
-void FileOperationInfo::setOperationRecording(bool state)
-{
-    if (m_operation_recording != state) {
-        m_operation_recording = state;
-    }
 }
 
 // S3/S4

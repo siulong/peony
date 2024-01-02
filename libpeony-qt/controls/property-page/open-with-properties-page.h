@@ -169,10 +169,6 @@ public:
     void init();
     void saveAllChange() override;
 
-public Q_SLOTS:
-    void chooseOtherApp();
-    void openAppCenter();
-
 private:
     QVBoxLayout *m_layout = nullptr;
 

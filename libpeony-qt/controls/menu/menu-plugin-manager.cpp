@@ -37,7 +37,6 @@
 
 //tag file
 #include "file-label-model.h"
-#include "tag-management.h"
 #include <QMenu>
 
 #include <QAction>
@@ -193,17 +192,6 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
         m_label = labelWidget;
         labelWidgetContainer->setDefaultWidget(labelWidget);
         l<<labelWidgetContainer;
-
-        QAction *tagAction = new QAction(tr("label management ..."), this);
-        connect(tagAction, &QAction::triggered, this, [=]() {
-            TagManagement *managent = TagManagement::getInstance();
-            managent->show();
-        });
-        l<<tagAction;
-
-        connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
-            tagAction->setText(text);
-        });
     }
     return l;
 }
@@ -259,7 +247,6 @@ QList<QAction *> CreateSharedFileLinkMenuPlugin::menuActions(MenuPluginInterface
 void FileLabelWidget::clickItem(int index)
 {
     m_colorgroup->button(index)->setFocus();
-    static_cast<ColorPushButton*>(m_colorgroup->button(index))->m_checkInMultiSelect = true;
     QList<int> updateids;
     updateids = m_ids;
     if(m_selectionUris->count() == 1){
@@ -315,10 +302,8 @@ void FileLabelWidget::clickItem(int index)
 
 FileLabelWidget::FileLabelWidget(const QStringList &selectionUris)
 {
-    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     m_selectionUris = const_cast<QStringList*>(&selectionUris);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     auto hbox = new QHBoxLayout;
     auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
 
@@ -328,22 +313,17 @@ FileLabelWidget::FileLabelWidget(const QStringList &selectionUris)
 
     int btnid = 1;
     for (auto item : items) {
-        if (!item->isValidInMenu()) {
-            continue;
-        }
         ColorPushButton *colorButton=new ColorPushButton(item->color(),this);
-        colorButton->setName(item->name());
+
         colorButton->palette().window();
         colorButton->setCheckable(true);
         colorButton->setEnabled(true);
         QList<int> ids;
-        bool checkInMultiSelect = true;
+
         for (auto selectionUri : selectionUris) {
             auto id = FileLabelModel::getGlobalModel()->getFileLabelIds(selectionUri);
-            checkInMultiSelect = checkInMultiSelect ? id.contains(item->id()) : false ;
             ids.append(id);
         }
-        colorButton->m_checkInMultiSelect = checkInMultiSelect;
         ids = ids.toSet().toList();
         m_ids = ids;
         bool checked = ids.contains(item->id());
@@ -351,33 +331,16 @@ FileLabelWidget::FileLabelWidget(const QStringList &selectionUris)
         colorButton->setChecked(checked);
         colorgroup->button(btnid)->setChecked(checked);
 
-        connect(colorButton, &ColorPushButton::changeText, this, &FileLabelWidget::changeText);
-
         btnid++;
     }
 
     for (QWidget * item : m_colorgroup->buttons()) {
             hbox->addWidget(item,0);
             item->installEventFilter(this);
-    }
-    hbox->setAlignment(Qt::AlignLeft);
-    mainLayout->addLayout(hbox);
-    this->setLayout(mainLayout);
+        }
+
+    this->setLayout(hbox);
 
     connect(m_colorgroup,SIGNAL(buttonClicked(int)),this,SLOT(clickItem(int)));
 }
 
-void FileLabelWidget::paintEvent(QPaintEvent *e)
-{
-    bool isUnderMouse = false;
-    QString manager;
-    for (QWidget * item : m_colorgroup->buttons()) {
-        if(item->underMouse()) {
-            isUnderMouse = true;
-            break;
-        }
-    }
-    if (!isUnderMouse){
-        Q_EMIT changeText(tr("label management ..."));
-    }
-}

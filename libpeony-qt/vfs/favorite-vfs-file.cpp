@@ -263,11 +263,9 @@ GFileInfo* vfs_favorite_file_query_info(GFile *file, const char *attributes, GFi
     } else {
         info = g_file_info_new ();
         QString name = QObject::tr("favorite");
-#ifdef KYLIN_COMMON
         if (QString::fromStdString(KDKGetPrjCodeName()) == V10_SP1_EDU) {
             name = QObject::tr("Favorites");
         }
-#endif // KYLIN_COMMON
         auto icon = g_themed_icon_new("favorite");
         g_file_info_set_icon(info, icon);
         g_object_unref(icon);

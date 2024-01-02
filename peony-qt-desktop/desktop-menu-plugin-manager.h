@@ -44,9 +44,6 @@ public:
 protected:
     void loadAsync();
 
-Q_SIGNALS:
-    void pluginLoadFinished();
-
 private:
     explicit DesktopMenuPluginManager(QObject *parent = nullptr);
     ~DesktopMenuPluginManager();

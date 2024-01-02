@@ -285,9 +285,6 @@ public:
     }
 
     bool isVideoFile();
-
-    bool isAudioFile();
-
     bool isOfficeFile();
 
     bool isEmptyInfo() {

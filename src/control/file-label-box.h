@@ -26,7 +26,6 @@
 #include <QListView>
 #include <QProxyStyle>
 #include <peony-core_global.h>
-#include <QPropertyAnimation>
 
 class PEONYCORESHARED_EXPORT FileLabelBox : public QListView
 {
@@ -41,19 +40,14 @@ public:
     }
 
     const int TOTAL_DEFAULT_COLOR = 7;
-    void setFloatWidgetVisible(bool visible);
 
 Q_SIGNALS:
     void leftClickOnBlank();
-    void fileLabelVisible(bool checked);
 
 protected:
     void mousePressEvent(QMouseEvent *e);
     void paintEvent(QPaintEvent *e);
 
-private:
-    QPropertyAnimation *m_labelHeightAnimation = nullptr;
-    bool m_isShow = false;
 };
 
 class LabelBoxStyle : public QProxyStyle

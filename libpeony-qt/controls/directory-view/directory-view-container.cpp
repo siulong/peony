@@ -164,10 +164,6 @@ bool DirectoryViewContainer::canCdUp()
 {
     if (!m_view)
         return false;
-
-    if("label:///" == FileUtils::getParentUri(m_view->getDirectoryUri()))/* 全局标记页面‘上一级’菜单置灰 */
-        return false;
-
     return !FileUtils::getParentUri(m_view->getDirectoryUri()).isNull();
 }
 
@@ -262,12 +258,8 @@ update:
         //fix bug 41094, avoid go back to same path issue
         if (! curUri.startsWith("search://")
             && !FileUtils::isSamePath(curUri, uri)) {
-            if(getCurrentUri().startsWith("label:///") && FileUtils::getTargetUri(getCurrentUri()) == uri){
-                m_back_list.append(FileUtils::getTargetUri(getCurrentUri()));/* 解决标记路径进入文件夹内，后退不了问题 */
-            }else{
-                qDebug() << "m_back_list.append first:"<<curUri;
-                m_back_list.append(getCurrentUri());
-            }
+            qDebug() << "m_back_list.append first:"<<curUri;
+            m_back_list.append(curUri);
         }else if(curUri.startsWith("search://")){
             //process remeber search record,only remeber the last search history,relate to bug#94229
             if (m_back_list.length() > 0 ){
@@ -366,7 +358,7 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
     connect(m_view, &DirectoryViewWidget::viewDirectoryChanged, this, [=](){
         if (DirectoryViewFactoryManager2::getInstance()->internalViews().contains(m_view->viewId())) {
             auto dirInfo = FileInfo::fromUri(m_current_uri);
-            if (dirInfo.get()->isEmptyInfo() && !dirInfo.get()->uri().startsWith("search://") && !dirInfo.get()->uri().startsWith("label://")) {
+            if (dirInfo.get()->isEmptyInfo() && !dirInfo.get()->uri().startsWith("search://")) {
                 goBack();
                 if (!m_forward_list.isEmpty())
                     m_forward_list.takeFirst();
@@ -435,20 +427,12 @@ void DirectoryViewContainer::switchViewType(const QString &viewId)
         bool hasStandardPath = FileUtils::containsStandardPath(selections);
         if (selections.count() == 1 && !hasStandardPath) {
             QString one = selections.first();
-            if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1 || one.startsWith("label://")) {
+            if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {
                 return ;
             }
             //修复在选中文件不可见时，重命名操作不会跳转显示重命名文件问题，link to bug#160799
             m_view->scrollToSelection(selections.first());
             m_view->editUri(selections.first());
-        } else if (selections.count() > 1 && !hasStandardPath) {
-            for (auto uri : selections) {
-                QString one = uri;
-                if(one.startsWith("filesafe:///") && one.remove("filesafe:///").indexOf("/") == -1) {
-                    return ;
-                }
-            }
-            m_view->editUris(selections);
         }
     });
     this->addAction(editAction);

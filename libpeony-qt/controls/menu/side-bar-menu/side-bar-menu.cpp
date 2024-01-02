@@ -36,7 +36,6 @@
 #include <QAction>
 #include <QModelIndex>
 #include "format_dialog.h"
-#include "format-dlg-create-delegate.h"
 
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
@@ -140,23 +139,22 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     QList<QAction *> l;
     /* 卸载 */
     bool isWayland = qApp->property("isWayland").toBool(); // related to #105070
-    //fix bug#175330, wayland should be the same with mainline version
-//    if (isWayland) {
-//        if (m_item->isUnmountable()) {
-//            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
-//                m_item->unmount();
-//            });
-//            l.last()->setEnabled(m_item->isMounted());
-//        }
-//    } else {
-    /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
-    if (!(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
-            m_item->unmount();
-        });
-        l.last()->setEnabled(m_item->isMounted());
+    if (isWayland) {
+        if (m_item->isUnmountable()) {
+            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
+                m_item->unmount();
+            });
+            l.last()->setEnabled(m_item->isMounted());
+        }
+    } else {
+        /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
+        if (!(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
+            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
+                m_item->unmount();
+            });
+            l.last()->setEnabled(m_item->isMounted());
+        }
     }
-//    }
 
     /* 弹出 */
     if (m_item->isEjectable()||m_item->isStopable()) {
@@ -215,7 +213,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 if(discControl->work()){
                    connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
                        connect(action, &QAction::triggered, [=](){
-                           UdfFormatDialog *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlg(uri, discCtrl);
+                           UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
@@ -229,7 +227,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 if(discControl->work()){
                    connect(discControl, &UdfBurn::DiscControl::workFinished, [=](UdfBurn::DiscControl *discCtrl){
                        connect(action, &QAction::triggered, [=](){
-                           UdfBurn::UdfFormatDialogWrapper *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlgWrapper(uri, discCtrl);
+                           UdfBurn::UdfFormatDialog *udfFormatDlg = new UdfFormatDialog(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
@@ -245,7 +243,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                     FileInfoJob job (uri, this);
                     job.querySync ();
                 }
-                Format_Dialog *fd = FormatDlgCreateDelegate::getInstance()->createUDiskDlg(uri, m_item);
+                Format_Dialog *fd  = new Format_Dialog(uri, m_item);
                 fd->show();
             });
         }
@@ -324,13 +322,13 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
 void SideBarMenu::gotoAboutComputer()
 {
     QProcess p;
-    p.setProgram("/usr/bin/ukui-control-center");
+    p.setProgram("ukui-control-center");
     //-m About para to show about computer infos, related to bug#88258
     p.setArguments(QStringList()<<"-m" << "About");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" << "About");
+    p.startDetached("ukui-control-center", QStringList()<<"-m" << "About");
 #endif
     p.waitForFinished(-1);
 }

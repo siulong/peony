@@ -603,7 +603,7 @@ bool DiscControl::xorrisoBlankFullSync()
 
     arg << "-dev" << mDevice << "-blank" << "full";
     formatUdf.setProcessChannelMode(QProcess::MergedChannels);
-    formatUdf.start("/usr/bin/xorriso", arg);
+    formatUdf.start("xorriso", arg);
     formatUdf.waitForFinished(-1);
     output = formatUdf.readAll();
     formatUdf.close();
@@ -627,7 +627,7 @@ bool DiscControl::xorrisoFormatFullSync()
 
     arg << "-dev" << mDevice << "-format" << "full";
     formatUdf.setProcessChannelMode(QProcess::MergedChannels);
-    formatUdf.start("/usr/bin/xorriso", arg);
+    formatUdf.start("xorriso", arg);
     formatUdf.waitForFinished(-1);
     output = formatUdf.readAll();
     formatUdf.close();
@@ -656,7 +656,7 @@ bool DiscControl::formatUdfByUdfclientSync(const QString &dvdRwLabel)
 
     arg << "-P" << dvdRwLabel << "-L" << dvdRwLabel << mDevice;
     formatUdf.setProcessChannelMode(QProcess::MergedChannels);
-    formatUdf.start("/usr/bin/newfs_udf", arg);
+    formatUdf.start("newfs_udf", arg);
     formatUdf.waitForFinished(-1);
     output = formatUdf.readAll();
     formatErr = formatUdf.error();
@@ -745,7 +745,7 @@ bool DiscControl::formatUdfDvdRw(const QString& dvdRwLabel){
     //2. 进行udf格式化
     arg2<<"-P"<<dvdRwLabel<<"-L"<<dvdRwLabel<<mDevice;
     formatUdf2.setProcessChannelMode(QProcess::MergedChannels);
-    formatUdf2.start("/usr/bin/newfs_udf", arg2);
+    formatUdf2.start("newfs_udf", arg2);
     formatUdf2.waitForFinished(-1);
     output2 = formatUdf2.readAll();
     formatUdf2.close();
@@ -838,7 +838,7 @@ bool DiscControl::discBurnSync2(){
 
     //3. 刻录操作：将空盘变为非空盘
     tmpBurnArg<<"-dev"<<mDevice<<"-map"<<tmpDirPath<<"/"<<"-close"<<"off"<<"-commit";
-    tmpBurn.start("/usr/bin/xorriso", tmpBurnArg);
+    tmpBurn.start("xorriso", tmpBurnArg);
     tmpBurn.waitForFinished(-1);
     //tmpBurnOutput = tmpBurn.readAll();
 
@@ -868,7 +868,7 @@ void DiscControl::discBurn(QString srcFile, QString destDir, const QString& disc
     asyncBurnParameters << "-close" << "off" << "-commit" << "-eject";
 
     mDeleteDirAfterBurn << srcFile << willBurnDir;
-    asyncBurnOperation->setCmd("/usr/bin/xorriso", asyncBurnParameters);
+    asyncBurnOperation->setCmd("xorriso", asyncBurnParameters);
     connect(asyncBurnOperation, &DiscCommand::cmdFinished, this, &DiscControl::burnSlot);
     asyncBurnOperation->startCmd();
 
@@ -929,13 +929,13 @@ QString DiscControl::prepareFileBeforeBurn(const QString& srcFile){
         dirObject.setPath(hardLinkParentDir);
         if(!dirObject.exists()){
             if(!dirObject.mkpath(hardLinkParentDir)){
-                qInfo()<<"failed for mkdir:" + hardLinkParentDir;
+                qInfo()<<"faild for mkdir:" + hardLinkParentDir;
                 return QString();
             }
         }
         //阻塞式创建文件的硬链接
         hardLinkFileName = hardLinkParentDir+hardLinkFileName;
-        createHardlink->setProgram("/usr/bin/ln");
+        createHardlink->setProgram("ln");
         hardLinkArgs.append(srcFileAttr.absoluteFilePath());//ln第一个参数
         hardLinkArgs.append(hardLinkFileName);              //ln第二个参数
         createHardlink->setArguments(hardLinkArgs);
