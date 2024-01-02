@@ -9,12 +9,12 @@
         <translation>Affichage des icônes du bureau</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="634"/>
         <source>New Folder</source>
         <translation>Nouveau dossier</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="728"/>
         <source>set background</source>
         <translation>Définir l&apos;arrière-plan</translation>
     </message>
@@ -23,37 +23,24 @@
         <translation type="obsolete">Dosyayı Sil Uyarısı</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="971"/>
         <source>Open Link failed</source>
         <translation>Échec de l&apos;ouverture du lien</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="972"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>Le fichier n&apos;existe pas, voulez-vous supprimer le fichier de lien ?</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="988"/>
         <source>Open failed</source>
         <translation>Échec de l&apos;ouverture</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="989"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>L&apos;ouverture du répertoire a échoué, vous n&apos;avez aucune permission !</translation>
-    </message>
-</context>
-<context>
-    <name>Peony::DesktopItemModel</name>
-    <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="624"/>
-        <source>Computer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="626"/>
-        <source>Trash</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -9,12 +9,12 @@
         <translation>桌面圖示檢視</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="634"/>
         <source>New Folder</source>
         <translation>新建資料夾</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="728"/>
         <source>set background</source>
         <translation>設置背景</translation>
     </message>
@@ -23,22 +23,22 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="988"/>
         <source>Open failed</source>
         <translation>打開失敗</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="989"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打開資料夾失敗，您沒有該目錄的許可權！</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="971"/>
         <source>Open Link failed</source>
         <translation>打開快捷方式失敗</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="972"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>目標資料夾不存在，是否刪除該無效快捷方式？</translation>
     </message>
@@ -46,14 +46,12 @@
 <context>
     <name>Peony::DesktopItemModel</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="624"/>
         <source>Computer</source>
-        <translation>計算機</translation>
+        <translation type="vanished">計算機</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="626"/>
         <source>Trash</source>
-        <translation>回收站</translation>
+        <translation type="vanished">回收站</translation>
     </message>
 </context>
 <context>

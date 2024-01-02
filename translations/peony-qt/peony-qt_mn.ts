@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation>ᠴᠤᠩᠬᠤ</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -15,16 +15,16 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/tr/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+〔X95X ᠰᠢᠷᠢᠰ〕 〔X101X ᠰᠢᠷᠢᠰ〕 〔X107X ᠰᠢᠷᠢᠰ〕 〔X144X ᠰᠢᠷᠢᠰ〕
+p， li { white-space： pre-wrap;
+〔X201X ᠰᠢᠷᠢᠰ〕 〔X209X ᠰᠢᠷᠢᠰ〕 〔X216X ᠰᠢᠷᠢᠰ〕
+〔X316X ᠰᠢᠷᠢᠰ〕 〔X476X ᠬᠡᠯᠪᠡᠷᠢ〕 〔 X482X ᠬᠡᠯᠪᠡᠷᠢ 〕 〔X486X ᠬᠡᠯᠪᠡᠷᠢ〕 〔 X493X ᠬᠡᠯᠪᠡᠷᠢ 〕</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation>ᠱᠤᠰᠢᠭ᠎ᠠ</translation>
+        <translation>ᠪᠠᠭᠲᠠᠭᠠᠮᠵᠢ</translation>
     </message>
     <message>
         <source>Offical Website: </source>
@@ -38,14 +38,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation>ᠦᠢᠯᠡᠴᠢᠯᠡᠬᠦ ᠪᠤᠯᠤᠨ ᠳᠡᠮᠵᠢᠬᠦ ᠪᠦᠯᠬᠦᠮ: </translation>
+        <translation>ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ ᠬᠢᠭᠡᠳ ᠳᠡᠮᠵᠢᠯᠭᠡ᠄ </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
+        <translation>ᠹᠠᠢᠯ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
     <message>
         <source>peony</source>
@@ -55,7 +55,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠨᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠵᠢᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠯᠳᠠ ᠵᠢᠨ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠹᠠᠢᠯ ᠢ᠋ ᠵᠢᠷᠤᠭᠴᠢᠯᠠᠬᠤ ᠰᠤᠹᠲ᠂ ᠲᠡᠷᠡ ᠨᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠲᠤ᠌ ᠪᠠᠢᠩᠭᠤ ᠠᠰᠢᠭᠯᠠᠳᠠᠭ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢᠨ ᠴᠢᠳᠠᠪᠬᠢ ᠵᠢ ᠬᠠᠩᠭᠠᠨ᠎ᠠ᠂ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ᠂ ᠹᠠᠢᠯ ᠪᠠᠢᠴᠠᠭᠠᠨ ᠦᠵᠡᠬᠦ᠂ ᠹᠠᠢᠯ ᠺᠤᠫᠢᠳᠠᠬᠤ ᠪᠠ ᠨᠠᠭᠠᠬᠤ᠂ ᠡᠰᠬᠡᠬᠦ᠂ ᠤᠰᠠᠳᠬᠠᠬᠤ᠂ ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠢᠳᠬᠦ᠂ ᠹᠠᠢᠯ ᠨᠡᠬᠡᠬᠡᠬᠦ ᠠᠷᠭ᠎ᠠ ᠵᠢ ᠰᠤᠩᠭᠤᠬᠤ᠂ ᠹᠠᠢᠯ ᠬᠠᠢᠬᠤ᠂ ᠹᠠᠢᠯ ᠵᠢᠭᠰᠠᠭᠠᠬᠤ᠂ ᠹᠠᠢᠯ ᠢ᠋ ᠤᠷᠢᠳᠴᠢᠯᠠᠨ ᠦᠵᠡᠬᠦ ᠬᠡᠬᠦ ᠮᠡᠳᠦ᠃ ᠡᠨᠡ ᠨᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠵᠠᠭᠠᠭ ᠭᠠᠳᠠᠷᠭᠤ ᠳᠡᠭᠡᠷ᠎ᠡ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠹᠠᠢᠯ ᠢ᠋ ᠰᠢᠭ᠋ᠤᠳ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ ᠳ᠋ᠤ᠌ ᠳᠦᠬᠦᠮ ᠦᠵᠡᠬᠦᠯᠳᠡᠭ.</translation>
+        <translation>ᠮᠦ ᠳ᠋ᠠᠨ ᠪᠣᠯ ᠨᠢᠭᠡ ᠵᠢᠷᠤᠭ ᠳᠦᠷᠰᠦᠲᠦ ᠵᠥᠭᠡᠯᠡᠨ ᠲᠣᠨᠣᠭ ᠂ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠢ ᠬᠠᠪᠰᠤᠷᠤᠨ ᠰᠢᠰᠲ᠋ᠧᠮ ᠦᠨ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠪᠣᠯᠣᠨ᠎ᠠ ᠃ ᠲᠡᠷᠡ ᠨᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠲᠦ ᠪᠠᠶᠢᠩᠭᠤ ᠬᠡᠷᠡᠭᠯᠡᠳᠡᠭ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠠᠵᠢᠯᠯᠠᠬᠤ ᠴᠢᠳᠠᠮᠵᠢ ᠬᠠᠩᠭᠠᠵᠤ ᠥᠭᠭᠦᠭᠰᠡᠨ᠂ ᠵᠢᠱᠢᠶᠡᠯᠡᠪᠡᠯ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠪᠠᠶᠢᠴᠠᠭᠠᠨ ᠦᠵᠡᠬᠦ᠂ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ᠂ ᠨᠠᠭᠠᠬᠤ᠂ ᠬᠠᠶᠢᠴᠢᠯᠠᠬᠤ᠂ ᠬᠠᠰᠤᠬᠤ᠂ ᠬᠦᠨᠳᠦ ᠪᠡᠷ ᠨᠡᠷᠡᠶᠢᠳᠬᠦ᠂ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠰᠣᠩᠭᠣᠬᠤ᠂ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ ᠳᠡᠰ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ ᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ᠂ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠡᠷᠢᠬᠦ᠂ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠵᠢᠭᠰᠠᠭᠠᠯᠲᠠ᠂ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠤᠷᠢᠳᠴᠢᠯᠠᠨ ᠦᠵᠡᠬᠦ ᠵᠡᠷᠭᠡ ᠶᠢ ᠬᠠᠩᠭᠠᠵᠤ᠂ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠦᠨ ᠨᠢᠭᠤᠷ ᠳᠡᠭᠡᠷ᠎ᠡ ᠰᠢᠭᠤᠳ ᠬᠠᠮᠢᠶᠠᠷᠤᠯᠲᠠ ᠶᠢᠨ ᠰᠢᠰᠲ᠋ᠧᠮ ᠦᠨ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠰᠢᠭᠤᠳ ᠬᠠᠮᠢᠶᠠᠷᠬᠤ ᠳᠤ ᠳᠥᠭᠥᠮ ᠦᠵᠡᠭᠦᠯᠦᠨ᠎ᠡ᠃</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -69,7 +69,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/windows/about-dialog.cpp" line="50"/>
         <location filename="../../src/windows/about-dialog.cpp" line="117"/>
         <source>Version number: %1</source>
-        <translation>ᠬᠡᠪᠯᠡᠯ ᠤ᠋ᠨ ᠨᠤᠮᠸᠷ: %1</translation>
+        <translation>ᠬᠡᠪᠯᠡᠯ ᠦᠨ ᠨᠣᠮᠧᠷ ᠄ 〈 1 ᠃</translation>
     </message>
     <message>
         <source>File manager is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
@@ -77,7 +77,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>none</source>
-        <translation type="vanished">none</translation>
+        <translation type="vanished">无</translation>
     </message>
 </context>
 <context>
@@ -90,15 +90,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>ᠦᠩᠬᠡ ᠵᠢ ᠨᠠᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+        <translation>ᠨᠠᠢ᠌ᠷᠠᠭᠤᠯᠤᠭᠴᠢ ᠥᠩᠭᠡ ᠃</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="vanished">ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation type="vanished">删除标记</translation>
     </message>
     <message>
         <source>Create New Label</source>
-        <translation type="vanished">ᠳᠡᠮᠳᠡᠭ ᠪᠠᠢᠭᠤᠯᠬᠤ</translation>
+        <translation type="vanished">创建标记</translation>
     </message>
 </context>
 <context>
@@ -123,12 +123,123 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="vanished">ᠬᠠᠢᠯᠳᠠ</translation>
+        <translation type="vanished">搜索</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="236"/>
+        <source>View Type</source>
+        <translation>ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ᠎ᠤ᠋ᠨ ᠲᠥᠷᠥᠯ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="274"/>
+        <source>Sort Type</source>
+        <translation>ᠵᠢᠭᠰᠠᠭᠠᠬᠤ ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="349"/>
+        <source>Option</source>
+        <translation>ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="465"/>
+        <source>Operate Tips</source>
+        <translation>ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="163"/>
         <source>Go Up</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠳᠡᠭᠡᠷ᠎ᠡ ᠃</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="vanished">ᠳᠡᠯᠭᠡᠷᠡᠩᠭᠦᠢ ᠮᠡᠳᠡᠭᠡ ᠵᠠᠩᠭᠢ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="362"/>
+        <source>&amp;Copy</source>
+        <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ (&amp;C)</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="365"/>
+        <source>Copy</source>
+        <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="377"/>
+        <source>&amp;Cut</source>
+        <translation>ᠠᠵᠢᠯᠴᠢᠨ ᠬᠡᠷᠴᠢᠬᠦ (&gt;)</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="380"/>
+        <source>Cut</source>
+        <translation>ᠬᠠᠢᠴᠢᠯᠠᠬᠤ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="386"/>
+        <source>&amp;Select All</source>
+        <translation>ᠪᠦᠬᠦᠨ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ(&amp;S)</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="390"/>
+        <location filename="../../src/control/header-bar.cpp" line="402"/>
+        <source>Select All</source>
+        <translation>ᠪᠦᠬᠦ ᠰᠣᠩᠭᠣᠯᠲᠠ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="407"/>
+        <location filename="../../src/control/header-bar.cpp" line="919"/>
+        <location filename="../../src/control/header-bar.cpp" line="937"/>
+        <source>Deselect All</source>
+        <translation>ᠰᠣᠩᠭᠣᠭᠤᠯᠢ ᠶᠢ ᠦᠭᠡᠶᠢᠰᠬᠡᠨ᠎ᠡ ᠃</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="412"/>
+        <source>&amp;Delete to trash</source>
+        <translation>ᠬᠠᠶᠠᠭᠳᠠᠮᠠᠯ ᠴᠠᠭᠠᠰᠤᠨ ᠤ ᠬᠤᠪᠢ ᠶᠢᠨ ᠦᠨᠦᠷ ᠢ ᠬᠠᠰᠤᠨ᠎ᠠ ᠃</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="415"/>
+        <source>Delete to trash</source>
+        <translation>ᠬᠠᠰᠤᠭᠠᠳ ᠬᠤᠭᠯᠠᠭᠤᠷ᠎ᠲᠤ᠌ ᠬᠢᠬᠦ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="466"/>
+        <source>Don&apos;t find any terminal, please install at least one terminal!</source>
+        <translation>ᠶᠠᠮᠠᠷ ᠴᠤ ᠦᠵᠦᠭᠦᠷ ᠢ ᠡᠷᠢᠵᠦ ᠣᠯᠬᠤ ᠦᠭᠡᠢ ᠂ ᠠᠳᠠᠭ ᠲᠠᠭᠠᠨ ᠨᠢᠭᠡ ᠦᠵᠦᠭᠦᠷ ᠤᠭᠰᠠᠷᠠᠭᠠᠷᠠᠢ !</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="721"/>
+        <location filename="../../src/control/header-bar.cpp" line="922"/>
+        <location filename="../../src/control/header-bar.cpp" line="932"/>
+        <source>Select All Item</source>
+        <translation>ᠪᠦᠬᠦᠨ ᠢ ᠰᠣᠩᠭᠣᠬᠤ ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ᠃</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="731"/>
+        <location filename="../../src/control/header-bar.cpp" line="866"/>
+        <location filename="../../src/control/header-bar.cpp" line="905"/>
+        <source>Select</source>
+        <translation>ᠰᠤᠩᠭᠤᠬᠤ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="706"/>
+        <source>Restore</source>
+        <translation>ᠡᠬᠡᠬᠦᠯᠬᠦ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="709"/>
+        <source>Maximize</source>
+        <translation>ᠬᠠᠮᠤᠭ ᠤ᠋ᠨ ᠶᠡᠬᠡᠴᠢᠯᠡᠯ</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="908"/>
+        <source>Select Done</source>
+        <translation>ᠰᠣᠩᠭᠣᠵᠤ ᠪᠡᠶᠡᠯᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="758"/>
+        <source>MoveTo</source>
+        <translation>ᠰᠢᠯᠵᠢᠵᠦ ᠢᠷᠡᠨ᠎ᠡ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="207"/>
@@ -136,131 +247,24 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="215"/>
+        <location filename="../../src/control/header-bar.cpp" line="217"/>
         <source>List View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="232"/>
-        <source>View Type</source>
-        <translation>ᠬᠠᠷᠠᠭᠠᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="269"/>
-        <source>Sort Type</source>
-        <translation>ᠳᠠᠷᠠᠭᠠᠯᠠᠯ ᠤ᠋ᠨ ᠬᠡᠯᠪᠡᠷᠢ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="341"/>
-        <source>Option</source>
-        <translation>ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="354"/>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="357"/>
-        <source>Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="369"/>
-        <source>&amp;Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="372"/>
-        <source>Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="378"/>
-        <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="382"/>
-        <location filename="../../src/control/header-bar.cpp" line="394"/>
-        <source>Select All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="399"/>
-        <location filename="../../src/control/header-bar.cpp" line="911"/>
-        <location filename="../../src/control/header-bar.cpp" line="929"/>
-        <source>Deselect All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="404"/>
-        <source>&amp;Delete to trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="407"/>
-        <source>Delete to trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="457"/>
-        <source>Operate Tips</source>
-        <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢᠨ ᠰᠠᠨᠠᠭᠤᠯᠭ᠎ᠠ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="458"/>
-        <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation>ᠶᠠᠮᠠᠷ ᠴᠤ᠌ ᠦᠵᠦᠬᠦᠷ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠡᠷᠢᠵᠤ ᠤᠤᠯᠤᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠ ᠠᠳᠠᠭ ᠲᠤ᠌ ᠪᠡᠨ ᠨᠢᠭᠡ ᠵᠢ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠪᠠᠢᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ!</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="698"/>
-        <source>Restore</source>
-        <translation>ᠪᠤᠴᠠᠭᠠᠬᠤ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="701"/>
-        <source>Maximize</source>
-        <translation>ᠬᠠᠮᠤᠭ ᠎ᠤᠨ ᠶᠡᠬᠡᠴᠢᠯᠡᠯ</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="713"/>
-        <location filename="../../src/control/header-bar.cpp" line="914"/>
-        <location filename="../../src/control/header-bar.cpp" line="924"/>
-        <source>Select All Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="723"/>
-        <location filename="../../src/control/header-bar.cpp" line="858"/>
-        <location filename="../../src/control/header-bar.cpp" line="897"/>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="750"/>
-        <source>MoveTo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="759"/>
+        <location filename="../../src/control/header-bar.cpp" line="767"/>
         <source>CopyTo</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠪᠠᠭᠤᠯᠭᠠᠨ ᠠᠪᠴᠤ ᠢᠷᠡᠪᠡ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="768"/>
+        <location filename="../../src/control/header-bar.cpp" line="776"/>
         <source>Delete</source>
-        <translation type="unfinished">ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation>ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="835"/>
+        <location filename="../../src/control/header-bar.cpp" line="843"/>
         <source>Select path</source>
-        <translation type="unfinished">选择路径</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="900"/>
-        <source>Select Done</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠰᠤᠩᠭᠤᠭᠰᠠᠨ ᠵᠢᠮ</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -274,7 +278,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1275"/>
+        <source>Option</source>
+        <translation type="vanished">选项</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="1288"/>
         <source>Minimize</source>
         <translation>ᠬᠠᠮᠤᠭ ᠎ᠤᠨ ᠪᠠᠭᠠᠴᠢᠯᠠᠯ</translation>
     </message>
@@ -291,7 +299,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1287"/>
+        <location filename="../../src/control/header-bar.cpp" line="1300"/>
         <source>Close</source>
         <translation>ᠬᠠᠭᠠᠬᠤ</translation>
     </message>
@@ -301,12 +309,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="180"/>
         <source>Open In &amp;New Window</source>
-        <translation type="unfinished">在新窗口中打开(&amp;N)</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠨ᠎ᠡ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="204"/>
         <source>Open In New &amp;Tab</source>
-        <translation type="unfinished">在新标签页中打开(&amp;T)</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠱᠣᠰᠢᠭ᠎ᠠ ᠶᠢᠨ ᠨᠢᠭᠤᠷ ᠲᠤ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ( &gt; )</translation>
     </message>
 </context>
 <context>
@@ -314,48 +322,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="516"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠹᠠᠢᠯ</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="877"/>
+        <location filename="../../src/windows/main-window.cpp" line="878"/>
         <source>File Manager</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="409"/>
+        <location filename="../../src/windows/main-window.cpp" line="410"/>
         <source>Undo</source>
         <translation>ᠪᠤᠴᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="416"/>
+        <location filename="../../src/windows/main-window.cpp" line="417"/>
         <source>Redo</source>
         <translation>ᠳᠠᠬᠢᠵᠤ ᠬᠢᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="786"/>
+        <location filename="../../src/windows/main-window.cpp" line="787"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="786"/>
+        <location filename="../../src/windows/main-window.cpp" line="787"/>
         <source>This operation is not supported.</source>
-        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ᠂</translation>
+        <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠥᠬᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="875"/>
+        <location filename="../../src/windows/main-window.cpp" line="876"/>
         <source>Search</source>
         <translation>ᠬᠠᠢᠯᠳᠠ</translation>
     </message>
     <message>
         <source>Tips info</source>
-        <translation type="vanished">tips info</translation>
+        <translation type="vanished">温馨提示</translation>
     </message>
     <message>
         <source>Trash has no file need to be cleaned.</source>
-        <translation type="vanished">trash has no file need to be cleaned.</translation>
+        <translation type="vanished">回收站没有文件需要被清空！</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -363,20 +371,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Permanently</source>
-        <translation type="vanished">ᠦᠨᠢᠳᠡ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation type="vanished">永久删除</translation>
     </message>
     <message>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="vanished">ᠲᠠ ᠨᠡᠬᠡᠷᠡᠨ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠬᠠᠰᠤᠵᠤ ᠬᠠᠶᠠᠬᠤ ᠤᠤ? ᠬᠠᠰᠤᠵᠤ ᠡᠬᠢᠯᠡᠭᠰᠡᠬᠡᠷ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠳᠠᠬᠢᠵᠤ ᠰᠡᠷᠬᠦᠬᠡᠵᠤ ᠳᠡᠢᠯᠬᠦ ᠦᠬᠡᠢ.</translation>
+        <translation type="vanished">您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
     </message>
     <message>
         <source>Peony Qt</source>
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="890"/>
+        <location filename="../../src/windows/main-window.cpp" line="891"/>
         <source>New Folder</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠪᠡᠷ ᠪᠠᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠪᠠᠢᠭᠤᠯᠬᠤ</translation>
     </message>
 </context>
 <context>
@@ -390,52 +398,52 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="521"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="521"/>
         <source>This operation is not supported.</source>
-        <translation>ᠳᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠬᠡᠢ᠂</translation>
+        <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠥᠬᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
         <source>Tips</source>
         <translation>ᠰᠠᠨᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳ᠋ᠦ᠍ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤᠳᠠᠭᠰᠠᠨ ᠤ᠋ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠶ᠋ᠢ ᠬᠡᠷᠡᠭᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ᠃</translation>
+        <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳᠤ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠢ ᠬᠡᠷᠡᠭ᠍ᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠬᠡᠪ ᠤ᠋ᠨ ᠪᠤᠰᠤ U ᠲᠠᠪᠠᠭ᠂ᠳᠡᠬᠦᠨ ᠢ᠋ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠠᠩᠬᠠᠵᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ</translation>
+        <translation>ᠡᠨᠡ ᠪᠣᠯ ᠨᠢᠭᠡᠨ ᠶᠡᠷᠦ ᠪᠤᠰᠤ ᠶᠢᠨ Udiissk ᠂ ᠰᠡᠯᠪᠢᠨ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠬᠡᠯᠪᠡᠷᠢᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation>ᠡᠨᠡ ᠪᠤᠯ ᠨᠢᠭᠡᠨ ᠬᠤᠭᠤᠰᠤᠨ ᠬᠡᠷᠡᠯᠯᠢᠭ ᠬᠦᠳᠡᠯᠭᠡᠬᠦᠷ᠂CD ᠢ᠋/ ᠵᠢ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠭᠠᠷᠠᠢ᠃</translation>
+        <translation>ᠡᠨᠡ ᠪᠣᠯ ᠨᠢᠭᠡ ᠬᠣᠭᠣᠰᠣᠨ ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ ᠮᠥᠨ ᠂ ᠭᠡᠷᠡᠯ ᠫᠠᠨᠰᠠ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠨ ᠣᠷᠣᠭᠠᠷᠠᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
         <source>Open In New Window</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠤᠩᠬᠤᠨ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ᠎ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="306"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="285"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="319"/>
         <source>Can not open %1, %2</source>
-        <translation>%1, %2 ᠢ᠋/ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠬᠦ ᠵᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠬᠡᠢ</translation>
+        <translation>アョイ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠵᠦ ᠳᠡᠶᠢᠯᠬᠦ ᠦᠭᠡᠶ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="290"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
         <source>Open In New Tab</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠱᠤᠰᠢᠭ᠎ᠠ ᠵᠢᠨ ᠨᠢᠭᠤᠷ ᠳᠡᠭᠡᠷ᠎ᠡ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠱᠣᠰᠢᠭ᠎ᠠ᠎ᠶ᠋ᠢᠨ ᠬᠠᠭᠤᠳᠠᠰᠤᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
         <source>Open In New &amp;Tab</source>
@@ -446,17 +454,17 @@ p, li { white-space: pre-wrap; }
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation type="vanished">ᠪᠦᠬᠦᠢᠯᠡ ᠳᠡᠮᠳᠡᠭ ᠁</translation>
+        <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="741"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="782"/>
         <source>Manager tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠵᠠᠬᠢᠷᠤᠯ ᠤᠨ ᠱᠣᠰᠢᠭ᠎ᠠ ᠁</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="744"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="785"/>
         <source>More tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠨᠡᠩ ᠤᠯᠠᠨ ᠱᠣᠰᠢᠭ᠎ᠠ ᠁</translation>
     </message>
 </context>
 <context>
@@ -468,7 +476,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/navigation-tab-bar.cpp" line="131"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>&quot;%2&quot; ᠳᠤᠮᠳᠠ&quot;%1&quot; ᠢ᠋/ ᠵᠢ ᠬᠠᠢᠬᠤ</translation>
+        <translation>&quot;%2&quot;᠎ᠠ᠋ᠴᠠ &quot;%1&quot; ᠢ᠋/᠎ᠶ᠋ᠢ ᠬᠠᠢᠬᠤ</translation>
     </message>
 </context>
 <context>
@@ -480,22 +488,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="78"/>
         <source>Keep Allow</source>
-        <translation>ᠤᠷᠤᠢ ᠳ᠋ᠡᠬᠢ ᠴᠤᠩᠬᠤ</translation>
+        <translation>ᠵᠥᠪᠰᠢᠶᠡᠷᠡᠯ ᠢᠶᠡᠨ ᠪᠠᠲᠤᠯᠠᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>ᠨᠢᠭᠤᠴᠠᠯᠠᠭᠰᠠᠨ ᠹᠠᠢᠯ ᠢ᠋ ᠢᠯᠡᠷᠡᠬᠦᠯᠬᠦ</translation>
+        <translation>ᠨᠢᠭᠤᠭᠳᠠᠮᠠᠯ ᠹᠠᠢᠯ᠎ᠢ᠋ ᠢᠯᠡᠷᠡᠭᠦᠯᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
         <source>Show File Extension</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠥᠷᠭᠡᠳᠭᠡᠭᠰᠡᠨ ᠨᠡᠷ᠎ᠡ ᠵᠢ ᠢᠯᠡᠷᠡᠬᠦᠯᠬᠦ</translation>
+        <translation>ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠨᠡᠷ᠎ᠡ ᠪᠡᠨ ᠥᠷᠭᠡᠳᠬᠡᠬᠦ ᠶᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠵᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="103"/>
         <source>Show Create Time</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠡᠭᠦᠳᠦᠨ ᠪᠠᠶᠢᠭᠤᠯᠬᠤ ᠴᠠᠭ ᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="110"/>
@@ -505,37 +513,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="123"/>
         <source>Forbid thumbnailing</source>
-        <translation>ᠠᠪᠴᠢᠭᠤᠯᠤᠯ ᠵᠢᠷᠤᠭ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ ᠵᠢ ᠴᠠᠭᠠᠵᠠᠯᠠᠬᠤ</translation>
+        <translation>ᠵᠢᠷᠤᠭ ᠢ ᠪᠢᠲᠡᠭᠦᠮᠵᠢᠯᠡᠬᠦ ᠶᠢ ᠴᠠᠭᠠᠵᠠᠯᠠᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="132"/>
         <source>Resident in Backend</source>
-        <translation>ᠠᠷᠤ ᠵᠢᠨ ᠳᠠᠪᠴᠠᠩ ᠳ᠋ᠤ᠌ ᠪᠠᠢᠩᠭᠤ ᠰᠠᠭᠤᠬᠤ</translation>
+        <translation>ᠪᠠᠢᠩᠭᠤ ᠬᠦᠯᠢᠶᠡᠬᠦ ᠲᠠᠢᠰᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="141"/>
         <source>Parallel Operations</source>
-        <translation>ᠠᠵᠢᠯᠯᠠᠬᠤᠢ ᠵᠡᠷᠭᠡᠳᠡ ᠶᠠᠪᠤᠭᠳᠠᠬᠤ ᠵᠢ ᠵᠦᠪᠰᠢᠶᠡᠷᠡᠬᠦ</translation>
+        <translation>ᠬᠠᠮᠲᠤ ᠳᠤᠨᠢ ᠠᠵᠢᠯᠯᠠᠭᠤᠯᠤᠨ᠎ᠠ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="147"/>
         <source>Set samba password</source>
-        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠤᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>Tips</source>
-        <translation>ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ</translation>
+        <translation>ᠰᠠᠨᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="161"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠨᠢᠭᠡᠨᠲᠡ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠠᠢ ᠪᠣᠯᠵᠠᠢ ᠂ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠴᠢᠬᠤᠯᠠ ᠲᠠᠢ ᠤᠤ ?</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/operation-menu.cpp" line="170"/>
-        <source>Samba password:</source>
-        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ</translation>
+        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠨᠢᠭᠡᠨᠲᠡ samb ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠲᠠᠢ ᠪᠣᠯᠵᠠᠢ ᠂ samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ ᠳᠠᠬᠢᠨ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ ᠴᠢᠬᠤᠯᠠ ᠲᠠᠢ ᠤᠤ ?</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="172"/>
@@ -543,10 +546,15 @@ p, li { white-space: pre-wrap; }
         <translation>Samba ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢᠳ ᠤ᠋ᠨ ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ ᠢ᠋ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
+        <location filename="../../src/control/operation-menu.cpp" line="170"/>
+        <source>Samba password:</source>
+        <translation>samba ᠨᠢᠭᠤᠴᠠ ᠨᠣᠮᠧᠷ</translation>
+    </message>
+    <message>
         <location filename="../../src/control/operation-menu.cpp" line="180"/>
         <location filename="../../src/control/operation-menu.cpp" line="191"/>
         <source>Warning</source>
-        <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠭᠦᠯᠬᠦ</translation>
+        <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="180"/>
@@ -561,50 +569,50 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="200"/>
         <source>Open each folder in a new window</source>
-        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠲᠠᠰᠤ ᠨᠢᠭᠡᠪᠦᠷᠢ ᠶ᠋ᠢ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ᠃</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠨᠢᠭᠡᠪᠦᠷᠢ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠵᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="206"/>
         <source>Plugin manager Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠪᠰᠤᠷᠤᠨ ᠲᠣᠨᠣᠭ ᠤᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠯᠲᠠ ᠶᠢᠨ ᠪᠠᠭᠠᠵᠢ ᠬᠡᠷᠡᠭᠰᠡᠯ ᠲᠣᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="215"/>
         <source>Help</source>
-        <translation>ᠳᠤᠰᠠᠯᠠᠬᠤ</translation>
+        <translation>ᠬᠠᠪᠰᠤᠷᠤᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="219"/>
         <source>About</source>
-        <translation>ᠲᠤᠬᠠᠢ</translation>
+        <translation>ᠪᠠᠷᠤᠭ ᠃</translation>
     </message>
 </context>
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="274"/>
+        <location filename="../../src/control/operation-menu.cpp" line="283"/>
         <source>Edit</source>
         <translation>ᠨᠠᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="285"/>
+        <location filename="../../src/control/operation-menu.cpp" line="294"/>
         <source>copy</source>
         <translation>ᠺᠤᠫᠢᠳᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="294"/>
+        <location filename="../../src/control/operation-menu.cpp" line="303"/>
         <source>paste</source>
         <translation>ᠨᠠᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="303"/>
+        <location filename="../../src/control/operation-menu.cpp" line="312"/>
         <source>cut</source>
         <translation>ᠬᠠᠢᠴᠢᠯᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="312"/>
+        <location filename="../../src/control/operation-menu.cpp" line="321"/>
         <source>trash</source>
-        <translation>ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation>ᠬᠣᠭ ᠨᠣᠪᠰᠢ ᠃</translation>
     </message>
 </context>
 <context>
@@ -612,12 +620,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠡᠭᠦᠯᠡᠨ ᠬᠠᠳᠠᠭᠠᠯᠠᠮᠵᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="55"/>
         <source>CloudFile</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠡᠭᠦᠯᠡᠨ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠃</translation>
     </message>
 </context>
 <context>
@@ -625,7 +633,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-favorite-item.cpp" line="46"/>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠮᠤᠭ ᠤ᠋ᠨ ᠳᠤᠷᠠᠳᠠᠢ</translation>
     </message>
 </context>
 <context>
@@ -633,51 +641,51 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="60"/>
         <source>Computer</source>
-        <translation type="unfinished">计算机</translation>
+        <translation>ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="79"/>
         <source>文件系统</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠰᠢᠰᠲ᠋ᠧᠮ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠰᠢᠰᠲ᠋ᠧᠮ᠎ᠦ᠋ᠨ ᠲᠠᠪᠠᠭ</translation>
     </message>
 </context>
 <context>
     <name>Peony::Intel::SideBarMenu</name>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="51"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="70"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="96"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="111"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="173"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="241"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="52"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="71"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="97"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="112"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠷᠢᠶᠠᠯᠠᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="81"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
         <source>Delete Symbolic</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="131"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="233"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="132"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="234"/>
         <source>Unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠠᠴᠢᠶ᠎ᠠ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="150"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="151"/>
         <source>Eject</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠦᠰᠦᠷᠴᠤ ᠭᠠᠷᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="202"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="203"/>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠹᠤᠷᠮᠠᠲ᠋ᠯᠠᠬᠤ</translation>
     </message>
 </context>
 <context>
@@ -685,7 +693,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-personal-item.cpp" line="45"/>
         <source>Personal</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠤᠪᠢ ᠬᠥᠮᠦᠨ</translation>
     </message>
 </context>
 <context>
@@ -693,7 +701,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-separator-item.h" line="70"/>
         <source>(No Sub Directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>(᠎ᠬᠣᠭᠣᠰᠣᠨ )</translation>
     </message>
 </context>
 <context>
@@ -701,7 +709,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ᠎ᠶ᠋ᠢᠨ ᠲᠠᠪᠠᠭ</translation>
     </message>
 </context>
 <context>
@@ -709,7 +717,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/tablet-side-bar-factory.cpp" line="60"/>
         <source>Intel Side Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Innl ᠬᠠᠵᠠᠭᠤ ᠶᠢᠨ ᠬᠠᠵᠠᠭᠤ ᠳᠤ ᠃</translation>
     </message>
 </context>
 <context>
@@ -717,7 +725,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠢᠯᠳᠠ</translation>
     </message>
 </context>
 <context>
@@ -725,17 +733,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="unfinished">ᠲᠠ ᠨᠡᠬᠡᠷᠡᠨ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠬᠠᠰᠤᠵᠤ ᠬᠠᠶᠠᠬᠤ ᠤᠤ? ᠬᠠᠰᠤᠵᠤ ᠡᠬᠢᠯᠡᠭᠰᠡᠬᠡᠷ ᠡᠳᠡᠭᠡᠷ ᠹᠠᠢᠯ ᠢ᠋ ᠳᠠᠬᠢᠵᠤ ᠰᠡᠷᠬᠦᠬᠡᠵᠤ ᠳᠡᠢᠯᠬᠦ ᠦᠬᠡᠢ.</translation>
+        <translation>ᠲᠠ ᠡᠳᠡᠭᠡᠷ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠬᠠᠰᠤᠬᠤ ᠪᠠᠷ ᠲᠣᠭᠲᠠᠬᠤ ᠤᠤ ? ᠡᠬᠢᠯᠡᠮᠡᠭ᠍ᠴᠡ ᠬᠠᠰᠤᠪᠠᠯ ᠬᠠᠰᠤᠭᠰᠠᠨ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠬᠡᠵᠢᠶᠡᠳᠡ ᠳᠠᠬᠢᠨ ᠰᠡᠷᠭᠦᠬᠦ ᠦᠭᠡᠢ ᠪᠣᠯᠣᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
         <source>Delete</source>
-        <translation type="unfinished">ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
+        <translation>ᠳᠡᠮᠳᠡᠭ ᠢ᠋ ᠬᠠᠰᠤᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="115"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠦᠴᠦᠨ ᠦᠭᠡᠶ ᠪᠣᠯᠭᠠᠨ᠎ᠠ᠃</translation>
     </message>
 </context>
 <context>
@@ -745,55 +753,55 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="168"/>
+        <location filename="../../src/peony-application.cpp" line="170"/>
         <source>peony-qt</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
+        <translation>ᠮᠦ ᠳ᠋ᠠᠨ —QT ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="175"/>
+        <location filename="../../src/peony-application.cpp" line="177"/>
         <source>Files or directories to open</source>
-        <translation>ᠨᠡᠬᠡᠬᠡᠬᠦ ᠴᠢᠬᠤᠯᠠᠳᠠᠢ ᠹᠠᠢᠯ ᠪᠤᠶᠤ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>ᠨᠡᠭᠡᠭᠡᠬᠦ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠪᠤᠶᠤ ᠭᠠᠷᠴᠠᠭ</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="175"/>
+        <location filename="../../src/peony-application.cpp" line="177"/>
         <source>[FILE1, FILE2,...]</source>
-        <translation>[ ᠹᠠᠢᠯ1，ᠹᠠᠢᠯ2...]</translation>
+        <translation>〔 ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ 1 ᠂ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ 2 ,... 〕</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="222"/>
+        <location filename="../../src/peony-application.cpp" line="224"/>
         <source>Warning</source>
-        <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ᠌</translation>
+        <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="222"/>
+        <location filename="../../src/peony-application.cpp" line="224"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠢᠺᠦᠨ ᠵᠢᠷᠤᠭ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠤᠯᠵᠤ ᠴᠢᠳᠠᠬᠤ ᠦᠬᠡᠢ ᠵᠢᠨ ᠰᠢᠯᠳᠠᠭᠠᠨ ᠨᠢ:
+        <translation>ᠫᠧᠨᠨᠧᠨ Qt ᠰᠢᠰᠲ᠋ᠧᠮ ᠦᠨ ᠵᠢᠷᠤᠭ ᠤᠨ ᠭᠣᠣᠯ ᠰᠡᠳᠦᠪ ᠢ ᠣᠯᠵᠤ ᠳᠡᠶᠢᠯᠬᠦ ᠦᠭᠡᠢ ᠃ 2 ᠰᠢᠯᠲᠠᠭᠠᠨ ᠠᠴᠠ ᠪᠣᠯᠵᠤ ᠡᠨᠡ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠡᠭᠦᠰᠭᠡᠵᠦ ᠮᠡᠳᠡᠨ᠎ᠡ ᠄
 
-1.ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠢ᠋ ᠠᠵᠢᠯᠯᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠨ᠎ᠠ᠂ ᠡᠨᠡ ᠨᠢ ᠬᠡᠳᠦᠢᠪᠡᠷ ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠩ ᠶᠡᠬᠡ ᠡᠷᠭᠡ ᠲᠠᠢ ᠭᠡᠳᠡᠭ ᠢ᠋ ᠬᠠᠷᠠᠭᠤᠯᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠪᠤᠯᠪᠠᠴᠤ ᠲᠠ ᠵᠠᠪᠠᠯ ᠡᠩ ᠤ᠋ᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠵᠢᠨ ᠳᠤᠤᠷ᠎ᠠ ᠰᠠᠶᠢ ᠪᠠᠢᠳᠠᠭ ᠤᠨᠴᠠᠯᠢᠭ ᠤ᠋ᠳ ᠵᠢᠨᠨ ᠠᠯᠳᠠᠭᠰᠠᠨ ᠵᠢᠨᠨ ᠤᠢᠯᠠᠭᠠᠬᠤ ᠬᠡᠷᠡᠭᠳᠡᠢ᠃ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ &quot; ᠮᠢᠨᠤ ᠺᠤᠮᠫᠢᠦ᠋ᠲᠸᠷ&quot; ᠵᠢᠴᠢ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ᠃ ᠬᠡᠷᠪᠡ ᠤᠨᠴᠠᠭᠠᠢ ᠪᠠᠢᠳᠠᠯ ᠪᠢᠰᠢ ᠪᠤᠯ ᠪᠢᠳᠡᠬᠡᠢ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠴᠢ ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ ᠪᠡᠷ ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠷᠡᠢ᠃
+1.Peony-Qt ᠨᠢ root ᠪᠠᠷ ᠪᠡᠶ᠎ᠡ ᠭᠠᠷᠤᠯ ᠢᠶᠠᠷ ᠠᠵᠢᠯᠯᠠᠵᠤ ᠮᠡᠳᠡᠨ᠎ᠡ ᠂ ᠡᠨᠡ ᠨᠢ ᠲᠠᠨ ᠤ ᠨᠡᠩ ᠥᠨᠳᠥᠷ ᠡᠷᠬᠡ ᠮᠡᠳᠡᠯ ᠲᠡᠢ ᠪᠠᠶᠢᠬᠤ ᠶᠢ ᠬᠠᠷᠠᠭᠤᠯᠵᠤ ᠂ ᠶᠡᠷᠦᠳᠡᠭᠡᠨ ᠴᠠᠭᠠᠵᠠᠯᠠᠬᠤ ᠵᠠᠷᠢᠮ ᠤᠴᠢᠷ ᠬᠢᠵᠦ ᠳᠡᠶᠢᠯᠦᠨ᠎ᠡ ᠃ ᠭᠡᠪᠡᠴᠦ ᠂ ᠲᠠ ᠣᠶᠢᠯᠠᠭᠠᠬᠤ ᠬᠡᠷᠡᠭᠲᠡᠢ ᠂ ᠬᠡᠷᠪᠡ ᠲᠠ ᠭᠠᠷᠴᠠᠭ ᠳᠣᠲᠣᠷ᠎ᠠ ᠂ ᠬᠡᠶᠢᠰᠪᠦᠷᠢ ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠰᠢᠰᠲ᠋ᠧᠮ ᠵᠠᠷᠢᠮ ᠴᠢᠳᠠᠮᠵᠢ ᠪᠠᠨ ᠠᠯᠳᠠᠨ᠎ᠠ ᠂ ᠵᠢᠱᠢᠶᠡᠯᠡᠪᠡᠯ ᠲᠠ 《 ᠮᠢᠨᠦ ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ 》 ᠢ ᠬᠡᠷᠡᠭᠯᠡᠬᠦ ᠶᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠂ ᠭᠣᠣᠯ ᠰᠡᠳᠦᠪ ᠪᠣᠯᠣᠨ ᠵᠢᠷᠤᠭ ᠤᠨ ᠲᠡᠮᠳᠡᠭ᠍ ᠨᠢ ᠪᠠᠰᠠ ᠪᠤᠷᠤᠭᠤ ᠭᠠᠷᠴᠤ ᠮᠡᠳᠡᠨ᠎ᠡ ᠃ ᠡᠶᠢᠮᠦ ᠡᠴᠡ ᠂ root ᠭᠠᠷᠴᠠᠭ ᠳᠣᠣᠷ᠎ᠠ peony-qt ᠠᠵᠢᠯᠯᠠᠭᠤᠯᠬᠤ ᠶᠢ ᠰᠠᠨᠠᠭᠤᠯᠬᠤ ᠦᠭᠡᠢ ᠃
 
-2. ᠲᠠᠨ ᠤ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯ qt ᠠᠶᠠᠳᠠᠯ ᠳᠡᠮᠵᠢᠬᠦ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠢᠰᠢ᠂ ᠳᠡᠬᠡᠬᠦ ᠮᠦᠷᠳᠡᠭᠡᠨ ᠲᠠ ᠬᠠᠮᠢᠶᠠᠳᠠᠢ ᠳᠠᠪᠴᠠᠩ ᠤ᠋ᠨ ᠤᠭᠯᠤᠷᠭ᠎ᠠ ᠲᠤᠨᠤᠭ ᠢ᠋ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠃ ᠬᠡᠷᠪᠡ ᠲᠠ ᠶᠠᠭ Gtk ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠢ᠋ ᠬᠡᠷᠡᠭᠯᠡᠵᠤ ᠰᠢᠰᠲ᠋ᠧᠮ ᠤ᠋ᠨ ᠭᠤᠤᠯ ᠰᠡᠳᠦᠪ ᠪᠤᠯᠭᠠᠭᠰᠠᠨ ᠪᠤᠯ qt5-gtk2-platformtheme ᠢ᠋/ ᠵᠢ ᠤᠭᠰᠠᠷᠴᠤ ᠲᠤᠰ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠢ᠋ ᠰᠢᠢᠳᠪᠦᠷᠢᠯᠡᠬᠦ ᠪᠡᠷ ᠳᠤᠷᠰᠢᠵᠤ ᠪᠤᠯᠤᠨ᠎ᠠ᠃</translation>
+2. ᠲᠠᠨ ᠤ ᠰᠢᠰᠲ᠋ᠧᠮ ᠨᠢ ᠶᠠᠭ qt ᠭᠣᠤᠯ ᠰᠡᠳᠦᠪ ᠢ ᠬᠡᠷᠡᠭᠯᠡᠵᠦ ᠪᠠᠶᠢᠨ᠎ᠠ ᠂ ᠭᠡᠪᠡᠴᠦ ᠲᠠ qt ᠶᠢᠨ ᠬᠡᠷᠡᠭᠯᠡᠭᠡᠨ ᠦ ᠫᠷᠦᠭᠷᠠᠮ ᠳᠤ ᠲᠠᠪᠴᠠᠩ ᠤᠨ ᠭᠣᠣᠯ ᠰᠡᠳᠦᠪᠲᠦ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠯ ᠤᠭᠰᠠᠷᠠᠭᠰᠠᠨ ᠦᠭᠡᠶ ᠃ ᠬᠡᠷᠪᠡ ᠲᠠ ᠬᠡᠷᠡᠭᠯᠡᠵᠦ ᠪᠠᠶᠢᠭ᠎ᠠ ᠪᠣᠯ qtkeme ᠶᠢ ᠬᠡᠷᠡᠭᠯᠡᠪᠡᠯ ᠂ qt5-gtk2-plateormmeme ᠤᠭᠰᠠᠷᠠᠵᠤ ᠡᠨᠡ ᠠᠰᠠᠭᠤᠳᠠᠯ ᠢ ᠰᠢᠢᠳᠪᠦᠷᠢᠯᠡᠬᠦ ᠪᠡᠷ ᠲᠤᠷᠰᠢᠭᠠᠷᠠᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="483"/>
+        <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="484"/>
+        <location filename="../../src/peony-application.cpp" line="496"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
-        <translation>ᠵᠤᠬᠢᠶᠠᠭᠴᠢ:
-Yue Lan &lt;lanyue@kylinos.cn&gt;
-Meihong He &lt;hemeihong@kylinos.cn&gt;
+        <translation>ᠵᠣᠬᠢᠶᠠᠭᠴᠢ
+	ᠶᠤᠸᠠᠢ ᠯᠠᠨ &lt;lanyue@kylinos.cn&gt;᠃
+	ᠾᠧ ᠮᠧᠢ ᠾᠦᠩ &lt;hemeihong@kylinos.cn&gt; ᠃
 
- ᠬᠡᠪᠯᠡᠯ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠲᠠᠢ(C): 2020᠂ ᠴᠢ ᠯᠢᠨ ᠰᠤᠹᠲ ᠤ᠋ᠨ ᠬᠢᠵᠠᠭᠠᠷᠳᠤ ᠺᠤᠮᠫᠠᠨᠢ</translation>
+Copyright (C): 2020, KylinSoft Co., Ltd.</translation>
     </message>
     <message>
         <source>Author:
@@ -846,22 +854,22 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/peony-application.h" line="67"/>
         <source>Close all peony-qt windows and quit</source>
-        <translation>ᠪᠦᠬᠦ ᠴᠤᠩᠬᠤ ᠵᠢ ᠬᠠᠭᠠᠭᠠᠳ ᠪᠤᠴᠠᠵᠤ ᠭᠠᠷᠬᠤ</translation>
+        <translation>ᠪᠤᠢ ᠪᠥᠬᠥᠢ ᠫᠣᠨᠨᠧᠷ qt ᠴᠣᠩᠬᠣ ᠶᠢ ᠬᠠᠭᠠᠵᠤ ᠤᠬᠤᠷᠢᠨ ᠭᠠᠷᠤᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="68"/>
         <source>Show items</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠪᠠᠢᠭ᠎ᠠ ᠭᠠᠷᠴᠠᠭ ᠢ᠋ ᠨᠡᠬᠡᠬᠡᠳ ᠳᠡᠳᠡᠨᠡᠷ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation>ᠦᠵᠡᠭᠦᠯᠬᠦ ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ ᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="69"/>
         <source>Show folders</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤᠨ ᠳ᠋ᠡᠬᠢ ᠠᠭᠤᠯᠭ᠎ᠠ ᠵᠢ ᠢᠯᠡᠷᠡᠬᠦᠯᠬᠦ</translation>
+        <translation>ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠬᠠᠪᠤᠳᠠᠷ ᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠵᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="70"/>
         <source>Show properties</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠷᠢᠶᠠᠯᠠᠯ ᠤ᠋ᠨ ᠴᠤᠩᠬᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠬᠦ</translation>
+        <translation>ᠢᠯᠡᠷᠡᠭᠦᠯᠬᠦ ᠰᠢᠨᠵᠢ ᠴᠢᠨᠠᠷ ᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ ᠃</translation>
     </message>
 </context>
 <context>
@@ -877,74 +885,76 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠠᠯᠪᠠᠳᠠᠯᠭ᠎ᠠ᠎ᠪᠠᠷ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ ᠢᠯᠠᠭᠳᠠᠪᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Error: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>ᠪᠤᠷᠤᠭᠤ ᠄ %1
+</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ᠎ᠶ᠋ᠢ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠪᠡᠶᠡᠯᠡᠭᠦᠯᠪᠡ ᠂ ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠨᠢᠭᠡᠨᠲᠡ ᠠᠮᠵᠢᠯᠲᠠ᠎ᠲᠠᠢ ᠪᠠᠭᠤᠯᠭᠠᠪᠠ !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠠᠴᠢᠶ᠎ᠠ ᠪᠠᠭᠤᠯᠲᠠ ᠢᠯᠠᠭᠳᠠᠪᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠪᠠᠭᠤᠯᠭᠠᠬᠤ᠎ᠶ᠋ᠢ ᠬᠠᠰᠤᠬᠤ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠂ ᠲᠠ ᠪᠠᠷᠤᠭ ᠤᠷᠢᠳᠠᠪᠡᠷ ᠵᠠᠷᠢᠮ ᠫᠷᠤᠭ᠌ᠷᠠᠮ᠎ᠢ᠋ ᠬᠠᠭᠠᠬᠤ ᠴᠢᠬᠤᠯᠠᠲᠠᠢ ᠂ ᠵᠢᠱ᠌ᠢᠶᠡᠯᠡᠪᠡᠯ ᠬᠤᠪᠢᠶᠠᠷᠢ ᠲᠤᠭᠤᠷᠢᠭ ᠤ᠋ᠨ ᠨᠠᠢᠷᠠᠭᠤᠯᠤᠭᠤᠷ ᠵᠡᠷᠭᠡ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠪᠤᠷᠤᠭᠤ᠄ %1
+ ᠠᠯᠪᠠᠳᠠᠯᠭ᠎ᠠ᠎ᠪᠠᠷ ᠪᠠᠭᠤᠯᠭᠠᠬᠤ ᠤᠤ ?</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="630"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="684"/>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠦᠰᠦᠷᠴᠤ ᠭᠠᠷᠴᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="631"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="685"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠦᠴᠦᠨ ᠦᠭᠡᠶ ᠪᠣᠯᠭᠠᠨ᠎ᠠ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="632"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="686"/>
         <source>Eject Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠶᠠᠭᠠᠬᠢᠭᠰᠠᠨ ᠴᠤ᠌ ᠭᠠᠷᠴᠤ ᠢᠷᠡᠨ᠎ᠡ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠳ᠋ᠠᠢᠲ᠋ᠠ᠎ᠶ᠋ᠢ ᠵᠡᠷᠭᠡᠪᠡᠷ ᠪᠡᠶᠡᠯᠡᠭᠦᠯᠪᠡ ᠂ ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ᠎ᠶ᠋ᠢ ᠠᠮᠤᠷ ᠲᠦᠪᠰᠢᠨ ᠰᠤᠭᠤᠯᠵᠤ ᠪᠣᠯᠤᠨ᠎ᠠ !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="682"/>
         <source>Unable to eject %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠡᠭᠦᠨ ᠡᠴᠡ 1 ᠶᠢ ᠰᠤᠮᠤ ᠠᠴᠠ ᠭᠠᠷᠭᠠᠬᠤ ᠶᠢᠨ ᠠᠷᠭ᠎ᠠ ᠦᠭᠡᠢ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="700"/>
         <source>PeonyNotify</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠮᠦ ᠳ᠋ᠠᠨ ᠮᠡᠳᠡᠭᠳᠡᠯ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
 </context>
 <context>
@@ -952,17 +962,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>File Name</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠨᠡᠷᠡᠢᠳᠦᠯ</translation>
+        <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠨᠡᠷ᠎ᠡ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="46"/>
         <source>File Size</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
+        <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="50"/>
         <source>Original Path</source>
-        <translation>ᠤᠭ ᠤ᠋ᠨ ᠵᠢᠮ</translation>
+        <translation>ᠠᠩᠬᠠᠨ᠎ᠤ᠋ ᠵᠢᠮ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
@@ -1001,12 +1011,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="42"/>
         <source>File Type</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠡᠯᠪᠡᠷᠢ</translation>
+        <translation>ᠹᠠᠢᠯ᠎ᠤ᠋ᠨ ᠲᠥᠷᠥᠯ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="38"/>
         <source>Modified Date</source>
-        <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠰᠠᠷ᠎ᠠ</translation>
+        <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠡᠳᠦᠷ ᠬᠤᠭᠤᠴᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
         <source>Modified Data</source>
@@ -1016,13 +1026,13 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/sort-type-menu.cpp" line="71"/>
         <location filename="../../src/control/sort-type-menu.cpp" line="118"/>
         <source>Ascending</source>
-        <translation>ᠦᠭᠰᠦᠬᠦ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ</translation>
+        <translation>ᠥᠭᠰᠥᠬᠦ ᠶᠠᠪᠤᠴᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
         <location filename="../../src/control/sort-type-menu.cpp" line="117"/>
         <source>Descending</source>
-        <translation>ᠪᠠᠭᠠᠰᠬᠠᠬᠤ ᠳᠠᠷᠠᠭᠠᠯᠠᠯ</translation>
+        <translation>ᠪᠠᠭᠤᠷᠠᠬᠤ</translation>
     </message>
 </context>
 <context>
@@ -1068,101 +1078,111 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">在%2中搜索%1</translation>
     </message>
     <message>
+        <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
+        <source> %1 items </source>
+        <translation> 1 ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ᠃ </translation>
+    </message>
+    <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
         <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
         <source>Searching for files ...</source>
-        <translation>ᠶᠠᠭ ᠹᠠᠢᠯ ᠤ᠋ᠳ ᠢ᠋ ᠡᠷᠢᠵᠦ ᠪᠠᠢᠨ᠎ᠠ ᠁</translation>
+        <translation>ᠶᠠᠭ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠡᠷᠢᠵᠦ ᠪᠠᠶᠢᠨ᠎ᠠ ᠁</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
-        <source> %1 items </source>
-        <translation> %1 ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ </translation>
+        <source>selected%1%2</source>
+        <translation type="vanished">选中%1%2</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
         <source> selected %1 items    %2</source>
-        <translation> %1 ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ    %2</translation>
+        <translation> ᠰᠣᠩᠭᠣᠨ ᠲᠣᠭᠲᠠᠭᠠᠭᠰᠠᠨ 1 ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ ᠦᠨ 2᠃</translation>
+    </message>
+    <message>
+        <source> %1 items    selected %2 items</source>
+        <translation type="vanished">%1 项   选中 %2 项</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
         <source> selected %1 items</source>
-        <translation> %1 ᠳᠦᠷᠦᠯ ᠵᠦᠢᠯ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation> ᠰᠣᠩᠭᠣᠨ ᠲᠣᠭᠲᠠᠭᠠᠭᠰᠠᠨ 1 ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ᠃</translation>
     </message>
 </context>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="280"/>
+        <location filename="../../src/control/tab-widget.cpp" line="282"/>
         <source>Trash</source>
         <translation>ᠬᠤᠭᠯᠠᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="284"/>
+        <location filename="../../src/control/tab-widget.cpp" line="286"/>
         <source>Clear</source>
-        <translation>ᠴᠡᠪᠡᠷᠯᠡᠬᠦ</translation>
+        <translation>ᠤᠰᠠᠳᠬᠠᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="289"/>
+        <location filename="../../src/control/tab-widget.cpp" line="291"/>
         <source>Recover</source>
-        <translation>ᠪᠤᠴᠠᠭᠠᠬᠤ</translation>
+        <translation>ᠰᠡᠷᠭᠦᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="445"/>
+        <location filename="../../src/control/tab-widget.cpp" line="447"/>
         <source>Computer</source>
-        <translation type="unfinished">计算机</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1692"/>
-        <source>Opening such files is not currently supported</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ</translation>
     </message>
     <message>
         <source>Close Filter.</source>
-        <translation type="vanished">ᠰᠢᠯᠢᠯᠳᠠ ᠵᠢ ᠬᠠᠭᠠᠬᠤ᠃</translation>
+        <translation type="vanished">关闭筛选。</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="vanished">ᠰᠢᠯᠢᠯᠳᠡ</translation>
+        <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="520"/>
+        <location filename="../../src/control/tab-widget.cpp" line="522"/>
         <source>Select Path</source>
-        <translation>ᠵᠢᠮ ᠢ᠋ ᠰᠤᠩᠭᠤᠬᠤ</translation>
+        <translation>ᠵᠠᠮ ᠰᠤᠩᠭ᠋ᠤᠬᠤ</translation>
     </message>
     <message>
-        <source>Current path: %1, %2</source>
-        <translation type="vanished">ᠤᠳᠤ ᠬᠡᠷᠡᠭᠯᠡᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠵᠢᠮ᠄ 1 ᠂ 2 ᠃</translation>
+        <location filename="../../src/control/tab-widget.cpp" line="1343"/>
+        <source>Warning</source>
+        <translation type="unfinished">ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <source>click to select other search path.</source>
-        <translation type="vanished">ᠲᠣᠭᠰᠢᠬᠤ ᠪᠠᠷ ᠳᠠᠮᠵᠢᠨ ᠪᠤᠰᠤᠳ ᠰᠣᠩᠭᠣᠯᠲᠠ ᠶ᠋ᠢᠨ ᠵᠢᠮ ᠰᠣᠩᠭᠣᠨ᠎ᠠ ᠃</translation>
+        <location filename="../../src/control/tab-widget.cpp" line="1345"/>
+        <source>Error</source>
+        <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1704"/>
+        <source>Opening such files is not currently supported</source>
+        <translation>ᠣᠳᠣᠬᠠᠨ ᠳᠤ ᠡᠶᠢᠮᠦᠷᠬᠦ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ ᠶᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠭᠡᠶ ᠃</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.cpp" line="1718"/>
         <source>Open failed</source>
         <translation>ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1706"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠲᠠᠰᠤᠨ ᠤ᠋ ᠵᠢᠮ ᠢ᠋ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
     </message>
     <message>
         <source>Close advance search.</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="435"/>
+        <location filename="../../src/control/tab-widget.cpp" line="437"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation>ᠬᠠᠢᠯᠳᠠ</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
-        <translation type="vanished">ᠪᠤᠰᠤᠳ ᠬᠠᠢᠬᠤ ᠵᠢᠮ ᠢ᠋ ᠰᠣᠩᠭᠣᠭᠠᠷᠠᠢ᠃</translation>
+        <translation type="vanished">选择其他搜索路径。</translation>
     </message>
     <message>
         <source>Search recursively</source>
-        <translation type="vanished">ᠡᠬᠡᠬᠦ ᠬᠠᠢᠯᠳᠠ</translation>
+        <translation type="vanished">递归搜索</translation>
     </message>
     <message>
         <source>more options</source>
@@ -1177,57 +1197,57 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="580"/>
-        <location filename="../../src/control/tab-widget.cpp" line="740"/>
+        <location filename="../../src/control/tab-widget.cpp" line="582"/>
+        <location filename="../../src/control/tab-widget.cpp" line="742"/>
         <source>is</source>
-        <translation>ᠳᠡᠢᠮᠤ</translation>
+        <translation>ᠲᠡᠢ᠌ᠮᠦ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="615"/>
+        <location filename="../../src/control/tab-widget.cpp" line="617"/>
         <source>Please input key words...</source>
-        <translation>ᠵᠠᠩᠭᠢᠯᠠᠭ᠎ᠠ ᠦᠭᠡᠰ ᠢ᠋ ᠤᠷᠤᠭᠤᠯᠬᠤ ᠁</translation>
+        <translation>ᠵᠠᠩᠭᠢᠯᠠᠭ᠎ᠠ ᠶᠢᠨ ᠦᠰᠦᠭ ᠢ ᠣᠷᠣᠭᠤᠯᠵᠤ ᠢᠷᠡᠭᠡᠳᠦᠶ ᠁</translation>
     </message>
     <message>
         <source>Please input kay words...</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="701"/>
-        <location filename="../../src/control/tab-widget.cpp" line="724"/>
+        <location filename="../../src/control/tab-widget.cpp" line="703"/>
+        <location filename="../../src/control/tab-widget.cpp" line="726"/>
         <source>contains</source>
-        <translation>ᠬᠠᠮᠤᠷᠤᠭᠳᠠᠬᠤ</translation>
+        <translation>ᠪᠠᠭᠲᠠᠨ᠎ᠠ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>name</source>
-        <translation>ᠨᠡᠷᠡᠢᠳᠤᠯ</translation>
+        <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ᠎ᠶ᠋ᠢᠨ ᠨᠡᠷ᠎ᠡ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>type</source>
-        <translation>ᠬᠡᠯᠪᠡᠷᠢ</translation>
+        <translation>ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>modify time</source>
-        <translation>ᠵᠠᠰᠠᠭᠰᠠᠨ ᠴᠠᠭ</translation>
+        <translation>ᠴᠠᠭ ᠢᠶᠠᠨ ᠵᠠᠰᠠᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="307"/>
         <source>file size</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ</translation>
+        <translation>ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ ᠃</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="308"/>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>all</source>
-        <translation>ᠪᠦᠬᠦᠢᠯᠡ/ ᠪᠦᠬᠦ</translation>
+        <translation>ᠪᠦᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="308"/>
         <source>file folder</source>
-        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ</translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠴᠢᠭᠤᠷ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="308"/>
@@ -1237,17 +1257,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="308"/>
         <source>video</source>
-        <translation>ᠸᠢᠳᠢᠤ᠋</translation>
+        <translation>ᠸᠢᠳᠢᠣ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>text file</source>
-        <translation>ᠲᠸᠺᠰᠲ</translation>
+        <translation>ᠲᠸᠻᠰᠲ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="309"/>
         <source>audio</source>
-        <translation>ᠠᠦ᠋ᠳᠢᠤ᠋</translation>
+        <translation>ᠠᠦ᠋ᠳᠢᠦ᠌</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="309"/>
@@ -1262,27 +1282,27 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>today</source>
-        <translation>ᠦᠨᠦᠳᠦᠷ</translation>
+        <translation>ᠥᠨᠥᠳᠥᠷ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this week</source>
-        <translation>ᠳᠤᠰ ᠭᠠᠷᠠᠭ</translation>
+        <translation>ᠲᠤᠰ ᠭᠠᠷᠠᠭ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this month</source>
-        <translation>ᠳᠤᠰ ᠰᠠᠷ᠎ᠠ</translation>
+        <translation>ᠲᠤᠰ ᠰᠠᠷ᠎ᠠ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>this year</source>
-        <translation>ᠡᠨᠡ ᠵᠢᠯ</translation>
+        <translation>ᠲᠤᠰ ᠵᠢᠯ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="310"/>
         <source>year ago</source>
-        <translation>ᠵᠢᠯ ᠤ᠋ᠨ ᠡᠮᠦᠨ᠎ᠡ</translation>
+        <translation>ᠨᠢᠳᠤᠨᠤᠨ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
@@ -1297,27 +1317,27 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>empty(0K)</source>
-        <translation>ᠬᠤᠭᠤᠰᠤᠨ(0K)</translation>
+        <translation>ᠬᠣᠭᠣᠰᠣᠨ (0K)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>medium(1M-128M)</source>
-        <translation>ᠳᠤᠮᠳᠠ ᠵᠡᠷᠭᠡ(1M-128M)</translation>
+        <translation>ᠳᠤᠮᠲᠠ  1ᠮ-128ᠮ </translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>big(128M-1G)</source>
-        <translation>ᠶᠡᠬᠡ(128M-1G)</translation>
+        <translation>ᠲᠣᠮᠣ (128M-1G)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>large(1-4G)</source>
-        <translation>ᠮᠤᠨᠳᠠᠭ ᠶᠡᠬᠡ(1-4G)</translation>
+        <translation>ᠲᠣᠮᠣ (1-4G)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>great(&gt;4G)</source>
-        <translation>ᠮᠠᠰᠢ ᠶᠡᠭᠡ(&gt;4G)</translation>
+        <translation>ᠮᠠᠰᠢ ᠰᠠᠢ᠌ᠬᠠᠨ ( &gt;4G )</translation>
     </message>
     <message>
         <source>medium(1M-100M)</source>
@@ -1335,27 +1355,27 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="877"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="922"/>
         <source>Peony</source>
-        <translation type="unfinished">ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
+        <translation>ᠹᠠᠢᠯ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
 </context>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1082"/>
+        <location filename="../../src/control/header-bar.cpp" line="1090"/>
         <source>Option</source>
-        <translation type="unfinished">ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
+        <translation>ᠰᠤᠩᠭᠤᠭᠳᠠᠬᠤᠨ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1095"/>
+        <location filename="../../src/control/header-bar.cpp" line="1103"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠮᠤᠭ ᠎ᠤᠨ ᠪᠠᠭᠠᠴᠢᠯᠠᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1118"/>
+        <location filename="../../src/control/header-bar.cpp" line="1126"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠬᠠᠭᠠᠬᠤ</translation>
     </message>
 </context>
 </TS>

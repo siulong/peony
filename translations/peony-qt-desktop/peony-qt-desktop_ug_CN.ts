@@ -9,12 +9,12 @@
         <translation>ئۈستەل يۈزى سىنبەلگىسى كۆرۈش</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="634"/>
         <source>New Folder</source>
         <translation>يېڭى ھۆججەت قىسقۇچ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="728"/>
         <source>set background</source>
         <translation>تەگلىك بەلگىلەش</translation>
     </message>
@@ -23,22 +23,22 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="988"/>
         <source>Open failed</source>
         <translation>ئېچىش مەغلۇپ بولدى</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="989"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>ئوچۇق مۇندەرىجە مەغلۇپ بولدى، رۇخسەتىڭىز يوق!</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="971"/>
         <source>Open Link failed</source>
         <translation>ئۇلىنىشنى ئېچىش مەغلۇپ بولدى</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="972"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>ھۆججەت مەۋجۇت ئەمەس، ئۇلىنىش ھۆججىتىنى ئۆچۈرمەكچىمۇ؟</translation>
     </message>
@@ -46,14 +46,12 @@
 <context>
     <name>Peony::DesktopItemModel</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="624"/>
         <source>Computer</source>
-        <translation>كومپيۇتېر</translation>
+        <translation type="vanished">كومپيۇتېر</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="626"/>
         <source>Trash</source>
-        <translation>ئەخلەت ساندۇقى</translation>
+        <translation type="vanished">ئەخلەت ساندۇقى</translation>
     </message>
 </context>
 <context>
