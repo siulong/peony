@@ -1,0 +1,22 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Wed, 3 Jan 2024 17:21:09 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0k4TTRWV+OAkOaWh+S7tueuoeeQhuWZqOOAkeS+pw==?=
+ =?utf-8?b?6L655qCP55uu5b2V5pS26LW354q25oCB5LiL77yM6YCJ5Lit5pe25YmN5pa5566t?=
+ =?utf-8?b?5aS05pyq5Y+N6buR?=
+
+---
+ src/control/navigation-side-bar.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index cb2c052..c5b5428 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -101,6 +101,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+ 
+     setDragDropMode(QTreeView::DropOnly);
+ 
++    setProperty("highlightMode", true);
+     setProperty("doNotBlur", true);
+     viewport()->setProperty("doNotBlur", true);
+ 
