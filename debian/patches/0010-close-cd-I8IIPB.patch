@@ -1,0 +1,24 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Wed, 3 Jan 2024 17:28:53 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0k4SUlQQuOAkOaWh+S7tueuoeeQhuWZqOOAkeWIlw==?=
+ =?utf-8?b?6KGo5qih5byP5LiL6YCJ5Lit5paH5Lu26IOM5pmv5LiN5piv6JOd6Imy77yM5YiH?=
+ =?utf-8?b?5o2i5L6n6L655qCP55uu5b2V5pe26YCJ5Lit55qE55uu5b2V5Lmf5LiN5piv6JOd?=
+ =?utf-8?b?6Imy6IOM5pmv?=
+
+---
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 8e24738..3bb79c2 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -78,6 +78,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
+     m_touch_active_timer->setInterval(2000);
+     m_touch_active_timer->setSingleShot(true);
+ 
++    setProperty("highlightMode", true);
++
+     //setFrameShape(QFrame::NoFrame);
+ 
+     // use scroll per pixel mode for calculate vertical scroll bar range.
