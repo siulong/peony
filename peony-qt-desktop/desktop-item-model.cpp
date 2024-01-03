@@ -34,7 +34,6 @@
 #include "file-operation-utils.h"
 
 #include "thumbnail-manager.h"
-#include "usershare-manager.h"
 
 #include "file-meta-info.h"
 
@@ -42,12 +41,7 @@
 #include "desktop-icon-view.h"
 #include "global-settings.h"
 #include "sound-effect.h"
-#ifdef KY_SDK_SOUND_EFFECTS
-#include "ksoundeffects.h"
-#endif
 #include "desktop-icon-view-delegate.h"
-#include "desktop-menu-plugin-manager.h"
-#include "emblem-provider.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -62,9 +56,6 @@
 #include <QDebug>
 
 using namespace Peony;
-#ifdef KY_SDK_SOUND_EFFECTS
-using namespace kdk;
-#endif
 
 DesktopItemModel::DesktopItemModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -189,7 +180,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             }
 
             if (metaInfoPos.x() >= 0) {
-                // check if overlapped, it might happened whild drag out and in desktop view.
+                // check if overlapped, it might happend whild drag out and in desktop view.
                 auto indexRect = QRect(metaInfoPos, iconSize);
                 if (notEmptyRegion.intersects(indexRect)) {
 
@@ -309,7 +300,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileDeleted, [=](const QString &uri) {
         m_items_need_relayout.removeOne(uri);
-        std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri);
+        auto info = FileInfo::fromUri(uri);
         Peony::DesktopIconView *view = nullptr;
         if (info.get()->isEmptyInfo()) {
             view = ((PeonyDesktopApplication*)qApp)->removeUri(uri);
@@ -330,15 +321,6 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                 //this->endResetModel();
                 Q_EMIT this->requestClearIndexWidget(QStringList()<<uri);
                 Q_EMIT this->requestUpdateItemPositions();
-
-                if (info->isDir()) {
-                    QString displayName = info->displayName();
-                    if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
-                        SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
-                        connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
-                        thread->start();
-                    }
-                }
             }
         }
     });
@@ -526,14 +508,6 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
             beginResetModel();
             endResetModel();
         }
-    });
-
-    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, [=](){
-       QTimer::singleShot(1000, this, [=]{
-           for (auto file : m_files) {
-               EmblemProviderManager::getInstance()->queryAsync(file->uri());
-           }
-       });
     });
 }
 
@@ -867,7 +841,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     auto info = FileInfo::fromUri(destDirUri);
     if (info.get()->isEmptyInfo()) {
-        // note that this case nearly won't happened.
+        // note that this case nearly won't happend.
         // but there is a bug reported due to this.
         // link to task #48798.
         FileInfoJob j(info);
@@ -981,11 +955,7 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
         auto op = FileOperationUtils::moveWithAction(srcUris, destDirUri, true, action);
         op->connect(op, &FileOperation::operationFinished, this, [=](){
-            //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
-            //Task#152997, use sdk play sound
-#ifdef KY_SDK_SOUND_EFFECTS
-            kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
-#endif
+            Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
         });
     }
 

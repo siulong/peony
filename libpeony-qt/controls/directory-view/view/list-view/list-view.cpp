@@ -108,8 +108,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
     header()->setStretchLastSection(false);
-    header()->setMinimumSectionSize(130);
-    header()->setTextElideMode(Qt::ElideRight);
+
     if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
         connect(header(), &QHeaderView::sectionClicked, this, [=](){
             //update sort policy
@@ -151,7 +150,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setIconSize(QSize(40, 40));
     setMouseTracking(true);//追踪鼠标
 
-    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
+    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -441,7 +440,7 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
         m_logicRect = logicRect.normalized();
 
         int dx = -horizontalOffset();
-        int dy = -verticalOffset();
+        int dy = -verticalOffset() + this->header()->height();
         auto realRect = m_logicRect.adjusted(dx, dy, dx ,dy);
 
         if (!m_rubberBand->isVisible())
@@ -586,13 +585,6 @@ void ListView::dropEvent(QDropEvent *e)
         return;
     }
 
-    auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
-    auto validRect = QRect(visualRect(proxy_index).topLeft(), sizeHint);
-    if (!validRect.contains(e->pos())) {
-        //拖拽到在空白处，就移动到当前目录下
-        m_model->dropMimeData(e->mimeData(), action, 0, 0, QModelIndex());
-        return;
-    }
     m_model->dropMimeData(e->mimeData(), action, 0, 0, index);
 }
 
@@ -767,9 +759,7 @@ void ListView::slotRename()
         || getDirectoryUri().startsWith("recent://")
         || getDirectoryUri().startsWith("favorite://")
         || getDirectoryUri().startsWith("search://")
-        || getDirectoryUri().startsWith("network://")
-        || getDirectoryUri().startsWith("label://"))
-
+        || getDirectoryUri().startsWith("network://"))
         return;
 
     //standardPaths not allow rename
@@ -1050,7 +1040,7 @@ void ListView::editUri(const QString &uri)
     auto origin = FileUtils::getOriginalUri(uri);
     if(uri.startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
         origin = uri;
-    QModelIndex index = m_proxy_model->indexFromUri(origin);
+    QModelIndex index =m_proxy_model->indexFromUri(origin);
     setIndexWidget(index, nullptr);
     //注释该行以修复bug:#60474
 //    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
@@ -1073,19 +1063,6 @@ void ListView::editUris(const QStringList uris)
 {
     //FIXME:
     //implement batch rename.
-    setState(QTreeView::NoState);
-    auto origin = FileUtils::getOriginalUri(uris.first());
-    if(uris.first().startsWith("mtp://"))/* Fixbug#82649:在手机内部存储里新建文件/文件夹时，名称不是可编辑状态,都是默认文件名/文件夹名 */
-        origin = uris.first();
-    QModelIndex index = m_proxy_model->indexFromUri(origin);
-    setIndexWidget(index, nullptr);
-    //fix bug#70769, edit box overlapped with status bar issue
-    //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
-    if(index.row() >= m_proxy_model->rowCount()-1)
-       QTreeView::scrollToBottom();
-    //注释该行以修复bug:#60474
-//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
-    edit(index);
 }
 
 bool ListView::isEnableMultiSelect()

@@ -86,7 +86,7 @@ UdfAppendBurnDataDialog::UdfAppendBurnDataDialog(const QString &uri, DiscControl
     QString discType = m_discControl->discMediaType();
     QString discName = m_discControl->discLabel();
     if (discType.isEmpty()) {
-        m_discTypeEdit->setText(tr("Unknown"));
+        m_discTypeEdit->setText(tr("Unknow"));
     } else {
         m_discTypeEdit->setText(discType);
     }

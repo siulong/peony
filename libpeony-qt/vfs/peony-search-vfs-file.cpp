@@ -23,11 +23,9 @@
 #include "peony-search-vfs-file.h"
 #include "peony-search-vfs-file-enumerator.h"
 #include "file-enumerator.h"
-#include "file-utils.h"
 #include "search-vfs-manager.h"
 #include <QString>
 #include <QDebug>
-#include <QThread>
 
 /* -- GFileIface -- */
 static void peony_search_vfs_file_g_file_iface_init(GFileIface *iface);
@@ -86,7 +84,6 @@ GFileEnumerator *peony_search_vfs_file_enumerate_children(GFile *file,
         GCancellable *cancellable,
         GError **error)
 {
-    qDebug() << "peony_search_vfs_file_enumerate_children";
     auto search_vfs_file = PEONY_SEARCH_VFS_FILE(file);
 
     return peony_search_vfs_file_enumerate_children_internal(file, attribute, flags, cancellable, error);
@@ -142,7 +139,6 @@ static char *peony_search_vfs_file_get_uri_sheceme(GFile *file)
 
 static void peony_search_vfs_file_g_file_iface_init(GFileIface *iface)
 {
-    qDebug() << "peony_search_vfs_file_g_file_iface_init";
     iface->dup = peony_search_vfs_file_dup;
     iface->get_parent = peony_search_vfs_file_get_parent;
     iface->is_native = peony_search_vfs_file_is_native;
@@ -160,7 +156,7 @@ static void peony_search_vfs_file_g_file_iface_init(GFileIface *iface)
 GFile *peony_search_vfs_file_dup(GFile *file)
 {
     if (!PEONY_IS_SEARCH_VFS_FILE(file)) {
-        //this should not be happened.
+        //this should not be happend.
         return g_file_new_for_uri("search:///");
     }
     auto vfs_file = PEONY_SEARCH_VFS_FILE(file);
@@ -212,8 +208,6 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
     }
 
     QStringList args = details->search_vfs_directory_uri->split("&", QString::SkipEmptyParts);
-    QStringList paths;
-    QStringList keyWords;
 
     if (args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
             && !details->search_vfs_directory_uri->contains("search_hidden=")
@@ -228,9 +222,6 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
             args.replace(1, nameRegExp);
         }
     }
-#ifdef KY_UKUI_SEARCH
-    details->search_engine = args.contains("search_engine=1");
-#endif
 
     //we should judge case sensitive, then we confirm the regexp when
     //we match file in file enumeration.
@@ -263,13 +254,6 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
             QString tmp = arg;
             tmp = tmp.remove("name_regexp=");
             details->name_regexp = new QRegExp(tmp);
-#ifdef KY_UKUI_SEARCH
-            //Add search keys
-            if (details->search_engine) {
-                keyWords.clear();
-                keyWords.append(tmp);
-            }
-#endif
             continue;
         }
 
@@ -316,18 +300,8 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
 
         if (arg.contains("search_uris=")) {
             QString tmp = arg;
-            QString tmpPath;
             tmp.remove("search:///");
             tmp.remove("search_uris=");
-#ifdef KY_UKUI_SEARCH
-            //Add search path
-            if (details->search_engine) {
-                tmpPath = tmp;
-                tmpPath.remove("file://");
-                paths.clear();
-                paths.append(tmpPath);
-            }
-#endif
             QStringList uris = tmp.split(",", QString::SkipEmptyParts);
             for (auto uri: uris) {
                 //NOTE: we should enumerate the search uris and add
@@ -365,38 +339,6 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
             details->name_regexp_extend_list->at(i)->setCaseSensitivity(sensitivity);
         }
     }
-
-#ifdef KY_UKUI_SEARCH
-    if (nullptr != details->m_search && details->search_engine) {
-        details->m_search->clearAllConditions();
-        details->m_queue->clear();
-
-        for (QString &dir : paths) {
-            dir = Peony::FileUtils::urlDecode(dir);
-            details->m_search->addSearchDir(dir);
-        }
-
-        for (QString &key : keyWords) {
-            details->m_search->addKeyword(key);
-        }
-
-        details->m_search->initSearchPlugin(UkuiSearch::SearchProperty::SearchType::File);
-        details->m_search->initSearchPlugin(UkuiSearch::SearchProperty::SearchType::FileContent);
-        details->m_queue = details->m_search->init();
-        details->m_search->setMaxResultNum(9999999);
-
-        qDebug() << "thraed:" << QThread::currentThreadId();
-
-//        QEventLoop *l = new QEventLoop;
-//        details->m_search->connect(details->m_search, &UkuiSearch::UkuiSearchTask::searchFinished, [l]{
-//            qDebug()<<"search finished";
-//            l->exit(0);
-//        });
-//        auto searchId = details->m_search->startSearch(UkuiSearch::SearchProperty::SearchType::File);
-//        l->exec();
-//        l->deleteLater();
-    }
-#endif
 }
 
 GFileEnumerator *peony_search_vfs_file_enumerate_children_internal(GFile *file,

@@ -30,14 +30,9 @@
 #include <QDir>
 #include <QAbstractItemView>
 #include <QTimer>
-#include <QDBusInterface>
 
 
 #include "peony-core_global.h"
-
-#define BW_LIST_NORMAL  "normal"
-#define BW_LIST_BLACK   "blacklist"
-#define BW_LIST_WHITE   "whitelist"
 
 namespace Peony {
 
@@ -131,8 +126,6 @@ public Q_SLOTS:
     void update();
     void setUseGlobalSort(bool use);
     void checkSortSettings();
-    void syncBlackAndWhiteData();
-    void updateBlackAndWhiteList();
 
     void setSelectionModeHint(QAbstractItemView::SelectionMode mode);
 
@@ -164,11 +157,9 @@ private:
     bool m_case_sensitive = false;
     QString m_blur_name = "";
     QString m_label_name = "";
-    QString m_bw_list_model = BW_LIST_NORMAL;
-    QStringList m_bwListInfo;
     QColor m_label_color = Qt::transparent;
     const int ALL_FILE = 0;
-    const quint64 K_BASE = 1024;
+    const quint64 K_BASE = 1000;
     int m_show_file_type=ALL_FILE, m_show_modify_time=ALL_FILE, m_show_file_size=ALL_FILE;
     QList<int> m_file_type_list, m_modify_time_list, m_file_size_list;
     QStringList m_file_name_list;
@@ -183,8 +174,6 @@ private:
     QTimer *m_sortTimer = nullptr;
     int m_sortType = 0;
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
-
-    QDBusInterface *mDbusPeonyServer = nullptr;
 };
 
 }

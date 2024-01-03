@@ -50,7 +50,6 @@
 #include "navigation-side-bar.h"
 #include "advance-search-bar.h"
 #include "status-bar.h"
-#include "search-widget.h"
 
 #include "intel/intel-navigation-side-bar.h"
 
@@ -84,8 +83,6 @@
 #include "location-bar.h"
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
-#include "file-utils.h"
-
 #include <QSplitter>
 
 #include <QPainter>
@@ -122,12 +119,7 @@
 
 #define FONT_SETTINGS "org.ukui.style"
 
-#include <QDBusConnection>
-#include <QDBusReply>
-
 static MainWindow *last_resize_window = nullptr;
-
-static QWidgetList blur_window_list;
 
 MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent)
 {
@@ -215,41 +207,16 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
             this->setCurrentSortOrder(this->getCurrentSortOrder());
         }
     });
-
-    if (blur_window_list.count() < 5) {
-        blur_window_list.append(this);
-        m_is_blur_window = true;
-        KWindowEffects::enableBlurBehind(winId(), true);
-    }
-
-#ifdef KY_SDK_DATE
-    connect(Peony::GlobalSettings::getInstance(),
-            &Peony::GlobalSettings::updateShortDataFormat,
-            this,
-            &MainWindow::updateDateFormat);
-#endif
 }
 
 MainWindow::~MainWindow()
 {
-    blur_window_list.removeOne(this);
-
     //fix bug 40913, when window is maximazed, not update size
     if (last_resize_window == this && !isMaximized()) {
         auto settings = Peony::GlobalSettings::getInstance();
         settings->setValue(DEFAULT_WINDOW_WIDTH, this->size().width());
         settings->setValue(DEFAULT_WINDOW_HEIGHT, this->size().height());
         last_resize_window = nullptr;
-    }
-}
-
-void MainWindow::updateDateFormat(QString dateFormat)
-{
-    //update date and time show format, task #101605
-    qDebug() << "sdk format signal:"<<dateFormat;
-    if (m_date_format != dateFormat){
-        this->refresh();
-        m_date_format = dateFormat;
     }
 }
 
@@ -436,17 +403,8 @@ void MainWindow::setShortCuts()
             QString downloadPath = Peony::FileUtils::getEncodedUri("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
             if (!uris.isEmpty() && !uris.contains(desktopUri) && !uris.contains(homeUri) && !uris.contains(documentPath) && !uris.contains(musicPath)
                     && !uris.contains(moviesPath) && !uris.contains(picturespPath) && !uris.contains(downloadPath)) {
-
-                bool canTrash = true;
-                for (auto uri : uris) {
-                    if(Peony::FileUtils::isLongNameFileOfNotDel2Trash(uri)){/* 在家目录/下载/扩展目录下存放的长文件名文件使用永久删除，link bug#188864 */
-                        canTrash = false;
-                        break;
-                    }
-                }
-
                 bool isTrash = this->getCurrentUri() == "trash:///";
-                if (!isTrash && canTrash) {
+                if (!isTrash) {
                     Peony::FileOperationUtils::trash(uris, true);
                 } else {
                     Peony::FileOperationUtils::executeRemoveActionWithDialog(uris);
@@ -565,10 +523,6 @@ void MainWindow::setShortCuts()
         connect(newFolderAction, &QAction::triggered, this, [=](){
             QString boxpath = "file://"+QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.box";
             if (boxpath == getCurrentUri()) {
-                return;
-            }
-            //not allow create in phone path
-            if (getCurrentUri().startsWith("mtp://") || getCurrentUri().startsWith("gphoto2://")){
                 return;
             }
 
@@ -694,7 +648,7 @@ void MainWindow::setShortCuts()
         quitAllAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
         connect(quitAllAction, &QAction::triggered, this, [=]() {
             QProcess p(0);
-            p.start("/usr/bin/peony", QStringList()<<"-q");
+            p.start("peony", QStringList()<<"-q");
             p.waitForStarted();
             p.waitForFinished();
         });
@@ -773,16 +727,6 @@ void MainWindow::setShortCuts()
                 QMessageBox::warning(this, tr("warn"), tr("This operation is not supported."));
                 return;
             }
-
-            //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
-            auto info = Peony::FileInfo::fromUri(currentUri);
-            //comment to fix bug#191108, huawei phone can paste file success
-            if (!info->canWrite() /*|| currentUri.startsWith("mtp://")
-                || currentUri.startsWith("gphoto2://")*/) {
-                return;
-            }
-
-            Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
                 //FIXME: how about duplicated copy?
                 //FIXME: how to deal with a failed move?
@@ -1126,9 +1070,7 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     (uri.startsWith("file://") || uri.startsWith("favorite://")))
         realUri = "file://" + info->symlinkTarget();
 
-    //try to fix bug#174666, part phone mtp mode access wrong issue
-    if (url.scheme().isEmpty() && ! uri.startsWith("mtp://") && ! uri.startsWith("gphoto2://")) {
-        qDebug() << "transform special uri:"<<uri;
+    if (url.scheme().isEmpty()) {
         if (uri.startsWith("/")) {
             realUri = "file://" + uri;
         } else {
@@ -1140,10 +1082,6 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
             realUri = url.toDisplayString();
         }
     }
-
-    //Fix bug#132638, special # character use in symbolic link open fail issue
-    if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
-        realUri = Peony::FileUtils::urlEncode(realUri);
 
     //if in search mode and key is not null, need quit search mode, bug#93528
     //清空搜索关键字时，不应该退出搜索状态，其他情况下，跳转非搜索路径，需要退出搜索
@@ -1195,33 +1133,13 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             m_is_clear_serach = true;
             goToUri(m_last_search_path, true);
             m_is_clear_serach = false;
-            m_tab->m_status_bar->updateSearchProgress(false);
-            m_searching = false;
         }
         else
         {
-            bool isSearchEngine = true;
-            const QByteArray id(UKUI_SEARCH_SCHEMAS);
-            if (QGSettings::isSchemaInstalled(id)) {
-                QGSettings *searchSettings = new QGSettings(id, QByteArray(), this);
-                if (!searchSettings || !searchSettings->keys().contains(SEARCH_METHOD_KEY)) {
-                    isSearchEngine = false;
-                }
-            } else {
-                isSearchEngine = false;
-            }
-
-            if (!m_last_search_path.startsWith("file:///") && !m_last_search_path.startsWith("computer:///")) {
-                isSearchEngine = false;
-            }
-
             auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(m_last_search_path,
                                                          m_last_key, true, false, "", true);
-            targetUri = Peony::SearchVFSUriParser::addSearchKey(targetUri, isSearchEngine);
             //qDebug() << "updateSearch targetUri:" <<targetUri;
             goToUri(targetUri, true);
-            m_tab->m_status_bar->updateSearchProgress(true);
-            m_searching = true;
         }
     }
 }
@@ -1363,7 +1281,7 @@ void MainWindow::setCurrentSelectionUris(const QStringList &uris)
 {
     m_tab->setCurrentSelections(uris);
     //move scrollToSelection to m_tab to try fix new unzip file show two same icon issue
-    //Fix me, Unknown caused reason
+    //Fix me, unknow caused reason
 //    if (uris.isEmpty())
 //        return;
 //    getCurrentPage()->getView()->scrollToSelection(uris.first());
@@ -1448,9 +1366,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
     auto sidebarOpacity = Peony::GlobalSettings::getInstance()->getValue(SIDEBAR_BG_OPACITY).toInt();
 
-    if (m_is_blur_window) {
-        colorBase.setAlphaF(sidebarOpacity/100.0);
-    }
+    colorBase.setAlphaF(sidebarOpacity/100.0);
 
     QPainterPath sidebarPath;
     sidebarPath.setFillRule(Qt::FillRule::WindingFill);
@@ -1579,16 +1495,19 @@ void MainWindow::validBorder()
 #include "file-utils.h"
 void MainWindow::initUI(const QString &uri)
 {
+    KWindowEffects::enableBlurBehind(this->winId(), true);
+
     auto size = sizeHint();
     resize(size);
-    m_searching = false;
+
+    KWindowEffects::enableBlurBehind(this->winId(), true);
 
     connect(this, &MainWindow::locationChangeStart, this, [=]() {
         //comment to fix bug 33527
         //m_side_bar->blockSignals(true);
         m_header_bar->blockSignals(true);
         QCursor c;
-        c.setShape(Qt::BusyCursor);
+        c.setShape(Qt::WaitCursor);
         this->setCursor(c);
         m_tab->setCursor(c);
         m_side_bar->setCursor(c);
@@ -1609,11 +1528,6 @@ void MainWindow::initUI(const QString &uri)
         //updateWindowIcon();
         //m_status_bar->update();
 
-        if (m_searching) {
-            m_tab->m_status_bar->updateSearchProgress(false);
-            Q_EMIT m_header_bar->updateSearchProgress(false);
-            m_searching = false;
-        }
         setShortCuts();
     });
 
@@ -1727,7 +1641,7 @@ void MainWindow::initUI(const QString &uri)
         m_is_search = showSearch;
     });
     //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
-    connect(m_header_bar->m_searchWidget, &Peony::SearchWidget::updateSearch, this, &MainWindow::updateSearch);
+    connect(m_header_bar, &HeaderBar::updateSearch, this, &MainWindow::updateSearch);
 
     X11WindowManager *tabBarHandler = X11WindowManager::getInstance();
     tabBarHandler->registerWidget(m_tab->tabBar());
@@ -1790,14 +1704,9 @@ void MainWindow::initUI(const QString &uri)
     });
 
     connect(m_tab, &TabWidget::menuRequest, this, [=](const QPoint &pos) {
-        //fix bug#162775, show mutiple menu issue
-        if (! m_is_show_menu){
-            m_is_show_menu = true;
-            Peony::DirectoryViewMenu menu(this, this);
-            menu.exec(pos);
-            m_uris_to_edit = menu.urisToEdit();
-            m_is_show_menu = false;
-        }
+        Peony::DirectoryViewMenu menu(this, this);
+        menu.exec(pos);
+        m_uris_to_edit = menu.urisToEdit();
     });
 
     connect(m_tab, &TabWidget::updateWindowSelectionRequest, this, [=](const QStringList &uris){
@@ -1829,12 +1738,12 @@ void MainWindow::initUI(const QString &uri)
 
 }
 
-void MainWindow::updateSearchStatus(bool showSearch)
-{
-    m_tab->updateSearchBar(showSearch);
-    m_header_bar->setSearchMode(showSearch);
-    m_is_search = showSearch;
-}
+//void MainWindow::updateSearchStatus(bool showSearch)
+//{
+//    m_tab->updateSearchBar(showSearch);
+//    m_header_bar->setSearchMode(showSearch);
+//    m_is_search = showSearch;
+//}
 
 void MainWindow::cleanTrash()
 {

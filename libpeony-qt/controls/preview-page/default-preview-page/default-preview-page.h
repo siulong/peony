@@ -30,7 +30,7 @@
 #include <memory>
 #include <QLabel>
 #include <QMap>
-#include <QDBusInterface>
+
 class QVBoxLayout;
 class QPushButton;
 class QFormLayout;
@@ -60,9 +60,6 @@ public:
     void cancel() override;
     void closePreviewPage() override;
 
-public Q_SLOTS:
-    void updateDateFormat(QString dateFormat);
-
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
     void paintEvent(QPaintEvent *e) override;
@@ -78,8 +75,6 @@ private:
     std::shared_ptr<FileWatcher> m_watcher;
 
     bool m_support = true;
-    QString m_date_format = "";
-    QDBusInterface  *mDbusDateServer;
 };
 
 class FileCountOperation;

@@ -121,9 +121,6 @@ static bool m_resident = false;
 
 PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicationName) : SingleApplication (argc, argv, applicationName, true)
 {
-    // fix #172774
-    QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths()<<"/usr/share/pixmaps");
-
     bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
     setProperty("isWayland", isWayland);
 
@@ -160,8 +157,6 @@ PeonyApplication::PeonyApplication(int &argc, char *argv[], const char *applicat
     bool ok = tUdfBrun->load(udfBurnTranslationFilePath);
     if (!ok) {
         qWarning()<<"can not load kyudfburn translation files, path is"<<udfBurnTranslationFilePath;
-    } else {
-        QApplication::installTranslator(tUdfBrun);
     }
 #endif
 
@@ -310,8 +305,6 @@ QString PeonyApplication::getUriMessage(QStringList& strList)
             args << *uri;
         } else if ((*uri).startsWith("/")) {
             args << Peony::FileUtils::urlEncode("file://" + *uri);
-        } else if ((*uri).startsWith("mtp://") || (*uri).startsWith("gphoto2://")) {
-            args << *uri;
         } else if ((*uri).contains("://")) {
             args << Peony::FileUtils::urlEncode(*uri);
         } else {

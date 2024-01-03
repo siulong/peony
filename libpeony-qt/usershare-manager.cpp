@@ -21,20 +21,16 @@
  */
 
 #include "usershare-manager.h"
-#include "file-utils.h"
 
 #include <QDebug>
 #include <QProcess>
 #include <QMessageBox>
-#include <QFileInfo>
-#include <QDir>
 
 #include <glib.h>
 
 using namespace Peony;
 
 UserShareInfoManager* UserShareInfoManager::g_shareInfo = nullptr;
-QMutex SharedDeleteInfoThread::m_mutex;
 
 static void         parseShareInfo (ShareInfo& shareInfo, QString& content);
 static QString      exectueCommand (QStringList& args, bool* ret /* out */);
@@ -94,7 +90,7 @@ QString UserShareInfoManager::exectueCommand (QStringList& args, bool* retb /* o
 
     // Shared folder
     args.prepend ("net");
-    proc.start("/usr/bin/bash");
+    proc.start("bash");
 //    args.prepend("pkexec");
     proc.waitForStarted();
     QString cmd = args.join(" ");
@@ -127,7 +123,7 @@ QString UserShareInfoManager::exectueSetAclCommand(QStringList &args, bool *ret)
     QProcess proc;
     proc.open();
 
-    proc.start("/usr/bin/bash");
+    proc.start("bash");
     proc.waitForStarted();
     QString cmd = args.join(" ");
     QString error;
@@ -206,20 +202,13 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo, const QString u
         return false;
     }
 
-    bool readOnly = shareInfo.readOnly;
-    if (!usershareAcl.isEmpty()
-            && (usershareAcl.compare("Everyone:F", Qt::CaseInsensitive) == 0
-                || usershareAcl.compare("Everyone:D", Qt::CaseInsensitive) == 0)) {
-        readOnly = false;
-    }
-
     bool ret = false;
     QStringList args;
     ShareInfo* sharedInfo = new ShareInfo;
     sharedInfo->name = shareInfo.name;
     sharedInfo->comment = shareInfo.comment;
     sharedInfo->isShared = shareInfo.isShared;
-    sharedInfo->readOnly = readOnly;
+    sharedInfo->readOnly = shareInfo.readOnly;
     sharedInfo->allowGuest = shareInfo.allowGuest;
     sharedInfo->originalPath = shareInfo.originalPath;
 
@@ -235,9 +224,8 @@ bool UserShareInfoManager::updateShareInfo(ShareInfo &shareInfo, const QString u
     m_sharedInfoMap[sharedInfo->name] = sharedInfo;
     if (m_usershareAclMap.contains(sharedInfo->name) && !usershareAcl.isEmpty()) {
         m_usershareAclMap.remove(sharedInfo->name);
+        m_usershareAclMap.insert(sharedInfo->name, usershareAcl);
     }
-    m_usershareAclMap.insert(sharedInfo->name, usershareAcl);
-
     m_mutex.unlock();
 
     args << "usershare" << "add";
@@ -386,51 +374,6 @@ QString UserShareInfoManager::parseUserShareAcl(QString &content)
     return acl;
 }
 
-bool UserShareInfoManager::checkDirAdvancedShare(QString &name)
-{
-    bool ret = true;
-    if (m_usershareAclMap[name].isEmpty()
-            || 11 == m_usershareAclMap[name].size()
-            || 10 == m_usershareAclMap[name].size()) {
-        ret = false;
-    }
-    return ret;
-}
-
-QStringList UserShareInfoManager::getUsershareLists()
-{
-    return m_usersharelists;
-}
-
-UserShareInfoManager::UserShareInfoManager(QObject *parent) : QObject(parent)
-{
-    QString filePath = "/var/lib/samba/usershares";
-    QString usersharesUri = "file://" + filePath;
-    m_watcher = std::make_shared<FileWatcher>(usersharesUri);
-    QDir dir(filePath);
-    QFileInfoList infoList = dir.entryInfoList(QDir::Files);
-    for (QFileInfo fileInfo : infoList) {
-        m_usersharelists.append(fileInfo.fileName());
-    }
-
-    qDebug() << __func__ << __LINE__ << m_usersharelists;
-    connect(m_watcher.get(), &FileWatcher::fileCreated, this, [=](QString uri){
-        QString name = Peony::FileUtils::urlDecode(uri).split("/").last();
-        if (!name.contains(":")) {
-            m_usersharelists.append(name);
-            m_usersharelists.removeDuplicates();
-        }
-    });
-    connect(m_watcher.get(), &FileWatcher::fileDeleted, this, [=](QString uri){
-        QString name = Peony::FileUtils::urlDecode(uri).split("/").last();
-        if (!name.contains(":") && m_usersharelists.contains(name)) {
-            m_usersharelists.removeOne(name);
-        }
-    });
-
-    m_watcher->startMonitor();
-}
-
 bool UserShareInfoManager::addShareInfo(ShareInfo* shareInfo)
 {
     if (nullptr == shareInfo
@@ -472,19 +415,4 @@ void UserShareInfoManager::removeShareInfo(QString &name)
     bool ret = false;
     exectueCommand (args, &ret);
     Q_EMIT signal_deleteSharedFolder(originalPath, ret);
-}
-
-SharedDeleteInfoThread::SharedDeleteInfoThread(const QString uri)
-    : m_uri(uri)
-{
-
-}
-
-void SharedDeleteInfoThread::run()
-{
-    QString name = FileUtils::getUriBaseName(m_uri);
-    QMutexLocker locker(&m_mutex);
-    UserShareInfoManager::getInstance()->removeShareInfo(name);
-    qDebug() << __func__ << "name:" << name;
-
 }

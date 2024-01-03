@@ -58,19 +58,16 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
         //key is null, clean search content, show all files
         if (key == "" || key.isNull()) {
             Q_EMIT this->updateLocationRequest(path, false);
-            this->updateSearch(path, key, true);
         } else {
             if (m_searchGlobal) {
                 QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(homePath, key, true, false, "", m_searchRecursive);
                 targetUri = targetUri.replace("&recursive=0", "&recursive=1");
                 Q_EMIT this->updateLocationRequest(targetUri, false);
-                this->updateSearch(homePath, key, true);
             } else {
                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(path, key, true, false, "", m_searchRecursive);
                 targetUri = targetUri.replace("&recursive=1", "&recursive=0");
                 Q_EMIT this->updateLocationRequest(targetUri, false);
-                this->updateSearch(path, key, true);
             }
         }
     });
@@ -219,9 +216,4 @@ void SearchWidget::updateTabletModeValue(bool isTabletMode)
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，去掉搜索
     int height = isTabletMode? 48:36;
     m_locationBar->setFixedHeight(height);
-}
-
-void SearchWidget::updateSearchProgress(bool isSearching)
-{
-    m_locationBar->updateSearchProgress(isSearching);
 }

@@ -141,10 +141,9 @@ void FileWatcher::startMonitor()
         QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);/* 家目录 */
         bool favoriteCond  = (m_uri=="favorite:///" && parentUri == homeUri);/* 快速访问下 */
         bool filesafeCond = (uri.startsWith("filesafe:///") && originalUri.startsWith("file:///"));
-        bool labelCond =  uri.startsWith("label://");/* 标识模式下 */
         if (parentUri == m_uri || parentUri == m_target_uri || parentUrl.toDisplayString() == m_uri
             || parentUrl.toDisplayString() == m_target_uri || parentUri == originalUri || favoriteCond
-            || filesafeCond||labelCond) {
+            || filesafeCond) {
             Q_EMIT fileChanged(uri);
             qDebug()<<"file label changed"<<uri;
         }

@@ -55,7 +55,6 @@ QString PeonyDbusService::GetSecurityConfigPath()
 int PeonyDbusService::ReloadSecurityConfig()
 {
     m_desktopIconView->updateBWList();
-    Q_EMIT black_and_white_update();
 
     return 0;
 }
@@ -63,36 +62,4 @@ int PeonyDbusService::ReloadSecurityConfig()
 void PeonyDbusService::receiveSrcAndDestUrisOfCopy(const QStringList& sourceUris, const QStringList& destUris)
 {
     Q_EMIT sendSrcAndDestUrisOfCopyDspsFiles(sourceUris, destUris);
-}
-
-QString PeonyDbusService::getBlackAndWhiteModel()
-{
-    if (!m_desktopIconView)
-        return "";
-
-    return m_desktopIconView->getBlackAndWhiteModel();
-}
-
-bool PeonyDbusService::getBlackAndWhiteListExist(QString name)
-{
-    if (!m_desktopIconView)
-        return false;
-
-    return m_desktopIconView->getBlackAndWhiteListExist(name);
-}
-
-QStringList PeonyDbusService::getBWListInfo()
-{
-    QSet<QString> info;
-    if (!m_desktopIconView)
-        return info.toList();
-
-    info = m_desktopIconView->getBWListInfo();
-    qDebug() << "getBWListInfo in service:"<<info;
-    return info.toList();
-}
-
-void PeonyDbusService::sendEngrampaOpreateFinishSig(const QString &path, bool finish)
-{
-    Q_EMIT opreateFinishedOfEngrampa(path, finish);
 }

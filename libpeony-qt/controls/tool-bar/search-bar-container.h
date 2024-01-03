@@ -32,28 +32,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QProxyStyle>
-#include <QPaintEvent>
-#include <QVariantAnimation>
 namespace Peony {
-
-class ProgressLineEdit : public QLineEdit
-{
-    Q_OBJECT
-
-public:
-    explicit ProgressLineEdit(QWidget *parent = nullptr);
-
-public Q_SLOTS:
-    void updateSearchProgress(bool searching);
-
-protected:
-    void paintEvent(QPaintEvent *e) override;
-
-private:
-    QVariantAnimation *m_animation = nullptr;
-    bool m_searching = false;
-    int m_value = 0;
-};
 
 class SearchBarContainer : public QWidget
 {
@@ -97,7 +76,6 @@ public:
 Q_SIGNALS:
     void returnPressed();
     void filterUpdate(const int &index);
-    void updateSearchProgress(bool searching);
 
 public Q_SLOTS:
     void onTableClicked(const QModelIndex &index);
@@ -107,7 +85,7 @@ public Q_SLOTS:
 private:
     QHBoxLayout *m_layout = nullptr;
 
-    ProgressLineEdit *m_search_box;
+    QLineEdit *m_search_box;
     QComboBox *m_filter_box;
 
     QStringListModel *m_model = nullptr;

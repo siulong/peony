@@ -47,8 +47,6 @@
 
 #include <QPainter>
 #include <QGSettings>
-#include <QDBusConnection>
-#include <QDBusReply>
 
 #include "icon-container.h"
 
@@ -107,7 +105,7 @@ DefaultPreviewPage::DefaultPreviewPage(QWidget *parent) : QStackedWidget (parent
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
         QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
         connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-            if ("hoursystem" == key) {
+            if ("hoursystem" == key || "date" == key) {
                 if (m_support && m_preview_tab_widget) {
                     if (m_info) {
                         FileInfoJob* infoJob = new FileInfoJob(m_info, this);
@@ -121,37 +119,11 @@ DefaultPreviewPage::DefaultPreviewPage(QWidget *parent) : QStackedWidget (parent
             }
         });
     }
-
-#ifdef KY_SDK_DATE
-    connect(GlobalSettings::getInstance(),
-            &GlobalSettings::updateLongDataFormat,
-            this,
-            &DefaultPreviewPage::updateDateFormat);
-#endif
 }
 
 DefaultPreviewPage::~DefaultPreviewPage()
 {
     cancel();
-}
-
-void DefaultPreviewPage::updateDateFormat(QString dateFormat)
-{
-    //update date and time show format, task #101605
-    qDebug() << "sdk format signal:"<<dateFormat;
-    if (m_date_format != dateFormat){
-        if (m_support && m_preview_tab_widget) {
-            if (m_info) {
-                FileInfoJob* infoJob = new FileInfoJob(m_info, this);
-                infoJob->setAutoDelete(true);
-                connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=] {
-                    m_preview_tab_widget->updateInfo(m_info.get());
-                });
-                infoJob->queryAsync();
-            }
-        }
-        m_date_format = dateFormat;
-    }
 }
 
 bool DefaultPreviewPage::eventFilter(QObject *obj, QEvent *ev)
@@ -160,10 +132,10 @@ bool DefaultPreviewPage::eventFilter(QObject *obj, QEvent *ev)
         if (ev->type() == QEvent::Resize) {
             auto e = static_cast<QResizeEvent*>(ev);
             auto page = qobject_cast<FilePreviewPage*>(m_preview_tab_widget);
-            int width = e->size().width();
+            int width = e->size().width() - 50;
             width = qMax(width, 96);
             width = qMin(width, 256);
-            page->resizeIcon(QSize(width* 2/3, width* 3/4));
+            page->resizeIcon(QSize(width, width * 2/3));
             page->updateForm(e->size());
         }
     }
@@ -337,14 +309,11 @@ void FilePreviewPage::wrapData(QLabel *p_label, const QString &text)
     int width = p_label->width()==0?LABEL_MAX_WIDTH:p_label->width();
     if(textSize > width){
         int lastIndex = 0;
-        for(int i = lastIndex+1; i <= wrapText.length(); i++) {
-            QString line = wrapText.mid(lastIndex, i - lastIndex);
-            if(fontMetrics.width(line) == width) {
+        for(int i = lastIndex; i < wrapText.length(); i++) {
+            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == width) {
                 lastIndex = i;
-                if (i != wrapText.length()) {
-                    wrapText.insert(i, '\n');
-                }
-            } else if(fontMetrics.width(line) > width) {
+                wrapText.insert(i, '\n');
+            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > width) {
                 lastIndex = i;
                 wrapText.insert(i - 1, '\n');
             } else {
@@ -377,14 +346,6 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     if (QRegExp("^file:///data/usershare(/{,1})$").exactMatch(info->uri())) {
         displayName = tr("usershare");
     }
-
-    QString accessDate = info->accessDate();
-    QString modifyDate = info->modifiedDate();
-#ifdef KY_SDK_DATE
-    accessDate = GlobalSettings::getInstance()->transToSystemTimeFormat(info->accessTime(), true);
-    modifyDate = GlobalSettings::getInstance()->transToSystemTimeFormat(info->modifiedTime(), true);
-#endif
-
     wrapData(m_display_name_label, displayName);
     m_form_label_map[m_display_name_label] = displayName;
 
@@ -404,11 +365,11 @@ void FilePreviewPage::updateInfo(FileInfo *info)
     wrapData(m_time_create_label, createTime);
     m_form_label_map[m_time_create_label] = createTime;
 
-    wrapData(m_time_access_label, accessDate);
-    m_form_label_map[m_time_access_label] = accessDate;
+    wrapData(m_time_access_label, info->accessDate());
+    m_form_label_map[m_time_access_label] = info->accessDate();
 
-    wrapData(m_time_modified_label, modifyDate);
-    m_form_label_map[m_time_modified_label] = modifyDate;
+    wrapData(m_time_modified_label, info->modifiedDate());
+    m_form_label_map[m_time_modified_label] = info->modifiedDate();
 
     m_file_count_label->setText(tr(""));
     m_form_label_map[m_file_count_label] = "";

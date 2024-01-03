@@ -25,12 +25,9 @@
 
 #include <QAbstractListModel>
 #include <QSettings>
-#include <QMap>
-#include <QSet>
-#include <QMutex>
+
 #include <QColor>
 #include <peony-core_global.h>
-#include <QSortFilterProxyModel>
 
 #define PEONY_FILE_LABEL_IDS "peony-file-label-ids"
 
@@ -48,7 +45,7 @@ public:
 
     int lastLabelId();
 
-    bool addLabel(const QString &label, const QColor &color, bool isInit = false);
+    void addLabel(const QString &label, const QColor &color);
     void removeLabel(int id);
     void setLabelName(int id, const QString &name);
     void setLabelColor(int id, const QColor &color);
@@ -61,7 +58,6 @@ public:
     const QList<QColor> getFileColors(const QString &uri);
     FileLabelItem *itemFromId(int id);
     FileLabelItem *itemFormIndex(const QModelIndex &index);
-    FileLabelItem *getItemByRow(int row);
 
     QList<FileLabelItem *> getAllFileLabelItems();
 
@@ -82,23 +78,12 @@ public:
     // Remove data:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    QSet<QString> getFileUrisFromLabelId(int labelId);
-    QString getLabelNameFromLabelId(int id);
-    int getLabelIdFromLabelName(const QString &colorName);
-
-
 Q_SIGNALS:
     void fileLabelChanged(const QString &uri);
-    void fileLabelAdded(const QString &uri, bool successed);
-    void fileLabelRemoved(const QString &uri, bool successed);
-    void fileLabelRenamed(const QString oldUri, const QString newUri);
 
 public Q_SLOTS:
     void setName(FileLabelItem *item, const QString &name);
     void setColor(FileLabelItem *item, const QColor &color);
-    void setValidInSidebar(FileLabelItem *item, bool isChecked);
-    void setValidInMenu(FileLabelItem *item, bool isChecked);
-    void renameFileLabel(const QString oldUri, const QString newUri);
 
 protected:
     void initLabelItems();
@@ -111,8 +96,6 @@ private:
     QSettings *m_label_settings;
 
     QList<FileLabelItem *> m_labels;
-    QMap<int, QSet<QString> > m_globalLabelMap;
-    QMutex m_mutex;
 };
 
 class PEONYCORESHARED_EXPORT FileLabelItem : public QObject
@@ -129,12 +112,6 @@ public:
     void setName(const QString &name);
     void setColor(const QColor &color);
 
-    bool isValidInSidebar();
-    bool isValidInMenu();
-
-    void setValidInSidebar(bool isChecked);
-    void setValidInMenu(bool isChecked);
-
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void colorChanged(const QColor &color);
@@ -143,18 +120,6 @@ private:
     int m_id = -1; //invalid
     QString m_name = nullptr;
     QColor m_color = Qt::transparent;
-    bool m_isValidInSidebar = false;
-    bool m_isValidInMenu = false;
 };
 
-class PEONYCORESHARED_EXPORT FileLableProxyFilterSortModel : public QSortFilterProxyModel
-{
-    Q_OBJECT
-
-public:
-    explicit FileLableProxyFilterSortModel(QObject *parent = nullptr);
-
-protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-};
 #endif // FILELABELMODEL_H

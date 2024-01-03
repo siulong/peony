@@ -11,10 +11,8 @@ include(tool-bar/tool-bar.pri)
 include(tab-page/tab-page.pri)
 
 HEADERS += \
-    $$PWD/icon-container.h              \
-    $$PWD/tag-management.h
+    $$PWD/icon-container.h
 
 SOURCES += \
-    $$PWD/icon-container.cpp            \
-    $$PWD/tag-management.cpp
+    $$PWD/icon-container.cpp
 

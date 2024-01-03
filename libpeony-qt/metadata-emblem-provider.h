@@ -27,7 +27,6 @@
 #include <QObject>
 #include "peony-core_global.h"
 #include "emblem-provider.h"
-#include "file-meta-info.h"
 
 namespace Peony {
 
@@ -41,14 +40,8 @@ public:
 
     QStringList getFileEmblemIcons(const QString &uri) override;
 
-Q_SIGNALS:
-    std::shared_ptr<Peony::FileMetaInfo> requestDupMetaInfo(const QString &uri);
-
 private:
     explicit MetadataEmblemProvider(QObject *parent = nullptr);
-
-private Q_SLOTS:
-    std::shared_ptr<Peony::FileMetaInfo> getDupMetaInfo(const QString &uri);
 };
 
 }

@@ -23,7 +23,6 @@
 #include "list-view-delegate.h"
 #include "file-operation-manager.h"
 #include "file-rename-operation.h"
-#include "file-batch-rename-operation.h"
 #include "file-item-model.h"
 #include "file-item-proxy-filter-sort-model.h"
 #include "file-item.h"
@@ -39,7 +38,6 @@
 #include <QPushButton>
 
 #include <QPainter>
-#include <QDBusReply>
 
 #include <QKeyEvent>
 #include <QItemDelegate>
@@ -365,27 +363,10 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto uri = index.data(Qt::UserRole).toString();
     auto suffix = displayName.remove(displayString);
     auto fsType = FileUtils::getFsTypeFromFile(uri);
-    auto info = FileInfo::fromUri(uri);
-    if (info->isDesktopFile()) {
-        suffix = ".desktop";
-    }
-    if (FileUtils::isFuseFileSystem(uri)) {
-        fsType = "fuse.kyfs";
-    }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
-        edit->setLimitBytes(false);
         edit->setMaxLengthLimit(255 - suffix.length());
-    } else if (fsType.contains("fuse.kyfs")) {
-        int32_t maxLength = 255;
-        edit->setLimitBytes(false);
-        QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
-        QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
-        if (reply.isValid()) {
-            maxLength = reply.value();
-        }
-        edit->setMaxLengthLimit(maxLength - suffix.length());
     }
     edit->blockSignals(false);
 
@@ -476,40 +457,21 @@ void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
         return;
     }
 
-    if (view->getSelections().count() > 1) {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        QStringList lists = view->getSelections();
-        auto renameOp = new FileBatchRenameOperation(lists, text);
+    auto fileOpMgr = FileOperationManager::getInstance();
+    auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
 
-        connect(renameOp, &FileBatchRenameOperation::operationFinished, view, [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, view, [=](){
-                view->setSelections(QStringList()<<uri);
-                //after rename will nor sort immediately, comment to fix bug#60482
-                //view->scrollToSelection(uri);
-                view->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
+    connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
+        auto info = renameOp->getOperationInfo().get();
+        auto uri = info->target();
+        QTimer::singleShot(100, view, [=](){
+            view->setSelections(QStringList()<<uri);
+            //after rename will nor sort immediately, comment to fix bug#60482
+            //view->scrollToSelection(uri);
+            view->setFocus();
+        });
+    }, Qt::BlockingQueuedConnection);
 
-        fileOpMgr->startOperation(renameOp, true);
-    } else {
-        auto fileOpMgr = FileOperationManager::getInstance();
-        auto renameOp = new FileRenameOperation(index.data(FileItemModel::UriRole).toString(), text);
-
-        connect(renameOp, &FileRenameOperation::operationFinished, view, [=](){
-            auto info = renameOp->getOperationInfo().get();
-            auto uri = info->target();
-            QTimer::singleShot(100, view, [=](){
-                view->setSelections(QStringList()<<uri);
-                //after rename will nor sort immediately, comment to fix bug#60482
-                //view->scrollToSelection(uri);
-                view->setFocus();
-            });
-        }, Qt::BlockingQueuedConnection);
-
-        fileOpMgr->startOperation(renameOp, true);
-    }
+    fileOpMgr->startOperation(renameOp, true);
 }
 
 //not comment this bug to fix bug#93314
@@ -541,11 +503,7 @@ void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 //TextEdit
 TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
 {
-    // fix #164278, icon view text editor doesn't cover view item.
-    // note on ukui platform theme, style panel frame is not visible.
-    setFrameShape(QFrame::NoFrame);
-    setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-    setViewportMargins(1, 2, 1, 2);
+    this->setContentsMargins(0,0,0,0);
 }
 
 void TextEdit::adjustText()
@@ -553,27 +511,35 @@ void TextEdit::adjustText()
     if (m_max_length_limit) {
         //fix #154584
         blockSignals(true);
+        auto privousText = toPlainText();
+        auto currentText = privousText;
         auto position = textCursor().position();
+        bool needReset = false;
         while (true) {
             if (m_limit_bytes) {
-                auto local8Bit = toPlainText().toLocal8Bit();
+                auto local8Bit = currentText.toLocal8Bit();
                 if (local8Bit.length() <= m_max_length_limit) {
                     break;
                 }
             } else {
-                if (toPlainText().length() <= m_max_length_limit) {
+                if (currentText.length() <= m_max_length_limit) {
                     break;
                 }
             }
+
             if (position > 0) {
                 position--;
-                textCursor().beginEditBlock();
-                textCursor().setPosition(position);
-                textCursor().deletePreviousChar();
-                textCursor().endEditBlock();
+                currentText.remove(position, 1);
             } else {
-                break;
+                currentText.remove(0, 1);
             }
+            needReset = true;
+        }
+        if (needReset) {
+            setText(currentText);
+            auto currentTextCursor = textCursor();
+            currentTextCursor.setPosition(position);
+            setTextCursor(currentTextCursor);
         }
         blockSignals(false);
     }

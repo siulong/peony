@@ -31,13 +31,10 @@
 #include "file-item-model.h"
 
 #include "thumbnail-manager.h"
-#include "usershare-manager.h"
 
 #include "gerror-wrapper.h"
 #include "bookmark-manager.h"
 #include "audio-play-manager.h"
-#include "file-label-model.h"
-
 #ifndef KY_UDF_BURN
 #include "disccontrol.h"
 #else
@@ -131,7 +128,6 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_children->remove(row);
                         m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
-                        FileLabelModel::getGlobalModel()->removeFileLabel(uri);
                         delete child;
                         break;
                     }
@@ -177,10 +173,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
 FileItem::~FileItem()
 {
     //qDebug()<<"~FileItem"<<m_info->uri();
-    // try fix #164883, error cusor while searching
-    if (!property("isCancelled").toBool()) {
-        Q_EMIT cancelFindChildren();
-    }
+    Q_EMIT cancelFindChildren();
     //disconnect();
 
     for (auto child : *m_children) {
@@ -243,10 +236,6 @@ void FileItem::findChildrenAsync()
     //the root item will be delete, so we should cancel the previous enumeration.
     enumerator->connect(this, &FileItem::cancelFindChildren, enumerator, &FileEnumerator::cancel);
     enumerator->connect(enumerator, &FileEnumerator::cancelled, m_model, [=](){
-        if (enumerator->getEnumerateUri() != m_model->getRootUri()) {
-            // try fix #164883, error cusor while searching
-            return;
-        }
         m_model->findChildrenFinished();
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
@@ -294,7 +283,6 @@ void FileItem::findChildrenAsync()
                 {
                     //check bookmark and delete
                     BookMarkManager::getInstance()->removeBookMark(uri2FavoriteUri(this->uri()));
-                    FileLabelModel::getGlobalModel()->removeFileLabel(this->uri());
                     m_model->sendPathChangeRequest("computer:///", this->uri());
                 }
                 else
@@ -475,16 +463,6 @@ void FileItem::findChildrenAsync()
                     m_children->append(item);
                     m_uri_item_hash.insert(item->uri(), item);
                     m_model->endInsertRows();
-
-                    /* 解决：升级上来的版本点击标记以后无法显示原来已有的标记文件（兼容性问题） */
-                    if(!item->uri().startsWith("label://")){
-                        QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(item->uri());
-                        for(auto &labelId: labelIds){
-                            if(labelId <= 0)
-                                continue;
-                            FileLabelModel::getGlobalModel()->addLabelToFile(item->uri(), labelId);
-                        }
-                    }//end
                     //Q_EMIT m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
                     //Q_EMIT m_model->updated();
                     ThumbnailManager::getInstance()->createThumbnail(info->uri(), m_thumbnail_watcher);
@@ -536,7 +514,6 @@ void FileItem::findChildrenAsync()
             });
             connect(m_watcher.get(), &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri) {
                 this->onRenamed(oldUri, newUri);
-                FileLabelModel::getGlobalModel()->fileLabelRenamed(oldUri, newUri);
                 BookMarkManager::getInstance()->bookmarkChanged(oldUri, newUri);
             });
             connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
@@ -677,17 +654,6 @@ void FileItem::onChildRemoved(const QString &uri)
     m_waiting_add_queue.removeOne(uri);
     m_uris_to_be_removed.append(uri);
     m_idle->start();
-    if (m_uris_to_be_removed.count() == 1) {
-        auto info = FileInfo::fromUri(uri);
-        if (info->isDir()) {
-            QString displayName = info->displayName();
-            if (UserShareInfoManager::getInstance()->getUsershareLists().contains(displayName)) {
-                SharedDeleteInfoThread *thread = new SharedDeleteInfoThread(info->uri());
-                connect(thread, &SharedDeleteInfoThread::finished, thread, &SharedDeleteInfoThread::deleteLater);
-                thread->start();
-            }
-        }
-    }
     return;
 }
 
@@ -1065,7 +1031,6 @@ void BatchProcessItems::slot_removeItems()
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
-            FileLabelModel::getGlobalModel()->removeFileLabel(uri);
             itemsToBeDeleted.append(child);
         }
     }
@@ -1075,5 +1040,5 @@ void BatchProcessItems::slot_removeItems()
         delete child;
     }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
-    qDebug()<<"execute deletion finished, cost"<<time1 - time0;
+    qDebug()<<"excute deletion finished, cost"<<time1 - time0;
 }

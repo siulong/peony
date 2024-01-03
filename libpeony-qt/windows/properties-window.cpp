@@ -203,8 +203,6 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
         } else if (uri.startsWith("network://")) {
             m_destroyThis = true;
             return;
-        }else if(uri.startsWith("label://")){
-            uri = FileUtils::getTargetUri(uri);/* 转化为真实的路径 */
         }
         //fix bug:70565,将已被编码的字符串解码后从新编码，保证在属性窗口中的编码中特殊字符为%xx形式。
         //编码时排除'()',防止 FileUtils::handleDesktopFileName 方法匹配不到(),避免出现bug:53504.
@@ -356,11 +354,7 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                 } else {
                     windowTitle = m_fileInfo.get()->displayName();
                 }  
-                //fix bug#182415, fix show Unknown-icon issue, but basic info icon is correct
-                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), true);
-                if (iconName.isEmpty()) {
-                    iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
-                }
+                iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
 
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
@@ -438,13 +432,13 @@ void PropertiesWindow::show()
 void PropertiesWindow::gotoAboutComputer()
 {
     QProcess p;
-    p.setProgram("/usr/bin/ukui-control-center");
+    p.setProgram("ukui-control-center");
     //-m About para to show about computer infos, related to bug#88258
     p.setArguments(QStringList()<<"-m" << "About");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     p.startDetached();
 #else
-    p.startDetached("/usr/bin/ukui-control-center", QStringList()<<"-m" << "About");
+    p.startDetached("ukui-control-center", QStringList()<<"-m" << "About");
 #endif
     p.waitForFinished(-1);
 }
@@ -790,7 +784,7 @@ void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *o
                 painter->restore();
 
                 //选中时文字颜色 - Text color when selected
-                painter->setPen(palette.color(QPalette::BrightText));
+                painter->setPen(palette.color(QPalette::HighlightedText));
             } else if (tab->state & QStyle::State_MouseOver) {
                 painter->save();
                 //QColor color = palette.color(QPalette::Highlight).lighter(140);

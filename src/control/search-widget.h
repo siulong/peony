@@ -49,7 +49,6 @@ Q_SIGNALS:
     void finishEdit();
     void clearSearchBox();
     void changeSearchMode(bool mode);
-    void updateSearch(const QString &uri, const QString &key = "", bool updateKey = false);
 
 public Q_SLOTS:
     void startEdit(bool bSearch = false);
@@ -57,7 +56,6 @@ public Q_SLOTS:
     void closeSearch();
     void setGlobalFlag(bool isGlobal);
     void updateTabletModeValue(bool isTabletMode);
-    void updateSearchProgress(bool isSearching);
 
 private:
     void initAnimation();

@@ -51,11 +51,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
     viewport()->setStyle(LabelBoxStyle::getStyle());
     viewport()->setAutoFillBackground(true);
     viewport()->setBackgroundRole(QPalette::AlternateBase);
-    setResizeMode(QListView::Adjust);
-    FileLableProxyFilterSortModel *proxyModel = new FileLableProxyFilterSortModel(this);
-    setModel(proxyModel);
-
-    proxyModel->setSourceModel(FileLabelModel::getGlobalModel());
+    setModel(FileLabelModel::getGlobalModel());
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -85,12 +81,11 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
                 }
             });
 
-//            auto a = menu.addAction(tr("Delete"), [=]() {
-//                FileLabelModel::getGlobalModel()->removeLabel(id);
-//                Q_EMIT removeLabel(id);
-//            });
+            auto a = menu.addAction(tr("Delete"), [=]() {
+                FileLabelModel::getGlobalModel()->removeLabel(id);
+            });
             //a->setEnabled(labelRemovable);
-        } /*else {
+        } else {
             menu.addAction(tr("Create New Label"), [=]() {
                 QColorDialog dialog;
                 dialog.setStyleSheet("QSpinBox{"
@@ -100,28 +95,19 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
                     auto color = dialog.selectedColor();
                     auto name = color.name();
                     FileLabelModel::getGlobalModel()->addLabel(name, color);
-                    Q_EMIT addLabel(name, color);
                 }
             });
-        }*/
+        }
         menu.exec(mapToGlobal(pos));
-    });
-
-    m_labelHeightAnimation = new QPropertyAnimation(this, "geometry");
-    m_labelHeightAnimation->setDuration(500);
-    m_labelHeightAnimation->setEasingCurve(QEasingCurve::OutCubic);
-
-    connect(m_labelHeightAnimation, &QVariantAnimation::finished, this, [=](){
-        Q_EMIT fileLabelVisible(m_isShow);
     });
 }
 
 QSize FileLabelBox::sizeHint() const
 {
-//    auto w = this->topLevelWidget()->width();
-//    auto size = QListView::sizeHint();
-//    size.setWidth(w/5);
-    return QListView::sizeHint();
+    auto w = this->topLevelWidget()->width();
+    auto size = QListView::sizeHint();
+    size.setWidth(w/5);
+    return size;
 }
 
 void FileLabelBox::mousePressEvent(QMouseEvent *e)
@@ -143,22 +129,7 @@ void FileLabelBox::paintEvent(QPaintEvent *e)
     QListView::paintEvent(e);
 }
 
-void FileLabelBox::setFloatWidgetVisible(bool visible)
-{
-    if (m_labelHeightAnimation->state() != QVariantAnimation::Running) {
-        if (visible) {
-            setVisible(visible);
-        }
-        m_isShow = visible;
-        int width = this->width();
-        int height = this->height();
-        m_labelHeightAnimation->setStartValue(QRect(mapToParent(QPoint(0, height)), QSize(width, 0)));
-        m_labelHeightAnimation->setEndValue(QRect(mapToParent(QPoint(0, 0)), QSize(width, height)));
-        m_labelHeightAnimation->setDirection(visible? QVariantAnimation::Forward: QVariantAnimation::Backward);
-        m_labelHeightAnimation->start();
-    }
-}
-
+//LabelBoxStyle
 LabelBoxStyle *LabelBoxStyle::getStyle()
 {
     if (!global_instance) {

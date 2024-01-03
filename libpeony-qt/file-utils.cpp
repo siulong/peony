@@ -34,13 +34,11 @@
 #include <QDir>
 #include <QIcon>
 #include <sys/stat.h>
-#include <sys/statvfs.h>
 #include <udisks/udisks.h>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <gio/gdesktopappinfo.h>
-#include <gio/gunixmounts.h>
 
 using namespace Peony;
 
@@ -343,7 +341,6 @@ QString FileUtils::getNonSuffixedBaseNameFromUri(const QString &uri)
     }
 }
 
-#include "file-label-model.h"
 QString FileUtils::getFileDisplayName(const QString &uri)
 {
     auto fileInfo = FileInfo::fromUri(uri);
@@ -364,15 +361,6 @@ QString FileUtils::getFileDisplayName(const QString &uri)
             return showName;
         }
     }
-    if(uri.startsWith("label://")){/* 标记模式uri的displayName */
-        if("label:///" == uri){
-            showName = QObject::tr("label");
-        }else{
-            showName = uri.section("/", -1,-1).replace("?schema=file","");
-        }
-        return showName;
-    }
-
     return fileInfo.get()->displayName();
 }
 
@@ -667,8 +655,6 @@ const QStringList FileUtils::toDisplayUris(const QStringList &args)
                 g_autofree gchar* file = g_strdup_printf ("file://%s/%s", currentDir, path.toUtf8 ().constData ());
                 uris << file;
             }
-        } else if (path.startsWith("mtp://") || path.startsWith("gphoto2://")) {
-            uris << path;
         } else {
             uris << FileUtils::urlEncode (path);
         }
@@ -1018,6 +1004,7 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     UDisksObject *object, *crypto_backing_object;
     UDisksBlock *block;
     UDisksClient *client =udisks_client_new_sync (NULL,NULL);
+
     object = NULL;
     if (stat (device_name, &statbuf) != 0)
     {
@@ -1050,20 +1037,6 @@ double FileUtils::getDeviceSize(const gchar * device_name)
     g_object_unref(block);
 
     return volume_size;
-}
-
-quint64 FileUtils::getDiskFreeSpace(const gchar * path, bool &isState)
-{
-    struct statvfs vfs;
-    quint64 freeSize = 0;
-    auto state = statvfs(path, &vfs);
-    if(0 > state) {
-        isState = false;
-        qWarning() << "read statvfs error";
-    } else {
-        freeSize = vfs.f_bavail * vfs.f_bsize;
-    }
-    return freeSize;
 }
 
 quint64 FileUtils::getFileSystemSize(QString uri)
@@ -1138,27 +1111,6 @@ QString FileUtils::getMobieDataPath()
         return "file://" + completePath;
     else
         return "";
-}
-
-QString FileUtils::getFileSystemId(QString uri)
-{
-    if (nullptr == uri) return "";
-
-    QString systemId = "";
-    auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
-    auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
-        G_FILE_ATTRIBUTE_ID_FILESYSTEM,
-        G_FILE_QUERY_INFO_NONE,
-        nullptr,
-        nullptr));
-    if (!G_IS_FILE_INFO (info.get()->get()))
-        return systemId;
-
-    if (info) {
-        systemId = g_file_info_get_attribute_string(info.get()->get(), G_FILE_ATTRIBUTE_ID_FILESYSTEM);
-    }
-
-    return systemId;
 }
 
 bool FileUtils::isRemoteServerUri(const QString &uri)
@@ -1272,7 +1224,7 @@ QString FileUtils::handleSpecialSymbols(const QString &displayName)
 
 QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 {
-    QString fsType = "ext";
+    QString fsType = "";
 
     g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
     g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
@@ -1288,12 +1240,6 @@ QString FileUtils::getFsTypeFromFile(const QString &fileUri)
         return fsType;
 
     QString unixDevice = unix_file;
-
-    // try fix #179725
-    if (unixDevice.startsWith("/dev/dm")) {
-        return "ext";
-    }
-
     QString dbusPath = "/org/freedesktop/UDisks2/block_devices/" + unixDevice.split("/").last();
     if (! QDBusConnection::systemBus().isConnected())
         return fsType;
@@ -1310,44 +1256,6 @@ QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 //        fsType = blockInterface.property("IdVersion").toString();
 
     return fsType;
-}
-
-bool FileUtils::isFuseFileSystem(const QString &fileUri)
-{
-    g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
-    g_autoptr (GFile) parent = g_file_get_parent(file);
-    auto path = g_file_peek_path(parent);
-    if (!path) {
-        return false;
-    }
-    g_autoptr (GUnixMountEntry) entry = g_unix_mount_at(path, NULL);
-    if (!entry) {
-        entry = g_unix_mount_for(path, NULL);
-        if (!entry) {
-            return false;
-        }
-    }
-    auto fsType = g_unix_mount_get_fs_type(entry);
-    if (QString(fsType).contains("fuse.kyfs")) {
-        return true;
-    } else {
-        return false;
-    }
-}
-bool FileUtils::isLongNameFileOfNotDel2Trash(const QString &fileUri)
-{
-    /* 存放长文件名目录的下，判断文件名超过224字符的，右键删除选项改成永久删除，不删除到回收站。link bug#188864  */
-    QString extendDir = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展";/* 长文件名文件存放在家目录/下载/扩展目录下 */
-    QString fileDecodeUri = urlDecode(fileUri);
-    if(!fileDecodeUri.startsWith(extendDir))
-        return false;
-
-    QString baseName = Peony::FileUtils::getUriBaseName(fileDecodeUri);
-    qDebug()<<"file decodeUri:"<<fileDecodeUri<<";base name:"<<baseName<<";length of base name:"<<baseName.length();
-    if(224 < baseName.length())
-        return true;
-
-    return false;
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
@@ -1368,7 +1276,16 @@ QString FileUtilsPrivate::getFileIconName(const QString &uri)
     if (g_icon && G_IS_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
         if (icon_names) {
-            icon_name = QString(icon_names[0]);
+            auto p = icon_names;
+            while (*p) {
+                QIcon icon = QIcon::fromTheme(*p);
+                if (!icon.isNull()) {
+                    icon_name = QString (*p);
+                    break;
+                } else {
+                    p++;
+                }
+            }
         } else {
             //if it's a bootable-media,maybe we can get the icon from the mount directory.
             char *bootableIcon = g_icon_to_string(g_icon);

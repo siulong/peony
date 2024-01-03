@@ -582,6 +582,8 @@ void SideBarFileSystemItem::findChildren()
             SideBarFileSystemItem* item = new SideBarFileSystemItem(volume.name(), volume, this, m_model);
             m_children->append(item);
             m_model->endInsertRows();
+            m_model->indexUpdated(this->lastColumnIndex());
+            m_model->dataChanged(item->firstColumnIndex(), item->lastColumnIndex());
         }
 
         if (FileUtils::isFileExsit("file:///data/usershare")) {

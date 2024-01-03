@@ -41,7 +41,7 @@ public:
     ~SideBarVFSItem();
 
     Type type() override {
-        return SideBarAbstractItem::VFSItem;
+        return SideBarAbstractItem::FileSystemItem;
     }
 
     QString uri() override;

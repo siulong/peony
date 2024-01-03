@@ -25,7 +25,6 @@
 #include "file-info.h"
 #include "file-node-reporter.h"
 
-#define PEONY_TRUNCATE_NAME_LIMIT 225
 
 using namespace Peony;
 
@@ -142,81 +141,4 @@ const QString FileNode::resolveDestFileUri(const QString &destRootDir)
     QString url = FileUtils::urlEncode(destRootDir + "/" + relativePath);
     setDestUri(url);
     return url;
-}
-
-void FileNode::truncateDestFileName(const int cateType)
-{
-    auto newName = FileUtils::getNonSuffixedBaseNameFromUri(m_uri);
-    auto destDirUri = FileUtils::getParentUri(destUri());
-    auto fsType = FileUtils::getFsTypeFromFile(destDirUri);
-    bool setLimitBytes = true;
-    if (fsType.contains("ntfs")) {
-        setLimitBytes = false;
-    }
-    auto suffix = m_basename;
-    suffix = suffix.remove(newName);
-    newName.remove(suffix);
-
-    if (setLimitBytes) {
-        bool useForceChop = false;
-        if (suffix.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
-            qWarning()<<"suffix too long:"<<m_uri<<"use force chop instead";
-            useForceChop = true;
-        } else if (newName == m_basename) {
-            qWarning()<<"failed to truncate suffix of"<<m_uri<<", use force chop instead";
-            useForceChop = true;
-        } else if (isFolder()) {
-            useForceChop = true;
-        }
-        if (useForceChop) {
-            newName = m_basename;
-            if (TurnCateType::Post == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
-                    newName.chop(1);
-                }
-            } else if (TurnCateType::Front == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
-                    newName.remove(0,1);
-                }
-            }
-        } else {
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.toLocal8Bit().count();
-            if (TurnCateType::Post == cateType) {
-                while (newName.toLocal8Bit().count() > limitBytes) {
-                    newName.chop(1);
-                }
-            } else if (TurnCateType::Front == cateType){
-                while (newName.toLocal8Bit().count() > limitBytes) {
-                    newName.remove(0,1);
-                }
-            }
-            newName = newName + suffix;
-        }
-        setDestFileName(newName);
-    } else {
-        bool useForceChop = false;
-        if (suffix.length() > PEONY_TRUNCATE_NAME_LIMIT) {
-            qWarning()<<"suffix too long:"<<m_uri<<"use force chop instead";
-            useForceChop = true;
-        } else if (newName == m_basename) {
-            qWarning()<<"failed to truncate suffix of"<<m_uri<<", use force chop instead";
-            useForceChop = true;
-        } else if (isFolder()) {
-            useForceChop = true;
-        }
-        if (useForceChop) {
-            newName = m_basename;
-            while (newName.length() > PEONY_TRUNCATE_NAME_LIMIT) {
-                newName.chop(1);
-            }
-        } else {
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.length();
-            while (newName.length() > limitBytes) {
-                newName.chop(1);
-            }
-            newName = newName + suffix;
-        }
-
-        setDestFileName(newName);
-    }
 }

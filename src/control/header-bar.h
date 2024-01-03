@@ -116,7 +116,6 @@ Q_SIGNALS:
     void cancelEdit();
     void startEdit(bool bSearch = false);
     void finishEdit();
-    void updateSearchProgress(bool searching);
 
 protected:
     void addSpacing(int pixel);
@@ -139,7 +138,6 @@ private Q_SLOTS:
     void updateTabletModeValue(bool isTabletMode);
     bool CopyOrMoveTo(bool isCut);
     void quitMultiSelect();
-    void setSearchMode(bool isSearching);
 
 private:
     const QString m_uri;

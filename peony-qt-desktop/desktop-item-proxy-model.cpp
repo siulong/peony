@@ -133,7 +133,6 @@ bool DesktopItemProxyModel::filterAcceptsRow(int source_row, const QModelIndex &
     }
 
     if (info->isDesktopFile() && nullptr != info->desktopName()){
-        qDebug() << "desktopName"<<info->desktopName();
         if (m_bwListInfo->isBlackListMode()){
             return !m_bwListInfo->desktopNameExist(info->desktopName());
         } else if (m_bwListInfo->isWriteListMode()){
@@ -271,19 +270,4 @@ void DesktopItemProxyModel::invalidateModel()
 void DesktopItemProxyModel::setId(int id)
 {
    m_id = id;
-}
-
-QString DesktopItemProxyModel::getBlackAndWhiteModel()
-{
-    return m_bwListInfo->getMode();
-}
-
-bool DesktopItemProxyModel::getBlackAndWhiteListExist(QString name)
-{
-    return m_bwListInfo->desktopNameExist(name);
-}
-
-QSet<QString> DesktopItemProxyModel::getBWListInfo()
-{
-    return m_bwListInfo->getBWListInfo();
 }

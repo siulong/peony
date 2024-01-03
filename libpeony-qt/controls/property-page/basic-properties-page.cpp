@@ -395,7 +395,6 @@ void BasicPropertiesPage::loadPartOne()
             m_displayNameEdit->setToolTip(fileName);
             fileName = BasicPropertiesPage::elideText(m_displayNameEdit->font(),260,fileName);
             m_displayNameEdit->setText(fileName);
-            m_displayNameEdit->setToolTip(fileName);
             delete getNameThread;
         });
         getNameThread->start();
@@ -437,8 +436,6 @@ void BasicPropertiesPage::loadPartOne()
 
     if (fileUri == ("file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation))) {
         disconnect(m_iconButton, &QPushButton::clicked, this, &BasicPropertiesPage::chooseFileIcon);
-        m_iconButton->setFocusPolicy(Qt::NoFocus);
-        m_iconButton->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 }
 
@@ -489,19 +486,12 @@ void BasicPropertiesPage::loadOptionalData()
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
         QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
         connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-            if ("hoursystem" == key) {
+            if ("hoursystem" == key || "date" == key) {
                 setSysTimeFormat();
                 updateInfo(m_info->uri());
             }
         });
     }
-
-#ifdef KY_SDK_DATE
-    connect(GlobalSettings::getInstance(),
-            &GlobalSettings::updateLongDataFormat,
-            this,
-            &BasicPropertiesPage::updateDateFormat);
-#endif
 
     updateInfo(m_info.get()->uri());
     connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
@@ -615,7 +605,6 @@ void BasicPropertiesPage::onSingleFileChanged(const QString &oldUri, const QStri
     }
 
     m_displayNameEdit->setText(fileName);
-    m_displayNameEdit->setToolTip(fileName);
 
     if (thumbnail.isNull()) {
         ThumbnailManager::getInstance()->createThumbnail(m_info.get()->uri(), m_thumbnail_watcher);
@@ -658,21 +647,7 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
         m_countOp = new FileCountOperation(realUris.isEmpty() ? uris : realUris);
         DEBUG << "symlinkTarget:" << info.get()->symlinkTarget();
     } else {
-        QStringList lists;
-        for (auto uri : uris) {
-            auto info = FileInfo::fromUri(uri);
-            if (info->isSymbolLink()) {
-                if (!info.get()->symlinkTarget().isEmpty()) {
-                    QString temp = "file://" + info.get()->symlinkTarget();
-                    lists.append(temp);
-                } else {
-                    lists.append(uri);
-                }
-            } else {
-                lists.append(uri);
-            }
-        }
-        m_countOp = new FileCountOperation(lists);
+        m_countOp = new FileCountOperation(uris);
     }
 
     m_countOp->setAutoDelete(true);
@@ -697,37 +672,27 @@ void BasicPropertiesPage::countFilesAsync(const QStringList &uris)
                 return;
             }
             QUrl url(uri);
-            if (url.isLocalFile()) {
-                std::shared_ptr<FileInfo> fileInfo = FileInfo::fromUri(uri);
-                FileInfoJob *fileInfoJob = new FileInfoJob(fileInfo);
-                fileInfoJob->setAutoDelete();
-                fileInfoJob->querySync();
-                //某些带空格的文件名称会导致命令错误，加上引号解决此问题。
-                QString path;
-                if(uri == "filesafe:///") {
-                    path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
+            bool isLocalFile = url.isLocalFile();
+            //某些带空格的文件名称会导致命令错误，加上引号解决此问题。
+            QString path;
+            if(uri == "filesafe:///") {
+                path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
+            } else {
+                g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
+                g_autofree gchar *gpath = g_file_get_path(gfile);
+                if (gpath) {
+                    path = gpath;
                 } else {
-    //                g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
-    //                g_autofree gchar *gpath = g_file_get_path(gfile);
-    //                if (gpath) {
-    //                    path = gpath;
-    //                } else {
-                        path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
-    //                }
+                    path = QString("%1%2%3").arg("\"").arg(url.path()).arg("\"");
                 }
-
-
-                QProcess process;
-                if (fileInfo->isSymbolLink()) {
-                    process.start("/usr/bin/du -L " + path);
-                } else {
-                    process.start("/usr/bin/du -s " + path);
-                }
-                process.waitForFinished();
-                QString result = process.readAllStandardOutput();
-                //du -s xxx 输出格式：4	xxx  (大小单位为KB)
-                m_fileTotalSizeCount += result.split(QRegExp("\\s+")).first().toLong();
             }
+
+            QProcess process;
+            process.start("du -s " + path);
+            process.waitForFinished();
+            QString result = process.readAllStandardOutput();
+            //du -s xxx 输出格式：4	xxx  (大小单位为KB)
+            m_fileTotalSizeCount += result.split(QRegExp("\\s+")).first().toLong();
         }
         //转换为 xx Bytes
         m_fileTotalSizeCount *= CELL1K;
@@ -904,12 +869,12 @@ void BasicPropertiesPage::saveAllChange()
     QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
     //if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
         QProcess p;
-        p.setProgram("/usr/bin/touch");
+        p.setProgram("touch");
         p.setArguments(QStringList()<<"-h"<<m_info->filePath());
     #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         p.startDetached();
     #else
-        p.startDetached("/usr/bin/touch", QStringList()<<"-h"<<m_info->filePath());
+        p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
     #endif
         p.waitForFinished(-1);
     //}
@@ -920,19 +885,6 @@ void BasicPropertiesPage::chooseFileIcon()
     QUrl iconPathUrl;
     iconPathUrl.setPath("/usr/share/icons");
     auto picture = QFileDialog::getOpenFileName(nullptr, tr("Choose a custom icon"), "/usr/share/icons", "*.png *.jpg *.jpeg *.svg");
-
-    QFileInfo fileInfo(picture);
-    if (fileInfo.exists()) {
-        qint64 fileSize = fileInfo.size();
-        double fileSizeMB = fileSize / (1024.0 * 1024.0);
-        qDebug() << "fileSize is ：" << fileSizeMB << "MB";
-        if (fileSizeMB > 1.0) {
-            QMessageBox::warning(nullptr, "", tr("Please select a image that is smaller than 1MB."));
-            return;
-        }
-    } else {
-        qDebug() << "file does not exist ：" << picture;
-    }
 
     if (!picture.isEmpty()) {
         qDebug()<<"chose new file icon:"<< picture;
@@ -990,16 +942,6 @@ void BasicPropertiesPage::updateCountInfo(bool isDone)
     }
 }
 
-void BasicPropertiesPage::updateDateFormat(QString dateFormat)
-{
-    //update date and time show format, task #101605
-    qDebug() << "sdk format signal:"<<dateFormat;
-    if (m_date_format != dateFormat){
-        updateInfo(m_info->uri());
-        m_date_format = dateFormat;
-    }
-}
-
 void BasicPropertiesPage::updateInfo(const QString &uri)
 {
     //QT获取文件相关时间 ,
@@ -1033,17 +975,15 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
 
             m_timeModified = g_file_info_get_attribute_uint64(info,"time::modified");
             if(m_timeModifiedLabel) {
-//                QDateTime date2 = QDateTime::fromMSecsSinceEpoch(m_timeModified*1000);
-//                QString time2 = date2.toString(m_systemTimeFormat);
-                QString time2 = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeModified, true);
+                QDateTime date2 = QDateTime::fromMSecsSinceEpoch(m_timeModified*1000);
+                QString time2 = date2.toString(m_systemTimeFormat);
                 m_timeModifiedLabel->setText(time2);
             }
 
             if(m_timeAccessLabel) {
                 m_timeAccess = g_file_info_get_attribute_uint64(info,"time::access");
-//                QDateTime date3 = QDateTime::fromMSecsSinceEpoch(m_timeAccess*1000);
-//                QString time3 = date3.toString(m_systemTimeFormat);
-                QString time3 = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeAccess, true);
+                QDateTime date3 = QDateTime::fromMSecsSinceEpoch(m_timeAccess*1000);
+                QString time3 = date3.toString(m_systemTimeFormat);
                 m_timeAccessLabel->setText(time3);
             }
 
@@ -1059,9 +999,8 @@ void BasicPropertiesPage::updateInfo(const QString &uri)
 //                    minTime = qMin (minTime, m_timeAccess);
 //                m_timeCreated = minTime;
                 if (m_timeCreated) {
-//                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
-//                    QString createTime = createDate.toString(m_systemTimeFormat);
-                    QString createTime = GlobalSettings::getInstance()->transToSystemTimeFormat(m_timeCreated, true);
+                    QDateTime createDate = QDateTime::fromMSecsSinceEpoch(m_timeCreated*1000);
+                    QString createTime = createDate.toString(m_systemTimeFormat);
                     m_timeCreatedLabel->setText(createTime);
                 } else {
                     QFormLayout *layout = this->findChild<QFormLayout*>("floorTwoBaseLayout");

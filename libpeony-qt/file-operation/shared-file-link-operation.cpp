@@ -76,21 +76,6 @@ void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
     }
 
     g_autoptr (GError) error = nullptr;
-    if(g_file_test(desktopfp.toUtf8().constData(), G_FILE_TEST_EXISTS)) {
-        error = g_error_new (1, G_IO_ERROR_EXISTS, "%s", QString(tr("The dest file \"%1\" has existed!")).arg(desktopfp).toUtf8().constData());
-        FileOperationError except;
-        except.srcUri = m_src_uri;
-        except.errorType = ET_GIO;
-        except.isCritical = true;
-        except.op = FileOpLink;
-        except.title = tr("Link file error");
-        except.destDirUri = m_dest_uri;
-        except.errorStr = error->message;
-        except.dlgType = ED_WARNING;
-        Q_EMIT errored(except);
-        return;
-    }
-
     GKeyFile* keyfile = g_key_file_new ();
 
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, "true");
@@ -111,7 +96,7 @@ void SharedFileLinkOperation::createShareFilesSymbolicLink(QString &srcUri)
     g_key_file_set_value(keyfile, G_KEY_FILE_DESKTOP_GROUP, "X-Peony-CMD", "true");
 
     // 可能会有路径重复的情况，后续需要做异常处理
-    g_key_file_save_to_file(keyfile, desktopfp.toUtf8().constData(), &error);
+    g_key_file_save_to_file(keyfile, desktopfp.toUtf8().constData(), nullptr);
 
     if (keyfile) {
         g_key_file_free(keyfile);

@@ -107,11 +107,10 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 {
     auto info = Peony::FileInfo::fromUri(uri);
     auto infoJob = new Peony::FileInfoJob(info);
-    //infoJob->setAutoDelete();
+    infoJob->setAutoDelete();
     setTabData(index, uri);
 
     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
-        infoJob->deleteLater();
         if (uri != tabData(index).toString())
             return;
         auto iconName = Peony::FileUtils::getFileIconName(uri);
@@ -136,7 +135,6 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         setElideMode(Qt::ElideRight);
         setTabText(index, displayName);
         setTabData(index, uri);
-        setTabToolTip(index, displayName);
 
         Q_EMIT this->locationUpdated(uri);
     });
@@ -190,13 +188,6 @@ void NavigationTabBar::tabInserted(int index)
 
 void NavigationTabBar::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (e->source() != this) {
-        QPoint pos = e->pos();
-        int index = tabAt(pos);
-        if (index >= 0) {
-            setCurrentIndex(index);
-        }
-    }
     e->accept();
     return;
 }
@@ -350,8 +341,7 @@ void TabBarStyle::polish(QWidget *widget)
     QProxyStyle::polish(widget);
     if (widget && qobject_cast<QToolButton *>(widget)) {
         widget->setProperty("isWindowButton", 0x1);
-        //bug#167146 useIconHighlightEffect=2 导致打开预览框的图标不反白
-        //widget->setProperty("useIconHighlightEffect", 0x2);
+        widget->setProperty("useIconHighlightEffect", 0x2);
     }
 }
 

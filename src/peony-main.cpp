@@ -38,8 +38,6 @@
 
 #include "global-settings.h"
 
-#include "xdg-portal-helper.h"
-
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -86,7 +84,6 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 
 int main(int argc, char *argv[])
 {
-    Peony::XdgPortalHelper::getInstance()->tryUnusePortal();
     PeonyApplication::peony_start_time = QDateTime::currentMSecsSinceEpoch();
     initUkuiLog4qt("peony");
 //    qInstallMessageHandler(messageOutput);
@@ -110,8 +107,6 @@ int main(int argc, char *argv[])
     }
 
     PeonyApplication app(argc, argv, "peony-qt");
-    qApp->setProperty("isPeony", true);
-    Peony::XdgPortalHelper::getInstance()->tryResetPortal();
     if (app.isSecondary())
         return 0;
 

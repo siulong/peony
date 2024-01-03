@@ -126,6 +126,7 @@ bool FileLaunchAction::isExcuteableFile(QString fileType)
 
 void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -192,7 +193,7 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus success name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileSync] launchAppWithDBus sucess name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -248,6 +249,7 @@ void pid_callback(GDesktopAppInfo *appinfo, GPid pid, gpointer user_data) {
 
 void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(checkAppDisabled()) {
         return;
     }
@@ -395,7 +397,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 #endif
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus success name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFileAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -467,6 +469,7 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 
 void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithArg, bool skipDialog)
 {
+    m_force_with_arg = forceWithArg;
     if(files.isEmpty())
         return;
 
@@ -552,8 +555,7 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
             }
             else
                 QMessageBox::critical(nullptr, tr("Open Failed"),
-                                  tr("Can not open %1, Please confirm you have the right authority.").arg(m_uri),
-                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
+                                  tr("Can not open %1, Please confirm you have the right authority.").arg(m_uri));
         }
         else if (fileInfo->isDesktopFile() && GlobalSettings::getInstance()->getProjectName() != V10_SP1_EDU)
         {
@@ -592,7 +594,7 @@ void FileLaunchAction::lauchFilesAsync(const QStringList files, bool forceWithAr
     }
 
     if (launchAppWithDBus()) {
-        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus success name:" << fileInfo->displayName();
+        qDebug() << "[FileLaunchAction::lauchFilesAsync] launchAppWithDBus sucess name:" << fileInfo->displayName();
         //fix bug#143664, use launchAppWithDBus not show in recent issue
         RecentVFSManager::getInstance()->insert(fileInfo.get()->uri(), fileInfo.get()->mimeType(), fileInfo.get()->displayName(), g_app_info_get_name(m_app_info));
         return;
@@ -707,11 +709,10 @@ void FileLaunchAction::preCheck()
 
 bool FileLaunchAction::launchAppWithDBus()
 {
-#ifdef KYLIN_COMMON
     //mavis不通过session而通过AppMgr
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
 
-    if (isDesktopFileAction()) {
+    if (isDesktopFileAction() && !m_force_with_arg) {
         bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
         if (intel && mavis) {
             return launchAppWithAppMgr();
@@ -733,7 +734,6 @@ bool FileLaunchAction::launchAppWithDBus()
             return launchDefaultAppWithUrl();
         }
     }
-#endif // KYLIN_COMMON
 
     return false;
 }
@@ -779,7 +779,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
             QString uri = fileInfo->uri();
             QUrl url = uri;
 
-            if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
+            if (G_IS_DESKTOP_APP_INFO(m_app_info) && false) {
                 auto desktop_app_info = G_DESKTOP_APP_INFO(m_app_info);
                 QString desktopFile = g_desktop_app_info_get_filename(desktop_app_info);
 
@@ -793,7 +793,7 @@ bool FileLaunchAction::launchDefaultAppWithUrl()
                     return true;
                 }
                 qDebug() << "[FileLaunchAction::LaunchAppWithArguments] failed, uri:" << uri;
-            } else {
+            } else if (G_IS_DESKTOP_APP_INFO(m_app_info)) {
                 QDBusReply<bool> result = session.call("LaunchDefaultAppWithUrl", url.toString());
                 qDebug() << "[FileLaunchAction::LaunchDefaultAppWithUrl]  uri:" << url.toString();
 
@@ -876,7 +876,6 @@ bool FileLaunchAction::launchAppWithSession()
 
 bool FileLaunchAction::checkAppDisabled()
 {
-#ifdef KYLIN_COMMON
     bool intel = (QString::compare(V10_SP1_EDU, QString::fromStdString(KDKGetPrjCodeName()), Qt::CaseInsensitive) == 0);
     if (intel) {
         preCheck();
@@ -887,14 +886,12 @@ bool FileLaunchAction::checkAppDisabled()
             return true;
         }
     }
-#endif // KYLIN_COMMON
 
     return false;
 }
 
 bool launchAppWithArguments(QString desktopFile, QStringList args)
 {
-#ifdef KYLIN_COMMON
     bool mavis = (QString::compare("mavis", QString::fromStdString(KDKGetOSRelease("SUB_PROJECT_CODENAME")), Qt::CaseInsensitive) == 0);
     int features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
     if (features == 2 || features == 3 || mavis) {
@@ -912,6 +909,5 @@ bool launchAppWithArguments(QString desktopFile, QStringList args)
         }
         return true;
     }
-#endif // KYLIN_COMMON
     return false;
 }

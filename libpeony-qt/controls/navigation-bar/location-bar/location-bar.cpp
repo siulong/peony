@@ -155,8 +155,6 @@ LocationBar::~LocationBar()
 
 void LocationBar::setRootUri(const QString &uri)
 {
-    m_indicator->setFixedSize(this->height() - 2, this->height() - 2);
-
     Q_EMIT aboutToSetRootUri();
 
     //when is the same uri and has buttons return
@@ -167,16 +165,10 @@ void LocationBar::setRootUri(const QString &uri)
 
     //clear buttons
     clearButtons();
-    if (m_current_uri.startsWith("search://") ) {
+    if (m_current_uri.startsWith("search://")) {
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
         //fix bug 94229, show button
-        doLayout();
-        return;
-    }
-
-    if (m_current_uri.startsWith("label://")) {
-        addButton(m_current_uri);
         doLayout();
         return;
     }
@@ -199,32 +191,37 @@ void LocationBar::setRootUri(const QString &uri)
 
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
-        //infoJob->setAutoDelete();
-        // enumerate buttons info directory
-        auto enumerator = new FileEnumerator;
-        //comment to fix kydroid path show abnormal issue
-        //enumerator->setEnumerateWithInfoJob();
-        connect(this, &LocationBar::aboutToSetRootUri, enumerator, [=]{
-            enumerator->setProperty("isCancelled", true);
-            enumerator->cancel();
+        infoJob->setAutoDelete();
+        connect(this, &LocationBar::aboutToSetRootUri, infoJob, [=]{
+            infoJob->setProperty("isCancelled", true);
+            infoJob->cancel();
         });
-        connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
-            m_querying_buttons_info.removeOne(info);
-            if (successed) {
-                auto infos = enumerator->getChildren();
-                m_infos_hash.insert(info.get()->uri(), infos);
-                if (m_querying_buttons_info.isEmpty()) {
-                    // add buttons
-                    clearButtons();
-                    for (auto info : m_buttons_info) {
-                        addButton(info.get()->uri().toLocal8Bit(), true, true);
-                    }
-                    doLayout();
-                }
-            } else {
+        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+            if (!successed) {
+                qWarning()<<"can not query file:"<<info->uri();
                 // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
                 // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
-                if (!enumerator->property("isCancelled").toBool()) {
+                if (!infoJob->property("isCancelled").toBool()) {
+                    m_querying_buttons_info.removeOne(info);
+                    m_buttons_info.removeOne(info);
+                }
+                return;
+            }
+            // enumerate buttons info directory
+            auto enumerator = new FileEnumerator;
+            enumerator->setEnumerateDirectory(info.get()->uri());
+            //comment to fix kydroid path show abnormal issue
+            //enumerator->setEnumerateWithInfoJob();
+
+            connect(this, &LocationBar::aboutToSetRootUri, enumerator, [=]{
+                enumerator->setProperty("isCancelled", true);
+                enumerator->cancel();
+            });
+            connect(enumerator, &FileEnumerator::enumerateFinished, this, [=](bool successed){
+                m_querying_buttons_info.removeOne(info);
+                if (successed) {
+                    auto infos = enumerator->getChildren();
+                    m_infos_hash.insert(info.get()->uri(), infos);
                     if (m_querying_buttons_info.isEmpty()) {
                         // add buttons
                         clearButtons();
@@ -233,36 +230,25 @@ void LocationBar::setRootUri(const QString &uri)
                         }
                         doLayout();
                     }
+                } else {
+                    // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
+                    // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
+                    if (!enumerator->property("isCancelled").toBool()) {
+                        if (m_querying_buttons_info.isEmpty()) {
+                            // add buttons
+                            clearButtons();
+                            for (auto info : m_buttons_info) {
+                                addButton(info.get()->uri().toLocal8Bit(), true, true);
+                            }
+                            doLayout();
+                        }
+                    }
                 }
-            }
 
-            enumerator->deleteLater();
-        });
-        connect(this, &LocationBar::aboutToSetRootUri, infoJob, [=]{
-            infoJob->setProperty("isCancelled", true);
-            infoJob->cancel();
-        });
-        connect(this, &LocationBar::destroyed, infoJob, [=]{
-            infoJob->setProperty("isCancelled", true);
-            infoJob->cancel();
-        });
-        connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](bool successed){
-            if (!successed && !info.get()->uri().startsWith("label://")) {
-                qWarning()<<"can not query file:"<<info->uri();
-                // 避免上一次的取消操作影响此次的结果，这个通常发生在极短时间内进行连续跳转的情况下
-                // 从peony的交互来看基本不会触发，但是文件对话框的流程可能会触发这种情况
-                if (!infoJob->property("isCancelled").toBool()) {
-                    m_querying_buttons_info.removeOne(info);
-                    m_buttons_info.removeOne(info);
-                }
                 enumerator->deleteLater();
-                infoJob->deleteLater();
-                return;
-            }
+            });
 
-            enumerator->setEnumerateDirectory(info.get()->uri());
             enumerator->enumerateAsync();
-            infoJob->deleteLater();
         });
         infoJob->queryAsync();
     }
@@ -308,7 +294,7 @@ void LocationBar::updateButtons()
 
     for (auto info : m_buttons_info) {
         auto infoJob = new FileInfoJob(info);
-        //infoJob->setAutoDelete();
+        infoJob->setAutoDelete();
         connect(infoJob, &FileInfoJob::queryAsyncFinished, this, [=](){
             // enumerate buttons info directory
             auto enumerator = new FileEnumerator;
@@ -343,7 +329,6 @@ void LocationBar::updateButtons()
             });
 
             enumerator->enumerateAsync();
-            infoJob->deleteLater();
         });
         infoJob->queryAsync();
     }
@@ -559,36 +544,16 @@ void LocationBar::doLayout()
 
     m_indicator_menu->clear();
 
-    int iconWidth = 0;
-    if (!m_buttons.isEmpty()) {
-        auto button = m_buttons.first();
-        button->setVisible(true);
-        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        iconWidth = button->sizeHint().width();
-        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        iconWidth = iconWidth - button->sizeHint().width();
-        button->setVisible(false);
-    }
-    int exceptTotalwidth = 0;
     for (auto button : m_buttons) {
         button->setVisible(true);
-        // 默认不做自动文字缩略
-        button->setProperty("elideText", QVariant());
-        button->resize(button->sizeHint().width(), button->height());
-        button->setFixedHeight(this->height()); //fixme
+        button->setFixedHeight(this->height());
         button->setToolButtonStyle(Qt::ToolButtonTextOnly);
         button->adjustSize();
-        int sizeHintWidth = button->sizeHint().width();
-        exceptTotalwidth += sizeHintWidth;
-        sizeHints<<sizeHintWidth;
+        sizeHints<<button->sizeHint().width();
         button->setVisible(false);
     }
 
-    int totalWidth = this->width() - iconWidth;
-    if (totalWidth < exceptTotalwidth) {
-        totalWidth = totalWidth - m_indicator->width() - 2;
-    }
-
+    int totalWidth = this->width();
     int currentWidth = 0;
     int visibleButtonCount = 0;
     for (int index = sizeHints.count() - 1; index >= 0; index--) {
@@ -625,11 +590,8 @@ void LocationBar::doLayout()
     if (visibleButtonCount == 0 && !m_buttons.isEmpty()) {
         auto button = m_buttons.values().at(sizeHints.count() - 1);
         button->setVisible(true);
-        // 设置自动文字缩略
-        button->setProperty("elideText", true);
         button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        button->move(offset, 0);
-        button->resize(totalWidth, button->height());
+        button->resize(totalWidth - 20, this->height());
     }
 
     int spaceCount = 0;
@@ -688,15 +650,7 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
             opt.features.setFlag(QStyleOptionToolButton::HasMenu, false);
             return qApp->style()->drawComplexControl(control, &opt, painter);
         } else {
-            opt.rect.adjust(0, 1, 0, -1); //bug#165286 地址栏中“计算机”文字显示不完整，高度减小2，宽度不变
-        }
-        if (widget) {
-            if (widget->property("elideText").toBool()) {
-                // 设置文字缩略
-                int textWidth = opt.rect.width() - opt.iconSize.width() - (opt.features.testFlag(QStyleOptionToolButton::HasMenu)? 44: 20);
-                auto text = opt.text;
-                opt.text = opt.fontMetrics.elidedText(text, Qt::ElideRight, textWidth);
-            }
+            opt.rect.adjust(1, 1, -1, -1);
         }
         return qApp->style()->drawComplexControl(control, &opt, painter, widget);
     }

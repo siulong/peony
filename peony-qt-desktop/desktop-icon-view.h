@@ -101,9 +101,6 @@ public:
     QRect getViewRect();
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
-    QString getBlackAndWhiteModel();
-    QSet<QString> getBWListInfo();
-    bool getBlackAndWhiteListExist(QString name);
 
     void setRestoreInfo(QString &uri, QPoint &itemPos);
     void setAllRestoreInfo();
@@ -118,12 +115,9 @@ public:
     void clearItemRect();
     bool isFull();
     void clearExtendItemPos(bool saveId = false);
-    void UpdateToEditUris(QStringList uris);
-    QRect getDataRect(const QModelIndex &index);
 
     // only used in model refresh.
     void clearCache();
-    void modifyGridSize();
     void initViewport();
 
 private:
@@ -272,8 +266,6 @@ private:
     DesktopItemProxyModel *m_proxy_model = nullptr;
 
     QStringList m_new_files_to_be_selected;
-    QStringList m_uris_to_edit;/* 新建文件/文件夹，可编辑文件名list */
-    QString m_edit_uri;    /* 正在编辑的文件，信息更新不重置*/
 
    // bool m_is_refreshing = false;
 

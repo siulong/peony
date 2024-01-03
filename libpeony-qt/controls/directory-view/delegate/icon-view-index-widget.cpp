@@ -109,6 +109,7 @@ IconViewIndexWidget::IconViewIndexWidget(const IconViewDelegate *delegate, const
 
     auto textSize = IconViewTextHelper::getTextSizeForIndex(opt, index, 2);
     int fixedHeight = 5 + iconExpectedSize.height() + 5 + textSize.height() + 5;
+
     int y_bottom = option.rect.y() + fixedHeight + 20;
     //qDebug() << "Y:" <<option.rect.y() <<fixedHeight <<m_delegate->getView()->height();
     b_elide_text = false;
@@ -195,12 +196,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 //    p.fillRect(0, 0, 999, 999, qApp->palette().base());
 
     //adjustPos();
-    auto bgColor = QApplication::palette().base().color();
-    p.save();
-    p.setPen(Qt::transparent);
-    p.setBrush(bgColor);
-    p.drawRoundedRect(this->rect(), 6, 6);
-    p.restore();
+
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
 
@@ -221,6 +217,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     auto opt = m_option;
     auto rawRect = m_option.rect;
     opt.rect = this->rect();
+    auto widgetRect = this->rect();
+    if (qApp->devicePixelRatio() != 1.0) {
+        opt.rect.adjust(1, 1, -1, -1);
+        rawRect.adjust(1, 1, -1, -1);
+        widgetRect.adjust(1, 1, -1, -1);
+    }
 
     int horizalMargin = 2;
     auto fontMetrics = opt.fontMetrics;
@@ -263,6 +265,9 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     opt.text = std::move(tmp);
 
     //extra emblems
+    if (!m_info.lock()) {
+        return;
+    }
     auto info = m_info.lock();
 
     // draw color symbols
@@ -316,6 +321,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
             p.save();
             //fix bug#147348
             p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            p.translate(widgetRect.topLeft());
             p.translate(0, m_delegate->getView()->iconSize().height() + 5);
 
            // p.translate(2, 2);
@@ -331,22 +337,16 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     }
     QString regFindKeyWords = m_delegate->getRegFindKeyWords();
     p.save();
+    p.translate(widgetRect.topLeft());
     p.translate(0, m_delegate->getView()->iconSize().height() + 5 + yoffset);
     p.setPen(opt.palette.highlightedText().color());
-
-    qreal textHeight = IconViewTextHelper::drawText(&p,
-                                                     opt,
-                                                     9999,
-                                                     xoffset,
-                                                     regFindKeyWords,
-                                                     2,
-                                                     4);
-
-    //fix#bug182191 【文件管理器】文件添加标记后选中状态名称显示不全
-    int fixedHeight = 5 + m_delegate->getView()->iconSize().height() + 5 + textHeight + 5;
-    if (fixedHeight > this->height())
-        setFixedHeight(fixedHeight);
-
+    IconViewTextHelper::paintText(&p,
+                                  opt,
+                                  9999,
+                                  xoffset,
+                                  regFindKeyWords,
+                                  2,
+                                  4);
     p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
@@ -360,7 +360,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //Adjust link emblem to topLeft.link story#8354
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(&p, this->rect().x() + 10, widgetRect.y()+m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
         p.restore();
     }
     if(view->isEnableMultiSelect())

@@ -26,17 +26,14 @@
 #include <QObject>
 #include <QSettings>
 #include <QMutex>
-#include <QDBusInterface>
 
 #include "peony-core_global.h"
-#include <gio/gio.h>
 
 //顶部菜单 - Top menu
 #define RESIDENT_IN_BACKEND         "resident"
 #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
-#define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
+#define ALLOW_FILE_OP_PARALLEL      "allow-file-op-parallel"
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
-#define SHOW_IN_NEW_WINDOW          "showInNewWindow"
 
 //视图 - View
 #define DEFAULT_VIEW_ID             "defaultViewId"
@@ -77,7 +74,6 @@
 #define LAST_DESKTOP_SORT_ORDER     "lastDesktopSortOrder"
 #define TEMPLATES_DIR               "templatesDir"
 #define DEFAULT_DESKTOP_ZOOM_LEVEL  "defaultDesktopZoomLevel"
-#define DEFAULT_GRID_SIZE           "default-grid-size"
 
 //收藏的服务器IP - favorite ip
 #define REMOTE_SERVER_REMOTE_IP     "remote-server/favorite-ip"
@@ -97,14 +93,8 @@
 #define SEND_URIS_OF_COPY_DSPS      "sendUrisOfCopyDsps"  /* send src and dest uris of copy dsps files to wps,默认值为false */
 #define DOC_IS_OCCUPIED_BY_WPS      "docIsOccupiedByWps" /* 是否开启wps占用文件监控功能 */
 
-#define UKUI_SEARCH_SCHEMAS          "org.ukui.search.settings"
-#define SEARCH_METHOD_KEY            "fileIndexEnable"
-
 //Control the display of desktop standard icons
 #define DISPLAY_STANDARD_ICONS       "displayStandardIcons"
-
-//control the mobile device trash file issue, if be true can trash mobile files
-#define TRASH_MOBILE_FILES            "trashMobileFiles"
 
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
@@ -136,12 +126,6 @@
 //dbus
 #define DBUS_STATUS_MANAGER_IF      "com.kylin.statusmanager.interface"
 
-#ifdef KY_SDK_DATE
-#define SDK_DATE_SERVER_PATH "/com/kylin/kysdk/Date"
-#define SDK_DATE_SERVER_SERVICE "com.kylin.kysdk.DateServer"
-#define SDK_DATE_SERVER_INTERFACE "com.kylin.kysdk.DateInterface"
-#endif
-
 class QGSettings;
 
 namespace Peony {
@@ -163,15 +147,11 @@ public:
     static GlobalSettings *getInstance();
     const QVariant getValue(const QString &key);
     bool isExist(const QString &key);
-    bool initDateFormatDBus();
     QString getProjectName();
 
 Q_SIGNALS:
     void valueChanged(const QString &key);
-    void updateHiddenFile(const QString &fileName);
     void signal_updateRemoteServer(const QString& server, bool add);
-    void updateShortDataFormat(const QString &fileName);
-    void updateLongDataFormat(const QString &fileName);
 
 public Q_SLOTS:
     void setValue(const QString &key, const QVariant &value);
@@ -179,10 +159,7 @@ public Q_SLOTS:
     void resetAll();
     void setTimeFormat(const QString &value);
     void setDateFormat(const QString &value);
-    void sendShortDataFormat(const QString &format);
-    void sendLongDataFormat(const QString &format);
     QString getSystemTimeFormat();
-    QString transToSystemTimeFormat(guint64 mtime, bool longFormat=false);
 
     /*!
      * \brief 通过GSetting保存设置
@@ -217,7 +194,6 @@ private:
     QGSettings*                 m_gsettings = nullptr;
     QGSettings*                 m_control_center_plugin = nullptr;
     QGSettings*                 m_peony_gsettings  = nullptr;
-    QGSettings*                 m_peonyGSettings  = nullptr; //fixme: 代码冲突遗留，后续仅保留一个peony gsettings实例
     QGSettings *m_gsettings_tablet_mode = nullptr;
     QGSettings *m_gsettings_dual_screen_mode = nullptr;
     QMutex                      m_mutex;
@@ -225,8 +201,6 @@ private:
     QString                     m_date_format = "";
     QString                     m_time_format = "";
     QString                     m_system_time_format  = "";
-
-    QDBusInterface*             mDbusDateServer = nullptr;
 };
 
 }

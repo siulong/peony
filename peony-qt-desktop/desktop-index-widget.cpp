@@ -25,8 +25,6 @@
 
 #include "desktop-icon-view-delegate.h"
 #include "desktop-icon-view.h"
-#include "file-info.h"
-#include "emblem-provider.h"
 
 #include <QPainter>
 #include <QStyle>
@@ -69,7 +67,6 @@ DesktopIndexWidget::DesktopIndexWidget(DesktopIconViewDelegate *delegate,
     view->m_real_do_edit = false;
     view->m_edit_trigger_timer.stop();
     view->m_edit_trigger_timer.start();
-
 }
 
 DesktopIndexWidget::~DesktopIndexWidget()
@@ -194,185 +191,6 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
             false);
 
     p.restore();
-
-    QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
-
-    //paint link icon and locker icon
-    FileInfo *file = FileInfo::fromUri(m_index.data(Qt::UserRole).toString()).get();
-    if ((m_index.data(Qt::UserRole).toString() != "computer:///") && (m_index.data(Qt::UserRole).toString() != "trash:///")) {
-        QSize lockerIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            lockerIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            lockerIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            lockerIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-        auto topRight = opt.rect.topRight();
-        topRight.setX(topRight.x() - opt.rect.width() + 10);
-        topRight.setY(topRight.y() + 10);
-        auto linkRect = QRect(topRight, lockerIconSize);
-
-        if (! file->canRead())
-        {
-            emblemPoses.removeOne(1);
-            QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");
-            p.save();
-            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            symbolicLinkIcon.paint(&p, linkRect, Qt::AlignCenter);
-            p.restore();
-        }
-        else if(! file->canWrite())
-        {
-            //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
-            emblemPoses.removeOne(1);
-            QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-readonly");
-            p.save();
-            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            symbolicLinkIcon.paint(&p, linkRect, Qt::AlignCenter);
-            p.restore();
-        }
-    }
-
-    if (m_index.data(Qt::UserRole + 1).toBool()) {
-        emblemPoses.removeOne(3);
-        QSize symbolicIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            symbolicIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            symbolicIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            symbolicIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-
-        //Adjust link emblem to topLeft.link story#8354
-        auto topLeft = opt.rect.topLeft();
-        topLeft.setX(opt.rect.topLeft().x() + 10);
-        topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
-        auto linkRect = QRect(topLeft, symbolicIconSize);
-        QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
-        p.save();
-        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        symbolicLinkIcon.paint(&p, linkRect, Qt::AlignCenter);
-        p.restore();
-    }
-
-    // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
-    auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(file->uri());
-    for (auto extensionsEmblem : extensionsEmblems) {
-        if (emblemPoses.isEmpty()) {
-            break;
-        }
-
-        QIcon icon = QIcon::fromTheme(extensionsEmblem);
-
-        QSize emblemsIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            emblemsIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            emblemsIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            emblemsIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-
-        if (!icon.isNull()) {
-            int pos = emblemPoses.takeFirst();
-            p.save();
-            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            switch (pos) {
-            case 1: {
-                icon.paint(&p,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
-                break;
-            }
-            case 2: {
-                icon.paint(&p,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
-                break;
-            }
-            case 3: {
-                icon.paint(&p,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
-                break;
-            }
-            case 4: {
-                icon.paint(&p,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
-                break;
-            }
-            default:
-                break;
-            }
-            p.restore();
-        }
-    }
 
     bgColor.setAlpha(255*0.8);
     p.setPen(bgColor);

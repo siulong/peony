@@ -40,7 +40,7 @@
     </message>
     <message>
         <source>Trash</source>
-        <translation>གད་སྙིགས་བླུགས་སྣོད།</translation>
+        <translation>ཚུར་བསྡུའི་ས་ཚིགས་</translation>
     </message>
 </context>
 <context>

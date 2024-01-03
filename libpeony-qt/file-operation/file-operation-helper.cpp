@@ -151,18 +151,14 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
             //开启udfclient的初始化
             right = udfwrite->startUdfClient(&errinfo);
             if (!right) {
-                if (udfwrite->isDiscRunning()) {
-                    m_disc_error_msg = errinfo;
-                } else {
-                    m_disc_error_msg = tr("Burn failed");
-                }
+                m_disc_error_msg = errinfo;
                 qDebug() << "udf clint error message: " << errinfo;
                 for (QString filePath : list) {
                     QFile file(filePath);
                     if (file.exists()) {
                         file.remove();
                     }
-                }               
+                }
                 udfwrite->closeUdfClient();
                 free(errinfo);
                 return false;
@@ -172,7 +168,7 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
             qDebug() << "udf write list:" << list << "dest name" << destName;
             right = udfwrite->writeMultiData(&errinfo, list, destName);
             if (!right) {
-                m_disc_error_msg = tr("Burn failed");
+                m_disc_error_msg = errinfo;
                 qDebug() << "udf write error message: " << errinfo;
                 for (QString filePath : list) {
                     QFile file(filePath);

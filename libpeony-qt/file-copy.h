@@ -73,16 +73,13 @@ public Q_SLOTS:
      */
     void cancel();
 
-    Status getStatus();
-
 private Q_SLOTS:
 
 private:
     void updateProgress () const;
     void detailError (GError** error);
     void sync(const GFile* destFile);
-    int doCopyBigFile(const char *srcPath, const char *destPath);
-    bool isFileOnLocal(const GFile* destFile);
+
 private:
     QMutex                          mPause;
     QString                         mSrcUri = nullptr;
@@ -98,7 +95,6 @@ private:
     goffset                         mOffset = 0;                // 记录当前进度
     goffset                         mTotalSize = 0;             // 记录当前进度
     enum Status                     mStatus = INVALID;          // 记录运行状态
-    bool                            mIsDestFileLocal = false;
 };
 };
 
