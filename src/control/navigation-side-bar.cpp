@@ -101,6 +101,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 
     setDragDropMode(QTreeView::DropOnly);
 
+    setProperty("highlightMode", true);
     setProperty("doNotBlur", true);
     viewport()->setProperty("doNotBlur", true);
 
