@@ -309,11 +309,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Manager tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>མཚོན་རྟགས་བྱེད་སྟངས།</translation>
     </message>
     <message>
         <source>More tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>མཚོན་རྟགས་སྔར་ལས་མང་བ།</translation>
     </message>
 </context>
 <context>
@@ -359,11 +359,11 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>Show Create Time</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་འཛུགས་དུས་ཚོད།</translation>
     </message>
     <message>
         <source>Set samba password</source>
-        <translation type="unfinished"></translation>
+        <translation>sambaགསང་གྲངས་བཞག</translation>
     </message>
     <message>
         <source>Tips</source>
@@ -371,39 +371,39 @@ p, li {དཀར་པོའི་བར་སྟོང་། སྔོན་ཚ
     </message>
     <message>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation type="unfinished"></translation>
+        <translation>སྤྱོད་མཁན་འདི་ལ་sambaགསང་གྲངས་ཡོད་ལ།sambaགསང་གྲངས་བསྐྱར་དུ་འཇོག་དགོས་སམ།</translation>
     </message>
     <message>
         <source>Samba password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sambaགསང་གྲངས།</translation>
     </message>
     <message>
         <source>Samba set user password</source>
-        <translation type="unfinished"></translation>
+        <translation>Sambaཡིས་མཛད་སྤྱོད་པའི་གསང་གྲངས་བཞག་ཡོད།</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">ཉེན་བརྡ།</translation>
+        <translation>ཉེན་བརྡ།</translation>
     </message>
     <message>
         <source>Samba set password failed, Please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sambaཡིས་གསང་གྲངས་བཞག་ནས་ཕམ་སོང་།ཡང་བསྐྱར་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation type="unfinished"></translation>
+        <translation>མཉམ་སྤྱོད་སྒྲིག་ཆས་ཀྱི་ཞབས་ཞུ་རྒྱུན་ལྡན་མིན་པས།ད་ལྟ་སྒྲུབ་བཞིན་པའི་མཉམ་སྤྱོད་སྒྲིག་ཆས་ཡོད་མེད་དང་།ཡང་ན་བསྐྱར་དུ་བཀོད་སྒྲིག་དང་མཉམ་སྤྱོད་བྱེད་རོགས།</translation>
     </message>
     <message>
         <source>Open each folder in a new window</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒེའུ་ཁུང་གསར་བ་ནས་ཡིག་ཆའི་སྒམ་ཕྱེ།</translation>
     </message>
     <message>
         <source>Plugin manager Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>བསྒར་ལྷུ་དོ་དམ་སྒྲིག་འགོད།</translation>
     </message>
     <message>
         <source>Show Relative Time</source>
-        <translation type="unfinished"></translation>
+        <translation>བལྟོས་བཅས་ཀྱི་དུས་ཚོད་མངོན་ཡོད།</translation>
     </message>
 </context>
 <context>
@@ -599,57 +599,57 @@ Yue Lan &lt;lanyue@kylinos.cn&gt;
     <name>QObject</name>
     <message>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>བཙན་ཤེད་ཀྱིས་བསུབ་པ་ལེགས་འགྲུབ་མ་བྱུང་།</translation>
     </message>
     <message>
         <source>Error: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>ནོར་འཁྲུལ།%1</translation>
     </message>
     <message>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་དུས་མཉམ་དུ་འགྲུབ་སོང་།སྒྲིག་ཆས་བདེ་ལེགས་ངང་བསུབ་པ་རེད།</translation>
     </message>
     <message>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>བསུབ་རྒྱུ་ལེགས་འགྲུབ་མ་བྱུང་།</translation>
     </message>
     <message>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>བསུབ་ཐབས་མེད།ཁྱེད་ཀྱིས་སྔོན་ལ་གོ་རིམ་འགའ་སྒོ་རྒྱག་དགོས།དཔེར་ན་ཁུལ་བགོ་རྩོམ་སྒྲིག་ཆས་སོགས།</translation>
     </message>
     <message>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation type="unfinished"></translation>
+        <translation>ནོར་འཁྲུལ།%1བཙན་ཤེད་ཀྱིས་སུབ་པ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ཕམ་ཁ་བྱུང་།</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>མེད་པར་བཟོ་བ།</translation>
     </message>
     <message>
         <source>Eject Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>ངེས་པར་དུ་སྒྲིག་ཆས་དེ་མདེལ་དཀྲོ</translation>
     </message>
     <message>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞི་གྲངས་དུས་མཉམ་དུ་འགྲུབ་ན་སྒྲིག་ཆས་བདེ་འཇགས་ངང་ལེན་ཐུབ།</translation>
     </message>
     <message>
         <source>Unable to eject %1</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒྲིག་ཆས་འདི་དཀྲོལ་ཐབས་མེད།</translation>
     </message>
     <message>
         <source>PeonyNotify</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་དོ་དམ་མ་ལག་གི་བརྡ་ཐོ</translation>
     </message>
     <message>
         <source>File Manager</source>
-        <translation type="unfinished">ཡིག་ཆ་དོ་དམ་ཆས།</translation>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས།</translation>
     </message>
 </context>
 <context>
@@ -688,27 +688,27 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Use current sorting for all folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཚང་མས་མིག་སྔའི་གོ་རིམ་བཀོལ་སྤྱོད་བྱས་ཡོད།</translation>
     </message>
     <message>
         <source>By %1</source>
-        <translation type="unfinished"></translation>
+        <translation>དེ་ལྟར་བྱེད་དགོས།%1</translation>
     </message>
     <message>
         <source>Newest to oldest</source>
-        <translation type="unfinished"></translation>
+        <translation>ཆེས་རྙིང་པར་གྱུར་པ་རེད།</translation>
     </message>
     <message>
         <source>Oldest to newest</source>
-        <translation type="unfinished"></translation>
+        <translation>ཆེས་རྙིང་པ་ནས་ཆེས་གསར་བར་གྱུར་པ་རེད།</translation>
     </message>
     <message>
         <source>Files from large to small</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཆེ་བ་ནས་ཆུང་བར་ཡིན།</translation>
     </message>
     <message>
         <source>Files from small to large</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཆུང་བ་ནས་ཆེ་བར་འགྲོ་བ།</translation>
     </message>
 </context>
 <context>
@@ -727,7 +727,7 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Searching for files ...</source>
-        <translation type="unfinished"></translation>
+        <translation>འཚོལ་ཞིབ་བྱེད་བཞིན་པའི་སྒང་རེད།</translation>
     </message>
 </context>
 <context>
@@ -886,33 +886,41 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished">འཚོལ་བ།</translation>
+        <translation>འཚོལ་བ།</translation>
     </message>
     <message>
         <source>Computer</source>
-        <translation type="unfinished"></translation>
+        <translation>རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Opening such files is not currently supported</source>
-        <translation type="unfinished"></translation>
+        <translation>གནས་སྐབས་ཡིག་ཆ་འདིའི་རིགས་ཀྱི་ཁ་འབྱེད་པར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>ཉེན་བརྡ།</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>ནོར་འཁྲུལ།</translation>
     </message>
 </context>
 <context>
     <name>TitleLabel</name>
     <message>
         <source>Peony</source>
-        <translation type="unfinished">ཡིག་ཆ་དོ་དམ་ཆས།</translation>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས།</translation>
     </message>
 </context>
 <context>
     <name>TopMenuBar</name>
     <message>
         <source>Option</source>
-        <translation type="unfinished">འདེམས་ཚན།</translation>
+        <translation>འདེམས་ཚན།</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished">ཆེས་ཆུང་འགྱུར།</translation>
+        <translation>ཆེས་ཆུང་འགྱུར།</translation>
     </message>
     <message>
         <source>Close</source>
