@@ -78,6 +78,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     m_touch_active_timer->setInterval(2000);
     m_touch_active_timer->setSingleShot(true);
 
+    setProperty("highlightMode", true);
+
     //setFrameShape(QFrame::NoFrame);
 
     // use scroll per pixel mode for calculate vertical scroll bar range.
