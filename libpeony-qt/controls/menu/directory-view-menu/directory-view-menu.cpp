@@ -935,6 +935,14 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 });
             }
 
+            //fix ftp, sftp file can not delete issue, task#188197
+            if (m_is_ftp && m_can_delete && !hasDeleteForever) {
+                l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete forever"));
+                connect(l.last(), &QAction::triggered, [=]() {
+                    FileOperationUtils::executeRemoveActionWithDialog(m_selections);
+                });
+            }
+
             if (m_selections.count() > 0 && ! hasStandardPath && !m_is_recent && !m_is_favorite && !m_is_filesafe && !m_is_label_model) {
                 l<<addAction(QIcon::fromTheme("document-edit-symbolic"), tr("Rename"));
                 l.last()->setObjectName(RENAME_ACTION);
