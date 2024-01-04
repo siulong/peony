@@ -644,8 +644,10 @@ void ListView::dropEvent(QDropEvent *e)
 void ListView::resizeEvent(QResizeEvent *e)
 {
     QTreeView::resizeEvent(e);
-    if (m_last_size != size()) {
+
+    if (m_last_size != size() || m_last_viewport_size != viewport()->size()) {
         m_last_size = size();
+        m_last_viewport_size = viewport()->size();
         adjustColumnsSize();
     }
     if (state() == QTreeView::EditingState && qApp->property("tabletMode").toBool()) {
