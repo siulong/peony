@@ -1,3 +1,11 @@
+peony (4.10.0.0-ok2~0104) nile; urgency=medium
+
+  * close #I8IENY【文件管理器】选中图片右键选择设置壁纸，未生效
+  * close #I8M4VW【文件管理器】侧边栏目录收起状态下，选中时前方箭头未反黑
+  * close #I8ISHL  #I8ISKZ #I8ISO8 系统语言为藏文，删除文件时弹窗显示为英文 ,右键弹出菜单存在英文,点击排序方式存在英文显示
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 04 Jan 2024 14:43:24 +0800
+
 peony (4.10.0.0-ok1~1215) nile; urgency=medium
 
   * hotfix bug#203460 【文件管理器】频繁进行U盘弹出接入操作时，文管高概率卡死1/3
