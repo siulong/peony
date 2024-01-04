@@ -70,6 +70,8 @@
 #include <QX11Info>
 #include <X11/Xlib.h>
 
+#include <QMessageBox>
+
 #define KYLIN_USER_GUIDE_PATH "/"
 #define KYLIN_USER_GUIDE_SERVICE QString("com.kylinUserGuide.hotel_%1").arg(getuid())
 #define KYLIN_USER_GUIDE_INTERFACE "com.guide.hotel"
@@ -828,9 +830,32 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
 void PeonyDesktopApplication::setupDesktop()
 {
     KScreen::GetConfigOperation *op = new KScreen::GetConfigOperation();
-    connect(op, &KScreen::GetConfigOperation::finished, this, [this](KScreen::ConfigOperation *op) {
+    if (op->exec()) {
         setConfig(op);
-    });
+    } else {
+        for (auto screen : qApp->screens()) {
+            KScreen::OutputPtr output(new KScreen::Output);
+            output->setId(qApp->screens().indexOf(screen));
+            output->setName(qApp->primaryScreen()->name());
+            output->setPos(screen->geometry().topLeft() * screen->devicePixelRatio());
+            output->setLogicalSize(screen->size() * devicePixelRatio());
+            output->setScale(1.0);
+            output->setSize(screen->size() * screen->devicePixelRatio());
+            if (screen == qApp->primaryScreen()) {
+                output->setPrimary(true);
+            } else {
+                output->setPrimary(false);
+            }
+            output->setConnected(true);
+            output->setEnabled(true);
+            addBgWindow(output);
+        }
+        QMessageBox::warning(0, tr("Failed to get screen config"), tr("Error message is: %1. Using fallback config to setup desktop."), op->errorString());
+    }
+
+//    connect(op, &KScreen::GetConfigOperation::finished, this, [this](KScreen::ConfigOperation *op) {
+//        setConfig(op);
+//    });
 }
 
 void PeonyDesktopApplication::setupBgAndDesktop()
