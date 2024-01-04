@@ -1,4 +1,4 @@
-peony (4.10.0.0-ok2~0104) nile; urgency=medium
+peony (4.10.0.0-ok2~0104.1) nile; urgency=medium
 
   * close #I8IENY【文件管理器】选中图片右键选择设置壁纸，未生效
   * close #I8M4VW【文件管理器】侧边栏目录收起状态下，选中时前方箭头未反黑
