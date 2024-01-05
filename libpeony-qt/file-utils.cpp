@@ -44,21 +44,9 @@
 
 using namespace Peony;
 
-QStringList Peony::FileUtils::m_standardPaths = QStringList();
 
 FileUtils::FileUtils()
 {
-    QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
-    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString documentPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    QString videoPath= QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    QString publicPath = g_get_user_special_dir(G_USER_DIRECTORY_PUBLIC_SHARE);
-    //qDebug() << "isStandardPath :" <<templateDir.path();
-    m_standardPaths <<desktopPath <<documentPath <<picturePath <<videoPath
-                  <<downloadPath <<musicPath <<templateDir.path()<<publicPath;
 }
 
 QString FileUtils::getQStringFromCString(char *c_string, bool free)
@@ -572,10 +560,28 @@ const QString FileUtils::getOriginalUri(const QString &uri)
     return originalUri;
 }
 
+QStringList FileUtils::standardPathList()
+{
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString documentPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    QString videoPath= QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+    QString templatePath = g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES);
+    QString publicPath = g_get_user_special_dir(G_USER_DIRECTORY_PUBLIC_SHARE);
+    //qDebug() << "isStandardPath :" <<templatePath;
+    QStringList standardPathList;
+    standardPathList<<desktopPath <<documentPath <<picturePath <<videoPath
+                  <<downloadPath <<musicPath <<templatePath<<publicPath;
+    return standardPathList;
+}
+
 bool FileUtils::isStandardPath(const QString &uri)
 {
+    QStringList standardPaths = standardPathList();
     QUrl url = uri;
-    if (m_standardPaths.contains(url.path()))
+    if (standardPaths.contains(url.path()))
         return true;
 
     return false;
@@ -624,19 +630,21 @@ bool FileUtils::isSamePath(const QString &uri, const QString &targetUri)
 
 bool FileUtils::containsStandardPath(const QStringList &list)
 {
-    for(auto& uri:list)
-    {
-        if (isStandardPath(uri))
+    QStringList standardPaths = standardPathList();
+    for(auto& uri:list){
+        QUrl url = uri;
+        if (standardPaths.contains(url.path())){
             return true;
+        }
     }
-
     return false;
 }
 
 bool FileUtils::containsStandardPath(const QList<QUrl> &urls)
 {
+    QStringList standardPaths = standardPathList();
     for (QUrl url : urls) {
-        if (isStandardPath(url.toDisplayString())) {
+        if (standardPaths.contains(url.toDisplayString())) {
             return true;
         }
     }

@@ -31,7 +31,6 @@
 #include "gerror-wrapper.h"
 
 #include <QString>
-#include <QStringList>
 
 namespace Peony {
 
@@ -77,11 +76,13 @@ public:
     NO_BLOCKING static const QString getParentUri(const QString &uri);
     NO_BLOCKING static const QString getOriginalUri(const QString &uri);
 
+    NO_BLOCKING static QStringList standardPathList();
     NO_BLOCKING static bool isStandardPath(const QString &uri);
     NO_BLOCKING static bool isMobileDeviceFile(const QString &uri);
     NO_BLOCKING static bool isSamePath(const QString &uri, const QString &targetUri);
     NO_BLOCKING static bool containsStandardPath(const QStringList &list);
     NO_BLOCKING static bool containsStandardPath(const QList<QUrl> &urls);
+
 
     BLOCKING static bool isFileExsit(const QString &uri);
 
@@ -124,10 +125,6 @@ public:
 
 private:
     FileUtils();
-
-private:
-    static QStringList m_standardPaths;
-
 };
 
 class FileUtilsPrivate
