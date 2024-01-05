@@ -544,6 +544,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
            }
        });
     });
+    UserShareInfoManager::getInstance();
 }
 
 DesktopItemModel::~DesktopItemModel()
