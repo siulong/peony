@@ -1068,7 +1068,7 @@
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="748"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="989"/>
         <source>%1 (%2 Bytes)</source>
-        <translation>% 1 （% 2 位元組 ）</translation>
+        <translation>%1 （%2 位元組 ）</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="943"/>
