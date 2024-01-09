@@ -1,0 +1,23 @@
+From: yangyanwei <yangyanwei@kylinos.cn>
+Date: Tue, 9 Jan 2024 14:44:34 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0k4SVQyWeOAkOmcgOaxgjIzNjA344CR44CQ5paH5Lu2?=
+ =?utf-8?b?566h55CG5Zmo44CR5pyA5aSn5YyW5paH5Lu2566h55CG5Zmo5ZCO77yM5bCG6aKE?=
+ =?utf-8?b?6KeI55WM6Z2i5ouJ5Yiw5pyA5a6977yM5paH5Lu25ZCN56ew6L+Y5piv5pi+56S6?=
+ =?utf-8?b?5Li65Lik6KGM?=
+
+---
+ .../controls/preview-page/default-preview-page/default-preview-page.cpp  | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp b/libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp
+index 044c56c..2b4b9e6 100644
+--- a/libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp
++++ b/libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp
+@@ -550,6 +550,7 @@ void FilePreviewPage::updateForm(QSize size)
+     int iLongTextWidth = 0;
+     while (i != m_form_label_map.constEnd()) {
+         if (i.key() == m_display_name_label) {
++            iLongTextWidth = qMax(fontMetrics().width(i.value()), iLongTextWidth);
+             ++i;
+             continue;
+         }
