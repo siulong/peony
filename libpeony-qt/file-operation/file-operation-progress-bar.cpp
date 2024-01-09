@@ -982,6 +982,34 @@ void ProgressBar::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 }
 
+bool ProgressBar::event(QEvent *event)
+{
+    if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QPoint pos = helpEvent->pos();
+        QString tooltipText = "";
+        if ((pos.x() >= m_pause_x)
+                   && (pos.x() <= m_pause_x_r)
+                   && (pos.y() >= m_pause_y)
+                   && (pos.y() <= m_pause_y_b)){
+            if (m_pause) {
+                tooltipText = tr("continue");
+            } else {
+                tooltipText = tr("pause");
+            }
+
+            QToolTip::showText(helpEvent->globalPos(), tooltipText, this);
+            return true;
+        } else if ((pos.x() >= m_close_x) && (pos.x() <= m_close_x_r)
+                  && (pos.y() >= m_close_y) && (pos.y() <= m_close_y_b)) {
+            tooltipText = tr("close");
+            QToolTip::showText(helpEvent->globalPos(), tooltipText, this);
+            return true;
+        }
+    }
+    return QWidget::event(event);
+}
+
 void ProgressBar::mouseReleaseEvent(QMouseEvent *event)
 {
     QPoint pos = event->pos();

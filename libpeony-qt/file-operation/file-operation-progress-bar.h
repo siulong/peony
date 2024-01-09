@@ -135,6 +135,7 @@ Q_SIGNALS:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    bool event(QEvent *event) override;
 
 public Q_SLOTS:
     void onCancelled();
