@@ -179,7 +179,7 @@ private:
 
     QTimer* m_renameTimer;
     bool  m_editValid;
-    bool  m_ctrl_key_pressed;
+    bool  m_ctrl_key_pressed = false;
     bool  m_delegate_editing = false;
 
     QRubberBand *m_rubberBand;
