@@ -550,6 +550,7 @@ void FilePreviewPage::updateForm(QSize size)
     int iLongTextWidth = 0;
     while (i != m_form_label_map.constEnd()) {
         if (i.key() == m_display_name_label) {
+            iLongTextWidth = qMax(fontMetrics().width(i.value()), iLongTextWidth);
             ++i;
             continue;
         }
