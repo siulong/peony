@@ -1244,7 +1244,18 @@ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
     if (G_IS_THEMED_ICON (gicon)) {
         const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
         if(icon_names) {
-            iconName = *icon_names;
+            //iconName = *icon_names;
+
+            auto p = icon_names;
+            while (*p) {
+                QIcon icon = QIcon::fromTheme(*p);
+                if (!icon.isNull()) {
+                    iconName = QString (*p);
+                    break;
+                } else {
+                    p++;
+                }
+            }
 
             // fix #81852, refer to #57660, #70014, #96652, task #25343
             if (QString(iconName) == "drive-harddisk-usb") {
