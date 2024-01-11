@@ -58,6 +58,13 @@ public:
     };
     Q_ENUM(ZoomLevel)
 
+    enum Direction {
+        All,
+        Right,
+        Bottom
+    };
+    Q_ENUM(Direction)
+
     explicit DesktopIconView(QWidget *parent = nullptr);
     ~DesktopIconView();
 
@@ -125,6 +132,7 @@ public:
     void clearCache();
     void modifyGridSize();
     void initViewport();
+    bool verifyBoundaries(const QRect &rect, Direction direction);
 
 private:
     QRect getScreenArea(QScreen* screen);
