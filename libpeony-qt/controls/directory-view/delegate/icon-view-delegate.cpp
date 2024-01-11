@@ -689,6 +689,8 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }
@@ -800,6 +802,8 @@ qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }
