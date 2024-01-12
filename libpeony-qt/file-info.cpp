@@ -344,7 +344,7 @@ FileInfo &FileInfo::operator=(const FileInfo &other)
         this->m_is_loaded = other.m_is_loaded;
         this->m_display_name = other.m_display_name;
         this->m_desktop_name = other.m_desktop_name;
-        this->m_icon_name = other.m_icon_name;
+        this->m_icon_name = other.updateIconName(other.m_uri, other.m_icon_name);
         this->m_symbolic_icon_name = other.m_symbolic_icon_name;
         this->m_file_id = other.m_file_id;
         this->m_path = other.m_path;
@@ -383,6 +383,15 @@ FileInfo &FileInfo::operator=(const FileInfo &other)
         this->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, other.property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
     }
     return *this;
+}
+
+QString FileInfo::updateIconName(const QString &uri, const QString &iconName) const
+{
+    QIcon icon = QIcon::fromTheme(iconName);
+    if (icon.isNull()) {
+        return FileUtils::updateFileIconName(uri, true);
+    }
+    return iconName;
 }
 
 const QString FileInfo::unixDeviceFile()

@@ -349,6 +349,7 @@ public:
     //const QIcon thumbnail() {return m_thumbnail;}
     //void setThumbnail(const QIcon &thumbnail) {m_thumbnail = thumbnail;}
     FileInfo &operator=(const FileInfo &other);
+    QString updateIconName(const QString& uri, const QString& iconName) const;
 
 Q_SIGNALS:
     void updated();

@@ -122,6 +122,7 @@ public:
     static bool isFuseFileSystem(const QString &fileUri);
     static bool isLongNameFileOfNotDel2Trash(const QString &fileUri);/* 判断是否是无法删除到回收站的长文件名文件 */
     static QString getActualDirFromSearchUri(const QString& searchUri);
+    static QString updateFileIconName(const QString &uri, bool checkValid = false);
 
 private:
     FileUtils();
