@@ -438,7 +438,7 @@ QSize DesktopIconViewDelegate::sizeHint(const QStyleOptionViewItem &option, cons
     auto view = qobject_cast<DesktopIconView*>(this->parent());
     auto iconSize = view->iconSize();
     QFont font = view->font();
-    font.setFamily(view->font().defaultFamily());
+    //font.setFamily(view->font().defaultFamily());
     // asume max text size.
     font.setPointSize(15);
     auto fm = QFontMetrics(font);
