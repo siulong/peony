@@ -410,8 +410,16 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     auto info = Peony::FileInfo::fromUri(currentDirUri);
     if (!info->isEmptyInfo()) {
         isDirectoryCanWrite = info->canWrite();
-        if (!isDirectoryCanWrite && info.get()->fileSystemType().contains("udf")) {
-            isDirectoryCanWrite = true;
+        if (!isDirectoryCanWrite) {
+            QString fileSystem = info.get()->fileSystemType();
+            if (fileSystem.isEmpty()) {
+                fileSystem = Peony::FileUtils::getFsTypeFromFile(info.get()->uri());
+                qDebug() << "file system :" << fileSystem;
+            }
+            if (fileSystem.contains("udf")) {
+                qDebug() << "file system contains:" << fileSystem;
+                isDirectoryCanWrite = true;
+            }
         }
     }
     //comment to fix bug#191108, huawei phone can paste file success
