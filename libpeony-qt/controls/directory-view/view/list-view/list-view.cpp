@@ -152,6 +152,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
 
     m_renameTimer = new QTimer(this);
     m_renameTimer->setInterval(3000);
+    m_renameTimer->setSingleShot(true);
     m_editValid = false;
 
     //use this property to fix bug 44314 and 33558
@@ -237,9 +238,14 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
         //qDebug()<<"list view selection changed"<<m_delegate_editing;
         //continue to fix bug#89540，98951
-        if (m_delegate_editing)
-            return;
         auto currentSelections = selection.indexes();
+        if (m_delegate_editing){
+            //fix bug#194642, list view can not trigger rename issue
+            if (! currentSelections.isEmpty()) {
+               m_last_index = currentSelections.first();
+            }
+            return;
+        }
 
         for (auto index : deselection.indexes()) {
             this->setIndexWidget(index, nullptr);
@@ -421,6 +427,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
             }
         }
         //qDebug()<<m_renameTimer->remainingTime()<<m_editValid<<all_index_in_same_row<<qApp->styleHints()->mouseDoubleClickInterval();
+        //qDebug()<<"m_last_index:"<<m_last_index<<"indexAt(e->pos()):"<<indexAt(e->pos());
         //优化文件点击策略，提升用户体验，关联bug#125368
         //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
         //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
