@@ -2440,6 +2440,10 @@ void DesktopIconView::clearAllIndexWidgets(const QStringList &uris)
     auto index = model()->index(row, 0);
     while (index.isValid()) {
         if (uris.isEmpty() || uris.contains(index.data(Qt::UserRole).toString())) {
+            auto widget = indexWidget(index);
+            if (widget) {
+                widget->hide();
+            }
             setIndexWidget(index, nullptr);
             qDebug() << "clearAllIndexWidgets setIndexWidget"<<index;
         }
