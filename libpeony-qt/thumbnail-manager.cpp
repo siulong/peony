@@ -213,6 +213,16 @@ void ThumbnailManager::createImageFileThumbnail(const QString &uri, std::shared_
         if (watcher) {
             watcher->fileChanged(uri);
         }
+    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://")) {
+        //手机传输和图片传输需要重定向path后获取对应缩略图
+        auto fileInfo = FileInfo::fromUri(uri);
+        QIcon thumbnail = GenericThumbnailer::generateThumbnail(fileInfo.get()->filePath(), true);
+        if (!thumbnail.isNull()) {
+            insertOrUpdateThumbnail(uri, thumbnail);
+            if (watcher) {
+                watcher->fileChanged(uri);
+            }
+        }
     }
 
     //qApp->processEvents();
