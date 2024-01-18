@@ -446,7 +446,7 @@ void ThumbnailManager::updateDesktopFileThumbnail(const QString &uri, std::share
         //async
         //qDebug()<<"desktop file"<<uri;
         auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
-        m_thumbnail_thread_pool->start(thumbnailJob, QThread::Priority::HighestPriority);
+        QThreadPool::globalInstance()->start(thumbnailJob, QThread::Priority::HighestPriority);
     } else {
         releaseThumbnail(uri);
         if (watcher) {
