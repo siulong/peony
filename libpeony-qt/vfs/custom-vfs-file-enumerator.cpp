@@ -16,53 +16,54 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
-#include "test-vfs-file-enumerator.h"
-#include "test-vfs-file.h"
+#include "custom-vfs-file-enumerator.h"
+#include "custom-vfs-file.h"
 #include "vfs-info-plugin-iface.h"
 #include "vfs-info-plugin-manager.h"
 
 #include <QDebug>
 
-G_DEFINE_TYPE_WITH_PRIVATE(TestVFSFileEnumerator, vfs_test_file_enumerator, G_TYPE_FILE_ENUMERATOR)
+G_DEFINE_TYPE_WITH_PRIVATE(CustomVFSFileEnumerator, vfs_custom_file_enumerator, G_TYPE_FILE_ENUMERATOR)
 
 static void next_async_op_free (GList *files);
-void vfs_test_file_enumerator_dispose (GObject *object);
+void vfs_custom_file_enumerator_dispose (GObject *object);
 static gboolean enumerator_close (GFileEnumerator *enumerator, GCancellable *cancellable, GError **error);
 static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable *cancellable, GError **error);
-static GList* vfs_test_file_enumerator_next_files_finished (GFileEnumerator* enumerator, GAsyncResult* result, GError** error);
+static GList* vfs_custom_file_enumerator_next_files_finished (GFileEnumerator* enumerator, GAsyncResult* result, GError** error);
 static void next_files_thread (GTask* task, gpointer source_object, gpointer task_data, GCancellable *cancellable);
-static void vfs_test_file_enumerator_next_files_async (GFileEnumerator* enumerator, int num_files, int io_priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+static void vfs_custom_file_enumerator_next_files_async (GFileEnumerator* enumerator, int num_files, int io_priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
 
-static void vfs_test_file_enumerator_init(TestVFSFileEnumerator *self) {
-    g_return_if_fail(VFS_IS_TEST_FILE_ENUMERATOR(self));
-    TestVFSFileEnumeratorPrivate* priv = (TestVFSFileEnumeratorPrivate *)(vfs_test_file_enumerator_get_instance_private(self));
+static void vfs_custom_file_enumerator_init(CustomVFSFileEnumerator *self) {
+    g_return_if_fail(VFS_IS_CUSTOM_FILE_ENUMERATOR(self));
+    CustomVFSFileEnumeratorPrivate* priv = (CustomVFSFileEnumeratorPrivate *)(vfs_custom_file_enumerator_get_instance_private(self));
 
     self->priv = priv;
     self->priv->enumerate_queue = new QQueue<QString>;
 }
 
-static void vfs_test_file_enumerator_class_init(TestVFSFileEnumeratorClass *klass) {
+static void vfs_custom_file_enumerator_class_init(CustomVFSFileEnumeratorClass *klass) {
     GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
     GFileEnumeratorClass *enumerator_class = G_FILE_ENUMERATOR_CLASS(klass);
 
-    gobject_class->dispose = vfs_test_file_enumerator_dispose;
+    gobject_class->dispose = vfs_custom_file_enumerator_dispose;
     enumerator_class->next_file = enumerate_next_file;
     enumerator_class->close_fn = enumerator_close;
 
-    enumerator_class->next_files_async = vfs_test_file_enumerator_next_files_async;
-    enumerator_class->next_files_finish = vfs_test_file_enumerator_next_files_finished;
+    enumerator_class->next_files_async = vfs_custom_file_enumerator_next_files_async;
+    enumerator_class->next_files_finish = vfs_custom_file_enumerator_next_files_finished;
 }
 
-void vfs_test_file_enumerator_dispose (GObject *object) {
-    g_return_if_fail(VFS_IS_TEST_FILE_ENUMERATOR(object));
-    TestVFSFileEnumerator *self = VFS_TEST_FILE_ENUMERATOR(object);
+void vfs_custom_file_enumerator_dispose (GObject *object) {
+    g_return_if_fail(VFS_IS_CUSTOM_FILE_ENUMERATOR(object));
+    CustomVFSFileEnumerator *self = VFS_CUSTOM_FILE_ENUMERATOR(object);
     delete self->priv->enumerate_queue;
 }
 
 static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable *cancellable, GError **error) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE_ENUMERATOR(enumerator), nullptr);
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE_ENUMERATOR(enumerator), nullptr);
     if (cancellable && g_cancellable_is_cancelled(cancellable)) {
         *error = g_error_new_literal(G_IO_ERROR, G_IO_ERROR_CANCELLED, "cancelled");
         return nullptr;
@@ -71,7 +72,7 @@ static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable
     //...
     GFileInfo* fileInfo = nullptr;
 
-    auto ve = VFS_TEST_FILE_ENUMERATOR(enumerator);
+    auto ve = VFS_CUSTOM_FILE_ENUMERATOR(enumerator);
     auto eq = ve->priv->enumerate_queue;
 
     if (!eq->isEmpty()) {
@@ -86,13 +87,13 @@ static GFileInfo *enumerate_next_file (GFileEnumerator *enumerator, GCancellable
 }
 
 static gboolean enumerator_close (GFileEnumerator *enumerator, GCancellable *cancellable, GError **error) {
-    TestVFSFileEnumerator *self = VFS_TEST_FILE_ENUMERATOR(enumerator);
+    CustomVFSFileEnumerator *self = VFS_CUSTOM_FILE_ENUMERATOR(enumerator);
     return true;
 }
 
-static void vfs_test_file_enumerator_next_files_async (GFileEnumerator* enumerator, int num_files, int io_priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data) {
+static void vfs_custom_file_enumerator_next_files_async (GFileEnumerator* enumerator, int num_files, int io_priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data) {
     GTask* task = g_task_new (enumerator, cancellable, callback, user_data);
-    g_task_set_source_tag (task, (gpointer) vfs_test_file_enumerator_next_files_async);
+    g_task_set_source_tag (task, (gpointer) vfs_custom_file_enumerator_next_files_async);
     g_task_set_task_data (task, GINT_TO_POINTER (num_files), NULL);
     g_task_set_priority (task, io_priority);
 
@@ -103,7 +104,7 @@ static void vfs_test_file_enumerator_next_files_async (GFileEnumerator* enumerat
     }
 }
 
-static GList* vfs_test_file_enumerator_next_files_finished (GFileEnumerator* enumerator, GAsyncResult* result, GError** error) {
+static GList* vfs_custom_file_enumerator_next_files_finished (GFileEnumerator* enumerator, GAsyncResult* result, GError** error) {
     g_return_val_if_fail (g_task_is_valid (result, enumerator), NULL);
 
     return (GList*)g_task_propagate_pointer (G_TASK (result), error);

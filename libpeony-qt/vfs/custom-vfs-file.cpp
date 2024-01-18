@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
-#include "test-vfs-file.h"
+#include "custom-vfs-file.h"
 #include "file-utils.h"
-#include "test-vfs-file-enumerator.h"
-#include "test-vfs-file-monitor.h"
+#include "custom-vfs-file-enumerator.h"
+#include "custom-vfs-file-monitor.h"
 #include "vfs-info-plugin-manager.h"
 #include "vfs-info-plugin-iface.h"
 
@@ -30,117 +31,117 @@
 #include <QUrl>
 #include <QDebug>
 
-static void vfs_test_file_g_file_iface_init(GFileIface *iface);
+static void vfs_custom_file_g_file_iface_init(GFileIface *iface);
 
-GFile*              vfs_test_file_dup(GFile *file);
-char*               vfs_test_file_get_uri(GFile *file);
-char*               vfs_test_file_get_path(GFile *file);
-gboolean            vfs_test_file_is_native(GFile *file);
-GFile*              vfs_test_file_get_parent(GFile *file);
-char*               vfs_test_file_get_schema (GFile* file);
-void                vfs_test_file_dispose(GObject *object);
-char*               vfs_test_file_get_basename (GFile* file);
-GFile*              vfs_test_file_new_for_uri(const char *uri);
-gboolean            vfs_test_file_is_equal(GFile *file1, GFile *file2);
-char*               vfs_test_file_get_relative_path (GFile* parent, GFile* descendant);
-GFile*              vfs_test_file_resolve_relative_path(GFile *file, const char *relative_path);
-GFileInputStream*   vfs_test_file_read_fn(GFile* file, GCancellable* cancellable, GError** error);
-gboolean            vfs_test_file_delete (GFile* file, GCancellable* cancellable, GError** error);
-GFileIOStream *     vfs_test_file_open_readwrite(GFile* file, GCancellable* cancellable, GError** error);
-gboolean            vfs_test_file_make_directory(GFile* file, GCancellable* cancellable, GError** error);
-GMount *            vfs_test_file_find_enclosing_mount(GFile* file, GCancellable* cancellable, GError** error);
-GFileOutputStream*  vfs_test_file_create(GFile* file, GFileCreateFlags flags, GCancellable* cancellable, GError** error);
-gboolean            vfs_test_file_make_symbolic_link(GFile* file, const char* svalue, GCancellable* cancellable, GError** error);
-GFileMonitor*       vfs_test_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
-GFileMonitor*       vfs_test_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
-GFile*              vfs_test_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error);
-GFileInfo*          vfs_test_file_query_filesystem_info(GFile* file, const char* attributes, GCancellable* cancellable, GError** error);
-GFileInfo*          vfs_test_file_query_info(GFile *file, const char *attributes, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
-GFileEnumerator*    vfs_test_file_enumerate_children(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
-GFileOutputStream*  vfs_test_file_replace(GFile* file, const char* etag, gboolean make_backup, GFileCreateFlags flags, GCancellable* cancellable, GError** error);
-GFileEnumerator*    vfs_test_file_enumerate_children_internal(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
-gboolean            vfs_test_file_copy(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback pcallback, gpointer pcallbackdata, GError** error);
-gboolean            vfs_test_file_move(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback progress_callback, gpointer progress, GError** error);
+GFile*              vfs_custom_file_dup(GFile *file);
+char*               vfs_custom_file_get_uri(GFile *file);
+char*               vfs_custom_file_get_path(GFile *file);
+gboolean            vfs_custom_file_is_native(GFile *file);
+GFile*              vfs_custom_file_get_parent(GFile *file);
+char*               vfs_custom_file_get_schema (GFile* file);
+void                vfs_custom_file_dispose(GObject *object);
+char*               vfs_custom_file_get_basename (GFile* file);
+GFile*              vfs_custom_file_new_for_uri(const char *uri);
+gboolean            vfs_custom_file_is_equal(GFile *file1, GFile *file2);
+char*               vfs_custom_file_get_relative_path (GFile* parent, GFile* descendant);
+GFile*              vfs_custom_file_resolve_relative_path(GFile *file, const char *relative_path);
+GFileInputStream*   vfs_custom_file_read_fn(GFile* file, GCancellable* cancellable, GError** error);
+gboolean            vfs_custom_file_delete (GFile* file, GCancellable* cancellable, GError** error);
+GFileIOStream *     vfs_custom_file_open_readwrite(GFile* file, GCancellable* cancellable, GError** error);
+gboolean            vfs_custom_file_make_directory(GFile* file, GCancellable* cancellable, GError** error);
+GMount *            vfs_custom_file_find_enclosing_mount(GFile* file, GCancellable* cancellable, GError** error);
+GFileOutputStream*  vfs_custom_file_create(GFile* file, GFileCreateFlags flags, GCancellable* cancellable, GError** error);
+gboolean            vfs_custom_file_make_symbolic_link(GFile* file, const char* svalue, GCancellable* cancellable, GError** error);
+GFileMonitor*       vfs_custom_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
+GFileMonitor*       vfs_custom_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
+GFile*              vfs_custom_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error);
+GFileInfo*          vfs_custom_file_query_filesystem_info(GFile* file, const char* attributes, GCancellable* cancellable, GError** error);
+GFileInfo*          vfs_custom_file_query_info(GFile *file, const char *attributes, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
+GFileEnumerator*    vfs_custom_file_enumerate_children(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
+GFileOutputStream*  vfs_custom_file_replace(GFile* file, const char* etag, gboolean make_backup, GFileCreateFlags flags, GCancellable* cancellable, GError** error);
+GFileEnumerator*    vfs_custom_file_enumerate_children_internal(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
+gboolean            vfs_custom_file_copy(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback pcallback, gpointer pcallbackdata, GError** error);
+gboolean            vfs_custom_file_move(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback progress_callback, gpointer progress, GError** error);
 
-G_DEFINE_TYPE_EXTENDED(TestVFSFile,
-                       vfs_test_file,
+G_DEFINE_TYPE_EXTENDED(CustomVFSFile,
+                       vfs_custom_file,
                        G_TYPE_OBJECT,
                        0,
-                       G_ADD_PRIVATE(TestVFSFile)
-                       G_IMPLEMENT_INTERFACE(G_TYPE_FILE, vfs_test_file_g_file_iface_init));
+                       G_ADD_PRIVATE(CustomVFSFile)
+                       G_IMPLEMENT_INTERFACE(G_TYPE_FILE, vfs_custom_file_g_file_iface_init));
 
-static void vfs_test_file_init(TestVFSFile *self) {
-    TestVFSFilePrivate *priv = (TestVFSFilePrivate*)vfs_test_file_get_instance_private(self);
+static void vfs_custom_file_init(CustomVFSFile *self) {
+    CustomVFSFilePrivate *priv = (CustomVFSFilePrivate*)vfs_custom_file_get_instance_private(self);
     self->priv = priv;
     priv->uri = nullptr;
 }
 
-static void vfs_test_file_class_init(TestVFSFileClass *klass) {
+static void vfs_custom_file_class_init(CustomVFSFileClass *klass) {
     GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
-    gobject_class->dispose = vfs_test_file_dispose;
+    gobject_class->dispose = vfs_custom_file_dispose;
 }
 
-void vfs_test_file_dispose(GObject *object) {
-    g_return_if_fail(VFS_IS_TEST_VFS(object));
+void vfs_custom_file_dispose(GObject *object) {
+    g_return_if_fail(VFS_IS_CUSTOM_VFS(object));
 
-    auto vfsfile = VFS_TEST_FILE(object);
+    auto vfsfile = VFS_CUSTOM_FILE(object);
     if (vfsfile->priv->uri) {
         g_free(vfsfile->priv->uri);
         vfsfile->priv->uri = nullptr;
     }
 }
 
-static void vfs_test_file_g_file_iface_init(GFileIface *iface) {
-    iface->dup                   = vfs_test_file_dup;
-    iface->move                  = vfs_test_file_move;
-    iface->copy                  = vfs_test_file_copy;
-    iface->trash                 = vfs_test_file_delete;
-    iface->equal                 = vfs_test_file_is_equal;
-    iface->create                = vfs_test_file_create;
-    iface->get_path              = vfs_test_file_get_path;
-    iface->get_uri               = vfs_test_file_get_uri;
-    iface->is_native             = vfs_test_file_is_native;
-    iface->query_info            = vfs_test_file_query_info;
-    iface->delete_file           = vfs_test_file_delete;
-    iface->get_parent            = vfs_test_file_get_parent;
-    iface->get_basename          = vfs_test_file_get_basename;
-    iface->set_display_name      = vfs_test_file_set_display_name;
-    iface->make_directory        = vfs_test_file_make_directory;
-    iface->get_relative_path     = vfs_test_file_get_relative_path;
-    iface->get_uri_scheme        = vfs_test_file_get_schema;
-    iface->enumerate_children    = vfs_test_file_enumerate_children;
-    iface->resolve_relative_path = vfs_test_file_resolve_relative_path;
-    iface->query_filesystem_info = vfs_test_file_query_filesystem_info;
-    iface->monitor_dir           = vfs_test_file_monitor_directory;
-    iface->monitor_file          = vfs_test_file_monitor_file;
+static void vfs_custom_file_g_file_iface_init(GFileIface *iface) {
+    iface->dup                   = vfs_custom_file_dup;
+    iface->move                  = vfs_custom_file_move;
+    iface->copy                  = vfs_custom_file_copy;
+    iface->trash                 = vfs_custom_file_delete;
+    iface->equal                 = vfs_custom_file_is_equal;
+    iface->create                = vfs_custom_file_create;
+    iface->get_path              = vfs_custom_file_get_path;
+    iface->get_uri               = vfs_custom_file_get_uri;
+    iface->is_native             = vfs_custom_file_is_native;
+    iface->query_info            = vfs_custom_file_query_info;
+    iface->delete_file           = vfs_custom_file_delete;
+    iface->get_parent            = vfs_custom_file_get_parent;
+    iface->get_basename          = vfs_custom_file_get_basename;
+    iface->set_display_name      = vfs_custom_file_set_display_name;
+    iface->make_directory        = vfs_custom_file_make_directory;
+    iface->get_relative_path     = vfs_custom_file_get_relative_path;
+    iface->get_uri_scheme        = vfs_custom_file_get_schema;
+    iface->enumerate_children    = vfs_custom_file_enumerate_children;
+    iface->resolve_relative_path = vfs_custom_file_resolve_relative_path;
+    iface->query_filesystem_info = vfs_custom_file_query_filesystem_info;
+    iface->monitor_dir           = vfs_custom_file_monitor_directory;
+    iface->monitor_file          = vfs_custom_file_monitor_file;
 }
 
-char* vfs_test_file_get_uri(GFile *file) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), g_strdup("test:///"));
+char* vfs_custom_file_get_uri(GFile *file) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), g_strdup("test:///"));
 
-    auto vfsfile = VFS_TEST_FILE(file);
+    auto vfsfile = VFS_CUSTOM_FILE(file);
     return g_strdup(vfsfile->priv->uri);
 }
 
-GFile *vfs_test_file_new_for_uri(const char *uri)
+GFile *vfs_custom_file_new_for_uri(const char *uri)
 {
-    auto vfs_test_file = VFS_TEST_FILE(g_object_new(VFS_TYPE_TEST_FILE, nullptr));
-    vfs_test_file->priv->uri = g_strdup(uri);
-    return G_FILE(vfs_test_file);
+    auto vfs_custom_file = VFS_CUSTOM_FILE(g_object_new(VFS_TYPE_CUSTOM_FILE, nullptr));
+    vfs_custom_file->priv->uri = g_strdup(uri);
+    return G_FILE(vfs_custom_file);
 }
 
-GFile *vfs_test_file_dup(GFile *file) {
-    if (!VFS_IS_TEST_FILE(file)) {
+GFile *vfs_custom_file_dup(GFile *file) {
+    if (!VFS_IS_CUSTOM_FILE(file)) {
         return g_file_new_for_uri("test:///");
     }
-    auto vfs_file = VFS_TEST_FILE(file);
-    auto dup = VFS_TEST_FILE(g_object_new(VFS_TYPE_TEST_FILE, nullptr));
+    auto vfs_file = VFS_CUSTOM_FILE(file);
+    auto dup = VFS_CUSTOM_FILE(g_object_new(VFS_TYPE_CUSTOM_FILE, nullptr));
     dup->priv->uri = g_strdup(vfs_file->priv->uri);
     return G_FILE(dup);
 }
 
-gboolean vfs_test_file_is_equal(GFile *file1, GFile *file2) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file1) || VFS_IS_TEST_FILE(file2), false);
+gboolean vfs_custom_file_is_equal(GFile *file1, GFile *file2) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file1) || VFS_IS_CUSTOM_FILE(file2), false);
 
     char* f1 = g_file_get_uri(file1);
     char* f2 =  g_file_get_uri(file2);
@@ -157,7 +158,7 @@ gboolean vfs_test_file_is_equal(GFile *file1, GFile *file2) {
     return ret == 0;
 }
 
-GFileInfo* vfs_test_file_query_info(GFile *file,
+GFileInfo* vfs_custom_file_query_info(GFile *file,
         const char *attributes,
         GFileQueryInfoFlags flags,
         GCancellable *cancellable,
@@ -168,9 +169,9 @@ GFileInfo* vfs_test_file_query_info(GFile *file,
     Q_UNUSED(cancellable);
     Q_UNUSED(error);
 
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
 
-    auto vfs_file = VFS_TEST_FILE(file);
+    auto vfs_file = VFS_CUSTOM_FILE(file);
     GFileInfo *info = g_file_info_new();
     QString uri(vfs_file->priv->uri);
     QString scheme = uri.section(":", 0, -2) + "://";
@@ -260,20 +261,20 @@ GFileInfo* vfs_test_file_query_info(GFile *file,
     return info;
 }
 
-char* vfs_test_file_get_path(GFile *file) {
+char* vfs_custom_file_get_path(GFile *file) {
     Q_UNUSED(file);
     return nullptr;
 }
 
-gboolean vfs_test_file_is_native(GFile *file) {
+gboolean vfs_custom_file_is_native(GFile *file) {
     Q_UNUSED(file);
     return false;
 }
 
-GFile* vfs_test_file_get_parent(GFile *file) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
+GFile* vfs_custom_file_get_parent(GFile *file) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
 
-    auto vfs_file = VFS_TEST_FILE(file);
+    auto vfs_file = VFS_CUSTOM_FILE(file);
 
     QString uri = g_file_get_uri(file);
 
@@ -294,16 +295,16 @@ GFile* vfs_test_file_get_parent(GFile *file) {
     return g_file_new_for_uri(realPath.toUtf8().constData());
 }
 
-char* vfs_test_file_get_basename (GFile* file) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
-    auto vfs_file = VFS_TEST_VFS(file);
+char* vfs_custom_file_get_basename (GFile* file) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
+    auto vfs_file = VFS_CUSTOM_VFS(file);
     QUrl url = QString(vfs_file->priv->uri);
 
     qDebug() << __func__ << url.path() << "url.fileName:" << url.fileName();
     return g_strdup(url.fileName().toUtf8().constData());
 }
 
-GFile* vfs_test_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error) {
+GFile* vfs_custom_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error) {
     Q_UNUSED(file);
     Q_UNUSED(display_name);
     Q_UNUSED(cancellable);
@@ -336,7 +337,7 @@ GFile* vfs_test_file_set_display_name (GFile* file, const gchar* display_name, G
     return nullptr;
 }
 
-gboolean vfs_test_file_make_directory(GFile* file, GCancellable* cancellable, GError** error){
+gboolean vfs_custom_file_make_directory(GFile* file, GCancellable* cancellable, GError** error){
     Q_UNUSED(file);
     Q_UNUSED(cancellable);
     Q_UNUSED(error);
@@ -376,13 +377,13 @@ gboolean vfs_test_file_make_directory(GFile* file, GCancellable* cancellable, GE
     return ret;
 }
 
-char* vfs_test_file_get_relative_path (GFile* parent, GFile* descendant) {
+char* vfs_custom_file_get_relative_path (GFile* parent, GFile* descendant) {
     Q_UNUSED(parent);
     Q_UNUSED(descendant);
     return nullptr;
 }
 
-GFileOutputStream* vfs_test_file_create(GFile* file, GFileCreateFlags flags, GCancellable* cancellable, GError** error) {
+GFileOutputStream* vfs_custom_file_create(GFile* file, GFileCreateFlags flags, GCancellable* cancellable, GError** error) {
     Q_UNUSED(file);
     Q_UNUSED(flags);
     Q_UNUSED(cancellable);
@@ -426,8 +427,8 @@ GFileOutputStream* vfs_test_file_create(GFile* file, GFileCreateFlags flags, GCa
     return nullptr;
 }
 
-gboolean vfs_test_file_delete (GFile* file, GCancellable* cancellable, GError** error) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), FALSE);
+gboolean vfs_custom_file_delete (GFile* file, GCancellable* cancellable, GError** error) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), FALSE);
 
     char *uri = g_file_get_uri(file);
     QString strUri = uri;
@@ -461,7 +462,7 @@ gboolean vfs_test_file_delete (GFile* file, GCancellable* cancellable, GError** 
     return true;
 }
 
-GFileInputStream* vfs_test_file_read_fn(GFile* file, GCancellable* cancellable, GError** error) {
+GFileInputStream* vfs_custom_file_read_fn(GFile* file, GCancellable* cancellable, GError** error) {
     Q_UNUSED(file);
     Q_UNUSED(cancellable);
     Q_UNUSED(error);
@@ -477,7 +478,7 @@ GFileInputStream* vfs_test_file_read_fn(GFile* file, GCancellable* cancellable, 
     return fileInputStream;
 }
 
-gboolean vfs_test_file_copy(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback pcallback, gpointer pcallbackdata, GError** error) {
+gboolean vfs_custom_file_copy(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback pcallback, gpointer pcallbackdata, GError** error) {
     Q_UNUSED(source);
     Q_UNUSED(destination);
     Q_UNUSED(flags);
@@ -519,7 +520,7 @@ gboolean vfs_test_file_copy(GFile* source, GFile* destination, GFileCopyFlags fl
     return ret;
 }
 
-gboolean vfs_test_file_move(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback progress_callback, gpointer progress, GError** error) {
+gboolean vfs_custom_file_move(GFile* source, GFile* destination, GFileCopyFlags flags, GCancellable* cancellable, GFileProgressCallback progress_callback, gpointer progress, GError** error) {
     Q_UNUSED(source);
     Q_UNUSED(destination);
     Q_UNUSED(flags);
@@ -572,14 +573,14 @@ gboolean vfs_test_file_move(GFile* source, GFile* destination, GFileCopyFlags fl
     return ret;
 }
 
-char* vfs_test_file_get_schema(GFile* file) {
+char* vfs_custom_file_get_schema(GFile* file) {
     Q_UNUSED(file);
-    return g_strdup("test");
+    return g_strdup("custom");
 }
 
-GFile* vfs_test_file_resolve_relative_path(GFile *file, const char *relative_path) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
-    auto vfs_file = VFS_TEST_FILE(file);
+GFile* vfs_custom_file_resolve_relative_path(GFile *file, const char *relative_path) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
+    auto vfs_file = VFS_CUSTOM_FILE(file);
     QString path = relative_path;
     QString uri = vfs_file->priv->uri;
     QString scheme = uri.section(":", 0, -2) + ":///";
@@ -601,11 +602,11 @@ GFile* vfs_test_file_resolve_relative_path(GFile *file, const char *relative_pat
     return g_file_new_for_uri(realUri.toUtf8().constData());
 }
 
-GFileInfo* vfs_test_file_query_filesystem_info(GFile* file, const char* attributes, GCancellable* cancellable, GError** error) {
-    return vfs_test_file_query_info(file, attributes, G_FILE_QUERY_INFO_NONE, cancellable, error);
+GFileInfo* vfs_custom_file_query_filesystem_info(GFile* file, const char* attributes, GCancellable* cancellable, GError** error) {
+    return vfs_custom_file_query_info(file, attributes, G_FILE_QUERY_INFO_NONE, cancellable, error);
 }
 
-void vfs_test_file_enumerator_set_uri(TestVFSFileEnumerator *enumerator, const char *uri) {
+void vfs_custom_file_enumerator_set_uri(CustomVFSFileEnumerator *enumerator, const char *uri) {
     QString tUri(uri);
     QString scheme = tUri.section(":", 0, -2);
     QString tScheme = scheme + "://";
@@ -621,29 +622,29 @@ void vfs_test_file_enumerator_set_uri(TestVFSFileEnumerator *enumerator, const c
     }
 }
 
-GFileMonitor* vfs_test_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
+GFileMonitor* vfs_custom_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
 
     Q_UNUSED(file);
     Q_UNUSED(flags);
     Q_UNUSED(error);
     Q_UNUSED(cancellable);
 
-    TestVFSFilePrivate* priv = VFS_TEST_FILE((TestVFSFile*)file)->priv;
+    CustomVFSFilePrivate* priv = VFS_CUSTOM_FILE((CustomVFSFile*)file)->priv;
     char *uri = g_file_get_uri(file);
     QString strUri = uri;
 
-    priv->dirMonitor = (GFileMonitor*) g_object_new(VFS_TYPE_TEST_FILE_MONITOR, nullptr);
+    priv->dirMonitor = (GFileMonitor*) g_object_new(VFS_TYPE_CUSTOM_FILE_MONITOR, nullptr);
 
-    vfs_test_file_monitor_dir(VFS_TEST_FILE_MONITOR(priv->dirMonitor), strUri);
+    vfs_custom_file_monitor_dir(VFS_CUSTOM_FILE_MONITOR(priv->dirMonitor), strUri);
 
     g_free(uri);
 
     return priv->dirMonitor;
 }
 
-GFileMonitor* vfs_test_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
+GFileMonitor* vfs_custom_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error) {
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
 
     Q_UNUSED(file);
     Q_UNUSED(flags);
@@ -659,25 +660,25 @@ GFileMonitor* vfs_test_file_monitor_file (GFile* file, GFileMonitorFlags flags, 
     return nullptr;
 }
 
-GFileEnumerator* vfs_test_file_enumerate_children(GFile *file,
+GFileEnumerator* vfs_custom_file_enumerate_children(GFile *file,
               const char *attribute,
               GFileQueryInfoFlags flags,
               GCancellable *cancellable,
               GError **error) {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
-    return vfs_test_file_enumerate_children_internal(file, attribute, flags, cancellable, error);
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
+    return vfs_custom_file_enumerate_children_internal(file, attribute, flags, cancellable, error);
 }
 
-GFileEnumerator *vfs_test_file_enumerate_children_internal(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error)
+GFileEnumerator *vfs_custom_file_enumerate_children_internal(GFile *file, const char *attribute, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error)
 {
-    g_return_val_if_fail(VFS_IS_TEST_FILE(file), nullptr);
+    g_return_val_if_fail(VFS_IS_CUSTOM_FILE(file), nullptr);
     Q_UNUSED(flags)
     Q_UNUSED(error)
     Q_UNUSED(attribute)
     Q_UNUSED(cancellable)
 
-    auto vfsfile = VFS_TEST_FILE(file);
-    auto enumerator = VFS_TEST_FILE_ENUMERATOR(g_object_new(VFS_TYPE_TEST_FILE_ENUMERATOR, "container", file, nullptr));
-    vfs_test_file_enumerator_set_uri(enumerator, vfsfile->priv->uri);
+    auto vfsfile = VFS_CUSTOM_FILE(file);
+    auto enumerator = VFS_CUSTOM_FILE_ENUMERATOR(g_object_new(VFS_TYPE_CUSTOM_FILE_ENUMERATOR, "container", file, nullptr));
+    vfs_custom_file_enumerator_set_uri(enumerator, vfsfile->priv->uri);
     return G_FILE_ENUMERATOR(enumerator);
 }

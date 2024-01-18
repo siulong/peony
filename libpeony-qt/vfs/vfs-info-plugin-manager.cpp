@@ -20,7 +20,7 @@
 
 #include "vfs-info-plugin-iface.h"
 #include "vfs-info-plugin-manager.h"
-#include "test-vfs-register.h"
+#include "custom-vfs-register.h"
 #include <QDebug>
 
 using namespace Peony;

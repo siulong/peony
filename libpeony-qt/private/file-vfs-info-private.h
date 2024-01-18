@@ -16,32 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
-#ifndef FILETMPINFO_H
-#define FILETMPINFO_H
+#ifndef FILEVFSINFOPRIVATE_H
+#define FILEVFSINFOPRIVATE_H
 
 #include "peony-core_global.h"
-
 #include <gio/gio.h>
-#include <QObject>
 #include <QMap>
 #include <QVariant>
+#include <QObject>
 
 namespace Peony {
-
-// 是否需要更改更合适的名称
-class  PEONYCORESHARED_EXPORT FileTmpInfo : public QObject
+class FileVFSInfo;
+class PEONYCORESHARED_EXPORT FileVFSInfoPrivate : QObject
 {
     Q_OBJECT
 public:
-    explicit FileTmpInfo(QObject *parent = nullptr);
-    FileTmpInfo(const FileTmpInfo &fileInfo);
+    explicit FileVFSInfoPrivate(FileVFSInfo* parent);
+    ~FileVFSInfoPrivate();
 
-    FileTmpInfo &operator =(const FileTmpInfo &fileInfo);
+    FileVFSInfo *const qptr;
 
-    ~FileTmpInfo();
-
+public:
     QString targetUri() const;
     void setTargetUri(const QString &targetUri);
 
@@ -95,8 +93,7 @@ public:
     QVariant getExtendInfo(const QString &key) const;
     QMap<QString, QVariant> getAllExtendInfo() const;
 
-private:
-    // todo: d-ptr
+
     QString m_uri = nullptr;
     QString m_target_uri = nullptr;
     bool m_is_dir = false;
@@ -119,9 +116,8 @@ private:
     bool m_can_rename = false;
 
     QMap<QString, QVariant> m_extend_info;
-};
 
+};
 }
 
-
-#endif // FILETMPINFO_H
+#endif // FILEVFSINFOPRIVATE_H
