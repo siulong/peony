@@ -53,6 +53,8 @@ using namespace Peony;
 static ThumbnailManager *global_instance = nullptr;
 static bool m_tril_exist = false;
 
+static QThreadPool *desktop_thumbnail_thread_pool = nullptr;
+
 /*!
  * \brief ThumbnailManager::ThumbnailManager
  * \param parent
@@ -66,6 +68,8 @@ static bool m_tril_exist = false;
  */
 ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
 {
+    desktop_thumbnail_thread_pool = new QThreadPool();
+
     GlobalSettings::getInstance();
 
     m_thumbnail_thread_pool = new QThreadPool(this);
@@ -456,7 +460,7 @@ void ThumbnailManager::updateDesktopFileThumbnail(const QString &uri, std::share
         //async
         //qDebug()<<"desktop file"<<uri;
         auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
-        QThreadPool::globalInstance()->start(thumbnailJob, QThread::Priority::HighestPriority);
+        desktop_thumbnail_thread_pool->start(thumbnailJob, QThread::Priority::HighestPriority);
     } else {
         releaseThumbnail(uri);
         if (watcher) {
