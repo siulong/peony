@@ -575,6 +575,8 @@ int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
                 }
                 mStatus = RUNNING;
             }
+        } else {
+            mStatus = RUNNING;
         }
     }
     close(in_fd);
