@@ -235,6 +235,15 @@ GFileInfo* vfs_custom_file_query_info(GFile *file,
             if (iter.key() == G_FILE_ATTRIBUTE_UNIX_MODE) {
                 guint32 mode = iter.value().toUInt();
                 g_file_info_set_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE, mode);
+            } else if (iter.key() == G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE
+                       || iter.key() == G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME
+                       || iter.key() == G_FILE_ATTRIBUTE_STANDARD_IS_VIRTUAL) {
+                gboolean value = iter.value().toBool();
+                g_file_info_set_attribute_boolean(info, iter.key().toUtf8().constData(), value);
+            } else if (iter.key() == G_FILE_ATTRIBUTE_OWNER_USER
+                       || iter.key() == G_FILE_ATTRIBUTE_OWNER_GROUP) {
+                QString str = iter.value().toString();
+                g_file_info_set_attribute_string(info, iter.key().toUtf8().constData(), str.toUtf8().constData());
             }
         }
 

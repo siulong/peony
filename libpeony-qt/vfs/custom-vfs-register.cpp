@@ -322,10 +322,15 @@ std::shared_ptr<FileVFSInfo> LocalVFSInfoInternalPlugin2::queryFile(const QStrin
                 }
             }
 
-           bool has_unix_mode = g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
+            bool has_unix_mode = g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
             guint32 mode = 0;
             if (has_unix_mode)
                 mode = g_file_info_get_attribute_uint32(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+            bool isWrite = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+            bool isRename = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME);
+            QString user = g_file_info_get_attribute_string(fileInfo, G_FILE_ATTRIBUTE_OWNER_USER);
+            QString groupName = g_file_info_get_attribute_string(fileInfo, G_FILE_ATTRIBUTE_OWNER_GROUP);
 
             qDebug() << __func__ << mode;
             file->setTargetUri(uri);
@@ -333,6 +338,10 @@ std::shared_ptr<FileVFSInfo> LocalVFSInfoInternalPlugin2::queryFile(const QStrin
             file->setModifiedTime(mtime);
             file->setAccessTime(atime);
             file->addExtendInfo(G_FILE_ATTRIBUTE_UNIX_MODE, QVariant(mode));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, QVariant(isWrite));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME, QVariant(isRename));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_OWNER_USER, QVariant(user));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_OWNER_GROUP, QVariant(groupName));
             file->setSize(g_file_info_get_attribute_uint64(fileInfo, G_FILE_ATTRIBUTE_STANDARD_SIZE));
             file->setContentType(contentType);
         } else {
