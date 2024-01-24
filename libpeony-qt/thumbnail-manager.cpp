@@ -269,7 +269,7 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
     if (desktop_app_info) {
         auto app_info = G_APP_INFO(desktop_app_info);
         GIcon *icon = g_app_info_get_icon(app_info);
-        string = FileUtils::getIconStringFromGIcon(icon);
+        string = FileUtils::getIconStringFromGIconThreadSafety(icon);
     }
 
     if (string.isEmpty()) {

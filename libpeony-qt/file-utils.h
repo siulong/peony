@@ -115,6 +115,7 @@ public:
     static quint64 getDiskFreeSpace(const gchar *path, bool &isState); /* 获取磁盘剩余空间*/
 
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
+    static QString getIconStringFromGIconThreadSafety(GIcon *gicon, QString deviceFile = nullptr);
     static void   saveCreateTime (const QString& url);
     static gint64 getCreateTimeOfMicro (const QString& url);
     static QString handleSpecialSymbols(const QString &displayName);
