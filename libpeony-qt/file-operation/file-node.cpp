@@ -106,6 +106,7 @@ void FileNode::findChildrenRecursively()
         for (auto uri: uris) {
             FileNode *node = new FileNode(uri, this, m_reporter);
             m_children->append(node);
+            m_reporter->setTotalCount(m_reporter->getTotalCount() + 1);
             node->findChildrenRecursively();
         }
     }

@@ -64,7 +64,14 @@ public:
             m_isUsedInCount = InCount;
         }
     }
-
+    qint64 getTotalCount() {
+        return m_totalCount;
+    }
+    void setTotalCount(const qint64 &totalCount) {
+        if (totalCount != m_totalCount) {
+            m_totalCount = totalCount;
+        }
+    }
 Q_SIGNALS:
     void nodeFound(const QString &uri, const qint64 &offset);
     /*!
@@ -84,6 +91,7 @@ Q_SIGNALS:
 private:
     bool m_cancelled = false;
     bool m_isUsedInCount = false;
+    qint64 m_totalCount = 0;
 };
 
 }

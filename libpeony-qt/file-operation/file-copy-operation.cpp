@@ -1099,6 +1099,7 @@ void FileCopyOperation::run()
         }
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
+        m_total_count += m_reporter->getTotalCount();
         nodes << node;
     }
 
@@ -1163,6 +1164,7 @@ void FileCopyOperation::run()
             }
         }
     }
+
 
     //comment to fix bug#177163, copy and paste file has error and play success sound issue
     //copy operation has finished, no need reset flag, keep the same with move-operation

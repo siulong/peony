@@ -29,6 +29,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QToolTip>
+#include <QTime>
 #include <QTimer>
 #include "file-utils.h"
 #include "xatom-helper.h"
@@ -41,6 +42,7 @@
 #include <QX11Info>
 #include "xatom-helper.h"
 #endif
+#define MEGABYTE 1048576.0
 
 QPushButton* btn;
 
@@ -747,6 +749,9 @@ void MainProgressBar::paintContent(QPainter &painter)
     painter.drawText(m_percent_x, m_percent_y, m_fix_width - m_percent_margin, m_percent_height, Qt::AlignRight | Qt::AlignBottom,
                      QString(" %1 %").arg(QString::number(m_current_value * 100, 'f', 1)));
 
+    painter.drawText(m_percent_x, m_percent_y, m_fix_width - m_percent_margin, m_percent_height, Qt::AlignLeft | Qt::AlignBottom,
+                     QString(tr(" %1Mb/s Est. time left: %2")).arg(QString::number(m_current_speed, 'f', 1)).arg(m_current_estimated_time));
+
     painter.restore();
 }
 
@@ -772,10 +777,14 @@ void MainProgressBar::cancelld()
     update();
 }
 
-void MainProgressBar::updateValue(QString& name, QIcon& icon, double value)
+void MainProgressBar::updateValue(QString& name, QIcon& icon, double value, double speed, int time)
 {
     if (value >= 0 && value < 1) {
         m_current_value = value;
+        m_current_speed = speed;
+        if (speed > 0.0 && time > 0) {
+            m_current_estimated_time = progressBarHelper::timeToString(time);
+        }
     }
 
     m_file_name = Peony::FileUtils::urlDecode(name);
@@ -859,6 +868,9 @@ ProgressBar::ProgressBar(QWidget *parent) : QWidget(parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_update_count = 0;
     m_dest_uri = tr("starting ...");
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, this, &ProgressBar::calculateSpeed);
+//    timer->start(1000);
     connect(this, &ProgressBar::cancelled, this, &ProgressBar::onCancelled);
     connect(this, &ProgressBar::destroyed, this, [=] () {m_has_finished = true;});
 }
@@ -1090,7 +1102,7 @@ void ProgressBar::updateValue(double value)
         m_current_value = value;
     }
 
-    Q_EMIT sendValue(m_dest_uri, getIcon(), m_current_value);
+    Q_EMIT sendValue(m_dest_uri, getIcon(), m_current_value, m_current_speed, m_estimated_time);
     update();
 }
 
@@ -1140,14 +1152,25 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     }
 
     double currentPercent = current * 1.0 / total;
+    m_current_size = current;
     //fix bug#133624,133380, delete all empty files, not update progress bar
 //    if (m_total_size <= 0 || 16 * m_total_count <= m_total_size){
 //        m_update_count++;
 //        currentPercent = m_update_count * 1.0 /m_total_count;
 //    }
-
+    if (m_last_size != m_current_size) {
+        qint64 elapsedMilliseconds = QDateTime::currentMSecsSinceEpoch() - m_start_time;
+        double elapsedSeconds = elapsedMilliseconds / 1000.0;
+        if (elapsedSeconds >= 1.0) {
+            auto size = m_current_size - m_last_size;
+            m_current_speed = progressBarHelper::calculateSpeed(size, elapsedSeconds);
+            auto residualSize = m_total_size - m_current_size;
+            m_estimated_time = progressBarHelper::calculateEstimatedTime(residualSize,m_current_speed);
+            m_last_size = m_current_size;
+            m_start_time = QDateTime::currentMSecsSinceEpoch();
+        }
+    }
     qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
-
     updateValue(currentPercent);
 
     Q_UNUSED(srcUri);

@@ -78,6 +78,8 @@ FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri,
         m_is_same_fs = true;
     else
         m_is_same_fs = false;
+
+    m_reporter = new FileNodeReporter;
 }
 
 FileMoveOperation::~FileMoveOperation()
@@ -218,7 +220,6 @@ void FileMoveOperation::move()
     QList<FileNode*> errNode;
 
     GError *err = nullptr;
-    m_total_count = m_src_uris.count();
     auto destDir = wrapGFile(g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData()));
 
     // file move
@@ -226,7 +227,7 @@ void FileMoveOperation::move()
         if (isCancelled())
             return;
 
-        auto node = new FileNode(srcUri, nullptr, nullptr);
+        auto node = new FileNode(srcUri, nullptr, m_reporter);
         node->setState(FileNode::Handling);
 
         auto srcFile = wrapGFile(g_file_new_for_uri(srcUri.toUtf8().constData()));
@@ -282,9 +283,9 @@ void FileMoveOperation::move()
     for (auto eNode : errNode) {
         if (isCancelled())
             return;
-
         eNode->findChildrenRecursively();
         eNode->computeTotalSize(total_size);
+        m_total_count += m_reporter->getTotalCount();
         if(eNode->isFolder())
             hasFolder = true;
     }
@@ -355,6 +356,7 @@ void FileMoveOperation::move()
     }
 
     operationStartSnyc();
+
 
 #if 0
     for (auto file : nodes) {
