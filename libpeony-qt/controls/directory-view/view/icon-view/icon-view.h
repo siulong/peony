@@ -138,6 +138,7 @@ public Q_SLOTS:
     void multiSelect();
     void disableMultiSelect();
     void setSearchKey(const QString &key);
+    void edit(const QModelIndex &index);
     void doMultiSelect(bool isMultiSlelect);
 
     void setItemsVisible(bool visible) override;
@@ -179,6 +180,11 @@ protected:
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
     void releaseUnselect(bool select);
 
+    bool edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event) override;
+
+protected Q_SLOTS:
+    void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) override;
+
 private Q_SLOTS:
     void slotRename();
 
@@ -189,6 +195,11 @@ private:
 
     bool  m_editValid;
     bool  m_ctrl_key_pressed = false;
+
+    bool  m_increase = false;
+
+    int m_scrollMax = 0;
+
     QTimer* m_renameTimer;
 
     QTimer *m_touch_active_timer = nullptr;

@@ -1084,6 +1084,9 @@ bool MainWindow::currentViewSupportZoom()
 
 void MainWindow::maximizeOrRestore()
 {
+    if (m_tab->currentPage()) {
+        m_tab->currentPage()->getView()->clearIndexWidget();
+    }
     if (!this->isMaximized()) {
         this->showMaximized();
     } else {

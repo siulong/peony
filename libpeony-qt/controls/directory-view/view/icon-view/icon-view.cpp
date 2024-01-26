@@ -68,6 +68,7 @@
 #include <QDrag>
 #include <QWindow>
 #include <QMessageBox>
+#include <QFontMetrics>
 
 using namespace Peony;
 using namespace Peony::DirectoryView;
@@ -524,9 +525,14 @@ void IconView::paintEvent(QPaintEvent *e)
 
 void IconView::resizeEvent(QResizeEvent *e)
 {
+    //FIXME: first resize is disfluency.
+    //but I have to reset the index widget in view's resize.
     QListView::resizeEvent(e);
-    // fix 85058
-    updateEditorGeometries();
+    if (m_delegate_editing && m_increase) {
+        m_increase = false;
+        return;
+    }
+    setIndexWidget(m_last_index, nullptr);
 }
 
 void IconView::wheelEvent(QWheelEvent *e)
@@ -555,6 +561,18 @@ void IconView::updateGeometries()
     QListView::updateGeometries();
 
     if (!model() || model()->columnCount() == 0 || model()->rowCount() == 0) {
+        return;
+    }
+
+    if (m_delegate_editing) {
+        int characterHeight = qApp->fontMetrics().height();
+        int totalHeight = characterHeight * 255/4;
+
+        m_scrollMax = verticalScrollBar()->maximum();
+        int maxHeight = viewport()->height() - visualRect(m_last_index).y() - characterHeight - 15 - totalHeight;
+        if (maxHeight + m_scrollMax < 0 && m_scrollMax >= 0) {
+            verticalScrollBar()->setRange(0, -maxHeight);
+        }
         return;
     }
 
@@ -958,6 +976,34 @@ void IconView::setSearchKey(const QString &key)
 {
     auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
     viewItemDelegate->setSearchKeyword(key);
+}
+
+void IconView::edit(const QModelIndex &index)
+{
+    QListView::edit(index);
+}
+
+bool IconView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    if (trigger == QAbstractItemView::AllEditTriggers) {
+        //按照255个字节的高度设置
+        int characterHeight = qApp->fontMetrics().height();
+        int totalHeight = characterHeight * 255/4;
+
+        m_scrollMax = verticalScrollBar()->maximum();
+        int maxHeight = viewport()->height() - visualRect(index).y() - characterHeight - 15 - totalHeight;
+        if (maxHeight + m_scrollMax < 0 && m_scrollMax >= 0) {
+            m_increase = true;
+            verticalScrollBar()->setRange(0, -maxHeight);
+        }
+    }
+    return  QListView::edit(index, trigger, event);
+}
+
+void IconView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    QListView::closeEditor(editor,hint);
+    verticalScrollBar()->setRange(0, m_scrollMax);
 }
 
 void IconView::doMultiSelect(bool isMultiSlelect)
