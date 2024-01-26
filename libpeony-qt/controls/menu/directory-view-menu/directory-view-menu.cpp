@@ -78,7 +78,6 @@
 #include <recent-vfs-manager.h>
 
 #include <QDebug>
-#include <QMessageBox>
 
 #include <QApplication>
 
@@ -600,35 +599,53 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
                     GFile *gtk_file = g_file_new_for_path(qinfo.filePath().toUtf8().constData());
                     char *uri_str = g_file_get_uri(gtk_file);
                     std::shared_ptr<FileInfo> info = FileInfo::fromUri(uri_str);
-
-                    QString mimeType = info->mimeType();
-                    if (mimeType.isEmpty()) {
-                        FileInfoJob job(info);
-                        job.querySync();
-                        mimeType = info->mimeType();
-                    }
-
                     QIcon tmpIcon;
-                    GList *app_infos = g_app_info_get_recommended_for_type(mimeType.toUtf8().constData());
-                    GList *l = app_infos;
-                    QList<FileLaunchAction *> actions;
-                    bool isOnlyUnref = false;
-                    while (l) {
-                        auto app_info = static_cast<GAppInfo*>(l->data);
-                        if (!isOnlyUnref) {
-                            GIcon *icon = g_app_info_get_icon(app_info);
-                            QString iconName = FileUtils::getIconStringFromGIcon(icon);
-                            if (iconName.startsWith("/")) {
-                                tmpIcon.addFile(iconName);
-                            } else {
+                    if (info->uri().endsWith(".desktop")) {
+                        QUrl url = info->uri();
+                        auto path = url.path();
+                        auto key_file = g_key_file_new();
+                        if (g_key_file_load_from_file(key_file, path.toUtf8().constData(), G_KEY_FILE_NONE, 0)) {
+                            g_autofree gchar* icon_name = g_key_file_get_value(key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, 0);
+                            if (icon_name) {
+                                QString iconName = icon_name;
                                 tmpIcon = QIcon::fromTheme(iconName);
                             }
-                            if(!tmpIcon.isNull())
-                                isOnlyUnref = true;
+                            g_key_file_free(key_file);
                         }
-                        l = l->next;
+                    } else {
+                        QString iconName = FileUtils::updateFileIconName(info->uri(), true);
+                        tmpIcon = QIcon::fromTheme(iconName);
                     }
-                    g_list_free_full(app_infos, g_object_unref);
+
+
+//                    QString mimeType = info->mimeType();
+//                    if (mimeType.isEmpty()) {
+//                        FileInfoJob job(info);
+//                        job.querySync();
+//                        mimeType = info->mimeType();
+//                    }
+
+//                    QIcon tmpIcon;
+//                    GList *app_infos = g_app_info_get_recommended_for_type(mimeType.toUtf8().constData());
+//                    GList *l = app_infos;
+//                    QList<FileLaunchAction *> actions;
+//                    bool isOnlyUnref = false;
+//                    while (l) {
+//                        auto app_info = static_cast<GAppInfo*>(l->data);
+//                        if (!isOnlyUnref) {
+//                            GIcon *icon = g_app_info_get_icon(app_info);
+//                            QString iconName = FileUtils::getIconStringFromGIcon(icon);
+//                            if (iconName.startsWith("/")) {
+//                                tmpIcon.addFile(iconName);
+//                            } else {
+//                                tmpIcon = QIcon::fromTheme(iconName);
+//                            }
+//                            if(!tmpIcon.isNull())
+//                                isOnlyUnref = true;
+//                        }
+//                        l = l->next;
+//                    }
+//                    g_list_free_full(app_infos, g_object_unref);
 
                     QAction *action = new QAction(tmpIcon, qinfo.baseName(), this);
                     connect(action, &QAction::triggered, this, [=]() {
