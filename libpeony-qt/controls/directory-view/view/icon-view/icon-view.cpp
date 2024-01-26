@@ -1082,6 +1082,8 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             return;
         }
 
+        m_menuRequesting = true;
+
         // we should clear the dirty rubber band due to call context menu.
         bool isDragSelecting = m_view->isDraggingState();
         if (isDragSelecting) {
@@ -1108,6 +1110,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             m_view->setIgnore_mouse_move_event(false);
             m_view->m_touch_active_timer->stop();
             Q_EMIT this->menuRequest(mapToGlobal(pos));
+            m_menuRequesting = false;
         });
     });
 
@@ -1121,6 +1124,8 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
 
 void IconView2::repaintView()
 {
+    if (m_menuRequesting)
+        return;
     m_view->update();
     m_view->viewport()->update();
 }

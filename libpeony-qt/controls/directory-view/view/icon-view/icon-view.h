@@ -340,6 +340,7 @@ private:
     FileItemProxyFilterSortModel *m_proxy_model = nullptr;
 
     int m_zoom_level = 70;
+    bool m_menuRequesting = false;
 };
 
 }
