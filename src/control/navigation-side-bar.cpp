@@ -171,26 +171,6 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             return;
         }
 
-        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
-        for (auto extensions : disExtensions) {
-            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
-            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
-                    && item->type() == SideBarAbstractItem::FileSystemItem
-                    && !item->uri().contains("computer:///")
-                    && item->uri().contains(pIface->uriScheme())) {
-                this->setRowHidden(index.row(), index.parent(), true);
-                return;
-            }
-
-            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
-                    && item->type() == SideBarAbstractItem::FavoriteItem
-                    && pIface->uriScheme() == "kmre://"
-                    && item->uri().contains(pIface->uriScheme())) {
-                this->setRowHidden(index.row(), index.parent(), true);
-                return;
-            }
-        }
-
         item->findChildrenAsync();
     });
 
@@ -384,7 +364,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
             auto index = m_proxy_model->index(i, 0);
             auto item = m_proxy_model->itemFromIndex(index);
-            if (item->type() == SideBarAbstractItem::FileSystemItem
+            if (item->type() == SideBarAbstractItem::VFSItem
                     && item->uri().contains(vfsPIface->uriScheme())
                     && !item->uri().contains("computer:///")
                     && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
@@ -433,6 +413,25 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         if (item->type() != SideBarAbstractItem::VFSItem && item->type() != SideBarAbstractItem::SeparatorItem) {
             expand(index);
         }
+
+        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
+        for (auto extensions : disExtensions) {
+            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::VFSItem
+                    && !item->uri().contains("computer:///")
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+            }
+
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FavoriteItem
+                    && pIface->uriScheme() == "kmre://"
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+            }
+        }
+
 //        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
 //            continue;
 //        expand(index);
