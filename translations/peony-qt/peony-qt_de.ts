@@ -328,7 +328,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="878"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>File Manager</source>
         <translation>Dateimanager</translation>
     </message>
@@ -353,7 +353,7 @@ p, li { white-space: pre-wrap; }
         <translation>Dieser Vorgang wird nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="876"/>
+        <location filename="../../src/windows/main-window.cpp" line="885"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -382,7 +382,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="891"/>
+        <location filename="../../src/windows/main-window.cpp" line="900"/>
         <source>New Folder</source>
         <translation>Neuer Ordner</translation>
     </message>
@@ -408,14 +408,14 @@ p, li { white-space: pre-wrap; }
         <translation>Dieser Vorgang wird nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
         <source>Tips</source>
         <translation>Tipps</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>Das Gerät ist ausgelastet, bitte führen Sie diesen Vorgang später durch.</translation>
     </message>
@@ -430,18 +430,18 @@ p, li { white-space: pre-wrap; }
         <translation>Dies ist ein leeres Laufwerk, bitte legen Sie eine Disc ein.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="250"/>
         <source>Open In New Window</source>
         <translation>In neuem Fenster öffnen</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="285"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="319"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="300"/>
         <source>Can not open %1, %2</source>
         <translation>%1, %2 kann nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="284"/>
         <source>Open In New Tab</source>
         <translation>In neuem Tab öffnen</translation>
     </message>
@@ -1125,7 +1125,7 @@ Willst du gewaltsam absteigen?</translation>
         <translation>Genesen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="447"/>
+        <location filename="../../src/control/tab-widget.cpp" line="448"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
@@ -1138,32 +1138,32 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="522"/>
+        <location filename="../../src/control/tab-widget.cpp" line="523"/>
         <source>Select Path</source>
         <translation>Pfad auswählen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1343"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1344"/>
         <source>Warning</source>
         <translation type="unfinished">Warnung</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1345"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1346"/>
         <source>Error</source>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1704"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
         <source>Opening such files is not currently supported</source>
         <translation>Das Öffnen solcher Dateien wird derzeit nicht unterstützt</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1718"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
         <source>Open failed</source>
         <translation>Öffnen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1720"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>Open Directory fehlgeschlagen, Sie haben keine Berechtigung!</translation>
     </message>
@@ -1172,7 +1172,7 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="437"/>
+        <location filename="../../src/control/tab-widget.cpp" line="438"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -1197,13 +1197,13 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="582"/>
-        <location filename="../../src/control/tab-widget.cpp" line="742"/>
+        <location filename="../../src/control/tab-widget.cpp" line="583"/>
+        <location filename="../../src/control/tab-widget.cpp" line="743"/>
         <source>is</source>
         <translation>ist</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="617"/>
+        <location filename="../../src/control/tab-widget.cpp" line="618"/>
         <source>Please input key words...</source>
         <translation>Bitte geben Sie Stichworte ein...</translation>
     </message>
@@ -1212,8 +1212,8 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="703"/>
-        <location filename="../../src/control/tab-widget.cpp" line="726"/>
+        <location filename="../../src/control/tab-widget.cpp" line="704"/>
+        <location filename="../../src/control/tab-widget.cpp" line="727"/>
         <source>contains</source>
         <translation>enthält</translation>
     </message>

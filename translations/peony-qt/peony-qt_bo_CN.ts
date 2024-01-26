@@ -328,7 +328,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="878"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་ཡོ་བྱད།</translation>
     </message>
@@ -353,7 +353,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="876"/>
+        <location filename="../../src/windows/main-window.cpp" line="885"/>
         <source>Search</source>
         <translation>འཚོལ་ཞིབ་བྱེད་པ།</translation>
     </message>
@@ -382,7 +382,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="891"/>
+        <location filename="../../src/windows/main-window.cpp" line="900"/>
         <source>New Folder</source>
         <translation>ཡིག་ཆ་བཙིར་མ་གསར་སྐྲུན་བྱེད་</translation>
     </message>
@@ -408,14 +408,14 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
         <source>Tips</source>
         <translation>ཐབས་རྩལ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="240"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>སྒྲིག་ཆས་བྲེལ་འཚུབ་ཆེ་བའི་གནས་སུ་གྱར་ཡོད་པས་རྗེས་སུ་བཀོལ་སྤྱོད་འདི་ལག་བསྟར་བྱེད་རོགས།</translation>
     </message>
@@ -430,18 +430,18 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>འདི་ནི་སྒུལ་བྱེད་འཕྲུལ་ཆས་སྟོང་བ་ཞིག་རེད། འོད་སྡེར་ནང་དུ་འཇུག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="250"/>
         <source>Open In New Window</source>
         <translation>སྒེའུ་ཁུང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="285"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="319"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="300"/>
         <source>Can not open %1, %2</source>
         <translation>བརྒྱ་ཆ་1.2འཕར་ཐབས་མེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="284"/>
         <source>Open In New Tab</source>
         <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
@@ -1125,7 +1125,7 @@ Do you want to unmount forcely?</source>
         <translation>སླར་གསོ་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="447"/>
+        <location filename="../../src/control/tab-widget.cpp" line="448"/>
         <source>Computer</source>
         <translation>རྩིས་འཁོར།</translation>
     </message>
@@ -1138,32 +1138,32 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="522"/>
+        <location filename="../../src/control/tab-widget.cpp" line="523"/>
         <source>Select Path</source>
         <translation>ཐབས་ལམ་གདམ་གསེས་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1343"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1344"/>
         <source>Warning</source>
         <translation type="unfinished">ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1345"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1346"/>
         <source>Error</source>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1704"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
         <source>Opening such files is not currently supported</source>
         <translation>མིག་སྔར་ཡིག་ཆ་དེ་རིགས་འབྱེད་རྒྱུར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1718"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
         <source>Open failed</source>
         <translation>ཕམ་ཉེས་བྱུང་བ་རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1720"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>དཀར་ཆག་གི་ཁ་ཕྱེ་ནས་ཕམ་སོང་། ཁྱེད་རང་ལ་དབང་ཚད་མེད།</translation>
     </message>
@@ -1172,7 +1172,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="437"/>
+        <location filename="../../src/control/tab-widget.cpp" line="438"/>
         <source>Search</source>
         <translation>འཚོལ་ཞིབ་བྱེད་པ།</translation>
     </message>
@@ -1197,13 +1197,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="582"/>
-        <location filename="../../src/control/tab-widget.cpp" line="742"/>
+        <location filename="../../src/control/tab-widget.cpp" line="583"/>
+        <location filename="../../src/control/tab-widget.cpp" line="743"/>
         <source>is</source>
         <translation>དེ་ནི་རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="617"/>
+        <location filename="../../src/control/tab-widget.cpp" line="618"/>
         <source>Please input key words...</source>
         <translation>འགག་རྩའི་ཡི་གེ་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
@@ -1212,8 +1212,8 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="703"/>
-        <location filename="../../src/control/tab-widget.cpp" line="726"/>
+        <location filename="../../src/control/tab-widget.cpp" line="704"/>
+        <location filename="../../src/control/tab-widget.cpp" line="727"/>
         <source>contains</source>
         <translation>དེའི་ནང་ཚུད་ཡོད།</translation>
     </message>
