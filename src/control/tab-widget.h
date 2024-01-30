@@ -101,6 +101,10 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *e);
 
+    void setWindow(QWidget *parent) {
+        m_parent = parent;
+    }
+
 Q_SIGNALS:
     void currentIndexChanged(int index);
     void tabMoved(int from, int to);
@@ -313,6 +317,8 @@ private:
     bool m_first_add_page = true;
 
     std::shared_ptr<Peony::FileInfo> m_search_button_info;
+
+    QWidget* m_parent = nullptr;
 };
 
 class PreviewPageContainer : public QStackedWidget

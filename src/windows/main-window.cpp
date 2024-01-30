@@ -1860,7 +1860,7 @@ void MainWindow::initUI(const QString &uri)
     });
 
     setTabOrder(m_side_bar, m_tab);
-
+    m_tab->setWindow(this);
 //    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
 //        m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 //        connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {

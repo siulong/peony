@@ -165,6 +165,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 
     setAttribute(Qt::WA_TranslucentBackground);
 
+    m_parent = parent;
     m_tab_bar = new NavigationTabBar(this);
     m_tab_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_stack = new QStackedWidget(this);
@@ -1716,7 +1717,7 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
     if (info->isDir() || info->isVolume() || info->isVirtual()) {
         if(info->uri().startsWith("file://")
                 && !info->canExecute()){
-            QMessageBox::critical(nullptr, tr("Open failed"),
+            QMessageBox::critical(m_parent, tr("Open failed"),
                                   tr("Open directory failed, you have no permission!"));
             return;
         }
