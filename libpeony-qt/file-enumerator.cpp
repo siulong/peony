@@ -320,12 +320,22 @@ void FileEnumerator::handleError(GError *err)
                     this->prepared(nullptr, this->getEnumerateUri());
                 });
                 connect(customErrorHandler, &CustomErrorHandler::cancelled, this, [=]{
-                    cancel();
-                    deleteLater();
+                    auto parentUri = FileUtils::getParentUri(this->getEnumerateUri());
+                    if (!parentUri.isEmpty()) {
+                        this->prepared(nullptr, parentUri);
+                    } else {
+                        cancel();
+                        deleteLater();
+                    }
                 });
                 connect(customErrorHandler, &CustomErrorHandler::failed, this, [=](const QString &message){
-                    cancel();
-                    deleteLater();
+                    auto parentUri = FileUtils::getParentUri(this->getEnumerateUri());
+                    if (!parentUri.isEmpty()) {
+                        this->prepared(nullptr, parentUri);
+                    } else {
+                        cancel();
+                        deleteLater();
+                    }
                     QMessageBox::critical(0, 0, message);
                 });
             }
