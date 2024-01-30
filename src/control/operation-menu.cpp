@@ -166,7 +166,7 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                     } else {
 setPasswd:
                         bool ok = false;
-                        QInputDialog dlg;
+                        QInputDialog dlg(m_window);
                         dlg.setLabelText(tr("Samba password:"));
                         dlg.setTextEchoMode(QLineEdit::Password);
                         dlg.setWindowTitle(tr("Samba set user password"));
