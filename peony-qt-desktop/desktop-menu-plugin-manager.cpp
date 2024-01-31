@@ -36,6 +36,7 @@
 #include "vfs-plugin-iface.h"
 #include "vfs-plugin-manager.h"
 #include "emblem-plugin-iface.h"
+#include "file-watcher.h"
 
 using namespace Peony;
 
@@ -118,6 +119,15 @@ void DesktopMenuPluginManager::loadAsync()
         Q_EMIT pluginLoadFinished();
     });
 
+    auto pluginsDirWatcher = new FileWatcher(QString("file://%1").arg(PLUGIN_INSTALL_DIRS), this, true);
+    pluginsDirWatcher->connect(pluginsDirWatcher, &FileWatcher::fileCreated, this, [=](const QString &uri){
+        registerPlugin(uri);
+    });
+    pluginsDirWatcher->connect(pluginsDirWatcher, &FileWatcher::fileRenamed, this, [=](const QString &oldUri, const QString &newUri){
+        Q_UNUSED(oldUri);
+        registerPlugin(newUri);
+    });
+    pluginsDirWatcher->startMonitor();
 }
 
 DesktopMenuPluginManager *DesktopMenuPluginManager::getInstance()
@@ -139,6 +149,45 @@ const QStringList DesktopMenuPluginManager::getPluginIds()
 MenuPluginInterface *DesktopMenuPluginManager::getPlugin(const QString &pluginId)
 {
     return m_map.value(pluginId);
+}
+
+void DesktopMenuPluginManager::registerPlugin(const QString &uri)
+{
+    QUrl url = uri;
+    QPluginLoader pluginLoader(url.path());
+
+    if ("libpeony-filesafe-menu-plugin.so" == url.fileName())
+        return;
+    qDebug()<<pluginLoader.fileName();
+    qDebug()<<pluginLoader.metaData();
+    qDebug()<<pluginLoader.load();
+
+    // version check
+    if (pluginLoader.metaData().value("MetaData").toObject().value("version").toString() != VERSION)
+        return;
+
+    QObject *plugin = pluginLoader.instance();
+    if (!plugin)
+        return;
+
+    auto p = dynamic_cast<VFSPluginIface *>(plugin);
+    if (p) {
+        VFSPluginManager::getInstance()->registerPlugin(p);
+        return;
+    }
+
+    auto emblemsPlugin = dynamic_cast<EmblemPluginInterface *>(plugin);
+    if (emblemsPlugin){
+        EmblemProviderManager::getInstance()->registerProvider(emblemsPlugin->create());
+        return;
+    }
+
+    MenuPluginInterface *piface = dynamic_cast<MenuPluginInterface*>(plugin);
+    if (!piface)
+        return;
+    qDebug()<<"ok:" <<piface->name();
+    if (!m_map.value(piface->name()))
+        m_map.insert(piface->name(), piface);
 }
 
 QList<MenuPluginInterface*> DesktopMenuPluginManager::getPlugins()
