@@ -74,6 +74,8 @@ protected:
 
     QStyleOptionViewItem viewOptions() const override;
 
+    bool viewportEvent(QEvent *event) override;
+
 private:
     Peony::SideBarProxyFilterSortModel *m_proxy_model = nullptr;
     Peony::SideBarModel *m_model = nullptr;

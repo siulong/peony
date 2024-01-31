@@ -74,6 +74,9 @@
 #include <QStandardPaths>
 #include <QApplication>
 
+#include <QTextLayout>
+#include <QTextLine>
+
 #ifdef KY_SDK_DATACOLLECT
 #include <kysdk/diagnosetest/libkydatacollect.h>
 #endif
@@ -470,6 +473,66 @@ void NavigationSideBar::sendKdkDataAsync()
 bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
 {
     return false;
+}
+
+bool NavigationSideBar::viewportEvent(QEvent *e)
+{
+    if (e->type() == QEvent::ToolTip) {
+        // 处理 ToolTip 事件的代码
+        QHelpEvent *helpEvent = static_cast<QHelpEvent*>(e);
+        QModelIndex itemIndex = indexAt(helpEvent->pos());
+        if (!itemIndex.isValid()) {
+            return QTreeView::viewportEvent(e);
+        }
+
+        //获取提示文本和index
+        QModelIndex parentIndex = itemIndex.parent();
+        QModelIndex firstColumnIndex;
+        if (parentIndex.isValid()) {
+            firstColumnIndex = model()->index(itemIndex.row(), 0, parentIndex);
+        } else {
+            firstColumnIndex = model()->index(itemIndex.row(), 0);
+        }
+        QString text = firstColumnIndex.data(Qt::DisplayRole).toString();
+
+        //获取style绘制文本的宽度，小于文本的宽度 则显示
+        NavigationSideBarItemDelegate *delegate = static_cast<NavigationSideBarItemDelegate *>(itemDelegate());
+        QStyleOptionViewItem opt = viewOptions();
+        delegate->initStyleOption(&opt, firstColumnIndex);
+        opt.rect = visualRect(firstColumnIndex);
+        QRect rect = QApplication::style()->subElementRect(QStyle::SE_ItemViewItemText, &opt, nullptr);
+        const QWidget *widget = opt.widget;
+        const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin, 0, widget) + 1;
+        QRect textRect = rect.adjusted(textMargin, 0, -textMargin, 0); // remove width padding
+
+        QTextLayout textLayout(text, opt.font);
+
+        QTextOption textOption;
+        const bool wrapText = opt.features & QStyleOptionViewItem::WrapText;
+        textOption.setWrapMode(wrapText ? QTextOption::WordWrap : QTextOption::ManualWrap);
+        textOption.setTextDirection(opt.direction);
+        textOption.setAlignment(QStyle::visualAlignment(opt.direction, opt.displayAlignment));
+
+        textLayout.setTextOption(textOption);
+        textLayout.beginLayout();
+
+        QTextLine line = textLayout.createLine();
+        if (!line.isValid())
+            return QTreeView::viewportEvent(e);;
+
+        line.setLineWidth(textRect.width());
+
+        const bool isShow = line.naturalTextWidth() > textRect.width();
+
+        textLayout.endLayout();
+        //qDebug() << "line.naturalTextWidth(): "  << line.naturalTextWidth() <<"textRect: " <<textRect <<"text: " << text;
+        if (!isShow) {
+            QToolTip::hideText();
+            e->ignore();
+            return true;
+        }
+    }
+    return QTreeView::viewportEvent(e);
 }
 
 void NavigationSideBar::updateGeometries()
