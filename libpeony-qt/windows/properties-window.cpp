@@ -948,7 +948,6 @@ void HeaderBar::initUI()
     this->addWidget(mainWidget);
 
     spreadButton->hide();
-    minimizeButton->hide();
 
     connect(spreadButton, &QToolButton::clicked, this, [=] {
         Q_EMIT buttonClicked(ButtonType::Spread_Button);
