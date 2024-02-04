@@ -822,6 +822,7 @@ void DesktopIconView::resolutionChange()
         // only reset items over viewport.
         QRegion notEmptyRegion;
         QList<QPair<QRect, QString>> needChanged;
+        QSize size;
         for (auto pair : newPosition) {
             QRect itemRect = pair.first;
             //itemRect.moveTo(itemRect.topLeft() + offset());
@@ -833,7 +834,12 @@ void DesktopIconView::resolutionChange()
                     //m_item_rect_hash.remove(pair.second);
                 }
             } else {
-                notEmptyRegion += pair.first;
+                QModelIndex srcIndex = m_model->indexFromUri(pair.second);
+                QModelIndex index = m_proxy_model->mapFromSource(srcIndex);
+                QRect rect = getDataRect(index);
+                rect.moveTo(m_item_rect_hash.value(pair.second).topLeft());
+                size = rect.size();
+                notEmptyRegion += rect;
             }
         }
 
@@ -873,6 +879,7 @@ void DesktopIconView::resolutionChange()
                     newRect.moveTo(0, 0);
                 }
                 m_item_rect_hash.insert(needChanged.at(i).second, newRect);
+                newRect.setSize(size);
                 notEmptyRegion += newRect;
             }
         } else {
@@ -1722,8 +1729,9 @@ void DesktopIconView::relayoutExsitingItems(const QStringList &uris)
                     continue;
 
                 isEmptyPos = true;
-                next.setSize(m_item_rect_hash.values().first().size());
-                m_item_rect_hash.insert(uri, next);
+                QRect tmp = next;
+                tmp.setSize(m_item_rect_hash.values().first().size());
+                m_item_rect_hash.insert(uri, tmp);
                 notEmptyRegion += next;
 
                 setFileMetaInfoPos(uri, next.topLeft());
@@ -1795,8 +1803,7 @@ void DesktopIconView::checkItemsOver()
     for (auto item : needRelayoutItems) {
         QRect itemRect = QRect(QPoint(posX, posY), dataSize);
         while (notEmptyRegion.contains(itemRect) && !isFull) {
-            QRect tmpRect = itemRect;
-            tmpRect.setY(posY + gridHeight);
+            QRect tmpRect = QRect(QPoint(posX, posY+gridHeight), dataSize);
             if (verifyBoundaries(tmpRect, Direction::Bottom)) {
                 posY = marginTop;
                 posX += gridWidth;
@@ -3075,7 +3082,8 @@ bool DesktopIconView::verifyBoundaries(const QRect &rect, Direction direction)
 {
     QRect dataRect = rect;
     if (!m_item_rect_hash.isEmpty() && m_item_rect_hash.first().size().isValid()) {
-        dataRect.setSize(m_item_rect_hash.first().size());
+        QSize size = gridSize().height() > m_item_rect_hash.first().size().height() ? m_item_rect_hash.first().size() : gridSize();
+        dataRect.setSize(size);
     }
     dataRect.moveTo(dataRect.topLeft() + getViewRect().topLeft());
 
