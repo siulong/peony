@@ -69,6 +69,8 @@
 
 #include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
 
+#include <kysdk/applications/ktabbar.h>
+
 using namespace Peony;
 
 #define WINDOW_NOT_OPEN -1
@@ -694,9 +696,31 @@ void PropertiesWindow::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
+class TabBar : public kdk::KTabBar
+{
+public:
+    explicit TabBar(QWidget *parent) : kdk::KTabBar(kdk::KTabBarStyle::SegmentDark, parent)
+    {
+
+    }
+
+protected:
+    QSize minimumTabSizeHint(int index) const
+    {
+        return QTabBar::minimumTabSizeHint(index);
+    }
+    QSize tabSizeHint(int index) const
+    {
+        return QTabBar::tabSizeHint(index);
+    }
+};
+
 //properties window
 PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidget *parent) : QTabWidget(parent)
 {
+    auto tabbar = new TabBar(nullptr);
+    setTabBar(tabbar);
+
     setTabsClosable(false);
     setMovable(false);
     setContentsMargins(0, 0, 0, 0);
@@ -725,6 +749,9 @@ PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidge
 void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter,
                            const QWidget *widget) const
 {
+#ifdef KY_SDK_QT_WIDGETS
+    return qApp->style()->drawControl(element, option, painter, widget);
+#endif
     /**
      * FIX:需要修复颜色不能跟随主题的问题
      * \brief
