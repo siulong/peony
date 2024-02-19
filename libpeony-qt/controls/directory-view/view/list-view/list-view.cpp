@@ -112,7 +112,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setAutoFillBackground(true);
     setBackgroundRole(QPalette::Base);
 
-    setItemDelegate(new ListViewDelegate(this));
+    //setItemDelegate(new ListViewDelegate(this));
 
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
