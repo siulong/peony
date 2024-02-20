@@ -303,7 +303,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
         break;
     case Qt::Key_Up: {
         if (!selectedIndexes().isEmpty()) {
-            QTreeView::scrollTo(selectedIndexes().first());
+            QTreeView::scrollTo(currentIndex());
         }
         break;
     }
@@ -313,7 +313,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
             if (index.row() + 1 == model()->rowCount()) {
                 verticalScrollBar()->setValue(qMin(verticalScrollBar()->value() + iconSize().height(), verticalScrollBar()->maximum()));
             } else {
-                QTreeView::scrollTo(selectedIndexes().first());
+                QTreeView::scrollTo(currentIndex());
             }
         }
         break;
@@ -324,7 +324,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_PageDown: {
         //fix bug#160799, can not update scrollBar to show selected file issue
         if (!selectedIndexes().isEmpty()) {
-            QTreeView::scrollTo(selectedIndexes().first());
+            QTreeView::scrollTo(currentIndex());
         }
         break;
     }
