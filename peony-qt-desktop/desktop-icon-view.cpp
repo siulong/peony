@@ -1523,7 +1523,6 @@ void DesktopIconView::keyReleaseEvent(QKeyEvent *e)
     QListView::keyReleaseEvent(e);
     m_ctrl_or_shift_pressed = false;
     m_ctrl_key_pressed = false;
-
 }
 
 void DesktopIconView::focusOutEvent(QFocusEvent *e)
@@ -1993,8 +1992,11 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
 
     if (e->modifiers() & Qt::ControlModifier)
         m_ctrl_key_pressed = true;
-    else
+    else {
         m_ctrl_key_pressed = false;
+        if (! (e->modifiers() & Qt::ShiftModifier))
+            m_ctrl_or_shift_pressed = false;
+    }
 
     if (!m_ctrl_or_shift_pressed) {
         if (!indexAt(e->pos()).isValid()) {
