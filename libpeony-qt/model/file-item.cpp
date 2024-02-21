@@ -454,8 +454,10 @@ void FileItem::findChildrenAsync()
                 if (isEnding) {
                     //qDebug() << "enumerateFinished childrenUpdated:" <<isEnding;
                     m_isEndOfEnumerate = isEnding;
-                    Q_EMIT m_model->findChildrenFinished();
-                    Q_EMIT m_model->updated();
+                    if(m_ending_uris.size()){
+                        Q_EMIT m_model->findChildrenFinished();
+                        Q_EMIT m_model->updated();
+                    }
                 }
             }
 
@@ -1078,10 +1080,9 @@ void FileItem::childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding)
 
     if (isEnding) {
         m_isEndOfEnumerate = isEnding;
-        m_ending_uris.clear();
-        m_ending_uris = uris;
-
     }
+    m_ending_uris.clear();
+    m_ending_uris = uris;
 
     QStringList originalList = uris; /* 原始列表 */
     /* 遍历时第一次先加载100个显示在桌面上，其余按大批量查询 */
