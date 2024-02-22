@@ -1,0 +1,27 @@
+From: yangjianhao <yangjianhao@cvte.com>
+Date: Thu, 22 Feb 2024 12:05:16 +0800
+Subject: =?utf-8?b?Zml4OiDkv67mlLnmoYzpnaLlv6vmjbfmlrnlvI/ml7bmi5Tlh7poZG1p?=
+ =?utf-8?b?5bSp5rqD?=
+
+---
+ peony-qt-desktop/desktop-icon-view-delegate.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/peony-qt-desktop/desktop-icon-view-delegate.cpp b/peony-qt-desktop/desktop-icon-view-delegate.cpp
+index e9a6521..19197c6 100644
+--- a/peony-qt-desktop/desktop-icon-view-delegate.cpp
++++ b/peony-qt-desktop/desktop-icon-view-delegate.cpp
+@@ -471,9 +471,12 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
+ 
+     getView()->setEditFlag(true);
+     connect(edit, &IconViewEditor::returnPressed, this, &DesktopIconViewDelegate::slot_finishEdit);
+-    connect(edit, &IconViewEditor::destroyed, getView(), [=](){
++    auto editDestroyConn = connect(edit, &IconViewEditor::destroyed, getView(), [=](){
+         getView()->setEditFlag(false);
+     });
++    connect(getView(), &DesktopIconView::destroyed, edit, [=](){
++        disconnect(editDestroyConn);
++    });
+ 
+     return edit;
+ }
