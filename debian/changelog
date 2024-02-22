@@ -1,3 +1,9 @@
+peony (4.0.0.0-ok3~0222) yangtze; urgency=medium
+
+  * close #I92STS 重命名桌面快捷方式时拔出hdmi出现peony-qt-desktop崩溃(by Ginhou)
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 22 Feb 2024 14:52:17 +0800
+
 peony (4.0.0.0-ok2~1030) yangtze; urgency=medium
 
   * close #I851VT 系统使用|通过局域网访问其它设备上的文件时无法打开文件
