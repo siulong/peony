@@ -500,8 +500,11 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
 
     getView()->setEditFlag(true);
     connect(edit, &IconViewEditor::returnPressed, this, &DesktopIconViewDelegate::slot_finishEdit);
-    connect(edit, &IconViewEditor::destroyed, getView(), [=](){
+    auto editDestroyConn = connect(edit, &IconViewEditor::destroyed, getView(), [=](){
         getView()->setEditFlag(false);
+    });
+    connect(getView(), &DesktopIconView::destroyed, edit, [=](){
+        disconnect(editDestroyConn);
     });
 
     return edit;
