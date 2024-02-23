@@ -838,7 +838,7 @@ void PeonyDesktopApplication::setupDesktop()
             output->setId(qApp->screens().indexOf(screen));
             output->setName(qApp->primaryScreen()->name());
             output->setPos(screen->geometry().topLeft() * screen->devicePixelRatio());
-            output->setLogicalSize(screen->size() * devicePixelRatio());
+            output->setExplicitLogicalSize(screen->size() * devicePixelRatio());
             output->setScale(1.0);
             output->setSize(screen->size() * screen->devicePixelRatio());
             if (screen == qApp->primaryScreen()) {
