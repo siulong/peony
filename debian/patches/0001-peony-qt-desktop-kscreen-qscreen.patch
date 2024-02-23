@@ -12,7 +12,7 @@ Subject: =?utf-8?b?cGVvbnktcXQtZGVza3RvcDog5L2/55Soa3NjcmVlbuWQjuWPsOabvw==?=
  5 files changed, 250 insertions(+), 142 deletions(-)
 
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
-index d9081bb..ae2ede3 100644
+index 5636669..4f8e963 100644
 --- a/peony-qt-desktop/desktopbackgroundwindow.cpp
 +++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
 @@ -41,7 +41,7 @@ static QTimeLine *gTimeLine = nullptr;
@@ -52,7 +52,7 @@ index d9081bb..ae2ede3 100644
          QPoint relativePos = getRelativePos(pos);
          qInfo()<<pos;
          // fix #115384, context menu key issue
-@@ -126,6 +126,37 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
+@@ -136,6 +136,37 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
  //            }
          });
      });
@@ -90,7 +90,7 @@ index d9081bb..ae2ede3 100644
  }
  
  DesktopBackgroundWindow::~DesktopBackgroundWindow()
-@@ -139,7 +170,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -149,7 +180,7 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
      if (!manager->getPaintBackground())
          return;
  
@@ -99,7 +99,7 @@ index d9081bb..ae2ede3 100644
          return;
  
      QPainter p(this);
-@@ -151,19 +182,19 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -161,19 +192,19 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
          p.setRenderHint(QPainter::SmoothPixmapTransform);
          auto animation = manager->getAnimation();
          QPixmap frontPixmap = manager->getFrontPixmap();
@@ -124,7 +124,7 @@ index d9081bb..ae2ede3 100644
                               frontPixmap);
              } else if (manager->getBackgroundOption() == "stretched") {
                  //拉伸
-@@ -184,12 +215,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -194,12 +225,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, backPixmap);
                          drawedWidth += backPixmap.width();
@@ -139,7 +139,7 @@ index d9081bb..ae2ede3 100644
                          break;
                      }
                  }
-@@ -201,12 +232,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -211,12 +242,12 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                          drawedWidth += frontPixmap.width();
@@ -154,7 +154,7 @@ index d9081bb..ae2ede3 100644
                          break;
                      }
                  }
-@@ -217,9 +248,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -227,9 +258,9 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                  p.drawPixmap(getDestRect(frontPixmap), frontPixmap, frontPixmap.rect());
              } else if (manager->getBackgroundOption() == "spanned") {
                  //跨区
@@ -166,7 +166,7 @@ index d9081bb..ae2ede3 100644
              } else {
                  p.drawPixmap(rect().adjusted(0, 0, -1, -1), backPixmap, backPixmap.rect());
                  p.setOpacity(opacity);
-@@ -228,8 +259,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -238,8 +269,8 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
  
          } else {
              if (manager->getBackgroundOption() == "centered") {
@@ -177,7 +177,7 @@ index d9081bb..ae2ede3 100644
                               frontPixmap);
              } else if (manager->getBackgroundOption() == "stretched") {
                  p.drawPixmap(this->rect(), frontPixmap, frontPixmap.rect());
-@@ -245,19 +276,20 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -255,19 +286,20 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
                      while (1) {
                          p.drawPixmap(drawedWidth, drawedHeight, frontPixmap);
                          drawedWidth += frontPixmap.width();
@@ -201,7 +201,7 @@ index d9081bb..ae2ede3 100644
              } else {
                  p.drawPixmap(rect().adjusted(0, 0, -1, -1), frontPixmap, frontPixmap.rect());
              }
-@@ -276,14 +308,28 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
+@@ -286,14 +318,28 @@ void DesktopBackgroundWindow::paintEvent(QPaintEvent *event)
      }
  }
  
@@ -233,7 +233,7 @@ index d9081bb..ae2ede3 100644
  }
  
  bool DesktopBackgroundWindow::event(QEvent *event)
-@@ -298,8 +344,8 @@ bool DesktopBackgroundWindow::event(QEvent *event)
+@@ -308,8 +354,8 @@ bool DesktopBackgroundWindow::event(QEvent *event)
                  m_shellSurface->setSkipSwitcher(true);
                  m_shellSurface->setSkipTaskbar(true);
                  // wayland中构造函数的move只能在这里生效
@@ -244,7 +244,7 @@ index d9081bb..ae2ede3 100644
                  }
              }
              break;
-@@ -320,7 +366,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
+@@ -330,7 +376,7 @@ bool DesktopBackgroundWindow::event(QEvent *event)
  
  void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
  {
@@ -253,7 +253,7 @@ index d9081bb..ae2ede3 100644
      if (gTimeLine->state() != QTimeLine::Running) {
          gTimeLine->start();
      } else {
-@@ -330,21 +376,22 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
+@@ -340,21 +386,22 @@ void DesktopBackgroundWindow::setWindowGeometry(const QRect &geometry)
  
  void DesktopBackgroundWindow::updateWindowGeometry()
  {
@@ -281,7 +281,7 @@ index d9081bb..ae2ede3 100644
              qInfo()<<"has center widget, raise window";
              KWindowSystem::raiseWindow(this->winId());
          } else {
-@@ -368,11 +415,11 @@ void DesktopBackgroundWindow::setId(int id)
+@@ -378,11 +425,11 @@ void DesktopBackgroundWindow::setId(int id)
  //获取iconview中图标的相对位置
  QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
  {
@@ -295,7 +295,7 @@ index d9081bb..ae2ede3 100644
          if (m_panelSetting) {
              int position = m_panelSetting->get("panelposition").toInt();
              int offset = m_panelSetting->get("panelsize").toInt();
-@@ -455,11 +502,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
+@@ -465,11 +512,12 @@ QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap)
  
  QRect DesktopBackgroundWindow::getSourceRect(const QPixmap &pixmap, const QRect &screenGeometry)
  {
@@ -312,7 +312,7 @@ index d9081bb..ae2ede3 100644
      qreal pixWidth = pixmap.width();
      qreal pixHeight = pixmap.height();
  
-@@ -534,3 +582,12 @@ Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
+@@ -544,3 +592,12 @@ Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
  {
      return m_desktopIconView;
  }
@@ -387,7 +387,7 @@ index 1485a26..9252d42 100644
  
  #endif // DESKTOPBACKGROUNDWINDOW_H
 diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
-index 661def5..2168aeb 100644
+index 1ab351a..10a2d46 100644
 --- a/peony-qt-desktop/peony-desktop-application.cpp
 +++ b/peony-qt-desktop/peony-desktop-application.cpp
 @@ -35,6 +35,7 @@
@@ -652,7 +652,7 @@ index 661def5..2168aeb 100644
  }
  
  void PeonyDesktopApplication::setupBgAndDesktop()
-@@ -1048,18 +1035,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
+@@ -1053,18 +1040,67 @@ Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
      return nullptr;
  }
  

@@ -1,16 +1,16 @@
 From: Yue-Lan <lanyue@kylinos.cn>
-Date: Thu, 4 Jan 2024 14:48:05 +0800
-Subject: update changelog.
+Date: Thu, 4 Jan 2024 14:43:01 +0800
+Subject: =?utf-8?b?5LyY5YyW5qGM6Z2i5Yid5aeL5YyW5rWB56iL?=
 
 ---
  peony-qt-desktop/peony-desktop-application.cpp | 29 ++++++++++++++++++++++++--
  1 file changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
-index 7b12209..f8e17ad 100644
+index 10a2d46..89624f9 100644
 --- a/peony-qt-desktop/peony-desktop-application.cpp
 +++ b/peony-qt-desktop/peony-desktop-application.cpp
-@@ -70,6 +70,8 @@
+@@ -71,6 +71,8 @@
  #include <QX11Info>
  #include <X11/Xlib.h>
  
@@ -19,7 +19,7 @@ index 7b12209..f8e17ad 100644
  #define KYLIN_USER_GUIDE_PATH "/"
  #define KYLIN_USER_GUIDE_SERVICE QString("com.kylinUserGuide.hotel_%1").arg(getuid())
  #define KYLIN_USER_GUIDE_INTERFACE "com.guide.hotel"
-@@ -828,9 +830,32 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
+@@ -829,9 +831,32 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
  void PeonyDesktopApplication::setupDesktop()
  {
      KScreen::GetConfigOperation *op = new KScreen::GetConfigOperation();
