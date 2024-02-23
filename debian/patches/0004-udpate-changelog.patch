@@ -1,0 +1,20 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 23 Feb 2024 16:03:47 +0800
+Subject: udpate changelog.
+
+---
+ peony-qt-desktop/peony-desktop-application.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index 89624f9..d60fdc6 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -35,7 +35,6 @@
+ #include "desktop-menu.h"
+ #include "global-settings.h"
+ #include "file-enumerator.h"
+-#include "desktopbackground.h"
+ #include "desktop-background-manager.h"
+ #include "desktopbackgroundwindow.h"
+ #include "desktop-item-model.h"
