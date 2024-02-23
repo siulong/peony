@@ -1967,10 +1967,23 @@ void MainWindow::startMonitorThumbnailForbidStatus()
         auto settings = Peony::GlobalSettings::getInstance();
         if (m_do_not_thumbnail != settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool()) {
             m_do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+            // fix #213036
             if (true == m_do_not_thumbnail) {
                 Peony::ThumbnailManager::getInstance()->clearThumbnail();
+                if (getCurrentPage()) {
+                    if (getCurrentPage()->getView()) {
+                        getCurrentPage()->getView()->repaintView();
+                    }
+                } else {
+                    refresh();
+                }
+            } else {
+                if (getCurrentPage()) {
+                    getCurrentPage()->updateCurrentFilesThumbnails();
+                } else {
+                    refresh();
+                }
             }
-            refresh();
         }
 
         //qDebug()<<"peonySettingFile:"<<peonySettingFile;

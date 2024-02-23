@@ -619,6 +619,11 @@ void DirectoryViewContainer::setSelectionMode(QAbstractItemView::SelectionMode m
     m_proxy_model->setSelectionModeHint(mode);
 }
 
+void DirectoryViewContainer::updateCurrentFilesThumbnails()
+{
+    m_model->updateCurrentFilesThumbnails();
+}
+
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
 {
     if (m_proxy_model) {

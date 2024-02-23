@@ -562,6 +562,14 @@ void FileItemModel::setRootIndex(const QModelIndex &index)
     }
 }
 
+void FileItemModel::updateCurrentFilesThumbnails()
+{
+    for (FileItem *child : *(m_root_item->m_children)) {
+        auto uri = child->uri();
+        ThumbnailManager::getInstance()->createThumbnail(uri, m_root_item->m_thumbnail_watcher);
+    }
+}
+
 QMimeData *FileItemModel::mimeData(const QModelIndexList &indexes) const
 {
     QMimeData* data = QAbstractItemModel::mimeData(indexes);
