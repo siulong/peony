@@ -83,9 +83,9 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         }
     });
 
-    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
-        refresh();
-    });
+//    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
+//        refresh();
+//    });
 
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
         m_control_center_plugin = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
@@ -617,6 +617,11 @@ void DirectoryViewContainer::onViewDoubleClicked(const QString& uri)
 void DirectoryViewContainer::setSelectionMode(QAbstractItemView::SelectionMode mode)
 {
     m_proxy_model->setSelectionModeHint(mode);
+}
+
+void DirectoryViewContainer::updateCurrentFilesThumbnails()
+{
+    m_model->updateCurrentFilesThumbnails();
 }
 
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)

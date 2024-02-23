@@ -192,6 +192,7 @@ void FileLabelModel::removeLabel(int id)
     Q_EMIT dataChanged(QModelIndex(), QModelIndex());
 
     endResetModel();
+    updateLabesForAllFilesById(id);
 }
 
 void FileLabelModel::setLabelName(int id, const QString &name)
@@ -213,6 +214,7 @@ void FileLabelModel::setLabelColor(int id, const QColor &color)
             item->setColor(color);
             int row = m_labels.indexOf(item);
             Q_EMIT dataChanged(index(row), index(row));
+            updateLabesForAllFilesById(id);
             break;
         }
     }
@@ -540,6 +542,18 @@ void FileLabelModel::renameFileLabel(const QString oldUri, const QString newUri)
         }
 
     });
+}
+
+void FileLabelModel::updateLabesForAllFilesById(int id)
+{
+    QSet<QString> uriSet = getFileUrisFromLabelId(id);
+
+    for (auto uri : uriSet) {
+        QUrl url(uri);
+        QString labelUri = QString("label:///").append(getLabelNameFromLabelId(id)) + url.path() + "?schema=" + url.scheme();
+        Q_EMIT fileLabelChanged(uri);
+        Q_EMIT fileLabelChanged(labelUri);/* 更新标识模式界面的该文件 */
+    }
 }
 
 void FileLabelModel::initLabelItems()

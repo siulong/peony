@@ -267,6 +267,10 @@ void FileBatchRenameOperation::run()
                                 || !FileUtils::isFileExsit(except.destDirUri)) {
                             break;
                         }
+                        auto fileSystemType = FileUtils::getFsTypeFromFile(except.srcUri);
+                        if (fileSystemType.contains("exfat") && err->code == G_IO_ERROR_EXISTS) {
+                            break;
+                        }
                         g_file_delete(newFile.get()->get(), nullptr, nullptr);
                         goto retry;
                     }

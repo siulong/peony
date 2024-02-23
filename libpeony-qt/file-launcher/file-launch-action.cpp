@@ -96,7 +96,8 @@ static GAppLaunchContext *getAppContext(FileLaunchAction *action = nullptr)
         auto desktop_app_info = G_DESKTOP_APP_INFO (app_info);
         auto desktop_filename = g_desktop_app_info_get_filename(desktop_app_info);
         g_app_launch_context_setenv(context, "APPLICATION_ID", desktop_filename);
-        g_app_launch_context_setenv(context, "DESKTOP_STARTUP_ID", g_app_info_get_name(app_info));
+        //修改 bug#205475 双屏扩展模式下，打开副屏上的.sh ，窗口显示在副屏上，注释 DESKTOP_STARTUP_ID 就可以显示在主屏
+        //g_app_launch_context_setenv(context, "DESKTOP_STARTUP_ID", g_app_info_get_name(app_info));
         g_app_launch_context_setenv(context, "TIMESTAMP",  QString::number(QX11Info::getTimestamp()).toUtf8().constData());
     }
     return context;
@@ -396,8 +397,10 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         QRect rect = fileInfo.get()->property("iconGeometry").toRect();
         rect.moveTo(rect.x()/* * scale*/, rect.y()/* * scale*/);
 #ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
-        if (rect.isValid())
+        if (rect.isValid()) {
             data.setIconGeometry(rect);
+            qDebug() << "KStartupInfoData iconGeometry:" << m_uri <<rect ;
+        }
 #endif
         data.setLaunchedBy(getpid());
 

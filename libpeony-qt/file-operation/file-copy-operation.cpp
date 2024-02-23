@@ -1170,7 +1170,8 @@ bool FileCopyOperation::copyLinkedFile(FileNode *node, GFileInfo *info, GFileWra
     target.replace("#", "%23");
     target.prepend("file://");
     QUrl url(target);
-    const char* symlinkValue = url.path().toUtf8().constData();
+    auto utf8 = url.path().toUtf8();
+    auto symlinkValue = utf8.constData();
     g_file_make_symbolic_link(file.get()->get(), symlinkValue, nullptr, &err);
     if (err) {
         qDebug() << "linkrun:" << err->message;

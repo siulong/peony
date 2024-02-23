@@ -16,23 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ *  Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
-#ifndef TESTVFSREGISTER_H
-#define TESTVFSREGISTER_H
+#ifndef CUSTOMVFSREGISTER_H
+#define CUSTOMVFSREGISTER_H
 
 #include "file-watcher.h"
 #include <peony-core_global.h>
 #include <vfs-plugin-iface.h>
 #include <vfs-info-plugin-iface.h>
-#include <file-tmp-info.h>
+#include <file-vfs-info.h>
 #include <QMap>
 
 namespace Peony {
 
-class TestVFSInternalPlugin : public VFSPluginIface {
+class CustomVFSInternalPlugin : public VFSPluginIface {
 public:
-    TestVFSInternalPlugin(QString scheme = "");
+    CustomVFSInternalPlugin(QString scheme = "");
 
     virtual PluginType pluginType() override {return VFSPlugin;}
 
@@ -52,13 +53,13 @@ private:
     QString m_scheme;
 };
 
-class PEONYCORESHARED_EXPORT TestVFSRegister
+class PEONYCORESHARED_EXPORT CustomVFSRegister
 {
 public:
     static void registTestVFS(QString scheme = "");
 
 private:
-    TestVFSRegister();
+    CustomVFSRegister();
 };
 
 #ifndef VFS_CUSTOM_PLUGIN
@@ -82,7 +83,7 @@ public:
 
     QStringList fileEnumerator(const QString &path) override;
 
-    std::shared_ptr<FileTmpInfo> queryFile(const QString &path) override;
+    std::shared_ptr<FileVFSInfo> queryFile(const QString &path) override;
 
     VFSError* handerMakeDirectory(const QString &uri, bool &ret) override;
 
@@ -124,7 +125,7 @@ public:
 
     QStringList fileEnumerator(const QString &path) override;
 
-    std::shared_ptr<FileTmpInfo> queryFile(const QString &path) override;
+    std::shared_ptr<FileVFSInfo> queryFile(const QString &path) override;
 
     VFSError* handerMakeDirectory(const QString &uri, bool &ret) override;
 
@@ -145,4 +146,4 @@ public:
 }
 
 
-#endif // TESTVFSREGISTER_H
+#endif // CUSTOMVFSREGISTER_H

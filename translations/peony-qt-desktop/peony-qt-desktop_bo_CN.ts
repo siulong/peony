@@ -36,11 +36,11 @@
     <name>Peony::DesktopItemModel</name>
     <message>
         <source>Computer</source>
-        <translation>རྩིས་འཁོར།</translation>
+        <translation type="vanished">རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation>གད་སྙིགས་བླུགས་སྣ</translation>
+        <translation type="vanished">གད་སྙིགས་བླུགས་སྣ</translation>
     </message>
 </context>
 <context>

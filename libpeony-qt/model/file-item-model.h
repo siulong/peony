@@ -290,6 +290,8 @@ public Q_SLOTS:
 
     void setRootIndex(const QModelIndex &index);
 
+    void updateCurrentFilesThumbnails();
+
 private:
     FileItem *m_root_item = nullptr;
     bool m_is_positive = false;

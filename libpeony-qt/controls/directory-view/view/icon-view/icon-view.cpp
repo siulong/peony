@@ -68,6 +68,7 @@
 #include <QDrag>
 #include <QWindow>
 #include <QMessageBox>
+#include <QFontMetrics>
 
 using namespace Peony;
 using namespace Peony::DirectoryView;
@@ -215,6 +216,7 @@ const QString IconView::getDirectoryUri()
 
 void IconView::beginLocationChange()
 {
+    m_last_index = QModelIndex();
     traverseNode();
     m_editValid = false;
     m_model->setRootUri(m_current_uri);
@@ -396,6 +398,10 @@ void IconView::mousePressEvent(QMouseEvent *e)
     }
 
     m_allow_set_index_widget = true;
+    if (e->modifiers() & Qt::ControlModifier)
+        m_ctrl_key_pressed = true;
+    else
+        m_ctrl_key_pressed = false;
 
     QModelIndex itemIndex = indexAt(e->pos());
     if (itemIndex.isValid() && m_multi_select) {
@@ -520,9 +526,14 @@ void IconView::paintEvent(QPaintEvent *e)
 
 void IconView::resizeEvent(QResizeEvent *e)
 {
+    //FIXME: first resize is disfluency.
+    //but I have to reset the index widget in view's resize.
     QListView::resizeEvent(e);
-    // fix 85058
-    updateEditorGeometries();
+    if (m_delegate_editing && m_increase) {
+        m_increase = false;
+        return;
+    }
+    setIndexWidget(m_last_index, nullptr);
 }
 
 void IconView::wheelEvent(QWheelEvent *e)
@@ -551,6 +562,18 @@ void IconView::updateGeometries()
     QListView::updateGeometries();
 
     if (!model() || model()->columnCount() == 0 || model()->rowCount() == 0) {
+        return;
+    }
+
+    if (m_delegate_editing) {
+        int characterHeight = qApp->fontMetrics().height();
+        int totalHeight = characterHeight * 255/4;
+
+        m_scrollMax = verticalScrollBar()->maximum();
+        int maxHeight = viewport()->height() - visualRect(m_last_index).y() - characterHeight - 15 - totalHeight;
+        if (maxHeight + m_scrollMax < 0 && m_scrollMax >= 0) {
+            verticalScrollBar()->setRange(0, -maxHeight);
+        }
         return;
     }
 
@@ -956,6 +979,34 @@ void IconView::setSearchKey(const QString &key)
     viewItemDelegate->setSearchKeyword(key);
 }
 
+void IconView::edit(const QModelIndex &index)
+{
+    QListView::edit(index);
+}
+
+bool IconView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    if (trigger == QAbstractItemView::AllEditTriggers) {
+        //按照255个字节的高度设置
+        int characterHeight = qApp->fontMetrics().height();
+        int totalHeight = characterHeight * 255/4;
+
+        m_scrollMax = verticalScrollBar()->maximum();
+        int maxHeight = viewport()->height() - visualRect(index).y() - characterHeight - 15 - totalHeight;
+        if (maxHeight + m_scrollMax < 0 && m_scrollMax >= 0) {
+            m_increase = true;
+            verticalScrollBar()->setRange(0, -maxHeight);
+        }
+    }
+    return  QListView::edit(index, trigger, event);
+}
+
+void IconView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    QListView::closeEditor(editor,hint);
+    verticalScrollBar()->setRange(0, m_scrollMax);
+}
+
 void IconView::doMultiSelect(bool isMultiSlelect)
 {
     if (isMultiSlelect) {
@@ -1042,7 +1093,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         if (this->cursor().shape() == Qt::BusyCursor || this->cursor().shape() == Qt::WaitCursor) {
             return;
         }
-        this->update();
+        repaintView();
     });
 
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
@@ -1078,6 +1129,8 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             return;
         }
 
+        m_menuRequesting = true;
+
         // we should clear the dirty rubber band due to call context menu.
         bool isDragSelecting = m_view->isDraggingState();
         if (isDragSelecting) {
@@ -1104,6 +1157,7 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
             m_view->setIgnore_mouse_move_event(false);
             m_view->m_touch_active_timer->stop();
             Q_EMIT this->menuRequest(mapToGlobal(pos));
+            m_menuRequesting = false;
         });
     });
 
@@ -1117,6 +1171,8 @@ void IconView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
 
 void IconView2::repaintView()
 {
+    if (m_menuRequesting)
+        return;
     m_view->update();
     m_view->viewport()->update();
 }

@@ -75,6 +75,9 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
     auto item = model->itemFromIndex(index);
+    if (!item) {
+        return;
+    }
     auto info = item->info();
     auto colors = info->getColors();
 
@@ -116,14 +119,14 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }
     else
        painter->setOpacity(1.0);
-    if (!opt.state.testFlag(QStyle::State_Selected)) {
-        if (opt.state & QStyle::State_Sunken) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
-        }
-        if (opt.state & QStyle::State_MouseOver) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
-        }
-    }
+//    if (!opt.state.testFlag(QStyle::State_Selected)) {
+//        if (opt.state & QStyle::State_Sunken) {
+//            opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
+//        }
+//        if (opt.state & QStyle::State_MouseOver) {
+//            opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
+//        }
+//    }
 
     if (index.column() == 0 && !m_regFindKeyWords.isEmpty()) {
         QString text1 = opt.text;

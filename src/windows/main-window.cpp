@@ -791,10 +791,19 @@ void MainWindow::setShortCuts()
             //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
             auto info = Peony::FileInfo::fromUri(currentUri);
             //comment to fix bug#191108, huawei phone can paste file success
-            if (!info->canWrite() /*|| currentUri.startsWith("mtp://")
-                || currentUri.startsWith("gphoto2://")*/) {
-                return;
+            if (!info->canWrite()) {
+                QString fileSystem = info.get()->fileSystemType();
+                if (fileSystem.isEmpty()) {
+                    fileSystem = Peony::FileUtils::getFsTypeFromFile(info.get()->uri());
+                }
+                if (!fileSystem.contains("udf")) {
+                    return;
+                }
             }
+//            if (!info->canWrite() /*|| currentUri.startsWith("mtp://")
+//                || currentUri.startsWith("gphoto2://")*/) {
+//                return;
+//            }
 
             Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
@@ -1075,6 +1084,9 @@ bool MainWindow::currentViewSupportZoom()
 
 void MainWindow::maximizeOrRestore()
 {
+    if (m_tab->currentPage()) {
+        m_tab->currentPage()->getView()->clearIndexWidget();
+    }
     if (!this->isMaximized()) {
         this->showMaximized();
     } else {
@@ -1816,7 +1828,15 @@ void MainWindow::initUI(const QString &uri)
         if (! m_is_show_menu){
             m_is_show_menu = true;
             Peony::DirectoryViewMenu menu(this, this);
+            /* 菜单执行弹出操作时停止更新，超过1s或者结束菜单都启用更新;linkto bug#205332【文件管理器】选中一万个文本文件后，点击鼠标右键，右键菜单会闪烁 */
+            m_tab->setUpdatesEnabled(false);
+            QTimer::singleShot(1000, this, [=](){
+                if(!m_tab->updatesEnabled()){
+                    m_tab->setUpdatesEnabled(true);
+                }
+            });
             menu.exec(pos);
+            m_tab->setUpdatesEnabled(true);//end
             m_uris_to_edit = menu.urisToEdit();
             m_is_show_menu = false;
         }
@@ -1840,7 +1860,7 @@ void MainWindow::initUI(const QString &uri)
     });
 
     setTabOrder(m_side_bar, m_tab);
-
+    m_tab->setWindow(this);
 //    if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
 //        m_thumbnail = new QGSettings("org.ukui.peony.settings", QByteArray(), this);
 //        connect(m_thumbnail, &QGSettings::changed, this, [=](const QString &key) {
@@ -1947,10 +1967,23 @@ void MainWindow::startMonitorThumbnailForbidStatus()
         auto settings = Peony::GlobalSettings::getInstance();
         if (m_do_not_thumbnail != settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool()) {
             m_do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+            // fix #213036
             if (true == m_do_not_thumbnail) {
                 Peony::ThumbnailManager::getInstance()->clearThumbnail();
+                if (getCurrentPage()) {
+                    if (getCurrentPage()->getView()) {
+                        getCurrentPage()->getView()->repaintView();
+                    }
+                } else {
+                    refresh();
+                }
+            } else {
+                if (getCurrentPage()) {
+                    getCurrentPage()->updateCurrentFilesThumbnails();
+                } else {
+                    refresh();
+                }
             }
-            refresh();
         }
 
         //qDebug()<<"peonySettingFile:"<<peonySettingFile;

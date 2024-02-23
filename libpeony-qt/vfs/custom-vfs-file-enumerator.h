@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
 #ifndef TESTVFSFILEENUMERATOR_H
@@ -27,24 +28,24 @@
 
 G_BEGIN_DECLS
 
-#define VFS_TYPE_TEST_FILE_ENUMERATOR vfs_test_file_enumerator_get_type()
+#define VFS_TYPE_CUSTOM_FILE_ENUMERATOR vfs_custom_file_enumerator_get_type()
 
-G_DECLARE_FINAL_TYPE(TestVFSFileEnumerator, vfs_test_file_enumerator, VFS, TEST_FILE_ENUMERATOR, GFileEnumerator)
+G_DECLARE_FINAL_TYPE(CustomVFSFileEnumerator, vfs_custom_file_enumerator, VFS, CUSTOM_FILE_ENUMERATOR, GFileEnumerator)
 
-TestVFSFileEnumerator* vfs_test_file_enumerator_new(void);
+CustomVFSFileEnumerator* vfs_custom_file_enumerator_new(void);
 
-typedef struct _TestVFSFileEnumeratorPrivate       TestVFSFileEnumeratorPrivate;
+typedef struct _CustomVFSFileEnumeratorPrivate       CustomVFSFileEnumeratorPrivate;
 
-struct _TestVFSFileEnumeratorPrivate
+struct _CustomVFSFileEnumeratorPrivate
 {
     QQueue<QString>*                    enumerate_queue;
 };
 
-struct _TestVFSFileEnumerator
+struct _CustomVFSFileEnumerator
 {
     GFileEnumerator                     parent_instance;
 
-    TestVFSFileEnumeratorPrivate*  priv;
+    CustomVFSFileEnumeratorPrivate*  priv;
 };
 
 G_END_DECLS

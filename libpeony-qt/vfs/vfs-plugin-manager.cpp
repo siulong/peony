@@ -25,7 +25,7 @@
 #include "favorite-vfs-register.h"
 #include "search-vfs-register.h"
 #include "label-vfs-register.h"
-#include "test-vfs-register.h"
+#include "custom-vfs-register.h"
 #include "vfs-info-plugin-manager.h"
 #include <QDebug>
 
@@ -97,7 +97,7 @@ VFSPluginManager::VFSPluginManager(QObject *parent) : QObject(parent)
 
     QStringList keys = VFSInfoPluginManager::getInstance()->getAllPluginKeys();
     for (auto key : keys) {
-        auto testVFSPlugin = new TestVFSInternalPlugin(key);
+        auto testVFSPlugin = new CustomVFSInternalPlugin(key);
         registerPlugin(testVFSPlugin);
     }
 }
