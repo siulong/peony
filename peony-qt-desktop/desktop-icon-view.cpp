@@ -156,6 +156,25 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
         viewport()->update();
     });
 
+    auto globalSettings = Peony::GlobalSettings::getInstance();
+    QString widgetThemeName = globalSettings->getValue("widgetThemeName").toString();
+    if (widgetThemeName.contains("classical")) {
+        m_radius = 0;
+    } else {
+        m_radius = 6;
+    }
+    connect(globalSettings, &GlobalSettings::valueChanged, this, [=](const QString &key){
+        if (key == "widgetThemeName") {
+            QString widgetThemeName = globalSettings->getValue("widgetThemeName").toString();
+            if (widgetThemeName.contains("classical")) {
+                m_radius = 0;
+            } else {
+                m_radius = 6;
+            }
+            viewport()->update();
+        }
+    });
+
     m_edit_trigger_timer.setSingleShot(true);
     m_edit_trigger_timer.setInterval(3000);
     m_last_index = QModelIndex();
@@ -2858,6 +2877,11 @@ bool DesktopIconView::dragToOtherScreen(QDropEvent *e)
         }
     }
     return false;
+}
+
+int DesktopIconView::radius() const
+{
+    return m_radius;
 }
 
 void DesktopIconView::saveExtendItemInfo()

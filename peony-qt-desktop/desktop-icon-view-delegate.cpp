@@ -102,6 +102,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     //paint background
     if (!view->indexWidget(index)) {
         //painter->setClipRect(opt.rect);
+        int radius = view->radius();
         painter->save();
         painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         if (opt.state.testFlag(QStyle::State_MouseOver) && !opt.state.testFlag(QStyle::State_Selected)) {
@@ -111,7 +112,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             color.setAlpha(255*0.5);
             painter->setPen(color.darker(100));
             painter->setBrush(color);
-            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), 6, 6);
+            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), radius, radius);
         }
         if (opt.state.testFlag(QStyle::State_Selected)) {
             QColor color = m_styled_button->palette().highlight().color();
@@ -120,7 +121,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             color.setAlpha(255*0.8);
             painter->setPen(color);
             painter->setBrush(color);
-            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), 6, 6);
+            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), radius, radius);
         }
         painter->restore();
     }

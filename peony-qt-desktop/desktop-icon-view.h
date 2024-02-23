@@ -134,6 +134,8 @@ public:
     void initViewport();
     bool verifyBoundaries(const QRect &rect, Direction direction);
 
+    int radius() const;
+
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);
@@ -316,6 +318,8 @@ private:
     int m_id = 0;
 
     QStringList m_storageBox;
+
+    int m_radius = 6;
 };
 
 }
