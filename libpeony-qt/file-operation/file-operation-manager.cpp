@@ -621,6 +621,9 @@ start:
         }
     }, Qt::BlockingQueuedConnection);
     connect(operation, &FileOperation::operationSaveAsLongNameFile, this, [=](const QString &uri){
+        if (operation->hasError()) {
+            return;
+        }
         QString text = QString(tr("The long name file is saved to %1")).arg(uri);
         QMessageBox::information(nullptr,nullptr,text);
     }, Qt::BlockingQueuedConnection);

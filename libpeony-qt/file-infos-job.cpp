@@ -151,7 +151,7 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         QUrl url = info->uri();
         GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
         if (!desktop_info) {
-            info->m_mutex.unlock();
+            //info->m_mutex.unlock();
             info->updated();
             return info;
         }

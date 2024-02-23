@@ -50,10 +50,12 @@ QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
     if (QThread::currentThread() == uiThread) {
         metaInfo = FileMetaInfo::fromUri(uri);
     } else {
-//        metaInfo = requestDupMetaInfo(uri);
-        // note: qt5.15 + peony通过block signals connect方式会导致死锁，这里只能先使用相对安全的dup方法
-        // 通过gdb分析主线程卡死在setWindowIcon()，qt增加了QT_USE_THREAD_PARALLEL_IMAGE_CONVERSIONS和相关处理代码，具体卡死原因还需要进一步分析
-        metaInfo = FileMetaInfo::dupFromUri(uri);
+        // 使用线程+blocking queue connection获取metainfo，原来的方案存在死锁可能性
+        auto dupJob = new MetadataDupJob(uri, nullptr);
+        dupJob->start();
+        dupJob->wait();
+        metaInfo = dupJob->dupMetaInfo();
+        delete dupJob;
     }
     if(!metaInfo || !metaInfo.get())
         return QStringList();
@@ -62,18 +64,37 @@ QStringList MetadataEmblemProvider::getFileEmblemIcons(const QString &uri)
 
 MetadataEmblemProvider::MetadataEmblemProvider(QObject *parent) : EmblemProvider(parent)
 {
-    connect(this, &MetadataEmblemProvider::requestDupMetaInfo, this, &MetadataEmblemProvider::getDupMetaInfo, Qt::BlockingQueuedConnection);
+//    connect(this, &MetadataEmblemProvider::requestDupMetaInfo, this, &MetadataEmblemProvider::getDupMetaInfo, Qt::BlockingQueuedConnection);
 
-    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]{
-        // note:
-        // 目前发现使用blockqueueconnection和emblemjob交互会影响app退出，这里尝试断开连接并且处理所有待处理事件解决此问题
-        // 这个改动对解决#181067 【音乐】音乐进程卡死 有一定帮助
-        disconnect(this, &MetadataEmblemProvider::requestDupMetaInfo, 0, 0);
-        qApp->processEvents();
-    });
+//    connect(qApp, &QCoreApplication::aboutToQuit, this, [=]{
+//        // note:
+//        // 目前发现使用blockqueueconnection和emblemjob交互会影响app退出，这里尝试断开连接并且处理所有待处理事件解决此问题
+//        // 这个改动对解决#181067 【音乐】音乐进程卡死 有一定帮助
+//        disconnect(this, &MetadataEmblemProvider::requestDupMetaInfo, 0, 0);
+//        qApp->processEvents();
+//    });
 }
 
 std::shared_ptr<FileMetaInfo> MetadataEmblemProvider::getDupMetaInfo(const QString &uri)
 {
     return FileMetaInfo::dupFromUri(uri);
+}
+
+MetadataDupJob::MetadataDupJob(const QString &uri, QObject *parent) : QThread(parent)
+{
+    m_uri = uri;
+
+    connect(this, &MetadataDupJob::requestDupMetaInfo, qApp, [=](const QString &uri){
+        return FileMetaInfo::dupFromUri(uri);
+    }, Qt::BlockingQueuedConnection);
+}
+
+void MetadataDupJob::run()
+{
+    m_dupMetaInfo = requestDupMetaInfo(m_uri);
+}
+
+std::shared_ptr<FileMetaInfo> MetadataDupJob::dupMetaInfo() const
+{
+    return m_dupMetaInfo;
 }

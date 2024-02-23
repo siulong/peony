@@ -24,7 +24,7 @@
 #include "plugin-iface.h"
 #include "custom-error-handler.h"
 #include <QObject>
-#include <file-tmp-info.h>
+#include <file-vfs-info.h>
 #include <memory>
 
 #define VFSInfoPluginInterface_iid "org.ukui.peony-qt.plugin-iface.VFSInfoPluginInterface"
@@ -100,7 +100,7 @@ Q_SIGNALS:
     void fileChanged(const QString &path);
 };
 
-class FileTmpInfo;
+class FileVFSInfo;
 class PEONYCORESHARED_EXPORT VFSInfoPluginIface : public PluginInterface
 {
 public:
@@ -114,7 +114,7 @@ public:
 
     virtual QStringList fileEnumerator(const QString &path) = 0;
 
-    virtual std::shared_ptr<FileTmpInfo> queryFile(const QString &path) = 0;
+    virtual std::shared_ptr<FileVFSInfo> queryFile(const QString &path) = 0;
 
     //file operation
     virtual VFSError* handerMakeDirectory(const QString &uri, bool &ret) = 0;

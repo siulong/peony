@@ -236,7 +236,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                         case PluginInterface::PropertiesWindowPlugin: {
                             Peony::PropertiesWindowFactoryPluginManager *manager = Peony::PropertiesWindowFactoryPluginManager::getInstance();
                             PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
-                            manager->registerFactory(propertiesWindowTabPageFactory);
+                            manager->unregisterFactory(propertiesWindowTabPageFactory);
                            break;
                         }
                         case PluginInterface::ColumnProviderPlugin: {

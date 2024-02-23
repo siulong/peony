@@ -210,7 +210,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (view->selectedIndexes().count() == 1 && view->selectedIndexes().first() == index && !bCutFile) {
         useIndexWidget = true;
         if (view->indexWidget(index)) {
-        } else if (! view->isDraggingState() && view->m_allow_set_index_widget) {
+        } else if (! view->isDraggingState() && view->m_allow_set_index_widget && !(view->m_ctrl_key_pressed)) {
             IconViewIndexWidget *indexWidget = new IconViewIndexWidget(this, option, index, getView());
             connect(getView()->m_model, &FileItemModel::dataChanged, indexWidget, [=](const QModelIndex &topleft, const QModelIndex &bottomRight){
                 // if item has been removed and there is no reference for responding info,
@@ -689,6 +689,8 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }
@@ -800,6 +802,8 @@ qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }

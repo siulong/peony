@@ -92,7 +92,7 @@ SideBarFavoriteItem::SideBarFavoriteItem(QString uri,SideBarFavoriteItem *parent
 void SideBarFavoriteItem::initChildren()
 {
     m_uri = "favorite:///";
-    m_displayName = tr("Favorite");
+    m_displayName = tr("Quick access");
 
     QString desktopUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 //    QString videoUri = localFileSystemPath + QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);

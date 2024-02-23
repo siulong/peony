@@ -25,6 +25,7 @@
 #define METADATAEMBLEMPROVIDER_H
 
 #include <QObject>
+#include <QThread>
 #include "peony-core_global.h"
 #include "emblem-provider.h"
 #include "file-meta-info.h"
@@ -42,13 +43,31 @@ public:
     QStringList getFileEmblemIcons(const QString &uri) override;
 
 Q_SIGNALS:
-    std::shared_ptr<Peony::FileMetaInfo> requestDupMetaInfo(const QString &uri);
+    std::shared_ptr<Peony::FileMetaInfo> requestDupMetaInfo(const QString &uri); //deprecated
 
 private:
     explicit MetadataEmblemProvider(QObject *parent = nullptr);
 
 private Q_SLOTS:
-    std::shared_ptr<Peony::FileMetaInfo> getDupMetaInfo(const QString &uri);
+    std::shared_ptr<Peony::FileMetaInfo> getDupMetaInfo(const QString &uri); //deprecated
+};
+
+class MetadataDupJob : public QThread
+{
+    Q_OBJECT
+public:
+    explicit MetadataDupJob(const QString &uri, QObject *parent = nullptr);
+
+    void run() override;
+
+    std::shared_ptr<Peony::FileMetaInfo> dupMetaInfo() const;
+
+Q_SIGNALS:
+    std::shared_ptr<Peony::FileMetaInfo> requestDupMetaInfo(const QString &uri);
+
+private:
+    QString m_uri;
+    std::shared_ptr<Peony::FileMetaInfo> m_dupMetaInfo = nullptr;
 };
 
 }

@@ -41,24 +41,14 @@
 #include <QDBusReply>
 #include <gio/gdesktopappinfo.h>
 #include <gio/gunixmounts.h>
+#include <QCoreApplication>
+#include <QThread>
 
 using namespace Peony;
 
-QStringList Peony::FileUtils::m_standardPaths = QStringList();
 
 FileUtils::FileUtils()
 {
-    QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
-    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString documentPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    QString videoPath= QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    QString publicPath = g_get_user_special_dir(G_USER_DIRECTORY_PUBLIC_SHARE);
-    //qDebug() << "isStandardPath :" <<templateDir.path();
-    m_standardPaths <<desktopPath <<documentPath <<picturePath <<videoPath
-                  <<downloadPath <<musicPath <<templateDir.path()<<publicPath;
 }
 
 QString FileUtils::getQStringFromCString(char *c_string, bool free)
@@ -572,10 +562,28 @@ const QString FileUtils::getOriginalUri(const QString &uri)
     return originalUri;
 }
 
+QStringList FileUtils::standardPathList()
+{
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString documentPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString picturePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    QString videoPath= QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+    QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    QString musicPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+    QString templatePath = g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES);
+    QString publicPath = g_get_user_special_dir(G_USER_DIRECTORY_PUBLIC_SHARE);
+    //qDebug() << "isStandardPath :" <<templatePath;
+    QStringList standardPathList;
+    standardPathList<<desktopPath <<documentPath <<picturePath <<videoPath
+                  <<downloadPath <<musicPath <<templatePath<<publicPath;
+    return standardPathList;
+}
+
 bool FileUtils::isStandardPath(const QString &uri)
 {
+    QStringList standardPaths = standardPathList();
     QUrl url = uri;
-    if (m_standardPaths.contains(url.path()))
+    if (standardPaths.contains(url.path()))
         return true;
 
     return false;
@@ -624,19 +632,21 @@ bool FileUtils::isSamePath(const QString &uri, const QString &targetUri)
 
 bool FileUtils::containsStandardPath(const QStringList &list)
 {
-    for(auto& uri:list)
-    {
-        if (isStandardPath(uri))
+    QStringList standardPaths = standardPathList();
+    for(auto& uri:list){
+        QUrl url = uri;
+        if (standardPaths.contains(url.path())){
             return true;
+        }
     }
-
     return false;
 }
 
 bool FileUtils::containsStandardPath(const QList<QUrl> &urls)
 {
+    QStringList standardPaths = standardPathList();
     for (QUrl url : urls) {
-        if (isStandardPath(url.toDisplayString())) {
+        if (standardPaths.contains(url.toDisplayString())) {
             return true;
         }
     }
@@ -1236,7 +1246,65 @@ QString FileUtils::getIconStringFromGIcon(GIcon *gicon, QString deviceFile)
     if (G_IS_THEMED_ICON (gicon)) {
         const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
         if(icon_names) {
+            //iconName = *icon_names;
+            auto p = icon_names;
+            while (*p) {
+                QIcon icon = QIcon::fromTheme(*p);
+                if (!icon.isNull()) {
+                    iconName = QString (*p);
+                    break;
+                } else {
+                    p++;
+                }
+            }
+
+            // fix #81852, refer to #57660, #70014, #96652, task #25343
+            if (QString(iconName) == "drive-harddisk-usb") {
+                double size = 0.0;
+                if(!deviceFile.isEmpty()){
+                    size = Peony::FileUtils::getDeviceSize(deviceFile.toUtf8().constData());
+                    if (size < 128) {
+                        iconName = "drive-removable-media-usb";
+                    }
+                }
+            }
+        }
+    } else if (G_IS_FILE_ICON (gicon)) {
+        g_autofree gchar *icon_name = g_icon_to_string(gicon);
+        iconName = icon_name;
+    } else if (G_IS_EMBLEMED_ICON (gicon)) {
+        GIcon *icon_emblemed = g_emblemed_icon_get_icon((GEmblemedIcon *)(gicon));
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)icon_emblemed);
+        if(icon_names) {
             iconName = *icon_names;
+        }
+    }
+    return iconName;
+}
+
+QString FileUtils::getIconStringFromGIconThreadSafety(GIcon *gicon, QString deviceFile)
+{
+    QString iconName;
+    if (G_IS_THEMED_ICON (gicon)) {
+        const char * const * icon_names = g_themed_icon_get_names((GThemedIcon *)gicon);
+        if(icon_names) {
+            //iconName = *icon_names;
+
+            static QThread *uiThread = qApp->thread();
+            if (uiThread == QThread::currentThread()) {
+                auto p = icon_names;
+                while (*p) {
+                    QIcon icon = QIcon::fromTheme(*p);
+                    if (!icon.isNull()) {
+                        iconName = QString (*p);
+                        break;
+                    } else {
+                        p++;
+                    }
+                }
+            } else {
+                iconName = *icon_names;
+            }
 
             // fix #81852, refer to #57660, #70014, #96652, task #25343
             if (QString(iconName) == "drive-harddisk-usb") {
@@ -1360,6 +1428,50 @@ QString FileUtils::getActualDirFromSearchUri(const QString &searchUri)
         actualDir = FileUtils::getEncodedUri(uri);
     }
     return actualDir;
+}
+
+QString FileUtils::updateFileIconName(const QString &uri, bool checkValid)
+{
+    if (nullptr == uri) return "";
+
+    auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
+    auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
+                                                G_FILE_ATTRIBUTE_STANDARD_ICON,
+                                                G_FILE_QUERY_INFO_NONE,
+                                                nullptr,
+                                                nullptr));
+    if (!G_IS_FILE_INFO (info.get()->get()))
+        return nullptr;
+    GIcon *g_icon = g_file_info_get_icon (info.get()->get());
+    QString icon_name;
+    //do not unref the GIcon from info.
+    if (g_icon && G_IS_ICON(g_icon)) {
+        const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
+        if (icon_names) {
+            auto p = icon_names;
+            icon_name = QString(icon_names[0]);
+            if (checkValid) {
+                while (*p) {
+                    QIcon icon = QIcon::fromTheme(*p);
+                    if (!icon.isNull()) {
+                        icon_name = QString (*p);
+                        break;
+                    } else {
+                        p++;
+                    }
+                }
+            }
+        } else {
+            //if it's a bootable-media,maybe we can get the icon from the mount directory.
+            char *bootableIcon = g_icon_to_string(g_icon);
+            if(bootableIcon){
+                icon_name = QString(bootableIcon);
+                g_free(bootableIcon);
+            }
+        }
+    }
+
+    return icon_name;
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)

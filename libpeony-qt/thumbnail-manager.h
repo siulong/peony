@@ -32,6 +32,8 @@
 #include <QMutex>
 
 #include <QGSettings>
+#include <QThread>
+
 class QThreadPool;
 class QSemaphore;
 
@@ -41,6 +43,7 @@ class FileWatcher;
 
 class PEONYCORESHARED_EXPORT ThumbnailManager : public QObject
 {
+    friend class UpdateThemedIconJob;
     friend class ThumbnailJob;
     Q_OBJECT
 public:
@@ -69,7 +72,7 @@ public:
 
 Q_SIGNALS:
     void updateFileThumbnail();
-    bool updateFileThemedIconFromThread(const QString &uri, const QString &themedIcon);
+    bool updateFileThemedIconFromThread(const QString &uri, const QString &themedIcon); //deprecated
 
 public Q_SLOTS:
     void syncThumbnailPreferences();
@@ -100,6 +103,26 @@ private:
 
     bool m_do_not_thumbnail = false;
     QGSettings* m_thumbnail = nullptr;
+};
+
+class UpdateThemedIconJob : public QThread
+{
+    Q_OBJECT
+public:
+    UpdateThemedIconJob(const QString &uri, const QString &themeIcon, QObject *parent = nullptr);
+
+    bool successed() const;
+
+Q_SIGNALS:
+    bool updateFileThemedIconFromThread(const QString &uri, const QString &themedIcon);
+
+protected:
+    void run() override;
+
+private:
+    QString m_uri;
+    QString m_themeIconName;
+    bool m_successed = false;
 };
 
 }

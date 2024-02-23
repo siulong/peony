@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ *  Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
-#include "test-vfs-register.h"
-#include "test-vfs-file.h"
+#include "custom-vfs-register.h"
+#include "custom-vfs-file.h"
 #include "file-enumerator.h"
 #include "file-info.h"
 #include "file-info-job.h"
@@ -41,36 +42,36 @@ using namespace Peony;
 bool test_is_registed = false;
 
 static GFile *
-test_vfs_parse_name (GVfs       *vfs,
+custom_vfs_parse_name (GVfs       *vfs,
                      const char *parse_name,
                      gpointer    user_data)
 {
     Q_UNUSED(vfs);
     Q_UNUSED(user_data);
-    return vfs_test_file_new_for_uri(parse_name);
+    return vfs_custom_file_new_for_uri(parse_name);
 }
 
 static GFile *
-test_vfs_lookup (GVfs       *vfs,
+custom_vfs_lookup (GVfs       *vfs,
                  const char *uri,
                  gpointer    user_data)
 {
-    return test_vfs_parse_name(vfs, uri, user_data);
+    return custom_vfs_parse_name(vfs, uri, user_data);
 }
 
-TestVFSInternalPlugin::TestVFSInternalPlugin(QString scheme)
+CustomVFSInternalPlugin::CustomVFSInternalPlugin(QString scheme)
     :m_scheme(scheme)
 {
 }
 
-void TestVFSInternalPlugin::initVFS()
+void CustomVFSInternalPlugin::initVFS()
 {
     if (!m_scheme.isEmpty()) {
-        TestVFSRegister::registTestVFS(m_scheme);
+        CustomVFSRegister::registTestVFS(m_scheme);
     }
 }
 
-QString TestVFSInternalPlugin::uriScheme()
+QString CustomVFSInternalPlugin::uriScheme()
 {
     QString uriScheme;
     if (!m_scheme.isEmpty()) {
@@ -79,7 +80,7 @@ QString TestVFSInternalPlugin::uriScheme()
     return uriScheme;
 }
 
-bool TestVFSInternalPlugin::holdInSideBar()
+bool CustomVFSInternalPlugin::holdInSideBar()
 {
     bool isShow = true;
     if (!m_scheme.isEmpty()) {
@@ -91,12 +92,12 @@ bool TestVFSInternalPlugin::holdInSideBar()
     return isShow;
 }
 
-void *TestVFSInternalPlugin::parseUriToVFSFile(const QString &uri)
+void *CustomVFSInternalPlugin::parseUriToVFSFile(const QString &uri)
 {
-    return vfs_test_file_new_for_uri(uri.toUtf8().constData());
+    return vfs_custom_file_new_for_uri(uri.toUtf8().constData());
 }
 
-CustomErrorHandler *TestVFSInternalPlugin::customErrorHandler()
+CustomErrorHandler *CustomVFSInternalPlugin::customErrorHandler()
 {
     if (!m_scheme.isEmpty()) {
         auto iface = VFSInfoPluginManager::getInstance()->userSchemeGetPlugin(m_scheme);
@@ -107,7 +108,7 @@ CustomErrorHandler *TestVFSInternalPlugin::customErrorHandler()
     return nullptr;
 }
 
-void TestVFSRegister::registTestVFS(QString scheme)
+void CustomVFSRegister::registTestVFS(QString scheme)
 {
     if (test_is_registed) {
         return;
@@ -133,21 +134,21 @@ void TestVFSRegister::registTestVFS(QString scheme)
     if (scheme.isEmpty()) {
 #if GLIB_CHECK_VERSION(2, 50, 0)
     res = g_vfs_register_uri_scheme(vfs, "test",
-                                    test_vfs_lookup, NULL, NULL,
-                                    test_vfs_parse_name, NULL, NULL);
+                                    custom_vfs_lookup, NULL, NULL,
+                                    custom_vfs_parse_name, NULL, NULL);
 #else
 #endif
     } else {
 #if GLIB_CHECK_VERSION(2, 50, 0)
     res = g_vfs_register_uri_scheme(vfs, scheme.toUtf8().constData(),
-                                    test_vfs_lookup, NULL, NULL,
-                                    test_vfs_parse_name, NULL, NULL);
+                                    custom_vfs_lookup, NULL, NULL,
+                                    custom_vfs_parse_name, NULL, NULL);
 #else
 #endif
     }
 }
 
-TestVFSRegister::TestVFSRegister()
+CustomVFSRegister::CustomVFSRegister()
 {
 
 }
@@ -202,7 +203,7 @@ QStringList CustomVFSInfoInernalPlugin::fileEnumerator(const QString &path)
     return list;
 }
 
-std::shared_ptr<FileTmpInfo> CustomVFSInfoInernalPlugin::queryFile(const QString &path)
+std::shared_ptr<FileVFSInfo> CustomVFSInfoInernalPlugin::queryFile(const QString &path)
 {
     bool isDir = false;
     if (m_allInfoMap.keys().contains(path)) {
@@ -212,7 +213,7 @@ std::shared_ptr<FileTmpInfo> CustomVFSInfoInernalPlugin::queryFile(const QString
     QString uri = QString("test://%1").arg(path);
 
     qDebug() << __func__ << path << m_allInfoMap.keys() << uri << isDir;
-    std::shared_ptr<FileTmpInfo> file = std::make_shared<FileTmpInfo>();
+    std::shared_ptr<FileVFSInfo> file = std::make_shared<FileVFSInfo>();
     file->setDir(isDir);
     return file;
 }
@@ -279,10 +280,10 @@ QStringList LocalVFSInfoInternalPlugin2::fileEnumerator(const QString &path)
     return list;
 }
 
-std::shared_ptr<FileTmpInfo> LocalVFSInfoInternalPlugin2::queryFile(const QString &path)
+std::shared_ptr<FileVFSInfo> LocalVFSInfoInternalPlugin2::queryFile(const QString &path)
 {
     QString tPath = path;
-    std::shared_ptr<FileTmpInfo> file = std::make_shared<FileTmpInfo>();
+    std::shared_ptr<FileVFSInfo> file = std::make_shared<FileVFSInfo>();
 
     QString uri = LOCAL_FILE_PATH2 + tPath;
     g_autoptr(GFile) tmp = g_file_new_for_uri(uri.toUtf8().constData());
@@ -321,10 +322,15 @@ std::shared_ptr<FileTmpInfo> LocalVFSInfoInternalPlugin2::queryFile(const QStrin
                 }
             }
 
-           bool has_unix_mode = g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
+            bool has_unix_mode = g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
             guint32 mode = 0;
             if (has_unix_mode)
                 mode = g_file_info_get_attribute_uint32(fileInfo, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+            bool isWrite = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+            bool isRename = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME);
+            QString user = g_file_info_get_attribute_string(fileInfo, G_FILE_ATTRIBUTE_OWNER_USER);
+            QString groupName = g_file_info_get_attribute_string(fileInfo, G_FILE_ATTRIBUTE_OWNER_GROUP);
 
             qDebug() << __func__ << mode;
             file->setTargetUri(uri);
@@ -332,6 +338,10 @@ std::shared_ptr<FileTmpInfo> LocalVFSInfoInternalPlugin2::queryFile(const QStrin
             file->setModifiedTime(mtime);
             file->setAccessTime(atime);
             file->addExtendInfo(G_FILE_ATTRIBUTE_UNIX_MODE, QVariant(mode));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, QVariant(isWrite));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME, QVariant(isRename));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_OWNER_USER, QVariant(user));
+            file->addExtendInfo(G_FILE_ATTRIBUTE_OWNER_GROUP, QVariant(groupName));
             file->setSize(g_file_info_get_attribute_uint64(fileInfo, G_FILE_ATTRIBUTE_STANDARD_SIZE));
             file->setContentType(contentType);
         } else {

@@ -38,6 +38,7 @@
 using namespace Peony;
 
 static EmblemProviderManager *global_instance = nullptr;
+static QThreadPool *emblem_thread_pool = nullptr;
 
 EmblemProvider::EmblemProvider(QObject *parent) : QObject(parent)
 {
@@ -141,6 +142,8 @@ void EmblemProviderManager::cancelQuery(const QString &uri)
 
 EmblemProviderManager::EmblemProviderManager(QObject *parent) : QObject(parent)
 {
+    emblem_thread_pool = new QThreadPool();
+
     registerProvider(MetadataEmblemProvider::getInstance());
 
     m_timer = new QTimer(this);
@@ -171,5 +174,5 @@ void EmblemProviderManager::queryInternal()
     // 由于构造job时使用了swap，需要把此操作互斥
     auto job = new EmblemJob(m_queryQueue, this);
     m_mutex.unlock();
-    QThreadPool::globalInstance()->start(job);
+    emblem_thread_pool->start(job);
 }

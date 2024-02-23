@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <https://www.gnu.org/licenses/>.
  *
+ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
  */
 
 #ifndef TESTVFSFILEMONITOR_H
@@ -26,17 +27,17 @@
 
 G_BEGIN_DECLS
 
-#define VFS_TYPE_TEST_FILE_MONITOR (vfs_test_file_monitor_get_type())
-#define VFS_TEST_FILE_MONITOR(o) (G_TYPE_CHECK_INSTANCE_CAST((o), VFS_TYPE_TEST_FILE_MONITOR, TestVFSFileMonitor))
-#define VFS_TEST_FILE_MONITOR_CLASS(k) (G_TYPE_CLASS_CAST((k), VFS_TYPE_TEST_FILE_MONITOR, TestVFSFileMonitorClass))
-#define VFS_IS_TEST_FILE_MONITOR(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), VFS_TYPE_TEST_FILE_MONITOR))
-#define VFS_IS_TEST_FILE_MONITOR_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE((k), VFS_TYPE_TEST_FILE_MONITOR))
-#define VFS_TEST_FILE_MONITOR_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS(o, VFS_TYPE_TEST_FILE_MONITOR, TestVFSFileMonitorClass))
+#define VFS_TYPE_CUSTOM_FILE_MONITOR (vfs_custom_file_monitor_get_type())
+#define VFS_CUSTOM_FILE_MONITOR(o) (G_TYPE_CHECK_INSTANCE_CAST((o), VFS_TYPE_CUSTOM_FILE_MONITOR, CustomVFSFileMonitor))
+#define VFS_CUSTOM_FILE_MONITOR_CLASS(k) (G_TYPE_CLASS_CAST((k), VFS_TYPE_CUSTOM_FILE_MONITOR, CustomVFSFileMonitorClass))
+#define VFS_IS_CUSTOM_FILE_MONITOR(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), VFS_TYPE_CUSTOM_FILE_MONITOR))
+#define VFS_IS_CUSTOM_FILE_MONITOR_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE((k), VFS_TYPE_CUSTOM_FILE_MONITOR))
+#define VFS_CUSTOM_FILE_MONITOR_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS(o, VFS_TYPE_CUSTOM_FILE_MONITOR, CustomVFSFileMonitorClass))
 
-typedef struct _TestVFSFileMonitor TestVFSFileMonitor;
-typedef struct _TestVFSFileMonitorClass TestVFSFileMonitorClass;
+typedef struct _CustomVFSFileMonitor CustomVFSFileMonitor;
+typedef struct _CustomVFSFileMonitorClass CustomVFSFileMonitorClass;
 
-struct _TestVFSFileMonitor
+struct _CustomVFSFileMonitor
 {
     GFileMonitor parent_monitor;
     QMetaObject::Connection add;
@@ -44,12 +45,12 @@ struct _TestVFSFileMonitor
     QMetaObject::Connection change;
 };
 
-struct _TestVFSFileMonitorClass {
+struct _CustomVFSFileMonitorClass {
     GFileMonitorClass parent_class;
 };
 
-GType vfs_test_file_monitor_get_type(void);
-void vfs_test_file_monitor_dir(TestVFSFileMonitor *obj, const QString &filepath);
+GType vfs_custom_file_monitor_get_type(void);
+void vfs_custom_file_monitor_dir(CustomVFSFileMonitor *obj, const QString &filepath);
 
 G_END_DECLS
 

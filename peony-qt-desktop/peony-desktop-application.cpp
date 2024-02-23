@@ -35,6 +35,7 @@
 #include "desktop-menu.h"
 #include "global-settings.h"
 #include "file-enumerator.h"
+#include "desktopbackground.h"
 #include "desktop-background-manager.h"
 #include "desktopbackgroundwindow.h"
 #include "desktop-item-model.h"
@@ -773,12 +774,6 @@ void PeonyDesktopApplication::addBgWindow(const KScreen::OutputPtr &output)
     qDebug()<<"[PeonyDesktopApplication::addBgWindow] screen name:"<<window->screen()->name()<<"  IP:"<<window->screen();
     window->show();
 
-    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
-        for (auto bgWindow : m_bg_windows) {
-            bgWindow->getIconView()->setGridSize(gridSize);
-        }
-    });
-
     //task#74174 更新图标大小
     connect(window, &DesktopBackgroundWindow::setDefaultZoomLevel, this, [=](DesktopIconView::ZoomLevel level){
         for (auto bgWindow : m_bg_windows) {
@@ -825,6 +820,12 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
             outputRemoved(output->id());
         }
     });
+
+    connect(window->getIconView(), &DesktopIconView::resetGridSize, this, [=](const QSize &gridSize){
+        for (auto bgWindow : m_bg_windows) {
+            bgWindow->getIconView()->setGridSize(gridSize);
+        }
+    });
 }
 
 void PeonyDesktopApplication::setupDesktop()
@@ -838,6 +839,7 @@ void PeonyDesktopApplication::setupDesktop()
             output->setId(qApp->screens().indexOf(screen));
             output->setName(qApp->primaryScreen()->name());
             output->setPos(screen->geometry().topLeft() * screen->devicePixelRatio());
+            output->setLogicalSize(screen->size() * devicePixelRatio());
             output->setScale(1.0);
             output->setSize(screen->size() * screen->devicePixelRatio());
             if (screen == qApp->primaryScreen()) {
@@ -937,6 +939,11 @@ void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
     error = NULL;
     openFolder = true;
     root = g_mount_get_default_location(G_MOUNT(object));
+
+    // fix #205338
+    g_autoptr(GFileInfo) access_info = g_file_query_info(root, G_FILE_ATTRIBUTE_ACCESS_CAN_READ","G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    openFolder = g_file_info_get_attribute_boolean(access_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ) && g_file_info_get_attribute_boolean(access_info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+
     mountUri = g_file_get_uri(root);
 
     openFolderCmd = "/usr/bin/peony " + QString(mountUri);

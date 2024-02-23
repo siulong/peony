@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/file-watcher.h                \
     $$PWD/connect-server-dialog.h       \
     $$PWD/connect-to-server-dialog.h    \
+    $$PWD/private/file-vfs-info-private.h \
     $$PWD/volume-manager.h              \
     $$PWD/gerror-wrapper.h              \
     $$PWD/gobject-template.h            \
@@ -26,7 +27,7 @@ HEADERS += \
     $$PWD/volumeManager.h               \
     $$PWD/usershare-manager.h           \
     $$PWD/file-infos-job.h              \
-    $$PWD/file-tmp-info.h
+    $$PWD/file-vfs-info.h
 
 SOURCES += \
     $$PWD/custom-error-handler.cpp \
@@ -41,6 +42,7 @@ SOURCES += \
     $$PWD/file-watcher.cpp              \
     $$PWD/connect-server-dialog.cpp     \
     $$PWD/connect-to-server-dialog.cpp  \
+    $$PWD/private/file-vfs-info-private.cpp \
     $$PWD/volume-manager.cpp            \
     $$PWD/gerror-wrapper.cpp            \
     $$PWD/gobject-template.cpp          \
@@ -53,7 +55,7 @@ SOURCES += \
     $$PWD/volumeManager.cpp		\
     $$PWD/usershare-manager.cpp         \
     $$PWD/file-infos-job.cpp           \
-    $$PWD/file-tmp-info.cpp
+    $$PWD/file-vfs-info.cpp
 
 FORMS += \
     $$PWD/connect-server-dialog.ui

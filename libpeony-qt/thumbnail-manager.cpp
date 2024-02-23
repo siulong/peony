@@ -53,6 +53,8 @@ using namespace Peony;
 static ThumbnailManager *global_instance = nullptr;
 static bool m_tril_exist = false;
 
+static QThreadPool *desktop_thumbnail_thread_pool = nullptr;
+
 /*!
  * \brief ThumbnailManager::ThumbnailManager
  * \param parent
@@ -66,6 +68,8 @@ static bool m_tril_exist = false;
  */
 ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
 {
+    desktop_thumbnail_thread_pool = new QThreadPool();
+
     GlobalSettings::getInstance();
 
     m_thumbnail_thread_pool = new QThreadPool(this);
@@ -94,14 +98,14 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
         }
     });
 
-    connect(this, &ThumbnailManager::updateFileThemedIconFromThread, this, [=](const QString &uri, const QString &themedIcon){
-        auto icon = QIcon::fromTheme(themedIcon);
-        if (icon.isNull()) {
-            return false;
-        }
-        this->insertOrUpdateThumbnail(uri, icon);
-        return true;
-    }, Qt::BlockingQueuedConnection);
+//    connect(this, &ThumbnailManager::updateFileThemedIconFromThread, this, [=](const QString &uri, const QString &themedIcon){
+//        auto icon = QIcon::fromTheme(themedIcon);
+//        if (icon.isNull()) {
+//            return false;
+//        }
+//        this->insertOrUpdateThumbnail(uri, icon);
+//        return true;
+//    }, Qt::BlockingQueuedConnection);
 }
 
 ThumbnailManager::~ThumbnailManager()
@@ -155,7 +159,11 @@ void ThumbnailManager::createImagePdfFileThumbnail(const QString &uri, std::shar
     QIcon thumbnail;
 
     ImagePdfThumbnail officeThumbnail(uri);
-    ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, "atril");
+//    ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, "atril");
+    auto job = new UpdateThemedIconJob(uri, "atril");
+    job->start();
+    job->wait();
+    delete job;
     if (watcher) {
         watcher->fileChanged(uri);
     }
@@ -209,6 +217,16 @@ void ThumbnailManager::createImageFileThumbnail(const QString &uri, std::shared_
         if (watcher) {
             watcher->fileChanged(uri);
         }
+    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://")) {
+        //手机传输和图片传输需要重定向path后获取对应缩略图
+        auto fileInfo = FileInfo::fromUri(uri);
+        QIcon thumbnail = GenericThumbnailer::generateThumbnail(fileInfo.get()->filePath(), true);
+        if (!thumbnail.isNull()) {
+            insertOrUpdateThumbnail(uri, thumbnail);
+            if (watcher) {
+                watcher->fileChanged(uri);
+            }
+        }
     }
 
     //qApp->processEvents();
@@ -251,7 +269,7 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
     if (desktop_app_info) {
         auto app_info = G_APP_INFO(desktop_app_info);
         GIcon *icon = g_app_info_get_icon(app_info);
-        string = FileUtils::getIconStringFromGIcon(icon);
+        string = FileUtils::getIconStringFromGIconThreadSafety(icon);
     }
 
     if (string.isEmpty()) {
@@ -282,8 +300,13 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
         }
     }
 
-    bool successed = ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, string);
+    auto job = new UpdateThemedIconJob(uri, string);
+    job->start();
+    job->wait();
+//    bool successed = ThumbnailManager::getInstance()->updateFileThemedIconFromThread(uri, string);
+    bool successed = job->successed();
     successed = !thumbnail.isNull() || successed;
+    delete job;
 
     //fix desktop file set customer icon issue, link to bug#77638
 //    auto info = FileInfo::fromUri(uri);
@@ -437,7 +460,7 @@ void ThumbnailManager::updateDesktopFileThumbnail(const QString &uri, std::share
         //async
         //qDebug()<<"desktop file"<<uri;
         auto thumbnailJob = new ThumbnailJob(uri, watcher, this);
-        m_thumbnail_thread_pool->start(thumbnailJob, QThread::Priority::HighestPriority);
+        desktop_thumbnail_thread_pool->start(thumbnailJob, QThread::Priority::HighestPriority);
     } else {
         releaseThumbnail(uri);
         if (watcher) {
@@ -485,4 +508,29 @@ bool ThumbnailManager::hasThumbnailThreadSafety(const QString &uri)
     bool res = hasThumbnail(uri);
     m_semaphore->release();
     return res;
+}
+
+UpdateThemedIconJob::UpdateThemedIconJob(const QString &uri, const QString &themeIcon, QObject *parent) : QThread(parent)
+{
+    m_uri = uri;
+    m_themeIconName = themeIcon;
+
+    connect(this, &UpdateThemedIconJob::updateFileThemedIconFromThread, ThumbnailManager::getInstance(), [=](const QString &uri, const QString &themeIcon){
+        auto icon = QIcon::fromTheme(themeIcon);
+        if (icon.isNull()) {
+            return false;
+        }
+        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri, icon);
+        return true;
+    }, Qt::BlockingQueuedConnection);
+}
+
+void UpdateThemedIconJob::run()
+{
+    m_successed = updateFileThemedIconFromThread(m_uri, m_themeIconName);
+}
+
+bool UpdateThemedIconJob::successed() const
+{
+    return m_successed;
 }

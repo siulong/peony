@@ -30,6 +30,7 @@
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
 #include "file-copy-operation.h"
+#include "file-operation-helper.h"
 
 #include "file-utils.h"
 
@@ -456,8 +457,8 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         if (m_root_item) {
             if (m_root_item->m_info->canWrite()) {
                 return Qt::ItemIsDropEnabled;
-            } else {
-                return Qt::ItemIsEnabled;
+            } else if(m_root_item->m_info.get()->fileSystemType().contains("udf")) {
+                return Qt::ItemIsDropEnabled;
             }
         }
         return Qt::ItemIsDropEnabled;
@@ -558,6 +559,14 @@ void FileItemModel::setRootIndex(const QModelIndex &index)
         if (new_root_item->hasChildren()) {
             setRootItem(new_root_item);
         }
+    }
+}
+
+void FileItemModel::updateCurrentFilesThumbnails()
+{
+    for (FileItem *child : *(m_root_item->m_children)) {
+        auto uri = child->uri();
+        ThumbnailManager::getInstance()->createThumbnail(uri, m_root_item->m_thumbnail_watcher);
     }
 }
 

@@ -33,6 +33,8 @@
 
 #include <udisks/udisks.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
@@ -74,6 +76,20 @@ QString getDeviceUUID(const char *device) {
     const gchar *uuid = udisks_block_get_id_uuid(block);
     return uuid;
 }
+
+static bool driveHasMedia(GDrive *gdrive){
+    /* 此方式替代g_drive_has_media只对evice.startsWith("/dev/sd")生效！Linkto Bug#205118插入拓展坞后文件管理器侧边栏多出了两个移动设备 */
+    g_autofree gchar* unix_device = g_drive_get_identifier(gdrive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+    g_object_unref(gdrive);
+    QString device = unix_device;
+    int fd = open(device.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
+    if(-1==fd){/* open失败 */
+        return false;
+    }
+    close(fd);
+    return true;
+}
+
 
 void VolumeManager::printVolumeList(){
     qDebug()<<endl<<endl<<endl;
@@ -425,13 +441,9 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                         addItem->setHidden(true);
                         // if drive has media, it is not represent a docking station.
                         // so it should not be hidden.
-                        if (g_drive_has_media(gdrive)) {
+                        if (driveHasMedia(gdrive)) {
                             addItem->setHidden(false);
                         }
-                    }else if(uuid.isEmpty()){
-                        qDebug()<<__func__<<__LINE__<<device<<uuid;
-                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                        addItem->setHidden(true);
                     }
                 }//end
                 pThis->m_volumeList->remove(device);
@@ -627,9 +639,6 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
             if (volume->getGVolume() == gvolume) {
                 // 加密U盘的device name可能改变，列表需要按之前的调整
                 device = volume->originalDevice();
-                /* 此处更新volume的icon，优先使用gmount的icon；解决先打开文件管理器在插入启动光盘，先打开的文件管理器启动光盘图标未正确显示问题 */
-                volume->setIconName(mountItem->icon());
-                Q_EMIT pThis->volumeUpdate(Volume(*volume),"name");//end
                 break;
             }
         }
@@ -698,7 +707,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 volume->setHidden(true);
                 // if drive has media, it is not represent a docking station.
                 // so it should not be hidden.
-                if (g_drive_has_media(gdrive)) {
+                if (driveHasMedia(gdrive)) {
                     volume->setHidden(false);
                 }
             }
@@ -896,7 +905,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         QString device = volumeItem->device();
         if(m_volumeList->contains(device)) {
             delete volumeItem;
-            delete entry;
+            //delete entry;
             continue;
         }
 
@@ -930,16 +939,18 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     // if drive has media, it is not represent a docking station.
                     // so it should not be hidden.
                     if (entry->getGDrive()) {
-                        if (g_drive_has_media(entry->getGDrive())) {
+                        if (driveHasMedia(entry->getGDrive())) {
                             volumeItem->setHidden(false);
                         }
                     }
                 }
-                /* 该代码段是解决前场问题时新增，影响了异常U盘显示，经讨论后先注释此处；hotfix bug#174631 关闭文件管理器时，插入异常U盘，侧边栏没有U盘图标 */
-                /*else if(uuid.isEmpty()){
-                    //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                    volumeItem->setHidden(true);
-                }*/
+                else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
+                    qDebug()<<"the icon of volume"<<volumeItem->device()<<volumeItem->icon();
+                    if("drive-removable-media" == volumeItem->icon()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
+                        volumeItem->setHidden(true);
+                    }
+                }
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
                 volumeItem->setHidden(true);
@@ -947,7 +958,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         }
         if (shouldDeleteItem)
             delete volumeItem;
-        delete entry;
+        //delete entry;
     }
 
 
@@ -1596,7 +1607,7 @@ void Mount::initMountInfo(){
     GIcon* gicon = g_mount_get_icon(m_mount);
     m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
     // fix #81852, refer to #57660, #70014, #96652, task #25343
-    if (QString(m_icon) == "drive-harddisk-usb") {
+    if (m_device.startsWith("/dev/sd") && m_icon.endsWith(".ico") || QString(m_icon) == "drive-harddisk-usb") {/* 镜像U盘或移动硬盘的图标处理，linkto bug#174770 */
         double size = 0.0;
         if(!tmpDevice.isEmpty()){
             size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
@@ -1606,6 +1617,9 @@ void Mount::initMountInfo(){
         if (size < 128) {
             m_icon = "drive-removable-media-usb";
         }
+    }
+    if(m_device.startsWith("/dev/sr") && m_icon.endsWith(".ico")){/* 镜像光盘的图标处理,linkto bug#174770 */
+        m_icon = "media-optical";
     }
 
     g_object_unref (gicon);

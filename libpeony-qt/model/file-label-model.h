@@ -99,6 +99,7 @@ public Q_SLOTS:
     void setValidInSidebar(FileLabelItem *item, bool isChecked);
     void setValidInMenu(FileLabelItem *item, bool isChecked);
     void renameFileLabel(const QString oldUri, const QString newUri);
+    void updateLabesForAllFilesById(int id);
 
 protected:
     void initLabelItems();

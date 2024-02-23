@@ -454,8 +454,10 @@ void FileItem::findChildrenAsync()
                 if (isEnding) {
                     //qDebug() << "enumerateFinished childrenUpdated:" <<isEnding;
                     m_isEndOfEnumerate = isEnding;
-                    Q_EMIT m_model->findChildrenFinished();
-                    Q_EMIT m_model->updated();
+                    if(m_ending_uris.size()){
+                        Q_EMIT m_model->findChildrenFinished();
+                        Q_EMIT m_model->updated();
+                    }
                 }
             }
 
@@ -912,7 +914,7 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 
 void FileItem::connectFunc()
 {
-    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
+    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
         /* 查询结果返回，更新数据 */
         //qDebug()<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
         if(parentItem && this != parentItem)
@@ -964,8 +966,8 @@ void FileItem::connectFunc()
                 if (!item)
                     continue;
                 info_manager->lock();
-                item->m_info = info;
                 info_manager->updateFileInfo(info);
+                item->m_info = info;
                 info_manager->unlock();
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
                 EmblemProviderManager::getInstance()->queryAsync(info->uri());
@@ -1078,10 +1080,9 @@ void FileItem::childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding)
 
     if (isEnding) {
         m_isEndOfEnumerate = isEnding;
-        m_ending_uris.clear();
-        m_ending_uris = uris;
-
     }
+    m_ending_uris.clear();
+    m_ending_uris = uris;
 
     QStringList originalList = uris; /* 原始列表 */
     /* 遍历时第一次先加载100个显示在桌面上，其余按大批量查询 */

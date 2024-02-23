@@ -26,7 +26,7 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QPushButton>
-
+#include <QToolButton>
 #include <gio/gio.h>
 
 class ProgressBar;
@@ -135,6 +135,7 @@ Q_SIGNALS:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    bool event(QEvent *event) override;
 
 public Q_SLOTS:
     void onCancelled();
@@ -260,6 +261,7 @@ private:
     // btn
     QPushButton* m_btn_close = nullptr;
     QPushButton* m_btn_mini = nullptr;
+    QToolButton* m_btn_pause = nullptr;
 
     // icon
     int m_icon_margin = 20;
