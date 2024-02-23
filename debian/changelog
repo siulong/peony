@@ -1,3 +1,9 @@
+peony (4.10.0.2-ok1~0223) nile; urgency=medium
+
+  * New upstream release
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 23 Feb 2024 15:37:19 +0800
+
 peony (4.10.0.0-ok2~0104.1) nile; urgency=medium
 
   * close #I8IENY【文件管理器】选中图片右键选择设置壁纸，未生效
