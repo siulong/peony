@@ -33,6 +33,7 @@
 
 #include "file-untrash-operation.h"
 #include "file-count-operation.h"
+#include "file-properties-operation.h"
 
 #include "file-info-job.h"
 #include "file-info.h"
@@ -384,6 +385,42 @@ FileOperation *FileOperationUtils::create(const QString &destDirUri, const QStri
     auto createOp = new CreateTemplateOperation(destDirUri, type, name);
     fileOpMgr->startOperation(createOp, true);
     return createOp;
+}
+
+FileOperation *FileOperationUtils::setReadOnly(const QStringList &srcUris, bool readOnly, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::ChangeReadOnly;
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto readOnlyOp = new FilePropertiesOperation(srcUris, options, false, readOnly);
+    fileOpMgr->startOperation(readOnlyOp, false);
+    return readOnlyOp;
+}
+
+FileOperation *FileOperationUtils::setHidden(const QStringList &srcUris, bool hidden, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::ChangeHidden;
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto hiddenOp = new FilePropertiesOperation(srcUris, options, hidden, false);
+    fileOpMgr->startOperation(hiddenOp, false);
+    return hiddenOp;
+}
+
+FileOperation *FileOperationUtils::setReadOnlyAndHidden(const QStringList &srcUris, bool readOnly, bool hidden, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::Options(FilePropertiesOperation::ChangeReadOnly|FilePropertiesOperation::ChangeHidden);
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto propertiesOp = new FilePropertiesOperation(srcUris, options, hidden, readOnly);
+    fileOpMgr->startOperation(propertiesOp);
+    return propertiesOp;
 }
 
 void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)

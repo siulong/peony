@@ -831,6 +831,29 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 {
     QList<QAction *> l;
 
+#if 0
+    addAction("test set properties", this, [=]{
+        QDialog d;
+        QVBoxLayout *layout = new QVBoxLayout;
+        auto hiddenBox = new QCheckBox("hidden");
+        auto readonlyBox = new QCheckBox("readonly");
+        auto recursiveBox = new QCheckBox("recusive");
+        layout->addWidget(hiddenBox);
+        layout->addWidget(readonlyBox);
+        layout->addWidget(recursiveBox);
+        auto button = new QPushButton("ok");
+        layout->addWidget(button);
+        connect(button, &QPushButton::clicked, &d, &QDialog::accept);
+        d.setLayout(layout);
+        if (d.exec()) {
+            bool hidden = hiddenBox->isChecked();
+            bool readonly = readonlyBox->isChecked();
+            bool recursive = recursiveBox->isChecked();
+            FileOperationUtils::setReadOnlyAndHidden(m_selections, readonly, hidden, recursive);
+        }
+    });
+#endif
+
     if (!m_is_trash && !m_is_computer) {
         QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         bool hasStandardPath = FileUtils::containsStandardPath(m_selections);
