@@ -323,7 +323,6 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
     auto childIndex = model->index(sourceRow, 0, sourceParent);
     if (childIndex.isValid()) {
         auto item = static_cast<FileItem*>(childIndex.internalPointer());
-
         /* task#63345 通过.hidden文件来设置隐藏文件和目录 */
         FileInfo* fileInfo =  item->m_info.get();/*FileInfo::fromUri(item->uri()).get()*/;
         bool isHidden = fileInfo->property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN).toBool();
@@ -334,16 +333,8 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
 
         if(!item->shouldShow())
             return false;
-        if (!m_show_hidden) {
-            //qDebug()<<sourceRow<<item->m_info->displayName()<<model->rowCount(sourceParent);
-            //QMessageBox::warning(nullptr, "filter", item->m_info->displayName());
-            //qDebug()<<item->m_info->displayName();
-            if (item->m_info->displayName() != nullptr) {
-                if (item->m_info->displayName().at(0) == '.') {
-                    //qDebug()<<sourceRow<<item->m_info->displayName()<<model->rowCount(sourceParent);
-                    return false;
-                }
-            }
+        if (!m_show_hidden && item->m_info->isHiddenFile()) {
+            return false;
         }
         //regExp
 

@@ -35,6 +35,7 @@
 
 #include <QIcon>
 #include <QColor>
+#include <QVariant>
 
 namespace Peony {
 
@@ -302,6 +303,12 @@ public:
     // 是否禁止执行程序
     bool isExecDisable();
 
+    bool isHiddenFile(){
+        if(m_is_hidden || displayName().startsWith(".")){
+           return true;
+        }
+        return false;
+    }
     AccessFlags accesses() {
         auto flags = AccessFlags();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
@@ -363,8 +370,8 @@ private:
     bool m_is_remote = false;
     bool m_is_symbol_link = false;
     bool m_is_virtual = false;
-
     bool m_is_loaded = false;
+    bool m_is_hidden = false;
 
     QString m_display_name = nullptr;
     QString m_desktop_name = nullptr;

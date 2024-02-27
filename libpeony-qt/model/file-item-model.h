@@ -256,7 +256,7 @@ Q_SIGNALS:
      * \note proxy model should connect this signal and start sort and filter again.
      */
     void updated();
-
+    void updateFilter();
     void selectRequest(const QStringList &uris);
     void changePathRequest(const QString &destUri, const QString &sourceUri);
 

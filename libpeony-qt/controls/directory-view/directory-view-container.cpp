@@ -86,6 +86,12 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
 //    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
 //        refresh();
 //    });
+    connect(m_model, &FileItemModel::updateFilter, [=](){
+        updateFilter();
+        QTimer::singleShot(400, this, [=](){
+            Q_EMIT this->statusBarChanged();
+        });
+    });
 
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
         m_control_center_plugin = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);

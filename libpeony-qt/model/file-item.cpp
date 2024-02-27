@@ -783,6 +783,7 @@ void FileItem::updateInfoAsync()
         //m_model->dataChanged(this->firstColumnIndex(), this->lastColumnIndex());
         m_model->updated();
         ThumbnailManager::getInstance()->createThumbnail(this->uri(), m_thumbnail_watcher, true);
+        Q_EMIT m_model->updateFilter();
     });
 
     job->connect(this, &FileItem::cancelFindChildren, job, &FileInfoJob::cancel);
