@@ -184,6 +184,11 @@ void FilePropertiesOperation::setPropertiesRecursively(FileNode *node, bool *can
 
 void FilePropertiesOperation::setPropertiesOne(FileNode *node)
 {
+    if (!node->isFolder() && node->baseName() == ".hidden") {
+        // 跳过.hidden文件
+        return;
+    }
+
     g_autoptr (GFile) file = g_file_new_for_uri(node->uri().toUtf8().constData());
     g_autofree gchar *child_file_basename = g_file_get_basename(file);
     node->setDestFileName(child_file_basename);
