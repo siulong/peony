@@ -1488,7 +1488,7 @@ void PropertiesSetDialog::initUI()
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
 
-    m_label = new QLabel(tr("Whether to apply it to the current selection, or whether to apply it to selections and subfolders."));
+    m_label = new QLabel(tr("Whether to apply to the current selected option or to selected options and subfolders and subfiles."));
     m_label->setContentsMargins(22, 10, 22, 0);
     m_label->setWordWrap(true);
     m_label->setAutoFillBackground(true);
