@@ -288,6 +288,14 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
         return;
     });
 
+    connect(m_model, &DesktopItemModel::refreshFilter, this, [=]() {
+        m_proxy_model->setShowHidden(GlobalSettings::getInstance()->getValue(SHOW_HIDDEN_PREFERENCE).toBool());
+        QTimer::singleShot(100, this, [=]() {
+            resetAllItemPositionInfos();
+            refresh();
+        });
+     });
+
     connect(m_model, &DesktopItemModel::requestClearIndexWidget, this, &DesktopIconView::clearAllIndexWidgets);
 
     connect(m_proxy_model, &QSortFilterProxyModel::layoutChanged, this, [=]() {

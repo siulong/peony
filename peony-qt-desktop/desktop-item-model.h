@@ -86,6 +86,7 @@ Q_SIGNALS:
     void requestClearIndexWidget(const QStringList &uris = QStringList());
     void requestUpdateItemPositions(const QString &uri = nullptr);
     void refreshed();
+    void refreshFilter();
 
    // void fileCreated(const QString &uri);
 

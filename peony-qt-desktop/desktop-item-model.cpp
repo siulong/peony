@@ -363,7 +363,7 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
                     ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
                     this->dataChanged(indexFromUri(uri), indexFromUri(uri));
                     Q_EMIT this->requestClearIndexWidget(QStringList()<<uri);
-
+                    refreshFilter();
                 });
                 job->queryAsync();
                 this->dataChanged(indexFromUri(uri), indexFromUri(uri));
