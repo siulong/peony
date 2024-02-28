@@ -375,16 +375,16 @@ void ListView::mousePressEvent(QMouseEvent *e)
         m_mouse_release_unselect = false;
     }
 
-    if (m_mouse_release_unselect) {
-        this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-    }
-
     if(getSelections().count()>1) {
         multiSelect();
     }
 
     m_editValid = true;
     QTreeView::mousePressEvent(e);
+
+    if (m_mouse_release_unselect) {
+        this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+    }
 
     auto visualRect = this->visualRect(index);
     auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
@@ -447,6 +447,13 @@ void ListView::mouseReleaseEvent(QMouseEvent *e)
     QTreeView::mouseReleaseEvent(e);
     m_rubberBand->hide();
     m_lastPressedLogicPoint = QPoint(-1, -1);
+
+    if (true == m_mouse_release_unselect) {
+        QModelIndex itemIndex = indexAt(e->pos());
+        if (itemIndex.isValid()) {
+            selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Deselect|QItemSelectionModel::Rows);
+        }
+    }
 }
 
 void ListView::mouseMoveEvent(QMouseEvent *e)
