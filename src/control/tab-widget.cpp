@@ -205,13 +205,15 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
    // group->setExclusive(true);
 
     //bug#94981 修改添加控件的位置和形状
-    m_add_page_button = new QToolButton(this);
-    m_add_page_button->setFixedSize(QSize(48, 48));
+    m_add_page_button = new QPushButton(this);
+    m_add_page_button->setFixedSize(QSize(38, 38));
     m_add_page_button->setIconSize(QSize(16, 16));
     m_add_page_button->setIcon(QIcon::fromTheme("list-add-symbolic"));
-    m_add_page_button->setAutoRaise(true);
-    m_add_page_button->setObjectName("toolButton");
-    m_add_page_button->setStyle(TabBarStyle::getStyle());
+    //m_add_page_button->setAutoRaise(true);
+    m_add_page_button->setProperty("isRoundButton", true);
+    m_add_page_button->setProperty("isWindowButton", 0x1);
+    //m_add_page_button->setObjectName("toolButton");
+    //m_add_page_button->setStyle(TabBarStyle::getStyle());
 
     connect(m_add_page_button, &QToolButton::clicked, this, [=](){
         QString str = m_tab_bar->tabData(m_tab_bar->currentIndex()).toString();

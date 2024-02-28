@@ -82,6 +82,8 @@ private:
     QList<std::shared_ptr<FileInfo>> m_buttons_info;
     QList<std::shared_ptr<FileInfo>> m_querying_buttons_info;
     QHash<QString, QList<std::shared_ptr<FileInfo>>> m_infos_hash;
+
+    bool m_is_classical = false;
 };
 
 }
