@@ -454,7 +454,7 @@ void FileItem::findChildrenAsync()
                 if (isEnding) {
                     //qDebug() << "enumerateFinished childrenUpdated:" <<isEnding;
                     m_isEndOfEnumerate = isEnding;
-                    if(m_ending_uris.size()){
+                    if(!m_ending_uris.size()){
                         Q_EMIT m_model->findChildrenFinished();
                         Q_EMIT m_model->updated();
                     }
