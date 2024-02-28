@@ -425,6 +425,7 @@ void FileOperationProgressBar::showDelay(int msec)
             }
 #endif
             show();
+            activateWindow();
         }
     });
 }
