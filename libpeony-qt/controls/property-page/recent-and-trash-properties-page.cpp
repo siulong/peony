@@ -92,7 +92,7 @@ void RecentAndTrashPropertiesPage::init()
     if (iconName == "application-x-desktop") {
         iconName = getIconName();
     }
-    auto icon = new QPushButton(QIcon::fromTheme(iconName), nullptr, this);
+    auto icon = new QPushButton(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")), nullptr, this);
     icon->setFocusPolicy(Qt::NoFocus);
     icon->setAttribute(Qt::WA_TransparentForMouseEvents);
     icon->setIconSize(QSize(48, 48));
