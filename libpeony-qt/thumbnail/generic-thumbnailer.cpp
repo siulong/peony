@@ -108,7 +108,7 @@ QIcon GenericThumbnailer::generateThumbnail(const QString &path, bool shadow, co
         QPixmap pixmap = QPixmap::fromImage(img);
         pixmap = pixmap.scaled(img.rect().adjusted(4, 4, -4, -4).size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
-        QImage newImg(img.size(), QImage::Format_ARGB32);
+        QImage newImg(img.size(), QImage::Format_ARGB32_Premultiplied);
         newImg.fill(Qt::transparent);
         QPainter p(&newImg);
 

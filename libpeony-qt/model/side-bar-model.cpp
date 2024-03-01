@@ -302,6 +302,8 @@ bool SideBarModel::insertColumns(int column, int count, const QModelIndex &paren
 
 bool SideBarModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    if (count == 0)
+        return true;
     beginRemoveRows(parent, row, row + count - 1);
     // FIXME: Implement me!
     endRemoveRows();
