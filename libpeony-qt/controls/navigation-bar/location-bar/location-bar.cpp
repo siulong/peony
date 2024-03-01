@@ -95,6 +95,23 @@ LocationBar::LocationBar(QWidget *parent) : QWidget(parent)
     setAttribute(Qt::WA_Hover);
     setMouseTracking(true);
 
+    auto currentStyleName = GlobalSettings::getInstance()->getValue("widgetThemeName").toString();
+    if (currentStyleName == "classical") {
+        m_is_classical = true;
+    }
+
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString &key){
+        if (key == "widgetThemeName") {
+            auto currentStyleName = GlobalSettings::getInstance()->getValue("widgetThemeName").toString();
+            if (currentStyleName == "classical") {
+                m_is_classical = true;
+            } else {
+                m_is_classical = false;
+            }
+        }
+        this->update();
+    });
+
     //comment to fix button text show incomplete issue, link to bug#72080
 //    setStyleSheet("padding-right: 15;"
 //                  "margin-left: 2");
@@ -535,9 +552,14 @@ void LocationBar::paintEvent(QPaintEvent *e)
 
     QStyleOptionFrame fopt;
     fopt.initFrom(this);
-    fopt.state |= QStyle::State_HasFocus;
+    if (!m_is_classical)
+        fopt.state |= QStyle::State_HasFocus;
     //fopt.state.setFlag(QStyle::State_HasFocus);
-    fopt.rect.adjust(0, 0, 0, 0);
+    fopt.rect.adjust(1, 0, 0, 0);
+    opt.rect.adjust(1, 0, 0, 0);
+    fopt.palette.setCurrentColorGroup(QPalette::Disabled);
+    //auto buttonTextDisabled = fopt.palette.buttonText().color();
+    fopt.palette.setCurrentColorGroup(QPalette::Active);
     fopt.palette.setColor(QPalette::Highlight, fopt.palette.button().color());
     fopt.palette.setColor(QPalette::Base, fopt.palette.window().color());
 

@@ -194,6 +194,7 @@ private:
     QString m_current_uri;
     QString m_version;
     QSize m_last_size;
+    QSize m_last_viewport_size;
 
     const int BOTTOM_STATUS_MARGIN = 200;
 

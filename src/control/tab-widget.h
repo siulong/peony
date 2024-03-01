@@ -236,7 +236,7 @@ protected:
 
 private:
     NavigationTabBar *m_tab_bar;
-    QToolButton *m_add_page_button;
+    QPushButton *m_add_page_button;
     QToolButton *m_show_page_button;
 
     QTreeView *m_treeView;

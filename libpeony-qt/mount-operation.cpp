@@ -87,6 +87,7 @@ void MountOperation::start()
         if (code == QDialog::Rejected) {
             cancel();
             QMessageBox msg;
+            msg.setIcon(QMessageBox::Critical);
             msg.setText(tr("Operation Cancelled"));
             msg.exec();
             return;

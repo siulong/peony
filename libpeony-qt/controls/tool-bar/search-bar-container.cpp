@@ -96,7 +96,7 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     QHBoxLayout *layout = new QHBoxLayout(this);
     this->setLayout(layout);
     m_layout = layout;
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(1,0,0,0);
 
 //    QComboBox *filter = new QComboBox(this);
 //    m_filter_box = filter;

@@ -232,6 +232,24 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
         }
     }
 
+    //fix bug#213466, remote file open not same with local issue
+    if (fileInfo->type() == "application/octet-stream") {
+        GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
+        GList *l = nullptr;
+        char *uri = g_strdup(m_uri.toUtf8().constData());
+        l = g_list_prepend(l, uri);
+#if GLIB_CHECK_VERSION(2, 60, 0)
+        g_app_info_launch_uris_async(text_info, l,
+                                     nullptr, nullptr,
+                                     nullptr, nullptr);
+#else
+        g_app_info_launch_uris(text_info, l, nullptr, nullptr);
+#endif
+        g_list_free_full(l, g_free);
+        g_object_unref(text_info);
+        return;
+    }
+
     if (!isValid()) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
         QMessageBox::critical(nullptr, tr("Open Failed"), tr("Can not open %1, file not exist, is it deleted?").arg(m_uri));
@@ -307,6 +325,24 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
         } else {
             return;
         }
+    }
+
+    //fix bug#213466, remote file open not same with local issue
+    if (fileInfo->type() == "application/octet-stream") {
+        GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
+        GList *l = nullptr;
+        char *uri = g_strdup(m_uri.toUtf8().constData());
+        l = g_list_prepend(l, uri);
+#if GLIB_CHECK_VERSION(2, 60, 0)
+        g_app_info_launch_uris_async(text_info, l,
+                                     nullptr, nullptr,
+                                     nullptr, nullptr);
+#else
+        g_app_info_launch_uris(text_info, l, nullptr, nullptr);
+#endif
+        g_list_free_full(l, g_free);
+        g_object_unref(text_info);
+        return;
     }
 
     if (!isValid()) {

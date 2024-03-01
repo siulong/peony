@@ -145,36 +145,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     QList<QAction *> l;
     /* 卸载 */
     bool isWayland = qApp->property("isWayland").toBool(); // related to #105070
-    //fix bug#175330, wayland should be the same with mainline version
-//    if (isWayland) {
-//        if (m_item->isUnmountable()) {
-//            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
-//                m_item->unmount();
-//            });
-//            l.last()->setEnabled(m_item->isMounted());
-//        }
-//    } else {
-    /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
-    if (!(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
-            m_item->unmount();
-        });
-        l.last()->setEnabled(m_item->isMounted());
-    }
-//    }
-
-    /* 弹出 */
-    if (m_item->isEjectable()||m_item->isStopable()) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Eject"), this, [=](){
-            m_item->eject(G_MOUNT_UNMOUNT_NONE);
-        });
-
-        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，弹出菜单置灰不可用。 */
-            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
-        }
-    }
-
-
+    bool isReddisk = false;
     QString unixDevice = m_item->getDevice();
     QString uri;
     if(m_uri=="file:///") /* 文件系统特殊处理 */
@@ -193,6 +164,39 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         uri = getComputerUriFromUnixDevice(unixDevice);
     }
 
+    //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
+    if (unixDevice.startsWith("/dev/dm") && QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui"))
+        isReddisk = true;
+
+    //fix bug#175330, wayland should be the same with mainline version
+//    if (isWayland) {
+//        if (m_item->isUnmountable()) {
+//            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
+//                m_item->unmount();
+//            });
+//            l.last()->setEnabled(m_item->isMounted());
+//        }
+//    } else {
+    /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
+    if (! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
+        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
+            m_item->unmount();
+        });
+        l.last()->setEnabled(m_item->isMounted());
+    }
+//    }
+
+    /* 弹出 */
+    if (m_item->isEjectable()||m_item->isStopable()) {
+        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Eject"), this, [=](){
+            m_item->eject(G_MOUNT_UNMOUNT_NONE);
+        });
+
+        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，弹出菜单置灰不可用。 */
+            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
+        }
+    }
+
     //not allow format data block, fix bug#66471，66479
     QString targetUri = FileUtils::getTargetUri(m_uri);
     bool isData = m_uri == "file:///data" || targetUri == "file:///data"
@@ -205,7 +209,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     bool showFormatDialog = m_uri!="file:///" && m_uri != "computer:///root.link"
             && (!unixDevice.isNull())
             && !unixDevice.startsWith("/dev/bus/usb")
-            && (m_item->isVolume()) && !m_item->uri().isEmpty();
+            && (m_item->isVolume()) && !m_item->uri().isEmpty()
+            && ! isReddisk;
 
     //fix bug133116, not allow format data disk
     if(showFormatDialog && ! isData)
