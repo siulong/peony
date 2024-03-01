@@ -37,6 +37,7 @@ using namespace Peony;
 
 PathEdit::PathEdit(QWidget *parent) : QLineEdit(parent)
 {
+    setContentsMargins(1, 0, 0, 0);
     setFocusPolicy(Qt::ClickFocus);
 
     m_model = new PathBarModel(this);

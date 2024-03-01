@@ -105,7 +105,11 @@ void Peony::ExtensionsManagerWidget::initUI()
     });
 
     connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
-       this->close();
+        this->close();
+        if (global_instance) {
+            delete global_instance;
+            global_instance = nullptr;
+        }
     });
 }
 

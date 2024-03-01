@@ -833,9 +833,6 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
 
     LabelButton *labelButton = new LabelButton(this);
-    labelButton->setProperty("useIconHighlightEffect", 0x2);
-    labelButton->setProperty("iconHighlightEffectMode", 1);
-    labelButton->setProperty("fillIconSymbolicColor", true);
     labelButton->setProperty("isWindowButton", 0x1);
     //m_label_button->setCheckable(true);
 
@@ -846,6 +843,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     LabelButton *control = new LabelButton(this);
     control->setText(tr("More tags..."));
+    control->setProperty("isWindowButton", 0x1);
     control->hide();
 
     connect(control, &QPushButton::clicked, this, [=](bool checked){
@@ -999,6 +997,8 @@ LabelButton::LabelButton(QWidget *parent) : QPushButton(parent)
     m_firstSymbolic = new QLabel(this);
     m_lastSymbolic = new QLabel(this);
     m_text = new QLabel(this);
+    m_firstSymbolic->setProperty("useIconHighlightEffect", 0x2);
+    m_lastSymbolic->setProperty("useIconHighlightEffect", 0x2);
     m_mainLayout->addWidget(m_firstSymbolic);
     m_mainLayout->addWidget(m_text);
     m_mainLayout->addStretch();
