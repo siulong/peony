@@ -86,6 +86,8 @@ using namespace Peony;
 using namespace kdk;
 #endif
 
+#define DEBUG qDebug() << "[" << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << "]"
+
 DirectoryViewMenu::DirectoryViewMenu(DirectoryViewWidget *directoryView, QWidget *parent) : QMenu(parent)
 {
     m_top_window = nullptr;
@@ -190,16 +192,16 @@ void DirectoryViewMenu::fillActions()
         m_is_mtp_ptp = true;
     }
 
-    auto dev = VolumeManager::getDriveFromUri(actualDir);
-    if(dev != nullptr){
-        bool canEject = g_drive_can_eject(dev.get()->getGDrive());
-        bool canStop = g_drive_can_stop(dev.get()->getGDrive());
-        if(canEject || canStop){
-            m_is_mobile_file = true;
-        }
-        qDebug() << "canEject :" << canEject;
-    }
-
+    isMobileFile(actualDir);/* 判断是否为移动文件或目录 */
+//    auto dev = VolumeManager::getDriveFromUri(actualDir);
+//    if(dev != nullptr){
+//        bool canEject = g_drive_can_eject(dev.get()->getGDrive());
+//        bool canStop = g_drive_can_stop(dev.get()->getGDrive());
+//        if(canEject || canStop){
+//            m_is_mobile_file = true;
+//        }
+//        qDebug() << "canEject :" << canEject;
+//    }
     //task#147972 【删除回收站】选项需求
     //如果是长城的机器并且带了9215控制器，不再区分移动设备，统一右键删除到回收站
     bool trashSettings = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
@@ -1376,6 +1378,68 @@ bool DirectoryViewMenu::isMultFile(std::shared_ptr<FileInfo> info)
     }
 
     return false;
+}
+
+void DirectoryViewMenu::isMobileFile(const QString &uri)
+{
+    if(uri.startsWith("file:///media/")){
+        QString unixDevice = FileInfo::fromUri(uri).get()->unixDeviceFile();
+        bool canEject = false;
+        bool canStop = false;
+        FileEnumerator e;
+        e.setEnumerateDirectory("computer:///");
+        e.enumerateSync();
+        for (auto fileInfo : e.getChildren()) {
+            QString uriStr = fileInfo.get()->uri();
+            GFile* gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
+            GError *err = nullptr;
+            QString device;
+            bool can_eject = false;
+            bool can_stop = false;
+            QString target_uri;
+            GFileInfo* gFileInfo = g_file_query_info(gFile,
+                                           "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                           G_FILE_QUERY_INFO_NONE,
+                                           g_cancellable_new(),
+                                           &err);
+            if (err) {
+                DEBUG<<err->code<<err->message;
+                g_error_free(err);
+                g_object_unref(gFile);
+                g_object_unref(gFileInfo);
+                continue;
+            }else{
+                if(g_file_info_has_attribute(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE)){
+                    device = g_file_info_get_attribute_string(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+                }
+                target_uri = g_file_info_get_attribute_string(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+                can_eject = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_EJECT);
+                can_stop = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_STOP);
+            }
+            g_object_unref(gFile);
+            g_object_unref(gFileInfo);
+            if((device == unixDevice) || uri.startsWith(target_uri)){
+                canEject = can_eject;
+                canStop = can_stop;
+                break;
+            }
+        }
+
+        if(canEject || canStop){
+            m_is_mobile_file = true;
+        }
+        DEBUG<<"unixDevice:"<<unixDevice<<"canEject:"<<canEject<<"canStop"<<canStop<<"m_is_mobile_file"<<m_is_mobile_file;
+    }else{
+        auto dev = VolumeManager::getDriveFromUri(uri);
+        if(dev != nullptr){
+            bool canEject = g_drive_can_eject(dev.get()->getGDrive());
+            bool canStop = g_drive_can_stop(dev.get()->getGDrive());
+            if(canEject || canStop){
+                m_is_mobile_file = true;
+            }
+            qDebug() << "canEject :" << canEject;
+        }
+    }
 }
 
 const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()

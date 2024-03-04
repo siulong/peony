@@ -75,6 +75,7 @@ protected:
 
 private:
     bool isMultFile(std::shared_ptr<FileInfo> info);
+    void isMobileFile(const QString &uri);
 
 private:
     FMWindowIface *m_top_window;
