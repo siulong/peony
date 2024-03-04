@@ -229,6 +229,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+            indexWidget->update();
 
             auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
             auto item = model->itemFromIndex(index);
