@@ -752,7 +752,7 @@ void DesktopIconView::initMenu()
         QTimer::singleShot(1, [=]() {
             DesktopMenu menu(this);
             if (this->getSelections().isEmpty()) {
-                auto action = menu.addAction(tr("set background"));
+                auto action = menu.addAction(tr("Set Background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
