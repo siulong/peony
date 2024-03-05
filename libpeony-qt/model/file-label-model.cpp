@@ -380,6 +380,13 @@ void FileLabelModel::removeFileLabel(const QString &uri, int labelId)
     m_label_settings->endGroup();
 }
 
+void FileLabelModel::removeFileLabel(const QVector<QString> &uris, int labelId)
+{
+    for(auto& uri :uris){
+        removeFileLabel(uri, labelId);
+    }
+}
+
 int FileLabelModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
