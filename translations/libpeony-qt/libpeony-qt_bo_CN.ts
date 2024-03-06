@@ -357,7 +357,7 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="693"/>
         <source>over one day</source>
-        <translation></translation>
+        <translation>ཉིན་གཅིག་ལས་བརྒལ་བ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
@@ -4706,7 +4706,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
         <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
         <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
-        <translation></translation>
+        <translation>ཡིག་ཆ་ཆེ་དྲགས་པས་ཕྱིར་སྡུད་ས་ཚིགས་སུ་སྤོར་མི་རུང་།%1ཡི་ཡིག་ཆ་འདི་གཏན་དུ་བསུབ་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
@@ -4784,7 +4784,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1048"/>
         <source>qmesg_notify</source>
-        <translation type="unfinished">通知</translation>
+        <translation>བརྡ་ཐོ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1063"/>
@@ -4794,7 +4794,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1065"/>
         <source>Begin Format</source>
-        <translation type="unfinished"></translation>
+        <translation>འགོ་བརྩམས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1068"/>
@@ -4813,7 +4813,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1048"/>
         <source>Sorry, the format operation is failed!</source>
-        <translation type="unfinished">很遗憾，格式化操作失败了，您可以重新试下！</translation>
+        <translation>ཡིད་ཕངས་པ་ཞིག་ལ།རྣམ་གཞག་ཅན་གྱི་བཀོལ་སྤྱོད་ཕམ་སོང་།ཁྱེད་ཀྱིས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱས་ཆོག</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1061"/>
@@ -4905,7 +4905,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1250"/>
         <source>Failed to activate device: Incorrect passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>སྐུལ་སློང་བྱེད་མི་ཐུབ་པའི་སྒྲིག་ཆས།ནོར་འཁྲུལ་གྱི་བཀའ་བརྡ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1260"/>
@@ -4942,7 +4942,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="266"/>
         <source>favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>མགྱོགས་མྱུར་འཚམས་འདྲི།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="269"/>
@@ -4955,13 +4955,13 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="382"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="387"/>
         <source>File is not existed.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་མེད་པ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="317"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="395"/>
         <source>Share Data</source>
-        <translation type="unfinished"></translation>
+        <translation>འཕྲུལ་ཆས་འདི་མཉམ་སྤྱོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="321"/>
@@ -4973,7 +4973,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="325"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="403"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉེ་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-file.cpp" line="337"/>
@@ -4987,27 +4987,27 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="466"/>
         <source>The virtual file system does not support folder creation</source>
-        <translation type="unfinished"></translation>
+        <translation>རྟོག་བཟོའི་ཡིག་ཆའི་མ་ལག་འོག་ཡིག་སྣོད་གསར་བ་འཛུགས་པར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="538"/>
         <source>Can not create a symbolic file for vfs location</source>
-        <translation type="unfinished"></translation>
+        <translation>རྟོག་བཟོའི་དཀར་ཆག་ལ་མྱུར་བཟོའི་ཐབས་ལམ་གསར་གཏོད་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="545"/>
         <source>Symbolic Link</source>
-        <translation type="unfinished"></translation>
+        <translation>མྱུར་བའི་ཐབས་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="557"/>
         <source>Can not create symbolic file here, %1</source>
-        <translation type="unfinished"></translation>
+        <translation>འདི་ནས་མགྱོགས་མྱུར་གྱི་ཐབས་ལམ་ཞིག་འཛུགས་མི་ཐུབ།%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="566"/>
         <source>Can not add a file to favorite directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་སྡུད་གསོག་ཆས་སུ་འཇོག་མི་རུང་།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="624"/>
@@ -5015,7 +5015,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="231"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="267"/>
         <source>The virtual file system cannot be opened</source>
-        <translation type="unfinished"></translation>
+        <translation>རྟོག་བཟོའི་ཡིག་ཆའི་མ་ལག་ཁ་ཕྱེ་མི་ཐུབ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-file.cpp" line="378"/>
@@ -5028,13 +5028,13 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="582"/>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="600"/>
         <source>Virtual file directories do not support move and copy operations</source>
-        <translation type="unfinished"></translation>
+        <translation>རྟོག་བཟོའི་ཡིག་ཆའི་ཐབས་ལམ་གྱིས་སྤོ་འགུལ་དང་འདྲ་བཟོ་བཀོལ་སྤྱོད་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-register.h" line="43"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-register.h" line="42"/>
         <source>Default favorite vfs of peony</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་དོ་དམ་ཆས་ཀྱི་རྟོག་བཟོའི་ཡིག་ཆའི་མ་ལག་གིས་མགྱོགས་མྱུར་ངང་བཅར་འདྲི་བྱེད་པར་ཁས་ལེན་བྱས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page-factory.h" line="38"/>
@@ -5045,12 +5045,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/mark-properties-page-factory.h" line="40"/>
         <source>Mark</source>
-        <translation type="unfinished"></translation>
+        <translation>རྟགས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/mark-properties-page-factory.h" line="46"/>
         <source>mark this file.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་འདི་ལ་རྟགས་རྒྱོབ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page-factory.h" line="40"/>
@@ -5060,7 +5060,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page-factory.h" line="46"/>
         <source>open with.</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒོ་འབྱེད་པ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="33"/>
@@ -5071,12 +5071,12 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="412"/>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="425"/>
         <source>Unable to discover the file, it may have been removed or deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་དེ་རྙེད་ཐབས་མེད་པས་ཡིག་ཆ་གནས་སྤོ་འམ་ཡང་ན་བསུབ་སྲིད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="419"/>
         <source>permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>དབང་ཚད་མེད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="536"/>
@@ -5126,12 +5126,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="411"/>
         <source>Failed to open file &quot;%1&quot;: insufficient permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆའི་ཁ་ཕྱེ་ནས&quot;%1&quot;ཕམ་པ།དབང་ཚད་མི་འདང་བ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="422"/>
         <source>File “%1” does not exist. Please check whether the file has been deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ&quot;%1&quot;མེད་པ་རེད།ཡིག་ཆ་བསུབ་ཡོད་མེད་ལ་ཞིབ་བཤེར་བྱེད་རོགས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
