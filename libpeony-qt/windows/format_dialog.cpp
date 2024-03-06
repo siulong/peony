@@ -503,7 +503,7 @@ void Format_Dialog::slot_format(bool enable)
 
         //do format
         kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
-                     full_clean? (canUseAtaSecureErase? "ata-scure-erase": "zero"): NULL, rom_name, &format_value);
+                     full_clean? (canUseAtaSecureErase? "ata-secure-erase": "zero"): NULL, rom_name, &format_value);
     });
 }
 
