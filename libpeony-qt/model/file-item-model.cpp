@@ -570,32 +570,30 @@ void FileItemModel::updateCurrentFilesThumbnails()
     }
 }
 
+#include <QVariant>
 QMimeData *FileItemModel::mimeData(const QModelIndexList &indexes) const
 {
-    QMimeData* data = QAbstractItemModel::mimeData(indexes);
+    QMimeData* mimeData = QAbstractItemModel::mimeData(indexes);
     //set urls data URLs correspond to the MIME type text/uri-list.
     QList<QUrl> urls;
     QStringList uris;
     QStringList encodedUris;
     for (auto index : indexes) {
-        auto item = itemFromIndex(index);
-        auto uri = item->m_info->uri();
-        QUrl url = uri;
-        if (!urls.contains(url)) {
-            qDebug() << "mimeData:" << url;
-
+        if (index.isValid() && index.column() == 0) { /* 仅处理有效的第一列索引 */
+            QVariant var = data(index, FileItemModel::UriRole);
+            auto uri = var.toString();
+            QUrl url = uri;
             urls << url;
             uris << uri;
-            auto encodeUri = Peony::FileUtils::urlEncode(uri);
-            encodedUris<<encodeUri;
+            encodedUris<<uri;
         }
     }
-    data->setUrls(urls);
+    mimeData->setUrls(urls);
     auto string = uris.join(" ");
     auto encodedString = encodedUris.join(" ");
-    data->setData("peony-qt/encoded-uris", encodedString.toUtf8());
-    data->setText(string);
-    return data;
+    mimeData->setData("peony-qt/encoded-uris", encodedString.toUtf8());
+    mimeData->setText(string);
+    return mimeData;
 }
 
 Qt::DropActions FileItemModel::supportedDropActions() const
