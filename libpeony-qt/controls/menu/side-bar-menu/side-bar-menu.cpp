@@ -117,6 +117,9 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
         QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
         //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        if(this->parentWidget() && this->parentWidget()->isModal()){
+            w->setParent(this->parentWidget());
+        }
         w->show();
     });
     if (!m_item->firstColumnIndex().parent().isValid()) {
@@ -133,6 +136,9 @@ const QList<QAction *> SideBarMenu::constructPersonalActions()
     l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
         QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
         //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        if(this->parentWidget() && this->parentWidget()->isModal()){
+            w->setParent(this->parentWidget());
+        }
         w->show();
     });
 
@@ -317,6 +323,9 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         else{
             QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
             //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+            if(this->parentWidget() && this->parentWidget()->isModal()){
+                w->setParent(this->parentWidget());
+            }
             w->show();
         }
     });
@@ -377,6 +386,9 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                         QString uri = fileInfo.get()->uri();
                         QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
                         //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+                        if(this->parentWidget() && this->parentWidget()->isModal()){
+                            w->setParent(this->parentWidget());
+                        }
                         w->show();
                         break;
                     }
@@ -385,6 +397,9 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                 /* 共享文件夹 */
                 QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
                 //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+                if(this->parentWidget() && this->parentWidget()->isModal()){
+                    w->setParent(this->parentWidget());
+                }
                 w->show();
             }
         });

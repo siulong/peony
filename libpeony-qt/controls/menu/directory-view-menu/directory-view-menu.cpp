@@ -1113,6 +1113,9 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                 uris<<m_directory;
                 QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
                 //PropertiesWindow *p = new PropertiesWindow(uris);
+                if(this->parentWidget() && this->parentWidget()->isModal()){
+                    p->setParent(this->parentWidget());
+                }
                 p->setAttribute(Qt::WA_DeleteOnClose);
                 p->show();
             } else {
@@ -1125,6 +1128,9 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                             urisList << FileUtils::getTargetUri(m_selections.at(uriIndex));
                             //PropertiesWindow *p = new PropertiesWindow(urisList);
                             QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                            if(this->parentWidget() && this->parentWidget()->isModal()){
+                                p->setParent(this->parentWidget());
+                            }
                             p->setAttribute(Qt::WA_DeleteOnClose);
                             p->show();
                         } else {
@@ -1137,6 +1143,9 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                         urisList.append(labelUri);
                         QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
                         //PropertiesWindow *p = new PropertiesWindow(urisList);
+                        if(this->parentWidget() && this->parentWidget()->isModal()){
+                            p->setParent(this->parentWidget());
+                        }
                         p->setAttribute(Qt::WA_DeleteOnClose);
                         p->show();
                     }
@@ -1147,6 +1156,9 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                 if (selectUriList.count() > 0) {
                     QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList);
                     //PropertiesWindow *p = new PropertiesWindow(selectUriList);
+                    if(this->parentWidget() && this->parentWidget()->isModal()){
+                        p->setParent(this->parentWidget());
+                    }
                     p->setAttribute(Qt::WA_DeleteOnClose);
                     p->show();
                 }
@@ -1158,6 +1170,9 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
         connect(l.last(), &QAction::triggered, this, [=]() {
             QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections);
             //PropertiesWindow *p = new PropertiesWindow(m_selections);
+            if(this->parentWidget() && this->parentWidget()->isModal()){
+                p->setParent(this->parentWidget());
+            }
             p->setAttribute(Qt::WA_DeleteOnClose);
             p->show();
         });
@@ -1169,7 +1184,6 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
 const QList<QAction *> DirectoryViewMenu::constructComputerActions()
 {
     QList<QAction *> l;
-
     if (m_is_computer && m_selections.count() == 1) {
         QString uri = m_selections.first();
 
