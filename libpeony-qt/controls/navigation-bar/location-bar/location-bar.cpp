@@ -182,7 +182,7 @@ void LocationBar::setRootUri(const QString &uri)
     }
     m_current_uri = uri;
     //clear buttons
-    if (m_current_uri.startsWith("search://")) {
+    if (m_current_uri.startsWith("search://") || m_current_uri.startsWith("label://")) {
         clearButtons();
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
@@ -396,6 +396,16 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         button->setText(displayName);
         button->setFixedWidth(button->sizeHint().width());
         button->setContextMenuPolicy(Qt::CustomContextMenu);
+        return;
+    }
+
+    if (m_current_uri.startsWith("label:///")) {
+        auto displayName = Peony::FileUtils::getFileDisplayName(m_current_uri);
+        button->setIcon(QIcon::fromTheme("edit-find-symbolic"));
+        displayName = tr("Search results for all files marked in  \"%1\"  in \"%2\"").arg(displayName).arg(tr("File System"));
+        button->setText(displayName);
+        button->setContextMenuPolicy(Qt::NoContextMenu);
+        button->setPopupMode(QToolButton::InstantPopup);
         return;
     }
 
