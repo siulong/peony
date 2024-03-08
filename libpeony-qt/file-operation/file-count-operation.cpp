@@ -63,6 +63,7 @@ void FileCountOperation::run()
 
     QList<FileNode *> nodes;
     for (auto uri : m_uris) {
+        m_reporter->setUsedInCount(true);
         auto node = new FileNode(FileUtils::urlEncode(uri), nullptr, m_reporter);
         node->findChildrenRecursively();
         nodes<<node;

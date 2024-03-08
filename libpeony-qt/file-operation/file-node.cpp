@@ -53,7 +53,7 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
                                         nullptr);
     g_object_unref(file);
     m_size = g_file_info_get_size(info);
-    if (0 == m_size) {
+    if (0 == m_size && !m_reporter->isUsedInCount())  {
         m_size = 1024;
     }
     if (uri == "file:///proc/kcore")
