@@ -805,7 +805,6 @@ void MainWindow::setShortCuts()
 //                return;
 //            }
 
-            Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
                 //FIXME: how about duplicated copy?
                 //FIXME: how to deal with a failed move?

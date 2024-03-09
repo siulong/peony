@@ -983,7 +983,6 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
                 l<<pasteAction;
                 l.last()->setObjectName(PASTE_ACTION);
-                ClipboardUtils::getInstance()->updateClipboardManually();
 
                 //fix bug#183268, not allow paste in mtp, gphoto2 path or can not write path
                 auto info = FileInfo::fromUri(m_directory);

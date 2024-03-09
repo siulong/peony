@@ -571,7 +571,6 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
     } else {
         auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
         l<<pasteAction;
-        ClipboardUtils::getInstance()->updateClipboardManually();
         pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
         connect(l.last(), &QAction::triggered, this, [=]() {
             ClipboardUtils::pasteClipboardFiles(m_directory);

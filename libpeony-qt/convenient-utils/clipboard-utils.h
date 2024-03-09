@@ -78,7 +78,6 @@ public:
     static const QString getClipedFilesParentUri();
 
     const QString getLastTargetDirectoryUri();
-    void updateClipboardManually(bool force = false);
 
 public Q_SLOTS:
     void onClipboardDataChanged ();
