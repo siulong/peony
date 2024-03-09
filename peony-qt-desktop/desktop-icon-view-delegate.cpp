@@ -90,9 +90,9 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     }
 
     bool bCutFile = false;
-    if (ClipboardUtils::isDesktopFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()){
-        auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-        if (clipedUris.contains(FileUtils::urlEncode(index.data(DesktopItemModel::UriRole).toString()))) {
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
+        if (clipedUris.contains(index.data(DesktopItemModel::UriRole).toString())) {
             painter->setOpacity(0.5);
             bCutFile = true;
             qDebug()<<"cut item in desktop"<<index.data();

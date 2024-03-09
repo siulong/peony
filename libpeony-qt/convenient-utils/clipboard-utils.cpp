@@ -48,6 +48,7 @@ static QMutex gClipboardFileUrlsMutex;
 static QList<quint64> gClipbordFileinode;
 static QAtomicInt gRemoteCurrentCount = 0;
 static bool gIsRemoteUri = false;
+static QStringList gCutFileUris;
 
 /*!
  * \brief m_clipboard_parent_uri
@@ -82,6 +83,11 @@ ClipboardUtils::ClipboardUtils(QObject *parent) : QObject(parent)
         auto data = QApplication::clipboard()->mimeData();
         if (!data->hasFormat("peony-qt/is-cut")) {
             m_clipboard_parent_uri = nullptr;
+            gCutFileUris.clear();
+        }
+
+        if (!QApplication::clipboard()->ownsClipboard()) {
+            gCutFileUris.clear();
         }
     });
 
@@ -120,6 +126,11 @@ void ClipboardUtils::release()
 const QString ClipboardUtils::getClipedFilesParentUri()
 {
     return m_clipboard_parent_uri;
+}
+
+QStringList ClipboardUtils::getCutFileUris()
+{
+    return gCutFileUris;
 }
 
 const QString ClipboardUtils::getLastTargetDirectoryUri()
@@ -169,6 +180,11 @@ void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut, bool
         clearClipboard();
         return;
     }
+
+    if (isCut)
+        gCutFileUris = uris;
+    else
+        gCutFileUris.clear();
 
     m_clipboard_parent_uri = FileUtils::getParentUri(uris.first());
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
@@ -282,6 +298,8 @@ QStringList ClipboardUtils::getClipboardFilesUris()
 
 FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
 {
+    gCutFileUris.clear();
+
     FileOperation *op = nullptr;
 //    if (!isClipboardHasFiles()) {
 //        return op;
@@ -355,6 +373,7 @@ void ClipboardUtils::clearClipboard()
     m_is_desktop_cut = false;
     m_is_peony_cut = false;
     QApplication::clipboard()->clear();
+    gCutFileUris.clear();
 }
 
 void ClipboardUtils::popLastTargetDirectoryUri(QString &uri)

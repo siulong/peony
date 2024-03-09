@@ -597,9 +597,10 @@ void MainWindow::setShortCuts()
         connect(propertiesWindowAction, &QAction::triggered, this, [=]() {
             //Fixed issue:when use this shortcut without any selections, this will crash
             QStringList uris;
-            if (getCurrentSelections().count() > 0)
+            QStringList currentSelections = getCurrentSelections();
+            if (currentSelections.count() > 0)
             {
-                uris<<getCurrentSelections();
+                uris<<currentSelections;
             }
             else
             {
@@ -742,15 +743,16 @@ void MainWindow::setShortCuts()
         copyAction->setShortcut(QKeySequence::Copy);
         connect(copyAction, &QAction::triggered, [=]() {
             bool is_recent = false;
-            if (!this->getCurrentSelections().isEmpty())
+            QStringList currentSelections = this->getCurrentSelections();
+            if (!currentSelections.isEmpty())
             {
-//                if (this->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
+//                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {
 //                    return ;
 //                }
-                if (this->getCurrentSelections().first().startsWith("recent://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("recent://", Qt::CaseInsensitive)) {
                     is_recent = true;
                 }
-                if (this->getCurrentSelections().first().startsWith("favorite://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("favorite://", Qt::CaseInsensitive)) {
                     return ;
                 }
             }
@@ -760,14 +762,14 @@ void MainWindow::setShortCuts()
             QStringList selections;
             if (is_recent)
             {
-                for(auto uri:this->getCurrentSelections())
+                for(auto uri: currentSelections)
                 {
                     uri = Peony::FileUtils::getTargetUri(uri);
                     selections << uri;
                 }
             }
             else{
-                selections = this->getCurrentSelections();
+                selections = currentSelections;
             }
 
             Peony::ClipboardUtils::setClipboardFiles(selections, false);
@@ -830,14 +832,15 @@ void MainWindow::setShortCuts()
         auto *cutAction = new QAction(this);
         cutAction->setShortcut(QKeySequence::Cut);
         connect(cutAction, &QAction::triggered, [=]() {
-            if (!this->getCurrentSelections().isEmpty()) {
-//                if (this->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
+            QStringList currentSelections = this->getCurrentSelections();
+            if (!currentSelections.isEmpty()) {
+//                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {
 //                    return ;
 //                }
-                if (this->getCurrentSelections().first().startsWith("recent://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("recent://", Qt::CaseInsensitive)) {
                     return ;
                 }
-                if (this->getCurrentSelections().first().startsWith("favorite://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("favorite://", Qt::CaseInsensitive)) {
                     return ;
                 }
 
@@ -848,8 +851,7 @@ void MainWindow::setShortCuts()
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
                     if(getCurrentUri().startsWith("search://")){
-                        auto selections = this->getCurrentSelections();
-                        auto selectInfo = Peony::FileInfo::fromUri(selections.first());
+                        auto selectInfo = Peony::FileInfo::fromUri(currentSelections.first());
                         if(!selectInfo->canWrite())
                             return;
                     }else{
@@ -860,10 +862,10 @@ void MainWindow::setShortCuts()
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
                 QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                if (! this->getCurrentSelections().contains(desktopUri) && ! this->getCurrentSelections().contains(homeUri))
+                if (!currentSelections.contains(desktopUri) && !currentSelections.contains(homeUri))
                 {
-                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, getCurrentUri().startsWith("search://"));
-                   this->getCurrentPage()->getView()->repaintView();
+                    Peony::ClipboardUtils::setClipboardFiles(currentSelections, true, getCurrentUri().startsWith("search://"));
+                    this->getCurrentPage()->getView()->repaintView();
                 }
             }
         });

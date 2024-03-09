@@ -104,14 +104,13 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
             bSearchTab = true;
         }
+        auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
         if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
-                && ClipboardUtils::isPeonyFilesBeCut()
-                && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+                && !clipedUris.isEmpty()) {
+            if (clipedUris.contains(index.data(Qt::UserRole).toString())) {
                 painter->setOpacity(0.5);
-                qDebug()<<"cut item in list view"<<index.data();
+                //qDebug()<<"cut item in list view"<<index.data();
             }
             else
                 painter->setOpacity(1.0);

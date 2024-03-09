@@ -168,12 +168,10 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             bSearchTab = true;
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
         }
+        auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
-        if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
-            && ClipboardUtils::isPeonyFilesBeCut()
-            && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(FileItemModel::UriRole).toString()))) {
+        if (!clipedUris.isEmpty() && (FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)))) {
+            if (clipedUris.contains(index.data(FileItemModel::UriRole).toString())) {
                 painter->setOpacity(0.5);
                 bCutFile = true;
                 qDebug()<<"cut item"<<index.data();

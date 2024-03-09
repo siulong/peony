@@ -77,6 +77,8 @@ public:
     static void popLastTargetDirectoryUri(QString& uri);
     static const QString getClipedFilesParentUri();
 
+    QStringList getCutFileUris();
+
     const QString getLastTargetDirectoryUri();
 
 public Q_SLOTS:

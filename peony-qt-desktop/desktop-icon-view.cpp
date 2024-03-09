@@ -545,6 +545,7 @@ void DesktopIconView::initShoutCut()
         {
             ClipboardUtils::setClipboardFiles(selectedUris, true);
             this->update();
+            this->viewport()->update();
         }
     });
     addAction(cutAction);

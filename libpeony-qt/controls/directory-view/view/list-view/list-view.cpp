@@ -1207,16 +1207,18 @@ void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, co
     }
 
     QString uri = m_model->getRootUri();
-    if (ClipboardUtils::isClipboardHasFiles() &&
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty() &&
         FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
-        if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+        if (!clipedUris.isEmpty()) {
+            if (clipedUris.contains(index.data(Qt::UserRole).toString())) {
                 painter->setOpacity(0.5);
             }
             else {
                 painter->setOpacity(1.0);
             }
+        } else {
+            painter->setOpacity(1.0);
         }
     }
     QTreeView::drawRow(painter, option, index);
