@@ -1417,7 +1417,7 @@ void DirectoryViewMenu::isMobileFile(const QString &uri)
             }
             g_object_unref(gFile);
             g_object_unref(gFileInfo);
-            if((device == unixDevice) || uri.startsWith(target_uri)){
+            if((device == unixDevice) || (!target_uri.isEmpty() && uri.startsWith(target_uri))){
                 canEject = can_eject;
                 canStop = can_stop;
                 break;
@@ -1464,15 +1464,22 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                 }
             } else {
                 if(plugin->name() != tr("Peony-Qt Filesafe Menu Extension")) {
-                    auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
-                    l<<actions;
-                    for (auto action : actions) {
-                        action->setParent(this);
-                        action->setObjectName(plugin->name());
-                        addAction(action);
-                        qDebug()<< id<<"-==================-";
-                        if(id == "Peony File Labels Menu Extension" && m_version != "ukui3.0"){
-                            l<<addSeparator();
+                    auto a = Peony::FileOperationManager::getInstance()->isFsynchronizing();
+                    if(m_is_mobile_file && Peony::FileOperationManager::getInstance()->isFsynchronizing()){
+                        /* 往移动设备中进行文件拷贝fysnc时导致io阻塞，插件暂先屏蔽,待后续改进 */
+                        //todo
+                        DEBUG<<"mobile file is synchronizing";
+                    }else{
+                        auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
+                        l<<actions;
+                        for (auto action : actions) {
+                            action->setParent(this);
+                            action->setObjectName(plugin->name());
+                            addAction(action);
+                            qDebug()<< id<<"-==================-";
+                            if(id == "Peony File Labels Menu Extension" && m_version != "ukui3.0"){
+                                l<<addSeparator();
+                            }
                         }
                     }
                 }

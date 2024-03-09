@@ -31,6 +31,7 @@
 #include <QtConcurrent>
 #include <QDBusInterface>
 #include <QDBusConnection>
+#include <QMutexLocker>
 
 #include "file-copy-operation.h"
 #include "file-delete-operation.h"
@@ -159,6 +160,18 @@ void FileOperationManager::setAllowParallel(bool allow)
 bool FileOperationManager::isAllowParallel()
 {
     return m_allow_parallel;
+}
+
+void FileOperationManager::setFsyncStatus(bool synchronizing)
+{
+    QMutexLocker lk(&m_fsyncMutex);
+    m_isFsynchronizing = synchronizing;
+}
+
+bool FileOperationManager::isFsynchronizing()
+{
+    QMutexLocker lk(&m_fsyncMutex);
+    return m_isFsynchronizing;
 }
 
 QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
