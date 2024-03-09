@@ -81,6 +81,14 @@ public:
 
     const QString getLastTargetDirectoryUri();
 
+    /*!
+     * \brief updateClipboardManually
+     * \param force
+     * \deprecated
+     * this method is depcreated and won't effect
+     */
+    void updateClipboardManually(bool force = false);
+
 public Q_SLOTS:
     void onClipboardDataChanged ();
 

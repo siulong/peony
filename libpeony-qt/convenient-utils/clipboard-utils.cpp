@@ -138,6 +138,11 @@ const QString ClipboardUtils::getLastTargetDirectoryUri()
     return m_target_directory_uri.size() > 0 ? m_target_directory_uri.back() : "";
 }
 
+void ClipboardUtils::updateClipboardManually(bool force)
+{
+    Q_UNUSED (force)
+}
+
 void ClipboardUtils::onClipboardDataChanged()
 {
     {
