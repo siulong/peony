@@ -533,7 +533,9 @@ void DesktopIconView::initShoutCut()
     connect(copyAction, &QAction::triggered, [=]() {
         auto selectedUris = this->getSelections();
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris)){
-            ClipboardUtils::setClipboardFiles(selectedUris, false);}
+            ClipboardUtils::setClipboardFiles(selectedUris, false);
+            this->viewport()->update();
+        }
     });
     addAction(copyAction);
 
@@ -544,7 +546,7 @@ void DesktopIconView::initShoutCut()
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris))
         {
             ClipboardUtils::setClipboardFiles(selectedUris, true);
-            this->update();
+            //this->update();
             this->viewport()->update();
         }
     });
@@ -554,11 +556,17 @@ void DesktopIconView::initShoutCut()
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
         if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
-            ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            if (!op) {
+                viewport()->update();
+            }
         } else {
             //auto clipUris = ClipboardUtils::getClipboardFilesUris();
             if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
-                ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+                auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+                if (!op) {
+                    viewport()->update();
+                }
             }
         }
     });
@@ -1357,6 +1365,7 @@ void DesktopIconView::scrollTo(const QModelIndex &index, QAbstractItemView::Scro
 void DesktopIconView::setCutFiles(const QStringList &uris)
 {
     ClipboardUtils::setClipboardFiles(uris, true);
+    this->viewport()->update();
 }
 
 void DesktopIconView::closeView()

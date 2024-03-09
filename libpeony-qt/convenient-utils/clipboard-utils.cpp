@@ -298,8 +298,6 @@ QStringList ClipboardUtils::getClipboardFilesUris()
 
 FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
 {
-    gCutFileUris.clear();
-
     FileOperation *op = nullptr;
 //    if (!isClipboardHasFiles()) {
 //        return op;
@@ -365,6 +363,9 @@ FileOperation *ClipboardUtils::pasteClipboardFiles(const QString &targetDirUri)
         m_target_directory_uri.pop_front();
     }
 
+    if (op) {
+        gCutFileUris.clear();
+    }
     return op;
 }
 
