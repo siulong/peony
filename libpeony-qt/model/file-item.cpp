@@ -806,7 +806,8 @@ void FileItem::batchRemoveItems()
         m_batchProcessItems->setBatchRemoveParam(list, m_uri_item_hash, m_children);
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
-        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
+        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash, const QVector<QString>& needHandleLabelUris){
+            FileLabelModel::getGlobalModel()->removeFileLabel(needHandleLabelUris);
             m_model->beginResetModel();
             auto old = m_children;
             m_children = children;
@@ -1175,6 +1176,7 @@ void BatchProcessItems::slot_removeItems()
     // do reset model
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
+    QVector<QString> needHandleLabelUris;
     QVector<FileItem *> itemsToBeDeleted;
     qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<",children count,uri item hash count:"<<m_children->size()<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
@@ -1185,15 +1187,15 @@ void BatchProcessItems::slot_removeItems()
             {
                 favoriteUris.append(uri2FavoriteUri(uri));
             }
+            needHandleLabelUris.push_back(uri);
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
-            FileLabelModel::getGlobalModel()->removeFileLabel(uri);
             itemsToBeDeleted.append(child);
         }
     }
     BookMarkManager::getInstance()->removeBookMark(favoriteUris);
-    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash);
+    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash, needHandleLabelUris);
     for (auto child : itemsToBeDeleted) {
         delete child;
     }

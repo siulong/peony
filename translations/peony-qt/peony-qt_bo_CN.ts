@@ -136,12 +136,12 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>གོ་རིམ་ལྡན་པའི་རིགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="349"/>
+        <location filename="../../src/control/header-bar.cpp" line="356"/>
         <source>Option</source>
         <translation>གདམ་ག་རྒྱག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="465"/>
+        <location filename="../../src/control/header-bar.cpp" line="472"/>
         <source>Operate Tips</source>
         <translation>བཀོལ་སྤྱོད་ཀྱི་གསལ་འདེབས།</translation>
     </message>
@@ -155,114 +155,114 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">ཞིབ་ཕྲ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="362"/>
+        <location filename="../../src/control/header-bar.cpp" line="369"/>
         <source>&amp;Copy</source>
         <translation>འདྲ་བཟོ། (C)</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="365"/>
+        <location filename="../../src/control/header-bar.cpp" line="372"/>
         <source>Copy</source>
         <translation>འདྲ་བཟོ་བྱས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="377"/>
+        <location filename="../../src/control/header-bar.cpp" line="384"/>
         <source>&amp;Cut</source>
         <translation>བྱ་བ་གཏུབ་མཁན། (&gt;)</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="380"/>
+        <location filename="../../src/control/header-bar.cpp" line="387"/>
         <source>Cut</source>
         <translation>གཏུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="386"/>
+        <location filename="../../src/control/header-bar.cpp" line="393"/>
         <source>&amp;Select All</source>
         <translation>འདེམས་བསྐོ་ཡོངས་རྫོགས།(&gt;)</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="390"/>
-        <location filename="../../src/control/header-bar.cpp" line="402"/>
+        <location filename="../../src/control/header-bar.cpp" line="397"/>
+        <location filename="../../src/control/header-bar.cpp" line="409"/>
         <source>Select All</source>
         <translation>ཡོངས་རྫོགས་འདེམས་བསྐོ་བྱ་དགོས</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="407"/>
-        <location filename="../../src/control/header-bar.cpp" line="919"/>
-        <location filename="../../src/control/header-bar.cpp" line="937"/>
+        <location filename="../../src/control/header-bar.cpp" line="414"/>
+        <location filename="../../src/control/header-bar.cpp" line="926"/>
+        <location filename="../../src/control/header-bar.cpp" line="944"/>
         <source>Deselect All</source>
         <translation>འདེམས་བསྐོ་ཡོངས་རྫོགས་ཕྱིར་འཐེན་བྱ་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="412"/>
+        <location filename="../../src/control/header-bar.cpp" line="419"/>
         <source>&amp;Delete to trash</source>
         <translation>ཤོག་སྙིགས་མེད་པར་བཟོས篓རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="415"/>
+        <location filename="../../src/control/header-bar.cpp" line="422"/>
         <source>Delete to trash</source>
         <translation>ཤོག་སྙིགས་མེད་པར་བཟོས篓རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="466"/>
+        <location filename="../../src/control/header-bar.cpp" line="473"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
         <translation>མཐའ་སྣེ་གང་ཡང་མ་རྙེད་པས་མ་མཐར་ཡང་མཐའ་སྣེ་ཞིག་སྒྲིག་སྦྱོར་བྱེད་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="721"/>
-        <location filename="../../src/control/header-bar.cpp" line="922"/>
-        <location filename="../../src/control/header-bar.cpp" line="932"/>
+        <location filename="../../src/control/header-bar.cpp" line="728"/>
+        <location filename="../../src/control/header-bar.cpp" line="929"/>
+        <location filename="../../src/control/header-bar.cpp" line="939"/>
         <source>Select All Item</source>
         <translation>རྣམ་གྲངས་ཡོངས་རྫོགས་འདེམས་བསྐོ་བྱ་</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="731"/>
-        <location filename="../../src/control/header-bar.cpp" line="866"/>
-        <location filename="../../src/control/header-bar.cpp" line="905"/>
+        <location filename="../../src/control/header-bar.cpp" line="738"/>
+        <location filename="../../src/control/header-bar.cpp" line="873"/>
+        <location filename="../../src/control/header-bar.cpp" line="912"/>
         <source>Select</source>
         <translation>གདམ་ག་རྒྱག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="706"/>
+        <location filename="../../src/control/header-bar.cpp" line="713"/>
         <source>Restore</source>
         <translation>སླར་གསོ་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="709"/>
+        <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>Maximize</source>
         <translation>ཆེས་ཆེ་བ་བཅས་སུ་འགྱུར་བར་</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="908"/>
+        <location filename="../../src/control/header-bar.cpp" line="915"/>
         <source>Select Done</source>
         <translation>གདམ་གསེས་ལེགས་འགྲུབ་བྱ་དགོས</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="758"/>
+        <location filename="../../src/control/header-bar.cpp" line="765"/>
         <source>MoveTo</source>
         <translation>སྤོ་འགུལ་བྱས་ནས་ཐོན་པ།</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="207"/>
         <source>Icon View</source>
-        <translation type="unfinished"></translation>
+        <translation>རི་མོའི་མཐོང་རིས།</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="217"/>
         <source>List View</source>
-        <translation type="unfinished"></translation>
+        <translation>གསལ་ཐོའི་དཔེ་རིས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="767"/>
+        <location filename="../../src/control/header-bar.cpp" line="774"/>
         <source>CopyTo</source>
         <translation>འདྲ་བཟོ་བྱས་ནས་ཐོན་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="776"/>
+        <location filename="../../src/control/header-bar.cpp" line="783"/>
         <source>Delete</source>
         <translation>སུབ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="843"/>
+        <location filename="../../src/control/header-bar.cpp" line="850"/>
         <source>Select path</source>
         <translation>ཐབས་ལམ་གདམ་གསེས་བྱ་དགོས།</translation>
     </message>
@@ -282,7 +282,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">选项</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1288"/>
+        <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
         <translation>ཆེས་ཆུང་བ་ཡིན།</translation>
     </message>
@@ -299,7 +299,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1300"/>
+        <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
         <translation>སྒོ་རྒྱག་པ།</translation>
     </message>
@@ -398,50 +398,50 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="521"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
         <source>warn</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="521"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
         <source>This operation is not supported.</source>
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
         <source>Tips</source>
         <translation>ཐབས་རྩལ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="221"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>སྒྲིག་ཆས་བྲེལ་འཚུབ་ཆེ་བའི་གནས་སུ་གྱར་ཡོད་པས་རྗེས་སུ་བཀོལ་སྤྱོད་འདི་ལག་བསྟར་བྱེད་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="559"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Udiskཡིན་པས་ཉམས་གསོ་དང་ཡང་ན་རྣམ་གཞག་ཅན་དུ་བསྒྱུར་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="577"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>འདི་ནི་སྒུལ་བྱེད་འཕྲུལ་ཆས་སྟོང་བ་ཞིག་རེད། འོད་སྡེར་ནང་དུ་འཇུག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="250"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
         <source>Open In New Window</source>
         <translation>སྒེའུ་ཁུང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="266"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="300"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
         <source>Can not open %1, %2</source>
         <translation>བརྒྱ་ཆ་1.2འཕར་ཐབས་མེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="284"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
         <source>Open In New Tab</source>
         <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
@@ -457,12 +457,12 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="782"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
         <source>Manager tags...</source>
         <translation>སྤྱི་གཉེར་བའི་ཤོག་བྱང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="785"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
         <source>More tags...</source>
         <translation>ཤོག་བྱང་སྔར་ལས་མང་བ་</translation>
     </message>
@@ -508,7 +508,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="110"/>
         <source>Show Relative Time</source>
-        <translation type="unfinished"></translation>
+        <translation>བལྟོས་བཅས་ཀྱི་དུས་ཚོད་མངོན་ཡོད།</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="123"/>
@@ -516,73 +516,73 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>རི་མོ་ཉུང་དུ་གཏོང་རིགས་གཏན་འགོག་བྱ</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="132"/>
+        <location filename="../../src/control/operation-menu.cpp" line="133"/>
         <source>Resident in Backend</source>
         <translation>རྒྱབ་ཕྱོགས་སུ་བཅའ་སྡོད་བྱས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="141"/>
+        <location filename="../../src/control/operation-menu.cpp" line="142"/>
         <source>Parallel Operations</source>
         <translation>བཀོལ་སྤྱོད་ཀྱང་བྱ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="148"/>
         <source>Set samba password</source>
         <translation>གསང་གྲངས་samaaརྩིས་འཛུགས་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="161"/>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>Tips</source>
         <translation>ཐབས་རྩལ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="161"/>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
         <translation>སྤྱོད་མཁན་ལ་གསང་གྲངས་samaa</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="172"/>
+        <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Samba set user password</source>
         <translation>Sambaལ་སྤྱོད་མཁན་གྱི་གསང་གྲངས་བཀོད་སྒྲིག་བྱས་ཡོད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="170"/>
+        <location filename="../../src/control/operation-menu.cpp" line="171"/>
         <source>Samba password:</source>
         <translation>Sambaཡི་གསང་གྲངས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
-        <location filename="../../src/control/operation-menu.cpp" line="191"/>
+        <location filename="../../src/control/operation-menu.cpp" line="181"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Warning</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="181"/>
         <source>Samba set password failed, Please re-enter!</source>
         <translation>Sambaལ་གསང་གྲངས་བཀོད་སྒྲིག་བྱས་ནས་ཕམ་ཉེས་བྱུང་བས་ཡང་བསྐྱར་ནང་འདྲེན་གནང་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="191"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
         <translation>མཉམ་སྤྱོད་དང་བཀོད་སྒྲིག་ཞབས་ཞུ་ཐུན་མོང་མ་ཡིན་པ་མཉམ་སྤྱོད་བྱེད་བཞིན་པའི་མཉམ་སྤྱོད་བཀོད་སྒྲིག་ཡོད་མེད་ངོས་འཛིན་གནང་རོགས།ཡང་ན་བསྐྱར་དུ་མཉམ་སྤྱོད་གནང་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="200"/>
+        <location filename="../../src/control/operation-menu.cpp" line="201"/>
         <source>Open each folder in a new window</source>
         <translation>སྒེའུ་ཁུང་གསར་བའི་ནང་དུ་ཡིག་ཆ་རེ་རེའི་ཁ་ཕྱེས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="206"/>
+        <location filename="../../src/control/operation-menu.cpp" line="207"/>
         <source>Plugin manager Settings</source>
         <translation>ལྷུ་ལག་དོ་དམ་ཡོ་བྱད་སྒྲིག་འགོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="215"/>
+        <location filename="../../src/control/operation-menu.cpp" line="216"/>
         <source>Help</source>
         <translation>རོགས་རམ་བྱེད་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="219"/>
+        <location filename="../../src/control/operation-menu.cpp" line="220"/>
         <source>About</source>
         <translation>ཕལ་ཆེར་གཅིག་འདྲ་ཡིན།</translation>
     </message>
@@ -590,27 +590,27 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="283"/>
+        <location filename="../../src/control/operation-menu.cpp" line="284"/>
         <source>Edit</source>
         <translation>རྩོམ་སྒྲིག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="294"/>
+        <location filename="../../src/control/operation-menu.cpp" line="295"/>
         <source>copy</source>
         <translation>འདྲ་བཟོ་བྱས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="303"/>
+        <location filename="../../src/control/operation-menu.cpp" line="304"/>
         <source>paste</source>
         <translation>རབ་རིབ་ཏུ་གྱུར</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="312"/>
+        <location filename="../../src/control/operation-menu.cpp" line="313"/>
         <source>cut</source>
         <translation>གཏུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="321"/>
+        <location filename="../../src/control/operation-menu.cpp" line="322"/>
         <source>trash</source>
         <translation>གད་སྙིགས།</translation>
     </message>
@@ -977,32 +977,32 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
         <source>Use current sorting for all folders</source>
-        <translation type="unfinished"></translation>
+        <translation>དཀར་ཆག་ཡོད་ཚད་མིག་སྔའི་གོ་རིམ་བཀོལ་སྤྱོད་བྱེད་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="102"/>
         <source>By %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ལྟར་བསྒྲིག%1</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="111"/>
         <source>Newest to oldest</source>
-        <translation type="unfinished"></translation>
+        <translation>གསར་པ་ནས་རྙིང་པའི་བར་</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="112"/>
         <source>Oldest to newest</source>
-        <translation type="unfinished"></translation>
+        <translation>རྙིང་པ་ནས་གསར་པའི་བར་ཡིན།</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="114"/>
         <source>Files from large to small</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཆེ་བ་ནས་ཆུང་བར་ཡིན།</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="115"/>
         <source>Files from small to large</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་ཆུང་བ་ནས་ཆེ་བར་འགྲོ་བ།</translation>
     </message>
     <message>
         <source>Use global sorting</source>
@@ -1110,22 +1110,22 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="282"/>
+        <location filename="../../src/control/tab-widget.cpp" line="285"/>
         <source>Trash</source>
         <translation>གད་སྙིགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="286"/>
+        <location filename="../../src/control/tab-widget.cpp" line="289"/>
         <source>Clear</source>
         <translation>གསལ་པོར་ཤེས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="291"/>
+        <location filename="../../src/control/tab-widget.cpp" line="294"/>
         <source>Recover</source>
         <translation>སླར་གསོ་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="448"/>
+        <location filename="../../src/control/tab-widget.cpp" line="451"/>
         <source>Computer</source>
         <translation>རྩིས་འཁོར།</translation>
     </message>
@@ -1138,32 +1138,32 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="523"/>
+        <location filename="../../src/control/tab-widget.cpp" line="526"/>
         <source>Select Path</source>
         <translation>ཐབས་ལམ་གདམ་གསེས་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1344"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1347"/>
         <source>Warning</source>
-        <translation type="unfinished">ཐ་ཚིག་སྒྲོག་པ།</translation>
+        <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1346"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1349"/>
         <source>Error</source>
-        <translation type="unfinished">错误</translation>
+        <translation>ནོར་འཁྲུལ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1708"/>
         <source>Opening such files is not currently supported</source>
         <translation>མིག་སྔར་ཡིག་ཆ་དེ་རིགས་འབྱེད་རྒྱུར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1719"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1722"/>
         <source>Open failed</source>
         <translation>ཕམ་ཉེས་བྱུང་བ་རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1720"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1723"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>དཀར་ཆག་གི་ཁ་ཕྱེ་ནས་ཕམ་སོང་། ཁྱེད་རང་ལ་དབང་ཚད་མེད།</translation>
     </message>
@@ -1172,7 +1172,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="438"/>
+        <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
         <translation>འཚོལ་ཞིབ་བྱེད་པ།</translation>
     </message>
@@ -1197,13 +1197,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="583"/>
-        <location filename="../../src/control/tab-widget.cpp" line="743"/>
+        <location filename="../../src/control/tab-widget.cpp" line="586"/>
+        <location filename="../../src/control/tab-widget.cpp" line="746"/>
         <source>is</source>
         <translation>དེ་ནི་རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="618"/>
+        <location filename="../../src/control/tab-widget.cpp" line="621"/>
         <source>Please input key words...</source>
         <translation>འགག་རྩའི་ཡི་གེ་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
@@ -1212,130 +1212,130 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="704"/>
-        <location filename="../../src/control/tab-widget.cpp" line="727"/>
+        <location filename="../../src/control/tab-widget.cpp" line="707"/>
+        <location filename="../../src/control/tab-widget.cpp" line="730"/>
         <source>contains</source>
         <translation>དེའི་ནང་ཚུད་ཡོད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>name</source>
         <translation>མིང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>type</source>
         <translation>རིགས་དབྱིབས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>modify time</source>
         <translation>བཟོ་བཅོས་རྒྱག་པའི་དུས་ཚོད</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>file size</source>
         <translation>ཡིག་ཆ་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>all</source>
         <translation>ཚང་མ་ཡིན།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>file folder</source>
         <translation>ཡིག་ཆའི་བཙུར་མ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>image</source>
         <translation>རི་མོ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>video</source>
         <translation>བརྙན་ལམ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>text file</source>
         <translation>ཡིག་ཆ་དང་ཡིག་ཆ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>audio</source>
         <translation>སྒྲ་གདངས་ཀྱི་འགྱུར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>others</source>
         <translation>གཞན་གྱི་ལག་ཏུ་</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>wps file</source>
         <translation>WPSཡིག་ཆ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>today</source>
         <translation>དེ་རིང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this week</source>
         <translation>གཟའ་འཁོར་འདིར།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this month</source>
         <translation>ཟླ་འདིར།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this year</source>
         <translation>ད་ལོ་</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>year ago</source>
         <translation>ལོ་གཅིག་གི་གོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>tiny(0-16K)</source>
         <translation>ཕྲན་བུ། (0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>small(16k-1M)</source>
         <translation>ཆུང་གྲས། (16k-1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>empty(0K)</source>
         <translation>སྟོང་པ། (0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
         <translation>(1M-128M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>big(128M-1G)</source>
         <translation>(128M-1G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>large(1-4G)</source>
         <translation>ཚོགས་ཆེན། (1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>great(&gt;4G)</source>
         <translation>ཧ་ཅང་བཟང་། (&gt;4G)</translation>
     </message>
@@ -1355,7 +1355,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="922"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
         <source>Peony</source>
         <translation>ཏན牡།།</translation>
     </message>
@@ -1363,17 +1363,17 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1090"/>
+        <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
         <translation>གདམ་ག་རྒྱག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1103"/>
+        <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
         <translation>ཆེས་ཆུང་བ་ཡིན།</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1126"/>
+        <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
         <translation>སྒོ་རྒྱག་པ།</translation>
     </message>

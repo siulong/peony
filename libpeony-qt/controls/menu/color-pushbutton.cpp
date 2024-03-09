@@ -69,7 +69,7 @@ void ColorPushButton::paintEvent(QPaintEvent *e)
             path.lineTo(m_bigpathrect.left() + m_bigpathrectwidth * 0.75, m_bigpathrect.top() + m_bigpathrectheigth / 4);
             painter.drawPath(path);
             painter.restore();
-            manager = QString(tr("delete \"%1\"")).arg(m_name);
+            manager = QString(tr("Remove \"%1\"")).arg(m_name);
             Q_EMIT changeText(manager);
         }else{
             QPalette pal = this->palette();
