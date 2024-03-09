@@ -159,13 +159,13 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
-        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="428"/>
+        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
-        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="428"/>
+        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Label or color is duplicated.</source>
         <translation>标签或者颜色重复</translation>
     </message>
@@ -3730,21 +3730,27 @@ Do you want to delete the link file?</source>
         <translation>在%2中搜索%1</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="424"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="434"/>
         <source>File System</source>
         <translation>文件系统</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
+        <source>Search results for all files marked in  &quot;%1&quot;  in &quot;%2&quot;</source>
+        <translation>在“%2”中搜索所有“%1”标识文件的结果</translation>
     </message>
     <message>
         <source>&amp;Copy Directory</source>
         <translation type="vanished">拷贝路径(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="516"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="526"/>
         <source>Open In New Tab</source>
         <translation>在新标签页中打开</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="520"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="530"/>
         <source>Open In New Window</source>
         <translation>在新窗口中打开</translation>
     </message>
@@ -3757,7 +3763,7 @@ Do you want to delete the link file?</source>
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="514"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="524"/>
         <source>Copy Directory</source>
         <translation>拷贝路径</translation>
     </message>

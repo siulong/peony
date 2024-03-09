@@ -155,13 +155,13 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
-        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="428"/>
+        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Error</source>
         <translation>ནོར་འཁྲུལ་བྱུང་བ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
-        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="428"/>
+        <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Label or color is duplicated.</source>
         <translation>ཡིག་བྱང་ངམ་ཡང་ན་ཁ་དོག་བསྐྱར་ཟློས་བྱེད་པ།</translation>
     </message>
@@ -1590,7 +1590,7 @@
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="358"/>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="359"/>
         <source>Can&apos;t get remote file information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཐག་རིང་གི་ཡིག་ཆའི་ཆ་འཕྲིན་ཐོབ་མ་ཐུབ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="368"/>
@@ -2837,7 +2837,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="46"/>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="49"/>
         <source>Symbolic Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">མྱུར་བའི་ཐབས་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="89"/>
@@ -2912,7 +2912,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1211"/>
         <source>Create file error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཡིག་ཆའི་ནོར་འཁྲུལ་འཛུགས་པ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1217"/>
@@ -2933,7 +2933,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1735"/>
         <source>File delete error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཡིག་ཆ་བསུབ་ནོར་ཐེབས་པ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1814"/>
@@ -3165,7 +3165,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1062"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1064"/>
         <source>Symbolic Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">མྱུར་བའི་ཐབས་ལམ།</translation>
     </message>
     <message>
         <source> - Symbolic Link</source>
@@ -3387,12 +3387,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="286"/>
         <source>Time Access:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">འཚམས་འདྲིའི་དུས་ཚོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="279"/>
         <source>Time Modified:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">བཟོ་བཅོས་རྒྱག་པའི་དུས་ཚོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="295"/>
@@ -3704,21 +3704,27 @@ Do you want to delete the link file?</source>
         <translation>&quot;བརྒྱ་ཆ་2&quot;ཡི་ཁྲོད་དུ་&quot;བརྒྱ་ཆ་གཅིག་&quot;འཚོལ་ཞིབ་བྱས་ཡོད།</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="424"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="434"/>
         <source>File System</source>
         <translation>ཡིག་ཆའི་མ་ལག</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
+        <source>Search results for all files marked in  &quot;%1&quot;  in &quot;%2&quot;</source>
+        <translation>&quot;%2&quot;ནང་&quot;%1&quot;ཡི་མཚོན་རྟགས་ཡིག་ཆ་ཡོད་ཚད་འཚོལ་ཞིབ་བྱས་པའི་མཇུག་འབྲས་ཡིན།</translation>
     </message>
     <message>
         <source>&amp;Copy Directory</source>
         <translation type="vanished">拷贝路径(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="516"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="526"/>
         <source>Open In New Tab</source>
         <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="520"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="530"/>
         <source>Open In New Window</source>
         <translation>སྒེའུ་ཁུང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
@@ -3731,7 +3737,7 @@ Do you want to delete the link file?</source>
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="514"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="524"/>
         <source>Copy Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3787,7 +3793,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="246"/>
         <source>Choose new application</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">བཀོལ་སྤྱོད་གསར་བ་ཞིག་འདེམས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="248"/>
@@ -3797,7 +3803,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="255"/>
         <source>apply now</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ལམ་སེང་བེད་སྤྱོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="261"/>
@@ -3923,7 +3929,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="577"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="598"/>
         <source>Permission refinement settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">དབང་ཚད་ཞིབ་ཕྲ་བཟོ་བ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="599"/>
@@ -3998,7 +4004,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="349"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཉེ་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="357"/>
@@ -4162,7 +4168,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="44"/>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="47"/>
         <source>Symbolic Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">མྱུར་བའི་ཐབས་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="80"/>
@@ -4198,7 +4204,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="87"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ཉེ་ལམ།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="95"/>
@@ -4584,17 +4590,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="860"/>
         <source>starting ...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ད་ལྟ་མགོ་བརྩམས་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="957"/>
         <source>canceling ...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">མེད་པར་བཟོ་བཞིན་པའི་སྒང་རེད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="959"/>
         <source>sync ...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">གོམ་མཉམ་བྱེད་བཞིན་ཡོད།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="1014"/>
@@ -5338,7 +5344,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="206"/>
         <source>Formatting. Do not close this window</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">རྣམ་གཞག་ཅན་དུ་འགྱུར་བཞིན་པའི་སྒང་ཡིན་པས་སྒོ་མ་བརྒྱག</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="216"/>
@@ -5348,7 +5354,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="219"/>
         <source>Begin Format</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">འགོ་བརྩམས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="220"/>
@@ -5418,7 +5424,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="205"/>
         <source>Formatting. Do not close this window</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">རྣམ་གཞག་ཅན་དུ་འགྱུར་བཞིན་པའི་སྒང་ཡིན་པས་སྒོ་མ་བརྒྱག</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="217"/>
@@ -5428,7 +5434,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="220"/>
         <source>Begin Format</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">འགོ་བརྩམས།</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="221"/>
