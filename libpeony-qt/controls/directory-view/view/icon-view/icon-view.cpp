@@ -135,6 +135,8 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     m_editValid = false;
 
     setMouseTracking(true);//追踪鼠标
+
+    setViewportMargins(0, 0, 0, 0);
 }
 
 IconView::~IconView()

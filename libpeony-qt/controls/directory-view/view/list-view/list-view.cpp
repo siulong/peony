@@ -193,6 +193,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
             }
         }
     });
+
+    setViewportMargins(0, 0, 0, 0);
 }
 
 void ListView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
