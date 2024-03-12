@@ -464,9 +464,11 @@ out:
         // some special detail for mtp,  gphoto2, or other cases.
         if (mSrcUri.startsWith("mtp://") || mDestUri.startsWith("mtp://")) {
             if (mError) {
-                g_error_free(*mError);
-                *mError = nullptr;
-                g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
+                if ((*mError)->code != G_IO_ERROR_EXISTS) {
+                    g_error_free(*mError);
+                    *mError = nullptr;
+                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
+                }
             }else if (mDestUri.startsWith("gphoto2://")) {
                 if (mError) {
                     g_error_free(*mError);
