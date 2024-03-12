@@ -41,6 +41,7 @@
 namespace Peony {
 
 class PropertiesWindowTabPagePluginIface;
+class PropertiesWindowPrivate;
 
 class PropertiesWindowPluginManager : public QObject
 {
@@ -216,6 +217,7 @@ public:
     bool handleKMREUri(QString &uri);
 
     void onVolumeRemoveClosePropertiesPage();
+    void setOpenTabPage(const QString &className);
 
 protected:
     /**
@@ -233,6 +235,7 @@ private:
     bool m_destroyThis = false;
     QStringList m_uris;
     QList<PropertiesWindowTabIface *> m_openTabPage;
+    PropertiesWindowPrivate* m_window = nullptr;
 
 
 public:

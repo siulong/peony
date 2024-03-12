@@ -541,12 +541,12 @@ void PropertiesWindow::initTabPage(const QStringList &uris)
     if(uris.isEmpty())
         return;
 
-    auto window = new PropertiesWindowPrivate(uris, this);
-    window->tabBar()->setStyle(new tabStyle);
+    m_window = new PropertiesWindowPrivate(uris, this);
+    m_window->tabBar()->setStyle(new tabStyle);
     //Warning: 不要设置tab高度，否则会导致tab页切换上下跳动
     //Do not set the tab height, otherwise it will cause the tab page to switch up and down
     //window->tabBar()->setMinimumHeight(72);
-    this->setCentralWidget(window);
+    this->setCentralWidget(m_window);
 }
 
 bool PropertiesWindow::checkUriIsOpen(QStringList &uris, PropertiesWindow *newWindow)
@@ -768,6 +768,18 @@ protected:
     }
 };
 #endif
+
+void PropertiesWindow::setOpenTabPage(const QString &className)
+{
+    int index = -1;
+    for(auto &page : m_openTabPage) {
+        if (page->metaObject()->className() == className) {
+            index = m_openTabPage.indexOf(page);
+            break;
+        }
+    }
+    m_window->setCurrentIndex(index);
+}
 
 //properties window
 PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidget *parent) : QTabWidget(parent)
