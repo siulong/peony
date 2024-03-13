@@ -97,14 +97,15 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }
 
 
-    if (ClipboardUtils::isClipboardHasFiles()){
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
         QString actualDirUri = view->getDirectoryUri();
         bool bSearchTab = false;
         if(actualDirUri.startsWith("search:///search_uris")){
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
             bSearchTab = true;
         }
-        auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
         if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
                 && !clipedUris.isEmpty()) {

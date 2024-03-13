@@ -161,14 +161,15 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     opt.decorationSize = rawDecoSize;
 
     bool bCutFile = false;
-    if (ClipboardUtils::isClipboardHasFiles()){
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
         QString actualDirUri = view->getDirectoryUri();
         bool bSearchTab = false;
         if(actualDirUri.startsWith("search:///search_uris")){
             bSearchTab = true;
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
         }
-        auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
         if (!clipedUris.isEmpty() && (FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)))) {
             if (clipedUris.contains(index.data(FileItemModel::UriRole).toString())) {
