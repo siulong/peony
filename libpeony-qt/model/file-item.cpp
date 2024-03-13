@@ -285,10 +285,14 @@ void FileItem::findChildrenAsync()
             //m_model->sendPathChangeRequest(target, this->uri());
             return;
         }
+
         if (err) {
             qDebug()<<"file item error:" <<err->message()<<enumerator->getEnumerateUri();
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
-            if (err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) {
+
+            //fix bug#214724, 214924， access smb-root error issue
+            if ((err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) &&
+                    this->uri() != "smb:///" && this->uri() != "network:///smb-root") {
                 enumerator->cancel();
                 //fix goto removed path in case device is ejected
                 if (this->uri().startsWith("file:///media"))
