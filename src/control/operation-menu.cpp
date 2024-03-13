@@ -238,6 +238,11 @@ setPasswd:
         widget->show();
     });
 
+    m_showNetwork = addAction(tr("Show Network"), this, [=](bool checked){
+        Peony::GlobalSettings::getInstance()->setValue(SHOW_NETWORK, checked);
+    });
+    m_showNetwork->setCheckable(true);
+
     addAction(tr("Connect to Server"), this, [=](){
         Peony::ConnectServerDialog dlg;
         if (dlg.exec()) {
@@ -304,9 +309,12 @@ void OperationMenu::updateMenu()
                                      Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool():
                                      false);
 
+    m_showNetwork->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
+                                  Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() :
+                                  true);
+
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
-
     bool tablet = qApp->property("tabletMode").toBool();
     m_editWidgetContainer->setVisible(!tablet);
     if (tablet) {

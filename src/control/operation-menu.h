@@ -48,6 +48,7 @@ private:
     QAction *m_showCreateTime = nullptr;
     QAction *m_showFoldersInNewWindow = nullptr;
     QAction *m_showRelativeTime = nullptr;
+    QAction *m_showNetwork = nullptr;
 
 private:
     MainWindow *m_window = nullptr;
