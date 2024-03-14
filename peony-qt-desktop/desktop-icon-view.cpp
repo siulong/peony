@@ -2017,12 +2017,13 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
             m_ctrl_or_shift_pressed = false;
     }
 
+    auto index = indexAt(e->pos());
+
     if (!m_ctrl_or_shift_pressed) {
-        if (!indexAt(e->pos()).isValid()) {
+        if (!index.isValid()) {
             clearAllIndexWidgets();
             clearSelection();
         } else {
-            auto index = indexAt(e->pos());
             m_last_index = index;
             //fix rename state has no menuRequest issue, bug#44107
             if (! m_is_edit)
@@ -2059,12 +2060,20 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
         return;
     }
 
+    if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
+
     QListView::mousePressEvent(e);
 }
 
 void DesktopIconView::mouseReleaseEvent(QMouseEvent *e)
 {
     QListView::mouseReleaseEvent(e);
+
+    m_noSelectOnPress = false;
 
     this->viewport()->update(viewport()->rect());
 }
@@ -2905,6 +2914,29 @@ bool DesktopIconView::dragToOtherScreen(QDropEvent *e)
         }
     }
     return false;
+}
+
+QItemSelectionModel::SelectionFlags DesktopIconView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QListView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect;
+            }
+            return flags;
+        }
+    }
+    return QListView::selectionCommand(index, event);
 }
 
 int DesktopIconView::radius() const

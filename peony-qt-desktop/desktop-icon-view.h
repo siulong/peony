@@ -274,6 +274,8 @@ protected:
     void checkItemsOver();
     bool dragToOtherScreen(QDropEvent *e);
 
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
+
 private:
     ZoomLevel m_zoom_level = Invalid;
     QMargins m_panel_margin;
@@ -323,6 +325,8 @@ private:
 
     int m_radius = 6;
     QGSettings *m_panelSetting = nullptr;
+
+    bool m_noSelectOnPress = false;
 };
 
 }

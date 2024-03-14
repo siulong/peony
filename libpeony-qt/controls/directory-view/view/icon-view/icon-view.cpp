@@ -412,6 +412,13 @@ void IconView::mousePressEvent(QMouseEvent *e)
         m_mouse_release_unselect = false;
     }
 
+    auto index = indexAt(e->pos());
+    if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
+
     QListView::mousePressEvent(e);
 
     if (e->button() != Qt::LeftButton) {
@@ -467,15 +474,10 @@ void IconView::mouseReleaseEvent(QMouseEvent *e)
 {
     QListView::mouseReleaseEvent(e);
 
+    m_noSelectOnPress = false;
+
     if (e->button() != Qt::LeftButton) {
         return;
-    }
-
-    if (true == m_mouse_release_unselect) {
-        QModelIndex itemIndex = indexAt(e->pos());
-        if (itemIndex.isValid()) {
-            selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Deselect|QItemSelectionModel::Rows);
-        }
     }
 }
 
@@ -1001,6 +1003,29 @@ bool IconView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
         }
     }
     return  QListView::edit(index, trigger, event);
+}
+
+QItemSelectionModel::SelectionFlags IconView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QListView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect;
+            }
+            return flags;
+        }
+    }
+    return QListView::selectionCommand(index, event);
 }
 
 void IconView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)

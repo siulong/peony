@@ -370,6 +370,11 @@ void ListView::mousePressEvent(QMouseEvent *e)
 
     auto index = indexAt(e->pos());
     bool isIndexSelected = selectedIndexes().contains(index);
+    if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
 
     if (isEnableMultiSelect() && index.isValid()) {
         m_mouse_release_unselect = isIndexSelected;
@@ -391,7 +396,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
     auto visualRect = this->visualRect(index);
     auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
     auto validRect = QRect(visualRect.topLeft(), sizeHint);
-    if (!isEnableMultiSelect() && !validRect.contains(e->pos())) {
+    if (!isEnableMultiSelect() && !validRect.contains(e->pos()) && e->modifiers() == Qt::NoModifier) {
         if (isIndexSelected) {
             clearSelection();
             setCurrentIndex(index);
@@ -447,15 +452,10 @@ void ListView::mousePressEvent(QMouseEvent *e)
 void ListView::mouseReleaseEvent(QMouseEvent *e)
 {
     QTreeView::mouseReleaseEvent(e);
+    m_noSelectOnPress = false;
     m_rubberBand->hide();
     m_lastPressedLogicPoint = QPoint(-1, -1);
-
-    if (true == m_mouse_release_unselect) {
-        QModelIndex itemIndex = indexAt(e->pos());
-        if (itemIndex.isValid()) {
-            selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Deselect|QItemSelectionModel::Rows);
-        }
-    }
+    m_isLeftButtonPressed = false;
 }
 
 void ListView::mouseMoveEvent(QMouseEvent *e)
@@ -813,6 +813,29 @@ void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
     QRect adjustedRect = rect;
     adjustedRect.setLeft(0);
     QTreeView::setSelection(adjustedRect, command);
+}
+
+QItemSelectionModel::SelectionFlags ListView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QTreeView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect|QItemSelectionModel::Rows;
+            }
+            return flags;
+        }
+    }
+    return QTreeView::selectionCommand(index, event);
 }
 
 void ListView::slotRename()
