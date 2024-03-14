@@ -80,6 +80,7 @@ ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
     findAtril();
 
     connect(qApp, &QGuiApplication::lastWindowClosed, this, [=]{
+        clearThumbnail();
         m_thumbnail_thread_pool->clear();
         m_thumbnail_thread_pool->waitForDone(500);
     });

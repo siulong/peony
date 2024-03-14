@@ -1216,7 +1216,8 @@ ExtraInfoRecorder::ExtraInfoRecorder(const QString &uri)
 
 ExtraInfoRecorder::~ExtraInfoRecorder()
 {
-    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
+    /* 改成程序退出时再释放图片，linkto bug#215437 */
+    //ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
     EmblemProviderManager::getInstance()->cancelQuery(m_uri);
 }
 
