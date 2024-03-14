@@ -529,6 +529,12 @@ void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
     return;
 }
 
+void IconViewIndexWidget::focusOutEvent(QFocusEvent *event)
+{
+    QWidget::focusOutEvent(event);
+    hide();
+}
+
 void IconViewIndexWidget::adjustPos()
 {
     IconView *view = m_delegate->getView();
