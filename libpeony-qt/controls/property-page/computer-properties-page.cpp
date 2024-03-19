@@ -139,7 +139,7 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             if (type.contains("ext")) {
                 used = total - available;
             }
-            m_layout->addRow(tr("Name: "), new QLabel(targetUri == "file:///" ? tr("File System") : tr("Data"), this));
+            m_layout->addRow(tr("Name: "), new QLabel(targetUri == "file:///" ? tr("System Disk") : tr("Data"), this));
             m_layout->addRow(tr("Total Space: "), new QLabel(formatCapacityString(total), this));
             m_layout->addRow(tr("Used Space: "), new QLabel(formatCapacityString(used), this));
             m_layout->addRow(tr("Free Space: "), new QLabel(formatCapacityString(available), this));

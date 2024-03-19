@@ -461,7 +461,7 @@ start:
             QString name;
 
             if (mountRootName == "/") {
-                name = tr("File System");
+                name = tr("System Disk");
             } else if (mountRootName == "/data") {
                 name = tr("Data");
             } else {

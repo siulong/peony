@@ -1343,7 +1343,7 @@ Volume* Volume::initRootVolume(){
     m_canEject = false;
     m_canStop = false;
     m_volume = nullptr;
-    m_name = "File System";
+    m_name = "System Disk";
 
     GUnixMountEntry* entry = g_unix_mount_at("/",nullptr);
     if(!entry)

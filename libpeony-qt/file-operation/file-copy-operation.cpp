@@ -1126,7 +1126,7 @@ void FileCopyOperation::run()
             FileOperationError except;
             QString name;
             if (storage.rootPath() == "/") {
-                name = tr("File System");
+                name = tr("System Disk");
             } else if (storage.rootPath() == "/data") {
                 name = tr("Data");
             } else {
