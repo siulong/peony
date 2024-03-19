@@ -474,32 +474,34 @@ void Format_Dialog::slot_format(bool enable)
 
         bool canUseAtaSecureErase = false;
         // judge fastest erase type
-        if (full_clean) {
-            // judge if drive only has one volume
-            if (property("formatDriveVolumesCount").toInt() <= 1) {
-                // judge drive has ata commands supported
-                g_autoptr (UDisksClient) client = udisks_client_new_sync(0, 0);
-                if (client) {
-                    struct stat statbuf;
-                    int ret = stat(dev_name, &statbuf);
-                    if (ret == 0) {
-                        g_autoptr (UDisksBlock) block = udisks_client_get_block_for_dev(client, statbuf.st_rdev);
-                        if (block) {
-                            auto drive_path = udisks_block_get_drive(block);
-                            if (drive_path) {
-                                g_autoptr (UDisksObject) drive_object = udisks_client_get_object(client, drive_path);
-                                if (drive_object) {
-                                    g_autoptr (UDisksDriveAta) drive_ata = udisks_object_get_drive_ata(drive_object);
-                                    if (drive_ata) {
-                                        canUseAtaSecureErase = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //fix bug#211997, all block use "zero" way, to avoid format fail issue
+        //comment canUseAtaSecureErase way
+//        if (full_clean) {
+//            // judge if drive only has one volume
+//            if (property("formatDriveVolumesCount").toInt() <= 1) {
+//                // judge drive has ata commands supported
+//                g_autoptr (UDisksClient) client = udisks_client_new_sync(0, 0);
+//                if (client) {
+//                    struct stat statbuf;
+//                    int ret = stat(dev_name, &statbuf);
+//                    if (ret == 0) {
+//                        g_autoptr (UDisksBlock) block = udisks_client_get_block_for_dev(client, statbuf.st_rdev);
+//                        if (block) {
+//                            auto drive_path = udisks_block_get_drive(block);
+//                            if (drive_path) {
+//                                g_autoptr (UDisksObject) drive_object = udisks_client_get_object(client, drive_path);
+//                                if (drive_object) {
+//                                    g_autoptr (UDisksDriveAta) drive_ata = udisks_object_get_drive_ata(drive_object);
+//                                    if (drive_ata) {
+//                                        canUseAtaSecureErase = true;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         //do format
         kdisk_format(dev_name, devtype.toLower().toUtf8().constData(),
