@@ -125,7 +125,10 @@ bool FileInfoJob::querySync()
 
     refreshInfoContents(_info);
     refreshFileSystemInfo(_fs_info);
-    g_object_unref(_info);
+    if (_info)
+        g_object_unref(_info);
+    if (_fs_info)
+        g_object_unref(_fs_info);
 
     EmblemProviderManager::getInstance()->querySync(m_info->uri());
 

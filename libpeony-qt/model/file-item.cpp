@@ -513,7 +513,7 @@ void FileItem::findChildrenAsync()
             connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
                 m_model->updated();
                 //m_model->dataChanged(m_model->indexFromUri(uri), m_model->indexFromUri(uri));
-            });
+            }, Qt::UniqueConnection);
             connect(m_watcher.get(), &FileWatcher::directoryDeleted, this, [=](QString uri) {
                 //clean all the children, if item index is root index, cd up.
                 //this might use FileItemModel::setRootItem()
