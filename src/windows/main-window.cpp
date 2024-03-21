@@ -86,6 +86,7 @@
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
 #include "file-utils.h"
+#include "trash-cleaned-watcher.h"
 
 #include <QSplitter>
 
@@ -1800,10 +1801,10 @@ void MainWindow::initUI(const QString &uri)
     connect(m_tab, &TabWidget::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
     connect(m_tab,&TabWidget::globalSearch, m_header_bar, &HeaderBar::setGlobalFlag);
     connect(m_tab, &TabWidget::clearTrash, this, &MainWindow::cleanTrash);
-    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
-        m_tab->updateTabPageTitle();
-    });
-    connect(this, &MainWindow::trashcleaned, m_header_bar, &HeaderBar::clearTrash);
+//    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
+//        m_tab->updateTabPageTitle();
+//    });
+//    connect(this, &MainWindow::trashcleaned, m_header_bar, &HeaderBar::clearTrash);
     connect(m_tab, &TabWidget::recoverFromTrash, this, &MainWindow::recoverFromTrash);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_tab, &TabWidget::updateSearch, this, &MainWindow::updateSearch);
@@ -1882,6 +1883,10 @@ void MainWindow::initUI(const QString &uri)
 //        });
 //    }
 
+    auto iscleaned = Peony::TrashCleanedWatcher::getInstance();
+    connect(iscleaned,&Peony::TrashCleanedWatcher::updateTrashIcon, m_tab, [=](){
+        m_tab->updateTabPageTitle();
+    });
 }
 
 void MainWindow::updateSearchStatus(bool showSearch)
@@ -1908,12 +1913,12 @@ void MainWindow::cleanTrash()
         } else {
             auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
             qApp->setProperty("clearTrash",true);
-            if(removeop){
-                removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
+//            if(removeop){
+//                removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
 //                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
-                Q_EMIT trashcleaned();
-                });
-            }
+//                Q_EMIT trashcleaned();
+//                });
+//            }
         }
     }
     else

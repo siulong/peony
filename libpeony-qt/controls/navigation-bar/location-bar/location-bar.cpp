@@ -297,7 +297,19 @@ void LocationBar::setRootUri(const QString &uri)
 
 void LocationBar::updateTrashIcon()
 {
-    updateButtons();
+    if (m_current_uri.startsWith("trash:///")) {
+        auto info  = FileInfo::fromUri(m_current_uri);
+        auto infoJob = new FileInfoJob(info);
+        connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
+            infoJob->deleteLater();
+
+            QIcon icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(m_current_uri), QIcon::fromTheme("folder"));
+            auto button = m_buttons.value(m_current_uri);
+            if (button)
+                button->setIcon(icon);
+        });
+        infoJob->queryAsync();
+    }
 }
 
 void LocationBar::clearButtons()
