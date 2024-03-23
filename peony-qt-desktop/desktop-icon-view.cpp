@@ -420,37 +420,20 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
     if (QGSettings::isSchemaInstalled(PANEL_SETTINGS))
     {
         //panel monitor
-        QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
-        connect(panelSetting, &QGSettings::changed, this, [=](const QString &key){
+        if (!m_panelSetting)
+            m_panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
+        int position = m_panelSetting->get("panelposition").toInt();
+        int margins = m_panelSetting->get("panelsize").toInt();
+        connect(m_panelSetting, &QGSettings::changed, this, [=](const QString &key){
             if (key == "panelposition" || key == "panelsize") {
-                int position = panelSetting->get("panelposition").toInt();
-                int margins = panelSetting->get("panelsize").toInt();
-                switch (position) {
-                case 1: {
-                    setViewportMargins(0, margins, 0, 0);
-                    m_panel_margin = QMargins(0, margins, 0, 0);
-                    break;
-                }
-                case 2: {
-                    setViewportMargins(margins, 0, 0, 0);
-                    m_panel_margin = QMargins(margins, 0, 0, 0);
-                    break;
-                }
-                case 3: {
-                    setViewportMargins(0, 0, margins, 0);
-                    m_panel_margin = QMargins(0, 0, margins, 0);
-                    break;
-                }
-                default: {
-                    setViewportMargins(0, 0, 0, margins);
-                    m_panel_margin = QMargins(0, 0, 0, margins);
-                    break;
-                }
-                }
+                int position = m_panelSetting->get("panelposition").toInt();
+                int margins = m_panelSetting->get("panelsize").toInt();
+                setMarginsBasedOnPosition(position,  margins);
                 if (m_initialized)
                     resolutionChange();
             }
         });
+        setMarginsBasedOnPosition(position, margins);
     }
 
     // try fixing #63358
@@ -463,6 +446,32 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
                 });
             }
         });
+    }
+}
+
+void DesktopIconView::setMarginsBasedOnPosition(int position, int margins)
+{
+    switch (position) {
+    case 1: {
+        setViewportMargins(0, margins, 0, 0);
+        m_panel_margin = QMargins(0, margins, 0, 0);
+        break;
+    }
+    case 2: {
+        setViewportMargins(margins, 0, 0, 0);
+        m_panel_margin = QMargins(margins, 0, 0, 0);
+        break;
+    }
+    case 3: {
+        setViewportMargins(0, 0, margins, 0);
+        m_panel_margin = QMargins(0, 0, margins, 0);
+        break;
+    }
+    default: {
+        setViewportMargins(0, 0, 0, margins);
+        m_panel_margin = QMargins(0, 0, 0, margins);
+        break;
+    }
     }
 }
 
@@ -3112,27 +3121,14 @@ void DesktopIconView::initViewport()
             return;
         }
         //panel
-        QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
-        int position = panelSetting->get("panelposition").toInt();
-        int margins = panelSetting->get("panelsize").toInt();
-        switch (position) {
-        case 1: {
-            setViewportMargins(0, margins, 0, 0);
-            break;
-        }
-        case 2: {
-            setViewportMargins(margins, 0, 0, 0);
-            break;
-        }
-        case 3: {
-            setViewportMargins(0, 0, margins, 0);
-            break;
-        }
-        default: {
-            setViewportMargins(0, 0, 0, margins);
-            break;
-        }
-        }
+        if (!m_panelSetting)
+            m_panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
+
+        int position = m_panelSetting->get("panelposition").toInt();
+        int margins = m_panelSetting->get("panelsize").toInt();
+
+        setMarginsBasedOnPosition(position,  margins);
+
         getAllRestoreInfo();
         modifyGridSize();
         resolutionChange();

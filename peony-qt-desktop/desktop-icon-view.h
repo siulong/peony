@@ -33,6 +33,7 @@
 #include <QMap>
 
 class QLabel;
+class QGSettings;
 
 namespace Peony {
 
@@ -135,6 +136,7 @@ public:
     bool verifyBoundaries(const QRect &rect, Direction direction);
 
     int radius() const;
+    void setMarginsBasedOnPosition(int position, int margins);
 
 private:
     QRect getScreenArea(QScreen* screen);
@@ -320,6 +322,7 @@ private:
     QStringList m_storageBox;
 
     int m_radius = 6;
+    QGSettings *m_panelSetting = nullptr;
 };
 
 }
