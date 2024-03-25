@@ -50,11 +50,36 @@ void FileTrashOperation::run()
         m_info.get()->m_is_search = true;
     }
 
+    // #Bug #218579 【模块单元测试】【需求25097】【文件管理器】删除两个同名文件，第一次撤销时还原的是第一次删除的文件，再次点击撤销时，文管闪退
+    // 由于gio trash逻辑对应用不可见，导致应用无法很好的处理撤销删除的操作，这里需要通过glib的改动配合处理此问题
+    GVfs *defaultvfs = g_vfs_get_default();
+    // 使用glib的缓存处理undo问题，不需要用原来遍历比较的方式，可以提高删除效率
+    bool useCacheInGlib = GPOINTER_TO_INT (g_object_get_data(G_OBJECT (defaultvfs), "use-glib-trash-cache"));
+
     QSet<QString> trashBefore;
-    FileEnumerator e;
-    e.setEnumerateDirectory("trash:///");
-    e.enumerateSync();
-    QStringList lsBefore = e.getChildrenUris ();
+    QStringList lsBefore;
+//    FileEnumerator e;
+//    e.setEnumerateDirectory("trash:///");
+//    e.enumerateSync();
+//    QStringList lsBefore = e.getChildrenUris ();
+//    trashBefore = lsBefore.toSet ();
+
+    g_autoptr (GFile) trashroot = g_file_new_for_uri("trash:///");
+    g_autoptr (GFileEnumerator) enumerator = g_file_enumerate_children(trashroot, G_FILE_ATTRIBUTE_STANDARD_NAME, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+    if (enumerator && !useCacheInGlib) {
+        auto child_info = g_file_enumerator_next_file(enumerator, nullptr, nullptr);
+        while (child_info) {
+            auto child = g_file_enumerator_get_child(enumerator, child_info);
+            auto uri = g_file_get_uri(child);
+            lsBefore<<uri;
+            g_free(uri);
+            g_object_unref(child);
+            g_object_unref(child_info);
+            child_info = g_file_enumerator_next_file(enumerator, nullptr, nullptr);
+        }
+    } else {
+        m_info->m_dest_uris.clear();
+    }
     trashBefore = lsBefore.toSet ();
 
     //add file_count para for file trash progress
@@ -258,6 +283,27 @@ retry:
                 quint64 time = QDateTime::currentMSecsSinceEpoch();
                 auto info = FileInfo::fromUri(src);
                 info.get()->setProperty(TRASH_TIME, time);
+
+                char *trashitem_escape_name = (char *)g_object_get_data(G_OBJECT (srcFile.get()->get()), "trash-escape-name");
+                bool is_home_dir_trash = GPOINTER_TO_INT (g_object_get_data(G_OBJECT (srcFile.get()->get()), "is-home-dir-trash"));
+                QString trashedFileUri;
+                if (is_home_dir_trash) {
+                    g_autoptr (GFile) trashedfile = g_file_get_child(trashroot, trashitem_escape_name);
+                    g_autofree gchar *trashedfileuri = g_file_get_uri(trashedfile);
+                    trashedFileUri = trashedfileuri;
+                } else {
+                    // 根据gvfs trash的uri构造规则，非家目录挂载点文件在回收站内的uri做了二次编码，故需要再次编码trashitem_escape_name
+                    g_autofree gchar *trashitem_escape_name2 = g_uri_escape_string(trashitem_escape_name, ":/\\", false);
+                    g_autoptr (GFile) trashedfile = g_file_get_child(trashroot, trashitem_escape_name2);
+                    g_autofree gchar *trashedfileuri = g_file_get_uri(trashedfile);
+                    trashedFileUri = trashedfileuri;
+                }
+
+
+                if (!trashedFileUri.isEmpty()) {
+                    useCacheInGlib = true;
+                    m_info.get()->m_dest_uris<<trashedFileUri;
+                }
             }
 
             Q_EMIT FileProgressCallback("trash:///", src, "", ++curSize, file_count);
@@ -265,7 +311,7 @@ retry:
 
         // fix dest uris in trash in FileOperationInfo
         // fileinfo关联被删除的时间，然后枚举trash中displayname相同的文件，对比时间差最近的文件作为待恢复的文件
-        if (!isCancelled()) {
+        if (!isCancelled() && !useCacheInGlib) {
             QSet<QString> trashAfter;
             FileEnumerator e;
             e.setEnumerateDirectory("trash:///");
