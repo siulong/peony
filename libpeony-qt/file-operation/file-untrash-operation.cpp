@@ -387,10 +387,25 @@ void FileUntrashOperation::run()
                 // 3. undo the operation in desktop application.
                 // in this case trashedFileLocaledUri is empty, and could not get
                 // the responding info. so I add a checkment to avoid the case happened.
-                originUri = "file://" + metaInfo.get()->getMetaInfoString("orig-path");
+                QString origPath = metaInfo->getMetaInfoString("orig-path");
+                if (origPath.isEmpty()) {
+                    qWarning() << "invalid file meta info orig-path" << trashedFileLocaledUri;
+                } else {
+                    g_autofree gchar *uri = g_filename_to_uri(origPath.toUtf8().constData(), nullptr, nullptr);
+                    originUri = uri;
+                }
             } else {
                 qWarning()<<"invalid file meta info orig-path"<<trashedFileLocaledUri;
             }
+        }
+        if (originUri.isEmpty()) {
+            FileOperationError except;
+            except.errorCode = G_IO_ERROR_NOT_FOUND;
+            except.errorStr = tr("Can not find trashed file %1, might be restored or removed.").arg(uri);
+            except.errorType = ET_GIO;
+            except.dlgType = ED_WARNING;
+            errored(except);
+            goto l_out;
         }
 
         auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
