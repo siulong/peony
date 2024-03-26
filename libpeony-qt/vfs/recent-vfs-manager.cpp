@@ -29,6 +29,8 @@
 #include <QXmlStreamWriter>
 
 #include <gio/gio.h>
+#include <stdio.h>
+#include <time.h>
 
 using namespace Peony;
 
@@ -139,7 +141,16 @@ bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QStri
     while (!rootElement.isNull()) {
         if (rootElement.hasAttribute("href") && rootElement.attribute("href") == uri) {
             qDebug() << "existed!";
-            // fixme: 更新访问时间
+            QDateTime dataTime = QDateTime::currentDateTime();
+            QDateTime utcTime = QDateTime::currentDateTimeUtc();
+            auto bookmark_file = g_bookmark_file_new();
+            bool loaded = g_bookmark_file_load_from_data(bookmark_file, m_dom_document.toByteArray().constData(), -1, nullptr);
+            if (loaded) {
+                g_bookmark_file_set_mime_type(bookmark_file, uri.toUtf8().constData(), mimetype.toUtf8().constData());
+                g_bookmark_file_add_application(bookmark_file, uri.toUtf8().constData(), name.toUtf8().constData(), exec.toUtf8().constData());
+                g_bookmark_file_to_file(bookmark_file, m_recent_path.toUtf8().constData(), nullptr);
+            }
+            g_bookmark_file_free (bookmark_file);
             return true;
         }
         rootElement = rootElement.nextSiblingElement();
