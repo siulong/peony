@@ -28,6 +28,8 @@
 #include <QStandardPaths>
 #include <QXmlStreamWriter>
 
+#include <gio/gio.h>
+
 using namespace Peony;
 
 RecentVFSManager* RecentVFSManager::m_instance = nullptr;
@@ -61,7 +63,7 @@ void RecentVFSManager::clearAll()
 
 void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QString exec)
 {
-    if (!exists(uri)) {
+    if (!exists(uri, mimetype, name, exec)) {
         createNode(uri, mimetype, name, exec);
         write();
     }
@@ -114,18 +116,19 @@ bool RecentVFSManager::read()
 
 bool RecentVFSManager::write()
 {
-    QFile file (m_recent_path);
-    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+//    QFile file (m_recent_path);
+//    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
 
-    file.write(m_dom_document.toByteArray());
+//    file.write(m_dom_document.toByteArray());
 
-    file.flush();
-    file.close();
+//    file.flush();
+//    file.close();
+    bool ok = g_file_set_contents(m_recent_path.toUtf8().constData(), m_dom_document.toByteArray().constData(), -1, nullptr);
 
-    return true;
+    return ok;
 }
 
-bool RecentVFSManager::exists(QString uri)
+bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QString exec)
 {
     if (!read()) {
         qDebug() << "read error";
@@ -136,6 +139,7 @@ bool RecentVFSManager::exists(QString uri)
     while (!rootElement.isNull()) {
         if (rootElement.hasAttribute("href") && rootElement.attribute("href") == uri) {
             qDebug() << "existed!";
+            // fixme: 更新访问时间
             return true;
         }
         rootElement = rootElement.nextSiblingElement();
