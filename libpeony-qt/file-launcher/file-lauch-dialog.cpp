@@ -380,6 +380,7 @@ void FileLauchDialog::initFloorFour()
                 action->lauchFileAsync(true);
 //            FileLaunchManager::openAsync(m_uri);
         }
+        accept();
     });
 
     container->setLayout(bottomToolLayout);
