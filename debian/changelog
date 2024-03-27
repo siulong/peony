@@ -1,3 +1,10 @@
+peony (4.10.0.4-ok1~0327) nile; urgency=medium
+
+  * close #I8O1L3【任务栏】调整任务栏位置为上，重启后任务栏遮挡桌面图标，一会恢复
+  * 修复应用选择对话框确认后未关闭的问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 27 Mar 2024 15:47:44 +0800
+
 peony (4.10.0.4-ok1~0312) nile; urgency=medium
 
   * rebuild.
