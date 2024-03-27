@@ -273,6 +273,9 @@ retry:
                         newFile = FileUtils::resolveRelativePath(parent, m_new_name);
                         getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
                     }
+                    if (needHidden) {
+                        Q_EMIT GlobalSettings::getInstance()->updateHiddenFile(m_new_name);
+                    }
                     goto retry;
                 }
                 case OverWriteAll:
