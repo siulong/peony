@@ -1,0 +1,170 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 27 Mar 2024 15:48:23 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-launcher/file-lauch-dialog.cpp |  1 +
+ peony-qt-desktop/desktop-icon-view.cpp          | 90 ++++++++++++-------------
+ peony-qt-desktop/desktop-icon-view.h            |  3 +
+ 3 files changed, 47 insertions(+), 47 deletions(-)
+
+diff --git a/libpeony-qt/file-launcher/file-lauch-dialog.cpp b/libpeony-qt/file-launcher/file-lauch-dialog.cpp
+index f8e6248..0876147 100644
+--- a/libpeony-qt/file-launcher/file-lauch-dialog.cpp
++++ b/libpeony-qt/file-launcher/file-lauch-dialog.cpp
+@@ -380,6 +380,7 @@ void FileLauchDialog::initFloorFour()
+                 action->lauchFileAsync(true);
+ //            FileLaunchManager::openAsync(m_uri);
+         }
++        accept();
+     });
+ 
+     container->setLayout(bottomToolLayout);
+diff --git a/peony-qt-desktop/desktop-icon-view.cpp b/peony-qt-desktop/desktop-icon-view.cpp
+index 034f381..b213a51 100755
+--- a/peony-qt-desktop/desktop-icon-view.cpp
++++ b/peony-qt-desktop/desktop-icon-view.cpp
+@@ -420,37 +420,20 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
+     if (QGSettings::isSchemaInstalled(PANEL_SETTINGS))
+     {
+         //panel monitor
+-        QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
+-        connect(panelSetting, &QGSettings::changed, this, [=](const QString &key){
++        if (!m_panelSetting)
++            m_panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
++        int position = m_panelSetting->get("panelposition").toInt();
++        int margins = m_panelSetting->get("panelsize").toInt();
++        connect(m_panelSetting, &QGSettings::changed, this, [=](const QString &key){
+             if (key == "panelposition" || key == "panelsize") {
+-                int position = panelSetting->get("panelposition").toInt();
+-                int margins = panelSetting->get("panelsize").toInt();
+-                switch (position) {
+-                case 1: {
+-                    setViewportMargins(0, margins, 0, 0);
+-                    m_panel_margin = QMargins(0, margins, 0, 0);
+-                    break;
+-                }
+-                case 2: {
+-                    setViewportMargins(margins, 0, 0, 0);
+-                    m_panel_margin = QMargins(margins, 0, 0, 0);
+-                    break;
+-                }
+-                case 3: {
+-                    setViewportMargins(0, 0, margins, 0);
+-                    m_panel_margin = QMargins(0, 0, margins, 0);
+-                    break;
+-                }
+-                default: {
+-                    setViewportMargins(0, 0, 0, margins);
+-                    m_panel_margin = QMargins(0, 0, 0, margins);
+-                    break;
+-                }
+-                }
++                int position = m_panelSetting->get("panelposition").toInt();
++                int margins = m_panelSetting->get("panelsize").toInt();
++                setMarginsBasedOnPosition(position,  margins);
+                 if (m_initialized)
+                     resolutionChange();
+             }
+         });
++        setMarginsBasedOnPosition(position, margins);
+     }
+ 
+     // try fixing #63358
+@@ -466,6 +449,32 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
+     }
+ }
+ 
++void DesktopIconView::setMarginsBasedOnPosition(int position, int margins)
++{
++    switch (position) {
++    case 1: {
++        setViewportMargins(0, margins, 0, 0);
++        m_panel_margin = QMargins(0, margins, 0, 0);
++        break;
++    }
++    case 2: {
++        setViewportMargins(margins, 0, 0, 0);
++        m_panel_margin = QMargins(margins, 0, 0, 0);
++        break;
++    }
++    case 3: {
++        setViewportMargins(0, 0, margins, 0);
++        m_panel_margin = QMargins(0, 0, margins, 0);
++        break;
++    }
++    default: {
++        setViewportMargins(0, 0, 0, margins);
++        m_panel_margin = QMargins(0, 0, 0, margins);
++        break;
++    }
++    }
++}
++
+ void DesktopIconView::setId(int id)
+ {
+     m_proxy_model->setId(id);
+@@ -3112,27 +3121,14 @@ void DesktopIconView::initViewport()
+             return;
+         }
+         //panel
+-        QGSettings *panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
+-        int position = panelSetting->get("panelposition").toInt();
+-        int margins = panelSetting->get("panelsize").toInt();
+-        switch (position) {
+-        case 1: {
+-            setViewportMargins(0, margins, 0, 0);
+-            break;
+-        }
+-        case 2: {
+-            setViewportMargins(margins, 0, 0, 0);
+-            break;
+-        }
+-        case 3: {
+-            setViewportMargins(0, 0, margins, 0);
+-            break;
+-        }
+-        default: {
+-            setViewportMargins(0, 0, 0, margins);
+-            break;
+-        }
+-        }
++        if (!m_panelSetting)
++            m_panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
++
++        int position = m_panelSetting->get("panelposition").toInt();
++        int margins = m_panelSetting->get("panelsize").toInt();
++
++        setMarginsBasedOnPosition(position,  margins);
++
+         getAllRestoreInfo();
+         modifyGridSize();
+         resolutionChange();
+diff --git a/peony-qt-desktop/desktop-icon-view.h b/peony-qt-desktop/desktop-icon-view.h
+index 571c936..7f0c0db 100755
+--- a/peony-qt-desktop/desktop-icon-view.h
++++ b/peony-qt-desktop/desktop-icon-view.h
+@@ -33,6 +33,7 @@
+ #include <QMap>
+ 
+ class QLabel;
++class QGSettings;
+ 
+ namespace Peony {
+ 
+@@ -135,6 +136,7 @@ public:
+     bool verifyBoundaries(const QRect &rect, Direction direction);
+ 
+     int radius() const;
++    void setMarginsBasedOnPosition(int position, int margins);
+ 
+ private:
+     QRect getScreenArea(QScreen* screen);
+@@ -320,6 +322,7 @@ private:
+     QStringList m_storageBox;
+ 
+     int m_radius = 6;
++    QGSettings *m_panelSetting = nullptr;
+ };
+ 
+ }
