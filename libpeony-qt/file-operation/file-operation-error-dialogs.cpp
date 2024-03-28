@@ -223,7 +223,17 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = true;
         done(QDialog::Rejected);
     });
-
+    QCheckBox* c = addCheckBoxLeft (tr("Skip all"));
+    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
+        switch (chose) {
+        case Qt::Checked:
+            m_do_same = true;
+            break;
+        case Qt::Unchecked:
+        default:
+            m_do_same = false;
+        }
+    });
 }
 
 Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
@@ -291,7 +301,11 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
         error.respCode = IgnoreAll;
         break;
     default:
-        error.respCode = IgnoreOne;
+        if (m_do_same) {
+            error.respCode = IgnoreAll;
+        } else {
+            error.respCode = IgnoreOne;
+        }
         break;
     }
 }

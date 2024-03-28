@@ -63,6 +63,7 @@ public:
 private:
     bool m_ok = false;
     bool m_cancel = false;
+    bool m_do_same = false;
 
     QPushButton* m_cancel_btn = nullptr;
 
