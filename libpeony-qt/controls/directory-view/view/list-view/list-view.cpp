@@ -753,8 +753,7 @@ void ListView::startDrag(Qt::DropActions flags)
             drag->setMimeData(model()->mimeData(indexes));
         }
 
-        int num = indexes.count();
-
+        int num = indexes.count() / 4;
         if (num > 50) {
             QRect pixmapRect = QRect(100, 100, 400, 400);
             QPixmap pixmap(pixmapRect.size() * scale);
@@ -783,7 +782,7 @@ void ListView::startDrag(Qt::DropActions flags)
             QFont font = qApp->font();
             font.setPointSize(10);
             QFontMetrics metrics(font);
-            QString text = num/4 > 999 ? "..." : QString::number(num/4);
+            QString text = num > 999 ? "..." : QString::number(num);
             int height = metrics.width(text);
             int width = metrics.height();
 
