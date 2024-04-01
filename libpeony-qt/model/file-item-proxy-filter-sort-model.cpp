@@ -389,6 +389,10 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         else if (! checkFileNameFilter(item->m_info->displayName()))
             return false;
 
+        if (!checkFileContentFilter(item->m_info->displayName())) {
+            return false;
+        }
+
         //check the file label filter conditions
         if (m_label_name != "" || m_label_color != Qt::transparent)
         {
@@ -524,6 +528,18 @@ bool FileItemProxyFilterSortModel::checkFileNameFilter(const QString &displayNam
         //Filter criteria are not case sensitive. fix bug#92478
         if (displayName.contains(key, Qt::CaseInsensitive))
             return true;
+    }
+
+    return false;
+}
+
+bool FileItemProxyFilterSortModel::checkFileContentFilter(const QString &displayName) const
+{
+    if (m_fileContent.isEmpty())
+        return true;
+
+    if (displayName.contains(m_fileContent, Qt::CaseInsensitive)) {
+        return true;
     }
 
     return false;
@@ -958,6 +974,19 @@ void FileItemProxyFilterSortModel::clearConditions()
     m_mimeTypeFilters.clear();
     m_nameFilters.clear();
     m_dirFilters = -1;
+}
+
+void FileItemProxyFilterSortModel::addFileContentFilter(QString key, bool updateNow)
+{
+    qDebug() << __func__ << key;
+    m_fileContent = key;
+    if (updateNow)
+        invalidateFilter();
+}
+
+void FileItemProxyFilterSortModel::clearFileContentConditions()
+{
+    m_fileContent.clear();
 }
 
 void FileItemProxyFilterSortModel::setFilterConditions(int fileType, int modifyTime, int fileSize)

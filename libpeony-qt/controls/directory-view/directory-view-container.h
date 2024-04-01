@@ -146,6 +146,9 @@ public Q_SLOTS:
 
     void updateCurrentFilesThumbnails();
 
+    void addFileContentFilter(QString key, bool updateNow = false);
+    void clearFileContentConditions();
+
 protected:
     /*!
      * \brief bindNewProxy

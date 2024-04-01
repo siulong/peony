@@ -121,6 +121,7 @@ void TabStatusBar::update()
         else
             m_label->setText(tr(" \%1 items ").arg(allDisplayFileCount));
 
+        qDebug() << "============" << __func__ << allDisplayFileCount;
         return;
     }
 

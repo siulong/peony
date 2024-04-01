@@ -1224,6 +1224,7 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             goToUri(m_last_search_path, true);
             m_is_clear_serach = false;
             m_tab->m_status_bar->updateSearchProgress(false);
+            m_tab->updateFilterContent("");
             m_searching = false;
         }
         else
@@ -1249,6 +1250,7 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             //qDebug() << "updateSearch targetUri:" <<targetUri;
             goToUri(targetUri, true);
             m_tab->m_status_bar->updateSearchProgress(true);
+            m_tab->updateFilterContent(m_last_key);
             m_searching = true;
         }
     }

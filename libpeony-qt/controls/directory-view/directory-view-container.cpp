@@ -651,6 +651,16 @@ void DirectoryViewContainer::updateCurrentFilesThumbnails()
     m_model->updateCurrentFilesThumbnails();
 }
 
+void DirectoryViewContainer::addFileContentFilter(QString key, bool updateNow)
+{
+    m_proxy_model->addFileContentFilter(key, updateNow);
+}
+
+void DirectoryViewContainer::clearFileContentConditions()
+{
+    m_proxy_model->clearFileContentConditions();
+}
+
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
 {
     if (m_proxy_model) {

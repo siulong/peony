@@ -490,6 +490,47 @@ void TabWidget::initAdvanceSearch()
     m_current_search->setFixedHeight(TRASH_BUTTON_HEIGHT + 20);
     m_current_search->setStyleSheet("border: 1px solid transparent;");
 
+    QComboBox *searchTypeCommobox = new QComboBox(searchButtons);
+    m_search_type_box = searchTypeCommobox;
+    searchTypeCommobox->setFixedHeight(TRASH_BUTTON_HEIGHT);
+    searchTypeCommobox->setFixedWidth(TRASH_BUTTON_WIDTH * 3 + 15);
+    auto searchTypeModel = new QStringListModel(searchButtons);
+    searchTypeModel->setStringList(m_search_type_list);
+    searchTypeCommobox->setModel(searchTypeModel);
+    connect(searchTypeCommobox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){
+       if (index > 0) {
+           //设置过滤关键字
+           MainWindow *mainWindow = dynamic_cast<MainWindow *>(this->topLevelWidget());
+           QString key = mainWindow->getLastSearchKey();
+           qDebug() << __func__ << "key: " << key;
+           this->updateFilterContent(key);
+       } else {
+           bool searchIndex = isSearchIndex();
+           if (!searchIndex) {
+               int ret = QMessageBox::question(nullptr, tr("Search Settings"), tr("After the creation of the index, "
+                                                                                  "the next search can get the results of the document content containing the search term, "
+                                                                                  "during which you can exit the page at any time, "
+                                                                                  "we will continue to complete the creation in the background."));
+               if (QMessageBox::Yes == ret) {
+                   const QByteArray id(UKUI_SEARCH_SCHEMAS);
+                   if (QGSettings::isSchemaInstalled(id)) {
+                       QGSettings *searchSettings = new QGSettings(id, QByteArray(), this);
+                       if (searchSettings && searchSettings->keys().contains(SEARCH_METHOD_KEY)) {
+                           searchSettings->set(SEARCH_METHOD_KEY, true);
+                           searchSettings->set("contentIndexEnable", true);
+                           searchSettings->set("contentIndexEnableOcr", true);
+                       }
+                   }
+               }
+               m_search_type_box->setCurrentIndex(1);
+           }
+
+           //清除过滤关键字
+           currentPage()->clearFileContentConditions();
+           updateFilter();
+       }
+    });
+
     m_home_search = new QPushButton(tr("Computer"), this);
 //    m_home_search->setFixedWidth(TRASH_BUTTON_WIDTH + 50);
     m_home_search->setFixedHeight(TRASH_BUTTON_HEIGHT + 20);
@@ -517,8 +558,11 @@ void TabWidget::initAdvanceSearch()
     search->addWidget(title, 0, Qt::AlignLeft);
     search->addSpacing(10);
     search->addWidget(m_current_search, 0, Qt::AlignLeft);
+
     search->addSpacing(10);
     search->addWidget(m_home_search, 0, Qt::AlignLeft);
+    search->addSpacing(10);
+    search->addWidget(searchTypeCommobox, Qt::AlignLeft);
     search->addStretch(1);
     search->addWidget(searchButtons);
     search->addWidget(m_add_filter_button, 0, Qt::AlignRight);
@@ -528,6 +572,7 @@ void TabWidget::initAdvanceSearch()
     m_current_search->setVisible(false);
     m_home_search->setVisible(false);
     m_add_filter_button->setVisible(false);
+    searchTypeCommobox->setVisible(false);
 }
 
 //search conditions changed, update filter
@@ -991,6 +1036,44 @@ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &so
     }
 }
 
+void TabWidget::updateSearchTypeShow()
+{
+    //判断是否建立索引更新默认选项
+    bool index = isSearchIndex();
+    if (index) {
+        m_search_type_box->setCurrentIndex(0);
+    } else {
+        m_search_type_box->setCurrentIndex(1);
+    }
+}
+
+void TabWidget::updateFilterContent(const QString &key)
+{
+    if(!currentPage())
+        return;
+
+    currentPage()->clearFileContentConditions();
+    if (m_search_type_box->currentIndex()) {
+        currentPage()->addFileContentFilter(key);
+    }
+
+    updateFilter();
+}
+
+bool TabWidget::isSearchIndex()
+{
+    bool isSearchIndex = false;
+    const QByteArray id(UKUI_SEARCH_SCHEMAS);
+    if (QGSettings::isSchemaInstalled(id)) {
+        QGSettings *searchSettings = new QGSettings(id, QByteArray(), this);
+        if (searchSettings && searchSettings->keys().contains(SEARCH_METHOD_KEY)) {
+            isSearchIndex = searchSettings->get(SEARCH_METHOD_KEY).toBool();
+        }
+    }
+
+    return isSearchIndex;
+}
+
 void TabWidget::updateSearchBar(bool showSearch)
 {
     qDebug() << "updateSearchBar:" <<showSearch;
@@ -1006,6 +1089,8 @@ void TabWidget::updateSearchBar(bool showSearch)
         updateSearchPathButton(getCurrentUri());
         m_jumpToComputer = false;
         switchSearchPath(true);
+        m_search_type_box->show();
+        updateSearchTypeShow();
     }
     else
     {
@@ -1015,6 +1100,7 @@ void TabWidget::updateSearchBar(bool showSearch)
         m_home_search->hide();
         m_add_filter_button->hide();
         m_jumpToComputer = false;
+        m_search_type_box->hide();
         m_search_bar_layout->setContentsMargins(10, 0, 10, 0);
     }
 

@@ -210,6 +210,9 @@ public Q_SLOTS:
     /* 设备卸载、弹出后，其所在标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭 */
     void slot_responseUnmounted(const QString &destUri, const QString &sourceUri);
     void updateTabletModeValue(bool isTabletMode);
+    void updateSearchTypeShow();
+    void updateFilterContent(const QString& key);
+    bool isSearchIndex();
 
 protected:
     void changeCurrentIndex(int index);
@@ -279,6 +282,7 @@ private:
     QPushButton* m_home_search;
     QPushButton* m_add_filter_button;
     QSplitter* m_preview_splitter;
+    QComboBox* m_search_type_box;
 
     //use qlist for dynamic generated search conditions list
     QList<QHBoxLayout*> m_layout_list;
@@ -315,6 +319,7 @@ private:
                                     tr("text file"), tr("audio"), tr("wps file"), tr("others")};
     QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
     QStringList m_file_size_list = {tr("all"),tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
+    QStringList m_search_type_list = {tr("file name and content"), tr("file name")};
 
     bool m_first_add_page = true;
 

@@ -105,6 +105,8 @@ public:
     void addFilterCondition(int option, int classify, bool updateNow = false);
     void removeFilterCondition(int option, int classify, bool updateNow = false);
     void clearConditions();
+    void addFileContentFilter(QString key, bool updateNow = false);
+    void clearFileContentConditions();
 
     //set file label filter conditions, default value mean all files are accepted
     //use it without any paras can clear the filter conditions
@@ -154,6 +156,7 @@ private:
     bool checkFileSizeFilter(quint64 size) const;
     bool checkFileSizeOrTypeFilter(quint64 sizem, bool isDir) const;
     bool checkFileNameFilter(const QString &displayName) const;
+    bool checkFileContentFilter(const QString &displayName) const;
 
     QVariant getDirectorySettings(const QString &key);
     void setDirectorySettings(const QString &key, const QVariant &value);
@@ -189,6 +192,7 @@ private:
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
 
     QDBusInterface *mDbusPeonyServer = nullptr;
+    QString m_fileContent;
 };
 
 }
