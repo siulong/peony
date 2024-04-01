@@ -319,6 +319,7 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto suffix = displayName.remove(displayString);
     auto fsType = FileUtils::getFsTypeFromFile(uri);
     auto info = FileInfo::fromUri(uri);
+    int32_t maxLength = 255;
     if (info->isDesktopFile()) {
         suffix = ".desktop";
     }
@@ -326,19 +327,21 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         fsType = "fuse.kyfs";
     }
     if (fsType.contains("ext")) {
-        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+        maxLength = 255 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
-        edit->setMaxLengthLimit(255 - suffix.length());
+        maxLength = 255 - suffix.length();
+        edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("fuse.kyfs")) {
-        int32_t maxLength = 255;
         edit->setLimitBytes(false);
         QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
         QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
         if (reply.isValid()) {
             maxLength = reply.value();
         }
-        edit->setMaxLengthLimit(maxLength - suffix.length());
+        maxLength = maxLength - suffix.length();
+        edit->setMaxLengthLimit(maxLength);
     }
     edit->blockSignals(false);
 
@@ -351,8 +354,13 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 //    });
 
     connect(edit, &TextEdit::textChanged, this, [=]() {
-        edit->adjustText();
-        updateEditorGeometry(edit, option, index);
+        auto text = edit->toPlainText();
+        //fix bug#220283, rename edit position wrong issue
+        //short file name no need update to avoid position wrong
+        if (text.length() >= maxLength) {
+            edit->adjustText();
+            updateEditorGeometry(edit, option, index);
+        }
     });
 
     connect(edit, &TextEdit::finishEditRequest, this, &ListViewDelegate::slot_finishEdit);
