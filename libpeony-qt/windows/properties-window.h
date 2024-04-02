@@ -43,7 +43,7 @@ namespace Peony {
 class PropertiesWindowTabPagePluginIface;
 class PropertiesWindowPrivate;
 
-class PropertiesWindowPluginManager : public QObject
+class PEONYCORESHARED_EXPORT PropertiesWindowPluginManager : public QObject
 {
     friend class PropertiesWindow;
 

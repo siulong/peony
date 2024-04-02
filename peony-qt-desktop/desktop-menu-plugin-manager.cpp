@@ -36,6 +36,8 @@
 #include "vfs-plugin-iface.h"
 #include "vfs-plugin-manager.h"
 #include "emblem-plugin-iface.h"
+#include "properties-window-tab-page-plugin-iface.h"
+#include "properties-window.h"
 #include "file-watcher.h"
 
 using namespace Peony;
@@ -103,6 +105,12 @@ void DesktopMenuPluginManager::loadAsync()
             auto emblemsPlugin = dynamic_cast<EmblemPluginInterface *>(plugin);
             if (emblemsPlugin){
                 EmblemProviderManager::getInstance()->registerProvider(emblemsPlugin->create());
+                continue;
+            }
+
+            auto propertiesPlugin = dynamic_cast<PropertiesWindowTabPagePluginIface *>(plugin);
+            if (propertiesPlugin) {
+                PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesPlugin);
                 continue;
             }
 
