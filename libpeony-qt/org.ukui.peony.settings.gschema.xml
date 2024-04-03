@@ -164,6 +164,12 @@
       <description>This list stores disabled extensions</description>
     </key>
 
+    <key type="b" name="show-share-properties">
+      <default>false</default>
+      <summary>show share properties</summary>
+      <description>Jump to Share Properties page</description>
+    </key>
+
     <!--directory-view-->
     <key type="b" name="multi-select-checkbox-enabled">
       <default>true</default>

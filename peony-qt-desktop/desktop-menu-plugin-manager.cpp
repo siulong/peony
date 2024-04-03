@@ -108,12 +108,6 @@ void DesktopMenuPluginManager::loadAsync()
                 continue;
             }
 
-            auto propertiesPlugin = dynamic_cast<PropertiesWindowTabPagePluginIface *>(plugin);
-            if (propertiesPlugin) {
-                PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesPlugin);
-                continue;
-            }
-
             MenuPluginInterface *piface = dynamic_cast<MenuPluginInterface*>(plugin);
             if (!piface)
                 continue;

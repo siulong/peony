@@ -91,7 +91,7 @@
 #include <QThreadPool>
 
 #include "properties-window-factory-plugin-manager.h"
-//#include "properties-window.h"
+#include "properties-window.h"
 
 #include "complementary-style.h"
 
@@ -431,6 +431,13 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             qApp->setProperty("showProperties", true);
             QMainWindow *window = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
             //Peony::PropertiesWindow *window = new Peony::PropertiesWindow(uris);
+            Peony::PropertiesWindow *w = qobject_cast<Peony::PropertiesWindow *>(window);
+            if (w) {
+                if (Peony::GlobalSettings::getInstance()->isExist(SHOW_SHARE_PROPERTIES) && Peony::GlobalSettings::getInstance()->getValue(SHOW_SHARE_PROPERTIES).toBool()) {
+                    w->setOpenTabPage("SharePage");
+                    Peony::GlobalSettings::getInstance()->setValue(SHOW_SHARE_PROPERTIES, false);
+                }
+            }
             window->setAttribute(Qt::WA_DeleteOnClose);
             window->show();
             KWindowSystem::raiseWindow(window->winId());

@@ -41,6 +41,7 @@
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
 #define SHOW_IN_NEW_WINDOW          "showInNewWindow"
 #define DISABLED_EXTENSIONS         "disabledExtensions"
+#define SHOW_SHARE_PROPERTIES       "showShareProperties"
 
 //视图 - View
 #define DEFAULT_VIEW_ID             "defaultViewId"
