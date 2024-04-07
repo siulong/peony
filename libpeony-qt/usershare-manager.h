@@ -76,6 +76,7 @@ private:
 Q_SIGNALS:
     void signal_addSharedFolder(const ShareInfo& shareInfo, bool successed);
     void signal_deleteSharedFolder(const QString& originalPath, bool successed);
+    void signal_deleteUserShareList(const QString& name);
 
 private:
     bool                            m_bInit = false;

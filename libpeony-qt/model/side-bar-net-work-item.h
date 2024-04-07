@@ -124,6 +124,7 @@ private Q_SLOTS:
     void slot_updateRemoteServer(const QString& server, bool add);
     void slot_unmountedRemoteServerCallBack(const QString& server);
     void slot_serverMount(const Experimental_Peony::Volume &volume);
+    void slot_deleteUserShareList(const QString& name);
 
 protected:
     void initWatcher();

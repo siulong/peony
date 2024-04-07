@@ -425,6 +425,7 @@ UserShareInfoManager::UserShareInfoManager(QObject *parent) : QObject(parent)
         QString name = Peony::FileUtils::urlDecode(uri).split("/").last();
         if (!name.contains(":") && m_usersharelists.contains(name)) {
             m_usersharelists.removeOne(name);
+            Q_EMIT signal_deleteUserShareList(name);
         }
     });
 

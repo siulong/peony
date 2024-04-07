@@ -220,6 +220,7 @@ void SideBarNetWorkItem::findChildren()
         auto userShareManager = UserShareInfoManager::getInstance();
         connect(userShareManager, &UserShareInfoManager::signal_addSharedFolder, this, &SideBarNetWorkItem::slot_addSharedFolder);
         connect(userShareManager, &UserShareInfoManager::signal_deleteSharedFolder, this, &SideBarNetWorkItem::slot_deleteSharedFolder);
+        connect(userShareManager, &UserShareInfoManager::signal_deleteUserShareList, this, &SideBarNetWorkItem::slot_deleteUserShareList);
         connect(GlobalSettings::getInstance(), &GlobalSettings::signal_updateRemoteServer,this,&SideBarNetWorkItem::slot_updateRemoteServer, Qt::UniqueConnection);
 
         /* samba的子项 */
@@ -418,6 +419,21 @@ void SideBarNetWorkItem::slot_serverMount(const Experimental_Peony::Volume &volu
     QUrl serverUrl = QUrl(volume.mountPoint());
     if("smb"==serverUrl.scheme().toLower() && !serverUrl.path().isEmpty()){/* samba的子项挂载成功后需添加到侧边栏 */
         addItemForUri(volume.mountPoint(), "network-workgroup-symbolic", volume.name(), this, m_model, true);
+    }
+}
+
+void SideBarNetWorkItem::slot_deleteUserShareList(const QString &name)
+{
+    for (auto item : *m_children){
+        if(FileUtils::urlDecode(item->uri()).split("/").last() != FileUtils::urlDecode(name))
+            continue;
+        int index = m_children->indexOf(item);
+        m_model->beginRemoveRows(firstColumnIndex(), index, index);
+        m_children->removeOne(item);
+        m_model->endRemoveRows();
+        item->deleteLater();
+        qDebug()<<"remove item for name:"<<FileUtils::urlDecode(name);
+        break;
     }
 }
 
