@@ -2091,6 +2091,14 @@ void DesktopIconView::mouseMoveEvent(QMouseEvent *e)
         }
     }
 
+    // fix #220390
+    if (state() == QListView::DragSelectingState) {
+        auto rubberbandRect = QRect(m_press_pos, e->pos());
+        rubberbandRect = rubberbandRect.normalized();
+        rubberbandRect.adjust(-5, -5, 5, 5);
+        viewport()->update(rubberbandRect);
+    }
+
     QListView::mouseMoveEvent(e);
 }
 
