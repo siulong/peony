@@ -5,7 +5,7 @@ Maintainer: Kylin Team <team+kylin@tracker.debian.org>
 Uploaders: Aron Xu <aron@debian.org>,
            handsome_feng <jianfengli@ubuntukylin.com>,
            xibowen <xibowen@kylinos.cn>
-Build-Depends: debhelper-compat (=13),
+Build-Depends: dpkg-dev (>= 1.22.5), debhelper-compat (=13),
                libbamf3-dev,
                libcanberra-dev,
                libdconf-dev,
@@ -44,7 +44,7 @@ Vcs-Browser: https://gitee.com/openkylin/peony
 Package: peony
 Architecture: any
 Multi-Arch: foreign
-Depends: libpeony3 (= ${binary:Version}),
+Depends: libpeony3t64 (= ${binary:Version}),
          peony-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -69,7 +69,7 @@ Description: file manager for the UKUI desktop (common files)
  .
  This package contains the architecture independent files.
 
-Package: libpeony3
+Package: libpeony3t64
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
@@ -79,9 +79,9 @@ Depends: dvd+rw-tools,
          gvfs-fuse,
          ${misc:Depends},
          ${shlibs:Depends}
-Provides: libpeony
-Breaks: libpeony2, peony (<< 2.2.0-1)
-Replaces: libpeony2, peony (<< 2.2.0-1)
+Provides: ${t64:Provides}, libpeony
+Breaks: libpeony3 (<< ${source:Version}), libpeony2, peony (<< 2.2.0-1)
+Replaces: libpeony3, libpeony2, peony (<< 2.2.0-1)
 Description: libraries for Peony components
  Peony is the official file manager for the UKUI desktop. It allows one
  to browse directories, preview files and launch applications associated
@@ -99,7 +99,7 @@ Depends: libcanberra-dev,
          libglib2.0-dev,
          libgsettings-qt-dev,
          libnotify-dev,
-         libpeony3 (= ${binary:Version}),
+         libpeony3t64 (= ${binary:Version}),
          libpoppler-qt5-dev,
          libudisks2-dev,
          qtbase5-dev,
