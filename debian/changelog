@@ -1,3 +1,17 @@
+peony (4.0.0.1-1) unstable; urgency=medium
+
+  [ handsome_feng ]
+  * Disable the auto partition mount to fix ubuntukylin install error
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 10 Apr 2024 18:09:17 +0800
+
+peony (4.0.0.0-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Rename libraries for 64-bit time_t transition.  Closes: #1063217
+
+ -- Benjamin Drung <bdrung@debian.org>  Thu, 29 Feb 2024 20:19:01 +0000
+
 peony (4.0.0.0-1) unstable; urgency=medium
 
   * New upstream release.
