@@ -401,6 +401,10 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                     windowTitle = tr("Data");
                     iconName = "drive-harddisk";
                 }
+
+                if ("computer:///root.link" == m_fileInfo->uri()) {
+                    windowTitle = tr("System Disk");
+                }
             }
         }
     }
