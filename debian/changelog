@@ -1,9 +1,8 @@
 peony (4.0.0.1-1) unstable; urgency=medium
 
-  [ handsome_feng ]
-  * Disable the auto partition mount to fix ubuntukylin install error
+  * Disable the auto partition mount to fix UbuntuKylin install error.
 
- -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 10 Apr 2024 18:09:17 +0800
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 10 Apr 2024 18:43:49 +0800
 
 peony (4.0.0.0-1.1) unstable; urgency=medium
 
