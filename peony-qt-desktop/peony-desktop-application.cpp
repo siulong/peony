@@ -250,37 +250,6 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
         connect(trayIcon, &QSystemTrayIcon::messageClicked, trayIcon, &QSystemTrayIcon::hide);
         */
 
-        // auto mount local driver
-        qDebug()<<"auto mount local volumes";
-        GVolumeMonitor* vm = g_volume_monitor_get ();
-        if (vm) {
-            GList* drives = g_volume_monitor_get_connected_drives(vm);
-            if (drives) {
-                for (GList* i = drives; nullptr != i; i = i->next) {
-                    GDrive * d = static_cast<GDrive*>(i->data);
-                    if (G_IS_DRIVE(d)) {
-                        GList* volumes = g_drive_get_volumes(d);
-                        if (volumes) {
-                            for (GList* j = volumes; nullptr != j; j = j->next) {
-                                GVolume* v = static_cast<GVolume*>(j->data);
-                                if (G_IS_VOLUME(v)) {
-                                    g_autofree char* uuid = g_volume_get_uuid(v);
-                                    if (0 != g_strcmp0("2691-6AB8", uuid)) {
-                                        g_volume_mount(v, G_MOUNT_MOUNT_NONE, nullptr, nullptr, volume_mount_cb, nullptr);
-                                    }
-                                    g_object_unref(v);
-                                }
-                            }
-                            g_list_free(volumes);
-                        }
-                        g_object_unref(d);
-                    }
-                }
-                g_list_free(drives);
-            }
-        }
-        g_object_unref(vm);
-
         g_signal_connect (g_volume_monitor_get(), "mount-added", G_CALLBACK(mount_added_cb), nullptr);
         g_signal_connect (g_volume_monitor_get(), "mount-changed", G_CALLBACK(mount_added_cb), nullptr);
 
