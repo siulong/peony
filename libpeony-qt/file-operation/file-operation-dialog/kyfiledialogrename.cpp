@@ -324,7 +324,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
             allApp->show();
             QString clickText = "<a href=\" \" style=\"color: #3D6BE5;text-decoration: none;\">"
                   + tr("truncate interval")
-                  + "</a>.";
+                  + "</a>" + tr(".");
             QString text = tr("Explanation: Truncate the portion of the file name that exceeds 225 bytes and select");
             text = text + clickText;
             specificationLabel->setText(text);
@@ -342,8 +342,8 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
             allApp->hide();
             QString clickText = "<a href=\"  \" style=\"color: #3D6BE5;text-decoration: none;\">"
                   + tr("modify the name")
-                  + "</a>.";
-            QString text = tr("Explanation: When renaming a file name, ensure it is within 225 bytes and ");
+                  + "</a>" + tr(".");
+            QString text = tr("Explanation: When renaming a file name, ensure it is within 255 bytes and ");
             text = text + clickText;
             specificationLabel->setText(text);
             m_currentWidget = page2;
