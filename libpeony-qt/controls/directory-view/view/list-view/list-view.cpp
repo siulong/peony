@@ -141,6 +141,9 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     connect(header(), &QHeaderView::sectionResized, this, [=]{
         m_header_section_resized_manually = true;
     });
+    connect(header(), &QHeaderView::sectionCountChanged, this, [=](){
+        m_header_section_resized_manually = false;/* 表头列数变化时，需要调整列size.linkto bug#220914 */
+    });
 
     setExpandsOnDoubleClick(false);
     setSortingEnabled(true);
@@ -951,7 +954,6 @@ void ListView::adjustColumnsSize()
 
     // do not trigger header's sectionResized() signal. related to #155969.
     header()->blockSignals(true);
-    header()->resizeSections(QHeaderView::ResizeToContents);
 
     int rightPartsSize = 0;
     for (int column = 1; column < model()->columnCount(); column++) {
@@ -976,8 +978,9 @@ void ListView::adjustColumnsSize()
         return;
     }
 
+    header()->resizeSections(QHeaderView::ResizeToContents);
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
-    header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+    header()->setSectionResizeMode(header()->count()-1, QHeaderView::Stretch);/* linkto bug#220914 */
     header()->blockSignals(false);
 }
 
