@@ -44,6 +44,8 @@
 
 using namespace Peony;
 
+static bool m_query_file_display_name_with_volumes = true;
+
 FileInfoJob::FileInfoJob(std::shared_ptr<FileInfo> info, QObject *parent) : QObject(parent)
 {
     connect(qApp, &QCoreApplication::aboutToQuit, this, &FileInfoJob::cancel);
@@ -133,6 +135,11 @@ bool FileInfoJob::querySync()
         deleteLater();
 
     return true;
+}
+
+void FileInfoJob::setQueryDisplayNameWithVolumes(bool queryWithVolumes)
+{
+    m_query_file_display_name_with_volumes = queryWithVolumes;
 }
 
 GAsyncReadyCallback FileInfoJob::query_info_async_callback(GFile *file, GAsyncResult *res, FileInfoJob *thisJob)
@@ -236,7 +243,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
     }
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
-    info->m_finalDisplayName = info->getFinalDisplayName();
+    info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
     if (info->isDesktopFile()) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
@@ -279,7 +286,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
 
             info->m_display_name = name;
         }
-        info->m_finalDisplayName = info->getFinalDisplayName();
+        info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
 
         g_key_file_free(desktop_key_file);
 
@@ -485,7 +492,7 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
         auto targetInfo = FileInfo::fromUri(info->m_target_uri);
         FileInfoJob j(targetInfo);
         j.querySync();
-        info->m_finalDisplayName = targetInfo.get()->getFinalDisplayName();
+        info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
         info->m_display_name = targetInfo.get()->displayName();
     }
 

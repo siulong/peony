@@ -23,6 +23,8 @@
 #ifndef FileInfoJob_H
 #define FileInfoJob_H
 
+#define HAVE_SET_QUERY_DISPLAY_NAME_WITH_VOLUMES
+
 #include "peony-core_global.h"
 
 #include <QObject>
@@ -78,6 +80,8 @@ public:
     void setAutoDelete(bool deleteWhenJobFinished = true) {
         m_auto_delete = deleteWhenJobFinished;
     }
+
+    static void setQueryDisplayNameWithVolumes(bool queryWithVolumes);
 
 Q_SIGNALS:
     /*!
@@ -144,7 +148,6 @@ private:
 
     GCancellable *m_cancellable = nullptr;
     GCancellable *m_fs_cancellable = nullptr;
-
 };
 
 }
