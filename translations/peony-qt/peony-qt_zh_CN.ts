@@ -329,7 +329,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="887"/>
+        <location filename="../../src/windows/main-window.cpp" line="888"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -344,17 +344,17 @@ p, li { white-space: pre-wrap; }
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="787"/>
+        <location filename="../../src/windows/main-window.cpp" line="789"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="787"/>
+        <location filename="../../src/windows/main-window.cpp" line="789"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="885"/>
+        <location filename="../../src/windows/main-window.cpp" line="886"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -383,7 +383,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="900"/>
+        <location filename="../../src/windows/main-window.cpp" line="901"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -1301,8 +1301,27 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>yesterday</source>
+        <translation>昨天</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last week</source>
+        <translation>上周</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last month</source>
+        <translation>上月</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last year</source>
+        <translation>去年</translation>
+    </message>
+    <message>
         <source>year ago</source>
-        <translation>一年前</translation>
+        <translation type="vanished">一年前</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>

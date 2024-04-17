@@ -328,7 +328,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="887"/>
+        <location filename="../../src/windows/main-window.cpp" line="888"/>
         <source>File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་ཡོ་བྱད།</translation>
     </message>
@@ -343,17 +343,17 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>བསྐྱར་དུ་བསྒྲུབ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="787"/>
+        <location filename="../../src/windows/main-window.cpp" line="789"/>
         <source>warn</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="787"/>
+        <location filename="../../src/windows/main-window.cpp" line="789"/>
         <source>This operation is not supported.</source>
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="885"/>
+        <location filename="../../src/windows/main-window.cpp" line="886"/>
         <source>Search</source>
         <translation>འཚོལ་ཞིབ་བྱེད་པ།</translation>
     </message>
@@ -382,7 +382,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="900"/>
+        <location filename="../../src/windows/main-window.cpp" line="901"/>
         <source>New Folder</source>
         <translation>ཡིག་ཆ་བཙིར་མ་གསར་སྐྲུན་བྱེད་</translation>
     </message>
@@ -1301,8 +1301,27 @@ Do you want to unmount forcely?</source>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>yesterday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>year ago</source>
-        <translation>ལོ་གཅིག་གི་གོང་།</translation>
+        <translation type="vanished">ལོ་གཅིག་གི་གོང་།</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
