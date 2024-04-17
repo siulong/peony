@@ -3150,6 +3150,9 @@ bool DesktopIconView::verifyBoundaries(const QRect &rect, Direction direction)
             return true;
         }
     }
+    if (!this->viewport()->rect().contains(dataRect)) {
+        return true;
+    }
     return false;
 }
 
