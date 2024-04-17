@@ -43,18 +43,17 @@ MainWindowFactoryPluginManager *MainWindowFactoryPluginManager::getInstance()
 
 QString MainWindowFactoryPluginManager::setVersion()
 {
-    int features = 2;
+    int version = 4;
 #ifdef KYLIN_COMMON
-    features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
+    version = Peony::GlobalSettings::getInstance()->getValue(PEONY_VERSION).toInt();
 #endif //KYLIN_COMMON
     QString name = "ukui4.0";
-    switch(features) {
-    case 0:
+    switch(version) {
+    case 3:
         name = "ukui3.0";
         Peony::GlobalSettings::getInstance()->setValue(MULTI_SELECT, false);
         break;
-    case 2:
-    case 3:
+    case 4:
     default:
         name = "ukui4.0";
         Peony::GlobalSettings::getInstance()->setValue(MULTI_SELECT, true);
@@ -134,6 +133,12 @@ MainWindowFactoryPluginManager::MainWindowFactoryPluginManager(QObject *parent) 
         registerPlugin(piface);
 
     }
+
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=] (const QString& key) {
+        if (PEONY_VERSION == key) {
+            setVersion();
+        }
+    });
 }
 
 bool MainWindowFactoryPluginManager::registerPlugin(Peony::MainWindowFactoryIface *plugin)

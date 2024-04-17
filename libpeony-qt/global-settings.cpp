@@ -285,6 +285,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(LABLE_ALIGNMENT, 1);
     }
 
+    if (m_cache.value(PEONY_VERSION).isNull()) {
+        setValue(PEONY_VERSION, 4);
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {

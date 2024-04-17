@@ -209,5 +209,11 @@
       <description>1 is smallest, 4 is largest</description>
     </key>
 
+    <key type="i" name="peony-version">
+     <default>4</default>
+     <summary>default peony version</summary>
+     <description>4 is ukui4.0 version, 3 is ukui3.0 version, other is ukui4.0</description>
+    </key>
+
   </schema>
 </schemalist>
