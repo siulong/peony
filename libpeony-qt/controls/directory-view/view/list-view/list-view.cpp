@@ -141,9 +141,6 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     connect(header(), &QHeaderView::sectionResized, this, [=]{
         m_header_section_resized_manually = true;
     });
-    connect(header(), &QHeaderView::sectionCountChanged, this, [=](){
-        m_header_section_resized_manually = false;/* 表头列数变化时，需要调整列size.linkto bug#220914 */
-    });
 
     setExpandsOnDoubleClick(false);
     setSortingEnabled(true);
@@ -980,7 +977,7 @@ void ListView::adjustColumnsSize()
 
     header()->resizeSections(QHeaderView::ResizeToContents);
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
-    header()->setSectionResizeMode(header()->count()-1, QHeaderView::Stretch);/* linkto bug#220914 */
+    header()->setStretchLastSection(true);    /* linkto bug#220914 */
     header()->blockSignals(false);
 }
 
