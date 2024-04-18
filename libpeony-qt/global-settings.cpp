@@ -336,26 +336,26 @@ void GlobalSettings::getUkuiStyle()
         m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
     }
     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-        m_peony_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
-        connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
+        QGSettings *styleGSettings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(styleGSettings, &QGSettings::changed, this, [=](const QString &key) {
             if (key == "peonySideBarTransparency" && transparentConfigFromUKUIStyle) {
                 m_cache.remove(SIDEBAR_BG_OPACITY);
-                m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get(key).toString());
+                m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get(key).toString());
                 qApp->paletteChanged(qApp->palette());
             }
             if (key == "widgetThemeName") {
                 m_cache.remove("widgetThemeName");
-                m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
+                m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
                 Q_EMIT this->valueChanged("widgetThemeName");
             }
         });
         if (transparentConfigFromUKUIStyle) {
             m_cache.remove(SIDEBAR_BG_OPACITY);
-            m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get("peonySideBarTransparency").toString());
+            m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get("peonySideBarTransparency").toString());
         }
-        if (m_peony_gsettings->keys().contains("widgetThemeName")) {
+        if (styleGSettings->keys().contains("widgetThemeName")) {
             m_cache.remove("widgetThemeName");
-            m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
+            m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
         }
     }
 }
