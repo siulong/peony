@@ -562,8 +562,7 @@ void DesktopIconView::initShoutCut()
             }
         } else {
             //auto clipUris = ClipboardUtils::getClipboardFilesUris();
-            auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
-            if (!clipedUris.isEmpty() && !meetSpecialConditions(this->getSelections())) {
+            if (ClipboardUtils::getInstance()->isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
                 auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
                 if (!op) {
                     viewport()->update();
