@@ -4,4 +4,33 @@ set -e
 
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
+#add config file to diff old /data solution and new
+if [ -d  "/data" ] && [ -d  "/data/root" ] && [ -d  "/data/home" ] && [ -d  "/data/usershare" ] ; then
+    echo "data block bind mount is exist"
+    data_has_user_file="false"
+    for dir_or_file in /data/*
+    do
+        echo $dir_or_file
+        if [ "$dir_or_file" != "/data/root" ] && [ "$dir_or_file" != "/data/home" ] && [ "$dir_or_file" != "/data/usershare" ] && [ "$dir_or_file" != "/data/lost+found" ]
+        then
+            echo "$dir_or_file is user file"
+            data_has_user_file="true"
+            echo "data_has_user_file:"$data_has_user_file
+            break
+        else
+            echo "$dir_or_file is system folder"
+        fi
+    done
+    printf "$data_has_user_file" > /etc/xdg/peony-data.conf
+    chmod 777 /etc/xdg/peony-data.conf
+    if [ "$data_has_user_file" != "true" ]
+    then
+        echo "only has system file file in /data, chmod mod /data -w"
+        chmod 555 /data 
+    fi
+else
+    echo "data is not binded mount"
+fi
+
+
 #DEBHELPER#
