@@ -70,7 +70,7 @@ public:
     static bool isClipboardFilesBeCut();
     static bool isDesktopFilesBeCut();
     static bool isPeonyFilesBeCut();
-    static bool isSearchTab();
+    static bool isSearchTab();/* 是否在搜索tab中执行剪切或者移动操作 */
     static QStringList getClipboardFilesUris();
     static FileOperation *pasteClipboardFiles(const QString &targetDirUri);
     static void clearClipboard();
