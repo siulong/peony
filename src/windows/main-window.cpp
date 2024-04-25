@@ -1684,7 +1684,11 @@ void MainWindow::initUI(const QString &uri)
     m_transparent_area_widget = m_side_bar;
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
-    addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
+    if (layoutDirection() == Qt::RightToLeft) {
+        addDockWidget(Qt::RightDockWidgetArea, m_side_bar);
+    } else {
+        addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
+    }
 
    // auto labelDialog = new FileLabelBox(this);
    // labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
