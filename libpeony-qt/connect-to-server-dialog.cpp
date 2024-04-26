@@ -720,6 +720,10 @@ QString ConnectServerLogin::getPassWordProperty()
     return m_reg_usr_passwd_editor->property("password").toString();
 }
 
+void ConnectServerLogin::setPassWordProperty(const QString &passwd)
+{
+    m_reg_usr_passwd_editor->setProperty("password", passwd);
+}
 
 static const unsigned char PEONY_AES_KEY[] = "peony key";
 

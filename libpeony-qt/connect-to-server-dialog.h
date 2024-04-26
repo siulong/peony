@@ -108,6 +108,7 @@ public:
 
     void syncRemoteServer(const QUrl& url);
     QString getPassWordProperty();
+    void setPassWordProperty(const QString &passwd);
 
 private:
     float           m_widget_margin         = 24;
