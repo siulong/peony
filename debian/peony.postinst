@@ -22,7 +22,7 @@ if [ -d  "/data" ] && [ -d  "/data/root" ] && [ -d  "/data/home" ] && [ -d  "/da
         fi
     done
     printf "$data_has_user_file" > /etc/xdg/peony-data.conf
-    chmod 777 /etc/xdg/peony-data.conf
+    chmod 444 /etc/xdg/peony-data.conf
     if [ "$data_has_user_file" != "true" ]
     then
         echo "only has system file file in /data, chmod mod /data -w"
