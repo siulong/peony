@@ -61,6 +61,11 @@ exists(/usr/include/kysdk/diagnosetest/libkydatacollect.h) {
     message("diagnosetest find")
     DEFINES += KY_SDK_DATACOLLECT
 }
+#include <kysdk/applications/kabase/log.hpp>
+exists(/usr/include/applications/kabase/log.hpp) {
+    message ("kysdkbase found")
+    DEFINES += KY_SDK_KABASE
+}
 
 USE_SET_ICON=$$(USE_SET_ICON_GEOMETRY)
 equals(USE_SET_ICON,1) {
