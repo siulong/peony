@@ -328,32 +328,32 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="888"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>Gestionnaire de fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>Défaire</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="417"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>Refaire</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation>avertir</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation>Cette opération n’est pas prise en charge.</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="886"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation>Rechercher</translation>
     </message>
@@ -382,7 +382,7 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="901"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>Nouveau dossier</translation>
     </message>
@@ -398,19 +398,19 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation>avertir</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation>Cette opération n’est pas prise en charge.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation>Conseils</translation>
     </message>
@@ -420,28 +420,28 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
         <translation>L’appareil est en état occupé, veuillez effectuer cette opération plus tard.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>Il s’agit d’un Udisk anormal, veuillez le corriger ou le formater</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>Il s’agit d’un lecteur vide, veuillez insérer un disque.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation>Ouvrir dans une nouvelle fenêtre</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation>Impossible d’ouvrir %1, %2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation>Ouvrir dans un nouvel onglet</translation>
     </message>
@@ -457,12 +457,12 @@ p, li { espace-blanc&#xa0;: pré-retournement&#xa0;; }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
         <translation>Balises de gestionnaire...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
         <translation>Plus de tags...</translation>
     </message>
@@ -1374,7 +1374,7 @@ Voulez-vous démonter de force&#xa0;?</translation>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
         <translation>Pivoine</translation>
     </message>

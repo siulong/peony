@@ -334,52 +334,52 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="567"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="565"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="567"/>
         <source>Device name cannot start with a decimal point, Please re-enter!</source>
         <translation>Gerätename darf nicht mit einem Komma beginnen, Bitte erneut eingeben!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="576"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="578"/>
         <source>Enter Password:</source>
         <translation>Passwort eingeben:</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="594"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="596"/>
         <source>Password too short, please retype a password more than 6 characters</source>
         <translation>Passwort zu kurz, bitte geben Sie ein Passwort mit mehr als 6 Zeichen ein</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="693"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
         <source>%1/sec, %2 remaining.</source>
         <translation>%1/Sek., %2 verbleibend.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="693"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
         <source>over one day</source>
         <translation>über einen Tag</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="697"/>
         <source>getting progress...</source>
         <translation>Fortschritte machen...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1288"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1290"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1288"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1290"/>
         <source>Block not existed!</source>
         <translation>Block nicht vorhanden!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1335"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1337"/>
         <source>Formatting. Do not close this window</source>
         <translation>Formatierung. Dieses Fenster nicht schließen</translation>
     </message>
@@ -495,6 +495,12 @@
         <translation>Intervall abschneiden</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="327"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="345"/>
+        <source>.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="328"/>
         <source>Explanation: Truncate the portion of the file name that exceeds 225 bytes and select</source>
         <translation>Erklärung: Schneiden Sie den Teil des Dateinamens ab, der 225 Byte überschreitet, und wählen Sie</translation>
@@ -511,8 +517,12 @@
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="346"/>
+        <source>Explanation: When renaming a file name, ensure it is within 255 bytes and </source>
+        <translation type="unfinished">Erklärung: Wenn Sie einen Dateinamen umbenennen, stellen Sie sicher, dass er nicht länger als 225 Byte ist und  {255 ?}</translation>
+    </message>
+    <message>
         <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
-        <translation>Erklärung: Wenn Sie einen Dateinamen umbenennen, stellen Sie sicher, dass er nicht länger als 225 Byte ist und </translation>
+        <translation type="vanished">Erklärung: Wenn Sie einen Dateinamen umbenennen, stellen Sie sicher, dass er nicht länger als 225 Byte ist und </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
@@ -825,7 +835,7 @@
 <context>
     <name>Peony::AdvancedLocationBar</name>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp" line="198"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp" line="200"/>
         <source>Search Content...</source>
         <translation>Inhalt suchen...</translation>
     </message>
@@ -1611,12 +1621,12 @@
         <translation type="vanished">图标视图</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="332"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="334"/>
         <source>warn</source>
         <translation>warnen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="332"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="334"/>
         <source>This operation is not supported.</source>
         <translation>Dieser Vorgang wird nicht unterstützt.</translation>
     </message>
@@ -1635,12 +1645,12 @@
         <translation type="vanished">列表视图</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="602"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="605"/>
         <source>warn</source>
         <translation>warnen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="602"/>
+        <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="605"/>
         <source>This operation is not supported.</source>
         <translation>Dieser Vorgang wird nicht unterstützt.</translation>
     </message>
@@ -2248,12 +2258,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation>Fehler beim Schreiben in eine Datei: Eingabe-/Ausgabefehler</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="474"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="476"/>
         <source>Failed to create %1. Please ensure if it is in root directory, or if the device supports gphoto2 protocol correctly.</source>
         <translation>%1 konnte nicht erstellt werden. Bitte stellen Sie sicher, dass es sich im Stammverzeichnis befindet oder ob das Gerät das gphoto2-Protokoll korrekt unterstützt.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="480"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="482"/>
         <source>Failed to create %1.</source>
         <translation>%1 konnte nicht erstellt werden.</translation>
     </message>
@@ -2276,7 +2286,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">请确认设备空间是否足够!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="469"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="470"/>
         <source>File opening failure</source>
         <translation>Fehler beim Öffnen der Datei</translation>
     </message>
@@ -2495,29 +2505,29 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="253"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="322"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="334"/>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="342"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="326"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="338"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="346"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="309"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="313"/>
         <source>Open Link failed</source>
         <translation>Open Link fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="310"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="314"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>Datei nicht vorhanden, möchten Sie die Linkdatei löschen?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="323"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="327"/>
         <source>Can not open path &quot;%1&quot;，permission denied.</source>
         <translation>Der Pfad &quot;%1&quot; kann nicht geöffnet werden, Berechtigung verweigert.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item.cpp" line="333"/>
+        <location filename="../../libpeony-qt/model/file-item.cpp" line="337"/>
         <source>Can not find path &quot;%1&quot;，are you moved or renamed it?</source>
         <translation>Sie können den Pfad &quot;%1&quot; nicht finden, wurden Sie ihn verschoben oder umbenannt?</translation>
     </message>
@@ -3725,18 +3735,18 @@ Möchten Sie die Linkdatei löschen?</translation>
         <translation type="obsolete">计算机</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="395"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="407"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
         <translation>Suchen nach &quot;%1&quot; in &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="434"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="417"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="446"/>
         <source>File System</source>
         <translation>Dateisystem</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="405"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="417"/>
         <source>Search results for all files marked in  &quot;%1&quot;  in &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3745,12 +3755,12 @@ Möchten Sie die Linkdatei löschen?</translation>
         <translation type="vanished">拷贝路径(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="526"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="538"/>
         <source>Open In New Tab</source>
         <translation>In neuem Tab öffnen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="530"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="542"/>
         <source>Open In New Window</source>
         <translation>In neuem Fenster öffnen</translation>
     </message>
@@ -3763,7 +3773,7 @@ Möchten Sie die Linkdatei löschen?</translation>
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="524"/>
+        <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="536"/>
         <source>Copy Directory</source>
         <translation>Verzeichnis kopieren</translation>
     </message>
@@ -3771,12 +3781,12 @@ Möchten Sie die Linkdatei löschen?</translation>
 <context>
     <name>Peony::MountOperation</name>
     <message>
-        <location filename="../../libpeony-qt/mount-operation.cpp" line="91"/>
+        <location filename="../../libpeony-qt/mount-operation.cpp" line="93"/>
         <source>Operation Cancelled</source>
         <translation>Vorgang abgebrochen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/mount-operation.cpp" line="188"/>
+        <location filename="../../libpeony-qt/mount-operation.cpp" line="190"/>
         <source>Login failed, unknown username or password error, please re-enter!</source>
         <translation>Login fehlgeschlagen, unbekannter Benutzername oder Passwortfehler, bitte erneut eingeben!</translation>
     </message>
@@ -4803,42 +4813,42 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">请检查设备是否正在使用,确认没有使用后再次弹出</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="542"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="544"/>
         <source>Format failed</source>
         <translation>Formatierung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="544"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="546"/>
         <source>YES</source>
         <translation>JA</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1033"/>
         <source>Formatting successful! But failed to set the device name.</source>
         <translation>Formatierung erfolgreich! Der Gerätename konnte jedoch nicht festgelegt werden.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1048"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1050"/>
         <source>qmesg_notify</source>
         <translation>qmesg_notify</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1063"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1065"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1065"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1067"/>
         <source>Begin Format</source>
         <translation>Format beginnen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1068"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1070"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1029"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
         <source>Format operation has been finished successfully.</source>
         <translation>Der Formatierungsvorgang wurde erfolgreich abgeschlossen.</translation>
     </message>
@@ -4847,18 +4857,18 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">格式化成功！设备名设置失败。</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1048"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1050"/>
         <source>Sorry, the format operation is failed!</source>
         <translation>Der Formatierungsvorgang ist leider fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1061"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1063"/>
         <source>Formatting this volume will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
         <translation>Durch das Formatieren dieses Volumes werden alle darauf befindlichen Daten gelöscht. Bitte sichern Sie alle aufbewahrten Daten vor der Formatierung. Möchten Sie fortfahren?</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1029"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1033"/>
         <source>format</source>
         <translation>Format</translation>
     </message>
@@ -4872,7 +4882,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="63"/>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="948"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="950"/>
         <source>File Manager</source>
         <translation>Dateimanager</translation>
     </message>
@@ -4890,7 +4900,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="177"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1754"/>
-        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="540"/>
+        <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="542"/>
         <source>Error: %1
 </source>
         <translation>Fehler: %1

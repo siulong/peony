@@ -328,32 +328,32 @@ p, li { ақ кеңістік: алдын ала орау; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="888"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>Файл менеджері</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>Болдырмау</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="417"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>Редо</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation>Бұл операцияға қолдау көрсетілмеген.</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="886"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation>Іздеу</translation>
     </message>
@@ -382,7 +382,7 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="901"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>Жаңа қапшық</translation>
     </message>
@@ -398,19 +398,19 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation>Бұл операцияға қолдау көрсетілмеген.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation>Кеңестер</translation>
     </message>
@@ -420,28 +420,28 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation>Құрылғы бос емес күйде, бұл операцияны кейінірек орындауыңызды сұраймыз.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>Бұл аномальды Удиск, оны түзетіңіз немесе пішімдеңіз</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>Бұл бос диск, диск кірістіруіңізді сұраймыз.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation>Жаңа терезеде ашу</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation>% 1, % 2 ашылмады</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation>Жаңа қойындыда ашу</translation>
     </message>
@@ -457,12 +457,12 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
         <translation>Менеджер тегтері...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
         <translation>Қосымша тегтер...</translation>
     </message>
@@ -1374,7 +1374,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
         <translation>Пеони</translation>
     </message>
