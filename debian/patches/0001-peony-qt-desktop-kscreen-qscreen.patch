@@ -12,7 +12,7 @@ Subject: =?utf-8?b?cGVvbnktcXQtZGVza3RvcDog5L2/55Soa3NjcmVlbuWQjuWPsOabvw==?=
  5 files changed, 250 insertions(+), 142 deletions(-)
 
 diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
-index 5636669..4f8e963 100644
+index b36ba79..8daf0e7 100644
 --- a/peony-qt-desktop/desktopbackgroundwindow.cpp
 +++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
 @@ -41,7 +41,7 @@ static QTimeLine *gTimeLine = nullptr;
@@ -783,7 +783,7 @@ index 10fda29..7483345 100644
  };
  
 diff --git a/peony-qt-desktop/peony-qt-desktop.pro b/peony-qt-desktop/peony-qt-desktop.pro
-index fc80c0a..af22aff 100644
+index ef553c6..0ed84bb 100644
 --- a/peony-qt-desktop/peony-qt-desktop.pro
 +++ b/peony-qt-desktop/peony-qt-desktop.pro
 @@ -4,7 +4,7 @@
