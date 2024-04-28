@@ -24,8 +24,12 @@ include(../3rd-parties/SingleApplication/singleapplication.pri)
 include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 DEFINES += QAPPLICATION_CLASS=QApplication
 
-PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra wayland-client dconf kysdk-kabase
+PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra wayland-client dconf
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
+
+contains(DEFINES, KY_SDK_KABASE) {
+    PKGCONFIG += kysdk-kabase
+}
 
 LIBS += -L$$PWD/../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
 
