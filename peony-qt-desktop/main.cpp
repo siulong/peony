@@ -36,7 +36,9 @@
 #include <QProcess>
 
 #include "xdg-portal-helper.h"
+#ifdef KY_SDK_KABASE
 #include <kysdk/applications/kabase/log.hpp>
+#endif
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
