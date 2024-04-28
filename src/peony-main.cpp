@@ -40,6 +40,10 @@
 
 #include "xdg-portal-helper.h"
 
+#ifdef KY_SDK_KABASE
+#include <kysdk/applications/kabase/log.hpp>
+#endif
+
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -88,8 +92,13 @@ int main(int argc, char *argv[])
 {
     Peony::XdgPortalHelper::getInstance()->tryUnusePortal();
     PeonyApplication::peony_start_time = QDateTime::currentMSecsSinceEpoch();
-    initUkuiLog4qt("peony");
+//    initUkuiLog4qt("peony");
 //    qInstallMessageHandler(messageOutput);
+#ifdef KY_SDK_KABASE
+    qInstallMessageHandler(kdk::kabase::Log::logOutput);
+#else
+    initUkuiLog4qt("peony");
+#endif
     qDebug() << "peony start in main time:" <<PeonyApplication::peony_start_time ;
 
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

@@ -170,6 +170,8 @@ protected:
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
 
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
+
 private Q_SLOTS:
     void slotRename();
 
@@ -203,6 +205,7 @@ private:
     bool m_mouse_release_unselect = false;
     bool m_header_section_resized_manually = false;
     int m_labelAlignment = 0;
+    bool m_noSelectOnPress = false;
 };
 
 //ListView2

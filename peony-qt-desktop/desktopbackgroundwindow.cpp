@@ -97,12 +97,12 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
             connect(m_menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
 
             if (m_desktopIconView->getSelections().isEmpty()) {
-                auto action = m_menu->addAction(QObject::tr("set background"));
+                auto action = m_menu->addAction(QObject::tr("Set Background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
                 });
-                auto action1 = m_menu->addAction(QObject::tr("display settings"));
+                auto action1 = m_menu->addAction(QObject::tr("Display Settings"));
                 connect(action1, &QAction::triggered, [=]() {
                     //go to control center set resolution ratio
                     PeonyDesktopApplication::gotoSetResolution();

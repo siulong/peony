@@ -27,6 +27,10 @@ PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udi
 LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 
+contains(DEFINES, KY_SDK_KABASE) {
+    PKGCONFIG += kysdk-kabase
+}
+
 contains(DEFINES, KY_SDK_DATACOLLECT) {
     PKGCONFIG += kysdk-datacollect
 }

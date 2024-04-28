@@ -73,6 +73,9 @@ public:
 
     void setAllowParallel(bool allow = true);
     bool isAllowParallel();
+    void setFsyncStatus(bool synchronizing = true);
+    bool isFsynchronizing();
+
 
     QStringList getFilesOpenedByProc(const QString &procName);
 
@@ -165,6 +168,9 @@ private:
     QHash<QString, totalOperationInfo> *m_mount_operation_list = nullptr;
     QHash<FileOperation*, currentOpertionInfo> *m_operation_use_list = nullptr;
     QDBusInterface* m_iface = nullptr;
+    bool m_isFsynchronizing = false;
+    QMutex m_fsyncMutex;
+
 };
 
 class FileOperationInfo : public QObject

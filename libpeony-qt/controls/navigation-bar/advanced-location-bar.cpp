@@ -26,6 +26,7 @@
 #include "search-vfs-uri-parser.h"
 #include "search-bar-container.h"
 #include "global-settings.h"
+#include "trash-cleaned-watcher.h"
 
 #include <QStackedLayout>
 #include <QDebug>
@@ -56,7 +57,6 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         }
     });
 
-    connect(this,&AdvancedLocationBar::clearTrash,m_bar,&LocationBar::updateTrashIcon);
     m_edit->connect(m_edit, &Peony::PathEdit::uriChangeRequest, [=](const QString uri) {
         //qDebug() << "uriChangeRequest:" <<uri;
         QString targetUri = uri;
@@ -124,6 +124,8 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
     layout->addWidget(m_search_bar);
 
     setLayout(layout);
+    auto iscleaned = Peony::TrashCleanedWatcher::getInstance();
+    connect(iscleaned,&TrashCleanedWatcher::updateTrashIcon,m_bar,&LocationBar::updateTrashIcon);
 }
 
 QString AdvancedLocationBar::processSpecialChar(QString key)

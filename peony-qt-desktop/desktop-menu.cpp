@@ -518,12 +518,14 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
             l<<addAction(QIcon::fromTheme("edit-copy-symbolic"), tr("Copy"));
             connect(l.last(), &QAction::triggered, this, [=]() {
                 ClipboardUtils::setClipboardFiles(m_selections, false);
+                //auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+                //desktopView->viewport()->update();
             });
             l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
             connect(l.last(), &QAction::triggered, this, [=]() {
                 ClipboardUtils::setClipboardFiles(m_selections, true);
-                auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
-                desktopView->update();
+                //auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+                //desktopView->viewport()->update();
             });
 
             if (!m_selections.contains("trash:///")) {
@@ -571,7 +573,6 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
     } else {
         auto pasteAction = addAction(QIcon::fromTheme("edit-paste-symbolic"), tr("Paste"));
         l<<pasteAction;
-        ClipboardUtils::getInstance()->updateClipboardManually();
         pasteAction->setEnabled(ClipboardUtils::isClipboardHasFiles());
         connect(l.last(), &QAction::triggered, this, [=]() {
             ClipboardUtils::pasteClipboardFiles(m_directory);

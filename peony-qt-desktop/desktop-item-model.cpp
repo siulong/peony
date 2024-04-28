@@ -677,9 +677,11 @@ void DesktopItemModel::onEnumerateFinished(bool successed)
     }
 
     //beginResetModel();
-    beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
-    m_files.clear();
-    endRemoveRows();
+    if (m_files.count() > 0) {
+        beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
+        m_files.clear();
+        endRemoveRows();
+    }
 
     auto computer = FileInfo::fromUri("computer:///");
     auto personal = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));

@@ -31,7 +31,36 @@
 #include <QMessageAuthenticationCode>
 #include<QDesktopServices>
 
+#include <QImageReader>
+
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
+
+QImage scaleImageWithAspectRatio(const QString &path, const QSize &targetSize) {
+    QImageReader reader(path);
+    if (!reader.canRead()) {
+        // 处理文件读取错误
+        return QImage();
+    }
+
+    // 获取原始图像的尺寸
+    QSize originalSize = reader.size();
+
+    // 计算缩放比例
+    double scaleFactorWidth = static_cast<double>(targetSize.width()) / originalSize.width();
+    double scaleFactorHeight = static_cast<double>(targetSize.height()) / originalSize.height();
+
+    // 选择较小的缩放比例以保持纵横比
+    double scaleFactor = std::min(scaleFactorWidth, scaleFactorHeight);
+
+    // 计算缩放后的新尺寸
+    QSize scaledSize(originalSize.width() * scaleFactor, originalSize.height() * scaleFactor);
+
+    // 设置缩放后的尺寸
+    reader.setScaledSize(scaledSize);
+
+    // 读取缩放后的图像
+    return reader.read();
+}
 
 QIcon GenericThumbnailer::generateThumbnail(const QUrl &url, bool shadow, const QSize &size)
 {
@@ -40,16 +69,9 @@ QIcon GenericThumbnailer::generateThumbnail(const QUrl &url, bool shadow, const 
     if (!file.exists())
         return icon;
 
-    QImage img(url.path());
+    QSize targetSize = size.isValid()? size: QSize(128, 128);
 
-    if (img.rect().size().width() > 128) {
-        //scale large size image.
-        if (size.isValid()) {
-            img = img.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        } else {
-            img = img.scaledToWidth(128, Qt::SmoothTransformation);
-        }
-    }
+    QImage img = scaleImageWithAspectRatio(url.path(), targetSize);
 
     if (img.hasAlphaChannel()) {
         //skip shadow
@@ -88,15 +110,9 @@ QIcon GenericThumbnailer::generateThumbnail(const QString &path, bool shadow, co
     if (!file.exists())
         return icon;
 
-    QImage img(path);
-    if (img.rect().size().width() > 128) {
-        //scale large size image.
-        if (size.isValid()) {
-            img = img.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        } else {
-            img = img.scaledToWidth(128, Qt::SmoothTransformation);
-        }
-    }
+    QSize targetSize = size.isValid()? size: QSize(128, 128);
+
+    QImage img = scaleImageWithAspectRatio(path, targetSize);
 
     if (img.hasAlphaChannel()) {
         //skip shadow
@@ -108,7 +124,7 @@ QIcon GenericThumbnailer::generateThumbnail(const QString &path, bool shadow, co
         QPixmap pixmap = QPixmap::fromImage(img);
         pixmap = pixmap.scaled(img.rect().adjusted(4, 4, -4, -4).size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
-        QImage newImg(img.size(), QImage::Format_ARGB32);
+        QImage newImg(img.size(), QImage::Format_ARGB32_Premultiplied);
         newImg.fill(Qt::transparent);
         QPainter p(&newImg);
 

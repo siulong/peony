@@ -533,7 +533,9 @@ void DesktopIconView::initShoutCut()
     connect(copyAction, &QAction::triggered, [=]() {
         auto selectedUris = this->getSelections();
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris)){
-            ClipboardUtils::setClipboardFiles(selectedUris, false);}
+            ClipboardUtils::setClipboardFiles(selectedUris, false);
+            this->viewport()->update();
+        }
     });
     addAction(copyAction);
 
@@ -544,7 +546,8 @@ void DesktopIconView::initShoutCut()
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris))
         {
             ClipboardUtils::setClipboardFiles(selectedUris, true);
-            this->update();
+            //this->update();
+            this->viewport()->update();
         }
     });
     addAction(cutAction);
@@ -552,13 +555,18 @@ void DesktopIconView::initShoutCut()
     QAction *pasteAction = new QAction(this);
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
-        ClipboardUtils::getInstance()->updateClipboardManually();
         if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
-            ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            if (!op) {
+                viewport()->update();
+            }
         } else {
             //auto clipUris = ClipboardUtils::getClipboardFilesUris();
-            if (ClipboardUtils::isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
-                ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+            if (ClipboardUtils::getInstance()->isClipboardHasFiles() && !meetSpecialConditions(this->getSelections())) {
+                auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
+                if (!op) {
+                    viewport()->update();
+                }
             }
         }
     });
@@ -752,7 +760,7 @@ void DesktopIconView::initMenu()
         QTimer::singleShot(1, [=]() {
             DesktopMenu menu(this);
             if (this->getSelections().isEmpty()) {
-                auto action = menu.addAction(tr("set background"));
+                auto action = menu.addAction(tr("Set Background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
@@ -1357,6 +1365,7 @@ void DesktopIconView::scrollTo(const QModelIndex &index, QAbstractItemView::Scro
 void DesktopIconView::setCutFiles(const QStringList &uris)
 {
     ClipboardUtils::setClipboardFiles(uris, true);
+    this->viewport()->update();
 }
 
 void DesktopIconView::closeView()
@@ -2007,12 +2016,13 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
             m_ctrl_or_shift_pressed = false;
     }
 
+    auto index = indexAt(e->pos());
+
     if (!m_ctrl_or_shift_pressed) {
-        if (!indexAt(e->pos()).isValid()) {
+        if (!index.isValid()) {
             clearAllIndexWidgets();
             clearSelection();
         } else {
-            auto index = indexAt(e->pos());
             m_last_index = index;
             //fix rename state has no menuRequest issue, bug#44107
             if (! m_is_edit)
@@ -2049,12 +2059,20 @@ void DesktopIconView::mousePressEvent(QMouseEvent *e)
         return;
     }
 
+    if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
+
     QListView::mousePressEvent(e);
 }
 
 void DesktopIconView::mouseReleaseEvent(QMouseEvent *e)
 {
     QListView::mouseReleaseEvent(e);
+
+    m_noSelectOnPress = false;
 
     this->viewport()->update(viewport()->rect());
 }
@@ -2897,6 +2915,29 @@ bool DesktopIconView::dragToOtherScreen(QDropEvent *e)
     return false;
 }
 
+QItemSelectionModel::SelectionFlags DesktopIconView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QListView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect;
+            }
+            return flags;
+        }
+    }
+    return QListView::selectionCommand(index, event);
+}
+
 int DesktopIconView::radius() const
 {
     return m_radius;
@@ -3107,6 +3148,9 @@ bool DesktopIconView::verifyBoundaries(const QRect &rect, Direction direction)
         if (dataRect.bottom() > this->viewport()->rect().bottom()) {
             return true;
         }
+    }
+    if (!this->viewport()->rect().contains(dataRect)) {
+        return true;
     }
     return false;
 }

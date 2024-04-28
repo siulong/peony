@@ -42,7 +42,8 @@ HEADERS += \
     $$PWD/global-settings.h         \
     $$PWD/complementary-style.h     \
     $$PWD/global-fstabdata.h        \
-    $$PWD/sound-effect.h
+    $$PWD/sound-effect.h \
+    $$PWD/trash-cleaned-watcher.h
 
 SOURCES += \
     $$PWD/extensions-manager-widget.cpp \
@@ -52,7 +53,8 @@ SOURCES += \
     $$PWD/global-settings.cpp       \
     $$PWD/complementary-style.cpp   \
     $$PWD/global-fstabdata.cpp      \
-    $$PWD/sound-effect.cpp
+    $$PWD/sound-effect.cpp \
+    $$PWD/trash-cleaned-watcher.cpp
 
 
 FORMS += \

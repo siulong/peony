@@ -285,10 +285,14 @@ void FileItem::findChildrenAsync()
             //m_model->sendPathChangeRequest(target, this->uri());
             return;
         }
+
         if (err) {
             qDebug()<<"file item error:" <<err->message()<<enumerator->getEnumerateUri();
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
-            if (err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) {
+
+            //fix bug#214724, 214924， access smb-root error issue
+            if ((err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) &&
+                    this->uri() != "smb:///" && this->uri() != "network:///smb-root") {
                 enumerator->cancel();
                 //fix goto removed path in case device is ejected
                 if (this->uri().startsWith("file:///media"))
@@ -509,7 +513,7 @@ void FileItem::findChildrenAsync()
             connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
                 m_model->updated();
                 //m_model->dataChanged(m_model->indexFromUri(uri), m_model->indexFromUri(uri));
-            });
+            }, Qt::UniqueConnection);
             connect(m_watcher.get(), &FileWatcher::directoryDeleted, this, [=](QString uri) {
                 //clean all the children, if item index is root index, cd up.
                 //this might use FileItemModel::setRootItem()
@@ -1212,7 +1216,8 @@ ExtraInfoRecorder::ExtraInfoRecorder(const QString &uri)
 
 ExtraInfoRecorder::~ExtraInfoRecorder()
 {
-    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
+    /* 改成程序退出时再释放图片，linkto bug#215437 */
+    //ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
     EmblemProviderManager::getInstance()->cancelQuery(m_uri);
 }
 

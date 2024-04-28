@@ -33,6 +33,7 @@
 #include <QProcess>
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-operation-manager.h"
 
 #define BUF_SIZE        1024000
 #define SYNC_INTERVAL   10
@@ -121,7 +122,9 @@ void FileCopy::sync(const GFile* destFile)
     // execute sync
     int fromfd = open(path, O_SYNC);
     if (-1 != fromfd) {
+        FileOperationManager::getInstance()->setFsyncStatus(true);
         fsync(fromfd);
+        FileOperationManager::getInstance()->setFsyncStatus(false);
         close(fromfd);
     } else {
         auto lastError = strerror(errno);
@@ -461,9 +464,11 @@ out:
         // some special detail for mtp,  gphoto2, or other cases.
         if (mSrcUri.startsWith("mtp://") || mDestUri.startsWith("mtp://")) {
             if (mError) {
-                g_error_free(*mError);
-                *mError = nullptr;
-                g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
+                if ((*mError)->code != G_IO_ERROR_EXISTS) {
+                    g_error_free(*mError);
+                    *mError = nullptr;
+                    g_set_error(mError, 1, G_IO_ERROR_FAILED, "%s", tr("File opening failure").toUtf8().constData());
+                }
             }else if (mDestUri.startsWith("gphoto2://")) {
                 if (mError) {
                     g_error_free(*mError);
@@ -564,7 +569,9 @@ int FileCopy::doCopyBigFile(const char *srcPath, const char *destPath)
             if (!mIsDestFileLocal) {
                 if (++syncCount > SYNC_INTERVAL) {
                     syncCount = 0;
+                    FileOperationManager::getInstance()->setFsyncStatus(true);
                     fsync(out_fd);
+                    FileOperationManager::getInstance()->setFsyncStatus(false);
                 }
             }
             updateProgress ();

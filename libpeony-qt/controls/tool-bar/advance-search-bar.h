@@ -56,7 +56,7 @@ public:
     //advance search filter options
     QStringList m_file_type_list = {tr("all"), tr("file folder"), tr("image"), tr("video"),
                                     tr("text file"), tr("audio"), tr("wps file"), tr("others")};
-    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("this week"), tr("this month"), tr("this year"), tr("year ago")};
+    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
     QStringList m_file_size_list = {tr("all"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-100M)"), tr("big(100M-1G)"),tr("large(>1G)")};
 
 protected:

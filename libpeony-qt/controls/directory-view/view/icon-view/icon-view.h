@@ -182,6 +182,8 @@ protected:
 
     bool edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event) override;
 
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
+
 protected Q_SLOTS:
     void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) override;
 
@@ -230,6 +232,8 @@ private:
 
     bool m_slider_bar_draging = false;
     bool m_mouse_release_unselect = false;
+
+    bool m_noSelectOnPress = false;
 };
 
 //IconView2

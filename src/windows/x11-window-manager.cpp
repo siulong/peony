@@ -100,7 +100,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
     case QEvent::MouseMove: {
         QMouseEvent *e = static_cast<QMouseEvent *>(event);
 
-        qDebug()<<e->type()<<e->pos();
+        //qDebug()<<e->type()<<e->pos();
 
         if (m_is_draging) {
             if (QX11Info::isPlatformX11()) {

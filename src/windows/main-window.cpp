@@ -86,6 +86,7 @@
 #include "file-launch-action.h"
 #include "file-launch-manager.h"
 #include "file-utils.h"
+#include "trash-cleaned-watcher.h"
 
 #include <QSplitter>
 
@@ -597,9 +598,10 @@ void MainWindow::setShortCuts()
         connect(propertiesWindowAction, &QAction::triggered, this, [=]() {
             //Fixed issue:when use this shortcut without any selections, this will crash
             QStringList uris;
-            if (getCurrentSelections().count() > 0)
+            QStringList currentSelections = getCurrentSelections();
+            if (currentSelections.count() > 0)
             {
-                uris<<getCurrentSelections();
+                uris<<currentSelections;
             }
             else
             {
@@ -742,15 +744,16 @@ void MainWindow::setShortCuts()
         copyAction->setShortcut(QKeySequence::Copy);
         connect(copyAction, &QAction::triggered, [=]() {
             bool is_recent = false;
-            if (!this->getCurrentSelections().isEmpty())
+            QStringList currentSelections = this->getCurrentSelections();
+            if (!currentSelections.isEmpty())
             {
-//                if (this->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
+//                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {
 //                    return ;
 //                }
-                if (this->getCurrentSelections().first().startsWith("recent://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("recent://", Qt::CaseInsensitive)) {
                     is_recent = true;
                 }
-                if (this->getCurrentSelections().first().startsWith("favorite://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("favorite://", Qt::CaseInsensitive)) {
                     return ;
                 }
             }
@@ -760,14 +763,14 @@ void MainWindow::setShortCuts()
             QStringList selections;
             if (is_recent)
             {
-                for(auto uri:this->getCurrentSelections())
+                for(auto uri: currentSelections)
                 {
                     uri = Peony::FileUtils::getTargetUri(uri);
                     selections << uri;
                 }
             }
             else{
-                selections = this->getCurrentSelections();
+                selections = currentSelections;
             }
 
             Peony::ClipboardUtils::setClipboardFiles(selections, false);
@@ -805,7 +808,6 @@ void MainWindow::setShortCuts()
 //                return;
 //            }
 
-            Peony::ClipboardUtils::getInstance()->updateClipboardManually();
             if (Peony::ClipboardUtils::isClipboardHasFiles()) {
                 //FIXME: how about duplicated copy?
                 //FIXME: how to deal with a failed move?
@@ -831,14 +833,15 @@ void MainWindow::setShortCuts()
         auto *cutAction = new QAction(this);
         cutAction->setShortcut(QKeySequence::Cut);
         connect(cutAction, &QAction::triggered, [=]() {
-            if (!this->getCurrentSelections().isEmpty()) {
-//                if (this->getCurrentSelections().first().startsWith("trash://", Qt::CaseInsensitive)) {
+            QStringList currentSelections = this->getCurrentSelections();
+            if (!currentSelections.isEmpty()) {
+//                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {
 //                    return ;
 //                }
-                if (this->getCurrentSelections().first().startsWith("recent://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("recent://", Qt::CaseInsensitive)) {
                     return ;
                 }
-                if (this->getCurrentSelections().first().startsWith("favorite://", Qt::CaseInsensitive)) {
+                if (currentSelections.first().startsWith("favorite://", Qt::CaseInsensitive)) {
                     return ;
                 }
 
@@ -849,8 +852,7 @@ void MainWindow::setShortCuts()
                 auto info = Peony::FileInfo::fromUri(currentUri);
                 if (!info->canWrite()) {
                     if(getCurrentUri().startsWith("search://")){
-                        auto selections = this->getCurrentSelections();
-                        auto selectInfo = Peony::FileInfo::fromUri(selections.first());
+                        auto selectInfo = Peony::FileInfo::fromUri(currentSelections.first());
                         if(!selectInfo->canWrite())
                             return;
                     }else{
@@ -861,10 +863,10 @@ void MainWindow::setShortCuts()
                 QString desktopPath = "file://" +  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
                 QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
                 QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                if (! this->getCurrentSelections().contains(desktopUri) && ! this->getCurrentSelections().contains(homeUri))
+                if (!currentSelections.contains(desktopUri) && !currentSelections.contains(homeUri))
                 {
-                   Peony::ClipboardUtils::setClipboardFiles(this->getCurrentSelections(), true, getCurrentUri().startsWith("search://"));
-                   this->getCurrentPage()->getView()->repaintView();
+                    Peony::ClipboardUtils::setClipboardFiles(currentSelections, true, getCurrentUri().startsWith("search://"));
+                    this->getCurrentPage()->getView()->repaintView();
                 }
             }
         });
@@ -1683,7 +1685,11 @@ void MainWindow::initUI(const QString &uri)
     m_transparent_area_widget = m_side_bar;
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
-    addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
+    if (layoutDirection() == Qt::RightToLeft) {
+        addDockWidget(Qt::RightDockWidgetArea, m_side_bar);
+    } else {
+        addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
+    }
 
    // auto labelDialog = new FileLabelBox(this);
    // labelDialog->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1795,10 +1801,10 @@ void MainWindow::initUI(const QString &uri)
     connect(m_tab, &TabWidget::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
     connect(m_tab,&TabWidget::globalSearch, m_header_bar, &HeaderBar::setGlobalFlag);
     connect(m_tab, &TabWidget::clearTrash, this, &MainWindow::cleanTrash);
-    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
-        m_tab->updateTabPageTitle();
-    });
-    connect(this, &MainWindow::trashcleaned, m_header_bar, &HeaderBar::clearTrash);
+//    connect(this, &MainWindow::trashcleaned, m_tab, [=](){
+//        m_tab->updateTabPageTitle();
+//    });
+//    connect(this, &MainWindow::trashcleaned, m_header_bar, &HeaderBar::clearTrash);
     connect(m_tab, &TabWidget::recoverFromTrash, this, &MainWindow::recoverFromTrash);
     connect(m_tab, &TabWidget::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_tab, &TabWidget::updateSearch, this, &MainWindow::updateSearch);
@@ -1877,6 +1883,10 @@ void MainWindow::initUI(const QString &uri)
 //        });
 //    }
 
+    auto iscleaned = Peony::TrashCleanedWatcher::getInstance();
+    connect(iscleaned,&Peony::TrashCleanedWatcher::updateTrashIcon, m_tab, [=](){
+        m_tab->updateTabPageTitle();
+    });
 }
 
 void MainWindow::updateSearchStatus(bool showSearch)
@@ -1903,12 +1913,12 @@ void MainWindow::cleanTrash()
         } else {
             auto removeop = Peony::FileOperationUtils::clearRecycleBinWithDialog(uris, this);
             qApp->setProperty("clearTrash",true);
-            if(removeop){
-                removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
+//            if(removeop){
+//                removeop->connect(removeop,&Peony::FileDeleteOperation::operationFinished,this,[=](){
 //                Peony::SoundEffect::getInstance()->recycleBinClearMusic();
-                Q_EMIT trashcleaned();
-                });
-            }
+//                Q_EMIT trashcleaned();
+//                });
+//            }
         }
     }
     else

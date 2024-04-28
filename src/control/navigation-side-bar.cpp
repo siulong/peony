@@ -250,13 +250,19 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 QList<QAction *> actionList;
                 MainWindow *window = dynamic_cast<MainWindow *>(this->topLevelWidget());
 
+                //fix bug#216256, open data block in menu fail issue
+                auto curUri = item->uri();
+                if (item->uri() == "computer:///ukui-data-volume") {
+                    curUri = "file:///data";
+                }
+
                 actionList << menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
                     auto enumerator = new Peony::FileEnumerator;
-                    enumerator->setEnumerateDirectory(item->uri());
+                    enumerator->setEnumerateDirectory(curUri);
                     enumerator->setAutoDelete();
 
                     enumerator->connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
-                        auto targetUri = Peony::FileUtils::getTargetUri(item->uri());
+                        auto targetUri = Peony::FileUtils::getTargetUri(curUri);
                         if (!targetUri.isEmpty()) {
                             auto enumerator2 = new Peony::FileEnumerator;
                             enumerator2->setEnumerateDirectory(targetUri);
@@ -272,7 +278,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                             });
                             enumerator2->prepare();
                         } else if (!err.get() && !critical) {
-                            auto newWindow = window->create(item->uri());
+                            auto newWindow = window->create(curUri);
                             dynamic_cast<QWidget *>(newWindow)->show();
                         }
                     });

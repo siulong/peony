@@ -36,6 +36,7 @@
 #include <QProcess>
 
 #include "xdg-portal-helper.h"
+#include <kysdk/applications/kabase/log.hpp>
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -97,8 +98,13 @@ int main(int argc, char *argv[])
     }
 
     Peony::XdgPortalHelper::getInstance()->tryUnusePortal();
-    initUkuiLog4qt("peony-desktop");
+//    initUkuiLog4qt("peony-desktop");
 //    qInstallMessageHandler(messageOutput);
+#ifdef KY_SDK_KABASE
+    qInstallMessageHandler(kdk::kabase::Log::logOutput);
+#else
+    initUkuiLog4qt("peony");
+#endif
     qDebug() << "desktop start time in main:" <<PeonyDesktopApplication::peony_desktop_start_time;
 
     QGuiApplication::setFallbackSessionManagementEnabled(true);

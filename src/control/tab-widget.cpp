@@ -1850,24 +1850,39 @@ void TabWidget::updateTabBarGeometry()
         addPageX = m_tab_bar->sizeHint().width() + 2;
     }
 
-    m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+    if (layoutDirection() == Qt::LeftToRight)
+        m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+    else
+        m_tab_bar->setGeometry(this->width() - tabBarWidth, 1, tabBarWidth, m_tab_bar->sizeHint().height());
     m_tab_bar->raise();
 
     if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
-        m_add_page_button->move(addPageX, 0);
+        if (layoutDirection() == Qt::LeftToRight)
+            m_add_page_button->move(addPageX, 0);
+        else
+            m_add_page_button->move(this->width() - addPageX - m_add_page_button->width(), 0);
         if (tabBarWidth == addPageX) {
             m_show_page_button->show();
-            m_show_page_button->move(addPageX + 40, 0);
+            if (layoutDirection() == Qt::LeftToRight)
+                m_show_page_button->move(addPageX + 40, 0);
+            else
+                m_show_page_button->move(this->width() - addPageX - 40 - m_show_page_button->width(), 0);
         } else {
             m_show_page_button->hide();
         }
     } else {
         auto lastTabRect =  m_tab_bar->rect();
         int fixedY = lastTabRect.center().y() - m_add_page_button->height()/2;
-        m_add_page_button->move(addPageX, fixedY);
+        if (layoutDirection() == Qt::LeftToRight)
+            m_add_page_button->move(addPageX, fixedY);
+        else
+            m_add_page_button->move(this->width() - addPageX - m_add_page_button->width(), fixedY);
         if (tabBarWidth == addPageX) {
             m_show_page_button->show();
-            m_show_page_button->move(addPageX + 40, fixedY);
+            if (layoutDirection() == Qt::LeftToRight)
+                m_show_page_button->move(addPageX + 40, fixedY);
+            else
+                m_show_page_button->move(this->width() - addPageX - 40 - m_show_page_button->width(), fixedY);
         } else {
             m_show_page_button->hide();
         }

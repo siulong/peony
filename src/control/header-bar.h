@@ -108,7 +108,7 @@ Q_SIGNALS:
     void viewTypeChangeRequest(const QString &viewId);
     void updateZoomLevelHintRequest(int zoomLevelHint);
     void updateSearchRequest(bool showSearch);
-    void clearTrash();
+//    void clearTrash();
     void refreshRequest();
     void updateFileTypeFilter(const int &index);
     void setGlobalFlag(bool isGlobal);

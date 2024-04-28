@@ -161,19 +161,18 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     opt.decorationSize = rawDecoSize;
 
     bool bCutFile = false;
-    if (ClipboardUtils::isClipboardHasFiles()){
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
         QString actualDirUri = view->getDirectoryUri();
         bool bSearchTab = false;
         if(actualDirUri.startsWith("search:///search_uris")){
             bSearchTab = true;
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
         }
+
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
-        if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
-            && ClipboardUtils::isPeonyFilesBeCut()
-            && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(FileItemModel::UriRole).toString()))) {
+        if (!clipedUris.isEmpty() && (FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)))) {
+            if (clipedUris.contains(index.data(FileItemModel::UriRole).toString())) {
                 painter->setOpacity(0.5);
                 bCutFile = true;
                 qDebug()<<"cut item"<<index.data();
@@ -229,6 +228,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+            indexWidget->update();
 
             auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
             auto item = model->itemFromIndex(index);

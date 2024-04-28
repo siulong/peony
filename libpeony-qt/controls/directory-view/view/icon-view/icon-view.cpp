@@ -135,6 +135,8 @@ IconView::IconView(QWidget *parent) : QListView(parent)
     m_editValid = false;
 
     setMouseTracking(true);//追踪鼠标
+
+    setViewportMargins(0, 0, 0, 0);
 }
 
 IconView::~IconView()
@@ -398,7 +400,7 @@ void IconView::mousePressEvent(QMouseEvent *e)
     }
 
     m_allow_set_index_widget = true;
-    if (e->modifiers() & Qt::ControlModifier)
+    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection))
         m_ctrl_key_pressed = true;
     else
         m_ctrl_key_pressed = false;
@@ -410,6 +412,13 @@ void IconView::mousePressEvent(QMouseEvent *e)
         m_mouse_release_unselect = false;
     }
 
+    auto index = indexAt(e->pos());
+    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
+
     QListView::mousePressEvent(e);
 
     if (e->button() != Qt::LeftButton) {
@@ -417,7 +426,7 @@ void IconView::mousePressEvent(QMouseEvent *e)
     }
 
     if (true == m_mouse_release_unselect) {
-        selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+        //selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
     if(getSelections().count()>1)
@@ -465,15 +474,10 @@ void IconView::mouseReleaseEvent(QMouseEvent *e)
 {
     QListView::mouseReleaseEvent(e);
 
+    m_noSelectOnPress = false;
+
     if (e->button() != Qt::LeftButton) {
         return;
-    }
-
-    if (true == m_mouse_release_unselect) {
-        QModelIndex itemIndex = indexAt(e->pos());
-        if (itemIndex.isValid()) {
-            selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Deselect|QItemSelectionModel::Rows);
-        }
     }
 }
 
@@ -538,7 +542,7 @@ void IconView::resizeEvent(QResizeEvent *e)
 
 void IconView::wheelEvent(QWheelEvent *e)
 {
-    if (e->modifiers() & Qt::ControlModifier) {
+    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
         if (e->delta() > 0) {
             zoomLevelChangedRequest(true);
         } else {
@@ -635,7 +639,7 @@ void IconView::focusInEvent(QFocusEvent *e)
     }
 }
 
-void IconView::startDrag(Qt::DropActions supportedActions)
+void IconView::startDrag(Qt::DropActions flags)
 {
     auto indexes = selectedIndexes();
     if (indexes.count() > 0) {
@@ -659,38 +663,86 @@ void IconView::startDrag(Qt::DropActions supportedActions)
             drag->setMimeData(model()->mimeData(indexes));
         }
 
-        QRegion rect;
-        QHash<QModelIndex, QRect> indexRectHash;
-        for (auto index : indexes) {
-            rect += (visualRect(index));
-            indexRectHash.insert(index, visualRect(index));
-        }
-
-        QRect realRect = rect.boundingRect();
-        QPixmap pixmap(realRect.size() * scale);
-        pixmap.fill(Qt::transparent);
-        pixmap.setDevicePixelRatio(scale);
-        QPainter painter(&pixmap);
-        for (auto index : indexes) {
+        int num = indexes.count();
+        if (num > 100) {
+            QRect pixmapRect = QRect(100, 100, 400, 400);
+            QPixmap pixmap(pixmapRect.size() * scale);
+            pixmap.fill(Qt::transparent);
+            pixmap.setDevicePixelRatio(scale);
+            QPainter painter(&pixmap);
+            quint64 count = 0;
             painter.save();
-            QStyleOptionViewItem opt = viewOptions();
-            auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
-            viewItemDelegate->initIndexOption(&opt, index);
+            QRect iconRect = pixmapRect;
+            iconRect.setSize(QSize(139, 139));
+            for (auto index : indexes) {
+               if (count > 10) {
+                   break;
+               }
+               count++;
+               iconRect.moveTo(iconRect.x()+3, iconRect.y()+3);
+               QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+               if (!icon.isNull()) {
+                   painter.save();
+                   painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+                   painter.drawPixmap(QPoint(100 + count*3, 100 + count*3), icon.pixmap(139, 139));
+                   painter.restore();
+              }
+            }
+            QFont font = qApp->font();
+            font.setPointSize(10);
+            QFontMetrics metrics(font);
+            QString text = num > 999 ? "..." : QString::number(num);
+            int height = metrics.width(text);
+            int width = metrics.height();
 
-            opt.state |= QStyle::State_Selected;
-            opt.rect.setSize(visualRect(index).size());
-            painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
-
-            viewItemDelegate->setStartDrag(true);
-            itemDelegate()->paint(&painter, opt, index);
-            viewItemDelegate->setStartDrag(false);
+            int diameter = std::max(height, width);
+            int radius = diameter / 2;
+            QRectF textRect = QRectF(iconRect.topRight().x() - diameter - 10, iconRect.topRight().y(), diameter + 10, diameter + 10);
+            painter.setBrush(Qt::red);
+            painter.setPen(Qt::red);
+            painter.drawEllipse(textRect);
+            painter.setPen(Qt::white);
+            painter.drawText(textRect, Qt::AlignCenter, text);
             painter.restore();
-        }
 
-        drag->setPixmap(pixmap);
-        drag->setHotSpot(pos - rect.boundingRect().topLeft() );
-        drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
-        drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+
+            drag->setPixmap(pixmap);
+            drag->setHotSpot(QPoint(200,200));
+            drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+            drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+        } else {
+            QRegion rect;
+            QHash<QModelIndex, QRect> indexRectHash;
+            for (auto index : indexes) {
+                rect += (visualRect(index));
+                indexRectHash.insert(index, visualRect(index));
+            }
+            QRect realRect = rect.boundingRect();
+            QPixmap pixmap(realRect.size() * scale);
+            pixmap.fill(Qt::transparent);
+            pixmap.setDevicePixelRatio(scale);
+            QPainter painter(&pixmap);
+
+            for (auto index : indexes) {
+                painter.save();
+                QStyleOptionViewItem opt = viewOptions();
+                auto viewItemDelegate = static_cast<IconViewDelegate *>(itemDelegate());
+                viewItemDelegate->initIndexOption(&opt, index);
+
+                opt.state |= QStyle::State_Selected;
+                opt.rect.setSize(visualRect(index).size());
+                painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
+
+                viewItemDelegate->setStartDrag(true);
+                itemDelegate()->paint(&painter, opt, index);
+                viewItemDelegate->setStartDrag(false);
+                painter.restore();
+            }
+            drag->setPixmap(pixmap);
+            drag->setHotSpot(pos - rect.boundingRect().topLeft());
+            drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+            drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+        }
     }
 }
 
@@ -999,6 +1051,29 @@ bool IconView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
         }
     }
     return  QListView::edit(index, trigger, event);
+}
+
+QItemSelectionModel::SelectionFlags IconView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QListView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect;
+            }
+            return flags;
+        }
+    }
+    return QListView::selectionCommand(index, event);
 }
 
 void IconView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
