@@ -1,0 +1,22 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Sun, 28 Apr 2024 14:22:13 +0800
+Subject: update changelog.
+
+---
+ peony-qt-desktop/main.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/peony-qt-desktop/main.cpp b/peony-qt-desktop/main.cpp
+index 8ceb388..cdbb0c4 100644
+--- a/peony-qt-desktop/main.cpp
++++ b/peony-qt-desktop/main.cpp
+@@ -36,7 +36,9 @@
+ #include <QProcess>
+ 
+ #include "xdg-portal-helper.h"
++#ifdef KY_SDK_KABASE
+ #include <kysdk/applications/kabase/log.hpp>
++#endif
+ 
+ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+ {
