@@ -472,6 +472,9 @@ void ConnectServerDialog::checkConnectIpAndPort(QString uri)
     }
 }
 
+QMap<QString, QVariant> ConnectServerLogin::s_cacheUserInfo;
+QMap<QString, QVariant> ConnectServerLogin::s_tmpUserInfo;
+
 ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     : QDialog(parent),m_remoteIP(uri)
 {
@@ -554,6 +557,7 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_reg_usr_combox->setChecked (false);
 
     QMap<QString, QVariant> uriList = GlobalSettings::getInstance()->getValue(REMOTE_SERVER_REMOTE_IP).toMap();
+    QMap<QString, QVariant> cacheUriList = ConnectServerLogin::getCacheUserInfo();
     QString portStr = QString::number(url.port());
     QString type = url.scheme();
     if (portStr.toInt() < 0) {
@@ -582,8 +586,24 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
                 m_reg_usr_passwd_editor->setText (passwdDecode (m_userInfo[du].toByteArray ()));
                 m_reg_usr_combox->setChecked(true);
             }
+        } else {
+            if (cacheUriList.contains(remoteUri)) {
+                QMap<QString, QVariant> cacheUserInfo = cacheUriList[remoteUri].toMap();
+                if (!cacheUserInfo.isEmpty()) {
+                    s_tmpUserInfo = cacheUserInfo;
+                    for (auto u : cacheUserInfo.keys()) {
+                        m_reg_usr_name_editor->addItem(u);
+                    }
+
+                    QString currentText = m_reg_usr_name_editor->currentText();
+                    if (s_tmpUserInfo.contains(currentText)) {
+                        m_reg_usr_passwd_editor->setText(s_tmpUserInfo[currentText].toString());
+                    }
+                }
+            }
         }
     }
+
 
     connect (m_reg_usr_name_editor, &QComboBox::currentTextChanged, this, [=] (const QString& u) {
         if (m_userInfo.contains (u) && !m_userInfo[u].toString ().isEmpty ()) {
@@ -710,6 +730,8 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
             uriList[remoteUri] = userInfo;
         }
 
+        updateCacheUserInfo(remoteUri);
+
         GlobalSettings::getInstance()->setValue(REMOTE_SERVER_REMOTE_IP,uriList);
         GlobalSettings::getInstance()->forceSync(REMOTE_SERVER_REMOTE_IP);
     }
@@ -723,6 +745,22 @@ QString ConnectServerLogin::getPassWordProperty()
 void ConnectServerLogin::setPassWordProperty(const QString &passwd)
 {
     m_reg_usr_passwd_editor->setProperty("password", passwd);
+}
+
+void ConnectServerLogin::updateCacheUserInfo(const QString &remoteUri)
+{
+    QMap<QString, QVariant> userInfo;
+
+    if (!getPassWordProperty().isEmpty()) {
+        userInfo.insert(user(), getPassWordProperty());
+    }
+
+    ConnectServerLogin::s_cacheUserInfo.insert(remoteUri, userInfo);
+}
+
+QMap<QString, QVariant> ConnectServerLogin::getCacheUserInfo()
+{
+    return s_cacheUserInfo;
 }
 
 static const unsigned char PEONY_AES_KEY[] = "peony key";

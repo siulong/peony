@@ -109,6 +109,10 @@ public:
     void syncRemoteServer(const QUrl& url);
     QString getPassWordProperty();
     void setPassWordProperty(const QString &passwd);
+    void updateCacheUserInfo(const QString &remoteUri);
+
+    //add static function
+    static QMap<QString, QVariant> getCacheUserInfo();
 
 private:
     float           m_widget_margin         = 24;
@@ -138,6 +142,8 @@ private:
 
     QMap<QString, QVariant> m_userInfo;
 
+    static QMap<QString, QVariant> s_cacheUserInfo;
+    static QMap<QString, QVariant> s_tmpUserInfo;
 };
 
 class ButtonStyle : public QProxyStyle
