@@ -328,32 +328,32 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="888"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>ཡིག་ཆ་དོ་དམ་ཡོ་བྱད།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>ཕྱིར་འཐེན་བྱ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="417"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>བསྐྱར་དུ་བསྒྲུབ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="886"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation>འཚོལ་ཞིབ་བྱེད་པ།</translation>
     </message>
@@ -382,7 +382,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="901"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>ཡིག་ཆ་བཙིར་མ་གསར་སྐྲུན་བྱེད་</translation>
     </message>
@@ -398,19 +398,19 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation>བཀོལ་སྤྱོད་དེར་རྒྱབ་སྐྱོར་མི་བྱེད།</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation>ཐབས་རྩལ།</translation>
     </message>
@@ -420,28 +420,28 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation>སྒྲིག་ཆས་བྲེལ་འཚུབ་ཆེ་བའི་གནས་སུ་གྱར་ཡོད་པས་རྗེས་སུ་བཀོལ་སྤྱོད་འདི་ལག་བསྟར་བྱེད་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>འདི་ནི་རྒྱུན་ལྡན་མིན་པའི་Udiskཡིན་པས་ཉམས་གསོ་དང་ཡང་ན་རྣམ་གཞག་ཅན་དུ་བསྒྱུར་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>འདི་ནི་སྒུལ་བྱེད་འཕྲུལ་ཆས་སྟོང་བ་ཞིག་རེད། འོད་སྡེར་ནང་དུ་འཇུག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation>སྒེའུ་ཁུང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation>བརྒྱ་ཆ་1.2འཕར་ཐབས་མེད།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation>ཤོག་བྱང་གསར་བའི་ནང་དུ་ཁ་ཕྱེ་བ།</translation>
     </message>
@@ -457,12 +457,12 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
         <translation>སྤྱི་གཉེར་བའི་ཤོག་བྱང་།</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
         <translation>ཤོག་བྱང་སྔར་ལས་མང་བ་</translation>
     </message>
@@ -1374,7 +1374,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
         <translation>ཏན牡།།</translation>
     </message>

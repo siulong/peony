@@ -292,32 +292,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="888"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>Dosya Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>Geri</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="417"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>İleri</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="886"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation type="unfinished">Ara</translation>
     </message>
@@ -338,7 +338,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="901"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>Yeni Klasör</translation>
     </message>
@@ -354,19 +354,19 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Yeni Pencerede Aç</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation type="unfinished"></translation>
     </message>
@@ -376,28 +376,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -413,12 +413,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Tüm etiketler...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1280,7 +1280,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
         <translation type="unfinished"></translation>
     </message>

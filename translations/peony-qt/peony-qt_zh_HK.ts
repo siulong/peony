@@ -328,32 +328,32 @@ p， li { white-space： pre-wrap;
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="888"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>檔管理員</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="410"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>恢復</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="417"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="789"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation>不支援此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="886"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -382,7 +382,7 @@ p， li { white-space： pre-wrap;
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="901"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>新建資料夾</translation>
     </message>
@@ -398,19 +398,19 @@ p， li { white-space： pre-wrap;
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="584"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation>不支援此操作。</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation>技巧</translation>
     </message>
@@ -420,28 +420,28 @@ p， li { white-space： pre-wrap;
         <translation>設備處於繁忙狀態，請稍後執行此操作。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="622"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>這是一個異常的Udisk，請修復或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="640"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>這是一個空驅動器，請插入光碟。</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation>在新視窗中打開</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="269"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="303"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation>無法開啟 %1、%2</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="287"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation>在新標籤頁中打開</translation>
     </message>
@@ -457,12 +457,12 @@ p， li { white-space： pre-wrap;
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="842"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
         <translation>經理標籤...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="845"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
         <translation>更多標籤...</translation>
     </message>
@@ -1374,7 +1374,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="983"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
         <translation>牡丹</translation>
     </message>
