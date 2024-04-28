@@ -370,11 +370,6 @@ void ListView::mousePressEvent(QMouseEvent *e)
 
     auto index = indexAt(e->pos());
     bool isIndexSelected = selectedIndexes().contains(index);
-    if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
-        m_noSelectOnPress = true;
-    } else {
-        m_noSelectOnPress = false;
-    }
 
     if (isEnableMultiSelect() && index.isValid()) {
         m_mouse_release_unselect = isIndexSelected;
@@ -386,11 +381,17 @@ void ListView::mousePressEvent(QMouseEvent *e)
         multiSelect();
     }
 
+    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
+    }
+
     m_editValid = true;
     QTreeView::mousePressEvent(e);
 
     if (m_mouse_release_unselect) {
-        this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+        //this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
     }
 
     auto visualRect = this->visualRect(index);
@@ -700,7 +701,7 @@ void ListView::updateGeometries()
 
 void ListView::wheelEvent(QWheelEvent *e)
 {
-    if (e->modifiers() & Qt::ControlModifier) {
+    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
         zoomLevelChangedRequest(e->delta() > 0);
         e->accept();
         return;
@@ -871,12 +872,12 @@ QItemSelectionModel::SelectionFlags ListView::selectionCommand(const QModelIndex
 
     if (event->type() == QEvent::MouseButtonPress) {
         auto e = static_cast<const QMouseEvent *>(event);
-        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier && selectedIndexes().contains(index)) {
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
             return QItemSelectionModel::NoUpdate;
         }
     } else if (event->type() == QEvent::MouseButtonRelease) {
         auto e = static_cast<const QMouseEvent *>(event);
-        if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
             QItemSelectionModel::SelectionFlags flags;
             if (m_noSelectOnPress) {
                 flags = QItemSelectionModel::Deselect|QItemSelectionModel::Rows;
