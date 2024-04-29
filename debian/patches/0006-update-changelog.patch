@@ -1,0 +1,54 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Mon, 29 Apr 2024 16:24:05 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp | 4 ++--
+ libpeony-qt/controls/tag-management.cpp                               | 3 +++
+ peony-qt-desktop/desktop-menu.cpp                                     | 4 ++--
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+index ca6a481..cb87424 100644
+--- a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
++++ b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+@@ -587,8 +587,8 @@ const QList<QAction *> DirectoryViewMenu::constructCreateTemplateActions()
+         addAction(createAction);
+ 
+         //enumerate template dir
+-//        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
+-        QString templatePath = GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString();
++        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
++        QString templatePath = templateDir.path();
+         qWarning()<<"tempalte Path is"<<templatePath;
+         if(!templatePath.isEmpty())
+         {
+diff --git a/libpeony-qt/controls/tag-management.cpp b/libpeony-qt/controls/tag-management.cpp
+index 2b10e83..efa4f99 100644
+--- a/libpeony-qt/controls/tag-management.cpp
++++ b/libpeony-qt/controls/tag-management.cpp
+@@ -272,6 +272,9 @@ void LabelSettings::addFileLabel()
+ void LabelSettings::delFileLabel()
+ {
+     int row = m_fileLabel->currentRow();
++    if (row < 0) {
++        return;
++    }
+     m_fileLabel->removeRow(row);
+     auto item = FileLabelModel::getGlobalModel()->getItemByRow(row);
+     int index = item->id();
+diff --git a/peony-qt-desktop/desktop-menu.cpp b/peony-qt-desktop/desktop-menu.cpp
+index b0b408e..def6d67 100644
+--- a/peony-qt-desktop/desktop-menu.cpp
++++ b/peony-qt-desktop/desktop-menu.cpp
+@@ -255,8 +255,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
+         addAction(createAction);
+ 
+         //enumerate template dir
+-//        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
+-        QString templatePath = GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString();
++        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
++        QString templatePath = templateDir.path();
+         qWarning()<<"tempalte Path is"<<templatePath;
+         if(!templatePath.isEmpty())
+         {
