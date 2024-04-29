@@ -255,8 +255,8 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
         addAction(createAction);
 
         //enumerate template dir
-//        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
-        QString templatePath = GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString();
+        QDir templateDir(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
+        QString templatePath = templateDir.path();
         qWarning()<<"tempalte Path is"<<templatePath;
         if(!templatePath.isEmpty())
         {
