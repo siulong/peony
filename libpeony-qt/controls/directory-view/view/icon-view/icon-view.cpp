@@ -542,7 +542,7 @@ void IconView::resizeEvent(QResizeEvent *e)
 
 void IconView::wheelEvent(QWheelEvent *e)
 {
-    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
+    if ((e->modifiers() & Qt::ControlModifier)) {
         if (e->delta() > 0) {
             zoomLevelChangedRequest(true);
         } else {
