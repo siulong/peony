@@ -701,7 +701,7 @@ void ListView::updateGeometries()
 
 void ListView::wheelEvent(QWheelEvent *e)
 {
-    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
+    if ((e->modifiers() & Qt::ControlModifier)) {
         zoomLevelChangedRequest(e->delta() > 0);
         e->accept();
         return;
