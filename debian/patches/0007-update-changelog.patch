@@ -1,0 +1,35 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 30 Apr 2024 19:30:16 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp | 2 +-
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+index 4cb65d3..4a56311 100644
+--- a/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp
+@@ -542,7 +542,7 @@ void IconView::resizeEvent(QResizeEvent *e)
+ 
+ void IconView::wheelEvent(QWheelEvent *e)
+ {
+-    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
++    if ((e->modifiers() & Qt::ControlModifier)) {
+         if (e->delta() > 0) {
+             zoomLevelChangedRequest(true);
+         } else {
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 457a08b..970e013 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -701,7 +701,7 @@ void ListView::updateGeometries()
+ 
+ void ListView::wheelEvent(QWheelEvent *e)
+ {
+-    if ((e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
++    if ((e->modifiers() & Qt::ControlModifier)) {
+         zoomLevelChangedRequest(e->delta() > 0);
+         e->accept();
+         return;
