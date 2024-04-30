@@ -49,6 +49,8 @@ static const QString sambaTypeStr="samba";
 static const QString ftpDefaultPortStr="21";
 static const QString sftpDefaultPortStr="22";
 static const QString sambaDefaultPortStr="445";
+static const QString Domain = "domain";
+static const QString Password = "password";
 
 static QString passwdEncode (QString p);
 static QString passwdDecode (QString p);
@@ -514,8 +516,10 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
 
     m_reg_usr_name_label    = new QLabel;
     m_reg_usr_passwd_label  = new QLabel;
+    m_reg_usr_domain_label  = new QLabel;
     m_reg_usr_name_editor   = new QComboBox;
     m_reg_usr_passwd_editor = new QLineEdit;
+    m_reg_usr_domain_editor = new QLineEdit;
     m_reg_usr_combox        = new QCheckBox;
     m_reg_usr_layout        = new QGridLayout;
 
@@ -523,18 +527,24 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
     m_reg_usr_name_label->setText(tr("Name"));
     m_reg_usr_passwd_label->setText(tr("Password"));
     m_reg_usr_combox->setText(tr("Remember the password"));
+    m_reg_usr_domain_label->setText(tr("domain"));
+    m_reg_usr_domain_editor->setText("WORKGROUP");
     m_reg_usr_name_label->setFixedHeight(36);
     m_reg_usr_passwd_label->setFixedHeight(36);
+    m_reg_usr_domain_label->setFixedHeight(36);
     m_reg_usr_name_editor->setFixedHeight(36);
     m_reg_usr_passwd_editor->setFixedHeight(36);
     m_reg_usr_combox->setFixedHeight(36);
+    m_reg_usr_domain_editor->setFixedHeight(36);
 
     m_reg_usr_passwd_editor->setEchoMode(QLineEdit::Password);
     m_reg_usr_layout->addWidget(m_reg_usr_name_label,       0, 0);
     m_reg_usr_layout->addWidget(m_reg_usr_name_editor,      0, 1);
-    m_reg_usr_layout->addWidget(m_reg_usr_passwd_label,     1, 0);
-    m_reg_usr_layout->addWidget(m_reg_usr_passwd_editor,    1, 1);
-    m_reg_usr_layout->addWidget(m_reg_usr_combox,           2, 1);
+    m_reg_usr_layout->addWidget(m_reg_usr_domain_label,     1, 0);
+    m_reg_usr_layout->addWidget(m_reg_usr_domain_editor,    1, 1);
+    m_reg_usr_layout->addWidget(m_reg_usr_passwd_label,     2, 0);
+    m_reg_usr_layout->addWidget(m_reg_usr_passwd_editor,    2, 1);
+    m_reg_usr_layout->addWidget(m_reg_usr_combox,           3, 1);
     m_reg_usr_layout->setVerticalSpacing(12);
     m_main_layout->addLayout(m_reg_usr_layout);
 
@@ -583,7 +593,9 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
             // set default passwd
             QString du = m_reg_usr_name_editor->currentText ();
             if (m_userInfo.contains (du)) {
-                m_reg_usr_passwd_editor->setText (passwdDecode (m_userInfo[du].toByteArray ()));
+                m_reg_usr_domain_editor->setText(m_userInfo[du].toMap().value(Domain).toString());
+                m_reg_usr_passwd_editor->setText(passwdDecode(m_userInfo[du].toMap().value(Password).toByteArray()));
+                //m_reg_usr_passwd_editor->setText (passwdDecode (m_userInfo[du].toByteArray ()));
                 m_reg_usr_combox->setChecked(true);
             }
         } else {
@@ -597,7 +609,9 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
 
                     QString currentText = m_reg_usr_name_editor->currentText();
                     if (s_tmpUserInfo.contains(currentText)) {
-                        m_reg_usr_passwd_editor->setText(s_tmpUserInfo[currentText].toString());
+                        //m_reg_usr_passwd_editor->setText(s_tmpUserInfo[currentText].toString());
+                        m_reg_usr_domain_editor->setText(s_tmpUserInfo[currentText].toMap().value(Domain).toString());
+                        m_reg_usr_passwd_editor->setText(s_tmpUserInfo[currentText].toMap().value(Password).toByteArray());
                     }
                 }
             }
@@ -606,8 +620,10 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
 
 
     connect (m_reg_usr_name_editor, &QComboBox::currentTextChanged, this, [=] (const QString& u) {
-        if (m_userInfo.contains (u) && !m_userInfo[u].toString ().isEmpty ()) {
-            m_reg_usr_passwd_editor->setText (passwdDecode (m_userInfo[u].toByteArray ()));
+        if (m_userInfo.contains (u) && /*!m_userInfo[u].toString ().isEmpty ()*/ !m_userInfo[u].toMap().isEmpty()) {
+            //m_reg_usr_passwd_editor->setText (passwdDecode (m_userInfo[u].toByteArray ()));
+            m_reg_usr_domain_editor->setText(m_userInfo[u].toMap().value(Domain).toString());
+            m_reg_usr_passwd_editor->setText(passwdDecode(m_userInfo[u].toMap().value(Password).toByteArray()));
             m_reg_usr_combox->setChecked(true);
         }
     });
@@ -619,6 +635,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
         m_reg_usr_name_editor->setHidden(true);
         m_reg_usr_passwd_label->setHidden(true);
         m_reg_usr_passwd_editor->setHidden(true);
+        m_reg_usr_domain_label->setHidden(true);
+        m_reg_usr_domain_editor->setHidden(true);
     });
 
     connect(m_usr_btn_usr, &QRadioButton::clicked, [=] () {
@@ -628,6 +646,8 @@ ConnectServerLogin::ConnectServerLogin(QString uri, QWidget *parent)
         m_reg_usr_name_editor->setHidden(false);
         m_reg_usr_passwd_label->setHidden(false);
         m_reg_usr_passwd_editor->setHidden(false);
+        m_reg_usr_domain_label->setHidden(false);
+        m_reg_usr_domain_editor->setHidden(false);
     });
 
     connect (m_reg_usr_combox, &QCheckBox::clicked, this, [=] (bool checked) {
@@ -660,7 +680,7 @@ QString ConnectServerLogin::user()
 
 QString ConnectServerLogin::domain()
 {
-    return "WORKGROUP";
+    return m_reg_usr_domain_editor->text();
 }
 
 QString ConnectServerLogin::password()
@@ -710,7 +730,11 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
         QMap<QString, QVariant> userInfo;
         if (!uriList.contains (remoteUri)) {
             if (savePassword () && !getPassWordProperty().isEmpty ()) {
-                userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
+                QMap<QString, QVariant> tmpInfo;
+                tmpInfo.insert(Domain, domain());
+                tmpInfo.insert(Password, passwdEncode(getPassWordProperty().toUtf8()));
+                userInfo.insert(user(), tmpInfo);
+                //userInfo.insert (user(), passwdEncode (getPassWordProperty().toUtf8 ()));
             }
 
             uriList.insert (remoteUri, userInfo);
@@ -719,7 +743,11 @@ void ConnectServerLogin::syncRemoteServer(const QUrl& url)
             userInfo = uriList[remoteUri].toMap ();
             if (savePassword()){
                 if (!getPassWordProperty().isEmpty ()) {
-                    userInfo[user()] = passwdEncode (getPassWordProperty().toUtf8 ());
+                    //userInfo[user()] = passwdEncode (getPassWordProperty().toUtf8 ());
+                    QMap<QString, QVariant> tmpInfo;
+                    tmpInfo.insert(Domain, domain());
+                    tmpInfo.insert(Password, passwdEncode(getPassWordProperty().toUtf8()));
+                    userInfo[user()] = tmpInfo;
                 }
             }else {
                 if (userInfo.contains(m_reg_usr_name_editor->currentText ())) {
@@ -752,7 +780,11 @@ void ConnectServerLogin::updateCacheUserInfo(const QString &remoteUri)
     QMap<QString, QVariant> userInfo;
 
     if (!getPassWordProperty().isEmpty()) {
-        userInfo.insert(user(), getPassWordProperty());
+        QMap<QString, QVariant> tmpInfo;
+        tmpInfo.insert(Domain, domain());
+        tmpInfo.insert(Password, getPassWordProperty());
+        userInfo.insert(user(), tmpInfo);
+        //userInfo.insert(user(), getPassWordProperty());
     }
 
     ConnectServerLogin::s_cacheUserInfo.insert(remoteUri, userInfo);

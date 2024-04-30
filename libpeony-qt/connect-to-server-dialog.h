@@ -129,8 +129,10 @@ private:
 
     QLabel*         m_reg_usr_name_label    = nullptr;
     QLabel*         m_reg_usr_passwd_label  = nullptr;
+    QLabel*         m_reg_usr_domain_label  = nullptr;
     QComboBox*      m_reg_usr_name_editor   = nullptr;
     QLineEdit*      m_reg_usr_passwd_editor = nullptr;
+    QLineEdit*      m_reg_usr_domain_editor = nullptr;
     QCheckBox*      m_reg_usr_combox        = nullptr;
     QGridLayout*    m_reg_usr_layout        = nullptr;
 
