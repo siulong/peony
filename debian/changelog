@@ -2,14 +2,14 @@ peony (4.10.0.5-ok1~0430) nile; urgency=medium
 
   * 修复多选状态下鼠标滚轮行为异常的问题
 
- -- Yue Lan <lanyue.kylinos.cn>  Tue, 30 Apr 2024 19:29:41 +0800
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 30 Apr 2024 19:29:41 +0800
 
 peony (4.10.0.5-ok1~0429) nile; urgency=medium
 
   * 修复右键菜单找不到文件模板问题
   * 修复侧边栏未选中标记时删除标记崩溃问题
 
- -- Yue Lan <lanyue.kylinos.cn>  Mon, 29 Apr 2024 16:22:41 +0800
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 29 Apr 2024 16:22:41 +0800
 
 peony (4.10.0.5-ok1~0428.1) nile; urgency=medium
 
