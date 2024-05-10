@@ -912,9 +912,10 @@ void MainWindow::createFolderOperation()
             return;
         auto opInfo = op->getOperationInfo();
         //auto targetUri = opInfo->target();
-        this->getCurrentPage()->getView()->clearIndexWidget();
+
         //set a short time delay, fix bug#86070, select two folders
-        QTimer::singleShot(10, this, [=](){
+        QTimer::singleShot(300, this, [=](){
+            this->getCurrentPage()->getView()->clearIndexWidget();
             this->editUri(opInfo->target());
         });
     }, Qt::BlockingQueuedConnection);

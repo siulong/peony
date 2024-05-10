@@ -1478,4 +1478,5 @@ void ListView2::clearIndexWidget()
         m_view->setIndexWidget(index, nullptr);
         m_view->closePersistentEditor(index);
     }
+    m_view->selectionModel()->clearSelection();
 }
