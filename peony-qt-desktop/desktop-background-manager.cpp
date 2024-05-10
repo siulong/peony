@@ -33,6 +33,7 @@
 #include <QDBusReply>
 #include <QFile>
 #include <QProcess>
+#include <QTimer>
 #include <global-settings.h>
 
 #include <gio/gio.h>
@@ -63,6 +64,10 @@ DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(pa
             m_animation->start();
         }
         updateScreens();
+        QTimer::singleShot(200, this, [=](){
+             m_animationRunning = false;
+        });
+
     });
 
     initGSettings();
@@ -93,6 +98,7 @@ void DesktopBackgroundManager::initGSettings()
     setBackground();
     if (m_backgroundSettings) {
         connect(m_backgroundSettings, &QGSettings::changed, this, [=](const QString &key){
+           m_animationRunning = true;
            if (key == "pictureFilename") {
                 m_current_bg_path = m_backgroundSettings->get("pictureFilename").toString();
                 setAccountBackground();
@@ -320,4 +326,9 @@ QPixmap DesktopBackgroundManager::getBackPixmap() const
 const QString &DesktopBackgroundManager::getBackgroundOption()
 {
     return m_backgroundOption;
+}
+
+bool DesktopBackgroundManager::AnimationRunning()
+{
+    return m_animationRunning;
 }
