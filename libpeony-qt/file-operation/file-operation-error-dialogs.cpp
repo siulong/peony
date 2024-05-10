@@ -255,14 +255,28 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
 
     int ret = exec();
 
+    if (QDialog::Rejected == ret || m_error->errorCode == G_IO_ERROR_CANCELLED) {
+        error.respCode = Cancel;
+        return;
+    }
+
+    // Delete file to the Recycle Bin error, prompt whether to force deletion
+    if (m_error->op == FileOpTrash && m_error->errorCode == G_IO_ERROR_FILENAME_TOO_LONG) {
+        error.respCode = Force;
+        return;
+    }
+
+    if (m_do_same) {
+        error.respCode = IgnoreAll;
+        return;
+    }
+
     switch (m_error->errorCode) {
     case G_IO_ERROR_BUSY:
     case G_IO_ERROR_PENDING:
     case G_IO_ERROR_NO_SPACE:
-    case G_IO_ERROR_CANCELLED:
     case G_IO_ERROR_INVALID_DATA:
     case G_IO_ERROR_NOT_SUPPORTED:
-    case G_IO_ERROR_PERMISSION_DENIED:
     case G_IO_ERROR_CANT_CREATE_BACKUP:
     case G_IO_ERROR_TOO_MANY_OPEN_FILES:
         error.respCode = Cancel;
@@ -273,15 +287,6 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
     default:
         error.respCode = IgnoreOne;
         break;
-    }
-
-    // Delete file to the Recycle Bin error, prompt whether to force deletion
-    if (QDialog::Accepted == ret && m_error->op == FileOpTrash && m_error->errorCode == G_IO_ERROR_FILENAME_TOO_LONG) {
-        error.respCode = Force;
-    }
-
-    if (QDialog::Rejected == ret) {
-        error.respCode = Cancel;
     }
 }
 
