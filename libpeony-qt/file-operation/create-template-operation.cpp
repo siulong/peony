@@ -35,7 +35,7 @@
 
 using namespace Peony;
 
-#define TEMPLATE_DIR "file://" + GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString()
+#define TEMPLATE_DIR "file://" + QString(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES)) + "/"
 
 void CreateTemplateOperation::handleDuplicate(const QString &uri)
 {
