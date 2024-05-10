@@ -1,0 +1,21 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 10 May 2024 15:09:39 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/create-template-operation.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libpeony-qt/file-operation/create-template-operation.cpp b/libpeony-qt/file-operation/create-template-operation.cpp
+index 128aa7c..3b92284 100644
+--- a/libpeony-qt/file-operation/create-template-operation.cpp
++++ b/libpeony-qt/file-operation/create-template-operation.cpp
+@@ -35,7 +35,7 @@
+ 
+ using namespace Peony;
+ 
+-#define TEMPLATE_DIR "file://" + GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString()
++#define TEMPLATE_DIR "file://" + QString(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES)) + "/"
+ 
+ void CreateTemplateOperation::handleDuplicate(const QString &uri)
+ {
