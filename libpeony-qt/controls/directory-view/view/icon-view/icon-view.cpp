@@ -813,6 +813,11 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         auto currentSelections = selection.indexes();
 
         for (auto index : deselection.indexes()) {
+            /* 解决：旧widget未及时delete还能接收鼠标事件，导致图标状态不对也选不中；link to bug#225660. */
+            auto widget = this->indexWidget(index);
+            if (widget) {
+                widget->hide();
+            }//end
             this->setIndexWidget(index, nullptr);
         }
 
