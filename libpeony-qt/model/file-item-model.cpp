@@ -278,6 +278,12 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole: {
             //fix bug#53504, desktop files not show same name issue
             QString displayName = item->m_info->displayName();
+
+            if ("computer:///root.link" == item->m_info->uri()) {
+                displayName = tr("System Disk");
+                return QVariant(displayName);
+            }
+
             if (item->m_info->isDesktopFile())
             {
                 displayName = FileUtils::handleDesktopFileName(item->m_info->uri(), item->m_info->displayName());
