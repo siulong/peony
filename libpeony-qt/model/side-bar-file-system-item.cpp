@@ -319,9 +319,10 @@ void SideBarFileSystemItem::slot_volumeDeviceRemove(const QString &removeDevice)
 
 void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Volume &volume)
 {   
+    qDebug()<<__func__<<__LINE__<<volume.device()<<volume.mountPoint()<<volume.getHidden()<<volume.icon();
     QString device = volume.device();
     QString mountPoint = volume.mountPoint();
-    if(mountPoint.isEmpty())
+    if(device.isEmpty() || mountPoint.isEmpty())
         return;
 
     //过滤smb子项挂载后会更新computer:///ukui-data-volume，导致数据不准确
@@ -341,6 +342,7 @@ void SideBarFileSystemItem::slot_volumeDeviceMount(const Experimental_Peony::Vol
                 item->m_unmountable = false;
             }
             item->m_iconName = volume.icon();
+
             /* 更新uri,为了枚举操作 */
             if(device.startsWith("/dev/bus/usb"))/* 手机设备(mtp、gphoto2)的uri */
                 item->m_uri = "computer:///" + volume.name() + ".volume";
@@ -396,12 +398,11 @@ void SideBarFileSystemItem::slot_volumeDeviceUnmount(const QString &unmountDevic
 void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Volume &updateDevice, QString property)
 {
     qDebug()<<__func__<<__LINE__<<updateDevice.device();
-    QString device;
     if(property != "name")
         return;
 
     auto gvolume = updateDevice.getGVolume();
-    device = updateDevice.device();
+    QString device = updateDevice.device();
     for(auto& item:*m_children){
         if("file:///" == item->uri() || "computer:///ukui-data-volume" == item->uri())/* hotfix bug#125095 打开文件管理器后，插入U盘，侧边栏中文件系统消失 */
             continue;
@@ -415,7 +416,8 @@ void SideBarFileSystemItem::slot_volumeDeviceUpdate(const Experimental_Peony::Vo
             item->m_displayName = updateDevice.name() + "(" + device + ")";
             item->m_hidden = updateDevice.getHidden();
             item->m_iconName = updateDevice.icon();
-            qDebug()<<__func__<<__LINE__<<item->m_device<<item->m_displayName<<item->m_hidden;
+            qDebug()<<__func__<<__LINE__<<item->m_device<<item->m_displayName<<item->m_hidden<<item->m_iconName;
+
             // 更新mount信息, 加密分区改变时需要
             g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);
             if (gmount) {

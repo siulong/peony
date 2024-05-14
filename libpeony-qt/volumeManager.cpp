@@ -1625,27 +1625,30 @@ void Mount::initMountInfo(){
 }
 
 void Mount::queryDeviceByMountpoint(){
-    const char* device;
-    char* mountPoint;
     if(m_mountPoint.isEmpty())
         return;
 
     //处理uri转码
     if(m_mountPoint.startsWith("file:///")){
-        mountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
+        char* mountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
         m_mountPoint = mountPoint;
         g_free(mountPoint);
     }
-    //mountPoint = m_mountPoint.toUtf8().constData();
-    //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
-    m_entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
-    if(!m_entry)
-        m_entry = g_unix_mount_for(m_mountPoint.toUtf8().constData(),nullptr);
-    if(!m_entry)
+
+    qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
+    GUnixMountEntry* entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
+    if(!entry)
+        entry = g_unix_mount_for(m_mountPoint.toUtf8().constData(),nullptr);
+    if(!entry)
         return;
-    //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
-    device = g_unix_mount_get_device_path(m_entry);
-    m_device = device;
+
+    if(g_unix_mount_get_mount_path(entry) == m_mountPoint){
+        /* GUnixMountEntry 获取的mountpath与m_mountPoint相同时，由GUnixMountEntry获取到的device才正确；linkto bug#226673 */
+        const char* device = g_unix_mount_get_device_path(entry);
+        m_device = device;
+        g_unix_mount_free(entry);
+        qDebug()<<__func__<<__LINE__<<m_mountPoint<<m_device<<endl;
+    }
 }
 
 /*==================Volume property==============*/
