@@ -279,6 +279,9 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if(info->uri().startsWith("favorite://")){/* 快速访问须特殊处理 */
         info = FileInfo::fromUri(FileUtils::getEncodedUri(FileUtils::getTargetUri(info->uri())));
     }
+    if (info->uri().startsWith("filesafe:///")) {
+        opt.icon = qvariant_cast<QIcon>(m_index.data(Qt::DecorationRole));
+    }
     auto colors = info->getColors();
     auto lineSpacing = opt.fontMetrics.lineSpacing();
     int yoffset = 0;
