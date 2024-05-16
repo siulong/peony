@@ -340,6 +340,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
+    int topLeftX = rect.x() + 10 + emblemOffset;
+    int topLeftY = rect.y() + 10 + emblemOffset;
+    int bottomRightX = rect.right() - 30 - emblemOffset;
+    int bottomRightY = opt.rect.y() + opt.decorationSize.height() - 10 - emblemOffset;
+    int emblemsSize = 20;
 
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -350,7 +356,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         //qDebug()<<info->symbolicIconName();
         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
-        icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(painter, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
     }
 
     if(view->isEnableMultiSelect()) {
@@ -369,12 +375,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         if (!info->canRead()) {
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-unreadable");
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+            icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize);
         } else if (!info->canWrite()/* && !info->canExecute()*/) {
             //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-readonly");
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+            icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize);
         }
     }
 
@@ -391,19 +397,19 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             int pos = emblemPoses.takeFirst();
             switch (pos) {
             case 1: {
-                icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 2: {
-                icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 3: {
-                icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 4: {
-                icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             default:

@@ -34,6 +34,7 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QTimer>
 #include <QPushButton>
@@ -211,11 +212,13 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //add link and read only icon support
     if (index.column() == 0) {
+        int emblemOffset = 4 - GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 5;
+        int bottomOff = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 5;
         auto rect = view->visualRect(index);
         auto iconSize = view->iconSize();
         auto size = iconSize.width()/2;
         bool isSymbolicLink = info->isSymbolLink();
-        auto loc_x = rect.x() + iconSize.width() - size/2;
+        auto loc_x = rect.x() + emblemOffset;
         auto loc_y = rect.y();
         auto iconSizeHeight = iconSize.height();
         //paint symbolic link emblems
@@ -225,20 +228,18 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             //qDebug()<<info->symbolicIconName();
             //icon.paint(painter, loc_x, loc_y, size, size);
             //Adjust link emblem to topLeft.link story#8354
-            loc_x = rect.x();
             //Special calculation emblems coordinates
             if(iconSize.height() < 28){
                 iconSizeHeight = 28;
             }
             painter->save();
             painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
+            icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - bottomOff - emblemOffset, size, size, Qt::AlignCenter);
             painter->restore();
         }
 
         //paint access emblems
         //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
-        loc_x = rect.x();
         if (info->uri().startsWith("file:")) {
             if (!info->canRead()) {
                 emblemPoses.removeOne(1);
@@ -258,7 +259,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
 
-    // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
+        // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
         auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
 
         //Special calculation emblems coordinates
@@ -268,7 +269,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         for (auto extensionsEmblem : extensionsEmblems) {
             if (emblemPoses.isEmpty()) {
-               break;
+                break;
             }
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
@@ -278,29 +279,28 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
-                   icon.paint(painter, loc_x, loc_y, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x, loc_y + emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 2: {
-                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 3: {
-                   icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - bottomOff - emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 4: {
-                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + iconSizeHeight - size/2 - bottomOff - emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 default:
-                   break;
+                    break;
                 }
                 painter->restore();
             }
         }
     }
-
 }
 
 QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -41,6 +41,7 @@
 #include "file-item.h"
 #include "file-utils.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QDebug>
 #include <QTextLayout>
@@ -363,6 +364,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
+    int topLeftX = rect().x() + 10 + emblemOffset;
+    int topLeftY = rect().y() + 10 + emblemOffset;
+    int bottomRightX = rect().right() - 30 - emblemOffset;
+    int bottomRightY = m_delegate->getView()->iconSize().height() - 10 - emblemOffset;
+    int emblemsSize = 20;
 
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
@@ -373,7 +380,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //Adjust link emblem to topLeft.link story#8354
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(&p, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
         p.restore();
     }
     if(view->isEnableMultiSelect())
@@ -388,13 +395,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         return;
     }
 
-    auto rect = this->rect();
     if (!info->canRead()) {
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        icon.paint(&p, topLeftX, topLeftY, 20, 20);
         p.restore();
     } else if (!info->canWrite()/* && !info->canExecute()*/) {
         //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
@@ -402,47 +408,46 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         QIcon icon = QIcon::fromTheme("emblem-readonly");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize);
         p.restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
-        auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
+    auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
 
-        for (auto extensionsEmblem : extensionsEmblems) {
-            if (emblemPoses.isEmpty()) {
-                break;
-            }
-
-            QIcon icon = QIcon::fromTheme(extensionsEmblem);
-            if (!icon.isNull()) {
-                p.save();
-                p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-                int pos = emblemPoses.takeFirst();
-                switch (pos) {
-                case 1: {
-                    icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 2: {
-                    icon.paint(&p, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 3: {
-                    icon.paint(&p, rect.x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 4: {
-                    icon.paint(&p, rect.right() - 30, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                default:
-                    break;
-                }
-                p.restore();
-            }
+    for (auto extensionsEmblem : extensionsEmblems) {
+        if (emblemPoses.isEmpty()) {
+            break;
         }
 
+        QIcon icon = QIcon::fromTheme(extensionsEmblem);
+        if (!icon.isNull()) {
+            p.save();
+            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            int pos = emblemPoses.takeFirst();
+            switch (pos) {
+            case 1: {
+                icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 2: {
+                icon.paint(&p, bottomRightX, topLeftX, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 3: {
+                icon.paint(&p, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 4: {
+                icon.paint(&p, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            default:
+                break;
+            }
+            p.restore();
+        }
+    }
 }
 
 void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
