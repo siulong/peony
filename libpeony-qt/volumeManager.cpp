@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <glib.h>
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
@@ -80,7 +81,6 @@ QString getDeviceUUID(const char *device) {
 static bool driveHasMedia(GDrive *gdrive){
     /* 此方式替代g_drive_has_media只对evice.startsWith("/dev/sd")生效！Linkto Bug#205118插入拓展坞后文件管理器侧边栏多出了两个移动设备 */
     g_autofree gchar* unix_device = g_drive_get_identifier(gdrive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
-    g_object_unref(gdrive);
     QString device = unix_device;
     int fd = open(device.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
     if(-1==fd){/* open失败 */
@@ -124,21 +124,19 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     QString uri;
     for (auto fileInfo : e.getChildren()) {
         QString uriStr = fileInfo.get()->uri();
-        GFile* gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
+        g_autoptr(GFile) gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
         GError *err = nullptr;
         QString device;
         QString targetUri;
-        GFileInfo* gFileInfo = g_file_query_info(gFile,
-                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
-                                       G_FILE_QUERY_INFO_NONE,
-                                       g_cancellable_new(),
-                                       &err);
+        g_autoptr(GFileInfo) gFileInfo = g_file_query_info(gFile,
+                                                           "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                                           G_FILE_QUERY_INFO_NONE,
+                                                           g_cancellable_new(),
+                                                           &err);
 
         if (err) {
             qDebug()<<err->code<<err->message;
             g_error_free(err);
-            g_object_unref(gFile);
-            g_object_unref(gFileInfo);
             continue;
         }else{
             if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)) {
@@ -148,8 +146,6 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
                 device = g_file_info_get_attribute_string(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
             }
         }
-        g_object_unref(gFile);
-        g_object_unref(gFileInfo);
 
         /* 由volume的unixDevice获取target uri */
         if(device==unixDevice){
@@ -356,8 +352,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
     bool itemIsExisted = false;
     int volumeCount = pThis->m_volumeList->count();
     Q_UNUSED(volumeCount)
-    GVolume* volume = (GVolume*)g_object_ref(gvolume);
-    Volume *addItem = new Volume(volume);
+    Volume *addItem = new Volume(gvolume);
 
     itemIsExisted = pThis->m_volumeList->contains(addItem->device());
     qDebug()<<__func__<<__LINE__<<addItem->device()<<itemIsExisted<<endl;
@@ -482,7 +477,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         return;
     }
 
-    GMount* gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
+    g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
     phoneFlag = device.contains("/dev/bus");
     blankCDFlag = device.contains("/dev/sr") && pThis->m_volumeList->value(device)->mountPoint().isEmpty();
     phoneOrCD = device.contains("/dev/bus") || device.contains("/dev/sr");
@@ -491,7 +486,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
     if(gmount){
         if(!phoneFlag && !blankCDFlag){
             //情景5、手机的mtp与gphoto2状态相互转换时只能保留一个
-            g_object_unref(gmount);
             return;
         }
         //情景2、处于挂载状态的设备在打开gparted瞬间需要保留该设备 更新设备的name属性?
@@ -499,8 +493,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         //Q_EMIT pThis->volumeUpdate();
     }
     qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
-    if(gmount)
-        g_object_unref(gmount);
 
     if (blankCDFlag)
         return;
@@ -524,7 +516,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
     //情景2、直接暴力拔出操作 (不区分有无gparted进程)
     //上述2种情境下GMount*只能获取到设备的挂载点，无法获取设备路径，因此尝试采用挂载点区分设备?
     Volume* volumeItem;
-    Mount* mountItem = new Mount((GMount*)g_object_ref(gmount));
+    Mount* mountItem = new Mount(gmount);
     QString mountPoint = mountItem->mountPoint();
 
     if(mountItem->mountPoint().startsWith("smb://")){/* 远程服务器特殊处理 */
@@ -574,10 +566,9 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
     //情景2、未打开gparted时用户手动从卸载状态转为挂载状态
     //情景3、打开gparted后->插入新设备不拔出->关闭gparted 此时新设备会自动挂载
     //情景4、打开gparted后->卸载设备a(此时前端不应该显示a)并且不拔出->关闭gparted->此时设备a需要重新显示
-    GMount* mount = (GMount*)g_object_ref(gmount);
-    Mount* mountItem = new Mount(mount);
+    Mount* mountItem = new Mount(gmount);
     QString device = mountItem->device();
-    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(gmount);
     if (gvolume) {
         for (auto volume : pThis->m_volumeList->values()) {
             if (volume->getGVolume() == gvolume) {
@@ -625,7 +616,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     if(!pThis->m_volumeList)
         return;
     /* 获取mountPoint 挂载点 */
-     GFile* rootFile = g_mount_get_root(mount);
+    g_autoptr (GFile) rootFile = g_mount_get_root(mount);
     if(!rootFile)
         return;
 
@@ -653,7 +644,6 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     }
 
     delete mountItem;
-    g_object_unref(rootFile);
 }
 
 void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
@@ -662,8 +652,7 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
     if(!pThis->m_volumeList)
         return;
 
-    GMount* gMount = (GMount*)g_object_ref(gmount);
-    GVolume* gVolume = (GVolume*)g_object_ref(g_mount_get_volume(gMount));
+    g_autoptr (GVolume) gVolume = g_mount_get_volume(gmount);
     Volume* volume = new Volume(gVolume);
     if(pThis->m_volumeList->contains(volume->device())){
         {
@@ -801,8 +790,9 @@ QList<GVolume*> VolumeManager::allGVolumes(){
         volumeList.push_back(gvolume);
     }
 
+    // 需要在此方法调用处释放GVolume实例
     if(volumes)
-        g_list_free(volumes);
+        g_list_free (volumes);
 
     return volumeList;
 }
@@ -824,6 +814,7 @@ QList<Volume*> VolumeManager::allVolumes()
         Volume* volumeItem = new Volume(gVolumes.at(i));
         //插入list
         volumes.append(volumeItem);
+        g_object_unref(gVolumes.at(i));
     }
     //qDebug()<<"--------------------------->>>>"<<endl;
 
@@ -987,8 +978,9 @@ QList<GMount*> VolumeManager::allGMounts(){
         mountList.push_back(gmount);
     }
 
+    // 需要在此方法调用处释放GMount实例
     if(mounts)
-        g_list_free(mounts);
+        g_list_free (mounts);
 
     return mountList;
 }
@@ -1009,6 +1001,7 @@ QList<Mount*> VolumeManager::allMounts(){
             //情景：查询设备时数据线连接的手机处于 "mtp"或"gphoto"状态
             //     此时有一个没有dev设备的GMount*不应该保存
             delete mountItem;
+            g_object_unref(gMounts.at(i));
             continue;
         }
         mounts.append(mountItem);
@@ -1032,8 +1025,9 @@ QList<GDrive *> VolumeManager::allGDrives()
         gdriveList.push_back(gdrive);
     }
 
+    // 需要在此方法调用处释放GDrive实例
     if(gdrives)
-        g_list_free(gdrives);
+        g_list_free (gdrives);
 
     return gdriveList;
 }
@@ -1097,6 +1091,8 @@ void Volume::initVolumeInfo()
 {
     if(!m_volume)   //如果m_volume为nullptr，可能会是一种用Mount来填充Volume数据的方式
         return;
+
+    m_volume = static_cast<GVolume *>(g_object_ref(m_volume));
 
     m_gMount = nullptr;
     m_canUnmount = false;
@@ -1378,6 +1374,8 @@ void Drive::initDriveInfo(){
     if(!m_drive)
         return;
 
+    m_drive = static_cast<GDrive *>(g_object_ref(m_drive));
+
     g_autofree gchar* unix_device = g_drive_get_identifier(m_drive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
     m_device = unix_device;
     m_canEject = g_drive_can_eject(m_drive);
@@ -1530,7 +1528,7 @@ void Drive::setMountPath(const QString &mountPath)
 }
 
 Mount::Mount(GMount* gmount) {
-    m_mount = static_cast<GMount *>(g_object_ref(gmount));
+    m_mount = gmount;
     initMountInfo();
 }
 
@@ -1550,6 +1548,7 @@ void Mount::initMountInfo(){
     if(!m_mount)
         return;
 
+    m_mount = static_cast<GMount *>(g_object_ref(m_mount));
     //1、mountPoint 挂载点
     rootFile = g_mount_get_root(m_mount);
     if(rootFile){

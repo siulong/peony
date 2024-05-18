@@ -300,8 +300,7 @@ std::shared_ptr<Drive> VolumeManager::getDriveFromSystemByPath(const QString &un
        }
    }
 
-   g_list_foreach(allVolumes,(GFunc)g_object_unref,NULL);
-   g_list_free(allVolumes);
+   g_list_free_full (allVolumes, g_object_unref);
 
    if(gdrive)
       tmp = std::make_shared<Drive>(gdrive,true);
@@ -320,8 +319,10 @@ const char* VolumeManager::getUnixDeviceFileFromMountPoint(const char* mountPoin
 
     const char *deviceFilePath = NULL;
     GUnixMountEntry* mountEntry = g_unix_mount_for(mountPoint,NULL);
-    if(mountEntry)
+    if(mountEntry) {
         deviceFilePath = g_unix_mount_get_device_path(mountEntry);
+        g_unix_mount_free (mountEntry);
+    }
 
     return deviceFilePath;
 }
