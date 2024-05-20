@@ -87,6 +87,7 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 int main(int argc, char *argv[])
 {
     //qputenv("QT_QPA_PLATFORM", "wayland");
+    qunsetenv("SESSION_MANAGER");
     PeonyDesktopApplication::peony_desktop_start_time = QDateTime::currentMSecsSinceEpoch();
 
     QString xdgUserDirsUri = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/user-dirs.dirs";
