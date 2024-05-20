@@ -254,6 +254,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 auto curUri = item->uri();
                 if (item->uri() == "computer:///ukui-data-volume") {
                     curUri = "file:///data";
+
+                    //story 28545, improve data block solution, when has no user file in /data, go to usershare
+                    //fix bug#239232, open in side bar menu not jump to usershare issue
+                    if (Peony::FileUtils::isFileExsit("file:///data/usershare") &&
+                            ! Peony::FileUtils::isDataBlockHasUserFile())
+                        curUri = "file:///data/usershare";
                 }
 
                 actionList << menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
