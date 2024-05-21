@@ -176,6 +176,8 @@ public:
     bool isExist(const QString &key);
     bool initDateFormatDBus();
     QString getProjectName();
+    bool isDesktopStartUp() const;
+    void setDesktopStartUp(bool startUp);/* 桌面启动和结束时使用，谨慎调用 */
 
     bool getShowCreateTime() const;
 
@@ -242,6 +244,7 @@ private:
     QDBusInterface*             mDbusDateServer = nullptr;
     bool m_showCreateTime = false;
     bool m_showRelativeTime = false;
+    bool                        m_isDesktopStartUp = false; /* 桌面进程启动中 */
 };
 
 }

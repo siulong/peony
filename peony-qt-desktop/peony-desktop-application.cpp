@@ -207,6 +207,7 @@ QRect caculateVirtualDesktopGeometry() {
 
 PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const QString &applicationName) : QtSingleApplication (applicationName, argc, argv)
 {
+    GlobalSettings::getInstance()->setDesktopStartUp(true);
     // fix #172774
     QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths()<<"/usr/share/pixmaps");
 
@@ -261,6 +262,32 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
 
     if (!this->isRunning()) {
         qDebug()<<"isPrimary screen";
+        getDesktopWindowManager();
+
+        //check if is great wall device and init settings
+        connect(desktopManger, &DesktopWindowManager::emitFinish, this , [=](){
+            if (g_emitFinish)
+                return;
+            g_emitFinish = true;
+            GlobalSettings::getInstance()->setDesktopStartUp(false);/* 桌面启动结束 */
+            QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
+                                                                  "/org/gnome/SessionManager",
+                                                                  "org.gnome.SessionManager",
+                                                                  "startupfinished");
+            QList<QVariant> args;
+            args.append("peony-qt-desktop");
+            args.append("startupfinished");
+            message.setArguments(args);
+            QDBusConnection::sessionBus().send(message);
+
+            greatWallDeviceInit();
+            QtConcurrent::run([=]() {
+                /* 桌面启动之后再挂载本地分区和监听volumes变化 */
+                autoMountLocalDriver();
+                monitoringVolumesChanges();//end
+            });
+        });
+
         connect(this, &QtSingleApplication::messageReceived, [=](QString msg) {
             this->parseCmd(msg, true);
         });
@@ -292,39 +319,41 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
         connect(trayIcon, &QSystemTrayIcon::messageClicked, trayIcon, &QSystemTrayIcon::hide);
         */
 
-        // auto mount local driver
-        qDebug()<<"auto mount local volumes";
-        GVolumeMonitor* vm = g_volume_monitor_get ();
-        if (vm) {
-            GList* drives = g_volume_monitor_get_connected_drives(vm);
-            if (drives) {
-                for (GList* i = drives; nullptr != i; i = i->next) {
-                    GDrive * d = static_cast<GDrive*>(i->data);
-                    if (G_IS_DRIVE(d)) {
-                        GList* volumes = g_drive_get_volumes(d);
-                        if (volumes) {
-                            for (GList* j = volumes; nullptr != j; j = j->next) {
-                                GVolume* v = static_cast<GVolume*>(j->data);
-                                if (G_IS_VOLUME(v)) {
-                                    g_autofree char* uuid = g_volume_get_uuid(v);
-                                    if (0 != g_strcmp0("2691-6AB8", uuid)) {
-                                        g_volume_mount(v, G_MOUNT_MOUNT_NONE, nullptr, nullptr, volume_mount_cb, nullptr);
-                                    }
-                                    g_object_unref(v);
-                                }
-                            }
-                            g_list_free(volumes);
-                        }
-                        g_object_unref(d);
-                    }
-                }
-                g_list_free(drives);
-            }
-        }
-        g_object_unref(vm);
+//        if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+//            // auto mount local driver
+//            qDebug()<<"auto mount local volumes";
+//            GVolumeMonitor* vm = g_volume_monitor_get ();
+//            if (vm) {
+//                GList* drives = g_volume_monitor_get_connected_drives(vm);
+//                if (drives) {
+//                    for (GList* i = drives; nullptr != i; i = i->next) {
+//                        GDrive * d = static_cast<GDrive*>(i->data);
+//                        if (G_IS_DRIVE(d)) {
+//                            GList* volumes = g_drive_get_volumes(d);
+//                            if (volumes) {
+//                                for (GList* j = volumes; nullptr != j; j = j->next) {
+//                                    GVolume* v = static_cast<GVolume*>(j->data);
+//                                    if (G_IS_VOLUME(v)) {
+//                                        g_autofree char* uuid = g_volume_get_uuid(v);
+//                                        if (0 != g_strcmp0("2691-6AB8", uuid)) {
+//                                            g_volume_mount(v, G_MOUNT_MOUNT_NONE, nullptr, nullptr, volume_mount_cb, nullptr);
+//                                        }
+//                                        g_object_unref(v);
+//                                    }
+//                                }
+//                                g_list_free(volumes);
+//                            }
+//                            g_object_unref(d);
+//                        }
+//                    }
+//                    g_list_free(drives);
+//                }
+//            }
+//            g_object_unref(vm);
 
-        g_signal_connect (g_volume_monitor_get(), "mount-added", G_CALLBACK(mount_added_cb), nullptr);
-        g_signal_connect (g_volume_monitor_get(), "mount-changed", G_CALLBACK(mount_added_cb), nullptr);
+//            g_signal_connect (g_volume_monitor_get(), "mount-added", G_CALLBACK(mount_added_cb), nullptr);
+//            g_signal_connect (g_volume_monitor_get(), "mount-changed", G_CALLBACK(mount_added_cb), nullptr);
+//        }
 
         // enumerat network:///
         QThread* t = QThread::create ([=] () {
@@ -348,36 +377,20 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
     auto message = this->arguments().join(' ').toUtf8();
     parseCmd(message, !isRunning());
 
-    //check if is great wall device and init settings
-    connect(this, &PeonyDesktopApplication::emitFinish, this , [=](){
-        if (g_emitFinish)
-            return;
-        g_emitFinish = true;
-        QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
-                                                              "/org/gnome/SessionManager",
-                                                              "org.gnome.SessionManager",
-                                                              "startupfinished");
-        QList<QVariant> args;
-        args.append("peony-qt-desktop");
-        args.append("startupfinished");
-        message.setArguments(args);
-        QDBusConnection::sessionBus().send(message);
+//    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+//        qDebug()<<"monitor volumes change";
+//        auto volumeManager = Peony::VolumeManager::getInstance();
+//        connect(volumeManager,&Peony::VolumeManager::mountAdded,this,[=](const std::shared_ptr<Peony::Mount> &mount){
+//            // auto open dir for inserted dvd.
+//            GMount* newMount = (GMount*) g_object_ref(mount->getGMount());
+//            //special Volumn of 839 M upgrade part can not mount
+//            if (mount->uuid() != "2691-6AB8")
+//                g_mount_guess_content_type(newMount, FALSE, NULL, guessContentTypeCallback, NULL);
+//            // mount
+//        });
+//        connect(volumeManager,&Peony::VolumeManager::volumeRemoved,this,&PeonyDesktopApplication::volumeRemovedProcess);
+//    }
 
-        greatWallDeviceInit();
-    });
-
-    qDebug()<<"monitor volumes change";
-    auto volumeManager = Peony::VolumeManager::getInstance();
-    connect(volumeManager,&Peony::VolumeManager::mountAdded,this,[=](const std::shared_ptr<Peony::Mount> &mount){
-        // auto open dir for inserted dvd.
-        GMount* newMount = (GMount*) g_object_ref(mount->getGMount());
-        //special Volumn of 839 M upgrade part can not mount
-        if (mount->uuid() != "2691-6AB8")
-            g_mount_guess_content_type(newMount, FALSE, NULL, guessContentTypeCallback, NULL);
-
-        // mount
-    });
-    connect(volumeManager,&Peony::VolumeManager::volumeRemoved,this,&PeonyDesktopApplication::volumeRemovedProcess);
     // 获取max_size初始值
     //caculateVirtualDesktopGeometry();
     qDebug()<<"peony desktop application constructor end";
@@ -705,6 +718,58 @@ void PeonyDesktopApplication::clearIcons(const QStringList &args)
                 GlobalSettings::getInstance()->setValue(DISPLAY_STANDARD_ICONS, true);
         }
     }
+}
+
+void PeonyDesktopApplication::autoMountLocalDriver()
+{
+    // auto mount local driver
+    qDebug()<<"auto mount local volumes";
+    GVolumeMonitor* vm = g_volume_monitor_get ();
+    if (vm) {
+        GList* drives = g_volume_monitor_get_connected_drives(vm);
+        if (drives) {
+            for (GList* i = drives; nullptr != i; i = i->next) {
+                GDrive * d = static_cast<GDrive*>(i->data);
+                if (G_IS_DRIVE(d)) {
+                    GList* volumes = g_drive_get_volumes(d);
+                    if (volumes) {
+                        for (GList* j = volumes; nullptr != j; j = j->next) {
+                            GVolume* v = static_cast<GVolume*>(j->data);
+                            if (G_IS_VOLUME(v)) {
+                                g_autofree char* uuid = g_volume_get_uuid(v);
+                                if (0 != g_strcmp0("2691-6AB8", uuid)) {
+                                    g_volume_mount(v, G_MOUNT_MOUNT_NONE, nullptr, nullptr, volume_mount_cb, nullptr);
+                                }
+                                g_object_unref(v);
+                            }
+                        }
+                        g_list_free(volumes);
+                    }
+                    g_object_unref(d);
+                }
+            }
+            g_list_free(drives);
+        }
+    }
+    g_object_unref(vm);
+
+    g_signal_connect (g_volume_monitor_get(), "mount-added", G_CALLBACK(mount_added_cb), nullptr);
+    g_signal_connect (g_volume_monitor_get(), "mount-changed", G_CALLBACK(mount_added_cb), nullptr);
+}
+
+void PeonyDesktopApplication::monitoringVolumesChanges()
+{
+    qDebug()<<"monitor volumes change";
+    auto volumeManager = Peony::VolumeManager::getInstance();
+    connect(volumeManager,&Peony::VolumeManager::mountAdded,this,[=](const std::shared_ptr<Peony::Mount> &mount){
+        // auto open dir for inserted dvd.
+        GMount* newMount = (GMount*) g_object_ref(mount->getGMount());
+        //special Volumn of 839 M upgrade part can not mount
+        if (mount->uuid() != "2691-6AB8")
+            g_mount_guess_content_type(newMount, FALSE, NULL, guessContentTypeCallback, NULL);
+        // mount
+    });
+    connect(volumeManager,&Peony::VolumeManager::volumeRemoved,this,&PeonyDesktopApplication::volumeRemovedProcess);
 }
 
 void PeonyDesktopApplication::addWindow(QScreen *screen, bool checkPrimay)

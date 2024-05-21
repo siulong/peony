@@ -20,14 +20,15 @@
  *
  */
 #include <gio/gunixmounts.h>
-#include "file-info.h"
 
+#include "file-info.h"
 #include "file-info-manager.h"
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "file-utils.h"
 #include "thumbnail-manager.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QUrl>
 #include <QtDBus/QDBusConnection>
@@ -296,18 +297,23 @@ const QString FileInfo::getFinalDisplayName()
     if (isEmptyInfo())
         return nullptr;
 
-    bool isMountPoint;
-    QString unixDevice,deviceName;
-
-    unixDevice = unixDeviceFile();
-    isMountPoint = FileUtils::isMountPoint(m_uri);
-
     if(m_uri == "file:///DATA"
             || m_uri == "file:///data"
             || m_target_uri == "file:///data")
     {
         return tr("data");
     }
+    if(GlobalSettings::getInstance()->isDesktopStartUp()){
+        return m_display_name;
+    }
+
+    bool isMountPoint;
+    QString unixDevice,deviceName;
+
+    unixDevice = unixDeviceFile();
+    isMountPoint = FileUtils::isMountPoint(m_uri);
+
+
 
     if((nullptr != m_display_name)
             && (!isMountPoint

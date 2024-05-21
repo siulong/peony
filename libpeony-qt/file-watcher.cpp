@@ -24,13 +24,14 @@
 #include "gerror-wrapper.h"
 
 #include "file-label-model.h"
-
-#include <QUrl>
 #include "file-utils.h"
 #include "file-operation-manager.h"
 #include "file-info.h"
 #include "volume-manager.h"
 #include "volumeManager.h"
+#include "global-settings.h"
+
+#include <QUrl>
 #include <QDebug>
 #include <QStandardPaths>
 
@@ -150,26 +151,30 @@ void FileWatcher::startMonitor()
         }
     });
 
-    connect(VolumeManager::getInstance(), &VolumeManager::fileUnmounted, this, [=](const QString &uri){
-        auto fixedUri = uri;
-        if (m_uri == uri || m_target_uri == uri || m_uri + "/" == fixedUri) {
-            Q_EMIT directoryUnmounted(uri);
-        }
-    });
-    connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, [=](const QString &uri){
-        /* volume卸载完成跳转到计算机目录(只有进入volume内部目录，卸载时才跳转) */
-        auto fixedUri = uri;
-        if (m_uri.contains(uri)||m_target_uri.contains(uri)|| m_uri + "/" == fixedUri) {
-            Q_EMIT directoryUnmounted(uri);
-        }
-    });
+    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+        connect(VolumeManager::getInstance(), &VolumeManager::fileUnmounted, this, [=](const QString &uri){
+            auto fixedUri = uri;
+            if (m_uri == uri || m_target_uri == uri || m_uri + "/" == fixedUri) {
+                Q_EMIT directoryUnmounted(uri);
+            }
+        });
+        connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, [=](const QString &uri){
+            /* volume卸载完成跳转到计算机目录(只有进入volume内部目录，卸载时才跳转) */
+            auto fixedUri = uri;
+            if (m_uri.contains(uri)||m_target_uri.contains(uri)|| m_uri + "/" == fixedUri) {
+                Q_EMIT directoryUnmounted(uri);
+            }
+        });
+    }
 }
 
 void FileWatcher::stopMonitor()
 {
     disconnect(FileLabelModel::getGlobalModel(), &FileLabelModel::fileLabelChanged, this, 0);
-    disconnect(VolumeManager::getInstance(), &VolumeManager::fileUnmounted, this, 0);
-    disconnect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, 0);
+    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+        disconnect(VolumeManager::getInstance(), &VolumeManager::fileUnmounted, this, 0);
+        disconnect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::signal_unmountFinished, this, 0);
+    }
     if (m_file_handle > 0) {
         g_signal_handler_disconnect(m_monitor, m_file_handle);
         m_file_handle = 0;

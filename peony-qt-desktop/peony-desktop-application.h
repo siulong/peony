@@ -96,6 +96,8 @@ private:
     void setupBgAndDesktop();
     void clearIcons(const QStringList &args);
     int getDesktopWindowId();
+    void autoMountLocalDriver();
+    void monitoringVolumesChanges();
 
     bool m_first_parse = true;
 

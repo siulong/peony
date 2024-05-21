@@ -80,7 +80,7 @@ Peony::ThumbnailJob::~ThumbnailJob()
 void Peony::ThumbnailJob::run()
 {
     /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
-    {
+    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
         auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
         QMutexLocker lk(mutex);
         auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();

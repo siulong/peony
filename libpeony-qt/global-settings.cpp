@@ -396,6 +396,16 @@ void GlobalSettings::getDualScreenMode()
     }
 }
 
+bool GlobalSettings::isDesktopStartUp() const
+{
+    return m_isDesktopStartUp;
+}
+
+void GlobalSettings::setDesktopStartUp(bool startUp)
+{
+    m_isDesktopStartUp = startUp;
+}
+
 const QVariant GlobalSettings::getValue(const QString &key)
 {
     return m_cache.value(key);
