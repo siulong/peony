@@ -588,12 +588,17 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
     //set date and time show format, task #101605
     auto ret = kdk_system_timeformat_transform(&m_tm);
-    g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
+    char* formatDate = kdk_system_shortformat_transform(&m_tm);
     if (m_showRelativeTime){
-       formatDate = kdk_system_tran_absolute_date(&m_tm);
+        if (formatDate)
+            g_free(formatDate);
+        formatDate = kdk_system_tran_absolute_date(&m_tm);
     }
-    else if (longFormat)
+    else if (longFormat) {
+        if (formatDate)
+            g_free(formatDate);
         formatDate = kdk_system_longformat_transform(&m_tm);
+    }
     if (ret && formatDate){
         g_autofree gchar *date_str = g_strdup_printf("%s %s", formatDate, ret->timesec);
         QString dateStr = date_str;
@@ -601,10 +606,14 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
         //释放结构体
         kdk_free_timeinfo(ret);
 
+        g_free(formatDate);
+
         //use sdk interface
         if (dateStr.trimmed().length() > 0)
             return dateStr;
     }
+    if (formatDate)
+        g_free(formatDate);
 #endif
 
     //old way of date, processed by self
