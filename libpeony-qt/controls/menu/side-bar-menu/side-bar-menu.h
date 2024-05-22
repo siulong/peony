@@ -47,6 +47,7 @@ protected:
 
 private:
     QString getComputerUriFromUnixDevice(const QString& unixDevice);
+    QString getComputerUriFromUri(const QString& uri);
 
 private:
     SideBarAbstractItem *m_item = nullptr;

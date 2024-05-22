@@ -162,12 +162,16 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         uri=m_uri;
 
     if (!unixDevice.isEmpty() && uri.isEmpty()) {
-        //可能是加密分区数据未同步问题，尝试同步
-        auto fsItem = qobject_cast<SideBarFileSystemItem *>(m_item);
-        auto gvolume = fsItem->getVolume().getGVolume();
-        g_autofree gchar *unix_device = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-        unixDevice = unix_device;
-        uri = getComputerUriFromUnixDevice(unixDevice);
+        if ("kyfs" == unixDevice) {
+            uri = getComputerUriFromUri(m_uri);
+        } else {
+            //可能是加密分区数据未同步问题，尝试同步
+            auto fsItem = qobject_cast<SideBarFileSystemItem *>(m_item);
+            auto gvolume = fsItem->getVolume().getGVolume();
+            g_autofree gchar *unix_device = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+            unixDevice = unix_device;
+            uri = getComputerUriFromUnixDevice(unixDevice);
+        }
     }
 
     //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
@@ -429,4 +433,22 @@ QString SideBarMenu::getComputerUriFromUnixDevice(const QString &unixDevice){
         }
     }
     return uri;
+}
+
+QString SideBarMenu::getComputerUriFromUri(const QString &uri)
+{
+    FileEnumerator e;
+    e.setEnumerateDirectory("computer:///");
+    e.enumerateSync();
+    QString computerUri = uri;
+    for (auto fileInfo : e.getChildren()) {
+        FileInfoJob infoJob(fileInfo);
+        infoJob.querySync();
+        if((fileInfo.get()->targetUri() == uri
+            || FileUtils::urlDecode(fileInfo.get()->targetUri()) == uri) && !uri.isEmpty()){
+            computerUri = fileInfo.get()->uri();
+            break;
+        }
+    }
+    return computerUri;
 }
