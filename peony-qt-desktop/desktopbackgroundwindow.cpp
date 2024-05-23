@@ -116,21 +116,21 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
             }
 
             /* 菜单执行弹出操作时停止更新，超过1s或者结束菜单都启用更新; 解决：点击鼠标右键，右键菜单会闪烁（偶现） */
-            if (manager->AnimationRunning()) {
-                //动画过程立刻更新界面
-                setUpdatesEnabled(true);
-                repaint();
+//            if (manager->AnimationRunning()) {
+//                //动画过程立刻更新界面
+//                setUpdatesEnabled(true);
+//                repaint();
+//                m_menu->exec(mapToGlobal(pos));
+//            } else {
+//                setUpdatesEnabled(false);
+//                QTimer::singleShot(1000, this, [=](){
+//                    if(!updatesEnabled()){
+//                        setUpdatesEnabled(true);
+//                    }
+//                });
                 m_menu->exec(mapToGlobal(pos));
-            } else {
-                setUpdatesEnabled(false);
-                QTimer::singleShot(1000, this, [=](){
-                    if(!updatesEnabled()){
-                        setUpdatesEnabled(true);
-                    }
-                });
-                m_menu->exec(mapToGlobal(pos));
-                setUpdatesEnabled(true);//end
-            }
+//                setUpdatesEnabled(true);//end
+//            }
 
             auto urisToEdit = m_menu->urisToEdit();
             m_desktopIconView->UpdateToEditUris(urisToEdit);
