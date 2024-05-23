@@ -65,9 +65,9 @@ TRANSLATIONS += ../translations/peony-qt/peony-qt_zh_CN.ts \
                 ../translations/peony-qt/peony-qt_de.ts \
                 ../translations/peony-qt/peony-qt_es.ts \
                 ../translations/peony-qt/peony-qt_fr.ts \
-                ../translations/peony-qt/peony-qt_kk_KZ.ts \
-                ../translations/peony-qt/peony-qt_ug_CN.ts \
-                ../translations/peony-qt/peony-qt_ky_KG.ts \
+#                ../translations/peony-qt/peony-qt_kk_KZ.ts \
+#                ../translations/peony-qt/peony-qt_ug_CN.ts \
+#                ../translations/peony-qt/peony-qt_ky_KG.ts \
                 ../translations/peony-qt/peony-qt_bo_CN.ts \
                 ../translations/peony-qt/peony-qt_mn.ts \
                 ../translations/peony-qt/peony-qt_zh_HK.ts
