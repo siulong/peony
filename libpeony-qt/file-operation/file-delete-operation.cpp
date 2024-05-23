@@ -134,11 +134,13 @@ void FileDeleteOperation::run()
         return;
 
     Q_EMIT operationStarted();
+    auto standardPaths = FileUtils::standardPathList();
     for (auto src : m_src_uris) {
         // pre-check for delete special directory
+        QUrl srcUrl = src;
         if (src == "file:///data/home" || src == "file:///data/usershare" ||
                 src == "file:///data/root" || src == "file:///home" ||
-                FileUtils::isStandardPath(src) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
+                standardPaths.contains(srcUrl.path()) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
             FileOperationError except;
             except.srcUri = src;
             except.destDirUri = nullptr;

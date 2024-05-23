@@ -87,11 +87,13 @@ void FileTrashOperation::run()
     //all file total size, should use changed the calculate way
     quint64 total_size = 0;
     const quint64 ONE_GIB_SIZE = 1024*1024*1024;
+    auto standardPaths = FileUtils::standardPathList();
     for (auto src : m_src_uris) {
         // pre-check for trash special directory
+        QUrl srcUrl = src;
         if (src == "file:///data/home" || src == "file:///data/usershare" ||
                 src == "file:///data/root" || src == "file:///home" ||
-                FileUtils::isStandardPath(src) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
+                standardPaths.contains(srcUrl.path()) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
             FileOperationError except;
             except.srcUri = src;
             except.destDirUri = tr("trash:///");
