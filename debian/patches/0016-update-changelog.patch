@@ -1,0 +1,449 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Thu, 23 May 2024 10:00:08 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/file-operation.cpp | 15 +++++++
+ libpeony-qt/file-operation/file-operation.h   | 15 +------
+ libpeony-qt/libpeony-qt.pro                   |  6 +--
+ libpeony-qt/vfs/recent-vfs-manager.cpp        | 31 +++++++++++----
+ libpeony-qt/vfs/recent-vfs-manager.h          |  2 +-
+ libpeony-qt/volume-manager.cpp                |  7 ++--
+ libpeony-qt/volumeManager.cpp                 | 57 +++++++++++++--------------
+ peony-qt-desktop/peony-qt-desktop.pro         |  6 +--
+ src/src.pro                                   |  6 +--
+ 9 files changed, 81 insertions(+), 64 deletions(-)
+
+diff --git a/libpeony-qt/file-operation/file-operation.cpp b/libpeony-qt/file-operation/file-operation.cpp
+index eadf61b..c3b73e2 100644
+--- a/libpeony-qt/file-operation/file-operation.cpp
++++ b/libpeony-qt/file-operation/file-operation.cpp
+@@ -230,3 +230,18 @@ void FileOperation::sendSrcAndDestUrisOfCopyDspsFiles()
+     if (!response.type() == QDBusMessage::ReplyMessage)
+         qDebug()<<"fail to send source and dest uris of copy!";
+ }
++
++bool FileOperation::URISorter::operator()(const QString &uri1, const QString &uri2) const {
++    bool isFolder1 = FileUtils::isFileDirectory(uri1);
++    bool isFolder2 = FileUtils::isFileDirectory(uri2);
++    if (isFolder1 == isFolder2) {
++        return true;
++    }
++    if (isFolder1 && !isFolder2) {
++        return directoryType == 0 ? false : true;
++    }
++    if (!isFolder1 && isFolder2) {
++        return directoryType == 0 ? true : false;
++    }
++    return isFolder1;
++}
+diff --git a/libpeony-qt/file-operation/file-operation.h b/libpeony-qt/file-operation/file-operation.h
+index c84c7c8..ec2c1bc 100644
+--- a/libpeony-qt/file-operation/file-operation.h
++++ b/libpeony-qt/file-operation/file-operation.h
+@@ -386,20 +386,7 @@ private:
+ 
+     struct URISorter {
+         URISorter(const int& type) : directoryType(type){}
+-        bool operator()(const QString& uri1, const QString& uri2) const {
+-            bool isFolder1 = FileUtils::isFileDirectory(uri1);
+-            bool isFolder2 = FileUtils::isFileDirectory(uri2);
+-            if (isFolder1 == isFolder2) {
+-                return true;
+-            }
+-            if (isFolder1 && !isFolder2) {
+-                return directoryType == 0 ? false : true;
+-            }
+-            if (!isFolder1 && isFolder2) {
+-               return directoryType == 0 ? true : false;
+-            }
+-            return isFolder1;
+-        }
++        bool operator()(const QString& uri1, const QString& uri2) const;
+     private:
+         int directoryType;
+     };
+diff --git a/libpeony-qt/libpeony-qt.pro b/libpeony-qt/libpeony-qt.pro
+index 037ea90..98a0b4e 100644
+--- a/libpeony-qt/libpeony-qt.pro
++++ b/libpeony-qt/libpeony-qt.pro
+@@ -68,9 +68,9 @@ TRANSLATIONS += ../translations/libpeony-qt/libpeony-qt_zh_CN.ts \
+                 ../translations/libpeony-qt/libpeony-qt_de.ts \
+                 ../translations/libpeony-qt/libpeony-qt_es.ts \
+                 ../translations/libpeony-qt/libpeony-qt_fr.ts \
+-                ../translations/libpeony-qt/libpeony-qt_kk_KZ.ts \
+-                ../translations/libpeony-qt/libpeony-qt_ug_CN.ts \
+-                ../translations/libpeony-qt/libpeony-qt_ky_KG.ts \
++#                ../translations/libpeony-qt/libpeony-qt_kk_KZ.ts \
++#                ../translations/libpeony-qt/libpeony-qt_ug_CN.ts \
++#                ../translations/libpeony-qt/libpeony-qt_ky_KG.ts \
+                 ../translations/libpeony-qt/libpeony-qt_bo_CN.ts \
+                 ../translations/libpeony-qt/libpeony-qt_mn.ts \
+                 ../translations/libpeony-qt/libpeony-qt_zh_HK.ts
+diff --git a/libpeony-qt/vfs/recent-vfs-manager.cpp b/libpeony-qt/vfs/recent-vfs-manager.cpp
+index 0c1aa12..f050d22 100644
+--- a/libpeony-qt/vfs/recent-vfs-manager.cpp
++++ b/libpeony-qt/vfs/recent-vfs-manager.cpp
+@@ -28,6 +28,10 @@
+ #include <QStandardPaths>
+ #include <QXmlStreamWriter>
+ 
++#include <gio/gio.h>
++#include <stdio.h>
++#include <time.h>
++
+ using namespace Peony;
+ 
+ RecentVFSManager* RecentVFSManager::m_instance = nullptr;
+@@ -61,7 +65,7 @@ void RecentVFSManager::clearAll()
+ 
+ void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QString exec)
+ {
+-    if (!exists(uri)) {
++    if (!exists(uri, mimetype, name, exec)) {
+         createNode(uri, mimetype, name, exec);
+         write();
+     }
+@@ -114,18 +118,19 @@ bool RecentVFSManager::read()
+ 
+ bool RecentVFSManager::write()
+ {
+-    QFile file (m_recent_path);
+-    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
++//    QFile file (m_recent_path);
++//    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+ 
+-    file.write(m_dom_document.toByteArray());
++//    file.write(m_dom_document.toByteArray());
+ 
+-    file.flush();
+-    file.close();
++//    file.flush();
++//    file.close();
++    bool ok = g_file_set_contents(m_recent_path.toUtf8().constData(), m_dom_document.toByteArray().constData(), -1, nullptr);
+ 
+-    return true;
++    return ok;
+ }
+ 
+-bool RecentVFSManager::exists(QString uri)
++bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QString exec)
+ {
+     if (!read()) {
+         qDebug() << "read error";
+@@ -136,6 +141,16 @@ bool RecentVFSManager::exists(QString uri)
+     while (!rootElement.isNull()) {
+         if (rootElement.hasAttribute("href") && rootElement.attribute("href") == uri) {
+             qDebug() << "existed!";
++            QDateTime dataTime = QDateTime::currentDateTime();
++            QDateTime utcTime = QDateTime::currentDateTimeUtc();
++            auto bookmark_file = g_bookmark_file_new();
++            bool loaded = g_bookmark_file_load_from_data(bookmark_file, m_dom_document.toByteArray().constData(), -1, nullptr);
++            if (loaded) {
++                g_bookmark_file_set_mime_type(bookmark_file, uri.toUtf8().constData(), mimetype.toUtf8().constData());
++                g_bookmark_file_add_application(bookmark_file, uri.toUtf8().constData(), name.toUtf8().constData(), exec.toUtf8().constData());
++                g_bookmark_file_to_file(bookmark_file, m_recent_path.toUtf8().constData(), nullptr);
++            }
++            g_bookmark_file_free (bookmark_file);
+             return true;
+         }
+         rootElement = rootElement.nextSiblingElement();
+diff --git a/libpeony-qt/vfs/recent-vfs-manager.h b/libpeony-qt/vfs/recent-vfs-manager.h
+index ec045e2..2928838 100644
+--- a/libpeony-qt/vfs/recent-vfs-manager.h
++++ b/libpeony-qt/vfs/recent-vfs-manager.h
+@@ -40,7 +40,7 @@ private:
+     explicit RecentVFSManager(QObject *parent = nullptr);
+     bool read ();
+     bool write ();
+-    bool exists (QString uri);
++    bool exists (QString uri, QString mimetype, QString name, QString exec);
+     bool createNode (QString uri, QString mimetype, QString name, QString exec);
+ 
+ private:
+diff --git a/libpeony-qt/volume-manager.cpp b/libpeony-qt/volume-manager.cpp
+index f24f358..b94d1be 100644
+--- a/libpeony-qt/volume-manager.cpp
++++ b/libpeony-qt/volume-manager.cpp
+@@ -300,8 +300,7 @@ std::shared_ptr<Drive> VolumeManager::getDriveFromSystemByPath(const QString &un
+        }
+    }
+ 
+-   g_list_foreach(allVolumes,(GFunc)g_object_unref,NULL);
+-   g_list_free(allVolumes);
++   g_list_free_full (allVolumes, g_object_unref);
+ 
+    if(gdrive)
+       tmp = std::make_shared<Drive>(gdrive,true);
+@@ -320,8 +319,10 @@ const char* VolumeManager::getUnixDeviceFileFromMountPoint(const char* mountPoin
+ 
+     const char *deviceFilePath = NULL;
+     GUnixMountEntry* mountEntry = g_unix_mount_for(mountPoint,NULL);
+-    if(mountEntry)
++    if(mountEntry) {
+         deviceFilePath = g_unix_mount_get_device_path(mountEntry);
++        g_unix_mount_free (mountEntry);
++    }
+ 
+     return deviceFilePath;
+ }
+diff --git a/libpeony-qt/volumeManager.cpp b/libpeony-qt/volumeManager.cpp
+index d8aa8fe..d7ef052 100644
+--- a/libpeony-qt/volumeManager.cpp
++++ b/libpeony-qt/volumeManager.cpp
+@@ -35,6 +35,7 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <glib.h>
+ 
+ using namespace Experimental_Peony;
+ static VolumeManager* m_globalManager = nullptr;
+@@ -80,7 +81,6 @@ QString getDeviceUUID(const char *device) {
+ static bool driveHasMedia(GDrive *gdrive){
+     /* 此方式替代g_drive_has_media只对evice.startsWith("/dev/sd")生效！Linkto Bug#205118插入拓展坞后文件管理器侧边栏多出了两个移动设备 */
+     g_autofree gchar* unix_device = g_drive_get_identifier(gdrive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+-    g_object_unref(gdrive);
+     QString device = unix_device;
+     int fd = open(device.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
+     if(-1==fd){/* open失败 */
+@@ -124,21 +124,19 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
+     QString uri;
+     for (auto fileInfo : e.getChildren()) {
+         QString uriStr = fileInfo.get()->uri();
+-        GFile* gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
++        g_autoptr(GFile) gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
+         GError *err = nullptr;
+         QString device;
+         QString targetUri;
+-        GFileInfo* gFileInfo = g_file_query_info(gFile,
+-                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+-                                       G_FILE_QUERY_INFO_NONE,
+-                                       g_cancellable_new(),
+-                                       &err);
++        g_autoptr(GFileInfo) gFileInfo = g_file_query_info(gFile,
++                                                           "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
++                                                           G_FILE_QUERY_INFO_NONE,
++                                                           g_cancellable_new(),
++                                                           &err);
+ 
+         if (err) {
+             qDebug()<<err->code<<err->message;
+             g_error_free(err);
+-            g_object_unref(gFile);
+-            g_object_unref(gFileInfo);
+             continue;
+         }else{
+             if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)) {
+@@ -148,8 +146,6 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
+                 device = g_file_info_get_attribute_string(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+             }
+         }
+-        g_object_unref(gFile);
+-        g_object_unref(gFileInfo);
+ 
+         /* 由volume的unixDevice获取target uri */
+         if(device==unixDevice){
+@@ -356,8 +352,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
+     bool itemIsExisted = false;
+     int volumeCount = pThis->m_volumeList->count();
+     Q_UNUSED(volumeCount)
+-    GVolume* volume = (GVolume*)g_object_ref(gvolume);
+-    Volume *addItem = new Volume(volume);
++    Volume *addItem = new Volume(gvolume);
+ 
+     itemIsExisted = pThis->m_volumeList->contains(addItem->device());
+     qDebug()<<__func__<<__LINE__<<addItem->device()<<itemIsExisted<<endl;
+@@ -482,7 +477,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
+         return;
+     }
+ 
+-    GMount* gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
++    g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
+     phoneFlag = device.contains("/dev/bus");
+     blankCDFlag = device.contains("/dev/sr") && pThis->m_volumeList->value(device)->mountPoint().isEmpty();
+     phoneOrCD = device.contains("/dev/bus") || device.contains("/dev/sr");
+@@ -491,7 +486,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
+     if(gmount){
+         if(!phoneFlag && !blankCDFlag){
+             //情景5、手机的mtp与gphoto2状态相互转换时只能保留一个
+-            g_object_unref(gmount);
+             return;
+         }
+         //情景2、处于挂载状态的设备在打开gparted瞬间需要保留该设备 更新设备的name属性?
+@@ -499,8 +493,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
+         //Q_EMIT pThis->volumeUpdate();
+     }
+     qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
+-    if(gmount)
+-        g_object_unref(gmount);
+ 
+     if (blankCDFlag)
+         return;
+@@ -524,7 +516,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
+     //情景2、直接暴力拔出操作 (不区分有无gparted进程)
+     //上述2种情境下GMount*只能获取到设备的挂载点，无法获取设备路径，因此尝试采用挂载点区分设备?
+     Volume* volumeItem;
+-    Mount* mountItem = new Mount((GMount*)g_object_ref(gmount));
++    Mount* mountItem = new Mount(gmount);
+     QString mountPoint = mountItem->mountPoint();
+ 
+     if(mountItem->mountPoint().startsWith("smb://")){/* 远程服务器特殊处理 */
+@@ -574,10 +566,9 @@ void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
+     //情景2、未打开gparted时用户手动从卸载状态转为挂载状态
+     //情景3、打开gparted后->插入新设备不拔出->关闭gparted 此时新设备会自动挂载
+     //情景4、打开gparted后->卸载设备a(此时前端不应该显示a)并且不拔出->关闭gparted->此时设备a需要重新显示
+-    GMount* mount = (GMount*)g_object_ref(gmount);
+-    Mount* mountItem = new Mount(mount);
++    Mount* mountItem = new Mount(gmount);
+     QString device = mountItem->device();
+-    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
++    g_autoptr (GVolume) gvolume = g_mount_get_volume(gmount);
+     if (gvolume) {
+         for (auto volume : pThis->m_volumeList->values()) {
+             if (volume->getGVolume() == gvolume) {
+@@ -625,7 +616,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
+     if(!pThis->m_volumeList)
+         return;
+     /* 获取mountPoint 挂载点 */
+-     GFile* rootFile = g_mount_get_root(mount);
++    g_autoptr (GFile) rootFile = g_mount_get_root(mount);
+     if(!rootFile)
+         return;
+ 
+@@ -653,7 +644,6 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
+     }
+ 
+     delete mountItem;
+-    g_object_unref(rootFile);
+ }
+ 
+ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
+@@ -662,8 +652,7 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
+     if(!pThis->m_volumeList)
+         return;
+ 
+-    GMount* gMount = (GMount*)g_object_ref(gmount);
+-    GVolume* gVolume = (GVolume*)g_object_ref(g_mount_get_volume(gMount));
++    g_autoptr (GVolume) gVolume = g_mount_get_volume(gmount);
+     Volume* volume = new Volume(gVolume);
+     if(pThis->m_volumeList->contains(volume->device())){
+         {
+@@ -801,8 +790,9 @@ QList<GVolume*> VolumeManager::allGVolumes(){
+         volumeList.push_back(gvolume);
+     }
+ 
++    // 需要在此方法调用处释放GVolume实例
+     if(volumes)
+-        g_list_free(volumes);
++        g_list_free (volumes);
+ 
+     return volumeList;
+ }
+@@ -824,6 +814,7 @@ QList<Volume*> VolumeManager::allVolumes()
+         Volume* volumeItem = new Volume(gVolumes.at(i));
+         //插入list
+         volumes.append(volumeItem);
++        g_object_unref(gVolumes.at(i));
+     }
+     //qDebug()<<"--------------------------->>>>"<<endl;
+ 
+@@ -987,8 +978,9 @@ QList<GMount*> VolumeManager::allGMounts(){
+         mountList.push_back(gmount);
+     }
+ 
++    // 需要在此方法调用处释放GMount实例
+     if(mounts)
+-        g_list_free(mounts);
++        g_list_free (mounts);
+ 
+     return mountList;
+ }
+@@ -1009,6 +1001,7 @@ QList<Mount*> VolumeManager::allMounts(){
+             //情景：查询设备时数据线连接的手机处于 "mtp"或"gphoto"状态
+             //     此时有一个没有dev设备的GMount*不应该保存
+             delete mountItem;
++            g_object_unref(gMounts.at(i));
+             continue;
+         }
+         mounts.append(mountItem);
+@@ -1032,8 +1025,9 @@ QList<GDrive *> VolumeManager::allGDrives()
+         gdriveList.push_back(gdrive);
+     }
+ 
++    // 需要在此方法调用处释放GDrive实例
+     if(gdrives)
+-        g_list_free(gdrives);
++        g_list_free (gdrives);
+ 
+     return gdriveList;
+ }
+@@ -1098,6 +1092,8 @@ void Volume::initVolumeInfo()
+     if(!m_volume)   //如果m_volume为nullptr，可能会是一种用Mount来填充Volume数据的方式
+         return;
+ 
++    m_volume = static_cast<GVolume *>(g_object_ref(m_volume));
++
+     m_gMount = nullptr;
+     m_canUnmount = false;
+     char* gname = g_volume_get_name(m_volume);
+@@ -1378,6 +1374,8 @@ void Drive::initDriveInfo(){
+     if(!m_drive)
+         return;
+ 
++    m_drive = static_cast<GDrive *>(g_object_ref(m_drive));
++
+     g_autofree gchar* unix_device = g_drive_get_identifier(m_drive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+     m_device = unix_device;
+     m_canEject = g_drive_can_eject(m_drive);
+@@ -1530,7 +1528,7 @@ void Drive::setMountPath(const QString &mountPath)
+ }
+ 
+ Mount::Mount(GMount* gmount) {
+-    m_mount = static_cast<GMount *>(g_object_ref(gmount));
++    m_mount = gmount;
+     initMountInfo();
+ }
+ 
+@@ -1550,6 +1548,7 @@ void Mount::initMountInfo(){
+     if(!m_mount)
+         return;
+ 
++    m_mount = static_cast<GMount *>(g_object_ref(m_mount));
+     //1、mountPoint 挂载点
+     rootFile = g_mount_get_root(m_mount);
+     if(rootFile){
+diff --git a/peony-qt-desktop/peony-qt-desktop.pro b/peony-qt-desktop/peony-qt-desktop.pro
+index 0ed84bb..fac6c60 100644
+--- a/peony-qt-desktop/peony-qt-desktop.pro
++++ b/peony-qt-desktop/peony-qt-desktop.pro
+@@ -39,9 +39,9 @@ TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_de.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_es.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_fr.ts \
+-                ../translations/peony-qt-desktop/peony-qt-desktop_kk_KZ.ts \
+-                ../translations/peony-qt-desktop/peony-qt-desktop_ug_CN.ts \
+-                ../translations/peony-qt-desktop/peony-qt-desktop_ky_KG.ts \
++#                ../translations/peony-qt-desktop/peony-qt-desktop_kk_KZ.ts \
++#                ../translations/peony-qt-desktop/peony-qt-desktop_ug_CN.ts \
++#                ../translations/peony-qt-desktop/peony-qt-desktop_ky_KG.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_mn.ts \
+                 ../translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
+diff --git a/src/src.pro b/src/src.pro
+index 047f2d6..de4ece5 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -65,9 +65,9 @@ TRANSLATIONS += ../translations/peony-qt/peony-qt_zh_CN.ts \
+                 ../translations/peony-qt/peony-qt_de.ts \
+                 ../translations/peony-qt/peony-qt_es.ts \
+                 ../translations/peony-qt/peony-qt_fr.ts \
+-                ../translations/peony-qt/peony-qt_kk_KZ.ts \
+-                ../translations/peony-qt/peony-qt_ug_CN.ts \
+-                ../translations/peony-qt/peony-qt_ky_KG.ts \
++#                ../translations/peony-qt/peony-qt_kk_KZ.ts \
++#                ../translations/peony-qt/peony-qt_ug_CN.ts \
++#                ../translations/peony-qt/peony-qt_ky_KG.ts \
+                 ../translations/peony-qt/peony-qt_bo_CN.ts \
+                 ../translations/peony-qt/peony-qt_mn.ts \
+                 ../translations/peony-qt/peony-qt_zh_HK.ts
