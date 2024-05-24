@@ -208,7 +208,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation>كىچىك</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
@@ -218,7 +218,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>چوڭ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
@@ -314,7 +314,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>Tracker(&amp;T):</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
