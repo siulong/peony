@@ -46,6 +46,7 @@ public:
     const QStringList getPluginIds();
     MenuPluginInterface *getPlugin(const QString &pluginId);
 
+    QMap<QString, MenuPluginInterface *> getComputerViewPlugins() const;
     bool insertFileSafePlugin(MenuPluginInterface *plugin);
     MenuPluginInterface *getFileSafePlugin(const QString &pluginId);
 
@@ -53,6 +54,7 @@ public:
 
 private:
     QHash<QString, MenuPluginInterface*> m_hash;
+    QMap<QString, MenuPluginInterface*> m_computerViewPlugins;
     QHash<QString, MenuPluginInterface*> m_fileSafeHash;
 
     explicit MenuPluginManager(QObject *parent = nullptr);

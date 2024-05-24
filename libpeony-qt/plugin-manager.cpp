@@ -118,7 +118,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
                 qApp->setProperty("deviceRenamePluginLoaded", true);
             }
-            if (isFileSafe) {
+            if (pluginLoader.metaData().value("MetaData").toObject().value("pluginName").toString() == "PeonyFileSafePlugin") {
                 MenuPluginManager::getInstance()->insertFileSafePlugin(menuPlugin);
             }
             break;
