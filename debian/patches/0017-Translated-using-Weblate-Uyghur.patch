@@ -1,0 +1,43 @@
+From: KevinDuan <duankaiwen@kylinos.com>
+Date: Fri, 24 May 2024 06:51:58 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 42.2% (19 of 45 strings)
+
+Translation: openkylin-nile-new/peony-qt-desktop
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt-desktop/ug/
+---
+ translations/peony-qt-desktop/peony-qt-desktop_ug.ts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+index 74806f6..34ee13a 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+@@ -208,7 +208,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
+         <source>Small</source>
+-        <translation type="unfinished"></translation>
++        <translation>كىچىك</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
+@@ -218,7 +218,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
+         <source>Large</source>
+-        <translation type="unfinished"></translation>
++        <translation>چوڭ</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
+@@ -314,7 +314,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
+         <source>Properties</source>
+-        <translation>خاسلىق</translation>
++        <translation>Tracker(&amp;T):</translation>
+     </message>
+     <message>
+         <source>P&amp;roperties</source>
