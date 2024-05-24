@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation>دىئالوگ</translation>
+        <translation>ۋاقىت ئۆزگەرتىش</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -20,7 +20,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation>تېكىست بەلگىسى</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>Offical Website: </source>
@@ -34,7 +34,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation>مۇلازىمەت ۋە قوللىغان كوللېكتىپ </translation>
+        <translation>مۇلازىمەت &gt; قوللاش: </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
@@ -134,7 +134,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="356"/>
         <source>Option</source>
-        <translation>تاللاش</translation>
+        <translation>كىرىش تاللىما تۈرى</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="472"/>
@@ -225,7 +225,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>Maximize</source>
-        <translation>چوڭايتىش</translation>
+        <translation>ئەڭ چوڭ ھالەت</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="915"/>
@@ -256,7 +256,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="783"/>
         <source>Delete</source>
-        <translation>ئۆچۈر</translation>
+        <translation>ئۆچۈرۈش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="850"/>
@@ -281,7 +281,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
-        <translation>كىچىكلىتىش</translation>
+        <translation>ئەڭ كىچىك ھالەت</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
@@ -319,7 +319,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="516"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەتلەر</translation>
     </message>
 </context>
 <context>
@@ -352,7 +352,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
-        <translation>ئىزدە</translation>
+        <translation>ئىزدىمەكچى بولغان مەزمۇننى كىرگۈزۈڭ</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -661,7 +661,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>Tracker(&amp;T):</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
@@ -722,7 +722,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation>ئىزدە</translation>
+        <translation>ئىزدىمەكچى بولغان مەزمۇننى كىرگۈزۈڭ</translation>
     </message>
 </context>
 <context>
@@ -735,7 +735,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
         <source>Delete</source>
-        <translation>ئۆچۈر</translation>
+        <translation>ئۆچۈرۈش</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="115"/>
@@ -1138,7 +1138,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1349"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>خاتا</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1708"/>
@@ -1162,7 +1162,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
-        <translation>ئىزدە</translation>
+        <translation>ئىزدىمەكچى بولغان مەزمۇننى كىرگۈزۈڭ</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
@@ -1372,12 +1372,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
-        <translation>تاللاش</translation>
+        <translation>كىرىش تاللىما تۈرى</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
-        <translation>كىچىكلىتىش</translation>
+        <translation>ئەڭ كىچىك ھالەت</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
