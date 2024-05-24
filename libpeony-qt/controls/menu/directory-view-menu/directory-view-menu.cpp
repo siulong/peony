@@ -1465,9 +1465,10 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
 
         for (auto id : pluginIds) {
             auto plugin = MenuPluginManager::getInstance()->getPlugin(id);
-
+            auto tPlugin = MenuPluginManager::getInstance()->getFileSafePlugin(id);
             if(m_is_filesafe||m_is_filebox_file) {
-                if(plugin->name() == tr("Peony-Qt Filesafe Menu Extension") || plugin->name() == tr("Peony File Labels Menu Extension")) {
+                if((plugin && tPlugin && plugin == tPlugin)
+                        || plugin->name() == tr("Peony File Labels Menu Extension")) {
                     auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
                     l<<actions;
                     for (auto action : actions) {
@@ -1477,7 +1478,7 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                     }
                 }
             } else {
-                if(plugin->name() != tr("Peony-Qt Filesafe Menu Extension")) {
+                if(plugin != tPlugin) {
                     auto a = Peony::FileOperationManager::getInstance()->isFsynchronizing();
                     if(m_is_mobile_file && Peony::FileOperationManager::getInstance()->isFsynchronizing()){
                         /* 往移动设备中进行文件拷贝fysnc时导致io阻塞，插件暂先屏蔽,待后续改进 */

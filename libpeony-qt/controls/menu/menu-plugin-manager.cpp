@@ -109,6 +109,20 @@ MenuPluginInterface *MenuPluginManager::getPlugin(const QString &pluginId)
     return m_hash.value(pluginId);
 }
 
+bool MenuPluginManager::insertFileSafePlugin(MenuPluginInterface *plugin)
+{
+    if (m_fileSafeHash.value(plugin->name())) {
+        return false;
+    }
+    m_fileSafeHash.insert(plugin->name(), plugin);
+    return true;
+}
+
+MenuPluginInterface *MenuPluginManager::getFileSafePlugin(const QString &pluginId)
+{
+    return m_fileSafeHash.value(pluginId);
+}
+
 //CreateLinkInternalPlugin
 CreateLinkInternalPlugin::CreateLinkInternalPlugin(QObject *parent) : QObject (parent)
 {
