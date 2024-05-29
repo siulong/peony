@@ -49,6 +49,7 @@ FileOperation::FileOperation(QObject *parent) : QObject (parent)
         m_is_pause.store(false);
         m_wait_condition.wakeOne();
     });
+    connect(this, &FileOperation::remoteFileEvent, FileOperationManager::getInstance(), &FileOperationManager::remoteFileEvent);
 }
 
 FileOperation::~FileOperation()
