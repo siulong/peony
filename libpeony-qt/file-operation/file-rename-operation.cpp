@@ -196,6 +196,8 @@ void FileRenameOperation::run()
     auto newFile = FileUtils::resolveRelativePath(parent, targetName);
     getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
 
+    bool successed = false;
+
     if (is_local_desktop_file) {
         GError *err = nullptr;
         g_file_move(file.get()->get(),
@@ -233,6 +235,8 @@ void FileRenameOperation::run()
             }
 
             cancel ();
+        } else {
+            successed = true;
         }
     } else {
 retry:
@@ -247,7 +251,7 @@ retry:
         qDebug() << "rename: " << g_file_get_uri(newFile.get()->get());
         g_autofree char* newName = g_file_get_basename(newFile.get()->get());
 
-        g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
+        g_autoptr (GFile) target_file = g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
 
         if (err) {
             except.dlgType = g_error_matches(err, g_io_error_quark(), G_IO_ERROR_FILENAME_TOO_LONG)? ED_RENAME: ED_WARNING;
@@ -340,6 +344,8 @@ retry:
             }
 
             g_error_free(err);
+        } else {
+            successed = true;
         }
     }
 
@@ -355,6 +361,8 @@ cancel:
         m_info->m_oldname = m_old_name;
     }
 
+    if (successed)
+        Q_EMIT remoteFileEvent(103, m_uri, destUri);
     fileSync(m_uri, destUri);
 
 #ifdef KY_UDF_BURN

@@ -250,6 +250,7 @@ void FileMoveOperation::move()
             err = nullptr;
         } else {
             node->setState(FileNode::Handled);
+            Q_EMIT remoteFileEvent(103, srcUri, destUri);
 
             /* 文件（夹）剪切/鼠标拖动move后，标识模式更新 */
             g_autofree char* sourceUri = g_file_get_uri(srcFile.get()->get());
