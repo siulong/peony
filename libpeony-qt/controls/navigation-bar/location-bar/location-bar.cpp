@@ -95,6 +95,23 @@ LocationBar::LocationBar(QWidget *parent) : QWidget(parent)
     setAttribute(Qt::WA_Hover);
     setMouseTracking(true);
 
+    auto currentStyleName = GlobalSettings::getInstance()->getValue("widgetThemeName").toString();
+    if (currentStyleName == "classical") {
+        m_is_classical = true;
+    }
+
+    connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString &key){
+        if (key == "widgetThemeName") {
+            auto currentStyleName = GlobalSettings::getInstance()->getValue("widgetThemeName").toString();
+            if (currentStyleName == "classical") {
+                m_is_classical = true;
+            } else {
+                m_is_classical = false;
+            }
+        }
+        this->update();
+    });
+
     //comment to fix button text show incomplete issue, link to bug#72080
 //    setStyleSheet("padding-right: 15;"
 //                  "margin-left: 2");
@@ -165,7 +182,7 @@ void LocationBar::setRootUri(const QString &uri)
     }
     m_current_uri = uri;
     //clear buttons
-    if (m_current_uri.startsWith("search://")) {
+    if (m_current_uri.startsWith("search://") || m_current_uri.startsWith("label://")) {
         clearButtons();
         //m_indicator->setArrowType(Qt::NoArrow);
         addButton(m_current_uri, false, false);
@@ -280,7 +297,19 @@ void LocationBar::setRootUri(const QString &uri)
 
 void LocationBar::updateTrashIcon()
 {
-    updateButtons();
+    if (m_current_uri.startsWith("trash:///")) {
+        auto info  = FileInfo::fromUri(m_current_uri);
+        auto infoJob = new FileInfoJob(info);
+        connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](){
+            infoJob->deleteLater();
+
+            QIcon icon = QIcon::fromTheme(Peony::FileUtils::getFileIconName(m_current_uri), QIcon::fromTheme("folder"));
+            auto button = m_buttons.value(m_current_uri);
+            if (button)
+                button->setIcon(icon);
+        });
+        infoJob->queryAsync();
+    }
 }
 
 void LocationBar::clearButtons()
@@ -379,6 +408,16 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
         button->setText(displayName);
         button->setFixedWidth(button->sizeHint().width());
         button->setContextMenuPolicy(Qt::CustomContextMenu);
+        return;
+    }
+
+    if (m_current_uri.startsWith("label:///")) {
+        auto displayName = Peony::FileUtils::getFileDisplayName(m_current_uri);
+        button->setIcon(QIcon::fromTheme("edit-find-symbolic"));
+        displayName = tr("Search results for all files marked in  \"%1\"  in \"%2\"").arg(displayName).arg(tr("File System"));
+        button->setText(displayName);
+        button->setContextMenuPolicy(Qt::NoContextMenu);
+        button->setPopupMode(QToolButton::InstantPopup);
         return;
     }
 
@@ -535,9 +574,14 @@ void LocationBar::paintEvent(QPaintEvent *e)
 
     QStyleOptionFrame fopt;
     fopt.initFrom(this);
-    fopt.state |= QStyle::State_HasFocus;
+    if (!m_is_classical)
+        fopt.state |= QStyle::State_HasFocus;
     //fopt.state.setFlag(QStyle::State_HasFocus);
-    fopt.rect.adjust(0, 0, 0, 0);
+    fopt.rect.adjust(1, 0, 0, 0);
+    opt.rect.adjust(1, 0, 0, 0);
+    fopt.palette.setCurrentColorGroup(QPalette::Disabled);
+    //auto buttonTextDisabled = fopt.palette.buttonText().color();
+    fopt.palette.setCurrentColorGroup(QPalette::Active);
     fopt.palette.setColor(QPalette::Highlight, fopt.palette.button().color());
     fopt.palette.setColor(QPalette::Base, fopt.palette.window().color());
 

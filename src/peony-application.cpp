@@ -23,6 +23,7 @@
 #include "peony-application.h"
 #include "menu-plugin-iface.h"
 
+#include "main-window-factory-plugin-manager.h"
 #include "file-info.h"
 #include "file-info-job.h"
 #include "file-utils.h"
@@ -62,7 +63,7 @@
 #include "navigation-bar.h"
 
 #include "fm-window.h"
-#include "main-window.h"
+//#include "main-window.h"
 #include "global-settings.h"
 
 #include <QFile>
@@ -89,7 +90,8 @@
 #include "file-count-operation.h"
 #include <QThreadPool>
 
-#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
+//#include "properties-window.h"
 
 #include "complementary-style.h"
 
@@ -353,6 +355,8 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
         return;
     }
 
+    MainWindowFactoryPluginManager::getInstance()->setVersion();
+
     //FIXME: should I load plugins async?
     Peony::PluginManager::init();
 
@@ -380,14 +384,17 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             auto parentUris = itemHash.keys();
 
             for (auto parentUri : parentUris) {
-                auto window = new MainWindow(parentUri);
+                QWidget *window = MainWindowFactoryPluginManager::getInstance()->create(parentUri,itemHash.value(parentUri));
+//                Peony::MainWindowIface* mainWindowIface = dynamic_cast<Peony::MainWindowIface*>(window);
+                //auto window = new MainWindow(parentUri);
                 //Peony::FMWindow *window = new Peony::FMWindow(parentUri);
-                connect(window, &MainWindow::locationChangeEnd, [=]() {
-                    QTimer::singleShot(500, [=] {
-                        window->getCurrentPage()->getView()->setSelections(itemHash.value(parentUri));
-                        window->getCurrentPage()->getView()->scrollToSelection(itemHash.value(parentUri).first());
-                    });
-                });
+//                connect(mainWindowIface, &Peony::MainWindowIface::locationChangeEnd, [=]() {
+//                    QTimer::singleShot(500, [=] {
+//                        Peony::FMWindowIface* iface = dynamic_cast<Peony::FMWindowIface*>(window);
+//                        iface->getCurrentPage()->getView()->setSelections(itemHash.value(parentUri));
+//                        iface->getCurrentPage()->getView()->scrollToSelection(itemHash.value(parentUri).first());
+//                    });
+//                });
                 window->show();
                 KWindowSystem::raiseWindow(window->winId());
                 if (KWindowSystem::activeWindow() != window->winId()) {
@@ -401,11 +408,13 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             if (uris.isEmpty()) {
                 return;
             }
-            auto window = new MainWindow(uris.first());
+            QWidget *window = MainWindowFactoryPluginManager::getInstance()->create(uris.first());
+            //auto window = new MainWindow(uris.first());
             //Peony::FMWindow *window = new Peony::FMWindow(uris.first());
             uris.removeAt(0);
             if (!uris.isEmpty()) {
-                window->addNewTabs(uris);
+                Peony::FMWindowIface* iface = dynamic_cast<Peony::FMWindowIface*>(window);
+                iface->addNewTabs(uris);
             }
             window->show();
             KWindowSystem::raiseWindow(window->winId());
@@ -420,9 +429,8 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             }
 
             qApp->setProperty("showProperties", true);
-
-            Peony::PropertiesWindow *window = new Peony::PropertiesWindow(uris);
-
+            QMainWindow *window = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
+            //Peony::PropertiesWindow *window = new Peony::PropertiesWindow(uris);
             window->setAttribute(Qt::WA_DeleteOnClose);
             window->show();
             KWindowSystem::raiseWindow(window->winId());
@@ -437,10 +445,12 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             arguments.removeOne("%U&");
             QStringList uris = Peony::FileUtils::toDisplayUris(arguments);
             if (!uris.isEmpty()) {
-                auto window = new MainWindow(uris.first());
+                QWidget *window = MainWindowFactoryPluginManager::getInstance()->create(uris.first());
+                Peony::FMWindowIface* iface = dynamic_cast<Peony::FMWindowIface*>(window);
+                //auto window = new MainWindow(uris.first());
                 uris.removeAt(0);
                 if (!uris.isEmpty()) {
-                    window->addNewTabs(uris);
+                    iface->addNewTabs(uris);
                 }
                 window->setAttribute(Qt::WA_DeleteOnClose);
                 window->show();
@@ -449,7 +459,8 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
                     KWindowSystem::activateWindow(window->winId());
                 }
             } else {
-                auto window = new MainWindow();
+                QWidget *window = MainWindowFactoryPluginManager::getInstance()->create(QString());
+              //  auto window = new MainWindow();
                 window->setAttribute(Qt::WA_DeleteOnClose);
                 window->show();
                 KWindowSystem::raiseWindow(window->winId());
@@ -458,7 +469,8 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
                 }
             }
         } else {
-            auto window = new MainWindow;
+            QWidget *window = MainWindowFactoryPluginManager::getInstance()->create(QString());
+            //auto window = new MainWindow;
             //auto window = new Peony::FMWindow;
             window->setAttribute(Qt::WA_DeleteOnClose);
             window->show();

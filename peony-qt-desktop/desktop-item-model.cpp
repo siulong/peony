@@ -537,13 +537,14 @@ DesktopItemModel::DesktopItemModel(QObject *parent)
         }
     });
 
-    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, [=](){
+    connect(DesktopMenuPluginManager::getInstance(), &DesktopMenuPluginManager::pluginLoadFinished, this, [=](){
        QTimer::singleShot(1000, this, [=]{
            for (auto file : m_files) {
                EmblemProviderManager::getInstance()->queryAsync(file->uri());
            }
        });
     });
+    UserShareInfoManager::getInstance();
 }
 
 DesktopItemModel::~DesktopItemModel()
@@ -627,15 +628,15 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
             return QVariant(displayName);
     }
     case Qt::ToolTipRole: {
-        // fix #80257
-        switch (index.row()) {
-        case 0:
-            return tr("Computer");
-        case 1:
-            return tr("Trash");
-        default:
-            break;
-        }
+//        // fix #80257
+//        switch (index.row()) {
+//        case 0:
+//            return tr("Computer");
+//        case 1:
+//            return tr("Trash");
+//        default:
+//            break;
+//        }
 
         //fix bug#53504, desktop files not show same name issue
         if (info->isDesktopFile())
@@ -676,9 +677,11 @@ void DesktopItemModel::onEnumerateFinished(bool successed)
     }
 
     //beginResetModel();
-    beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
-    m_files.clear();
-    endRemoveRows();
+    if (m_files.count() > 0) {
+        beginRemoveRows(QModelIndex(), 0, m_files.count() - 1);
+        m_files.clear();
+        endRemoveRows();
+    }
 
     auto computer = FileInfo::fromUri("computer:///");
     auto personal = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
@@ -997,10 +1000,13 @@ bool DesktopItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         op->connect(op, &FileOperation::operationFinished, this, [=](){
             //Peony::SoundEffect::getInstance()->copyOrMoveSucceedMusic();
             //Task#152997, use sdk play sound
+            if (op->hasError()) {
+                return;
+            }
 #ifdef KY_SDK_SOUND_EFFECTS
             kdk::KSoundEffects::playSound(SoundType::OPERATION_FILE);
 #endif
-        });
+        }, Qt::BlockingQueuedConnection);
     }
 
     //NOTE:

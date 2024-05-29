@@ -152,12 +152,21 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         /* hotfix bug#101227:解决兼容升级后对应设置项恢复gsetting默认值问题。判断字段（INIT_FOR_FIRST_TIME）不存在，则为首次初始化，反之不是 */
         if(!isExist(INIT_FOR_FIRST_TIME)){
             setValue(INIT_FOR_FIRST_TIME, false);
-            /* /usr/share/glib-2.0/schemas/org.ukui.peony.settings.gschema.xml文件首次初始化时，
-             * SHOW_HIDDEN_PREFERENCE字段为 "org.ukui/peony-qt-preferences" 文件中"show-hidden"的值 */
-            if(isExist("show-hidden")){
-                bool value = getValue("show-hidden").toBool();
-                m_cache.insert(SHOW_HIDDEN_PREFERENCE, value);
-                setGSettingValue(SHOW_HIDDEN_PREFERENCE, value);
+            /* fix #198708 【建行离线升级2-1216>>4>>9>>11月版1019】【系统升级】升级前勾选显示隐藏文件，升级后显示隐藏文件为未勾选状态
+             * 由于建行从peony 3.2.3.0-0k0.1升级，此版本已经合入show-hidden-file的gsettings，但是没有合入#101227，导致升级到当前版本时走了错误的流程
+             */
+            bool currentShowHidden = m_peony_gsettings->get(SHOW_HIDDEN_PREFERENCE).toBool();
+            if (!currentShowHidden) {
+                /* /usr/share/glib-2.0/schemas/org.ukui.peony.settings.gschema.xml文件首次初始化时，
+                 * SHOW_HIDDEN_PREFERENCE字段为 "org.ukui/peony-qt-preferences" 文件中"show-hidden"的值*/
+                if(isExist("show-hidden")){
+                    bool value = getValue("show-hidden").toBool();
+                    m_cache.insert(SHOW_HIDDEN_PREFERENCE, value);
+                    setGSettingValue(SHOW_HIDDEN_PREFERENCE, value);
+                    // 兼容性处理只做一次，避免再次走到此处的可能
+                    m_settings->remove("show-hidden");
+                    m_cache.remove("show-hidden");
+                }
             }
         }
 
@@ -272,6 +281,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(DEFAULT_GRID_SIZE, QSize());
     }
 
+    if (m_cache.value(LABLE_ALIGNMENT).isNull()) {
+        setValue(LABLE_ALIGNMENT, 1);
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
@@ -295,7 +308,9 @@ GlobalSettings::~GlobalSettings()
 
 void GlobalSettings::getUkuiStyle()
 {
+    bool transparentConfigFromUKUIStyle = true;
     if (QGSettings::isSchemaInstalled(UKUI_CONTROL_CENTER_PERSONALISE)) {
+        transparentConfigFromUKUIStyle = false;
         m_gsettings = new QGSettings(UKUI_CONTROL_CENTER_PERSONALISE);
         connect(m_gsettings, &QGSettings::changed, [this](const QString &key) {
             if (key == PERSONALISE_EFFECT) {
@@ -315,18 +330,28 @@ void GlobalSettings::getUkuiStyle()
         }
         m_cache.remove(SIDEBAR_BG_OPACITY);
         m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
-    } else {
-        if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-            m_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
-            connect(m_gsettings, &QGSettings::changed, this, [=](const QString &key) {
-                if (key == "peonySideBarTransparency") {
-                    m_cache.remove(SIDEBAR_BG_OPACITY);
-                    m_cache.insert(SIDEBAR_BG_OPACITY, m_gsettings->get(key).toString());
-                    qApp->paletteChanged(qApp->palette());
-                }
-            });
+    }
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        m_peony_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
+            if (key == "peonySideBarTransparency" && transparentConfigFromUKUIStyle) {
+                m_cache.remove(SIDEBAR_BG_OPACITY);
+                m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get(key).toString());
+                qApp->paletteChanged(qApp->palette());
+            }
+            if (key == "widgetThemeName") {
+                m_cache.remove("widgetThemeName");
+                m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
+                Q_EMIT this->valueChanged("widgetThemeName");
+            }
+        });
+        if (transparentConfigFromUKUIStyle) {
             m_cache.remove(SIDEBAR_BG_OPACITY);
-            m_cache.insert(SIDEBAR_BG_OPACITY, m_gsettings->get("peonySideBarTransparency").toString());
+            m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get("peonySideBarTransparency").toString());
+        }
+        if (m_peony_gsettings->keys().contains("widgetThemeName")) {
+            m_cache.remove("widgetThemeName");
+            m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
         }
     }
 }

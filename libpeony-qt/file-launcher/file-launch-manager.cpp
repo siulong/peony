@@ -36,6 +36,9 @@
 
 using namespace Peony;
 
+static bool glib_force_use_portal = false;
+static bool init_glib_env = false;
+
 FileLaunchManager::FileLaunchManager(QObject *parent) : QObject(parent)
 {
 
@@ -294,6 +297,16 @@ void FileLaunchManager::openAsync(const QStringList &files, bool forceWithArg, b
     auto action = getDefaultAction(targets.first());
     action->lauchFilesAsync(targets, forceWithArg, skipDialog);
     action->deleteLater();
+}
+
+bool FileLaunchManager::isGlibForceUsePortal()
+{
+    if (!init_glib_env) {
+        auto env = qgetenv("GLIB_FORCE_USE_PORTAL");
+        glib_force_use_portal = !env.isEmpty() && env[0] == '1';
+        init_glib_env = true;
+    }
+    return glib_force_use_portal;
 }
 
 void FileLaunchManager::setDefaultLauchAction(const QString &uri, FileLaunchAction *action)

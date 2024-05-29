@@ -161,19 +161,18 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     opt.decorationSize = rawDecoSize;
 
     bool bCutFile = false;
-    if (ClipboardUtils::isClipboardHasFiles()){
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
         QString actualDirUri = view->getDirectoryUri();
         bool bSearchTab = false;
         if(actualDirUri.startsWith("search:///search_uris")){
             bSearchTab = true;
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
         }
+
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
-        if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
-            && ClipboardUtils::isPeonyFilesBeCut()
-            && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(FileItemModel::UriRole).toString()))) {
+        if (!clipedUris.isEmpty() && (FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)))) {
+            if (clipedUris.contains(index.data(FileItemModel::UriRole).toString())) {
                 painter->setOpacity(0.5);
                 bCutFile = true;
                 qDebug()<<"cut item"<<index.data();
@@ -210,7 +209,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (view->selectedIndexes().count() == 1 && view->selectedIndexes().first() == index && !bCutFile) {
         useIndexWidget = true;
         if (view->indexWidget(index)) {
-        } else if (! view->isDraggingState() && view->m_allow_set_index_widget) {
+        } else if (! view->isDraggingState() && view->m_allow_set_index_widget && !(view->m_ctrl_key_pressed)) {
             IconViewIndexWidget *indexWidget = new IconViewIndexWidget(this, option, index, getView());
             connect(getView()->m_model, &FileItemModel::dataChanged, indexWidget, [=](const QModelIndex &topleft, const QModelIndex &bottomRight){
                 // if item has been removed and there is no reference for responding info,
@@ -229,6 +228,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             });
             view->setIndexWidget(index, indexWidget);
             indexWidget->adjustPos();
+            indexWidget->update();
 
             auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
             auto item = model->itemFromIndex(index);
@@ -689,6 +689,8 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }
@@ -696,6 +698,7 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
             if (elidedLastLine != lastLine) {
+                elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width - 2);
                 isElided = true;
             }
             elidedText = option.text.left(line.textStart()) + elidedLastLine;
@@ -799,6 +802,8 @@ qreal IconViewTextHelper::drawText(QPainter *painter, const QStyleOptionViewItem
         y = nextLineY;
         if (1 == lineCount) {
            line.setLineWidth(width-xOffset);
+           xOffset = xOffset > 0 ? xOffset - (width - xOffset - line.naturalTextWidth()) : 0;
+           xOffset = xOffset > 0 ? xOffset : 0;
         } else {
             line.setLineWidth(width);
         }

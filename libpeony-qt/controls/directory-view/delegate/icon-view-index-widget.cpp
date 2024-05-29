@@ -456,7 +456,7 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
     if (e->button() == Qt::LeftButton) {
         IconView *view = m_delegate->getView();
 
-        if (view->isDraggingState() || m_is_dragging) {
+        if (view->isDraggingState() || m_is_dragging || view->m_ctrl_key_pressed) {
             view->m_renameTimer->stop();
             view->m_editValid = false;
             return QWidget::mousePressEvent(e);
@@ -527,6 +527,12 @@ void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
         m_delegate->getView()->activated(m_index);
     }
     return;
+}
+
+void IconViewIndexWidget::focusOutEvent(QFocusEvent *event)
+{
+    QWidget::focusOutEvent(event);
+    hide();
 }
 
 void IconViewIndexWidget::adjustPos()

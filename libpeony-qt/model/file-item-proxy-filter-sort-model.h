@@ -64,10 +64,13 @@ public:
     enum FilterFileModifyTime {
         ALL_TIME,
         TODAY,
+        YESTERDAY,
         THIS_WEEK,
+        LAST_WEEK,
         THIS_MONTH,
+        LAST_MONTH,
         THIS_YEAR,
-        YEAR_AGO
+        LAST_YEAR
     };
     Q_ENUM(FilterFileModifyTime)
     enum FilterFileSize {

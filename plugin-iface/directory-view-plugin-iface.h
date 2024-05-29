@@ -253,9 +253,6 @@ Q_SIGNALS:
     //window
     void updateWindowLocationRequest(const QString &uri);
 
-    virtual int getSortType() = 0;
-    virtual int getSortOrder() = 0;
-
 public Q_SLOTS:
     //location
     virtual void open(const QStringList &uris, bool newWindow) = 0;
@@ -279,6 +276,9 @@ public Q_SLOTS:
 
     virtual void editUri(const QString &uri) = 0;
     virtual void editUris(const QStringList uris) = 0;
+
+    virtual int getSortType() = 0;
+    virtual int getSortOrder() = 0;
 };
 
 }

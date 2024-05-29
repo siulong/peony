@@ -97,12 +97,12 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
             connect(m_menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
 
             if (m_desktopIconView->getSelections().isEmpty()) {
-                auto action = m_menu->addAction(QObject::tr("set background"));
+                auto action = m_menu->addAction(QObject::tr("Set Background"));
                 connect(action, &QAction::triggered, [=]() {
                     //go to control center set background
                     PeonyDesktopApplication::gotoSetBackground();
                 });
-                auto action1 = m_menu->addAction(QObject::tr("display settings"));
+                auto action1 = m_menu->addAction(QObject::tr("Display Settings"));
                 connect(action1, &QAction::triggered, [=]() {
                     //go to control center set resolution ratio
                     PeonyDesktopApplication::gotoSetResolution();
@@ -114,7 +114,17 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
                 if (screen->geometry().contains(relativePos));
                 //menu.windowHandle()->setScreen(screen);
             }
+
+            /* 菜单执行弹出操作时停止更新，超过1s或者结束菜单都启用更新; 解决：点击鼠标右键，右键菜单会闪烁（偶现） */
+            setUpdatesEnabled(false);
+            QTimer::singleShot(1000, this, [=](){
+                if(!updatesEnabled()){
+                    setUpdatesEnabled(true);
+                }
+            });
             m_menu->exec(mapToGlobal(pos));
+            setUpdatesEnabled(true);//end
+
             auto urisToEdit = m_menu->urisToEdit();
             m_desktopIconView->UpdateToEditUris(urisToEdit);
 //            if (urisToEdit.count() >= 1) {

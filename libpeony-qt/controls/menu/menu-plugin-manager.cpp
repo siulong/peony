@@ -196,23 +196,55 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
         if (uri.startsWith("trash://") || uri.startsWith("smb://")
             || uri.startsWith("recent://") || uri.startsWith("computer://"))
             return l;
+        QString version = qApp->property("version").toString();
+        if (version == "ukui3.0") {
+            if (selectionUris.count() == 1) {
+                auto action = new QAction(tr("Add File Label"), nullptr);
+                auto uri = selectionUris.first();
+                auto menu = new QMenu();
+                auto items = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
+                for (auto item : items) {
+                    auto ids = FileLabelModel::getGlobalModel()->getFileLabelIds(uri);
+                    bool checked = ids.contains(item->id());
+                    auto a = menu->addAction(item->name(), [=]() {
+                        if (!checked) {
+                            // note: while add label to file at first time (usually new user created),
+                            // it might fail to add a label correctly, but second time will work.
+                            // it might be a bug of gvfsd-metadata. anyway we should to avoid this
+                            // situation.
+                            FileLabelModel::getGlobalModel()->addLabelToFile(uri, item->id());
+                            FileLabelModel::getGlobalModel()->addLabelToFile(uri, item->id());
+                        } else {
+                            FileLabelModel::getGlobalModel()->removeFileLabel(uri, item->id());
+                        }
+                    });
+                    a->setCheckable(true);
+                    a->setChecked(checked);
+                }
+                menu->addSeparator();
+                menu->addAction(tr("Delete All Label"), [=]() {
+                    FileLabelModel::getGlobalModel()->removeFileLabel(uri);
+                });
+                action->setMenu(menu);
+                l<<action;
+            }
+        } else {
+            auto labelWidgetContainer = new QWidgetAction(this);
+            auto labelWidget = new FileLabelWidget(selectionUris);
+            labelWidgetContainer->setDefaultWidget(labelWidget);
+            l<<labelWidgetContainer;
 
-        auto labelWidgetContainer = new QWidgetAction(this);
-        auto labelWidget = new FileLabelWidget(selectionUris);
-        m_label = labelWidget;
-        labelWidgetContainer->setDefaultWidget(labelWidget);
-        l<<labelWidgetContainer;
+            QAction *tagAction = new QAction(tr("label management ..."), this);
+            connect(tagAction, &QAction::triggered, this, [=]() {
+                TagManagement *managent = TagManagement::getInstance();
+                managent->show();
+            });
+            l<<tagAction;
 
-        QAction *tagAction = new QAction(tr("label management ..."), this);
-        connect(tagAction, &QAction::triggered, this, [=]() {
-            TagManagement *managent = TagManagement::getInstance();
-            managent->show();
-        });
-        l<<tagAction;
-
-        connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
+           connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
             tagAction->setText(text);
-        });
+           });
+        }
     }
     return l;
 }

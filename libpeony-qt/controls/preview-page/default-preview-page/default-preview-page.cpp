@@ -175,7 +175,7 @@ void DefaultPreviewPage::prepare(const QString &uri, PreviewType type)
     m_current_uri = uri;
     m_info = FileInfo::fromUri(uri);
     m_current_type = type;
-    m_support = uri.contains("file:///");
+    m_support = (uri.contains("file:///") || uri.contains("mtp://") || uri.contains("gphoto2://")) ? true : false;
     m_watcher = std::make_shared<FileWatcher>(uri);
     connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString &, const QString &newUri) {
         this->prepare(newUri);
@@ -550,6 +550,7 @@ void FilePreviewPage::updateForm(QSize size)
     int iLongTextWidth = 0;
     while (i != m_form_label_map.constEnd()) {
         if (i.key() == m_display_name_label) {
+            iLongTextWidth = qMax(fontMetrics().width(i.value()), iLongTextWidth);
             ++i;
             continue;
         }

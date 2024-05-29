@@ -75,6 +75,9 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     auto model = static_cast<FileItemProxyFilterSortModel*>(view->model());
     auto item = model->itemFromIndex(index);
+    if (!item) {
+        return;
+    }
     auto info = item->info();
     auto colors = info->getColors();
 
@@ -86,78 +89,29 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         auto matchInfo = FileInfo::fromUri(uri);
         colors = matchInfo->getColors();
     }
-    auto rect = view->visualRect(index);
+
     if (index.column() == 0 && colors.count() >0) {
         if (!view->isDragging() || !view->selectionModel()->selectedIndexes().contains(index)) {
-            //修改标记个数最多为3个，以及标记位置
-            const int MAX_LABEL_NUM = 3;
-            const int LABEL_SIZE = 12;
-            int startIndex = (colors.count() > MAX_LABEL_NUM ? colors.count() - MAX_LABEL_NUM : 0);
-            int num =  colors.count() - startIndex;
-            auto lineSpacing = option.fontMetrics.lineSpacing();
-
-            int xOffSet = rect.topRight().x() - LABEL_SIZE/2 - 20;
-            int yOffSet = rect.height()/2 - LABEL_SIZE/2;
-            int width = rect.width();
-            if(num > 0){
-                //bug#94242 修改标记位置后和名称重叠，设置标记位置的背景颜色
-                QRect markRect = opt.rect;
-                markRect.setLeft(rect.width() - (num+1)*LABEL_SIZE/2 );
-                bool isHover = (opt.state & QStyle::State_MouseOver) && (opt.state & ~QStyle::State_Selected);
-                bool isSelected = opt.state & QStyle::State_Selected;
-                bool enable = opt.state & QStyle::State_Enabled;
-                QColor color = opt.palette.color(enable? QPalette::Active: QPalette::Disabled,
-                                                     QPalette::Highlight);
-
-                if (isSelected) {
-                    color.setAlpha(255);
-                } else if (isHover) {
-                    color = opt.palette.color(QPalette::Active, QPalette::BrightText);
-                    color.setAlphaF(0.05);
-                } else {
-                    color.setAlpha(0);
-                }
-
-                painter->save();
-                painter->fillRect(markRect, color);
-                painter->restore();
-                width = width - (num+1)*LABEL_SIZE/2 - 20;
-            }
-            for (int i = startIndex; i < colors.count(); ++i) {
-                auto color = colors.at(i);
-                painter->save();
-                //fix bug#147348
-                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-                painter->translate(0, opt.rect.topLeft().y());
-                painter->translate(2, 2);
-                painter->setPen(opt.palette.highlightedText().color());
-                painter->setBrush(color);
-                painter->drawEllipse(QRectF(xOffSet, yOffSet, LABEL_SIZE, LABEL_SIZE));
-                painter->restore();
-
-                xOffSet -= LABEL_SIZE/2;
-            }
-            //bug#94242 修改标记位置后和名称重叠，设置汉字宽度
-            opt.rect.setWidth(width);
+            paintLabel(opt, view->getLabelAlignment(), colors, painter);
         }
     }
 
 
-    if (ClipboardUtils::isClipboardHasFiles()){
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
         QString actualDirUri = view->getDirectoryUri();
         bool bSearchTab = false;
         if(actualDirUri.startsWith("search:///search_uris")){
             actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
             bSearchTab = true;
         }
+
         QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
         if ((FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri)) )
-                && ClipboardUtils::isPeonyFilesBeCut()
-                && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+                && !clipedUris.isEmpty()) {
+            if (clipedUris.contains(index.data(Qt::UserRole).toString())) {
                 painter->setOpacity(0.5);
-                qDebug()<<"cut item in list view"<<index.data();
+                //qDebug()<<"cut item in list view"<<index.data();
             }
             else
                 painter->setOpacity(1.0);
@@ -165,14 +119,14 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }
     else
        painter->setOpacity(1.0);
-    if (!opt.state.testFlag(QStyle::State_Selected)) {
-        if (opt.state & QStyle::State_Sunken) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
-        }
-        if (opt.state & QStyle::State_MouseOver) {
-            opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
-        }
-    }
+//    if (!opt.state.testFlag(QStyle::State_Selected)) {
+//        if (opt.state & QStyle::State_Sunken) {
+//            opt.palette.setColor(QPalette::Highlight, opt.palette.button().color());
+//        }
+//        if (opt.state & QStyle::State_MouseOver) {
+//            opt.palette.setColor(QPalette::Highlight, opt.palette.mid().color());
+//        }
+//    }
 
     if (index.column() == 0 && !m_regFindKeyWords.isEmpty()) {
         QString text1 = opt.text;
@@ -237,6 +191,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         int selectBox = 0;
         //get current checkbox positon and draw them.
         selectBox = view->getCurrentCheckboxColumn();
+        QRect rect = opt.rect;
         int selectBoxPosion = view->viewport()->width()+view->viewport()->x()-view->header()->sectionViewportPosition(selectBox)-48;
         if(index.column() == selectBox)
         {
@@ -364,6 +319,7 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     auto suffix = displayName.remove(displayString);
     auto fsType = FileUtils::getFsTypeFromFile(uri);
     auto info = FileInfo::fromUri(uri);
+    int32_t maxLength = 255;
     if (info->isDesktopFile()) {
         suffix = ".desktop";
     }
@@ -371,19 +327,21 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         fsType = "fuse.kyfs";
     }
     if (fsType.contains("ext")) {
-        edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+        maxLength = 255 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
-        edit->setMaxLengthLimit(255 - suffix.length());
+        maxLength = 255 - suffix.length();
+        edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("fuse.kyfs")) {
-        int32_t maxLength = 255;
         edit->setLimitBytes(false);
         QDBusInterface iface ("com.kylin.file.system.fuse","/com/kylin/file/system/fuse","com.kylin.file.system.fuse",QDBusConnection::systemBus());
         QDBusReply<int32_t> reply = iface.call("GetFilenameLength");
         if (reply.isValid()) {
             maxLength = reply.value();
         }
-        edit->setMaxLengthLimit(maxLength - suffix.length());
+        maxLength = maxLength - suffix.length();
+        edit->setMaxLengthLimit(maxLength);
     }
     edit->blockSignals(false);
 
@@ -396,8 +354,13 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 //    });
 
     connect(edit, &TextEdit::textChanged, this, [=]() {
-        edit->adjustText();
-        updateEditorGeometry(edit, option, index);
+        auto text = edit->toPlainText();
+        //fix bug#220283, rename edit position wrong issue
+        //short file name no need update to avoid position wrong
+        if (text.length() >= maxLength) {
+            edit->adjustText();
+            updateEditorGeometry(edit, option, index);
+        }
     });
 
     connect(edit, &TextEdit::finishEditRequest, this, &ListViewDelegate::slot_finishEdit);
@@ -534,6 +497,99 @@ void ListViewDelegate::slot_finishEdit()
 void ListViewDelegate::setSearchKeyword(QString regFindKeyWords)
 {
     m_regFindKeyWords = regFindKeyWords;
+}
+
+void ListViewDelegate::paintLabel(QStyleOptionViewItem &opt, int aalignment, QList<QColor> colors, QPainter *painter) const
+{
+    //修改标记个数最多为3个，以及标记位置
+    int xOffSet = 0;
+    int yOffSet = 0;
+    int labelSize = 12;
+    const int MAX_LABEL_NUM = 3;
+    switch(aalignment) {
+    case DirectoryView::ListView::LabelAlignment::AlignVertical: {
+        xOffSet = 5;
+        int index = 0;
+        int startIndex = (colors.count() > MAX_LABEL_NUM ? colors.count() - MAX_LABEL_NUM : 0);
+        int num = colors.count() - startIndex + 1;
+
+        //set color label on center, fix bug#40609
+        auto iconSize = opt.decorationSize;
+        labelSize = iconSize.height()/3;
+        if (labelSize > 10)
+            labelSize = 10;
+        if (labelSize <6)
+            labelSize = 6;
+
+        yOffSet = (opt.rect.height()-labelSize*num/2)/2;
+        if(yOffSet < 2)
+        {
+            yOffSet = 2;
+        }
+        for (int i = startIndex; i < colors.count(); ++i, ++index) {
+            auto color = colors.at(i);
+            painter->save();
+            //fix bug#147348
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            painter->translate(0, opt.rect.topLeft().y());
+            painter->translate(2, 0);
+            painter->setPen(opt.palette.highlightedText().color());
+            painter->setBrush(color);
+            painter->drawEllipse(QRectF(xOffSet, yOffSet, labelSize, labelSize));
+            painter->restore();
+            yOffSet += labelSize/2;
+        }
+        break;
+    }
+    case DirectoryView::ListView::LabelAlignment::AlignHorizontal:{
+        QRect rect = opt.rect;
+        xOffSet = rect.topRight().x() - labelSize/2 - 20;
+        yOffSet = rect.height()/2 - labelSize/2;
+        int startIndex = (colors.count() > MAX_LABEL_NUM ? colors.count() - MAX_LABEL_NUM : 0);
+        int num =  colors.count() - startIndex;
+        int width = rect.width();
+        if(num > 0){
+            //bug#94242 修改标记位置后和名称重叠，设置标记位置的背景颜色
+            QRect markRect = rect;
+            markRect.setLeft(rect.width() - (num+1)*labelSize/2 );
+            bool isHover = (opt.state & QStyle::State_MouseOver) && (opt.state & ~QStyle::State_Selected);
+            bool isSelected = opt.state & QStyle::State_Selected;
+            bool enable = opt.state & QStyle::State_Enabled;
+            QColor color = opt.palette.color(enable? QPalette::Active: QPalette::Disabled,
+                                                 QPalette::Highlight);
+
+            if (isSelected) {
+                color.setAlpha(255);
+            } else if (isHover) {
+                color = opt.palette.color(QPalette::Active, QPalette::BrightText);
+                color.setAlphaF(0.05);
+            } else {
+                color.setAlpha(0);
+            }
+
+            painter->save();
+            painter->fillRect(markRect, color);
+            painter->restore();
+            width = width - (num+1)*labelSize/2 - 20;
+        }
+        for (int i = startIndex; i < colors.count(); ++i) {
+            auto color = colors.at(i);
+            painter->save();
+            //fix bug#147348
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            painter->translate(0, rect.topLeft().y());
+            painter->translate(2, 2);
+            painter->setPen(opt.palette.highlightedText().color());
+            painter->setBrush(color);
+            painter->drawEllipse(QRectF(xOffSet, yOffSet, labelSize, labelSize));
+            painter->restore();
+            xOffSet -= labelSize/2;
+        }
+        //bug#94242 修改标记位置后和名称重叠，设置汉字宽度
+        opt.rect.setWidth(width);
+        break;
+    }
+    }
 }
 
 //TextEdit

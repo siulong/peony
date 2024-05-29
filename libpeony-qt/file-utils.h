@@ -31,7 +31,6 @@
 #include "gerror-wrapper.h"
 
 #include <QString>
-#include <QStringList>
 
 namespace Peony {
 
@@ -77,11 +76,13 @@ public:
     NO_BLOCKING static const QString getParentUri(const QString &uri);
     NO_BLOCKING static const QString getOriginalUri(const QString &uri);
 
+    NO_BLOCKING static QStringList standardPathList();
     NO_BLOCKING static bool isStandardPath(const QString &uri);
     NO_BLOCKING static bool isMobileDeviceFile(const QString &uri);
     NO_BLOCKING static bool isSamePath(const QString &uri, const QString &targetUri);
     NO_BLOCKING static bool containsStandardPath(const QStringList &list);
     NO_BLOCKING static bool containsStandardPath(const QList<QUrl> &urls);
+
 
     BLOCKING static bool isFileExsit(const QString &uri);
 
@@ -114,6 +115,7 @@ public:
     static quint64 getDiskFreeSpace(const gchar *path, bool &isState); /* 获取磁盘剩余空间*/
 
     NO_BLOCKING static QString getIconStringFromGIcon(GIcon *gicon, QString deviceFile = nullptr);
+    static QString getIconStringFromGIconThreadSafety(GIcon *gicon, QString deviceFile = nullptr);
     static void   saveCreateTime (const QString& url);
     static gint64 getCreateTimeOfMicro (const QString& url);
     static QString handleSpecialSymbols(const QString &displayName);
@@ -121,13 +123,10 @@ public:
     static bool isFuseFileSystem(const QString &fileUri);
     static bool isLongNameFileOfNotDel2Trash(const QString &fileUri);/* 判断是否是无法删除到回收站的长文件名文件 */
     static QString getActualDirFromSearchUri(const QString& searchUri);
+    static QString updateFileIconName(const QString &uri, bool checkValid = false);
 
 private:
     FileUtils();
-
-private:
-    static QStringList m_standardPaths;
-
 };
 
 class FileUtilsPrivate

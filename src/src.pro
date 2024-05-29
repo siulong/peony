@@ -17,13 +17,19 @@ QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitia
 include(../libpeony-qt/libpeony-qt-header.pri)
 include(../3rd-parties/SingleApplication/singleapplication.pri)
 include(windows/windows.pri)
+include(windows/windows-peony.pri)
 include(control/control.pri)
+include(../plugin-iface/unstable/window-plugin-iface.pri)
 #include(view/view.pri)
 DEFINES += QAPPLICATION_CLASS=QApplication
 
 PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf
 LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
+
+contains(DEFINES, KY_SDK_KABASE) {
+    PKGCONFIG += kysdk-kabase
+}
 
 contains(DEFINES, KY_SDK_DATACOLLECT) {
     PKGCONFIG += kysdk-datacollect
@@ -38,6 +44,9 @@ contains(DEFINES, KY_SDK_QT_WIDGETS) {
 contains(DEFINES, KY_SDK_WAYLANDHELPER) {
     PKGCONFIG += kysdk-waylandhelper
 }
+
+WINDOW_PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/peony-main-window
+DEFINES += WINDOW_PLUGIN_INSTALL_DIRS='\\"$${WINDOW_PLUGIN_INSTALL_DIRS}\\"'
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -64,13 +73,15 @@ TRANSLATIONS += ../translations/peony-qt/peony-qt_zh_CN.ts \
                 ../translations/peony-qt/peony-qt_zh_HK.ts
 
 SOURCES += \
+    main-window-factory-plugin-manager.cpp \
     peony-application.cpp \
     peony-main-window-style.cpp \
-    peony-main.cpp
+    peony-main.cpp \
 
 HEADERS += \
     peony-application.h \
     peony-main-window-style.h
+    main-window-factory-plugin-manager.h \
 
 INCLUDEPATH    += ../plugin-iface
 

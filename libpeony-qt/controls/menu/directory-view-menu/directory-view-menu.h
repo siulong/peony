@@ -75,12 +75,14 @@ protected:
 
 private:
     bool isMultFile(std::shared_ptr<FileInfo> info);
+    void isMobileFile(const QString &uri);
 
 private:
     FMWindowIface *m_top_window;
 
     DirectoryViewWidget *m_view;
     QString m_directory;
+    QString m_version;
     QStringList m_selections;
 
     bool m_is_cd = false;

@@ -78,13 +78,20 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     m_touch_active_timer->setInterval(2000);
     m_touch_active_timer->setSingleShot(true);
 
-    setFrameShape(QFrame::NoFrame);
+    setProperty("highlightMode", true);
+
+    //setFrameShape(QFrame::NoFrame);
 
     // use scroll per pixel mode for calculate vertical scroll bar range.
     // see reUpdateScrollBar()
     setVerticalScrollMode(ScrollPerPixel);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    m_version = qApp->property("version").toString();
+    if (m_version == "ukui3.0") {
+        setStyle(Peony::DirectoryView::ListViewStyle::getStyle());
+    } else {
+        setFrameShape(QFrame::NoFrame);
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    } 
 
     setAutoScroll(true);
     setAutoScrollMargin(100);
@@ -105,7 +112,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setAutoFillBackground(true);
     setBackgroundRole(QPalette::Base);
 
-    setItemDelegate(new ListViewDelegate(this));
+    //setItemDelegate(new ListViewDelegate(this));
 
     header()->setSectionResizeMode(QHeaderView::Interactive);
     header()->setSectionsMovable(true);
@@ -145,6 +152,7 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
 
     m_renameTimer = new QTimer(this);
     m_renameTimer->setInterval(3000);
+    m_renameTimer->setSingleShot(true);
     m_editValid = false;
 
     //use this property to fix bug 44314 and 33558
@@ -154,6 +162,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     setMouseTracking(true);//追踪鼠标
 
     m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this->viewport());
+
+    m_labelAlignment = GlobalSettings::getInstance()->getValue(LABLE_ALIGNMENT).toInt();
 
     //FIXME: do not create proxy in view itself.
     ListViewDelegate *delegate = new ListViewDelegate(this);
@@ -183,6 +193,8 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
             }
         }
     });
+
+    setViewportMargins(0, 0, 0, 0);
 }
 
 void ListView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -228,9 +240,14 @@ void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, [=](const QItemSelection &selection, const QItemSelection &deselection) {
         //qDebug()<<"list view selection changed"<<m_delegate_editing;
         //continue to fix bug#89540，98951
-        if (m_delegate_editing)
-            return;
         auto currentSelections = selection.indexes();
+        if (m_delegate_editing){
+            //fix bug#194642, list view can not trigger rename issue
+            if (! currentSelections.isEmpty()) {
+               m_last_index = currentSelections.first();
+            }
+            return;
+        }
 
         for (auto index : deselection.indexes()) {
             this->setIndexWidget(index, nullptr);
@@ -288,7 +305,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
         break;
     case Qt::Key_Up: {
         if (!selectedIndexes().isEmpty()) {
-            QTreeView::scrollTo(selectedIndexes().first());
+            QTreeView::scrollTo(currentIndex());
         }
         break;
     }
@@ -298,7 +315,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
             if (index.row() + 1 == model()->rowCount()) {
                 verticalScrollBar()->setValue(qMin(verticalScrollBar()->value() + iconSize().height(), verticalScrollBar()->maximum()));
             } else {
-                QTreeView::scrollTo(selectedIndexes().first());
+                QTreeView::scrollTo(currentIndex());
             }
         }
         break;
@@ -309,7 +326,7 @@ void ListView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_PageDown: {
         //fix bug#160799, can not update scrollBar to show selected file issue
         if (!selectedIndexes().isEmpty()) {
-            QTreeView::scrollTo(selectedIndexes().first());
+            QTreeView::scrollTo(currentIndex());
         }
         break;
     }
@@ -360,21 +377,27 @@ void ListView::mousePressEvent(QMouseEvent *e)
         m_mouse_release_unselect = false;
     }
 
-    if (m_mouse_release_unselect) {
-        this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-    }
-
     if(getSelections().count()>1) {
         multiSelect();
+    }
+
+    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+        m_noSelectOnPress = true;
+    } else {
+        m_noSelectOnPress = false;
     }
 
     m_editValid = true;
     QTreeView::mousePressEvent(e);
 
+    if (m_mouse_release_unselect) {
+        //this->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+    }
+
     auto visualRect = this->visualRect(index);
     auto sizeHint = itemDelegate()->sizeHint(viewOptions(), index);
     auto validRect = QRect(visualRect.topLeft(), sizeHint);
-    if (!isEnableMultiSelect() && !validRect.contains(e->pos())) {
+    if (!isEnableMultiSelect() && !validRect.contains(e->pos()) && e->modifiers() == Qt::NoModifier) {
         if (isIndexSelected) {
             clearSelection();
             setCurrentIndex(index);
@@ -412,6 +435,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
             }
         }
         //qDebug()<<m_renameTimer->remainingTime()<<m_editValid<<all_index_in_same_row<<qApp->styleHints()->mouseDoubleClickInterval();
+        //qDebug()<<"m_last_index:"<<m_last_index<<"indexAt(e->pos()):"<<indexAt(e->pos());
         //优化文件点击策略，提升用户体验，关联bug#125368
         //在双击时间间隔内，如果未触发双击事件，但是点击的是同一个有效图标，触发双击事件
         //系统默认双击间隔为400ms, 策略为[0,400]，触发双击，(400,3000)触发重命名
@@ -429,8 +453,10 @@ void ListView::mousePressEvent(QMouseEvent *e)
 void ListView::mouseReleaseEvent(QMouseEvent *e)
 {
     QTreeView::mouseReleaseEvent(e);
+    m_noSelectOnPress = false;
     m_rubberBand->hide();
     m_lastPressedLogicPoint = QPoint(-1, -1);
+    m_isLeftButtonPressed = false;
 }
 
 void ListView::mouseMoveEvent(QMouseEvent *e)
@@ -621,8 +647,10 @@ void ListView::dropEvent(QDropEvent *e)
 void ListView::resizeEvent(QResizeEvent *e)
 {
     QTreeView::resizeEvent(e);
-    if (m_last_size != size()) {
+
+    if (m_last_size != size() || m_last_viewport_size != viewport()->size()) {
         m_last_size = size();
+        m_last_viewport_size = viewport()->size();
         adjustColumnsSize();
     }
     if (state() == QTreeView::EditingState && qApp->property("tabletMode").toBool()) {
@@ -673,7 +701,7 @@ void ListView::updateGeometries()
 
 void ListView::wheelEvent(QWheelEvent *e)
 {
-    if (e->modifiers() & Qt::ControlModifier) {
+    if ((e->modifiers() & Qt::ControlModifier)) {
         zoomLevelChangedRequest(e->delta() > 0);
         e->accept();
         return;
@@ -726,57 +754,106 @@ void ListView::startDrag(Qt::DropActions flags)
             drag->setMimeData(model()->mimeData(indexes));
         }
 
-        QRegion rect;
-        QHash<QModelIndex, QRect> indexRectHash;
-        for (auto index : indexes) {
-            rect += (visualRect(index));
-            indexRectHash.insert(index, visualRect(index));
-        }
+        int num = indexes.count() / 4;
+        if (num > 50) {
+            QRect pixmapRect = QRect(100, 100, 400, 400);
+            QPixmap pixmap(pixmapRect.size() * scale);
+            pixmap.fill(Qt::transparent);
+            pixmap.setDevicePixelRatio(scale);
+            QPainter painter(&pixmap);
+            quint64 count = 0;
 
-        QRect realRect = rect.boundingRect();
-        QPixmap pixmap(realRect.size() * scale);
-        pixmap.fill(Qt::transparent);
-        pixmap.setDevicePixelRatio(scale);
-        QPainter painter(&pixmap);
-        quint64 count = 0;
-        for (auto index : indexes) {
             painter.save();
-            painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
-            //painter.translate(-rect.boundingRect().topLeft());
-            painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            QStyleOptionViewItem opt = viewOptions();
-            auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
-            viewItemDelegate->initIndexOption(&opt, index);
-            opt.displayAlignment = Qt::Alignment(Qt::AlignLeft|Qt::AlignVCenter);
-            opt.rect.setSize(indexRectHash.value(index).size());
-            opt.rect.moveTo(0, 0);
-            opt.state |= QStyle::State_Selected;
-            painter.setOpacity(0.8);
+            QRect iconRect = pixmapRect;
+            iconRect.setSize(QSize(139, 139));
+            for (auto index : indexes) {
+               if (count > 50) {
+                   break;
+               }
+               count++;
+               iconRect.moveTo(iconRect.x()+1, iconRect.y()+1);
+               QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+               if (!icon.isNull()) {
+                   painter.save();
+                   painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+                   painter.drawPixmap(QPoint(100 + count, 100 + count), icon.pixmap(139, 139));
+                   painter.restore();
+              }
+            }
+            QFont font = qApp->font();
+            font.setPointSize(10);
+            QFontMetrics metrics(font);
+            QString text = num > 999 ? "..." : QString::number(num);
+            int height = metrics.width(text);
+            int width = metrics.height();
 
-            count++;
-            if(count == 1){
-                QPainterPath leftRoundedRegion;
-                leftRoundedRegion.setFillRule(Qt::WindingFill);
-                leftRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
-                leftRoundedRegion.addRect(opt.rect.adjusted(LISTVIEW_ITEM_BORDER_RADIUS, 0, 0, 0));
-                painter.setClipPath(leftRoundedRegion);
-            }else if(count == 4){
-                QPainterPath rightRoundedRegion;
-                rightRoundedRegion.setFillRule(Qt::WindingFill);
-                rightRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
-                rightRoundedRegion.addRect(opt.rect.adjusted(0, 0, -LISTVIEW_ITEM_BORDER_RADIUS, 0));
-                painter.setClipPath(rightRoundedRegion);
-                count = 0;
+            int diameter = std::max(height, width);
+            int radius = diameter / 2;
+            QRectF textRect = QRectF(iconRect.topRight().x() - diameter - 10, iconRect.topRight().y(), diameter + 10, diameter + 10);
+            painter.setBrush(Qt::red);
+            painter.setPen(Qt::red);
+            painter.drawEllipse(textRect);
+            painter.setPen(Qt::white);
+            painter.drawText(textRect, Qt::AlignCenter, text);
+            painter.restore();
+
+            drag->setPixmap(pixmap);
+            drag->setHotSpot(QPoint(200,200));
+            drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+            drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+        } else {
+            QRegion rect;
+            QHash<QModelIndex, QRect> indexRectHash;
+            for (auto index : indexes) {
+                rect += (visualRect(index));
+                indexRectHash.insert(index, visualRect(index));
             }
 
-            QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
-            painter.restore();
-        }
+            QRect realRect = rect.boundingRect();
+            QPixmap pixmap(realRect.size() * scale);
+            pixmap.fill(Qt::transparent);
+            pixmap.setDevicePixelRatio(scale);
+            QPainter painter(&pixmap);
+            quint64 count = 0;
 
-        drag->setPixmap(pixmap);
-        drag->setHotSpot(pos - rect.boundingRect().topLeft() - QPoint(0, header()->height()));
-        drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
-        drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+            for (auto index : indexes) {
+                painter.save();
+                painter.translate(indexRectHash.value(index).topLeft() - rect.boundingRect().topLeft());
+                //painter.translate(-rect.boundingRect().topLeft());
+                painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+                QStyleOptionViewItem opt = viewOptions();
+                auto viewItemDelegate = static_cast<ListViewDelegate *>(itemDelegate());
+                viewItemDelegate->initIndexOption(&opt, index);
+                opt.displayAlignment = Qt::Alignment(Qt::AlignLeft|Qt::AlignVCenter);
+                opt.rect.setSize(indexRectHash.value(index).size());
+                opt.rect.moveTo(0, 0);
+                opt.state |= QStyle::State_Selected;
+                painter.setOpacity(0.8);
+
+                count++;
+                if(count == 1){
+                    QPainterPath leftRoundedRegion;
+                    leftRoundedRegion.setFillRule(Qt::WindingFill);
+                    leftRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                    leftRoundedRegion.addRect(opt.rect.adjusted(LISTVIEW_ITEM_BORDER_RADIUS, 0, 0, 0));
+                    painter.setClipPath(leftRoundedRegion);
+                }else if(count == 4){
+                    QPainterPath rightRoundedRegion;
+                    rightRoundedRegion.setFillRule(Qt::WindingFill);
+                    rightRoundedRegion.addRoundedRect(opt.rect, LISTVIEW_ITEM_BORDER_RADIUS, LISTVIEW_ITEM_BORDER_RADIUS);
+                    rightRoundedRegion.addRect(opt.rect.adjusted(0, 0, -LISTVIEW_ITEM_BORDER_RADIUS, 0));
+                    painter.setClipPath(rightRoundedRegion);
+                    count = 0;
+                }
+
+                QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, this);
+                painter.restore();
+            }
+            drag->setPixmap(pixmap);
+            drag->setHotSpot(pos - rect.boundingRect().topLeft() - QPoint(0, header()->height()));
+            drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+            drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
+        }
     }
 }
 
@@ -786,6 +863,29 @@ void ListView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
     QRect adjustedRect = rect;
     adjustedRect.setLeft(0);
     QTreeView::setSelection(adjustedRect, command);
+}
+
+QItemSelectionModel::SelectionFlags ListView::selectionCommand(const QModelIndex &index, const QEvent *event) const
+{
+    if (!event)
+        return QTreeView::selectionCommand(index, event);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto e = static_cast<const QMouseEvent *>(event);
+        if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection)) {
+            QItemSelectionModel::SelectionFlags flags;
+            if (m_noSelectOnPress) {
+                flags = QItemSelectionModel::Deselect|QItemSelectionModel::Rows;
+            }
+            return flags;
+        }
+    }
+    return QTreeView::selectionCommand(index, event);
 }
 
 void ListView::slotRename()
@@ -852,7 +952,6 @@ void ListView::adjustColumnsSize()
 
     // do not trigger header's sectionResized() signal. related to #155969.
     header()->blockSignals(true);
-    header()->resizeSections(QHeaderView::ResizeToContents);
 
     int rightPartsSize = 0;
     for (int column = 1; column < model()->columnCount(); column++) {
@@ -877,8 +976,9 @@ void ListView::adjustColumnsSize()
         return;
     }
 
+    header()->resizeSections(QHeaderView::ResizeToContents);
     header()->resizeSection(0, this->viewport()->width() - rightPartsSize);
-    header()->resizeSection(model()->columnCount() - 1, viewport()->width() - 20 - header()->sectionSize(0) - header()->sectionSize(1) - header()->sectionSize(2));
+    header()->setStretchLastSection(true);    /* linkto bug#220914 */
     header()->blockSignals(false);
 }
 
@@ -1057,9 +1157,9 @@ int ListView::getSortType()
 void ListView::setSortType(int sortType)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    QTimer::singleShot(0, this, [=]{
-        header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
-    });
+    header()->blockSignals(true);
+    header()->setSortIndicator(sortType, Qt::SortOrder(getSortOrder()));
+    header()->blockSignals(false);
     m_proxy_model->sort(sortType, Qt::SortOrder(getSortOrder()));
 }
 
@@ -1071,9 +1171,9 @@ int ListView::getSortOrder()
 void ListView::setSortOrder(int sortOrder)
 {
     //fix indicator not agree with actual sort order issue, link to bug#71475
-    QTimer::singleShot(0, this, [=]{
-        header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
-    });
+    header()->blockSignals(true);
+    header()->setSortIndicator(getSortType(), Qt::SortOrder(sortOrder));
+    header()->blockSignals(false);
     m_proxy_model->sort(getSortType(), Qt::SortOrder(sortOrder));
 }
 
@@ -1085,9 +1185,6 @@ void ListView::editUri(const QString &uri)
         origin = uri;
     QModelIndex index = m_proxy_model->indexFromUri(origin);
     setIndexWidget(index, nullptr);
-    //注释该行以修复bug:#60474
-//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
-    edit(index);
     //fix bug#70769, edit box overlapped with status bar issue
     //qDebug() <<"editUri row"<<m_proxy_model->rowCount()<<index.row();
     if(index.row() >= m_proxy_model->rowCount()-1) {
@@ -1100,6 +1197,9 @@ void ListView::editUri(const QString &uri)
             }
         });
     }
+    //注释该行以修复bug:#60474
+//    QTreeView::scrollTo(m_proxy_model->indexFromUri(origin));
+    edit(index);
 }
 
 void ListView::editUris(const QStringList uris)
@@ -1182,16 +1282,18 @@ void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, co
     }
 
     QString uri = m_model->getRootUri();
-    if (ClipboardUtils::isClipboardHasFiles() &&
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty() &&
         FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
-        if (ClipboardUtils::isPeonyFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()) {
-            auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-            if (clipedUris.contains(FileUtils::urlEncode(index.data(Qt::UserRole).toString()))) {
+        if (!clipedUris.isEmpty()) {
+            if (clipedUris.contains(index.data(Qt::UserRole).toString())) {
                 painter->setOpacity(0.5);
             }
             else {
                 painter->setOpacity(1.0);
             }
+        } else {
+            painter->setOpacity(1.0);
         }
     }
     QTreeView::drawRow(painter, option, index);
@@ -1208,6 +1310,16 @@ void ListView::doMultiSelect(bool isMultiSlelect)
     }
 
     viewport()->update();
+}
+
+void ListView::setLabelAlignment(int alignment)
+{
+    m_labelAlignment = alignment;
+}
+
+int ListView::getLabelAlignment() const
+{
+    return m_labelAlignment;
 }
 
 //List View 2

@@ -33,6 +33,7 @@
 #include <QMap>
 
 class QLabel;
+class QGSettings;
 
 namespace Peony {
 
@@ -57,6 +58,13 @@ public:
 
     };
     Q_ENUM(ZoomLevel)
+
+    enum Direction {
+        All,
+        Right,
+        Bottom
+    };
+    Q_ENUM(Direction)
 
     explicit DesktopIconView(QWidget *parent = nullptr);
     ~DesktopIconView();
@@ -99,6 +107,7 @@ public:
     int getSortOrder();
 
     QRect visualRect(const QModelIndex &index) const;
+    QPoint offset();
     QRect getViewRect();
     const QFont getViewItemFont(QStyleOptionViewItem *item);
     int updateBWList();
@@ -124,6 +133,10 @@ public:
     void clearCache();
     void modifyGridSize();
     void initViewport();
+    bool verifyBoundaries(const QRect &rect, Direction direction);
+
+    int radius() const;
+    void setMarginsBasedOnPosition(int position, int margins);
 
 private:
     QRect getScreenArea(QScreen* screen);
@@ -261,6 +274,8 @@ protected:
     void checkItemsOver();
     bool dragToOtherScreen(QDropEvent *e);
 
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
+
 private:
     ZoomLevel m_zoom_level = Invalid;
     QMargins m_panel_margin;
@@ -307,6 +322,11 @@ private:
     int m_id = 0;
 
     QStringList m_storageBox;
+
+    int m_radius = 6;
+    QGSettings *m_panelSetting = nullptr;
+
+    bool m_noSelectOnPress = false;
 };
 
 }

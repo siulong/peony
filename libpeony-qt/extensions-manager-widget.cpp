@@ -105,7 +105,11 @@ void Peony::ExtensionsManagerWidget::initUI()
     });
 
     connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
-       this->close();
+        this->close();
+        if (global_instance) {
+            delete global_instance;
+            global_instance = nullptr;
+        }
     });
 }
 
@@ -163,6 +167,7 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
 
         QIcon icon = iface->icon();
         QLabel *iconLabel = new QLabel();
+        iconLabel->setProperty("useIconHighlightEffect", 0x2);
         iconLabel->setPixmap(QIcon::fromTheme(icon.name(), QIcon::fromTheme("unknown")).pixmap(QSize(24, 24)));
         iconLabel->setAlignment(Qt::AlignCenter);
         m_tableWidget->setCellWidget(row, 1, iconLabel);

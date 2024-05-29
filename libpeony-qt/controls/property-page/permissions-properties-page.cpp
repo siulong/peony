@@ -153,7 +153,7 @@ void PermissionsPropertiesPage::initTableWidget()
     m_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
     m_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     m_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    m_table->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
+    //m_table->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
 
     m_table->setColumnWidth(0, 150);
     m_table->setColumnWidth(1, 75);
@@ -835,7 +835,7 @@ void AdvancedPermissionsPage::initTableWidget()
     m_tabWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     m_tabWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     m_tabWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
-    m_tabWidget->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
+    //m_tabWidget->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft);
 
     m_tabWidget->setColumnWidth(0, 100);
     m_tabWidget->setColumnWidth(1, 75);

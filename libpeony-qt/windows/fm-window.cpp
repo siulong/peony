@@ -51,7 +51,8 @@
 
 #include "directory-view-factory-manager.h"
 
-#include "properties-window.h"
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 
 #include "global-settings.h"
 
@@ -460,7 +461,8 @@ FMWindow::FMWindow(const QString &uri, QWidget *parent) : QMainWindow (parent)
     connect(propertiesWindowAction, &QAction::triggered, this, [=]() {
         if (getCurrentSelections().count() >0)
         {
-            PropertiesWindow *w = new PropertiesWindow(getCurrentSelections());
+            QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(getCurrentSelections());
+            //PropertiesWindow *w = new PropertiesWindow(getCurrentSelections());
             w->show();
         }
     });
@@ -551,7 +553,7 @@ FMWindow::FMWindow(const QString &uri, QWidget *parent) : QMainWindow (parent)
 
 FMWindowFactory *FMWindow::getFactory()
 {
-    return FMWindowFactory::getInstance();
+    return nullptr;
 }
 
 FMWindowIface *FMWindow::create(const QString &uri)

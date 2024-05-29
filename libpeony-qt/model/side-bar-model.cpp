@@ -63,7 +63,6 @@ SideBarModel::SideBarModel(QObject *parent)
         if (plugin->holdInSideBar()) {
             m_root_children->append(new SideBarVFSItem(plugin->uriScheme() + "/", nullptr, this));
         }
-
     }
 
 //    SideBarSeparatorItem *separator1 = new SideBarSeparatorItem(SideBarSeparatorItem::Large, nullptr, this, this);
@@ -246,9 +245,15 @@ QVariant SideBarModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DecorationRole:{
-        QString iconName = item->iconName() + "-symbolic";
-        if(item->iconName().endsWith("-symbolic"))
-            iconName = item->iconName();
+        QString iconName = item->iconName();
+        if(item->type() == SideBarAbstractItem::FileSystemItem
+                && item->getDevice().startsWith("/dev/sr")
+                && (iconName.startsWith("media-optical"))){/* 规范光盘图标，与竞品对比，光盘图标使用的是"media-optical-symbolic",linkto bug#174770 */
+            iconName = "media-optical-symbolic";
+        }
+        if(!iconName.endsWith("-symbolic")){
+            iconName += "-symbolic";
+        }
         //qDebug()<<"print side bar icon name, uri"<<FileUtils::urlEncode(item->uri())<<" icon name:"<<iconName;
         return QIcon::fromTheme(iconName, QIcon::fromTheme(item->iconName()));
     }
@@ -297,6 +302,8 @@ bool SideBarModel::insertColumns(int column, int count, const QModelIndex &paren
 
 bool SideBarModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    if (count == 0)
+        return true;
     beginRemoveRows(parent, row, row + count - 1);
     // FIXME: Implement me!
     endRemoveRows();

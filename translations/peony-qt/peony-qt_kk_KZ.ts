@@ -55,7 +55,7 @@ p, li { ақ кеңістік: алдын ала орау; }
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>Peony — пайдаланушыларға жүйелік файлдарды басқаруға көмектесетін графикалық бағдарламалық жасақтама. Ол пайдаланушылар үшін ортақ файлдық операция функцияларын қамтамасыз етеді, мысалы, файлды көру, файлды көшіру, қою, қиып алу, жою, атын өзгерту, файл таңдау, қолданба ашу, файлды іздеу, файлды сұрыптау, файлды алдын ала қарау және т.б. Пайдаланушыларға жүйе файлдарын интерфейсте интуитивті басқару ыңғайлы.</translation>
+        <translation>Peony — пайдаланушыларға жүйелік файлдарды басқаруға көмектесетін графикалық бағдарламалық жасақтама. Ол пайдаланушылар үшін ортақ файлдық операция функцияларын қамтамасыз етеді, мысалы, файлды көру, файлды көшіру, қою, қиып алу, жою, атын өзгерту, файл таңдау, қолданба ашу, файлды іздеу, файлды сұрыптау, файлды алдын ала қарау және т.б. Пайдаланушыларға жүйелік файлдарды интерфейсте интуитивті басқару ыңғайлы.</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -94,11 +94,11 @@ p, li { ақ кеңістік: алдын ала орау; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="vanished">Өшіру</translation>
+        <translation type="vanished">删除标记</translation>
     </message>
     <message>
         <source>Create New Label</source>
-        <translation type="vanished">Жаңа белгі жасау</translation>
+        <translation type="vanished">创建标记</translation>
     </message>
 </context>
 <context>
@@ -123,12 +123,123 @@ p, li { ақ кеңістік: алдын ала орау; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="vanished">Іздеу</translation>
+        <translation type="vanished">搜索</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="236"/>
+        <source>View Type</source>
+        <translation>Көрініс түрі</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="274"/>
+        <source>Sort Type</source>
+        <translation>Сұрыптау түрі</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="356"/>
+        <source>Option</source>
+        <translation>Опция</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="472"/>
+        <source>Operate Tips</source>
+        <translation>Кеңестерді пайдалану</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="163"/>
         <source>Go Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Жоғарыға шығу</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="vanished">Егжей- тегжей</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="369"/>
+        <source>&amp;Copy</source>
+        <translation>&amp; Көшіру</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="372"/>
+        <source>Copy</source>
+        <translation>Көшіру</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="384"/>
+        <source>&amp;Cut</source>
+        <translation>Қиып алу</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="387"/>
+        <source>Cut</source>
+        <translation>Қиып алу</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="393"/>
+        <source>&amp;Select All</source>
+        <translation>Барлығын таңдау</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="397"/>
+        <location filename="../../src/control/header-bar.cpp" line="409"/>
+        <source>Select All</source>
+        <translation>Барлығын таңдау</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="414"/>
+        <location filename="../../src/control/header-bar.cpp" line="926"/>
+        <location filename="../../src/control/header-bar.cpp" line="944"/>
+        <source>Deselect All</source>
+        <translation>Барлығын басу</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="419"/>
+        <source>&amp;Delete to trash</source>
+        <translation>Өшірілгенге дейін өшіру</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="422"/>
+        <source>Delete to trash</source>
+        <translation>Өшірілгенге дейін өшіру</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="473"/>
+        <source>Don&apos;t find any terminal, please install at least one terminal!</source>
+        <translation>Ешбір терминалды таппаңыз, кем дегенде бір терминал орнатуыңызды сұраймыз!</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="728"/>
+        <location filename="../../src/control/header-bar.cpp" line="929"/>
+        <location filename="../../src/control/header-bar.cpp" line="939"/>
+        <source>Select All Item</source>
+        <translation>Барлық элементті таңдау</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="738"/>
+        <location filename="../../src/control/header-bar.cpp" line="873"/>
+        <location filename="../../src/control/header-bar.cpp" line="912"/>
+        <source>Select</source>
+        <translation>Таңдау</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="713"/>
+        <source>Restore</source>
+        <translation>Қалпына келтіру</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="716"/>
+        <source>Maximize</source>
+        <translation>Барынша көбейту</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="915"/>
+        <source>Select Done</source>
+        <translation>Орындалды тармағын таңдау</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="765"/>
+        <source>MoveTo</source>
+        <translation>Жылжыту</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="207"/>
@@ -136,131 +247,24 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="215"/>
+        <location filename="../../src/control/header-bar.cpp" line="217"/>
         <source>List View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="232"/>
-        <source>View Type</source>
-        <translation>Көрініс түрі</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="269"/>
-        <source>Sort Type</source>
-        <translation>Сұрыптау түрі</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="341"/>
-        <source>Option</source>
-        <translation>Опция</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="354"/>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="357"/>
-        <source>Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="369"/>
-        <source>&amp;Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="372"/>
-        <source>Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="378"/>
-        <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="382"/>
-        <location filename="../../src/control/header-bar.cpp" line="394"/>
-        <source>Select All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="399"/>
-        <location filename="../../src/control/header-bar.cpp" line="911"/>
-        <location filename="../../src/control/header-bar.cpp" line="929"/>
-        <source>Deselect All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="404"/>
-        <source>&amp;Delete to trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="407"/>
-        <source>Delete to trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="457"/>
-        <source>Operate Tips</source>
-        <translation>Кеңестерді пайдалану</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="458"/>
-        <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation>Ешбір терминалды таппаңыздар, кем дегенде бір терминал орнатуыңызды сұраймыз!</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="698"/>
-        <source>Restore</source>
-        <translation>Қалпына келтіру</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="701"/>
-        <source>Maximize</source>
-        <translation>Барынша көбейту</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="713"/>
-        <location filename="../../src/control/header-bar.cpp" line="914"/>
-        <location filename="../../src/control/header-bar.cpp" line="924"/>
-        <source>Select All Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="723"/>
-        <location filename="../../src/control/header-bar.cpp" line="858"/>
-        <location filename="../../src/control/header-bar.cpp" line="897"/>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="750"/>
-        <source>MoveTo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="759"/>
+        <location filename="../../src/control/header-bar.cpp" line="774"/>
         <source>CopyTo</source>
-        <translation type="unfinished"></translation>
+        <translation>Көшіріп алу</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="768"/>
+        <location filename="../../src/control/header-bar.cpp" line="783"/>
         <source>Delete</source>
-        <translation type="unfinished">Өшіру</translation>
+        <translation>Өшіру</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="835"/>
+        <location filename="../../src/control/header-bar.cpp" line="850"/>
         <source>Select path</source>
-        <translation type="unfinished">选择路径</translation>
-    </message>
-    <message>
-        <location filename="../../src/control/header-bar.cpp" line="900"/>
-        <source>Select Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Жолды таңдау</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -274,7 +278,11 @@ p, li { ақ кеңістік: алдын ала орау; }
 <context>
     <name>HeaderBarContainer</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1275"/>
+        <source>Option</source>
+        <translation type="vanished">选项</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
         <translation>Кішірейту</translation>
     </message>
@@ -291,7 +299,7 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">最大化</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1287"/>
+        <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
         <translation>Жабу</translation>
     </message>
@@ -301,12 +309,12 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="180"/>
         <source>Open In &amp;New Window</source>
-        <translation type="unfinished">在新窗口中打开(&amp;N)</translation>
+        <translation>Жаңа терезені ашу</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="204"/>
         <source>Open In New &amp;Tab</source>
-        <translation type="unfinished">在新标签页中打开(&amp;T)</translation>
+        <translation>Жаңа &gt; қойындысын ашу</translation>
     </message>
 </context>
 <context>
@@ -314,38 +322,38 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="516"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлдар</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="877"/>
+        <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
         <translation>Файл менеджері</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="409"/>
+        <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
         <translation>Болдырмау</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="416"/>
+        <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
         <translation>Редо</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="786"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
         <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="786"/>
+        <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
         <translation>Бұл операцияға қолдау көрсетілмеген.</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="875"/>
+        <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
         <translation>Іздеу</translation>
     </message>
@@ -374,7 +382,7 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/windows/main-window.cpp" line="890"/>
+        <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
         <translation>Жаңа қапшық</translation>
     </message>
@@ -390,50 +398,50 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
         <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="479"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
         <translation>Бұл операцияға қолдау көрсетілмеген.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
         <translation>Кеңестер</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="228"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>Құрылғы бос емес күйде, бұл операцияны кейінірек орындауыңызды сұраймыз.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="517"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>Бұл аномальды Удиск, оны түзетіңіз немесе пішімдеңіз</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="535"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>Бұл бос диск, диск кірістіруіңізді сұраймыз.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="256"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
         <translation>Жаңа терезеде ашу</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="272"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="306"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
         <translation>% 1, % 2 ашылмады</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="290"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
         <translation>Жаңа қойындыда ашу</translation>
     </message>
@@ -446,17 +454,17 @@ p, li { ақ кеңістік: алдын ала орау; }
     <name>NavigationSideBarContainer</name>
     <message>
         <source>All tags...</source>
-        <translation type="vanished">Барлық тегтер...</translation>
+        <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="741"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер тегтері...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="744"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>Қосымша тегтер...</translation>
     </message>
 </context>
 <context>
@@ -495,7 +503,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="103"/>
         <source>Show Create Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Уақыт жасауды көрсету</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="110"/>
@@ -508,73 +516,73 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation>Нобайлауға тыйым салу</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="132"/>
+        <location filename="../../src/control/operation-menu.cpp" line="133"/>
         <source>Resident in Backend</source>
         <translation>Backend тұрғыны</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="141"/>
+        <location filename="../../src/control/operation-menu.cpp" line="142"/>
         <source>Parallel Operations</source>
         <translation>Параллель операциялар</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="147"/>
+        <location filename="../../src/control/operation-menu.cpp" line="148"/>
         <source>Set samba password</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba құпия сөзін орнату</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="161"/>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>Tips</source>
-        <translation type="unfinished">Кеңестер</translation>
+        <translation>Кеңестер</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="161"/>
+        <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Пайдаланушыда әлдеқашан samba құпия сөзі бар, samba құпия сөзін қалпына келтіру керек пе?</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="170"/>
-        <source>Samba password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/control/operation-menu.cpp" line="172"/>
+        <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Samba set user password</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba пайдаланушы құпия сөзін орнатты</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
-        <location filename="../../src/control/operation-menu.cpp" line="191"/>
+        <location filename="../../src/control/operation-menu.cpp" line="171"/>
+        <source>Samba password:</source>
+        <translation>Samba паролі:</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/operation-menu.cpp" line="181"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Warning</source>
-        <translation type="unfinished">Ескерту</translation>
+        <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="180"/>
+        <location filename="../../src/control/operation-menu.cpp" line="181"/>
         <source>Samba set password failed, Please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba құпиясөзі жаңылысы, Қайта енгізуіңізді сұраймын!</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="191"/>
+        <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ортақ конфигурация қызметінен ерекшелік, ортақ конфигурация операциясы жалғасып жатқанын растаңыз немесе үлесті қалпына келтіруіңізді сұраймыз!</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="200"/>
+        <location filename="../../src/control/operation-menu.cpp" line="201"/>
         <source>Open each folder in a new window</source>
-        <translation type="unfinished"></translation>
+        <translation>Әр қалтаны жаңа терезеде ашу</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="206"/>
+        <location filename="../../src/control/operation-menu.cpp" line="207"/>
         <source>Plugin manager Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Плагин модулін реттеуші параметрлері</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="215"/>
+        <location filename="../../src/control/operation-menu.cpp" line="216"/>
         <source>Help</source>
         <translation>Анықтама</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="219"/>
+        <location filename="../../src/control/operation-menu.cpp" line="220"/>
         <source>About</source>
         <translation>Шамамен</translation>
     </message>
@@ -582,27 +590,27 @@ p, li { ақ кеңістік: алдын ала орау; }
 <context>
     <name>OperationMenuEditWidget</name>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="274"/>
+        <location filename="../../src/control/operation-menu.cpp" line="284"/>
         <source>Edit</source>
         <translation>Өңдеу</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="285"/>
+        <location filename="../../src/control/operation-menu.cpp" line="295"/>
         <source>copy</source>
         <translation>көшіру</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="294"/>
+        <location filename="../../src/control/operation-menu.cpp" line="304"/>
         <source>paste</source>
         <translation>қою</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="303"/>
+        <location filename="../../src/control/operation-menu.cpp" line="313"/>
         <source>cut</source>
         <translation>қиып алу</translation>
     </message>
     <message>
-        <location filename="../../src/control/operation-menu.cpp" line="312"/>
+        <location filename="../../src/control/operation-menu.cpp" line="322"/>
         <source>trash</source>
         <translation>себет</translation>
     </message>
@@ -612,12 +620,12 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation type="unfinished"></translation>
+        <translation>CloudStorage</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="55"/>
         <source>CloudFile</source>
-        <translation type="unfinished"></translation>
+        <translation>CloudFile</translation>
     </message>
 </context>
 <context>
@@ -625,7 +633,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-favorite-item.cpp" line="46"/>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Таңдаулылар</translation>
     </message>
 </context>
 <context>
@@ -633,51 +641,51 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="60"/>
         <source>Computer</source>
-        <translation type="unfinished">计算机</translation>
+        <translation>Компьютер</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="79"/>
         <source>文件系统</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Жүйе дискісі</translation>
     </message>
 </context>
 <context>
     <name>Peony::Intel::SideBarMenu</name>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="51"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="70"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="96"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="111"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="173"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="241"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="52"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="71"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="97"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="112"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Сипаттары</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="81"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
         <source>Delete Symbolic</source>
-        <translation type="unfinished"></translation>
+        <translation>Символдық мәнді өшіру</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="131"/>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="233"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="132"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="234"/>
         <source>Unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>Еңсерілмеу</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="150"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="151"/>
         <source>Eject</source>
-        <translation type="unfinished"></translation>
+        <translation>Эжек</translation>
     </message>
     <message>
-        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="202"/>
+        <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="203"/>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>пішімі</translation>
     </message>
 </context>
 <context>
@@ -685,7 +693,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-personal-item.cpp" line="45"/>
         <source>Personal</source>
-        <translation type="unfinished"></translation>
+        <translation>Жеке</translation>
     </message>
 </context>
 <context>
@@ -693,7 +701,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-separator-item.h" line="70"/>
         <source>(No Sub Directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Ішкі каталог жоқ)</translation>
     </message>
 </context>
 <context>
@@ -701,7 +709,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Пайдаланушы дискісі</translation>
     </message>
 </context>
 <context>
@@ -709,7 +717,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/intel/tablet-side-bar-factory.cpp" line="60"/>
         <source>Intel Side Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Intel Side тақтасы</translation>
     </message>
 </context>
 <context>
@@ -717,7 +725,7 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Іздеу</translation>
     </message>
 </context>
 <context>
@@ -725,17 +733,17 @@ p, li { ақ кеңістік: алдын ала орау; }
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="unfinished">您确定要删除这些文件吗？一旦开始删除，这些文件将不可再恢复。</translation>
+        <translation>Осы файлдарды жойғыңыз келетініне сенімдісіз бе? Жоюды бастағаннан кейін жойған файлдар ешқашан қалпына келтірілмеуі тиіс.</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
         <source>Delete</source>
-        <translation type="unfinished">Өшіру</translation>
+        <translation>Өшіру</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="115"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Болдырмау</translation>
     </message>
 </context>
 <context>
@@ -745,27 +753,27 @@ p, li { ақ кеңістік: алдын ала орау; }
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="168"/>
+        <location filename="../../src/peony-application.cpp" line="170"/>
         <source>peony-qt</source>
-        <translation>| | | | | | | | | | |</translation>
+        <translation>| | | | | | | | | | | |</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="175"/>
+        <location filename="../../src/peony-application.cpp" line="177"/>
         <source>Files or directories to open</source>
         <translation>Ашылатын файлдар немесе каталогтар</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="175"/>
+        <location filename="../../src/peony-application.cpp" line="177"/>
         <source>[FILE1, FILE2,...]</source>
         <translation>[FILE1, FILE2,...]</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="222"/>
+        <location filename="../../src/peony-application.cpp" line="224"/>
         <source>Warning</source>
         <translation>Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="222"/>
+        <location filename="../../src/peony-application.cpp" line="224"/>
         <source>Peony-Qt can not get the system&apos;s icon theme. There are 2 reasons might lead to this problem:
 
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
@@ -773,17 +781,17 @@ p, li { ақ кеңістік: алдын ала орау; }
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
         <translation>Peony-Qt жүйенің белгіше тақырыбын ала алмайды. Бұл проблемаға әкелуі мүмкін 2 себеп бар:
 
-1. Peony-Qt түбір ретінде жұмыс істеуі мүмкін, демек, сізде жоғары рұқсат бар және әдетте тыйым салынған кейбір әрекеттерді жасай аласыз. Бірақ, егер сіз түбірде болсаңыз, виртуалды файл жүйесі «Менің компьютерім» дегенді пайдалана алмайтындай кейбір ерліктерін жоғалтатынын білуіңіз қажет, тақырып пен белгішелер де қате болуы мүмкін. Сонымен, түбірдегі пеони-qt жүгіру ұсынылмайды.
+1. Peony-Qt түбір ретінде жұмыс істеуі мүмкін, демек, сізде жоғары рұқсат бар және әдетте тыйым салынған кейбір әрекеттерді жасай аласыз. Бірақ, егер сіз түбірде болсаңыз, виртуалды файл жүйесі «Менің компьютерім» дегенді пайдалана алмайтындай кейбір ерліктерін жоғалтатынын білуіңіз керек, тақырып пен белгішелер де қате болуы мүмкін. Сонымен, түбірдегі пеони-qt жүгіру ұсынылмайды.
 
-2. Сіз жүйеңізге арналған Qt емес тақырыпты пайдаланып жатырсыз, бірақ qt қосымшалары үшін платформа тақырыбының плагинін орнатпадыңыз. Егер gtk-тақырыпты пайдаланып жатсаңыз, осы мәселені шешу үшін Qt5-gtk2-платформалық пакетін орнатып көріңіз.</translation>
+2. Жүйеңізге арналған Qt емес тақырыпты пайдаланып жатырсыз, бірақ qt қосымшалары үшін платформа тақырыбының плагинін орнатпадыңыз. Егер gtk-тақырыпты пайдаланып жатсаңыз, осы мәселені шешу үшін Qt5-gtk2-платформалық пакетін орнатып көріңіз.</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="483"/>
+        <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
         <translation>Peony Qt</translation>
     </message>
     <message>
-        <location filename="../../src/peony-application.cpp" line="484"/>
+        <location filename="../../src/peony-application.cpp" line="496"/>
         <source>Author:
 	Yue Lan &lt;lanyue@kylinos.cn&gt;
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
@@ -877,74 +885,76 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Күшін жою жаңылысы</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Error: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Қате:% 1
+</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>Деректерді синхрондау аяқталды, құрылғы сәтті өтті!</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ð Ð°Ñ Ð1/2Ð°Ð1/2</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Оны болдырмау мүмкін емес, кейбір бағдарламаларды жабу қажет болуы мүмкін, мысалы: GParted және т.б.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation type="unfinished"></translation>
+        <translation>Қате:% 1
+Күшпен болдырмауды қалайсыз ба?</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="630"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="684"/>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Шығарылу жаңылысы</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="631"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="685"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Болдырмау</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="632"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="686"/>
         <source>Eject Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Сонда да шығарылсын</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>Деректерді синхрондау аяқталды және құрылғы қауіпсіз ажыратылуы мүмкін!</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="682"/>
         <source>Unable to eject %1</source>
-        <translation type="unfinished"></translation>
+        <translation>% 1 шығарылмады</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="700"/>
         <source>PeonyNotify</source>
-        <translation type="unfinished"></translation>
+        <translation>PeonyNotify</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл менеджері</translation>
     </message>
 </context>
 <context>
@@ -1068,20 +1078,28 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">在%2中搜索%1</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
-        <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
-        <source>Searching for files ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
         <source> %1 items </source>
         <translation> % 1 элементтер </translation>
     </message>
     <message>
+        <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
+        <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
+        <source>Searching for files ...</source>
+        <translation>Файлдарды іздеу...</translation>
+    </message>
+    <message>
+        <source>selected%1%2</source>
+        <translation type="vanished">选中%1%2</translation>
+    </message>
+    <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
         <source> selected %1 items    %2</source>
         <translation> % 1 элементі таңдалған% 2</translation>
+    </message>
+    <message>
+        <source> %1 items    selected %2 items</source>
+        <translation type="vanished">%1 项   选中 %2 项</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
@@ -1092,50 +1110,60 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="280"/>
+        <location filename="../../src/control/tab-widget.cpp" line="285"/>
         <source>Trash</source>
         <translation>Себет</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="284"/>
+        <location filename="../../src/control/tab-widget.cpp" line="289"/>
         <source>Clear</source>
         <translation>Тазалау</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="289"/>
+        <location filename="../../src/control/tab-widget.cpp" line="294"/>
         <source>Recover</source>
         <translation>Қалпына келтіру</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="445"/>
+        <location filename="../../src/control/tab-widget.cpp" line="451"/>
         <source>Computer</source>
-        <translation type="unfinished">计算机</translation>
+        <translation>Компьютер</translation>
     </message>
     <message>
         <source>Close Filter.</source>
-        <translation type="vanished">Сүзгіні жабыңыз.</translation>
+        <translation type="vanished">关闭筛选。</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="vanished">Сүзгі</translation>
+        <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="520"/>
+        <location filename="../../src/control/tab-widget.cpp" line="526"/>
         <source>Select Path</source>
         <translation>Жолды таңдау</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1692"/>
-        <source>Opening such files is not currently supported</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/control/tab-widget.cpp" line="1347"/>
+        <source>Warning</source>
+        <translation type="unfinished">Ескерту</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1705"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1349"/>
+        <source>Error</source>
+        <translation type="unfinished">错误</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.cpp" line="1708"/>
+        <source>Opening such files is not currently supported</source>
+        <translation>Мұндай файлдарды ашуға қазіргі уақытта қолдау көрсетілмейді</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.cpp" line="1722"/>
         <source>Open failed</source>
         <translation>Ашу жаңылысы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1706"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1723"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>Каталогты ашу жаңылысы, рұқсатыңыз жоқ!</translation>
     </message>
@@ -1144,17 +1172,17 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="435"/>
+        <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation>Іздеу</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
-        <translation type="vanished">Іздеудің басқа жолын таңдаңыз.</translation>
+        <translation type="vanished">选择其他搜索路径。</translation>
     </message>
     <message>
         <source>Search recursively</source>
-        <translation type="vanished">Рекурсивті іздеу</translation>
+        <translation type="vanished">递归搜索</translation>
     </message>
     <message>
         <source>more options</source>
@@ -1169,13 +1197,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="580"/>
-        <location filename="../../src/control/tab-widget.cpp" line="740"/>
+        <location filename="../../src/control/tab-widget.cpp" line="586"/>
+        <location filename="../../src/control/tab-widget.cpp" line="746"/>
         <source>is</source>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="615"/>
+        <location filename="../../src/control/tab-widget.cpp" line="621"/>
         <source>Please input key words...</source>
         <translation>Негізгі сөздерді енгізуіңізді сұраймын...</translation>
     </message>
@@ -1184,130 +1212,149 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="701"/>
-        <location filename="../../src/control/tab-widget.cpp" line="724"/>
+        <location filename="../../src/control/tab-widget.cpp" line="707"/>
+        <location filename="../../src/control/tab-widget.cpp" line="730"/>
         <source>contains</source>
         <translation>құрамында</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>name</source>
         <translation>атауы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>type</source>
         <translation>түрі</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>modify time</source>
         <translation>уақытты өзгерту</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="307"/>
+        <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>file size</source>
         <translation>файл өлшемі</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>all</source>
         <translation>барлығы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>file folder</source>
         <translation>файл қалтасы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>image</source>
         <translation>кескіні</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="308"/>
+        <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>video</source>
         <translation>бейне</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>text file</source>
         <translation>мәтін файлы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>audio</source>
         <translation>дыбыс</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>others</source>
         <translation>басқалары</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="309"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>wps file</source>
         <translation>wps файлы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>today</source>
         <translation>бүгін</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this week</source>
         <translation>осы аптада</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this month</source>
         <translation>осы айда</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this year</source>
         <translation>осы жылы</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="310"/>
-        <source>year ago</source>
-        <translation>жыл бұрын</translation>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>yesterday</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <source>last year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>year ago</source>
+        <translation type="vanished">жыл бұрын</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>tiny(0-16K)</source>
         <translation>қаңылтыр(0-16К)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>small(16k-1M)</source>
         <translation>кіші(16к-1М)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>empty(0K)</source>
         <translation>бос( 0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
         <translation>орташа(1М-128М)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>big(128M-1G)</source>
         <translation>үлкен(128М-1Г)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>large(1-4G)</source>
         <translation>үлкен(1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>great(&gt;4G)</source>
         <translation>great(&gt;4G)</translation>
     </message>
@@ -1327,27 +1374,27 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="877"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
-        <translation type="unfinished">Пеони</translation>
+        <translation>Пеони</translation>
     </message>
 </context>
 <context>
     <name>TopMenuBar</name>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1082"/>
+        <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
-        <translation type="unfinished">Опция</translation>
+        <translation>Опция</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1095"/>
+        <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Кішірейту</translation>
     </message>
     <message>
-        <location filename="../../src/control/header-bar.cpp" line="1118"/>
+        <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Жабу</translation>
     </message>
 </context>
 </TS>

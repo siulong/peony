@@ -44,6 +44,9 @@ schemes.path = /usr/share/glib-2.0/schemas/
 PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/peony-extensions
 DEFINES += PLUGIN_INSTALL_DIRS='\\"$${PLUGIN_INSTALL_DIRS}\\"'
 
+PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/peony-properties-window
+DEFINES += PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS='\\"$${PROPERTIES_WINDOW_PLUGIN_INSTALL_DIRS}\\"'
+
 QMAKE_CXXFLAGS += -execution-charset:utf-8
 
 # The following define makes your compiler emit warnings if you use
@@ -92,7 +95,7 @@ unix {
     # fixme:// format_dialog.h
     header.path = /usr/include/peony-qt
     header.files += *.h model/*.h file-operation/*.h vfs/*.h controls/ ../plugin-iface/*.h convenient-utils/*.h convenient-utils/disc/*.h windows/format_dialog.h windows/FMWindowIface.h \
-                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h windows/udfAppendBurnDataDialog.h windows/format-dlg-create-delegate.h file-launcher/*.h
+                    libpeony-qt/usershare-manager.h windows/udfFormatDialog.h windows/udfAppendBurnDataDialog.h windows/format-dlg-create-delegate.h file-launcher/*.h private/*.h
 #    header.depends = header2
     header.files += development-files/header-files/*
     INSTALLS += header

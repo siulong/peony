@@ -32,7 +32,8 @@
 #include "file-info-job.h"
 #include "file-launch-manager.h"
 #include "search-vfs-uri-parser.h"
-#include "properties-window.h"
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 #include "file-enumerator.h"
 
 #include <QStackedWidget>
@@ -64,6 +65,7 @@
 #include "volume-manager.h"
 #include "directoryviewhelper.h"
 
+#include "file-info-manager.h"
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "global-settings.h"
@@ -163,6 +165,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 
     setAttribute(Qt::WA_TranslucentBackground);
 
+    m_parent = parent;
     m_tab_bar = new NavigationTabBar(this);
     m_tab_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_stack = new QStackedWidget(this);
@@ -202,13 +205,15 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
    // group->setExclusive(true);
 
     //bug#94981 修改添加控件的位置和形状
-    m_add_page_button = new QToolButton(this);
-    m_add_page_button->setFixedSize(QSize(48, 48));
+    m_add_page_button = new QPushButton(this);
+    m_add_page_button->setFixedSize(QSize(38, 38));
     m_add_page_button->setIconSize(QSize(16, 16));
     m_add_page_button->setIcon(QIcon::fromTheme("list-add-symbolic"));
-    m_add_page_button->setAutoRaise(true);
-    m_add_page_button->setObjectName("toolButton");
-    m_add_page_button->setStyle(TabBarStyle::getStyle());
+    //m_add_page_button->setAutoRaise(true);
+    m_add_page_button->setProperty("isRoundButton", true);
+    m_add_page_button->setProperty("isWindowButton", 0x1);
+    //m_add_page_button->setObjectName("toolButton");
+    //m_add_page_button->setStyle(TabBarStyle::getStyle());
 
     connect(m_add_page_button, &QToolButton::clicked, this, [=](){
         QString str = m_tab_bar->tabData(m_tab_bar->currentIndex()).toString();
@@ -278,17 +283,17 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     m_trash_bar = trashButtons;
 
     QLabel *Label = new QLabel(tr("Trash"), trashButtons);
-    Label->setFixedHeight(TRASH_BUTTON_HEIGHT);
-    Label->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    Label->setFixedHeight(TRASH_BUTTON_HEIGHT);
+//    Label->setFixedWidth(TRASH_BUTTON_WIDTH);
     m_trash_label = Label;
     QPushButton *clearAll = new QPushButton(tr("Clear"), trashButtons);
-    clearAll->setFixedWidth(TRASH_BUTTON_WIDTH);
-    clearAll->setFixedHeight(TRASH_BUTTON_HEIGHT);/* Fix the bug:62841,the font of the clear button is not displayed completely */
+//    clearAll->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    clearAll->setFixedHeight(TRASH_BUTTON_HEIGHT);/* Fix the bug:62841,the font of the clear button is not displayed completely */
     clearAll->setStyle(PushButtonStyle::getStyle());
     m_clear_button = clearAll;
     QPushButton *recover = new QPushButton(tr("Recover"), trashButtons);
-    recover->setFixedWidth(TRASH_BUTTON_WIDTH);
-    recover->setFixedHeight(TRASH_BUTTON_HEIGHT);
+//    recover->setFixedWidth(TRASH_BUTTON_WIDTH);
+//    recover->setFixedHeight(TRASH_BUTTON_HEIGHT);
     recover->setStyle(PushButtonStyle::getStyle());
     m_recover_button = recover;
     //hide trash button to fix bug 31322, according to designer advice
@@ -298,9 +303,10 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     trash->addWidget(Label, Qt::AlignLeft);
     trash->setContentsMargins(10, 0, 10, 0);
     trash->addWidget(trashButtons);
-    trash->addWidget(recover, Qt::AlignLeft);
+    trash->addStretch();
+    trash->addWidget(recover);
     trash->addSpacing(10);
-    trash->addWidget(clearAll, Qt::AlignLeft);
+    trash->addWidget(clearAll);
     updateTrashBarVisible();
 
     connect(clearAll, &QPushButton::clicked, this, [=]()
@@ -1337,7 +1343,12 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
         });
         connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
             if (critical) {
-                QMessageBox::critical(0, 0, err.get()->message());
+                if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
+                    QMessageBox::warning(nullptr, tr("Warning"), err->message());
+                } else {
+                    QMessageBox::critical(nullptr, tr("Error"), err->message());
+                }
+                //QMessageBox::critical(0, 0, err.get()->message());
                 setCursor(QCursor(Qt::ArrowCursor));
                 // if there is no active page, window should be closed to avoid crash. link to: #48031
                 if (!currentPage()) {
@@ -1684,7 +1695,12 @@ void TabWidget::editUris(const QStringList &uris)
 void TabWidget::onViewDoubleClicked(const QString &uri)
 {
     qDebug()<<"tab widget double clicked"<<uri;
-    auto info = Peony::FileInfo::fromUri(uri);
+    //auto info = Peony::FileInfo::fromUri(uri);
+    // fix #206224
+    auto info = Peony::FileInfoManager::getInstance()->findFileInfoByUri(uri);
+    if (!info) {
+        info = Peony::FileInfo::fromUri(uri);
+    }
 
 #ifdef MULTI_DISABLE
     if (isMultFile(info)) {
@@ -1695,14 +1711,15 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
 #endif
 
     if (info->uri().startsWith("trash://")) {
-        auto w = new Peony::PropertiesWindow(QStringList()<<uri);
+        QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+        //auto w = new Peony::PropertiesWindow(QStringList()<<uri);
         w->show();
         return;
     }
     if (info->isDir() || info->isVolume() || info->isVirtual()) {
         if(info->uri().startsWith("file://")
                 && !info->canExecute()){
-            QMessageBox::critical(nullptr, tr("Open failed"),
+            QMessageBox::critical(m_parent, tr("Open failed"),
                                   tr("Open directory failed, you have no permission!"));
             return;
         }
@@ -1833,24 +1850,39 @@ void TabWidget::updateTabBarGeometry()
         addPageX = m_tab_bar->sizeHint().width() + 2;
     }
 
-    m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+    if (layoutDirection() == Qt::LeftToRight)
+        m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+    else
+        m_tab_bar->setGeometry(this->width() - tabBarWidth, 1, tabBarWidth, m_tab_bar->sizeHint().height());
     m_tab_bar->raise();
 
     if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
-        m_add_page_button->move(addPageX, 0);
+        if (layoutDirection() == Qt::LeftToRight)
+            m_add_page_button->move(addPageX, 0);
+        else
+            m_add_page_button->move(this->width() - addPageX - m_add_page_button->width(), 0);
         if (tabBarWidth == addPageX) {
             m_show_page_button->show();
-            m_show_page_button->move(addPageX + 40, 0);
+            if (layoutDirection() == Qt::LeftToRight)
+                m_show_page_button->move(addPageX + 40, 0);
+            else
+                m_show_page_button->move(this->width() - addPageX - 40 - m_show_page_button->width(), 0);
         } else {
             m_show_page_button->hide();
         }
     } else {
         auto lastTabRect =  m_tab_bar->rect();
         int fixedY = lastTabRect.center().y() - m_add_page_button->height()/2;
-        m_add_page_button->move(addPageX, fixedY);
+        if (layoutDirection() == Qt::LeftToRight)
+            m_add_page_button->move(addPageX, fixedY);
+        else
+            m_add_page_button->move(this->width() - addPageX - m_add_page_button->width(), fixedY);
         if (tabBarWidth == addPageX) {
             m_show_page_button->show();
-            m_show_page_button->move(addPageX + 40, fixedY);
+            if (layoutDirection() == Qt::LeftToRight)
+                m_show_page_button->move(addPageX + 40, fixedY);
+            else
+                m_show_page_button->move(this->width() - addPageX - 40 - m_show_page_button->width(), fixedY);
         } else {
             m_show_page_button->hide();
         }

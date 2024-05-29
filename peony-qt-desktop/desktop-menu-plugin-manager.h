@@ -40,6 +40,7 @@ public:
     const QStringList getPluginIds();
     QList<MenuPluginInterface*> getPlugins();
     MenuPluginInterface *getPlugin(const QString &pluginId);
+    void registerPlugin(const QString &uri);
 
 protected:
     void loadAsync();

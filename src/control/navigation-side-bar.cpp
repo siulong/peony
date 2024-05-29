@@ -74,6 +74,9 @@
 #include <QStandardPaths>
 #include <QApplication>
 
+#include <QTextLayout>
+#include <QTextLine>
+
 #ifdef KY_SDK_DATACOLLECT
 #include <kysdk/diagnosetest/libkydatacollect.h>
 #endif
@@ -101,6 +104,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 
     setDragDropMode(QTreeView::DropOnly);
 
+    setProperty("highlightMode", true);
     setProperty("doNotBlur", true);
     viewport()->setProperty("doNotBlur", true);
 
@@ -168,26 +172,6 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
             this->setRowHidden(index.row(), index.parent(), true);
             return;
-        }
-
-        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
-        for (auto extensions : disExtensions) {
-            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
-            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
-                    && item->type() == SideBarAbstractItem::FileSystemItem
-                    && !item->uri().contains("computer:///")
-                    && item->uri().contains(pIface->uriScheme())) {
-                this->setRowHidden(index.row(), index.parent(), true);
-                return;
-            }
-
-            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
-                    && item->type() == SideBarAbstractItem::FavoriteItem
-                    && pIface->uriScheme() == "kmre://"
-                    && item->uri().contains(pIface->uriScheme())) {
-                this->setRowHidden(index.row(), index.parent(), true);
-                return;
-            }
         }
 
         item->findChildrenAsync();
@@ -266,13 +250,19 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 QList<QAction *> actionList;
                 MainWindow *window = dynamic_cast<MainWindow *>(this->topLevelWidget());
 
+                //fix bug#216256, open data block in menu fail issue
+                auto curUri = item->uri();
+                if (item->uri() == "computer:///ukui-data-volume") {
+                    curUri = "file:///data";
+                }
+
                 actionList << menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
                     auto enumerator = new Peony::FileEnumerator;
-                    enumerator->setEnumerateDirectory(item->uri());
+                    enumerator->setEnumerateDirectory(curUri);
                     enumerator->setAutoDelete();
 
                     enumerator->connect(enumerator, &Peony::FileEnumerator::prepared, this, [=](const std::shared_ptr<Peony::GErrorWrapper> &err = nullptr, const QString &t = nullptr, bool critical = false){
-                        auto targetUri = Peony::FileUtils::getTargetUri(item->uri());
+                        auto targetUri = Peony::FileUtils::getTargetUri(curUri);
                         if (!targetUri.isEmpty()) {
                             auto enumerator2 = new Peony::FileEnumerator;
                             enumerator2->setEnumerateDirectory(targetUri);
@@ -288,7 +278,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                             });
                             enumerator2->prepare();
                         } else if (!err.get() && !critical) {
-                            auto newWindow = window->create(item->uri());
+                            auto newWindow = window->create(curUri);
                             dynamic_cast<QWidget *>(newWindow)->show();
                         }
                     });
@@ -383,7 +373,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
             auto index = m_proxy_model->index(i, 0);
             auto item = m_proxy_model->itemFromIndex(index);
-            if (item->type() == SideBarAbstractItem::FileSystemItem
+            if (item->type() == SideBarAbstractItem::VFSItem
                     && item->uri().contains(vfsPIface->uriScheme())
                     && !item->uri().contains("computer:///")
                     && vfsPIface->pluginType() == PluginInterface::VFSPlugin) {
@@ -432,6 +422,25 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         if (item->type() != SideBarAbstractItem::VFSItem && item->type() != SideBarAbstractItem::SeparatorItem) {
             expand(index);
         }
+
+        QStringList disExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
+        for (auto extensions : disExtensions) {
+            VFSPluginIface *pIface = dynamic_cast<VFSPluginIface*>(PluginManager::getInstance()->getPluginByFileName(extensions));
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::VFSItem
+                    && !item->uri().contains("computer:///")
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+            }
+
+            if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin
+                    && item->type() == SideBarAbstractItem::FavoriteItem
+                    && pIface->uriScheme() == "kmre://"
+                    && item->uri().contains(pIface->uriScheme())) {
+                this->setRowHidden(index.row(), index.parent(), true);
+            }
+        }
+
 //        if(item->uri()=="filesafe:///")/* 文件保护箱默认不展开 */
 //            continue;
 //        expand(index);
@@ -470,6 +479,66 @@ void NavigationSideBar::sendKdkDataAsync()
 bool NavigationSideBar::eventFilter(QObject *obj, QEvent *e)
 {
     return false;
+}
+
+bool NavigationSideBar::viewportEvent(QEvent *e)
+{
+    if (e->type() == QEvent::ToolTip) {
+        // 处理 ToolTip 事件的代码
+        QHelpEvent *helpEvent = static_cast<QHelpEvent*>(e);
+        QModelIndex itemIndex = indexAt(helpEvent->pos());
+        if (!itemIndex.isValid()) {
+            return QTreeView::viewportEvent(e);
+        }
+
+        //获取提示文本和index
+        QModelIndex parentIndex = itemIndex.parent();
+        QModelIndex firstColumnIndex;
+        if (parentIndex.isValid()) {
+            firstColumnIndex = model()->index(itemIndex.row(), 0, parentIndex);
+        } else {
+            firstColumnIndex = model()->index(itemIndex.row(), 0);
+        }
+        QString text = firstColumnIndex.data(Qt::DisplayRole).toString();
+
+        //获取style绘制文本的宽度，小于文本的宽度 则显示
+        NavigationSideBarItemDelegate *delegate = static_cast<NavigationSideBarItemDelegate *>(itemDelegate());
+        QStyleOptionViewItem opt = viewOptions();
+        delegate->initStyleOption(&opt, firstColumnIndex);
+        opt.rect = visualRect(firstColumnIndex);
+        QRect rect = QApplication::style()->subElementRect(QStyle::SE_ItemViewItemText, &opt, nullptr);
+        const QWidget *widget = opt.widget;
+        const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin, 0, widget) + 1;
+        QRect textRect = rect.adjusted(textMargin, 0, -textMargin, 0); // remove width padding
+
+        QTextLayout textLayout(text, opt.font);
+
+        QTextOption textOption;
+        const bool wrapText = opt.features & QStyleOptionViewItem::WrapText;
+        textOption.setWrapMode(wrapText ? QTextOption::WordWrap : QTextOption::ManualWrap);
+        textOption.setTextDirection(opt.direction);
+        textOption.setAlignment(QStyle::visualAlignment(opt.direction, opt.displayAlignment));
+
+        textLayout.setTextOption(textOption);
+        textLayout.beginLayout();
+
+        QTextLine line = textLayout.createLine();
+        if (!line.isValid())
+            return QTreeView::viewportEvent(e);;
+
+        line.setLineWidth(textRect.width());
+
+        const bool isShow = line.naturalTextWidth() > textRect.width();
+
+        textLayout.endLayout();
+        //qDebug() << "line.naturalTextWidth(): "  << line.naturalTextWidth() <<"textRect: " <<textRect <<"text: " << text;
+        if (!isShow) {
+            QToolTip::hideText();
+            e->ignore();
+            return true;
+        }
+    }
+    return QTreeView::viewportEvent(e);
 }
 
 void NavigationSideBar::updateGeometries()
@@ -770,9 +839,6 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
 
     LabelButton *labelButton = new LabelButton(this);
-    labelButton->setProperty("useIconHighlightEffect", 0x2);
-    labelButton->setProperty("iconHighlightEffectMode", 1);
-    labelButton->setProperty("fillIconSymbolicColor", true);
     labelButton->setProperty("isWindowButton", 0x1);
     //m_label_button->setCheckable(true);
 
@@ -783,6 +849,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
 
     LabelButton *control = new LabelButton(this);
     control->setText(tr("More tags..."));
+    control->setProperty("isWindowButton", 0x1);
     control->hide();
 
     connect(control, &QPushButton::clicked, this, [=](bool checked){
@@ -936,6 +1003,8 @@ LabelButton::LabelButton(QWidget *parent) : QPushButton(parent)
     m_firstSymbolic = new QLabel(this);
     m_lastSymbolic = new QLabel(this);
     m_text = new QLabel(this);
+    m_firstSymbolic->setProperty("useIconHighlightEffect", 0x2);
+    m_lastSymbolic->setProperty("useIconHighlightEffect", 0x2);
     m_mainLayout->addWidget(m_firstSymbolic);
     m_mainLayout->addWidget(m_text);
     m_mainLayout->addStretch();

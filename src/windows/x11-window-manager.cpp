@@ -100,7 +100,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
     case QEvent::MouseMove: {
         QMouseEvent *e = static_cast<QMouseEvent *>(event);
 
-        qDebug()<<e->type()<<e->pos();
+        //qDebug()<<e->type()<<e->pos();
 
         if (m_is_draging) {
             if (QX11Info::isPlatformX11()) {
@@ -115,7 +115,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
                 Display *display = QX11Info::display();
                 Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", False);
                 XEvent xEvent;
-                const auto pos = currentPos;
+                const auto pos = currentPos - offset;
 
                 memset(&xEvent, 0, sizeof(XEvent));
                 xEvent.xclient.type = ClientMessage;
@@ -147,7 +147,7 @@ bool X11WindowManager::eventFilter(QObject *watched, QEvent *event)
                     }
                 }
 
-                if (qobject_cast<NavigationTabBar *>(m_current_widget)) {
+                if (qobject_cast<QTabBar *>(m_current_widget)) {
                     m_current_widget->hide();
                     m_current_widget->show();
                 }

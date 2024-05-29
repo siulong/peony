@@ -47,7 +47,7 @@ Q_SIGNALS:
     void refreshRequest();
     void searchRequest(const QString &path, const QString &key);
     void updateFileTypeFilter(const int &index);
-    void clearTrash();
+//    void clearTrash();
     void updateSearchProgress(bool searching);
 
 public Q_SLOTS:

@@ -147,21 +147,35 @@ QIcon VideoThumbnail::generateThumbnail()
     QString fileThumbnail=thumbnail+"/"+md5Name;
 
     if (!QFile::exists(fileThumbnail)) {
-        QMap<QString, QString> map=  videoInfo();
-        QString pos=map.value("Pos");
-
-        //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
+        static bool isWayland = qApp->property("isWayland").toBool();
         QStringList list;
-        list<<"-hwaccel"<<"auto"    /*try using hardware accel*/
-           <<"-i"<<m_url.path()     /*Input File Name*/
-           <<"-y"                    /*Overwrite*/
-           <<"-ss"<<pos              /* seeks in this position*/
-           <<"-vframes"<<"1"         /* Num Frames */
-           <<"-f"<<"image2"          /* file format.  */
-          // <<"-s"<<"128x128"         /*<<"-vf"<<scal*/
-           <<"-s"<<"640x640"         /*<<"-vf"<<scal*/
-           <<fileThumbnail; /*output file Name */
-        qDebug()<<"the ffmpeg cmd: " << list;
+        if (isWayland) {
+            QMap<QString, QString> map=  videoInfo();
+            QString pos=map.value("Pos");
+
+            //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
+            list<<"-hwaccel"<<"auto"    /*try using hardware accel*/
+               <<"-i"<<m_url.path()     /*Input File Name*/
+               <<"-y"                    /*Overwrite*/
+               <<"-ss"<<pos              /* seeks in this position*/
+               <<"-vframes"<<"1"         /* Num Frames */
+               <<"-f"<<"image2"          /* file format.  */
+              // <<"-s"<<"128x128"         /*<<"-vf"<<scal*/
+               <<"-s"<<"640x640"         /*<<"-vf"<<scal*/
+               <<fileThumbnail; /*output file Name */
+            qDebug()<<"the ffmpeg cmd: " << list;
+        } else {
+            //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
+            list<<"-i"<<m_url.path()     /*Input File Name*/
+               <<"-y"                    /*Overwrite*/
+               <<"-ss"<<"10.0"              /* seeks in this position*/
+               <<"-vframes"<<"1"         /* Num Frames */
+               <<"-f"<<"image2"          /* file format.  */
+              // <<"-s"<<"128x128"         /*<<"-vf"<<scal*/
+               <<"-s"<<"640x640"         /*<<"-vf"<<scal*/
+               <<fileThumbnail; /*output file Name */
+            qDebug()<<"the ffmpeg cmd: " << list;
+        }
 
         QProcess p;
         p.start("/usr/bin/ffmpeg",list);

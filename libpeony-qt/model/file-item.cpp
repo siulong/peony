@@ -247,8 +247,13 @@ void FileItem::findChildrenAsync()
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
         if (critical) {
+            if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
+                QMessageBox::warning(nullptr, tr("Warning"), err->message());
+            } else {
+                QMessageBox::critical(nullptr, tr("Error"), err->message());
+            }
+            //QMessageBox::critical(nullptr, tr("Error"), err->message());
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
-            QMessageBox::critical(nullptr, tr("Error"), err->message());
             enumerator->cancel();
             //fix bug#77594
             enumerator->deleteLater();
@@ -280,10 +285,14 @@ void FileItem::findChildrenAsync()
             //m_model->sendPathChangeRequest(target, this->uri());
             return;
         }
+
         if (err) {
             qDebug()<<"file item error:" <<err->message()<<enumerator->getEnumerateUri();
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
-            if (err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) {
+
+            //fix bug#214724, 214924， access smb-root error issue
+            if ((err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) &&
+                    this->uri() != "smb:///" && this->uri() != "network:///smb-root") {
                 enumerator->cancel();
                 //fix goto removed path in case device is ejected
                 if (this->uri().startsWith("file:///media"))
@@ -449,8 +458,10 @@ void FileItem::findChildrenAsync()
                 if (isEnding) {
                     //qDebug() << "enumerateFinished childrenUpdated:" <<isEnding;
                     m_isEndOfEnumerate = isEnding;
-                    Q_EMIT m_model->findChildrenFinished();
-                    Q_EMIT m_model->updated();
+                    if(!m_ending_uris.size()){
+                        Q_EMIT m_model->findChildrenFinished();
+                        Q_EMIT m_model->updated();
+                    }
                 }
             }
 
@@ -502,7 +513,7 @@ void FileItem::findChildrenAsync()
             connect(m_thumbnail_watcher.get(), &FileWatcher::thumbnailUpdated, this, [=](const QString &uri) {
                 m_model->updated();
                 //m_model->dataChanged(m_model->indexFromUri(uri), m_model->indexFromUri(uri));
-            });
+            }, Qt::UniqueConnection);
             connect(m_watcher.get(), &FileWatcher::directoryDeleted, this, [=](QString uri) {
                 //clean all the children, if item index is root index, cd up.
                 //this might use FileItemModel::setRootItem()
@@ -799,7 +810,8 @@ void FileItem::batchRemoveItems()
         m_batchProcessItems->setBatchRemoveParam(list, m_uri_item_hash, m_children);
         m_batchProcessItems->moveToThread(m_batchProcessThread);
         connect(m_batchProcessThread, &QThread::started, m_batchProcessItems, &BatchProcessItems::slot_removeItems);
-        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash){
+        connect(m_batchProcessItems, &BatchProcessItems::removeItemsFinished, this, [=](QVector<FileItem*> *children, const QHash<QString, FileItem*> &uri_item_hash, const QVector<QString>& needHandleLabelUris){
+            FileLabelModel::getGlobalModel()->removeFileLabel(needHandleLabelUris);
             m_model->beginResetModel();
             auto old = m_children;
             m_children = children;
@@ -907,7 +919,7 @@ void FileItem::showFilesForBurningOnRTypeDisc()
 
 void FileItem::connectFunc()
 {
-    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](const std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
+    connect(m_model->m_fileManagerThread, &FileManagerThread::finishQueryFileInfos, this, [=](std::vector<std::shared_ptr<FileInfo> >& retFileInfos, /*FileItemModel::OperateType*/int operateType, FileItem *parentItem){
         /* 查询结果返回，更新数据 */
         //qDebug()<<retFileInfos.size()<<this<<this->uri()<<operate<<m_ending_uris.size();
         if(parentItem && this != parentItem)
@@ -959,8 +971,8 @@ void FileItem::connectFunc()
                 if (!item)
                     continue;
                 info_manager->lock();
-                item->m_info = info;
                 info_manager->updateFileInfo(info);
+                item->m_info = info;
                 info_manager->unlock();
                 ThumbnailManager::getInstance()->createThumbnail(info.get()->uri(), m_thumbnail_watcher, true);
                 EmblemProviderManager::getInstance()->queryAsync(info->uri());
@@ -1073,10 +1085,9 @@ void FileItem::childrenUpdateOfEnumerate(const QStringList &uris, bool isEnding)
 
     if (isEnding) {
         m_isEndOfEnumerate = isEnding;
-        m_ending_uris.clear();
-        m_ending_uris = uris;
-
     }
+    m_ending_uris.clear();
+    m_ending_uris = uris;
 
     QStringList originalList = uris; /* 原始列表 */
     /* 遍历时第一次先加载100个显示在桌面上，其余按大批量查询 */
@@ -1169,6 +1180,7 @@ void BatchProcessItems::slot_removeItems()
     // do reset model
     int time0 = QTime::currentTime().msecsSinceStartOfDay();
     QStringList favoriteUris;
+    QVector<QString> needHandleLabelUris;
     QVector<FileItem *> itemsToBeDeleted;
     qDebug()<<"execute deletion, deleted count:"<<m_uris_to_be_removed.count()<<",children count,uri item hash count:"<<m_children->size()<<m_uri_item_hash.size();
     for (auto& uri : m_uris_to_be_removed) {
@@ -1179,15 +1191,15 @@ void BatchProcessItems::slot_removeItems()
             {
                 favoriteUris.append(uri2FavoriteUri(uri));
             }
+            needHandleLabelUris.push_back(uri);
             int i = m_uri_item_hash.remove(uri);
             m_uris_to_be_removed.removeOne(uri);
             m_children->removeOne(child);
-            FileLabelModel::getGlobalModel()->removeFileLabel(uri);
             itemsToBeDeleted.append(child);
         }
     }
     BookMarkManager::getInstance()->removeBookMark(favoriteUris);
-    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash);
+    Q_EMIT removeItemsFinished(m_children, m_uri_item_hash, needHandleLabelUris);
     for (auto child : itemsToBeDeleted) {
         delete child;
     }
@@ -1204,7 +1216,8 @@ ExtraInfoRecorder::ExtraInfoRecorder(const QString &uri)
 
 ExtraInfoRecorder::~ExtraInfoRecorder()
 {
-    ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
+    /* 改成程序退出时再释放图片，linkto bug#215437 */
+    //ThumbnailManager::getInstance()->releaseThumbnail(m_uri);
     EmblemProviderManager::getInstance()->cancelQuery(m_uri);
 }
 

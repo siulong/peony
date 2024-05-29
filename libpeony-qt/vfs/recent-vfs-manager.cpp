@@ -28,6 +28,10 @@
 #include <QStandardPaths>
 #include <QXmlStreamWriter>
 
+#include <gio/gio.h>
+#include <stdio.h>
+#include <time.h>
+
 using namespace Peony;
 
 RecentVFSManager* RecentVFSManager::m_instance = nullptr;
@@ -61,7 +65,7 @@ void RecentVFSManager::clearAll()
 
 void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QString exec)
 {
-    if (!exists(uri)) {
+    if (!exists(uri, mimetype, name, exec)) {
         createNode(uri, mimetype, name, exec);
         write();
     }
@@ -114,18 +118,19 @@ bool RecentVFSManager::read()
 
 bool RecentVFSManager::write()
 {
-    QFile file (m_recent_path);
-    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
+//    QFile file (m_recent_path);
+//    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
 
-    file.write(m_dom_document.toByteArray());
+//    file.write(m_dom_document.toByteArray());
 
-    file.flush();
-    file.close();
+//    file.flush();
+//    file.close();
+    bool ok = g_file_set_contents(m_recent_path.toUtf8().constData(), m_dom_document.toByteArray().constData(), -1, nullptr);
 
-    return true;
+    return ok;
 }
 
-bool RecentVFSManager::exists(QString uri)
+bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QString exec)
 {
     if (!read()) {
         qDebug() << "read error";
@@ -136,6 +141,16 @@ bool RecentVFSManager::exists(QString uri)
     while (!rootElement.isNull()) {
         if (rootElement.hasAttribute("href") && rootElement.attribute("href") == uri) {
             qDebug() << "existed!";
+            QDateTime dataTime = QDateTime::currentDateTime();
+            QDateTime utcTime = QDateTime::currentDateTimeUtc();
+            auto bookmark_file = g_bookmark_file_new();
+            bool loaded = g_bookmark_file_load_from_data(bookmark_file, m_dom_document.toByteArray().constData(), -1, nullptr);
+            if (loaded) {
+                g_bookmark_file_set_mime_type(bookmark_file, uri.toUtf8().constData(), mimetype.toUtf8().constData());
+                g_bookmark_file_add_application(bookmark_file, uri.toUtf8().constData(), name.toUtf8().constData(), exec.toUtf8().constData());
+                g_bookmark_file_to_file(bookmark_file, m_recent_path.toUtf8().constData(), nullptr);
+            }
+            g_bookmark_file_free (bookmark_file);
             return true;
         }
         rootElement = rootElement.nextSiblingElement();

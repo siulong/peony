@@ -123,7 +123,8 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     auto forbidThumbnailing = addAction(tr("Forbid thumbnailing"), this, [=](bool checked) {
         //FIXME:
         Peony::GlobalSettings::getInstance()->setValue(FORBID_THUMBNAIL_IN_VIEW, checked);
-        //m_window->refresh();
+        // fix #213036
+//        m_window->refresh();
     });
     m_forbid_thumbnailing = forbidThumbnailing;
     forbidThumbnailing->setCheckable(true);
@@ -158,7 +159,7 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                  QDBusReply<bool> hasPasswdReply = interFace->call("hasPasswd");
                  if (hasPasswdReply.isValid()) {
                     if (hasPasswdReply.value()) {
-                        auto result = QMessageBox::question(nullptr, tr("Tips"), tr("The user already has a samba password, do you need to reset the samba password?"),
+                        auto result = QMessageBox::question(m_window, tr("Tips"), tr("The user already has a samba password, do you need to reset the samba password?"),
                                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                         if (result == QMessageBox::Yes) {
                               goto setPasswd;
@@ -166,7 +167,7 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
                     } else {
 setPasswd:
                         bool ok = false;
-                        QInputDialog dlg;
+                        QInputDialog dlg(m_window);
                         dlg.setLabelText(tr("Samba password:"));
                         dlg.setTextEchoMode(QLineEdit::Password);
                         dlg.setWindowTitle(tr("Samba set user password"));
@@ -177,7 +178,7 @@ setPasswd:
                             QDBusReply<bool> setPasswdReply = interFace->call("setPasswd", text);
                             if (setPasswdReply.isValid()) {
                                 if (!setPasswdReply.value()) {
-                                     QMessageBox::warning(nullptr, tr("Warning"), tr("Samba set password failed, Please re-enter!"));
+                                     QMessageBox::warning(m_window, tr("Warning"), tr("Samba set password failed, Please re-enter!"));
                                 }
                             } else {
                                 qDebug() << "setPasswd call failed!";
@@ -256,6 +257,12 @@ void OperationMenu::updateMenu()
     m_showFoldersInNewWindow->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_IN_NEW_WINDOW)?
                                       Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool():
                                       false);
+
+    //fix bug#200297, menu status update issue
+    m_showCreateTime->setChecked(Peony::GlobalSettings::getInstance()->isExist(SHOW_CREATE_TIME)?
+                                     Peony::GlobalSettings::getInstance()->getValue(SHOW_CREATE_TIME).toBool():
+                                     false);
+
     //get window current directory and selections, then update ohter actions.
     m_edit_widget->updateActions(m_window->getCurrentUri(), m_window->getCurrentSelections());
 
@@ -404,6 +411,17 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     auto info = Peony::FileInfo::fromUri(currentDirUri);
     if (!info->isEmptyInfo()) {
         isDirectoryCanWrite = info->canWrite();
+        if (!isDirectoryCanWrite) {
+            QString fileSystem = info.get()->fileSystemType();
+            if (fileSystem.isEmpty()) {
+                fileSystem = Peony::FileUtils::getFsTypeFromFile(info.get()->uri());
+                qDebug() << "file system :" << fileSystem;
+            }
+            if (fileSystem.contains("udf")) {
+                qDebug() << "file system contains:" << fileSystem;
+                isDirectoryCanWrite = true;
+            }
+        }
     }
     //comment to fix bug#191108, huawei phone can paste file success
 //    if (currentDirUri.startsWith("mtp://") || currentDirUri.startsWith("gphoto2://")){
@@ -414,7 +432,6 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
     m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
     m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isComputer && isDirectoryCanWrite && !hasLongFileName);
 
-    Peony::ClipboardUtils::getInstance()->updateClipboardManually();
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
     m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && isDirectoryCanWrite);
 }

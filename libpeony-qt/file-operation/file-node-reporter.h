@@ -56,6 +56,14 @@ public:
     bool isOperationCancelled() {
         return m_cancelled;
     }
+    bool isUsedInCount() {
+        return m_isUsedInCount;
+    }
+    void setUsedInCount(const bool InCount) {
+        if (InCount != m_isUsedInCount) {
+            m_isUsedInCount = InCount;
+        }
+    }
 
 Q_SIGNALS:
     void nodeFound(const QString &uri, const qint64 &offset);
@@ -75,6 +83,7 @@ Q_SIGNALS:
 
 private:
     bool m_cancelled = false;
+    bool m_isUsedInCount = false;
 };
 
 }

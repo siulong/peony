@@ -30,6 +30,7 @@
 #include "file-operation-manager.h"
 #include "file-move-operation.h"
 #include "file-copy-operation.h"
+#include "file-operation-helper.h"
 
 #include "file-utils.h"
 
@@ -456,8 +457,8 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         if (m_root_item) {
             if (m_root_item->m_info->canWrite()) {
                 return Qt::ItemIsDropEnabled;
-            } else {
-                return Qt::ItemIsEnabled;
+            } else if(m_root_item->m_info.get()->fileSystemType().contains("udf")) {
+                return Qt::ItemIsDropEnabled;
             }
         }
         return Qt::ItemIsDropEnabled;
@@ -561,32 +562,38 @@ void FileItemModel::setRootIndex(const QModelIndex &index)
     }
 }
 
+void FileItemModel::updateCurrentFilesThumbnails()
+{
+    for (FileItem *child : *(m_root_item->m_children)) {
+        auto uri = child->uri();
+        ThumbnailManager::getInstance()->createThumbnail(uri, m_root_item->m_thumbnail_watcher);
+    }
+}
+
+#include <QVariant>
 QMimeData *FileItemModel::mimeData(const QModelIndexList &indexes) const
 {
-    QMimeData* data = QAbstractItemModel::mimeData(indexes);
+    QMimeData* mimeData = QAbstractItemModel::mimeData(indexes);
     //set urls data URLs correspond to the MIME type text/uri-list.
     QList<QUrl> urls;
     QStringList uris;
     QStringList encodedUris;
     for (auto index : indexes) {
-        auto item = itemFromIndex(index);
-        auto uri = item->m_info->uri();
-        QUrl url = uri;
-        if (!urls.contains(url)) {
-            qDebug() << "mimeData:" << url;
-
+        if (index.isValid() && index.column() == 0) { /* 仅处理有效的第一列索引 */
+            QVariant var = data(index, FileItemModel::UriRole);
+            auto uri = var.toString();
+            QUrl url = uri;
             urls << url;
             uris << uri;
-            auto encodeUri = Peony::FileUtils::urlEncode(uri);
-            encodedUris<<encodeUri;
+            encodedUris<<uri;
         }
     }
-    data->setUrls(urls);
+    mimeData->setUrls(urls);
     auto string = uris.join(" ");
     auto encodedString = encodedUris.join(" ");
-    data->setData("peony-qt/encoded-uris", encodedString.toUtf8());
-    data->setText(string);
-    return data;
+    mimeData->setData("peony-qt/encoded-uris", encodedString.toUtf8());
+    mimeData->setText(string);
+    return mimeData;
 }
 
 Qt::DropActions FileItemModel::supportedDropActions() const

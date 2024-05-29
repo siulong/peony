@@ -709,6 +709,13 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
                 return true;
             break;
         }
+        case YESTERDAY:
+        {
+            QDate yesterday = date.addDays(-1);
+            if(yesterday == md_date)/* 判断给定日期是否是昨天 */
+                return true;
+            break;
+        }
         case THIS_WEEK:
         {
             QDate md_date(md_year, md_month, md_day);
@@ -719,11 +726,29 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
                 return true;
             break;
         }
+        case LAST_WEEK:
+        {
+            QDate monDate = date.addDays(-date.dayOfWeek() + 1);
+            if(monDate.addDays(-7)<= md_date &&  md_date <= monDate.addDays(-1))/* 判断给定日期是否在上周 */
+                return true;
+            break;
+        }
         case THIS_MONTH:
         {
             if (year == md_year && month == md_month)
                 return true;
             break;
+        }
+        case LAST_MONTH:
+        {
+            int lastMonth = (month == 1) ? 12 : month - 1;
+            if(md_month == lastMonth){/*  判断给定日期是否在上个月 */
+                if((month == 1 && md_year == (year - 1)) || (month !=1 && year == md_year)){
+                    return true;
+                }
+            }
+            break;
+
         }
         case THIS_YEAR:
         {
@@ -731,9 +756,10 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
                 return true;
             break;
         }
-        case YEAR_AGO:
+        case LAST_YEAR:
         {
-            if(year > md_year)
+            int lastYear = year - 1;
+            if(md_year == lastYear)/* 判断给定日期是否在去年 */
                 return true;
             break;
         }

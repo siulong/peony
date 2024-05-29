@@ -123,7 +123,7 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
             return;
         auto iconName = Peony::FileUtils::getFileIconName(uri);
         auto displayName = Peony::FileUtils::getFileDisplayName(uri);
-        //qDebug() << "updateLocation text:" <<displayName <<uri;
+        //qDebug() << "updateLocation text:" <<displayName <<uri << iconName;
         if (uri.startsWith("search:///"))
         {
             QString nameRegexp = Peony::SearchVFSUriParser::getSearchUriNameRegexp(uri);

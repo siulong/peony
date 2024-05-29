@@ -32,10 +32,12 @@
 #include "style-plugin-iface.h"
 #include "vfs-plugin-manager.h"
 #include "emblem-plugin-iface.h"
+#include "vfs-info-plugin-iface.h"
+#include "vfs-info-plugin-manager.h"
 
-#include "properties-window.h" //properties factory manager define is in this header
+//#include "properties-window.h" //properties factory manager define is in this header
 #include "properties-window-tab-page-plugin-iface.h"
-
+#include "properties-window-factory-plugin-manager.h"
 #include "directory-view-widget.h"
 
 #include "global-settings.h"
@@ -58,11 +60,13 @@ static PluginManager *global_instance = nullptr;
 PluginManager::PluginManager(QObject *parent) : QObject(parent)
 {
     //FIXME: we have to ensure that internal factory being registered successfully.
-    PropertiesWindowPluginManager::getInstance();
+    Peony::PropertiesWindowFactoryPluginManager::getInstance();
+    //PropertiesWindowPluginManager::getInstance();
     MenuPluginManager::getInstance();
     DirectoryViewFactoryManager2::getInstance();
     PreviewPageFactoryManager::getInstance();
     VFSPluginManager::getInstance();
+    VFSInfoPluginManager::getInstance();
 
     QDir pluginsDir(PLUGIN_INSTALL_DIRS);
 //    if (COMMERCIAL_VERSION)
@@ -120,8 +124,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             break;
         }
         case PluginInterface::PropertiesWindowPlugin: {
+            Peony::PropertiesWindowFactoryPluginManager *manager = Peony::PropertiesWindowFactoryPluginManager::getInstance();
             PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
-            PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+            manager->registerFactory(propertiesWindowTabPageFactory);
             break;
         }
         case PluginInterface::ColumnProviderPlugin: {
@@ -146,13 +151,13 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             auto p = dynamic_cast<VFSPluginIface *>(plugin);
 #ifdef KY_SDK_SYSINFO
             if (p->name() == "file-safe vfs") {
-                char *isCloudPlat = kdk_system_get_hostVirtType();
+                g_autofree char *isCloudPlat = kdk_system_get_hostVirtType();
                 if (isCloudPlat != nullptr) {
                     qDebug() << "isCloudPlat is " << isCloudPlat;
                     if (strcmp(isCloudPlat, "none") == 0) {
                         VFSPluginManager::getInstance()->registerPlugin(p);
                     }
-                    delete isCloudPlat;
+                    //delete isCloudPlat;
                 }
             } else {
                 VFSPluginManager::getInstance()->registerPlugin(p);
@@ -165,6 +170,11 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         case PluginInterface::EmblemPlugin: {
             auto p = dynamic_cast<EmblemPluginInterface *>(plugin);
             EmblemProviderManager::getInstance()->registerProvider(p->create());
+            break;
+        }
+        case PluginInterface::VFSINFOPlugin: {
+            auto p = dynamic_cast<VFSInfoPluginIface *>(plugin);
+            VFSInfoPluginManager::getInstance()->registerPlugin(p);
             break;
         }
         default:
@@ -224,9 +234,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                            break;
                         }
                         case PluginInterface::PropertiesWindowPlugin: {
-                           PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
-                           //PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
-                           PropertiesWindowPluginManager::getInstance()->unregisterFactory(propertiesWindowTabPageFactory);
+                            Peony::PropertiesWindowFactoryPluginManager *manager = Peony::PropertiesWindowFactoryPluginManager::getInstance();
+                            PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
+                            manager->unregisterFactory(propertiesWindowTabPageFactory);
                            break;
                         }
                         case PluginInterface::ColumnProviderPlugin: {
@@ -273,8 +283,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                            break;
                         }
                         case PluginInterface::PropertiesWindowPlugin: {
-                           PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
-                           PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+                            Peony::PropertiesWindowFactoryPluginManager *manager = Peony::PropertiesWindowFactoryPluginManager::getInstance();
+                            PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
+                            manager->registerFactory(propertiesWindowTabPageFactory);
                            break;
                         }
                         case PluginInterface::ColumnProviderPlugin: {
@@ -401,8 +412,9 @@ void PluginManager::registerPlugin(PluginInterface *piface, QObject *plugin)
         break;
     }
     case PluginInterface::PropertiesWindowPlugin: {
+        Peony::PropertiesWindowFactoryPluginManager *manager = Peony::PropertiesWindowFactoryPluginManager::getInstance();
         PropertiesWindowTabPagePluginIface *propertiesWindowTabPageFactory = dynamic_cast<PropertiesWindowTabPagePluginIface*>(plugin);
-        PropertiesWindowPluginManager::getInstance()->registerFactory(propertiesWindowTabPageFactory);
+        manager->registerFactory(propertiesWindowTabPageFactory);
         break;
     }
     case PluginInterface::ColumnProviderPlugin: {

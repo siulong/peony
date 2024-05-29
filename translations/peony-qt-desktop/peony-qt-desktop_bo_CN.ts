@@ -25,22 +25,26 @@
     </message>
     <message>
         <source>set background</source>
-        <translation>རྒྱབ་ལྗོངས་འདེམ་པ།</translation>
+        <translation type="vanished">རྒྱབ་ལྗོངས་འདེམ་པ།</translation>
     </message>
     <message>
         <source>Desktop Icon View</source>
         <translation>སྒྲོག་ངོས་རྟགས་རིས་མཐོང་རིས།</translation>
+    </message>
+    <message>
+        <source>Set Background</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Peony::DesktopItemModel</name>
     <message>
         <source>Computer</source>
-        <translation>རྩིས་འཁོར།</translation>
+        <translation type="vanished">རྩིས་འཁོར།</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation>གད་སྙིགས་བླུགས་སྣ</translation>
+        <translation type="vanished">གད་སྙིགས་བླུགས་སྣ</translation>
     </message>
 </context>
 <context>
@@ -228,7 +232,7 @@
     <name>QObject</name>
     <message>
         <source>set background</source>
-        <translation>རྒྱབ་ལྗོངས་བཀོད་སྒྲིག</translation>
+        <translation type="vanished">རྒྱབ་ལྗོངས་བཀོད་སྒྲིག</translation>
     </message>
     <message>
         <source>set resolution</source>
@@ -236,7 +240,15 @@
     </message>
     <message>
         <source>display settings</source>
-        <translation>འགྲེམས་སྟོན་གྱི་སྒྲིག་བཀོད།</translation>
+        <translation type="vanished">འགྲེམས་སྟོན་གྱི་སྒྲིག་བཀོད།</translation>
+    </message>
+    <message>
+        <source>Set Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

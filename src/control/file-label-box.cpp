@@ -108,7 +108,7 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
     });
 
     m_labelHeightAnimation = new QPropertyAnimation(this, "geometry");
-    m_labelHeightAnimation->setDuration(500);
+    m_labelHeightAnimation->setDuration(250);
     m_labelHeightAnimation->setEasingCurve(QEasingCurve::OutCubic);
 
     connect(m_labelHeightAnimation, &QVariantAnimation::finished, this, [=](){

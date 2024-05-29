@@ -31,6 +31,7 @@
 #include <QtConcurrent>
 #include <QDBusInterface>
 #include <QDBusConnection>
+#include <QMutexLocker>
 
 #include "file-copy-operation.h"
 #include "file-delete-operation.h"
@@ -48,7 +49,7 @@
 #include "file-watcher.h"
 #include "audio-play-manager.h"
 
-#include "properties-window.h"
+//#include "properties-window.h"
 #include "sound-effect.h"
 #include <kballontip.h>
 #ifdef KY_SDK_SOUND_EFFECTS
@@ -159,6 +160,18 @@ void FileOperationManager::setAllowParallel(bool allow)
 bool FileOperationManager::isAllowParallel()
 {
     return m_allow_parallel;
+}
+
+void FileOperationManager::setFsyncStatus(bool synchronizing)
+{
+    QMutexLocker lk(&m_fsyncMutex);
+    m_isFsynchronizing = synchronizing;
+}
+
+bool FileOperationManager::isFsynchronizing()
+{
+    QMutexLocker lk(&m_fsyncMutex);
+    return m_isFsynchronizing;
 }
 
 QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
@@ -621,6 +634,9 @@ start:
         }
     }, Qt::BlockingQueuedConnection);
     connect(operation, &FileOperation::operationSaveAsLongNameFile, this, [=](const QString &uri){
+        if (operation->hasError()) {
+            return;
+        }
         QString text = QString(tr("The long name file is saved to %1")).arg(uri);
         QMessageBox::information(nullptr,nullptr,text);
     }, Qt::BlockingQueuedConnection);

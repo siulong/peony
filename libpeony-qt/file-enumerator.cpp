@@ -320,12 +320,22 @@ void FileEnumerator::handleError(GError *err)
                     this->prepared(nullptr, this->getEnumerateUri());
                 });
                 connect(customErrorHandler, &CustomErrorHandler::cancelled, this, [=]{
-                    cancel();
-                    deleteLater();
+                    auto parentUri = FileUtils::getParentUri(this->getEnumerateUri());
+                    if (!parentUri.isEmpty()) {
+                        this->prepared(nullptr, parentUri);
+                    } else {
+                        cancel();
+                        deleteLater();
+                    }
                 });
                 connect(customErrorHandler, &CustomErrorHandler::failed, this, [=](const QString &message){
-                    cancel();
-                    deleteLater();
+                    auto parentUri = FileUtils::getParentUri(this->getEnumerateUri());
+                    if (!parentUri.isEmpty()) {
+                        this->prepared(nullptr, parentUri);
+                    } else {
+                        cancel();
+                        deleteLater();
+                    }
                     QMessageBox::critical(0, 0, message);
                 });
             }
@@ -399,7 +409,7 @@ void FileEnumerator::handleError(GError *err)
         break;
     case G_IO_ERROR_EXISTS:
     {
-        QString str_error = QObject::tr("file not found");
+        QString str_error = QObject::tr("Unable to discover the file, it may have been removed or deleted.");
         Q_EMIT prepared(GErrorWrapper::wrapFrom(g_error_new(G_IO_ERROR, G_IO_ERROR_EXISTS, "%s\n", str_error.toUtf8().constData())), nullptr, true);
         break;
     }
@@ -412,7 +422,7 @@ void FileEnumerator::handleError(GError *err)
     }
     case G_IO_ERROR_NOT_FOUND:
     {
-        QString str_error = QObject::tr("file not found");
+        QString str_error = QObject::tr("Unable to discover the file, it may have been removed or deleted.");
         Q_EMIT prepared(GErrorWrapper::wrapFrom(g_error_new(G_IO_ERROR, G_IO_ERROR_NOT_FOUND, "%s\n", str_error.toUtf8().constData())), nullptr, true);
         //processed in file-item, comment to fix duplicated prompt
         //QMessageBox::critical(nullptr, tr("Error"), tr("Did not find target path, do you move or deleted it?"));
@@ -665,32 +675,18 @@ GAsyncReadyCallback FileEnumerator::enumerator_next_files_async_ready_callback(G
     }
 
     GList *l = files;
-    QStringList uriList;
+    //QStringList uriList;
     int files_count = 0;
     while (l) {
         GFileInfo *info = static_cast<GFileInfo*>(l->data);
         GFile *file = g_file_enumerator_get_child(enumerator, info);
         g_autofree char *uri = g_file_get_uri(file);
-        g_autofree char *path = g_file_get_path(file);
+        //g_autofree char *path = g_file_get_path(file);
         g_object_unref(file);
         //qDebug()<<uri;
 
-        QUrl url = QUrl(QString(uri));
-
-        if (path && !url.isLocalFile() && false) {
-            QString localUri = QString("file://%1").arg(path);
-            uriList<<localUri;
-            *(p_this->m_cache_uris)<<localUri;
-            //g_free(path);
-        } else {
-            uriList<<uri;
-            auto urldecode = url.toDisplayString();
-            if (urldecode.startsWith("file:///media/")) {
-                *(p_this->m_cache_uris)<<urldecode;
-            } else {
-                *(p_this->m_cache_uris)<<uri;
-            }
-        }
+        //QUrl url = QUrl(QString(uri));
+        *(p_this->m_cache_uris)<<uri;
 
         // FIXME: dirty code need be rewritten.
         auto fileInfo = FileInfo::fromUri(uri);

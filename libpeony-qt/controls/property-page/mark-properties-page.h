@@ -28,6 +28,7 @@
 
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QLabel>
 
 namespace Peony {
 
@@ -69,6 +70,8 @@ private:
      * \return
      */
     QString convertRGB16HexStr(const QColor color);
+
+    void updateTableLabelShow(QLabel* label, const QString &str);
 };
 
 }

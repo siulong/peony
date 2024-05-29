@@ -4,41 +4,45 @@
 <context>
     <name>Peony::DesktopIconView</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.h" line="81"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.h" line="89"/>
         <source>Desktop Icon View</source>
         <translation>Үстел белгішесінің көрінісі</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="631"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="669"/>
         <source>New Folder</source>
         <translation>Жаңа қапшық</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="725"/>
         <source>set background</source>
-        <translation>аясын орнату</translation>
+        <translation type="vanished">аясын орнату</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="967"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1031"/>
         <source>Open failed</source>
         <translation>Ашу жаңылысы</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="968"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1032"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>Каталогты ашу жаңылысы, рұқсатыңыз жоқ!</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="950"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1014"/>
         <source>Open Link failed</source>
         <translation>Сілтемені ашу жаңылысы</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="951"/>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
+        <source>Set Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>Файл жоқ, сілтеме файлын жойғыңыз келе ме?</translation>
     </message>
@@ -46,14 +50,12 @@
 <context>
     <name>Peony::DesktopItemModel</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="624"/>
         <source>Computer</source>
-        <translation>Компьютер</translation>
+        <translation type="vanished">Компьютер</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-item-model.cpp" line="626"/>
         <source>Trash</source>
-        <translation>Себет</translation>
+        <translation type="vanished">Себет</translation>
     </message>
 </context>
 <context>
@@ -116,7 +118,7 @@
         <translation type="vanished">文件夹(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="338"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="355"/>
         <source>New Folder</source>
         <translation>Жаңа қапшық</translation>
     </message>
@@ -181,42 +183,42 @@
         <translation>Жаңа</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="322"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="339"/>
         <source>Empty File</source>
         <translation>Бос файл</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="334"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
         <source>Folder</source>
         <translation>Қапшық</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="357"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="374"/>
         <source>View Type</source>
         <translation>Көрініс түрі</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="363"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
         <source>Small</source>
         <translation>Кіші</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="366"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
         <source>Normal</source>
         <translation>Қалыпты</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="369"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
         <source>Large</source>
         <translation>Үлкен</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="372"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
         <source>Huge</source>
         <translation>Орасан зор</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="400"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="417"/>
         <source>Sort By</source>
         <translation>Сұрыптау</translation>
     </message>
@@ -225,32 +227,32 @@
         <translation type="vanished">排序方式...</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="405"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
         <translation>Атауы</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="407"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
         <source>File Type</source>
         <translation>Файл түрі</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="408"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="425"/>
         <source>File Size</source>
         <translation>Файл өлшемі</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="480"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="497"/>
         <source>Clean the trash</source>
         <translation>Себетті тазалау</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="501"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="518"/>
         <source>Copy</source>
         <translation>Көшіру</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="526"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="545"/>
         <source>Delete to trash</source>
         <translation>Өшірілгенге дейін өшіру</translation>
     </message>
@@ -263,7 +265,7 @@
         <translation type="vanished">不能将回收站与其他文件一起查看属性!</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="406"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="423"/>
         <source>Modified Date</source>
         <translation>Өзгертілген күн</translation>
     </message>
@@ -272,7 +274,7 @@
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="505"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="524"/>
         <source>Cut</source>
         <translation>Қиып алу</translation>
     </message>
@@ -281,28 +283,28 @@
         <translation type="vanished">删除到回收站(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="535"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="554"/>
         <source>Delete forever</source>
         <translation>Мәңгі өшіру</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="543"/>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="548"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="567"/>
         <source>Rename</source>
         <translation>Атын өзгерту</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="555"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="574"/>
         <source>Paste</source>
         <translation>Қою</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="580"/>
         <source>Refresh</source>
         <translation>Жаңарту</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="576"/>
+        <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
         <translation>Сипаттары</translation>
     </message>
@@ -442,18 +444,26 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>set background</source>
-        <translation>аясын орнату</translation>
+        <translation type="vanished">аясын орнату</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>display settings</source>
-        <translation>дисплей параметрлері</translation>
+        <translation type="vanished">дисплей параметрлері</translation>
     </message>
     <message>
         <source>set resolution</source>
         <translation type="vanished">设置分辨率</translation>
+    </message>
+    <message>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
+        <source>Set Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
+        <source>Display Settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

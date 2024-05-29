@@ -272,6 +272,9 @@ void LabelSettings::addFileLabel()
 void LabelSettings::delFileLabel()
 {
     int row = m_fileLabel->currentRow();
+    if (row < 0) {
+        return;
+    }
     m_fileLabel->removeRow(row);
     auto item = FileLabelModel::getGlobalModel()->getItemByRow(row);
     int index = item->id();

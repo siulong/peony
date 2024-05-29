@@ -40,7 +40,7 @@ private:
     explicit RecentVFSManager(QObject *parent = nullptr);
     bool read ();
     bool write ();
-    bool exists (QString uri);
+    bool exists (QString uri, QString mimetype, QString name, QString exec);
     bool createNode (QString uri, QString mimetype, QString name, QString exec);
 
 private:

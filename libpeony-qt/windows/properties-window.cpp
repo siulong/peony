@@ -35,6 +35,7 @@
 #include "file-utils.h"
 #include "vfs-plugin-manager.h"
 #include "xatom-helper.h"
+//#include "properties-window-factory.h"
 
 #include <QToolBar>
 #include <QPushButton>
@@ -67,6 +68,8 @@
 #include "file-info-job.h"
 
 #include <kysdk/applications/ukuistylehelper/ukuistylehelper.h>
+
+#include <kysdk/applications/ktabbar.h>
 
 using namespace Peony;
 
@@ -266,12 +269,15 @@ void PropertiesWindow::init()
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setContentsMargins(0, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
+#ifdef KY_SDK_WAYLANDHELPER
     kdk::UkuiStyleHelper::self()->removeHeader(this);
-//    MotifWmHints hints;
-//    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-//    hints.functions = MWM_FUNC_ALL;
-//    hints.decorations = MWM_DECOR_BORDER;
-//    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
+#else
+    MotifWmHints hints;
+    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+    hints.functions = MWM_FUNC_ALL;
+    hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(window()->winId(), hints);
+#endif
     //only show close button
     //this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowSystemMenuHint);
 
@@ -693,9 +699,35 @@ void PropertiesWindow::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
+
+#ifdef KY_SDK_QT_WIDGETS
+class TabBar : public kdk::KTabBar
+{
+public:
+    explicit TabBar(QWidget *parent) : kdk::KTabBar(kdk::KTabBarStyle::SegmentDark, parent)
+    {
+
+    }
+
+protected:
+    QSize minimumTabSizeHint(int index) const
+    {
+        return QTabBar::minimumTabSizeHint(index);
+    }
+    QSize tabSizeHint(int index) const
+    {
+        return QTabBar::tabSizeHint(index);
+    }
+};
+#endif
+
 //properties window
 PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidget *parent) : QTabWidget(parent)
 {
+#ifdef KY_SDK_QT_WIDGETS
+    auto tabbar = new TabBar(nullptr);
+    setTabBar(tabbar);
+#endif
     setTabsClosable(false);
     setMovable(false);
     setContentsMargins(0, 0, 0, 0);
@@ -724,6 +756,9 @@ PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidge
 void tabStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter,
                            const QWidget *widget) const
 {
+#ifdef KY_SDK_QT_WIDGETS
+    return qApp->style()->drawControl(element, option, painter, widget);
+#endif
     /**
      * FIX:需要修复颜色不能跟随主题的问题
      * \brief

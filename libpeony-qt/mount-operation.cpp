@@ -71,7 +71,9 @@ void MountOperation::start()
 {
     gchar* urit = g_file_get_uri(m_volume);
     QUrl uri = QUrl(urit);
-    if (uri.scheme() != "mtp") {
+    qDebug() << "start uri path:"<<uri.toString();
+    //fix bug#214724, 214924， access smb-root error issue
+    if (uri.scheme() != "mtp" && uri.toString() != "smb:///") {
         ConnectServerLogin* dlg = new ConnectServerLogin(urit);
         m_dlg = dlg;
         //block ui
@@ -87,6 +89,7 @@ void MountOperation::start()
         if (code == QDialog::Rejected) {
             cancel();
             QMessageBox msg;
+            msg.setIcon(QMessageBox::Critical);
             msg.setText(tr("Operation Cancelled"));
             msg.exec();
             return;

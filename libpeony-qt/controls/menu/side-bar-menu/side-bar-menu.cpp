@@ -25,8 +25,8 @@
 #include "side-bar-file-system-item.h"
 
 #include "bookmark-manager.h"
-#include "properties-window.h"
-
+//#include "properties-window.h"
+#include "properties-window-factory-plugin-manager.h"
 #include "menu-plugin-manager.h"
 
 #include "file-utils.h"
@@ -99,7 +99,7 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
 {
     QList<QAction *> l;
 
-    l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete Symbolic"), [=]() {
+    l<<addAction(QIcon::fromTheme("edit-clear-symbolic"), tr("Delete Symbolic"), this, [=]() {
         BookMarkManager::getInstance()->removeBookMark(m_uri);
     });
 
@@ -114,8 +114,12 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
         l.last()->setEnabled(false);
     }
 
-    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
-        PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
+        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        if(this->parentWidget() && this->parentWidget()->isModal()){
+            w->setParent(this->parentWidget());
+        }
         w->show();
     });
     if (!m_item->firstColumnIndex().parent().isValid()) {
@@ -129,8 +133,12 @@ const QList<QAction *> SideBarMenu::constructPersonalActions()
 {
     QList<QAction *> l;
 
-    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
-        PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
+        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+        if(this->parentWidget() && this->parentWidget()->isModal()){
+            w->setParent(this->parentWidget());
+        }
         w->show();
     });
 
@@ -143,36 +151,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     QList<QAction *> l;
     /* 卸载 */
     bool isWayland = qApp->property("isWayland").toBool(); // related to #105070
-    //fix bug#175330, wayland should be the same with mainline version
-//    if (isWayland) {
-//        if (m_item->isUnmountable()) {
-//            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
-//                m_item->unmount();
-//            });
-//            l.last()->setEnabled(m_item->isMounted());
-//        }
-//    } else {
-    /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
-    if (!(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
-            m_item->unmount();
-        });
-        l.last()->setEnabled(m_item->isMounted());
-    }
-//    }
-
-    /* 弹出 */
-    if (m_item->isEjectable()||m_item->isStopable()) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Eject"), [=](){
-            m_item->eject(G_MOUNT_UNMOUNT_NONE);
-        });
-
-        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，弹出菜单置灰不可用。 */
-            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
-        }
-    }
-
-
+    bool isReddisk = false;
     QString unixDevice = m_item->getDevice();
     QString uri;
     if(m_uri=="file:///") /* 文件系统特殊处理 */
@@ -191,6 +170,39 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         uri = getComputerUriFromUnixDevice(unixDevice);
     }
 
+    //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
+    if (unixDevice.startsWith("/dev/dm") && QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui"))
+        isReddisk = true;
+
+    //fix bug#175330, wayland should be the same with mainline version
+//    if (isWayland) {
+//        if (m_item->isUnmountable()) {
+//            l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
+//                m_item->unmount();
+//            });
+//            l.last()->setEnabled(m_item->isMounted());
+//        }
+//    } else {
+    /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
+    if (! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
+        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
+            m_item->unmount();
+        });
+        l.last()->setEnabled(m_item->isMounted());
+    }
+//    }
+
+    /* 弹出 */
+    if (m_item->isEjectable()||m_item->isStopable()) {
+        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Eject"), this, [=](){
+            m_item->eject(G_MOUNT_UNMOUNT_NONE);
+        });
+
+        if(m_item->getDevice().contains("/dev/sr")){/* 光盘在刻录数据、镜像等操作时,若处于busy状态时，弹出菜单置灰不可用。 */
+            l.last()->setDisabled(FileUtils::isBusyDevice(m_item->getDevice()));
+        }
+    }
+
     //not allow format data block, fix bug#66471，66479
     QString targetUri = FileUtils::getTargetUri(m_uri);
     bool isData = m_uri == "file:///data" || targetUri == "file:///data"
@@ -203,26 +215,27 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     bool showFormatDialog = m_uri!="file:///" && m_uri != "computer:///root.link"
             && (!unixDevice.isNull())
             && !unixDevice.startsWith("/dev/bus/usb")
-            && (m_item->isVolume()) && !m_item->uri().isEmpty();
+            && (m_item->isVolume()) && !m_item->uri().isEmpty()
+            && ! isReddisk;
 
     //fix bug133116, not allow format data disk
     if(showFormatDialog && ! isData)
     {
         if(unixDevice.contains("/dev/sr")){/*  光盘格式化(udf格式化) */
-            QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("format"));
+            QAction *action = addAction(QIcon::fromTheme("preview-file"), tr("Format"));
             action->setEnabled(false);
             l.append(action);
 #ifndef KY_UDF_BURN
             if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
                 DiscControl *discControl = new DiscControl(unixDevice);
                 if(discControl->work()){
-                   connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
-                       connect(action, &QAction::triggered, [=](){
+                   connect(discControl, &DiscControl::workFinished, this, [=](DiscControl *discCtrl){
+                       connect(action, &QAction::triggered, this, [=](){
                            UdfFormatDialog *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlg(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
-                       l.last()->setEnabled(discCtrl->supportUdf());
+                       action->setEnabled(discCtrl->supportUdf());
                    });
                 }
             }
@@ -230,19 +243,19 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
                 UdfBurn::DiscControl *discControl = new UdfBurn::DiscControl(unixDevice);
                 if(discControl->work()){
-                   connect(discControl, &UdfBurn::DiscControl::workFinished, [=](UdfBurn::DiscControl *discCtrl){
-                       connect(action, &QAction::triggered, [=](){
+                   connect(discControl, &UdfBurn::DiscControl::workFinished, this, [=](UdfBurn::DiscControl *discCtrl){
+                       connect(action, &QAction::triggered, this, [=](){
                            UdfBurn::UdfFormatDialogWrapper *udfFormatDlg = FormatDlgCreateDelegate::getInstance()->createUdfDlgWrapper(uri, discCtrl);
                            udfFormatDlg->show();
                        });
                        qDebug()<<unixDevice<<" supported Udf values are:"<<discCtrl->supportUdf();
-                       l.last()->setEnabled(discCtrl->supportUdf());
+                       action->setEnabled(discCtrl->supportUdf());
                    });
                 }
             }
 #endif
         }else{/* 其它格式化 */
-            l<<addAction(QIcon::fromTheme("preview-file"), tr("format"), [=]() {
+            l<<addAction(QIcon::fromTheme("preview-file"), tr("Format"), this, [=]() {
                 auto info = FileInfo::fromUri(uri);
                 if (info->targetUri ().isEmpty ()) {
                     FileInfoJob job (uri, this);
@@ -286,8 +299,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             /* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
             DiscControl *discControl = new DiscControl(unixDevice);
             if(discControl->work()){
-                connect(discControl, &DiscControl::workFinished, [=](DiscControl *discCtrl){
-                    connect(actionBurn, &QAction::triggered, [=](){
+                connect(discControl, &DiscControl::workFinished, this, [=](DiscControl *discCtrl){
+                    connect(actionBurn, &QAction::triggered, this, [=](){
                         UdfAppendBurnDataDialog *udfAppendBurnDataDlg = new UdfAppendBurnDataDialog(uri, discCtrl);
                         udfAppendBurnDataDlg->show();
                     });
@@ -301,14 +314,18 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
 #endif
 
     /* 属性 */
-    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
+    l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
         //fix computer show properties crash issue, link to bug#77789
         if (m_uri == "computer:///" || m_uri == "//")
         {
             gotoAboutComputer();
         }
         else{
-            PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+            QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+            //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+            if(this->parentWidget() && this->parentWidget()->isModal()){
+                w->setParent(this->parentWidget());
+            }
             w->show();
         }
     });
@@ -345,13 +362,13 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
 
     /* 共享文件夹无右键菜单'卸载' */
     if (!m_uri.startsWith("file://")) {
-        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), [=]() {
+        l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
             m_item->unmount();
         });
         l.last()->setEnabled(m_item->isMounted());
     }
     if(netWorkUri != m_uri){
-        l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), [=]() {
+        l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"), this, [=]() {
             if((m_item->isVolume())){
                 /* 远程服务器 */
                 FileEnumerator e;
@@ -367,14 +384,22 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
 
                     if(sourceUrl.scheme()==targetUrl.scheme() && sourceUrl.host()==targetUrl.host()){/* 相同scheme和host，但port不同时怎么处理呢？ */
                         QString uri = fileInfo.get()->uri();
-                        PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+                        QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
+                        //PropertiesWindow *w = new PropertiesWindow(QStringList()<<uri);
+                        if(this->parentWidget() && this->parentWidget()->isModal()){
+                            w->setParent(this->parentWidget());
+                        }
                         w->show();
                         break;
                     }
                 }
             }else{
                 /* 共享文件夹 */
-                PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+                QMainWindow *w = PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<m_uri);
+                //PropertiesWindow *w = new PropertiesWindow(QStringList()<<m_uri);
+                if(this->parentWidget() && this->parentWidget()->isModal()){
+                    w->setParent(this->parentWidget());
+                }
                 w->show();
             }
         });

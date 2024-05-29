@@ -29,6 +29,7 @@
 #include "global-settings.h"
 
 #include <QDebug>
+#include <QApplication>
 
 using namespace Peony;
 
@@ -57,6 +58,20 @@ DirectoryViewFactoryManager2::DirectoryViewFactoryManager2(QObject *parent) : QO
     auto listViewFactory2 = ListViewFactory2::getInstance();
     registerFactory(listViewFactory2->viewIdentity(), listViewFactory2);
     m_internal_views<<"List View";
+    QString version = qApp->property("version").toString();
+    if (version == "ukui3.0") {
+        iconViewFactory2->setZoomLevelHint(25);
+        iconViewFactory2->setMinimunSupportZoomLevel(21);
+        listViewFactory2->setZoomLevelhint(20);
+        listViewFactory2->setMaximumSupportedZoomLevel(20);
+        m_separatingZoomLevel = 20;
+    } else {
+        iconViewFactory2->setZoomLevelHint(70);
+        iconViewFactory2->setMinimunSupportZoomLevel(41);
+        listViewFactory2->setZoomLevelhint(24);
+        listViewFactory2->setMaximumSupportedZoomLevel(40);
+        m_separatingZoomLevel = 40;
+    }
 }
 
 DirectoryViewFactoryManager2::~DirectoryViewFactoryManager2()
@@ -139,10 +154,10 @@ const QString DirectoryViewFactoryManager2::getDefaultViewId(int zoomLevel, cons
         return getDefaultViewId(uri);
 
     if (defaultFactory->supportZoom()) {
-        if (zoomLevel <= 40 && zoomLevel >=0) {
+        if (zoomLevel <= m_separatingZoomLevel && zoomLevel >=0) {
             defaultFactory = getFactory("List View");
         }
-        if (zoomLevel >= 41) {
+        if (zoomLevel >= m_separatingZoomLevel + 1) {
             defaultFactory = getFactory("Icon View");
         }
     }

@@ -101,6 +101,10 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *e);
 
+    void setWindow(QWidget *parent) {
+        m_parent = parent;
+    }
+
 Q_SIGNALS:
     void currentIndexChanged(int index);
     void tabMoved(int from, int to);
@@ -232,7 +236,7 @@ protected:
 
 private:
     NavigationTabBar *m_tab_bar;
-    QToolButton *m_add_page_button;
+    QPushButton *m_add_page_button;
     QToolButton *m_show_page_button;
 
     QTreeView *m_treeView;
@@ -307,12 +311,14 @@ private:
     QStringList m_option_list = {tr("type"), tr("file size"), tr("modify time"), tr("name")};
     QStringList m_file_type_list = {tr("all"), tr("file folder"), tr("image"), tr("video"),
                                     tr("text file"), tr("audio"), tr("wps file"), tr("others")};
-    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("this week"), tr("this month"), tr("this year"), tr("year ago")};
+    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
     QStringList m_file_size_list = {tr("all"),tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
 
     bool m_first_add_page = true;
 
     std::shared_ptr<Peony::FileInfo> m_search_button_info;
+
+    QWidget* m_parent = nullptr;
 };
 
 class PreviewPageContainer : public QStackedWidget

@@ -311,6 +311,13 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         sortType->releaseMouse();
         sortType->update();
     });
+    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=](const QString &key){
+        if (SORT_COLUMN == key) {
+            QString sortTypeName = m_sort_type_menu->getSortTypeName(m_window->getCurrentSortColumn());
+            m_sort_type_menu->updateSortOrderName(m_window->getCurrentSortColumn());
+            a->setText(sortTypeName);
+        }
+    });
 
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
@@ -1172,10 +1179,10 @@ void TopMenuBar::addWindowButtons()
     close->setMouseTracking(true);
     close->installEventFilter(this);
 
-    optionButton->setFocusPolicy(Qt::FocusPolicy(optionButton->focusPolicy() &  ~Qt::TabFocus));
-    minimize->setFocusPolicy(Qt::FocusPolicy(minimize->focusPolicy() & ~Qt::TabFocus));
-    maximizeAndRestore->setFocusPolicy(Qt::FocusPolicy(maximizeAndRestore->focusPolicy() & ~Qt::TabFocus));
-    close->setFocusPolicy(Qt::FocusPolicy(close->focusPolicy() & ~Qt::TabFocus));
+    optionButton->setFocusPolicy(Qt::FocusPolicy(optionButton->focusPolicy() /*&  ~Qt::TabFocus*/));
+    minimize->setFocusPolicy(Qt::FocusPolicy(minimize->focusPolicy() /*& ~Qt::TabFocus*/));
+    maximizeAndRestore->setFocusPolicy(Qt::FocusPolicy(maximizeAndRestore->focusPolicy() /*& ~Qt::TabFocus*/));
+    close->setFocusPolicy(Qt::FocusPolicy(close->focusPolicy() /*& ~Qt::TabFocus*/));
 
     for (int i = 0; i < layout->count(); i++) {
         auto w = layout->itemAt(i)->widget();

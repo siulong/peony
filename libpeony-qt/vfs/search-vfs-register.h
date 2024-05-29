@@ -39,7 +39,7 @@ public:
     virtual const QString name() override {return "search vfs";}
     virtual const QString description() override {return QObject::tr("Default search vfs of peony");}
     virtual const QIcon icon() override {return QIcon();}
-    virtual void setEnable(bool enable) {}
+    virtual void setEnable(bool enable);
     virtual bool isEnable() {return true;}
 
     void initVFS() override;

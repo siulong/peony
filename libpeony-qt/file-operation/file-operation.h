@@ -386,20 +386,7 @@ private:
 
     struct URISorter {
         URISorter(const int& type) : directoryType(type){}
-        bool operator()(const QString& uri1, const QString& uri2) const {
-            bool isFolder1 = FileUtils::isFileDirectory(uri1);
-            bool isFolder2 = FileUtils::isFileDirectory(uri2);
-            if (isFolder1 == isFolder2) {
-                return true;
-            }
-            if (isFolder1 && !isFolder2) {
-                return directoryType == 0 ? false : true;
-            }
-            if (!isFolder1 && isFolder2) {
-               return directoryType == 0 ? true : false;
-            }
-            return isFolder1;
-        }
+        bool operator()(const QString& uri1, const QString& uri2) const;
     private:
         int directoryType;
     };

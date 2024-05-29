@@ -33,6 +33,9 @@
 
 #include <udisks/udisks.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <glib.h>
 
 using namespace Experimental_Peony;
 static VolumeManager* m_globalManager = nullptr;
@@ -75,6 +78,19 @@ QString getDeviceUUID(const char *device) {
     return uuid;
 }
 
+static bool driveHasMedia(GDrive *gdrive){
+    /* 此方式替代g_drive_has_media只对evice.startsWith("/dev/sd")生效！Linkto Bug#205118插入拓展坞后文件管理器侧边栏多出了两个移动设备 */
+    g_autofree gchar* unix_device = g_drive_get_identifier(gdrive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
+    QString device = unix_device;
+    int fd = open(device.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
+    if(-1==fd){/* open失败 */
+        return false;
+    }
+    close(fd);
+    return true;
+}
+
+
 void VolumeManager::printVolumeList(){
     qDebug()<<endl<<endl<<endl;
     //static int count=0;
@@ -100,8 +116,6 @@ void VolumeManager::printVolumeList(){
 }
 #include "file-enumerator.h"
 #include "file-info.h"
-#include "file-info-job.h"
-#include "file-utils.h"
 QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     /* volume item,遍历方式获取uri */
     Peony::FileEnumerator e;
@@ -109,13 +123,33 @@ QString VolumeManager::getTargetUriFromUnixDevice(const QString &unixDevice){
     e.enumerateSync();
     QString uri;
     for (auto fileInfo : e.getChildren()) {
-        Peony::FileInfoJob infoJob(fileInfo);
-        infoJob.querySync();
+        QString uriStr = fileInfo.get()->uri();
+        g_autoptr(GFile) gFile = g_file_new_for_uri(uriStr.toUtf8().constData());
+        GError *err = nullptr;
+        QString device;
+        QString targetUri;
+        g_autoptr(GFileInfo) gFileInfo = g_file_query_info(gFile,
+                                                           "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                                           G_FILE_QUERY_INFO_NONE,
+                                                           g_cancellable_new(),
+                                                           &err);
+
+        if (err) {
+            qDebug()<<err->code<<err->message;
+            g_error_free(err);
+            continue;
+        }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)) {
+               targetUri = g_file_info_get_attribute_string(gFileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+            }
+            if(g_file_info_has_attribute(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE)){
+                device = g_file_info_get_attribute_string(gFileInfo,G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE);
+            }
+        }
+
         /* 由volume的unixDevice获取target uri */
-        auto info = infoJob.getInfo();
-        QString device = fileInfo.get()->unixDeviceFile();
         if(device==unixDevice){
-            uri = fileInfo.get()->targetUri();
+            uri = targetUri;
             break;
         }
     }
@@ -242,6 +276,7 @@ void VolumeManager::initManagerInfo(){
 /*gparted应用是否打开*/
 bool VolumeManager::gpartedIsOpening(){
     GList* volumes = nullptr;
+    Q_UNUSED(volumes)
     GList* drives = nullptr;
     GList* l;
     GDrive* drive;
@@ -273,12 +308,16 @@ bool VolumeManager::gpartedIsOpening(){
 /*使用volume-changed信号处理设备的name属性更新*/
 void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
+
     if(!pThis->m_volumeList)
         return;
     QString device,name;
     char *gdevice,*gname;
 
     QHash<QString,Volume*>::iterator findItem,end;
+    Q_UNUSED(findItem)
+    Q_UNUSED(end)
     //情景：使用其他工具修改卷标后，卷标需要更新
     gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
     gname = g_volume_get_name(gvolume);
@@ -307,12 +346,13 @@ void VolumeManager::volumeChangeCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     bool itemIsExisted = false;
     int volumeCount = pThis->m_volumeList->count();
-    GVolume* volume = (GVolume*)g_object_ref(gvolume);
-    Volume *addItem = new Volume(volume);
+    Q_UNUSED(volumeCount)
+    Volume *addItem = new Volume(gvolume);
 
     itemIsExisted = pThis->m_volumeList->contains(addItem->device());
     qDebug()<<__func__<<__LINE__<<addItem->device()<<itemIsExisted<<endl;
@@ -355,6 +395,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         GVolume *gvolume,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
@@ -395,13 +436,9 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                         addItem->setHidden(true);
                         // if drive has media, it is not represent a docking station.
                         // so it should not be hidden.
-                        if (g_drive_has_media(gdrive)) {
+                        if (driveHasMedia(gdrive)) {
                             addItem->setHidden(false);
                         }
-                    }else if(uuid.isEmpty()){
-                        qDebug()<<__func__<<__LINE__<<device<<uuid;
-                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                        addItem->setHidden(true);
                     }
                 }//end
                 pThis->m_volumeList->remove(device);
@@ -417,6 +454,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         g_autofree char *gdevice = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
         if (pThis->m_volumeList->contains(gdevice)) {
             auto volumeItem = pThis->m_volumeList->value(gdevice);
+            Q_UNUSED(volumeItem)
             pThis->m_volumeList->remove(gdevice);
             Q_EMIT pThis->volumeRemove(gdevice);
         }
@@ -439,15 +477,15 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         return;
     }
 
-    GMount* gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
+    g_autoptr (GMount) gmount = g_volume_get_mount(gvolume);//情景3时该处的值不为nullptr
     phoneFlag = device.contains("/dev/bus");
     blankCDFlag = device.contains("/dev/sr") && pThis->m_volumeList->value(device)->mountPoint().isEmpty();
     phoneOrCD = device.contains("/dev/bus") || device.contains("/dev/sr");
+    Q_UNUSED(phoneOrCD)
     qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
     if(gmount){
         if(!phoneFlag && !blankCDFlag){
             //情景5、手机的mtp与gphoto2状态相互转换时只能保留一个
-            g_object_unref(gmount);
             return;
         }
         //情景2、处于挂载状态的设备在打开gparted瞬间需要保留该设备 更新设备的name属性?
@@ -455,8 +493,6 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         //Q_EMIT pThis->volumeUpdate();
     }
     qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
-    if(gmount)
-        g_object_unref(gmount);
 
     if (blankCDFlag)
         return;
@@ -473,13 +509,14 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
 //收到mount-removed时使用挂载点属性更新设备的状态
 void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         GMount *gmount,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     //情景1、卸载或弹出操作（不区分有无gparted进程）
     //情景2、直接暴力拔出操作 (不区分有无gparted进程)
     //上述2种情境下GMount*只能获取到设备的挂载点，无法获取设备路径，因此尝试采用挂载点区分设备?
     Volume* volumeItem;
-    Mount* mountItem = new Mount((GMount*)g_object_ref(gmount));
+    Mount* mountItem = new Mount(gmount);
     QString mountPoint = mountItem->mountPoint();
 
     if(mountItem->mountPoint().startsWith("smb://")){/* 远程服务器特殊处理 */
@@ -522,16 +559,16 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::mountAddCallback(GVolumeMonitor *monitor,
         GMount *gmount,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     //情景1、未打开gparted时插入新设备的自动挂载操作
     //情景2、未打开gparted时用户手动从卸载状态转为挂载状态
     //情景3、打开gparted后->插入新设备不拔出->关闭gparted 此时新设备会自动挂载
     //情景4、打开gparted后->卸载设备a(此时前端不应该显示a)并且不拔出->关闭gparted->此时设备a需要重新显示
-    GMount* mount = (GMount*)g_object_ref(gmount);
-    Mount* mountItem = new Mount(mount);
+    Mount* mountItem = new Mount(gmount);
     QString device = mountItem->device();
-    g_autoptr (GVolume) gvolume = g_mount_get_volume(mount);
+    g_autoptr (GVolume) gvolume = g_mount_get_volume(gmount);
     if (gvolume) {
         for (auto volume : pThis->m_volumeList->values()) {
             if (volume->getGVolume() == gvolume) {
@@ -579,7 +616,7 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     if(!pThis->m_volumeList)
         return;
     /* 获取mountPoint 挂载点 */
-     GFile* rootFile = g_mount_get_root(mount);
+    g_autoptr (GFile) rootFile = g_mount_get_root(mount);
     if(!rootFile)
         return;
 
@@ -593,9 +630,6 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
             if (volume->getGVolume() == gvolume) {
                 // 加密U盘的device name可能改变，列表需要按之前的调整
                 device = volume->originalDevice();
-                /* 此处更新volume的icon，优先使用gmount的icon；解决先打开文件管理器在插入启动光盘，先打开的文件管理器启动光盘图标未正确显示问题 */
-                volume->setIconName(mountItem->icon());
-                Q_EMIT pThis->volumeUpdate(Volume(*volume),"name");//end
                 break;
             }
         }
@@ -610,16 +644,15 @@ void VolumeManager::mountChangedCallback(GMount *mount, VolumeManager *pThis)
     }
 
     delete mountItem;
-    g_object_unref(rootFile);
 }
 
 void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmount,VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
-    GMount* gMount = (GMount*)g_object_ref(gmount);
-    GVolume* gVolume = (GVolume*)g_object_ref(g_mount_get_volume(gMount));
+    g_autoptr (GVolume) gVolume = g_mount_get_volume(gmount);
     Volume* volume = new Volume(gVolume);
     if(pThis->m_volumeList->contains(volume->device())){
         {
@@ -633,6 +666,7 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
 void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                                          GDrive *gdrive,VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     /* 添加光驱设备，例如空光驱插入 */
@@ -662,7 +696,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 volume->setHidden(true);
                 // if drive has media, it is not represent a docking station.
                 // so it should not be hidden.
-                if (g_drive_has_media(gdrive)) {
+                if (driveHasMedia(gdrive)) {
                     volume->setHidden(false);
                 }
             }
@@ -688,6 +722,7 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
 */
 void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
                                             GDrive *gdrive,VolumeManager *pThis){
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
     char* gdevice = g_drive_get_identifier(gdrive,G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
@@ -718,6 +753,7 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
 
 void VolumeManager::driveChangedCallback(GVolumeMonitor *monitor, GDrive *gdrive, VolumeManager *pThis)
 {
+    Q_UNUSED(monitor)
     if(!pThis->m_volumeList)
         return;
 
@@ -754,8 +790,9 @@ QList<GVolume*> VolumeManager::allGVolumes(){
         volumeList.push_back(gvolume);
     }
 
+    // 需要在此方法调用处释放GVolume实例
     if(volumes)
-        g_list_free(volumes);
+        g_list_free (volumes);
 
     return volumeList;
 }
@@ -777,6 +814,7 @@ QList<Volume*> VolumeManager::allVolumes()
         Volume* volumeItem = new Volume(gVolumes.at(i));
         //插入list
         volumes.append(volumeItem);
+        g_object_unref(gVolumes.at(i));
     }
     //qDebug()<<"--------------------------->>>>"<<endl;
 
@@ -858,7 +896,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         QString device = volumeItem->device();
         if(m_volumeList->contains(device)) {
             delete volumeItem;
-            delete entry;
+            //delete entry;
             continue;
         }
 
@@ -892,16 +930,18 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     // if drive has media, it is not represent a docking station.
                     // so it should not be hidden.
                     if (entry->getGDrive()) {
-                        if (g_drive_has_media(entry->getGDrive())) {
+                        if (driveHasMedia(entry->getGDrive())) {
                             volumeItem->setHidden(false);
                         }
                     }
                 }
-                /* 该代码段是解决前场问题时新增，影响了异常U盘显示，经讨论后先注释此处；hotfix bug#174631 关闭文件管理器时，插入异常U盘，侧边栏没有U盘图标 */
-                /*else if(uuid.isEmpty()){
-                    //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009
-                    volumeItem->setHidden(true);
-                }*/
+                else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
+                    qDebug()<<"the icon of volume"<<volumeItem->device()<<volumeItem->icon();
+                    if("drive-removable-media" == volumeItem->icon()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                        //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
+                        volumeItem->setHidden(true);
+                    }
+                }
             }
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
                 volumeItem->setHidden(true);
@@ -909,7 +949,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
         }
         if (shouldDeleteItem)
             delete volumeItem;
-        delete entry;
+        //delete entry;
     }
 
 
@@ -938,8 +978,9 @@ QList<GMount*> VolumeManager::allGMounts(){
         mountList.push_back(gmount);
     }
 
+    // 需要在此方法调用处释放GMount实例
     if(mounts)
-        g_list_free(mounts);
+        g_list_free (mounts);
 
     return mountList;
 }
@@ -960,6 +1001,7 @@ QList<Mount*> VolumeManager::allMounts(){
             //情景：查询设备时数据线连接的手机处于 "mtp"或"gphoto"状态
             //     此时有一个没有dev设备的GMount*不应该保存
             delete mountItem;
+            g_object_unref(gMounts.at(i));
             continue;
         }
         mounts.append(mountItem);
@@ -983,8 +1025,9 @@ QList<GDrive *> VolumeManager::allGDrives()
         gdriveList.push_back(gdrive);
     }
 
+    // 需要在此方法调用处释放GDrive实例
     if(gdrives)
-        g_list_free(gdrives);
+        g_list_free (gdrives);
 
     return gdriveList;
 }
@@ -1048,6 +1091,8 @@ void Volume::initVolumeInfo()
 {
     if(!m_volume)   //如果m_volume为nullptr，可能会是一种用Mount来填充Volume数据的方式
         return;
+
+    m_volume = static_cast<GVolume *>(g_object_ref(m_volume));
 
     m_gMount = nullptr;
     m_canUnmount = false;
@@ -1329,6 +1374,8 @@ void Drive::initDriveInfo(){
     if(!m_drive)
         return;
 
+    m_drive = static_cast<GDrive *>(g_object_ref(m_drive));
+
     g_autofree gchar* unix_device = g_drive_get_identifier(m_drive, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
     m_device = unix_device;
     m_canEject = g_drive_can_eject(m_drive);
@@ -1481,7 +1528,7 @@ void Drive::setMountPath(const QString &mountPath)
 }
 
 Mount::Mount(GMount* gmount) {
-    m_mount = static_cast<GMount *>(g_object_ref(gmount));
+    m_mount = gmount;
     initMountInfo();
 }
 
@@ -1501,6 +1548,7 @@ void Mount::initMountInfo(){
     if(!m_mount)
         return;
 
+    m_mount = static_cast<GMount *>(g_object_ref(m_mount));
     //1、mountPoint 挂载点
     rootFile = g_mount_get_root(m_mount);
     if(rootFile){
@@ -1558,7 +1606,7 @@ void Mount::initMountInfo(){
     GIcon* gicon = g_mount_get_icon(m_mount);
     m_icon = Peony::FileUtils::getIconStringFromGIcon(gicon, tmpDevice);
     // fix #81852, refer to #57660, #70014, #96652, task #25343
-    if (QString(m_icon) == "drive-harddisk-usb") {
+    if (m_device.startsWith("/dev/sd") && m_icon.endsWith(".ico") || QString(m_icon) == "drive-harddisk-usb") {/* 镜像U盘或移动硬盘的图标处理，linkto bug#174770 */
         double size = 0.0;
         if(!tmpDevice.isEmpty()){
             size = Peony::FileUtils::getDeviceSize(tmpDevice.toUtf8().constData());
@@ -1568,6 +1616,9 @@ void Mount::initMountInfo(){
         if (size < 128) {
             m_icon = "drive-removable-media-usb";
         }
+    }
+    if(m_device.startsWith("/dev/sr") && m_icon.endsWith(".ico")){/* 镜像光盘的图标处理,linkto bug#174770 */
+        m_icon = "media-optical";
     }
 
     g_object_unref (gicon);
@@ -1824,7 +1875,7 @@ void MessageDialog::init(std::map<QString, QIcon> &occupiedAppMap, const QString
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 #include"file-utils.h"
-GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent)
+GetOccupiedAppsInfoThread::GetOccupiedAppsInfoThread(QObject *parent) : QThread(parent)
 {
 
 }
@@ -1837,9 +1888,11 @@ void GetOccupiedAppsInfoThread::run()
 
 void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char *message, GArray *processes, char **choices, gpointer user_data)
 {
+    Q_UNUSED(MountOp)
+    Q_UNUSED(choices)
     qDebug()<<"len of processes:"<<processes->len;
     std::map<QString,QIcon> occupiedAppMap;
-    for(int i=0; i< processes->len; i++)
+    for(guint i=0; i< processes->len; i++)
     {
         GPid pid = g_array_index(processes, GPid ,i);
         QProcess *process =new QProcess();

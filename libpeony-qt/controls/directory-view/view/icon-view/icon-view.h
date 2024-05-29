@@ -138,6 +138,7 @@ public Q_SLOTS:
     void multiSelect();
     void disableMultiSelect();
     void setSearchKey(const QString &key);
+    void edit(const QModelIndex &index);
     void doMultiSelect(bool isMultiSlelect);
 
     void setItemsVisible(bool visible) override;
@@ -179,6 +180,13 @@ protected:
     void setIgnore_mouse_move_event(bool ignore_mouse_move_event);
     void releaseUnselect(bool select);
 
+    bool edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event) override;
+
+    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
+
+protected Q_SLOTS:
+    void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) override;
+
 private Q_SLOTS:
     void slotRename();
 
@@ -188,7 +196,12 @@ private:
     QTimer m_repaint_timer;
 
     bool  m_editValid;
-    bool  m_ctrl_key_pressed;
+    bool  m_ctrl_key_pressed = false;
+
+    bool  m_increase = false;
+
+    int m_scrollMax = 0;
+
     QTimer* m_renameTimer;
 
     QTimer *m_touch_active_timer = nullptr;
@@ -219,6 +232,8 @@ private:
 
     bool m_slider_bar_draging = false;
     bool m_mouse_release_unselect = false;
+
+    bool m_noSelectOnPress = false;
 };
 
 //IconView2
@@ -340,6 +355,7 @@ private:
     FileItemProxyFilterSortModel *m_proxy_model = nullptr;
 
     int m_zoom_level = 70;
+    bool m_menuRequesting = false;
 };
 
 }

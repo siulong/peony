@@ -55,6 +55,7 @@ public:
 
     void addLabelToFile(const QString &uri, int labelId);
     void removeFileLabel(const QString &uri, int labelId = -1);
+    void removeFileLabel(const QVector<QString> &uris, int labelId = -1);
 
     const QList<int> getFileLabelIds(const QString &uri);
     const QStringList getFileLabels(const QString &uri);
@@ -99,6 +100,7 @@ public Q_SLOTS:
     void setValidInSidebar(FileLabelItem *item, bool isChecked);
     void setValidInMenu(FileLabelItem *item, bool isChecked);
     void renameFileLabel(const QString oldUri, const QString newUri);
+    void updateLabesForAllFilesById(int id);
 
 protected:
     void initLabelItems();

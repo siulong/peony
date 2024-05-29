@@ -36,7 +36,7 @@ public:
 
     virtual PluginType pluginType () override {return VFSPlugin;}
 
-    virtual void setEnable (bool enable) {}
+    virtual void setEnable (bool enable);
     virtual bool isEnable () {return true;}
     virtual const QIcon icon () override {return QIcon();}
     virtual const QString name () override {return "favorite vfs";}

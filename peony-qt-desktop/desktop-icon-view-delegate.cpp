@@ -90,9 +90,9 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     }
 
     bool bCutFile = false;
-    if (ClipboardUtils::isDesktopFilesBeCut() && ClipboardUtils::isClipboardFilesBeCut()){
-        auto clipedUris = ClipboardUtils::getClipboardFilesUris();
-        if (clipedUris.contains(FileUtils::urlEncode(index.data(DesktopItemModel::UriRole).toString()))) {
+    auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
+    if (!clipedUris.isEmpty()){
+        if (clipedUris.contains(index.data(DesktopItemModel::UriRole).toString())) {
             painter->setOpacity(0.5);
             bCutFile = true;
             qDebug()<<"cut item in desktop"<<index.data();
@@ -102,6 +102,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     //paint background
     if (!view->indexWidget(index)) {
         //painter->setClipRect(opt.rect);
+        int radius = view->radius();
         painter->save();
         painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         if (opt.state.testFlag(QStyle::State_MouseOver) && !opt.state.testFlag(QStyle::State_Selected)) {
@@ -111,7 +112,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             color.setAlpha(255*0.5);
             painter->setPen(color.darker(100));
             painter->setBrush(color);
-            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), 6, 6);
+            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), radius, radius);
         }
         if (opt.state.testFlag(QStyle::State_Selected)) {
             QColor color = m_styled_button->palette().highlight().color();
@@ -120,7 +121,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
             color.setAlpha(255*0.8);
             painter->setPen(color);
             painter->setBrush(color);
-            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), 6, 6);
+            painter->drawRoundedRect(opt.rect.adjusted(1, 1, -1, -1), radius, radius);
         }
         painter->restore();
     }
@@ -438,7 +439,7 @@ QSize DesktopIconViewDelegate::sizeHint(const QStyleOptionViewItem &option, cons
     auto view = qobject_cast<DesktopIconView*>(this->parent());
     auto iconSize = view->iconSize();
     QFont font = view->font();
-    font.setFamily(view->font().defaultFamily());
+    //font.setFamily(view->font().defaultFamily());
     // asume max text size.
     font.setPointSize(15);
     auto fm = QFontMetrics(font);
@@ -500,8 +501,11 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
 
     getView()->setEditFlag(true);
     connect(edit, &IconViewEditor::returnPressed, this, &DesktopIconViewDelegate::slot_finishEdit);
-    connect(edit, &IconViewEditor::destroyed, getView(), [=](){
+    auto editDestroyConn = connect(edit, &IconViewEditor::destroyed, getView(), [=](){
         getView()->setEditFlag(false);
+    });
+    connect(getView(), &DesktopIconView::destroyed, edit, [=](){
+        disconnect(editDestroyConn);
     });
 
     return edit;
@@ -625,4 +629,9 @@ DesktopIconView *DesktopIconViewDelegate::getView() const
 {
     auto view = qobject_cast<Peony::DesktopIconView*>(parent());
     return view;
+}
+
+void DesktopIconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    return initStyleOption(option, index);
 }
