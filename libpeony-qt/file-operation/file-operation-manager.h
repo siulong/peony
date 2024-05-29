@@ -37,6 +37,7 @@
 #include "file-operation-progress-bar.h"
 #include "file-operation-error-dialogs.h"
 class QDBusInterface;
+class RemoteFileEventHelper;
 
 namespace Peony {
 
@@ -84,6 +85,7 @@ Q_SIGNALS:
 
     void operationStarted(std::shared_ptr<FileOperationInfo> info);
     void operationFinished(std::shared_ptr<FileOperationInfo> info, bool successed);
+    void remoteFileEvent(int eventType, const QString &arg1, const QString &arg2);
 
     void errored(FileOperationError& error);
 
@@ -171,6 +173,8 @@ private:
     bool m_isFsynchronizing = false;
     QMutex m_fsyncMutex;
 
+    QThread *m_replicaThread = nullptr;
+    RemoteFileEventHelper *m_replica = nullptr;
 };
 
 class FileOperationInfo : public QObject
