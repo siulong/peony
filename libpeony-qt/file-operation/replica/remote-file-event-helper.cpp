@@ -19,6 +19,7 @@
 #include "rep_fileeventhandler_replica.h"
 
 #include <QtRemoteObjects>
+#include <QUrl>
 #include <QDebug>
 
 RemoteFileEventHelper::RemoteFileEventHelper(QObject *parent) : QObject(parent)
@@ -52,8 +53,11 @@ void RemoteFileEventHelper::setupConnections()
     });
     connect(this, &RemoteFileEventHelper::handleFileEventRequest, m_fileEventHandlerIface, [=](int type, const QString &arg1, const QString &arg2){
         qDebug() << type << arg1 << arg2 << m_fileEventHandlerIface;
-        if (m_fileEventHandlerIface->state() == QRemoteObjectReplica::Valid)
-            m_fileEventHandlerIface->handleFileEvent(type, arg1, arg2);
+        if (m_fileEventHandlerIface->state() == QRemoteObjectReplica::Valid) {
+            QUrl url1(arg1);
+            QUrl url2(arg2);
+            m_fileEventHandlerIface->handleFileEvent(type, url1.toLocalFile(), url2.toLocalFile());
+        }
     });
 }
 

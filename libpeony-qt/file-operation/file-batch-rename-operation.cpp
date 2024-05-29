@@ -187,6 +187,9 @@ void FileBatchRenameOperation::run()
         }        
 //        getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
         m_new_names.append(newName);
+
+        bool successed = false;
+
         if (is_local_desktop_file) {
             GError *err = nullptr;
             g_file_move(file.get()->get(),
@@ -224,13 +227,15 @@ void FileBatchRenameOperation::run()
                 }
 
                 cancel ();
+            } else {
+                successed = true;
             }
         } else {
     retry:
             GError* err = nullptr;
             g_autofree char* newName = g_file_get_basename(newFile.get()->get());
 
-            g_file_set_display_name(file.get()->get(), newName, getCancellable().get()->get(), &err);
+            g_autoptr (GFile) target_file = g_file_set_display_name(file.get()->get(), newName, getCancellable().get()->get(), &err);
 
             if (err) {
                 FileOperationError except;
@@ -313,6 +318,8 @@ void FileBatchRenameOperation::run()
                 }
 
                 g_error_free(err);
+            } else {
+                successed = true;
             }
         }
 
@@ -328,6 +335,8 @@ void FileBatchRenameOperation::run()
             m_info->m_oldname = oldName;
         }
 
+        if (successed)
+            Q_EMIT remoteFileEvent(103, uri, destUri);
         fileSync(uri, destUri);
         m_current_offset += 1;
         Q_EMIT FileProgressCallback(uri, destUri, fileIconName, m_current_offset, m_total_size);

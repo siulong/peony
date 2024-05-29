@@ -253,6 +253,7 @@ retry:
                     }
                 }
             } else {
+                Q_EMIT remoteFileEvent(102, src, nullptr);
                 // fileinfo关联删除时间
                 quint64 time = QDateTime::currentMSecsSinceEpoch();
                 auto info = FileInfo::fromUri(src);
