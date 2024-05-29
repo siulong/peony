@@ -161,21 +161,50 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         m_proxy_model->invalidate();//display udisk in real time after format it.
     });
 
-    connect(this, &QTreeView::expanded, [=](const QModelIndex &index) {
+    auto globalSettings = Peony::GlobalSettings::getInstance();
+    bool isShowNetwork = globalSettings->isExist(SHOW_NETWORK) ? globalSettings->getValue(SHOW_NETWORK).toBool() : true;
+    QStringList disExtensions = globalSettings->getValue(DISABLED_EXTENSIONS).toStringList();
+    connect(this, &QTreeView::expanded, this, [=](const QModelIndex &index) {
+        // 获取索引项并缓存到局部变量
         auto item = m_proxy_model->itemFromIndex(index);
-        qDebug()<<item->uri();
-        /*!
-          \bug can not expanded? enumerator can not get prepared signal, why?
-          */
-        bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
-                    Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
-        if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+        auto itemType = item->type();
+        auto itemUri = item->uri();
+
+        // 延迟加载子项
+        item->findChildrenAsync();
+
+        if (itemType == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+            // 如果不显示网络项目，则隐藏该行并退出
             this->setRowHidden(index.row(), index.parent(), true);
             return;
         }
 
-        item->findChildrenAsync();
-    });
+        // 使用 QMap 缓存插件实例
+        PluginManager* pluginManager = PluginManager::getInstance();
+        QMap<QString, VFSPluginIface*> cachedPlugins;
+
+        // 遍历禁用的扩展列表
+        for (auto extension : disExtensions) {
+            // 如果插件未缓存，则动态转换并缓存
+            if (!cachedPlugins.contains(extension)) {
+                VFSPluginIface* pIface = dynamic_cast<VFSPluginIface*>(pluginManager->getPluginByFileName(extension));
+                cachedPlugins.insert(extension, pIface);
+            } else {
+                auto pIface = cachedPlugins[extension];
+
+                if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin) {
+                    bool isFileSystemItem = (itemType == SideBarAbstractItem::FileSystemItem);
+                    bool isFavoriteItem = (itemType == SideBarAbstractItem::FavoriteItem);
+
+                    if ((isFileSystemItem && !itemUri.contains("computer:///") && itemUri.contains(pIface->uriScheme())) ||
+                        (isFavoriteItem && pIface->uriScheme() == "kmre://" && itemUri.contains(pIface->uriScheme()))) {
+                        this->setRowHidden(index.row(), index.parent(), true);
+                        return;
+                    }
+                }
+            }
+        }
+    },Qt::QueuedConnection);
 
     connect(this, &QTreeView::collapsed, [=](const QModelIndex &index) {
         auto item = m_proxy_model->itemFromIndex(index);
