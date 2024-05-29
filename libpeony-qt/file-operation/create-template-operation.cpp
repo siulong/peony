@@ -94,6 +94,7 @@ retry_create_empty_file:
                 except.errorStr = err->message;
                 except.errorType = ET_GIO;
                 Q_EMIT errored(except);
+                g_error_free(err);
             }
         }
         //fix bug 35145, function occupy udisk issue
@@ -125,6 +126,7 @@ retry_create_empty_folder:
                 except.errorStr = err->message;
                 except.errorType = ET_GIO;
                 Q_EMIT errored(except);
+                g_error_free(err);
             }
         }
         break;
@@ -158,6 +160,7 @@ retry_create_template:
                 except.errorStr = err->message;
                 except.errorType = ET_GIO;
                 Q_EMIT errored(except);
+                g_error_free(err);
             }
         } else {
             setHasError(false);
@@ -225,6 +228,8 @@ retry_create_template:
     m_info.get()->m_dest_dir_uri = m_target_uri;
     m_info.get()->m_dest_uris.clear();
     m_info.get()->m_dest_uris<<m_target_uri;
+
+    setProperty("targetUri", m_target_uri);
 
     Q_EMIT operationFinished();
     notifyFileWatcherOperationFinished();
