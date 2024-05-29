@@ -1,0 +1,86 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 29 May 2024 10:33:43 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/create-template-operation.cpp |  5 +++++
+ libpeony-qt/global-settings.cpp                          | 15 ++++++++++++---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/file-operation/create-template-operation.cpp b/libpeony-qt/file-operation/create-template-operation.cpp
+index 3b92284..cdc75a1 100644
+--- a/libpeony-qt/file-operation/create-template-operation.cpp
++++ b/libpeony-qt/file-operation/create-template-operation.cpp
+@@ -94,6 +94,7 @@ retry_create_empty_file:
+                 except.errorStr = err->message;
+                 except.errorType = ET_GIO;
+                 Q_EMIT errored(except);
++                g_error_free(err);
+             }
+         }
+         //fix bug 35145, function occupy udisk issue
+@@ -125,6 +126,7 @@ retry_create_empty_folder:
+                 except.errorStr = err->message;
+                 except.errorType = ET_GIO;
+                 Q_EMIT errored(except);
++                g_error_free(err);
+             }
+         }
+         break;
+@@ -158,6 +160,7 @@ retry_create_template:
+                 except.errorStr = err->message;
+                 except.errorType = ET_GIO;
+                 Q_EMIT errored(except);
++                g_error_free(err);
+             }
+         } else {
+             setHasError(false);
+@@ -226,6 +229,8 @@ retry_create_template:
+     m_info.get()->m_dest_uris.clear();
+     m_info.get()->m_dest_uris<<m_target_uri;
+ 
++    setProperty("targetUri", m_target_uri);
++
+     Q_EMIT operationFinished();
+     notifyFileWatcherOperationFinished();
+ }
+diff --git a/libpeony-qt/global-settings.cpp b/libpeony-qt/global-settings.cpp
+index db94af9..e228a12 100644
+--- a/libpeony-qt/global-settings.cpp
++++ b/libpeony-qt/global-settings.cpp
+@@ -584,12 +584,17 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
+     //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
+     //set date and time show format, task #101605
+     auto ret = kdk_system_timeformat_transform(&m_tm);
+-    g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
++    char* formatDate = kdk_system_shortformat_transform(&m_tm);
+     if (m_showRelativeTime){
+-       formatDate = kdk_system_tran_absolute_date(&m_tm);
++        if (formatDate)
++            g_free(formatDate);
++        formatDate = kdk_system_tran_absolute_date(&m_tm);
+     }
+-    else if (longFormat)
++    else if (longFormat) {
++        if (formatDate)
++            g_free(formatDate);
+         formatDate = kdk_system_longformat_transform(&m_tm);
++    }
+     if (ret && formatDate){
+         g_autofree gchar *date_str = g_strdup_printf("%s %s", formatDate, ret->timesec);
+         QString dateStr = date_str;
+@@ -597,10 +602,14 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
+         //释放结构体
+         kdk_free_timeinfo(ret);
+ 
++        g_free(formatDate);
++
+         //use sdk interface
+         if (dateStr.trimmed().length() > 0)
+             return dateStr;
+     }
++    if (formatDate)
++        g_free(formatDate);
+ #endif
+ 
+     //old way of date, processed by self
