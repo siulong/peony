@@ -213,7 +213,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     //add link and read only icon support
     if (index.column() == 0) {
         int emblemOffset = 4 - GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 5;
-        int bottomOff = 5 + GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 2;
+        int bottomOff = 6 + GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 2;
         auto rect = view->visualRect(index);
         auto iconSize = view->iconSize();
         auto size = iconSize.width()/2;
