@@ -1,0 +1,131 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 31 May 2024 13:42:35 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/global-settings.cpp                 | 18 +++++++++++-------
+ libpeony-qt/global-settings.h                   |  3 +++
+ libpeony-qt/org.ukui.peony.settings.gschema.xml |  6 ++++++
+ src/main-window-factory-plugin-manager.cpp      | 17 +++++++++++------
+ 4 files changed, 31 insertions(+), 13 deletions(-)
+
+diff --git a/libpeony-qt/global-settings.cpp b/libpeony-qt/global-settings.cpp
+index e228a12..b090c70 100644
+--- a/libpeony-qt/global-settings.cpp
++++ b/libpeony-qt/global-settings.cpp
+@@ -285,6 +285,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
+         setValue(LABLE_ALIGNMENT, 1);
+     }
+ 
++    if (m_cache.value(PEONY_VERSION).isNull()) {
++        setValue(PEONY_VERSION, 4);
++    }
++
+ #ifdef KY_SDK_SYSINFO
+     auto machine = kdk_system_get_hostCloudPlatform();
+     if (machine) {
+@@ -332,26 +336,26 @@ void GlobalSettings::getUkuiStyle()
+         m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
+     }
+     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+-        m_peony_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
+-        connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
++        QGSettings *styleGSettings = new QGSettings("org.ukui.style", QByteArray(), this);
++        connect(styleGSettings, &QGSettings::changed, this, [=](const QString &key) {
+             if (key == "peonySideBarTransparency" && transparentConfigFromUKUIStyle) {
+                 m_cache.remove(SIDEBAR_BG_OPACITY);
+-                m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get(key).toString());
++                m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get(key).toString());
+                 qApp->paletteChanged(qApp->palette());
+             }
+             if (key == "widgetThemeName") {
+                 m_cache.remove("widgetThemeName");
+-                m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
++                m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
+                 Q_EMIT this->valueChanged("widgetThemeName");
+             }
+         });
+         if (transparentConfigFromUKUIStyle) {
+             m_cache.remove(SIDEBAR_BG_OPACITY);
+-            m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get("peonySideBarTransparency").toString());
++            m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get("peonySideBarTransparency").toString());
+         }
+-        if (m_peony_gsettings->keys().contains("widgetThemeName")) {
++        if (styleGSettings->keys().contains("widgetThemeName")) {
+             m_cache.remove("widgetThemeName");
+-            m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
++            m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
+         }
+     }
+ }
+diff --git a/libpeony-qt/global-settings.h b/libpeony-qt/global-settings.h
+index 825b026..4152b43 100644
+--- a/libpeony-qt/global-settings.h
++++ b/libpeony-qt/global-settings.h
+@@ -31,6 +31,9 @@
+ #include "peony-core_global.h"
+ #include <gio/gio.h>
+ 
++//文件管理器版本
++#define PEONY_VERSION               "peonyVersion"
++
+ //顶部菜单 - Top menu
+ #define RESIDENT_IN_BACKEND         "resident"
+ #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
+diff --git a/libpeony-qt/org.ukui.peony.settings.gschema.xml b/libpeony-qt/org.ukui.peony.settings.gschema.xml
+index 18ad979..230c471 100644
+--- a/libpeony-qt/org.ukui.peony.settings.gschema.xml
++++ b/libpeony-qt/org.ukui.peony.settings.gschema.xml
+@@ -209,5 +209,11 @@
+       <description>1 is smallest, 4 is largest</description>
+     </key>
+ 
++    <key type="i" name="peony-version">
++     <default>4</default>
++     <summary>default peony version</summary>
++     <description>4 is ukui4.0 version, 3 is ukui3.0 version, other is ukui4.0</description>
++    </key>
++
+   </schema>
+ </schemalist>
+diff --git a/src/main-window-factory-plugin-manager.cpp b/src/main-window-factory-plugin-manager.cpp
+index 17bee80..0891a66 100644
+--- a/src/main-window-factory-plugin-manager.cpp
++++ b/src/main-window-factory-plugin-manager.cpp
+@@ -43,18 +43,17 @@ MainWindowFactoryPluginManager *MainWindowFactoryPluginManager::getInstance()
+ 
+ QString MainWindowFactoryPluginManager::setVersion()
+ {
+-    int features = 2;
++    int version = 4;
+ #ifdef KYLIN_COMMON
+-    features = QString::fromStdString(KDKGetOSRelease("PRODUCT_FEATURES")).toInt();
++    version = Peony::GlobalSettings::getInstance()->getValue(PEONY_VERSION).toInt();
+ #endif //KYLIN_COMMON
+     QString name = "ukui4.0";
+-    switch(features) {
+-    case 0:
++    switch(version) {
++    case 3:
+         name = "ukui3.0";
+         Peony::GlobalSettings::getInstance()->setValue(MULTI_SELECT, false);
+         break;
+-    case 2:
+-    case 3:
++    case 4:
+     default:
+         name = "ukui4.0";
+         Peony::GlobalSettings::getInstance()->setValue(MULTI_SELECT, true);
+@@ -134,6 +133,12 @@ MainWindowFactoryPluginManager::MainWindowFactoryPluginManager(QObject *parent)
+         registerPlugin(piface);
+ 
+     }
++
++    connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=] (const QString& key) {
++        if (PEONY_VERSION == key) {
++            setVersion();
++        }
++    });
+ }
+ 
+ bool MainWindowFactoryPluginManager::registerPlugin(Peony::MainWindowFactoryIface *plugin)

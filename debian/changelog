@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0531.1) nile; urgency=medium
+
+  * 修改版本配置判断流程，关联bug: #I8WL1N、#I8IEBZ、#I8WKVY
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 31 May 2024 13:39:51 +0800
+
 peony (4.10.0.5-ok1~0531) nile; urgency=medium
 
   * 适配智能数据管理移动、重命名等流程
