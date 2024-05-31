@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0531) nile; urgency=medium
+
+  * 适配智能数据管理移动、重命名等流程
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 31 May 2024 11:26:47 +0800
+
 peony (4.10.0.5-ok1~0529) nile; urgency=medium
 
   * 适配智能数据管理新建流程

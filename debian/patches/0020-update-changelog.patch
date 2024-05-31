@@ -1,0 +1,399 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 31 May 2024 11:28:51 +0800
+Subject: update changelog.
+
+---
+ .../file-operation/file-batch-rename-operation.cpp | 11 +++-
+ libpeony-qt/file-operation/file-move-operation.cpp |  1 +
+ .../file-operation/file-operation-manager.cpp      | 12 ++++
+ .../file-operation/file-operation-manager.h        |  4 ++
+ libpeony-qt/file-operation/file-operation.cpp      |  1 +
+ libpeony-qt/file-operation/file-operation.h        |  2 +
+ libpeony-qt/file-operation/file-operation.pri      |  1 +
+ .../file-operation/file-rename-operation.cpp       | 10 +++-
+ .../file-operation/file-trash-operation.cpp        |  1 +
+ .../file-operation/file-untrash-operation.cpp      |  2 +
+ .../file-operation/replica/fileeventhandler.rep    |  6 ++
+ .../replica/remote-file-event-helper.cpp           | 69 ++++++++++++++++++++++
+ .../replica/remote-file-event-helper.h             | 45 ++++++++++++++
+ 13 files changed, 163 insertions(+), 2 deletions(-)
+ create mode 100644 libpeony-qt/file-operation/replica/fileeventhandler.rep
+ create mode 100644 libpeony-qt/file-operation/replica/remote-file-event-helper.cpp
+ create mode 100644 libpeony-qt/file-operation/replica/remote-file-event-helper.h
+
+diff --git a/libpeony-qt/file-operation/file-batch-rename-operation.cpp b/libpeony-qt/file-operation/file-batch-rename-operation.cpp
+index 10aac36..3a94855 100644
+--- a/libpeony-qt/file-operation/file-batch-rename-operation.cpp
++++ b/libpeony-qt/file-operation/file-batch-rename-operation.cpp
+@@ -187,6 +187,9 @@ void FileBatchRenameOperation::run()
+         }        
+ //        getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+         m_new_names.append(newName);
++
++        bool successed = false;
++
+         if (is_local_desktop_file) {
+             GError *err = nullptr;
+             g_file_move(file.get()->get(),
+@@ -224,13 +227,15 @@ void FileBatchRenameOperation::run()
+                 }
+ 
+                 cancel ();
++            } else {
++                successed = true;
+             }
+         } else {
+     retry:
+             GError* err = nullptr;
+             g_autofree char* newName = g_file_get_basename(newFile.get()->get());
+ 
+-            g_file_set_display_name(file.get()->get(), newName, getCancellable().get()->get(), &err);
++            g_autoptr (GFile) target_file = g_file_set_display_name(file.get()->get(), newName, getCancellable().get()->get(), &err);
+ 
+             if (err) {
+                 FileOperationError except;
+@@ -313,6 +318,8 @@ void FileBatchRenameOperation::run()
+                 }
+ 
+                 g_error_free(err);
++            } else {
++                successed = true;
+             }
+         }
+ 
+@@ -328,6 +335,8 @@ void FileBatchRenameOperation::run()
+             m_info->m_oldname = oldName;
+         }
+ 
++        if (successed)
++            Q_EMIT remoteFileEvent(103, uri, destUri);
+         fileSync(uri, destUri);
+         m_current_offset += 1;
+         Q_EMIT FileProgressCallback(uri, destUri, fileIconName, m_current_offset, m_total_size);
+diff --git a/libpeony-qt/file-operation/file-move-operation.cpp b/libpeony-qt/file-operation/file-move-operation.cpp
+index ea894cb..f566321 100644
+--- a/libpeony-qt/file-operation/file-move-operation.cpp
++++ b/libpeony-qt/file-operation/file-move-operation.cpp
+@@ -250,6 +250,7 @@ void FileMoveOperation::move()
+             err = nullptr;
+         } else {
+             node->setState(FileNode::Handled);
++            Q_EMIT remoteFileEvent(103, srcUri, destUri);
+ 
+             /* 文件（夹）剪切/鼠标拖动move后，标识模式更新 */
+             g_autofree char* sourceUri = g_file_get_uri(srcFile.get()->get());
+diff --git a/libpeony-qt/file-operation/file-operation-manager.cpp b/libpeony-qt/file-operation/file-operation-manager.cpp
+index 0632989..fcb32de 100644
+--- a/libpeony-qt/file-operation/file-operation-manager.cpp
++++ b/libpeony-qt/file-operation/file-operation-manager.cpp
+@@ -51,6 +51,8 @@
+ 
+ //#include "properties-window.h"
+ #include "sound-effect.h"
++#include "remote-file-event-helper.h"
++
+ #include <kballontip.h>
+ #ifdef KY_SDK_SOUND_EFFECTS
+ #include "ksoundeffects.h"
+@@ -119,6 +121,12 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
+                                           "moveFilesToAnotherProcCompleted",
+                                           this,
+                                           SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
++
++    m_replicaThread = new QThread;
++    m_replica = new RemoteFileEventHelper;
++    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
++    m_replica->moveToThread(m_replicaThread);
++    m_replicaThread->start();
+ }
+ 
+ FileOperationManager::~FileOperationManager()
+@@ -128,6 +136,10 @@ FileOperationManager::~FileOperationManager()
+         m_iface = nullptr;
+     }
+ 
++    m_replicaThread->quit();
++    m_replicaThread->wait(500);
++    delete m_replicaThread;
++    delete m_replica;
+ }
+ 
+ FileOperationManager *FileOperationManager::getInstance()
+diff --git a/libpeony-qt/file-operation/file-operation-manager.h b/libpeony-qt/file-operation/file-operation-manager.h
+index 9fc4091..8081335 100644
+--- a/libpeony-qt/file-operation/file-operation-manager.h
++++ b/libpeony-qt/file-operation/file-operation-manager.h
+@@ -37,6 +37,7 @@
+ #include "file-operation-progress-bar.h"
+ #include "file-operation-error-dialogs.h"
+ class QDBusInterface;
++class RemoteFileEventHelper;
+ 
+ namespace Peony {
+ 
+@@ -84,6 +85,7 @@ Q_SIGNALS:
+ 
+     void operationStarted(std::shared_ptr<FileOperationInfo> info);
+     void operationFinished(std::shared_ptr<FileOperationInfo> info, bool successed);
++    void remoteFileEvent(int eventType, const QString &arg1, const QString &arg2);
+ 
+     void errored(FileOperationError& error);
+ 
+@@ -171,6 +173,8 @@ private:
+     bool m_isFsynchronizing = false;
+     QMutex m_fsyncMutex;
+ 
++    QThread *m_replicaThread = nullptr;
++    RemoteFileEventHelper *m_replica = nullptr;
+ };
+ 
+ class FileOperationInfo : public QObject
+diff --git a/libpeony-qt/file-operation/file-operation.cpp b/libpeony-qt/file-operation/file-operation.cpp
+index c3b73e2..91dfe92 100644
+--- a/libpeony-qt/file-operation/file-operation.cpp
++++ b/libpeony-qt/file-operation/file-operation.cpp
+@@ -49,6 +49,7 @@ FileOperation::FileOperation(QObject *parent) : QObject (parent)
+         m_is_pause.store(false);
+         m_wait_condition.wakeOne();
+     });
++    connect(this, &FileOperation::remoteFileEvent, FileOperationManager::getInstance(), &FileOperationManager::remoteFileEvent);
+ }
+ 
+ FileOperation::~FileOperation()
+diff --git a/libpeony-qt/file-operation/file-operation.h b/libpeony-qt/file-operation/file-operation.h
+index ec2c1bc..6711d7a 100644
+--- a/libpeony-qt/file-operation/file-operation.h
++++ b/libpeony-qt/file-operation/file-operation.h
+@@ -347,6 +347,8 @@ Q_SIGNALS:
+ 
+     void operationInfoMsgBox(const QString &uri);
+ 
++    void remoteFileEvent(int eventType, const QString &arg1, const QString &arg2);
++
+ public Q_SLOTS:
+     virtual void cancel();
+ 
+diff --git a/libpeony-qt/file-operation/file-operation.pri b/libpeony-qt/file-operation/file-operation.pri
+index 6b6a336..87f0ffe 100644
+--- a/libpeony-qt/file-operation/file-operation.pri
++++ b/libpeony-qt/file-operation/file-operation.pri
+@@ -3,6 +3,7 @@ INCLUDEPATH += $$PWD
+ #include(../peony-core.pri)
+ 
+ include(file-operation-dialog/file-operation-dialog.pri)
++include(replica/replica.pri)
+ 
+ PKGCONFIG += gio-unix-2.0
+ 
+diff --git a/libpeony-qt/file-operation/file-rename-operation.cpp b/libpeony-qt/file-operation/file-rename-operation.cpp
+index 3d882c3..0e79b3b 100644
+--- a/libpeony-qt/file-operation/file-rename-operation.cpp
++++ b/libpeony-qt/file-operation/file-rename-operation.cpp
+@@ -196,6 +196,8 @@ void FileRenameOperation::run()
+     auto newFile = FileUtils::resolveRelativePath(parent, targetName);
+     getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+ 
++    bool successed = false;
++
+     if (is_local_desktop_file) {
+         GError *err = nullptr;
+         g_file_move(file.get()->get(),
+@@ -233,6 +235,8 @@ void FileRenameOperation::run()
+             }
+ 
+             cancel ();
++        } else {
++            successed = true;
+         }
+     } else {
+ retry:
+@@ -247,7 +251,7 @@ retry:
+         qDebug() << "rename: " << g_file_get_uri(newFile.get()->get());
+         g_autofree char* newName = g_file_get_basename(newFile.get()->get());
+ 
+-        g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
++        g_autoptr (GFile) target_file = g_file_set_display_name(file.get()->get(), newName, nullptr, &err);
+ 
+         if (err) {
+             except.dlgType = g_error_matches(err, g_io_error_quark(), G_IO_ERROR_FILENAME_TOO_LONG)? ED_RENAME: ED_WARNING;
+@@ -340,6 +344,8 @@ retry:
+             }
+ 
+             g_error_free(err);
++        } else {
++            successed = true;
+         }
+     }
+ 
+@@ -355,6 +361,8 @@ cancel:
+         m_info->m_oldname = m_old_name;
+     }
+ 
++    if (successed)
++        Q_EMIT remoteFileEvent(103, m_uri, destUri);
+     fileSync(m_uri, destUri);
+ 
+ #ifdef KY_UDF_BURN
+diff --git a/libpeony-qt/file-operation/file-trash-operation.cpp b/libpeony-qt/file-operation/file-trash-operation.cpp
+index 2c09b4e..8c44846 100644
+--- a/libpeony-qt/file-operation/file-trash-operation.cpp
++++ b/libpeony-qt/file-operation/file-trash-operation.cpp
+@@ -253,6 +253,7 @@ retry:
+                     }
+                 }
+             } else {
++                Q_EMIT remoteFileEvent(102, src, nullptr);
+                 // fileinfo关联删除时间
+                 quint64 time = QDateTime::currentMSecsSinceEpoch();
+                 auto info = FileInfo::fromUri(src);
+diff --git a/libpeony-qt/file-operation/file-untrash-operation.cpp b/libpeony-qt/file-operation/file-untrash-operation.cpp
+index 5bfe337..6f57099 100644
+--- a/libpeony-qt/file-operation/file-untrash-operation.cpp
++++ b/libpeony-qt/file-operation/file-untrash-operation.cpp
+@@ -442,6 +442,8 @@ retry:
+                         }
+                     }
+                 }
++            } else {
++                Q_EMIT remoteFileEvent(101, originUri, nullptr);
+             }
+         }
+ 
+diff --git a/libpeony-qt/file-operation/replica/fileeventhandler.rep b/libpeony-qt/file-operation/replica/fileeventhandler.rep
+new file mode 100644
+index 0000000..98aad46
+--- /dev/null
++++ b/libpeony-qt/file-operation/replica/fileeventhandler.rep
+@@ -0,0 +1,6 @@
++#include <QtCore>
++
++class FileEventHandler
++{
++    SLOT(void handleFileEvent(int eventType, QString arg1, QString arg2))
++}
+diff --git a/libpeony-qt/file-operation/replica/remote-file-event-helper.cpp b/libpeony-qt/file-operation/replica/remote-file-event-helper.cpp
+new file mode 100644
+index 0000000..21e3454
+--- /dev/null
++++ b/libpeony-qt/file-operation/replica/remote-file-event-helper.cpp
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (C) 2024, KylinSoft Co., Ltd.
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ *
++ */
++#include "remote-file-event-helper.h"
++#include "rep_fileeventhandler_replica.h"
++
++#include <QtRemoteObjects>
++#include <QUrl>
++#include <QDebug>
++
++RemoteFileEventHelper::RemoteFileEventHelper(QObject *parent) : QObject(parent)
++{
++    setupConnections();
++}
++
++RemoteFileEventHelper::~RemoteFileEventHelper()
++{
++    delete m_fileEventHandlerIface;
++    delete m_remoteNode;
++}
++
++void RemoteFileEventHelper::setupConnections()
++{
++    m_remoteNode = new QRemoteObjectNode;
++    m_remoteNode->connectToNode(nodeUrl());
++    m_fileEventHandlerIface = m_remoteNode->acquire<FileEventHandlerReplica>();
++    qDebug() << "connect handle" <<  m_fileEventHandlerIface;
++    connect(m_fileEventHandlerIface, &QRemoteObjectReplica::initialized, this, [=]{
++        qDebug() << "initilized" << m_fileEventHandlerIface;
++    });
++    connect(m_fileEventHandlerIface, &QRemoteObjectReplica::stateChanged, this, [=](QRemoteObjectReplica::State state, QRemoteObjectReplica::State oldState){
++        qDebug() << "state changed" << state << oldState << m_fileEventHandlerIface;
++        if (state == QRemoteObjectReplica::Suspect) {
++            qDebug() << "try reconnect";
++            m_fileEventHandlerIface->deleteLater();
++            m_remoteNode->deleteLater();
++            setupConnections();
++        }
++    });
++    connect(this, &RemoteFileEventHelper::handleFileEventRequest, m_fileEventHandlerIface, [=](int type, const QString &arg1, const QString &arg2){
++        qDebug() << type << arg1 << arg2 << m_fileEventHandlerIface;
++        if (m_fileEventHandlerIface->state() == QRemoteObjectReplica::Valid) {
++            QUrl url1(arg1);
++            QUrl url2(arg2);
++            m_fileEventHandlerIface->handleFileEvent(type, url1.toLocalFile(), url2.toLocalFile());
++        }
++    });
++}
++
++QUrl RemoteFileEventHelper::nodeUrl()
++{
++    QString displayEnv = (qgetenv("XDG_SESSION_TYPE") == "wayland") ? QLatin1String("WAYLAND_DISPLAY") : QLatin1String("DISPLAY");
++    QString display(qgetenv(displayEnv.toUtf8().data()));
++    return QUrl(QStringLiteral("local:ukui-idm-") + QString(qgetenv("USER")) + display);
++}
+diff --git a/libpeony-qt/file-operation/replica/remote-file-event-helper.h b/libpeony-qt/file-operation/replica/remote-file-event-helper.h
+new file mode 100644
+index 0000000..1857996
+--- /dev/null
++++ b/libpeony-qt/file-operation/replica/remote-file-event-helper.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright (C) 2024, KylinSoft Co., Ltd.
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ *
++ */
++#ifndef REMOTEFILEEVENTHELPER_H
++#define REMOTEFILEEVENTHELPER_H
++
++#include <QObject>
++#include <QUrl>
++
++class QRemoteObjectNode;
++class FileEventHandlerReplica;
++
++class RemoteFileEventHelper : public QObject
++{
++    Q_OBJECT
++public:
++    explicit RemoteFileEventHelper(QObject *parent = nullptr);
++    ~RemoteFileEventHelper();
++
++Q_SIGNALS:
++    void handleFileEventRequest(int type, const QString &arg1, const QString &arg2);
++
++private:
++    void setupConnections();
++    static QUrl nodeUrl();
++
++    QRemoteObjectNode *m_remoteNode = nullptr;
++    FileEventHandlerReplica *m_fileEventHandlerIface = nullptr;
++};
++
++#endif // REMOTEFILEEVENTHELPER_H
