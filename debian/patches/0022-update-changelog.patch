@@ -1,0 +1,28 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 31 May 2024 13:56:02 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/replica/replica.pri | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 libpeony-qt/file-operation/replica/replica.pri
+
+diff --git a/libpeony-qt/file-operation/replica/replica.pri b/libpeony-qt/file-operation/replica/replica.pri
+new file mode 100644
+index 0000000..419b415
+--- /dev/null
++++ b/libpeony-qt/file-operation/replica/replica.pri
+@@ -0,0 +1,13 @@
++QT += remoteobjects
++
++INCLUDEPATH += \
++    $$PWD
++
++HEADERS += \
++    $$PWD/remote-file-event-helper.h
++
++SOURCES += \
++    $$PWD/remote-file-event-helper.cpp
++
++REPC_REPLICA += \
++    $$PWD/fileeventhandler.rep
