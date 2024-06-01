@@ -393,17 +393,11 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
         QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
         connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
             double fontSize = fontSetting->get("systemFontSize").toDouble();
+            for(int index=0;index<m_conditions_list.length();index++){
+                setCondWidthWithFont(m_conditions_list[index], fontSize);
+            }
             for(int index=0;index<m_classify_list.length();index++){
-                if(fontSize < 12){
-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-                    //fix bug#166969, Tibetan language not show complete issue
-                    if ("bo_CN" == QLocale::system().name())
-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
-                }else{
-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 +45);
-                    if ("bo_CN" == QLocale::system().name())
-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
-                }
+                setClassifyWidthWithFont(m_classify_list[index], fontSize);
             }
             //fix #185743
             auto realDisplayName = m_current_search->property("realDisplayName").toString();
@@ -427,6 +421,45 @@ bool TabWidget::isMultFile(std::shared_ptr<Peony::FileInfo> info)
     }
 
     return false;
+}
+
+void TabWidget::setCondWidthWithFont(QComboBox *conditionCombox, int fontSize)
+{
+    QString language = QLocale::system().name();
+    if(fontSize < 12){
+        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+        //fix bug#166969, Tibetan language not show complete issue
+        if ("bo_CN" == language){
+            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
+        }
+    }else {
+        if ("en_US" == language){
+            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 45);
+        }else if ("bo_CN" == language){
+            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3);
+        }else{
+            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+        }
+    }
+}
+
+void TabWidget::setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize)
+{
+    QString language = QLocale::system().name();
+    if(fontSize < 12){
+        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+        if ("en_US" == language)
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 45);
+        if ("bo_CN" == language)
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
+    }else{
+        //最大字体最长字符串所需宽度
+        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 10);
+        if ("en_US" == language)
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 50);
+        if ("zh_HK" == language)
+            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 25);
+    }
 }
 
 void TabWidget::initAdvanceSearch()
@@ -570,9 +603,14 @@ void TabWidget::addNewConditionBar()
     QComboBox *conditionCombox = new QComboBox(optionBar);
     m_conditions_list.append(conditionCombox);
     conditionCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
-    conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-    if ("bo_CN" == QLocale::system().name())
-        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        double fontSize = fontSetting->get("systemFontSize").toDouble();
+        setCondWidthWithFont(conditionCombox, fontSize);
+    }else{
+        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+    }
+
     auto conditionModel = new QStringListModel(optionBar);
     conditionModel->setStringList(m_option_list);
     conditionCombox->setModel(conditionModel);
@@ -594,16 +632,7 @@ void TabWidget::addNewConditionBar()
     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
         QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
         double fontSize = fontSetting->get("systemFontSize").toDouble();
-        if(fontSize < 12){
-            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
-            if ("bo_CN" == QLocale::system().name())
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
-        }else{
-            //最大字体最长字符串所需宽度
-            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
-            if ("bo_CN" == QLocale::system().name())
-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
-        }
+        setClassifyWidthWithFont(classifyCombox, fontSize);
     }
     else{
         classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
