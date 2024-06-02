@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0602) nile; urgency=medium
+
+  * 增加peony打开文件相关元数据记录流程
+
+ -- Yue Lan <lanyue@kylinos.cn>  Sun, 02 Jun 2024 15:08:14 +0800
+
 peony (4.10.0.5-ok1~0531.2) nile; urgency=medium
 
   * 修复编译报错问题
