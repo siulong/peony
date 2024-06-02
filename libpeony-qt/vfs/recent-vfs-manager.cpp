@@ -66,10 +66,20 @@ void RecentVFSManager::clearAll()
 void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QString exec)
 {
     g_autoptr (GFile) opened_file = g_file_new_for_uri(uri.toUtf8().constData());
-    g_autoptr (GFileInfo) tmp_info = g_file_info_new();
+    g_autoptr (GFileInfo) tmp_info = g_file_query_info(opened_file, "metadata::peony-opened-count", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    QString openCountString = g_file_info_get_attribute_string(tmp_info, "metadata::peony-opened-count");
+    bool hasOpenCount = false;
+    int openCount = openCountString.toInt(&hasOpenCount);
+    if (!hasOpenCount) {
+        openCount = 0;
+    }
+    openCount++;
+    openCountString = QString::number(openCount);
     gint64 opened_time = g_get_monotonic_time();
     opened_time /= 1000;
-    g_file_info_set_attribute_uint64(tmp_info, "metadata::peony-time-opened", opened_time);
+    QString openTimeString = QString::number(opened_time);
+    g_file_info_set_attribute_string(tmp_info, "metadata::peony-time-opened", openTimeString.toUtf8().constData());
+    g_file_info_set_attribute_string(tmp_info, "metadata::peony-opened-count", openCountString.toUtf8().constData());
     g_file_info_set_attribute_uint64(tmp_info, G_FILE_ATTRIBUTE_TIME_ACCESS, opened_time);
     g_file_set_attributes_async(opened_file, tmp_info, G_FILE_QUERY_INFO_NONE, 0, nullptr, nullptr, nullptr);
 
