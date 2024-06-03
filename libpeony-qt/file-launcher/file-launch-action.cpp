@@ -233,7 +233,8 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
     }
 
     //fix bug#213466, remote file open not same with local issue
-    if (fileInfo->type() == "application/octet-stream") {
+    //fix issue https://gitee.com/openkylin/peony/issues/I9QXWX, default open new file issue
+    if (fileInfo->type() == "application/octet-stream" || fileInfo->type() == "application/x-zerosize") {
         GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
         GList *l = nullptr;
         char *uri = g_strdup(m_uri.toUtf8().constData());
@@ -328,7 +329,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
     }
 
     //fix bug#213466, remote file open not same with local issue
-    if (fileInfo->type() == "application/octet-stream") {
+    //fix issue https://gitee.com/openkylin/peony/issues/I9QXWX, default open new file issue
+    if (fileInfo->type() == "application/octet-stream" || fileInfo->type() == "application/x-zerosize") {
         GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
         GList *l = nullptr;
         char *uri = g_strdup(m_uri.toUtf8().constData());
