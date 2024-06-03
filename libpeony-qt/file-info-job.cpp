@@ -246,7 +246,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
     }
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
-    info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
+    info->m_finalDisplayName = info->m_display_name;
     if (info->isDesktopFile()) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
@@ -289,8 +289,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
 
             info->m_display_name = name;
         }
-        info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
-
+        info->m_finalDisplayName = info->m_display_name;
         g_key_file_free(desktop_key_file);
 
     }/* else if (!info->uri().startsWith("file:///")) {
