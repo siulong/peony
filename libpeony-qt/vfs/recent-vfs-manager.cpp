@@ -75,12 +75,11 @@ void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QStri
     }
     openCount++;
     openCountString = QString::number(openCount);
-    gint64 opened_time = g_get_monotonic_time();
-    opened_time /= 1000;
-    QString openTimeString = QString::number(opened_time);
+    qint64 openTime = QDateTime::currentSecsSinceEpoch();
+    QString openTimeString = QString::number(openTime);
     g_file_info_set_attribute_string(tmp_info, "metadata::peony-time-opened", openTimeString.toUtf8().constData());
     g_file_info_set_attribute_string(tmp_info, "metadata::peony-opened-count", openCountString.toUtf8().constData());
-    g_file_info_set_attribute_uint64(tmp_info, G_FILE_ATTRIBUTE_TIME_ACCESS, opened_time);
+    g_file_info_set_attribute_uint64(tmp_info, G_FILE_ATTRIBUTE_TIME_ACCESS, (quint64)openTime);
     g_file_set_attributes_async(opened_file, tmp_info, G_FILE_QUERY_INFO_NONE, 0, nullptr, nullptr, nullptr);
 
     if (!exists(uri, mimetype, name, exec)) {
