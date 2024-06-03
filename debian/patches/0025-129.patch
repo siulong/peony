@@ -1,0 +1,34 @@
+From: MeihongHe <hemeihong@kylinos.cn>
+Date: Mon, 3 Jun 2024 08:52:16 +0000
+Subject: =?utf-8?b?ITEyOSDkv67lpI3mlrDlu7rnmoTnqbrmlofku7blj7PplK7miZPlvIA=?=
+ =?utf-8?b?5o+Q56S65om+5LiN5Yiw6buY6K6k5bqU55So6Zeu6aKYIE1lcmdlIHB1bGwgcmVx?=
+ =?utf-8?b?dWVzdCAhMTI5IGZyb20gTWVpaG9uZ0hlL2ZpeC1vcGVuLW5ldy1maWxlLWlzc3Vl?=
+
+---
+ libpeony-qt/file-launcher/file-launch-action.cpp | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libpeony-qt/file-launcher/file-launch-action.cpp b/libpeony-qt/file-launcher/file-launch-action.cpp
+index dc134da..d1e0115 100644
+--- a/libpeony-qt/file-launcher/file-launch-action.cpp
++++ b/libpeony-qt/file-launcher/file-launch-action.cpp
+@@ -233,7 +233,8 @@ void FileLaunchAction::lauchFileSync(bool forceWithArg, bool skipDialog)
+     }
+ 
+     //fix bug#213466, remote file open not same with local issue
+-    if (fileInfo->type() == "application/octet-stream") {
++    //fix issue https://gitee.com/openkylin/peony/issues/I9QXWX, default open new file issue
++    if (fileInfo->type() == "application/octet-stream" || fileInfo->type() == "application/x-zerosize") {
+         GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
+         GList *l = nullptr;
+         char *uri = g_strdup(m_uri.toUtf8().constData());
+@@ -328,7 +329,8 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
+     }
+ 
+     //fix bug#213466, remote file open not same with local issue
+-    if (fileInfo->type() == "application/octet-stream") {
++    //fix issue https://gitee.com/openkylin/peony/issues/I9QXWX, default open new file issue
++    if (fileInfo->type() == "application/octet-stream" || fileInfo->type() == "application/x-zerosize") {
+         GAppInfo *text_info = g_app_info_get_default_for_type("text/plain", false);
+         GList *l = nullptr;
+         char *uri = g_strdup(m_uri.toUtf8().constData());
