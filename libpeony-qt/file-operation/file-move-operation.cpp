@@ -957,6 +957,21 @@ fallback_retry:
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
                 setHasError(true);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    GFileInfo *info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            }
+                        }
+                        g_object_unref(info);
+                        goto fallback_retry;
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
@@ -997,6 +1012,21 @@ fallback_retry:
                 node->setErrorResponse(OverWriteOne);
                 setHasError(true);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    GFileInfo *info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            }
+                        }
+                        g_object_unref(info);
+                        goto fallback_retry;
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     m_is_udf_warning = true;
                     auto result = udfCopyWarningDialog();
