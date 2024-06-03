@@ -1242,7 +1242,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>all</source>
-        <translation>都</translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="312"/>
@@ -1302,22 +1302,22 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>yesterday</source>
-        <translation type="unfinished"></translation>
+        <translation>昨天</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last week</source>
-        <translation type="unfinished"></translation>
+        <translation>上週</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last month</source>
-        <translation type="unfinished"></translation>
+        <translation>上月</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last year</source>
-        <translation type="unfinished"></translation>
+        <translation>去年</translation>
     </message>
     <message>
         <source>year ago</source>
@@ -1326,12 +1326,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>tiny(0-16K)</source>
-        <translation>微小（0-16K）</translation>
+        <translation>极小（0-16K）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>small(16k-1M)</source>
-        <translation>小型（16k-1M）</translation>
+        <translation>很小（16k-1M）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
@@ -1341,7 +1341,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
-        <translation>中（1M-128M）</translation>
+        <translation>中等（1M-128M）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
@@ -1351,12 +1351,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>large(1-4G)</source>
-        <translation>大（1-4G）</translation>
+        <translation>巨大（1-4G）</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>great(&gt;4G)</source>
-        <translation>很棒（&gt;4G）</translation>
+        <translation>极大（&gt;4G）</translation>
     </message>
     <message>
         <source>medium(1M-100M)</source>
