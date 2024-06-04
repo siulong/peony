@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0604) nile; urgency=medium
+
+  * 修复新建的空文件右键打开提示找不到默认应用问题
+  * fix #I8WNJG, #I9QP2P
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 04 Jun 2024 09:23:43 +0800
+
 peony (4.10.0.5-ok1~0603) nile; urgency=medium
 
   * 修复访问日期元数据设置问题
