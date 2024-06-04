@@ -1,0 +1,281 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 4 Jun 2024 09:28:01 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-info-job.cpp           |  5 +--
+ src/control/tab-widget.cpp              | 75 +++++++++++++++++++++++----------
+ src/control/tab-widget.h                |  2 +
+ translations/peony-qt/peony-qt_bo_CN.ts | 12 +++---
+ translations/peony-qt/peony-qt_zh_HK.ts | 20 ++++-----
+ 5 files changed, 72 insertions(+), 42 deletions(-)
+
+diff --git a/libpeony-qt/file-info-job.cpp b/libpeony-qt/file-info-job.cpp
+index 5bb3579..79dbedc 100644
+--- a/libpeony-qt/file-info-job.cpp
++++ b/libpeony-qt/file-info-job.cpp
+@@ -246,7 +246,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
+     }
+ 
+     info->m_display_name = QString (g_file_info_get_display_name(new_info));
+-    info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
++    info->m_finalDisplayName = info->m_display_name;
+     if (info->isDesktopFile()) {
+         info->m_desktop_name = info->displayName();
+         QUrl url = info->uri();
+@@ -289,8 +289,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
+ 
+             info->m_display_name = name;
+         }
+-        info->m_finalDisplayName = m_query_file_display_name_with_volumes? info->getFinalDisplayName(): info->displayName();
+-
++        info->m_finalDisplayName = info->m_display_name;
+         g_key_file_free(desktop_key_file);
+ 
+     }/* else if (!info->uri().startsWith("file:///")) {
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index f024772..8495579 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -393,17 +393,11 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
+         QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+         connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+             double fontSize = fontSetting->get("systemFontSize").toDouble();
++            for(int index=0;index<m_conditions_list.length();index++){
++                setCondWidthWithFont(m_conditions_list[index], fontSize);
++            }
+             for(int index=0;index<m_classify_list.length();index++){
+-                if(fontSize < 12){
+-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+-                    //fix bug#166969, Tibetan language not show complete issue
+-                    if ("bo_CN" == QLocale::system().name())
+-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
+-                }else{
+-                    m_classify_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 +45);
+-                    if ("bo_CN" == QLocale::system().name())
+-                        m_conditions_list[index]->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
+-                }
++                setClassifyWidthWithFont(m_classify_list[index], fontSize);
+             }
+             //fix #185743
+             auto realDisplayName = m_current_search->property("realDisplayName").toString();
+@@ -429,6 +423,45 @@ bool TabWidget::isMultFile(std::shared_ptr<Peony::FileInfo> info)
+     return false;
+ }
+ 
++void TabWidget::setCondWidthWithFont(QComboBox *conditionCombox, int fontSize)
++{
++    QString language = QLocale::system().name();
++    if(fontSize < 12){
++        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
++        //fix bug#166969, Tibetan language not show complete issue
++        if ("bo_CN" == language){
++            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
++        }
++    }else {
++        if ("en_US" == language){
++            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 45);
++        }else if ("bo_CN" == language){
++            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3);
++        }else{
++            conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
++        }
++    }
++}
++
++void TabWidget::setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize)
++{
++    QString language = QLocale::system().name();
++    if(fontSize < 12){
++        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
++        if ("en_US" == language)
++            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 45);
++        if ("bo_CN" == language)
++            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
++    }else{
++        //最大字体最长字符串所需宽度
++        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 10);
++        if ("en_US" == language)
++            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 50);
++        if ("zh_HK" == language)
++            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *3 + 25);
++    }
++}
++
+ void TabWidget::initAdvanceSearch()
+ {
+     //advance search bar
+@@ -570,9 +603,14 @@ void TabWidget::addNewConditionBar()
+     QComboBox *conditionCombox = new QComboBox(optionBar);
+     m_conditions_list.append(conditionCombox);
+     conditionCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
+-    conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+-    if ("bo_CN" == QLocale::system().name())
+-        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
++    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
++        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
++        double fontSize = fontSetting->get("systemFontSize").toDouble();
++        setCondWidthWithFont(conditionCombox, fontSize);
++    }else{
++        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
++    }
++
+     auto conditionModel = new QStringListModel(optionBar);
+     conditionModel->setStringList(m_option_list);
+     conditionCombox->setModel(conditionModel);
+@@ -594,16 +632,7 @@ void TabWidget::addNewConditionBar()
+     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+         QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+         double fontSize = fontSetting->get("systemFontSize").toDouble();
+-        if(fontSize < 12){
+-            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+-            if ("bo_CN" == QLocale::system().name())
+-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 20);
+-        }else{
+-            //最大字体最长字符串所需宽度
+-            classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+-            if ("bo_CN" == QLocale::system().name())
+-                classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2 + 50);
+-        }
++        setClassifyWidthWithFont(classifyCombox, fontSize);
+     }
+     else{
+         classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+diff --git a/src/control/tab-widget.h b/src/control/tab-widget.h
+index 317aa49..fb7ca35 100644
+--- a/src/control/tab-widget.h
++++ b/src/control/tab-widget.h
+@@ -233,6 +233,8 @@ protected:
+ 
+     void paintEvent(QPaintEvent *e);
+     bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
++    void setCondWidthWithFont(QComboBox *conditionCombox, int fontSize);
++    void setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize);
+ 
+ private:
+     NavigationTabBar *m_tab_bar;
+diff --git a/translations/peony-qt/peony-qt_bo_CN.ts b/translations/peony-qt/peony-qt_bo_CN.ts
+index 2f443f5..5a3a5b2 100644
+--- a/translations/peony-qt/peony-qt_bo_CN.ts
++++ b/translations/peony-qt/peony-qt_bo_CN.ts
+@@ -1302,22 +1302,22 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>yesterday</source>
+-        <translation type="unfinished"></translation>
++        <translation>ཁ་ཙ</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last week</source>
+-        <translation type="unfinished"></translation>
++        <translation>བདུན་ཕྲག་ཙ</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last month</source>
+-        <translation type="unfinished"></translation>
++        <translation>ཟླ་བ་ཙ</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last year</source>
+-        <translation type="unfinished"></translation>
++        <translation>ལོ་གཅིག་ སྔོན་</translation>
+     </message>
+     <message>
+         <source>year ago</source>
+@@ -1341,12 +1341,12 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>medium(1M-128M)</source>
+-        <translation>(1M-128M)</translation>
++        <translation>དཀྱུས་མ་(1M-128M)</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>big(128M-1G)</source>
+-        <translation>(128M-1G)</translation>
++        <translation>ཆེ་(128M-1G)</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+diff --git a/translations/peony-qt/peony-qt_zh_HK.ts b/translations/peony-qt/peony-qt_zh_HK.ts
+index 42cbd2b..0abe9cb 100644
+--- a/translations/peony-qt/peony-qt_zh_HK.ts
++++ b/translations/peony-qt/peony-qt_zh_HK.ts
+@@ -1242,7 +1242,7 @@ Do you want to unmount forcely?</source>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>all</source>
+-        <translation>都</translation>
++        <translation>全部</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="312"/>
+@@ -1302,22 +1302,22 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>yesterday</source>
+-        <translation type="unfinished"></translation>
++        <translation>昨天</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last week</source>
+-        <translation type="unfinished"></translation>
++        <translation>上週</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last month</source>
+-        <translation type="unfinished"></translation>
++        <translation>上月</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="314"/>
+         <source>last year</source>
+-        <translation type="unfinished"></translation>
++        <translation>去年</translation>
+     </message>
+     <message>
+         <source>year ago</source>
+@@ -1326,12 +1326,12 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>tiny(0-16K)</source>
+-        <translation>微小（0-16K）</translation>
++        <translation>极小（0-16K）</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>small(16k-1M)</source>
+-        <translation>小型（16k-1M）</translation>
++        <translation>很小（16k-1M）</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+@@ -1341,7 +1341,7 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>medium(1M-128M)</source>
+-        <translation>中（1M-128M）</translation>
++        <translation>中等（1M-128M）</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+@@ -1351,12 +1351,12 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>large(1-4G)</source>
+-        <translation>大（1-4G）</translation>
++        <translation>巨大（1-4G）</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/tab-widget.h" line="315"/>
+         <source>great(&gt;4G)</source>
+-        <translation>很棒（&gt;4G）</translation>
++        <translation>极大（&gt;4G）</translation>
+     </message>
+     <message>
+         <source>medium(1M-100M)</source>
