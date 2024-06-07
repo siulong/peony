@@ -1,0 +1,204 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 7 Jun 2024 17:25:21 +0800
+Subject: update changelog.
+
+---
+ .../convenient-utils/file-operation-utils.cpp      | 108 +++++++++++----------
+ .../convenient-utils/file-operation-utils.h        |   1 +
+ .../file-operation/file-operation-manager.cpp      |  14 ++-
+ .../file-operation/file-operation-manager.h        |   1 +
+ 4 files changed, 72 insertions(+), 52 deletions(-)
+
+diff --git a/libpeony-qt/convenient-utils/file-operation-utils.cpp b/libpeony-qt/convenient-utils/file-operation-utils.cpp
+index 293f568..011e5f7 100644
+--- a/libpeony-qt/convenient-utils/file-operation-utils.cpp
++++ b/libpeony-qt/convenient-utils/file-operation-utils.cpp
+@@ -53,54 +53,7 @@
+ 
+ using namespace Peony;
+ 
+-FileOperationUtils::FileOperationUtils()
+-{
+-
+-}
+-
+-FileOperation *FileOperationUtils::move(const QStringList &srcUris, const QString &destUri, bool addHistory, bool copyMove)
+-{
+-    FileOperation *op;
+-    QString destDir = nullptr;
+-    auto fileOpMgr = FileOperationManager::getInstance();
+-    if (destUri != "trash:///") {
+-        if (true == destUri.startsWith("computer:///")) {
+-            destDir = FileUtils::getTargetUri(destUri);
+-            if (nullptr == destDir){
+-                qWarning()<<"get target uri failed, from uri:"
+-                          <<destUri;
+-                destDir = destUri;
+-            }
+-        }
+-        else {
+-            destDir = destUri;
+-        }
+-
+-        auto moveOp = new FileMoveOperation(srcUris, destDir);
+-        moveOp->setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
+-        //moveOp->setCopyMove(copyMove);
+-        op = moveOp;
+-        fileOpMgr->startOperation(moveOp, addHistory);
+-    } else {
+-        op = FileOperationUtils::trash(srcUris, true);
+-    }
+-    return op;
+-}
+-
+-FileOperation *FileOperationUtils::copy(const QStringList &srcUris, const QString &destUri, bool addHistory)
+-{
+-    auto fileOpMgr = FileOperationManager::getInstance();
+-    auto copyOp = new FileCopyOperation(srcUris, destUri);
+-    fileOpMgr->startOperation(copyOp, addHistory);
+-    return copyOp;
+-}
+-
+-FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory)
+-{
+-    return trash(uris, addHistory, false);
+-}
+-
+-FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory, bool isFromSearchTab)
++static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bool isFromSearchTab, bool forceShowDialog)
+ {
+     FileOperation *op = nullptr;
+     bool canNotTrash = false;
+@@ -221,11 +174,68 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
+     if (isFromSearchTab) {
+         trashOp->setSearchOperation(isFromSearchTab);
+     }
+-    fileOpMgr->startOperation(trashOp, addHistory);
++    fileOpMgr->startOperation(trashOp, addHistory, forceShowDialog);
+ 
+     return trashOp;
+ }
+ 
++FileOperationUtils::FileOperationUtils()
++{
++
++}
++
++FileOperation *FileOperationUtils::move(const QStringList &srcUris, const QString &destUri, bool addHistory, bool copyMove)
++{
++    FileOperation *op;
++    QString destDir = nullptr;
++    auto fileOpMgr = FileOperationManager::getInstance();
++    if (destUri != "trash:///") {
++        if (true == destUri.startsWith("computer:///")) {
++            destDir = FileUtils::getTargetUri(destUri);
++            if (nullptr == destDir){
++                qWarning()<<"get target uri failed, from uri:"
++                          <<destUri;
++                destDir = destUri;
++            }
++        }
++        else {
++            destDir = destUri;
++        }
++
++        auto moveOp = new FileMoveOperation(srcUris, destDir);
++        moveOp->setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
++        //moveOp->setCopyMove(copyMove);
++        op = moveOp;
++        fileOpMgr->startOperation(moveOp, addHistory);
++    } else {
++        op = FileOperationUtils::trash(srcUris, true);
++    }
++    return op;
++}
++
++FileOperation *FileOperationUtils::copy(const QStringList &srcUris, const QString &destUri, bool addHistory)
++{
++    auto fileOpMgr = FileOperationManager::getInstance();
++    auto copyOp = new FileCopyOperation(srcUris, destUri);
++    fileOpMgr->startOperation(copyOp, addHistory);
++    return copyOp;
++}
++
++FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory)
++{
++    return trash(uris, addHistory, false);
++}
++
++FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory, bool isFromSearchTab)
++{
++    return trashInternal(uris, addHistory, isFromSearchTab, false);
++}
++
++FileOperation *FileOperationUtils::trashWithDialog(const QStringList &uris, bool addHistory)
++{
++    return trashInternal(uris, addHistory, false, true);
++}
++
+ FileOperation *FileOperationUtils::rename(const QString &uri, const QString &newName, bool addHistory)
+ {
+     auto fileOpMgr = FileOperationManager::getInstance();
+diff --git a/libpeony-qt/convenient-utils/file-operation-utils.h b/libpeony-qt/convenient-utils/file-operation-utils.h
+index a84693c..73a9d9a 100644
+--- a/libpeony-qt/convenient-utils/file-operation-utils.h
++++ b/libpeony-qt/convenient-utils/file-operation-utils.h
+@@ -43,6 +43,7 @@ public:
+     static FileOperation *copy(const QStringList &srcUris, const QString &destUri, bool addHistory);
+     static FileOperation *trash(const QStringList &uris, bool addHistory);
+     static FileOperation *trash(const QStringList &uris, bool addHistory, bool isFromSearchTab);
++    static FileOperation *trashWithDialog(const QStringList &uris, bool addHistory);
+     static FileOperation *remove(const QStringList &uris);
+     static FileOperation *rename(const QString &uri, const QString &newName, bool addHistory);
+     static FileOperation *link(const QString &srcUri, const QString &destUri, bool addHistory);
+diff --git a/libpeony-qt/file-operation/file-operation-manager.cpp b/libpeony-qt/file-operation/file-operation-manager.cpp
+index fcb32de..664336d 100644
+--- a/libpeony-qt/file-operation/file-operation-manager.cpp
++++ b/libpeony-qt/file-operation/file-operation-manager.cpp
+@@ -210,6 +210,11 @@ QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
+ 
+ void FileOperationManager::startOperation(FileOperation *operation, bool addToHistory)
+ {    
++    startOperation(operation, addToHistory, false);
++}
++
++void FileOperationManager::startOperation(FileOperation *operation, bool addToHistory, bool forceShowDialog)
++{
+     auto operationInfo = operation->getOperationInfo();
+ 
+     QStringList uriList = operationInfo.get()->sources();
+@@ -261,9 +266,11 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
+ 
+     if (operationInfo.get()->operationType() == FileOperationInfo::Trash) {
+         auto value = GlobalSettings::getInstance()->getValue("showTrashDialog");
+-        if (value.isValid()) {
+-            if (value.toBool() == false) {
+-                goto start;
++        if (!forceShowDialog) {
++            if (value.isValid()) {
++                if (value.toBool() == false) {
++                    goto start;
++                }
+             }
+         }
+ 
+@@ -283,6 +290,7 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
+         questionbox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
+         questionbox.setIcon("user-trash");
+         auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
++        checkbox->setVisible(!forceShowDialog);
+         if (questionbox.exec()) {
+ //            SoundEffect::getInstance()->recycleBinDeleteMusic();
+             if (checkbox->isChecked()) {
+diff --git a/libpeony-qt/file-operation/file-operation-manager.h b/libpeony-qt/file-operation/file-operation-manager.h
+index 8081335..c59f88d 100644
+--- a/libpeony-qt/file-operation/file-operation-manager.h
++++ b/libpeony-qt/file-operation/file-operation-manager.h
+@@ -91,6 +91,7 @@ Q_SIGNALS:
+ 
+ public Q_SLOTS:
+     void startOperation(FileOperation *operation, bool addToHistory = true);
++    void startOperation(FileOperation *operation, bool addToHistory, bool forceShowDialog);
+     void startUndoOrRedo(std::shared_ptr<FileOperationInfo> info);
+     bool canUndo();
+     std::shared_ptr<FileOperationInfo> getUndoInfo();
