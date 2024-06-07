@@ -210,6 +210,11 @@ QStringList FileOperationManager::getFilesOpenedByProc(const QString &procName)
 
 void FileOperationManager::startOperation(FileOperation *operation, bool addToHistory)
 {    
+    startOperation(operation, addToHistory, false);
+}
+
+void FileOperationManager::startOperation(FileOperation *operation, bool addToHistory, bool forceShowDialog)
+{
     auto operationInfo = operation->getOperationInfo();
 
     QStringList uriList = operationInfo.get()->sources();
@@ -261,9 +266,11 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
 
     if (operationInfo.get()->operationType() == FileOperationInfo::Trash) {
         auto value = GlobalSettings::getInstance()->getValue("showTrashDialog");
-        if (value.isValid()) {
-            if (value.toBool() == false) {
-                goto start;
+        if (!forceShowDialog) {
+            if (value.isValid()) {
+                if (value.toBool() == false) {
+                    goto start;
+                }
             }
         }
 
@@ -283,6 +290,7 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         questionbox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
         questionbox.setIcon("user-trash");
         auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
+        checkbox->setVisible(!forceShowDialog);
         if (questionbox.exec()) {
 //            SoundEffect::getInstance()->recycleBinDeleteMusic();
             if (checkbox->isChecked()) {

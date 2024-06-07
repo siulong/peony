@@ -91,6 +91,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void startOperation(FileOperation *operation, bool addToHistory = true);
+    void startOperation(FileOperation *operation, bool addToHistory, bool forceShowDialog);
     void startUndoOrRedo(std::shared_ptr<FileOperationInfo> info);
     bool canUndo();
     std::shared_ptr<FileOperationInfo> getUndoInfo();
