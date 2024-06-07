@@ -53,54 +53,7 @@
 
 using namespace Peony;
 
-FileOperationUtils::FileOperationUtils()
-{
-
-}
-
-FileOperation *FileOperationUtils::move(const QStringList &srcUris, const QString &destUri, bool addHistory, bool copyMove)
-{
-    FileOperation *op;
-    QString destDir = nullptr;
-    auto fileOpMgr = FileOperationManager::getInstance();
-    if (destUri != "trash:///") {
-        if (true == destUri.startsWith("computer:///")) {
-            destDir = FileUtils::getTargetUri(destUri);
-            if (nullptr == destDir){
-                qWarning()<<"get target uri failed, from uri:"
-                          <<destUri;
-                destDir = destUri;
-            }
-        }
-        else {
-            destDir = destUri;
-        }
-
-        auto moveOp = new FileMoveOperation(srcUris, destDir);
-        moveOp->setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
-        //moveOp->setCopyMove(copyMove);
-        op = moveOp;
-        fileOpMgr->startOperation(moveOp, addHistory);
-    } else {
-        op = FileOperationUtils::trash(srcUris, true);
-    }
-    return op;
-}
-
-FileOperation *FileOperationUtils::copy(const QStringList &srcUris, const QString &destUri, bool addHistory)
-{
-    auto fileOpMgr = FileOperationManager::getInstance();
-    auto copyOp = new FileCopyOperation(srcUris, destUri);
-    fileOpMgr->startOperation(copyOp, addHistory);
-    return copyOp;
-}
-
-FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory)
-{
-    return trash(uris, addHistory, false);
-}
-
-FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory, bool isFromSearchTab)
+static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bool isFromSearchTab, bool forceShowDialog)
 {
     FileOperation *op = nullptr;
     bool canNotTrash = false;
@@ -221,9 +174,66 @@ FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistor
     if (isFromSearchTab) {
         trashOp->setSearchOperation(isFromSearchTab);
     }
-    fileOpMgr->startOperation(trashOp, addHistory);
+    fileOpMgr->startOperation(trashOp, addHistory, forceShowDialog);
 
     return trashOp;
+}
+
+FileOperationUtils::FileOperationUtils()
+{
+
+}
+
+FileOperation *FileOperationUtils::move(const QStringList &srcUris, const QString &destUri, bool addHistory, bool copyMove)
+{
+    FileOperation *op;
+    QString destDir = nullptr;
+    auto fileOpMgr = FileOperationManager::getInstance();
+    if (destUri != "trash:///") {
+        if (true == destUri.startsWith("computer:///")) {
+            destDir = FileUtils::getTargetUri(destUri);
+            if (nullptr == destDir){
+                qWarning()<<"get target uri failed, from uri:"
+                          <<destUri;
+                destDir = destUri;
+            }
+        }
+        else {
+            destDir = destUri;
+        }
+
+        auto moveOp = new FileMoveOperation(srcUris, destDir);
+        moveOp->setAction(copyMove? Qt::MoveAction: Qt::TargetMoveAction);
+        //moveOp->setCopyMove(copyMove);
+        op = moveOp;
+        fileOpMgr->startOperation(moveOp, addHistory);
+    } else {
+        op = FileOperationUtils::trash(srcUris, true);
+    }
+    return op;
+}
+
+FileOperation *FileOperationUtils::copy(const QStringList &srcUris, const QString &destUri, bool addHistory)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    auto copyOp = new FileCopyOperation(srcUris, destUri);
+    fileOpMgr->startOperation(copyOp, addHistory);
+    return copyOp;
+}
+
+FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory)
+{
+    return trash(uris, addHistory, false);
+}
+
+FileOperation *FileOperationUtils::trash(const QStringList &uris, bool addHistory, bool isFromSearchTab)
+{
+    return trashInternal(uris, addHistory, isFromSearchTab, false);
+}
+
+FileOperation *FileOperationUtils::trashWithDialog(const QStringList &uris, bool addHistory)
+{
+    return trashInternal(uris, addHistory, false, true);
 }
 
 FileOperation *FileOperationUtils::rename(const QString &uri, const QString &newName, bool addHistory)
