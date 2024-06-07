@@ -1,0 +1,25 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Fri, 7 Jun 2024 06:38:38 +0000
+Subject: =?utf-8?b?ITEzMCBob3RmaXggaXNzdWUjSThXTFRKIOOAkOasoeimgeOAkeOAkA==?=
+ =?utf-8?b?5paH5Lu2566h55CG5Zmo44CR5Y+W5raI4oCY5omA5pyJ5paH5Lu25aS55L2/55So?=
+ =?utf-8?b?5b2T5YmN5o6S5bqP4oCZ5Yqf6IO944CC5o6S5bqP57G75Z6L5LiN6IO956uL5Y2z?=
+ =?utf-8?b?5YiH5o2i5Li65LmL5YmN6K6+572u55qE5o6S5bqP57G75Z6L44CCIE1lcmdlIHB1?=
+ =?utf-8?b?bGwgcmVxdWVzdCAhMTMwIGZyb20g5p2o546yL2hvdGZpeC1pc3N1ZSNJOFdMVEo=?=
+
+---
+ src/control/header-bar.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/control/header-bar.cpp b/src/control/header-bar.cpp
+index 52c87a0..b012511 100644
+--- a/src/control/header-bar.cpp
++++ b/src/control/header-bar.cpp
+@@ -312,7 +312,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
+         sortType->update();
+     });
+     connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=](const QString &key){
+-        if (SORT_COLUMN == key) {
++        if (SORT_COLUMN == key || key == USE_GLOBAL_DEFAULT_SORTING) {
+             QString sortTypeName = m_sort_type_menu->getSortTypeName(m_window->getCurrentSortColumn());
+             m_sort_type_menu->updateSortOrderName(m_window->getCurrentSortColumn());
+             a->setText(sortTypeName);
