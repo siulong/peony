@@ -312,7 +312,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         sortType->update();
     });
     connect(Peony::GlobalSettings::getInstance(), &Peony::GlobalSettings::valueChanged, this, [=](const QString &key){
-        if (SORT_COLUMN == key) {
+        if (SORT_COLUMN == key || key == USE_GLOBAL_DEFAULT_SORTING) {
             QString sortTypeName = m_sort_type_menu->getSortTypeName(m_window->getCurrentSortColumn());
             m_sort_type_menu->updateSortOrderName(m_window->getCurrentSortColumn());
             a->setText(sortTypeName);
