@@ -3,6 +3,7 @@ INCLUDEPATH += $$PWD
 #include(../peony-core.pri)
 
 include(file-operation-dialog/file-operation-dialog.pri)
+include(replica/replica.pri)
 
 PKGCONFIG += gio-unix-2.0
 

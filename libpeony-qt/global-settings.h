@@ -31,6 +31,9 @@
 #include "peony-core_global.h"
 #include <gio/gio.h>
 
+//文件管理器版本
+#define PEONY_VERSION               "peonyVersion"
+
 //顶部菜单 - Top menu
 #define RESIDENT_IN_BACKEND         "resident"
 #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"

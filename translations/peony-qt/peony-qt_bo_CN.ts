@@ -1302,22 +1302,22 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>yesterday</source>
-        <translation type="unfinished"></translation>
+        <translation>ཁ་ཙ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last week</source>
-        <translation type="unfinished"></translation>
+        <translation>བདུན་ཕྲག་ཙ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last month</source>
-        <translation type="unfinished"></translation>
+        <translation>ཟླ་བ་ཙ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last year</source>
-        <translation type="unfinished"></translation>
+        <translation>ལོ་གཅིག་ སྔོན་</translation>
     </message>
     <message>
         <source>year ago</source>
@@ -1341,12 +1341,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
-        <translation>(1M-128M)</translation>
+        <translation>དཀྱུས་མ་(1M-128M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>big(128M-1G)</source>
-        <translation>(128M-1G)</translation>
+        <translation>ཆེ་(128M-1G)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>

@@ -51,6 +51,8 @@
 
 //#include "properties-window.h"
 #include "sound-effect.h"
+#include "remote-file-event-helper.h"
+
 #include <kballontip.h>
 #ifdef KY_SDK_SOUND_EFFECTS
 #include "ksoundeffects.h"
@@ -119,6 +121,12 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
                                           "moveFilesToAnotherProcCompleted",
                                           this,
                                           SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
+
+    m_replicaThread = new QThread;
+    m_replica = new RemoteFileEventHelper;
+    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
+    m_replica->moveToThread(m_replicaThread);
+    m_replicaThread->start();
 }
 
 FileOperationManager::~FileOperationManager()
@@ -128,6 +136,10 @@ FileOperationManager::~FileOperationManager()
         m_iface = nullptr;
     }
 
+    m_replicaThread->quit();
+    m_replicaThread->wait(500);
+    delete m_replicaThread;
+    delete m_replica;
 }
 
 FileOperationManager *FileOperationManager::getInstance()

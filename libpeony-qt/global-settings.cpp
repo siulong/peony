@@ -285,6 +285,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         setValue(LABLE_ALIGNMENT, 1);
     }
 
+    if (m_cache.value(PEONY_VERSION).isNull()) {
+        setValue(PEONY_VERSION, 4);
+    }
+
 #ifdef KY_SDK_SYSINFO
     auto machine = kdk_system_get_hostCloudPlatform();
     if (machine) {
@@ -332,26 +336,26 @@ void GlobalSettings::getUkuiStyle()
         m_cache.insert(SIDEBAR_BG_OPACITY, opacity);
     }
     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
-        m_peony_gsettings = new QGSettings("org.ukui.style", QByteArray(), this);
-        connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
+        QGSettings *styleGSettings = new QGSettings("org.ukui.style", QByteArray(), this);
+        connect(styleGSettings, &QGSettings::changed, this, [=](const QString &key) {
             if (key == "peonySideBarTransparency" && transparentConfigFromUKUIStyle) {
                 m_cache.remove(SIDEBAR_BG_OPACITY);
-                m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get(key).toString());
+                m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get(key).toString());
                 qApp->paletteChanged(qApp->palette());
             }
             if (key == "widgetThemeName") {
                 m_cache.remove("widgetThemeName");
-                m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
+                m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
                 Q_EMIT this->valueChanged("widgetThemeName");
             }
         });
         if (transparentConfigFromUKUIStyle) {
             m_cache.remove(SIDEBAR_BG_OPACITY);
-            m_cache.insert(SIDEBAR_BG_OPACITY, m_peony_gsettings->get("peonySideBarTransparency").toString());
+            m_cache.insert(SIDEBAR_BG_OPACITY, styleGSettings->get("peonySideBarTransparency").toString());
         }
-        if (m_peony_gsettings->keys().contains("widgetThemeName")) {
+        if (styleGSettings->keys().contains("widgetThemeName")) {
             m_cache.remove("widgetThemeName");
-            m_cache.insert("widgetThemeName", m_peony_gsettings->get("widgetThemeName").toString());
+            m_cache.insert("widgetThemeName", styleGSettings->get("widgetThemeName").toString());
         }
     }
 }
@@ -584,12 +588,17 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
     //qDebug() << "year:"<<date.year()<<"month:"<<date.month()<<"day:"<<date.day();
     //set date and time show format, task #101605
     auto ret = kdk_system_timeformat_transform(&m_tm);
-    g_autofree char* formatDate = kdk_system_shortformat_transform(&m_tm);
+    char* formatDate = kdk_system_shortformat_transform(&m_tm);
     if (m_showRelativeTime){
-       formatDate = kdk_system_tran_absolute_date(&m_tm);
+        if (formatDate)
+            g_free(formatDate);
+        formatDate = kdk_system_tran_absolute_date(&m_tm);
     }
-    else if (longFormat)
+    else if (longFormat) {
+        if (formatDate)
+            g_free(formatDate);
         formatDate = kdk_system_longformat_transform(&m_tm);
+    }
     if (ret && formatDate){
         g_autofree gchar *date_str = g_strdup_printf("%s %s", formatDate, ret->timesec);
         QString dateStr = date_str;
@@ -597,10 +606,14 @@ QString GlobalSettings::transToSystemTimeFormat(guint64 mtime, bool longFormat)
         //释放结构体
         kdk_free_timeinfo(ret);
 
+        g_free(formatDate);
+
         //use sdk interface
         if (dateStr.trimmed().length() > 0)
             return dateStr;
     }
+    if (formatDate)
+        g_free(formatDate);
 #endif
 
     //old way of date, processed by self

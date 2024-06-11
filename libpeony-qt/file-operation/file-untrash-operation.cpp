@@ -442,6 +442,8 @@ retry:
                         }
                     }
                 }
+            } else {
+                Q_EMIT remoteFileEvent(101, originUri, nullptr);
             }
         }
 

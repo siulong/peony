@@ -65,6 +65,23 @@ void RecentVFSManager::clearAll()
 
 void RecentVFSManager::insert(QString uri, QString mimetype, QString name, QString exec)
 {
+    g_autoptr (GFile) opened_file = g_file_new_for_uri(uri.toUtf8().constData());
+    g_autoptr (GFileInfo) tmp_info = g_file_query_info(opened_file, "metadata::peony-opened-count", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    QString openCountString = g_file_info_get_attribute_string(tmp_info, "metadata::peony-opened-count");
+    bool hasOpenCount = false;
+    int openCount = openCountString.toInt(&hasOpenCount);
+    if (!hasOpenCount) {
+        openCount = 0;
+    }
+    openCount++;
+    openCountString = QString::number(openCount);
+    qint64 openTime = QDateTime::currentSecsSinceEpoch();
+    QString openTimeString = QString::number(openTime);
+    g_file_info_set_attribute_string(tmp_info, "metadata::peony-time-opened", openTimeString.toUtf8().constData());
+    g_file_info_set_attribute_string(tmp_info, "metadata::peony-opened-count", openCountString.toUtf8().constData());
+    g_file_info_set_attribute_uint64(tmp_info, G_FILE_ATTRIBUTE_TIME_ACCESS, (quint64)openTime);
+    g_file_set_attributes_async(opened_file, tmp_info, G_FILE_QUERY_INFO_NONE, 0, nullptr, nullptr, nullptr);
+
     if (!exists(uri, mimetype, name, exec)) {
         createNode(uri, mimetype, name, exec);
         write();
@@ -141,15 +158,15 @@ bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QStri
     while (!rootElement.isNull()) {
         if (rootElement.hasAttribute("href") && rootElement.attribute("href") == uri) {
             qDebug() << "existed!";
-            QDateTime dataTime = QDateTime::currentDateTime();
-            QDateTime utcTime = QDateTime::currentDateTimeUtc();
             auto bookmark_file = g_bookmark_file_new();
             bool loaded = g_bookmark_file_load_from_data(bookmark_file, m_dom_document.toByteArray().constData(), -1, nullptr);
             if (loaded) {
                 g_bookmark_file_set_mime_type(bookmark_file, uri.toUtf8().constData(), mimetype.toUtf8().constData());
                 g_bookmark_file_add_application(bookmark_file, uri.toUtf8().constData(), name.toUtf8().constData(), exec.toUtf8().constData());
                 g_bookmark_file_to_file(bookmark_file, m_recent_path.toUtf8().constData(), nullptr);
+                g_bookmark_file_set_visited(bookmark_file, uri.toUtf8().constData(), g_get_monotonic_time());
             }
+            g_bookmark_file_to_file (bookmark_file, m_recent_path.toUtf8().constData(), nullptr);
             g_bookmark_file_free (bookmark_file);
             return true;
         }

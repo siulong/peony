@@ -233,6 +233,8 @@ protected:
 
     void paintEvent(QPaintEvent *e);
     bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
+    void setCondWidthWithFont(QComboBox *conditionCombox, int fontSize);
+    void setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize);
 
 private:
     NavigationTabBar *m_tab_bar;

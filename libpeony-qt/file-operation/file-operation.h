@@ -347,6 +347,8 @@ Q_SIGNALS:
 
     void operationInfoMsgBox(const QString &uri);
 
+    void remoteFileEvent(int eventType, const QString &arg1, const QString &arg2);
+
 public Q_SLOTS:
     virtual void cancel();
 
