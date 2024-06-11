@@ -1,0 +1,358 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Tue, 11 Jun 2024 15:05:35 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-copy.cpp                          | 49 ++++++++--------------
+ libpeony-qt/file-copy.h                            |  3 ++
+ libpeony-qt/file-operation/file-copy-operation.cpp | 38 +++++++++--------
+ libpeony-qt/file-operation/file-copy-operation.h   |  2 +
+ libpeony-qt/file-operation/file-move-operation.cpp | 41 ++++++++++--------
+ libpeony-qt/file-operation/file-move-operation.h   |  2 +
+ 6 files changed, 70 insertions(+), 65 deletions(-)
+
+diff --git a/libpeony-qt/file-copy.cpp b/libpeony-qt/file-copy.cpp
+index 0c16472..6de8b03 100644
+--- a/libpeony-qt/file-copy.cpp
++++ b/libpeony-qt/file-copy.cpp
+@@ -158,7 +158,8 @@ void FileCopy::run ()
+     GFileInfo*              destFileInfo = nullptr;
+     GFileType               srcFileType = G_FILE_TYPE_UNKNOWN;
+     GFileType               destFileType = G_FILE_TYPE_UNKNOWN;
+-    g_autofree gchar*       buf = (char*)g_malloc0(sizeof (char) * BUF_SIZE);
++    qint64                  blockSize = 0;
++    g_autofree gchar*       buf = nullptr;
+ 
+     g_autoptr (GFile)       destDir = NULL;
+ 
+@@ -250,7 +251,7 @@ void FileCopy::run ()
+     // check dest filesystem
+     destDir = g_file_get_parent (destFile);
+     mIsDestFileLocal = isFileOnLocal(destDir);
+-    if (destDir) {
++    if (destDir && mTotalSize >= 4294967296) {
+         g_autoptr (GMount) destMount = g_file_find_enclosing_mount (destDir, NULL, NULL);
+         if (destMount) {
+             g_autoptr (GFile) destMountFile = g_mount_get_default_location (destMount);
+@@ -259,11 +260,9 @@ void FileCopy::run ()
+                 if (mountPath) {
+                     g_autofree gchar* fstype = get_fs_type (mountPath);
+                     if (!g_strcmp0 (fstype, "vfat") || !g_strcmp0 (fstype, "fat32")) {
+-                        if (mTotalSize >= 4294967296) {
+-                            error = g_error_new (1, G_IO_ERROR_NOT_SUPPORTED, "%s", QString(tr("Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!")).toUtf8 ().constData ());
+-                            detailError(&error);
+-                            goto out;
+-                        }
++                        error = g_error_new (1, G_IO_ERROR_NOT_SUPPORTED, "%s", QString(tr("Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!")).toUtf8 ().constData ());
++                        detailError(&error);
++                        goto out;
+                     }
+                 }
+             }
+@@ -293,7 +292,8 @@ void FileCopy::run ()
+             }
+         }
+     }
+-
++    blockSize = mTotalSize > BUF_SIZE ? BUF_SIZE : (mTotalSize + 1);
++    buf = (char*)g_malloc0(sizeof (char) * blockSize);
+     // read io stream
+     readIO = g_file_read(srcFile, mCancel ? mCancel : nullptr, &error);
+     if (nullptr != error) {
+@@ -344,7 +344,7 @@ void FileCopy::run ()
+                 continue;
+             }
+ 
+-            memset(buf, 0, BUF_SIZE);
++            memset(buf, 0, blockSize);
+             if (++syncTim > SYNC_INTERVAL) {
+                 syncTim = 0;
+                 sync(destFile);
+@@ -353,7 +353,7 @@ void FileCopy::run ()
+             mPause.lock();
+             // read data
+             // readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
+-            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, &readSize, mCancel ? mCancel : nullptr, &error);
++            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, blockSize - 1, &readSize, mCancel ? mCancel : nullptr, &error);
+             if (0 == readSize && nullptr == error) {
+                 mStatus = FINISHED;
+                 mPause.unlock();
+@@ -432,28 +432,8 @@ out:
+     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
+         // copy file attribute
+         // It is possible that some file systems do not support file attributes
+-        gboolean readonly_source_fs = FALSE;
+-        GFile *source_dir;
+-        QString srcParent;
+-
+-        srcParent = FileUtils::getParentUri(mSrcUri);
+-        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+-        /* Query the source dir, not the file because if its a symlink we'll follow it */
+-        if (source_dir) {
+-            GFileInfo *inf;
+-            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+-            if (inf != NULL) {
+-                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+-                g_object_unref (inf);
+-            }
+-            g_object_unref (source_dir);
+-        }
+-
+-        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+-                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+-
+         //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
+-        g_file_copy_attributes(srcFile, destFile, (GFileCopyFlags)flags, nullptr, &error);
++        g_file_copy_attributes(srcFile, destFile, mParentFlags, nullptr, &error);
+         if (nullptr != error) {
+             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;
+             g_error_free(error);
+@@ -600,6 +580,13 @@ bool FileCopy::isFileOnLocal(const GFile* destFile)
+     return true;
+ }
+ 
++void FileCopy::setParentFlags(GFileCopyFlags parentFlags)
++{
++    if (parentFlags != mParentFlags) {
++        mParentFlags = parentFlags;
++    }
++}
++
+ /**
+  * @note
+  *  同步了 glib 针对vfat/fat32 单文件大于4g，提前提醒用户的补丁，
+diff --git a/libpeony-qt/file-copy.h b/libpeony-qt/file-copy.h
+index dfb3093..ba48125 100644
+--- a/libpeony-qt/file-copy.h
++++ b/libpeony-qt/file-copy.h
+@@ -58,6 +58,8 @@ public:
+      */
+     void run();
+ 
++    void setParentFlags(GFileCopyFlags parentFlags);
++
+ public Q_SLOTS:
+     /**
+      * @brief pause
+@@ -90,6 +92,7 @@ private:
+ 
+     GFileProgressCallback           mProgress;
+     GFileCopyFlags                  mCopyFlags;
++    GFileCopyFlags                  mParentFlags;
+     GCancellable*                   mCancel = nullptr;          // temp param
+ 
+     GError**                        mError = nullptr;           // temp param
+diff --git a/libpeony-qt/file-operation/file-copy-operation.cpp b/libpeony-qt/file-operation/file-copy-operation.cpp
+index 05dde88..d756404 100644
+--- a/libpeony-qt/file-operation/file-copy-operation.cpp
++++ b/libpeony-qt/file-operation/file-copy-operation.cpp
+@@ -189,26 +189,29 @@ fallback_retry:
+     }
+ 
+     //fix bug#163573, can not copy readonly folder issue
+-    gboolean readonly_source_fs = FALSE;
+-    GFile *source_dir;
+     QString srcParent;
+     srcParent = FileUtils::getParentUri(node->uri());
+-    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+-    /* Query the source dir, not the file because if its a symlink we'll follow it */
+-    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+-    if (source_dir) {
+-        GFileInfo *inf;
+-        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+-        if (inf != NULL) {
+-            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+-            g_object_unref (inf);
++    if (m_last_src_parent != srcParent || m_parent_flags == GFileCopyFlags(G_FILE_COPY_NONE)) {
++        GFile *source_dir;
++        gboolean readonly_source_fs = FALSE;
++        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
++        /* Query the source dir, not the file because if its a symlink we'll follow it */
++        qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
++        if (source_dir) {
++            GFileInfo *inf;
++            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
++            if (inf != NULL) {
++                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
++                g_object_unref (inf);
++            }
++            g_object_unref (source_dir);
+         }
+-        g_object_unref (source_dir);
++        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
++                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
++        m_parent_flags = GFileCopyFlags(flags);
++        m_last_src_parent = srcParent;
+     }
+ 
+-    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+-                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+-
+     if (node->isFolder()) {
+         GError *err = nullptr;
+         GError *error = nullptr;
+@@ -500,15 +503,15 @@ fallback_retry:
+         if (node->state() == FileNode::Handled || node->responseType() == OverWriteOne || node->responseType() == OverWriteAll) {
+             g_file_copy_attributes(srcFile.get()->get(),
+                                    destFile.get()->get(),
+-                                   GFileCopyFlags(flags),
++                                   m_parent_flags,
+                                    nullptr,
+                                    &error);
+         }
+ 
+         if (error) {
+             qDebug() << __func__ << error->code << error->message;
++            g_error_free(error);
+         }
+-        g_error_free(error);
+     } else {
+         GError *err = nullptr;
+         QUrl url = node->uri();
+@@ -583,6 +586,7 @@ fallback_retry:
+                            GFileProgressCallback(progress_callback),
+                            this,
+                            &err);
++        fileCopy.setParentFlags(m_parent_flags);
+         if (m_is_pause) fileCopy.pause();
+         fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
+         fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
+diff --git a/libpeony-qt/file-operation/file-copy-operation.h b/libpeony-qt/file-operation/file-copy-operation.h
+index 7ff70c5..3dd902c 100644
+--- a/libpeony-qt/file-operation/file-copy-operation.h
++++ b/libpeony-qt/file-operation/file-copy-operation.h
+@@ -94,6 +94,7 @@ private:
+     bool m_is_duplicated_copy = false;
+     QStringList m_source_uris;
+     QString m_dest_dir_uri = nullptr;
++    QString m_last_src_parent = nullptr;
+ 
+     QString m_disc_media_type = nullptr;
+     bool m_is_disk_work = false;
+@@ -108,6 +109,7 @@ private:
+     goffset m_total_size = 0;
+ 
+     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS);
++    GFileCopyFlags m_parent_flags = GFileCopyFlags(G_FILE_COPY_NONE);
+ 
+     FileNodeReporter *m_reporter = nullptr;
+ 
+diff --git a/libpeony-qt/file-operation/file-move-operation.cpp b/libpeony-qt/file-operation/file-move-operation.cpp
+index f566321..7aac6ab 100644
+--- a/libpeony-qt/file-operation/file-move-operation.cpp
++++ b/libpeony-qt/file-operation/file-move-operation.cpp
+@@ -792,26 +792,29 @@ fallback_retry:
+         }
+     }
+ 
+-    //fix bug#172512, can not copy readonly folder issue
+-    gboolean readonly_source_fs = FALSE;
+-    GFile *source_dir;
+     QString srcParent;
+     srcParent = FileUtils::getParentUri(node->uri());
+-    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+-    /* Query the source dir, not the file because if its a symlink we'll follow it */
+-    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+-    if (source_dir) {
+-        GFileInfo *inf;
+-        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+-        if (inf != NULL) {
+-            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+-            g_object_unref (inf);
++    if (m_last_src_parent != srcParent || m_parent_flags == GFileCopyFlags(G_FILE_COPY_NONE)) {
++        GFile *source_dir;
++        gboolean readonly_source_fs = FALSE;
++        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
++        /* Query the source dir, not the file because if its a symlink we'll follow it */
++        qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
++        if (source_dir) {
++            GFileInfo *inf;
++            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
++            if (inf != NULL) {
++                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
++                g_object_unref (inf);
++            }
++            g_object_unref (source_dir);
+         }
+-        g_object_unref (source_dir);
++        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
++                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
++        m_parent_flags = GFileCopyFlags(flags);
++        m_last_src_parent = srcParent;
+     }
+ 
+-    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+-                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+     if (node->isFolder()) {
+         auto realDestUri = node->resolveDestFileUri(m_dest_dir_uri);
+         destFile = wrapGFile(g_file_new_for_uri(realDestUri.toUtf8().constData()));
+@@ -1149,15 +1152,15 @@ fallback_retry:
+         if (node->state() == FileNode::Handled || node->responseType() == OverWriteOne || node->responseType() == OverWriteAll) {
+             g_file_copy_attributes(srcFile.get()->get(),
+                                    destFile.get()->get(),
+-                                   GFileCopyFlags(flags),
++                                   m_parent_flags,
+                                    nullptr,
+                                    &error);
+         }
+ 
+         if (error) {
++            g_error_free(error);
+             qDebug() << __func__ << error->code << error->message;
+         }
+-        g_error_free(error);
+     } else {
+         GError *err = nullptr;
+         GFileWrapperPtr sourceFile = wrapGFile(g_file_new_for_uri(node->uri().toUtf8().constData()));
+@@ -1176,6 +1179,7 @@ fallback_retry:
+                            GFileProgressCallback(progress_callback),
+                            this,
+                            &err);
++        fileCopy.setParentFlags(m_parent_flags);
+         fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
+         fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
+         fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
+@@ -1307,6 +1311,7 @@ fallback_retry:
+                                    GFileProgressCallback(progress_callback),
+                                    this,
+                                    &nodeErr);
++                fileCopy.setParentFlags(m_parent_flags);
+                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
+@@ -1347,6 +1352,7 @@ fallback_retry:
+                                    GFileProgressCallback(progress_callback),
+                                    this,
+                                    &nodeErr);
++                fileCopy.setParentFlags(m_parent_flags);
+                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
+@@ -1399,6 +1405,7 @@ fallback_retry:
+                                    GFileProgressCallback(progress_callback),
+                                    this,
+                                    &nodeErr);
++                fileCopy.setParentFlags(m_parent_flags);
+                 fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
+                 fileCopy.connect(this, &FileOperation::operationCancel, &fileCopy, &FileCopy::cancel, Qt::DirectConnection);
+diff --git a/libpeony-qt/file-operation/file-move-operation.h b/libpeony-qt/file-operation/file-move-operation.h
+index 052d48b..e26ae0a 100644
+--- a/libpeony-qt/file-operation/file-move-operation.h
++++ b/libpeony-qt/file-operation/file-move-operation.h
+@@ -170,6 +170,7 @@ private:
+      */
+     QString m_current_dest_dir_uri = nullptr;
+     QString m_save_as_other_uri= nullptr;
++    QString m_last_src_parent = nullptr;
+ 
+     goffset m_current_offset = 0;
+     goffset m_total_size = 0;
+@@ -202,6 +203,7 @@ private:
+ 
+     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS|
+                                          G_FILE_COPY_NO_FALLBACK_FOR_MOVE);
++    GFileCopyFlags m_parent_flags = GFileCopyFlags(G_FILE_COPY_NONE);
+ 
+     FileNodeReporter *m_reporter = nullptr;
+ 
