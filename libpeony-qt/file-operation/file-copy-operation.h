@@ -94,6 +94,7 @@ private:
     bool m_is_duplicated_copy = false;
     QStringList m_source_uris;
     QString m_dest_dir_uri = nullptr;
+    QString m_last_src_parent = nullptr;
 
     QString m_disc_media_type = nullptr;
     bool m_is_disk_work = false;
@@ -108,6 +109,7 @@ private:
     goffset m_total_size = 0;
 
     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS);
+    GFileCopyFlags m_parent_flags = GFileCopyFlags(G_FILE_COPY_NONE);
 
     FileNodeReporter *m_reporter = nullptr;
 

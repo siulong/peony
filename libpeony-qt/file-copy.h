@@ -58,6 +58,8 @@ public:
      */
     void run();
 
+    void setParentFlags(GFileCopyFlags parentFlags);
+
 public Q_SLOTS:
     /**
      * @brief pause
@@ -90,6 +92,7 @@ private:
 
     GFileProgressCallback           mProgress;
     GFileCopyFlags                  mCopyFlags;
+    GFileCopyFlags                  mParentFlags;
     GCancellable*                   mCancel = nullptr;          // temp param
 
     GError**                        mError = nullptr;           // temp param
