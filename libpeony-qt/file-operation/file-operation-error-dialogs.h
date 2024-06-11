@@ -65,6 +65,8 @@ private:
     bool m_cancel = false;
 
     QPushButton* m_cancel_btn = nullptr;
+
+    bool m_do_same = false;
 };
 
 /*!

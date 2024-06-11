@@ -286,8 +286,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 
                     //story 28545, improve data block solution, when has no user file in /data, go to usershare
                     //fix bug#239232, open in side bar menu not jump to usershare issue
-                    if (Peony::FileUtils::isFileExsit("file:///data/usershare") &&
-                            ! Peony::FileUtils::isDataBlockHasUserFile())
+                    if (Peony::FileUtils::isFileExsit("file:///data/usershare"))
                         curUri = "file:///data/usershare";
                 }
 

@@ -181,6 +181,7 @@ private:
     QString m_icon;
     QString m_device;
     QString m_mountPoint;    
+    GUnixMountEntry *m_entry = nullptr;
 
 private:
     void initMountInfo();

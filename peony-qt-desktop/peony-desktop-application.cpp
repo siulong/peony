@@ -262,30 +262,24 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
 
     if (!this->isRunning()) {
         qDebug()<<"isPrimary screen";
-        getDesktopWindowManager();
 
         //check if is great wall device and init settings
-        connect(desktopManger, &DesktopWindowManager::emitFinish, this , [=](){
-            if (g_emitFinish)
-                return;
-            g_emitFinish = true;
-            GlobalSettings::getInstance()->setDesktopStartUp(false);/* 桌面启动结束 */
-            QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
-                                                                  "/org/gnome/SessionManager",
-                                                                  "org.gnome.SessionManager",
-                                                                  "startupfinished");
-            QList<QVariant> args;
-            args.append("peony-qt-desktop");
-            args.append("startupfinished");
-            message.setArguments(args);
-            QDBusConnection::sessionBus().send(message);
+        GlobalSettings::getInstance()->setDesktopStartUp(false);/* 桌面启动结束 */
+        QDBusMessage message = QDBusMessage::createMethodCall("org.gnome.SessionManager",
+                                                              "/org/gnome/SessionManager",
+                                                              "org.gnome.SessionManager",
+                                                              "startupfinished");
+        QList<QVariant> args;
+        args.append("peony-qt-desktop");
+        args.append("startupfinished");
+        message.setArguments(args);
+        QDBusConnection::sessionBus().send(message);
 
-            greatWallDeviceInit();
-            QtConcurrent::run([=]() {
-                /* 桌面启动之后再挂载本地分区和监听volumes变化 */
-                autoMountLocalDriver();
-                monitoringVolumesChanges();//end
-            });
+        greatWallDeviceInit();
+        QtConcurrent::run([=]() {
+            /* 桌面启动之后再挂载本地分区和监听volumes变化 */
+            autoMountLocalDriver();
+            monitoringVolumesChanges();//end
         });
 
         connect(this, &QtSingleApplication::messageReceived, [=](QString msg) {
