@@ -170,6 +170,7 @@ private:
      */
     QString m_current_dest_dir_uri = nullptr;
     QString m_save_as_other_uri= nullptr;
+    QString m_last_src_parent = nullptr;
 
     goffset m_current_offset = 0;
     goffset m_total_size = 0;
@@ -202,6 +203,7 @@ private:
 
     GFileCopyFlags m_default_copy_flag = GFileCopyFlags(G_FILE_COPY_NOFOLLOW_SYMLINKS|
                                          G_FILE_COPY_NO_FALLBACK_FOR_MOVE);
+    GFileCopyFlags m_parent_flags = GFileCopyFlags(G_FILE_COPY_NONE);
 
     FileNodeReporter *m_reporter = nullptr;
 
