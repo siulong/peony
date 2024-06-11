@@ -398,50 +398,50 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>warn</source>
         <translation>warnen</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>This operation is not supported.</source>
         <translation>Dieser Vorgang wird nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>Tips</source>
         <translation>Tipps</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>Das Gerät ist ausgelastet, bitte führen Sie diesen Vorgang später durch.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>Dies ist eine abnormale Udisk, bitte beheben Sie sie oder formatieren Sie sie</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>Dies ist ein leeres Laufwerk, bitte legen Sie eine Disc ein.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Window</source>
         <translation>In neuem Fenster öffnen</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="343"/>
         <source>Can not open %1, %2</source>
         <translation>%1, %2 kann nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="327"/>
         <source>Open In New Tab</source>
         <translation>In neuem Tab öffnen</translation>
     </message>
@@ -457,12 +457,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="882"/>
         <source>Manager tags...</source>
         <translation>Manager-Tags...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="885"/>
         <source>More tags...</source>
         <translation>Mehr Tags...</translation>
     </message>
@@ -1125,7 +1125,7 @@ Willst du gewaltsam absteigen?</translation>
         <translation>Genesen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="451"/>
+        <location filename="../../src/control/tab-widget.cpp" line="484"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
@@ -1138,32 +1138,32 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="526"/>
+        <location filename="../../src/control/tab-widget.cpp" line="559"/>
         <source>Select Path</source>
         <translation>Pfad auswählen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1347"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1376"/>
         <source>Warning</source>
         <translation type="unfinished">Warnung</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1349"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1378"/>
         <source>Error</source>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1708"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1737"/>
         <source>Opening such files is not currently supported</source>
         <translation>Das Öffnen solcher Dateien wird derzeit nicht unterstützt</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1722"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1751"/>
         <source>Open failed</source>
         <translation>Öffnen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1723"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1752"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>Open Directory fehlgeschlagen, Sie haben keine Berechtigung!</translation>
     </message>
@@ -1172,7 +1172,7 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="441"/>
+        <location filename="../../src/control/tab-widget.cpp" line="474"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -1197,13 +1197,13 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="586"/>
-        <location filename="../../src/control/tab-widget.cpp" line="746"/>
+        <location filename="../../src/control/tab-widget.cpp" line="624"/>
+        <location filename="../../src/control/tab-widget.cpp" line="775"/>
         <source>is</source>
         <translation>ist</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="621"/>
+        <location filename="../../src/control/tab-widget.cpp" line="650"/>
         <source>Please input key words...</source>
         <translation>Bitte geben Sie Stichworte ein...</translation>
     </message>
@@ -1212,110 +1212,110 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="707"/>
-        <location filename="../../src/control/tab-widget.cpp" line="730"/>
+        <location filename="../../src/control/tab-widget.cpp" line="736"/>
+        <location filename="../../src/control/tab-widget.cpp" line="759"/>
         <source>contains</source>
         <translation>enthält</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>type</source>
         <translation>Art</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>modify time</source>
         <translation>Zeit ändern</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>file size</source>
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
         <location filename="../../src/control/tab-widget.h" line="314"/>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>all</source>
         <translation>alle</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>file folder</source>
         <translation>Ordner</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>image</source>
         <translation>Bild</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>text file</source>
         <translation>Textdatei</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>others</source>
         <translation>andere</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>wps file</source>
         <translation>WPS-Datei</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>today</source>
         <translation>Heute</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this week</source>
         <translation>Diese Woche</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this month</source>
         <translation>Diesen Monat</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this year</source>
         <translation>dieses Jahr</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>yesterday</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last year</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1324,37 +1324,37 @@ Willst du gewaltsam absteigen?</translation>
         <translation type="vanished">vor einem Jahr</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>tiny(0-16K)</source>
         <translation>winzig (0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>small(16k-1M)</source>
         <translation>klein (16k-1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>empty(0K)</source>
         <translation>leer(0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>medium(1M-128M)</source>
         <translation>mittel (1M-128M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>big(128M-1G)</source>
         <translation>groß (128M-1G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>large(1-4G)</source>
         <translation>groß (1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>great(&gt;4G)</source>
         <translation>großartig (&gt;4G)</translation>
     </message>
@@ -1374,7 +1374,7 @@ Willst du gewaltsam absteigen?</translation>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="1023"/>
         <source>Peony</source>
         <translation>Pfingstrose</translation>
     </message>

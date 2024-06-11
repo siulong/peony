@@ -399,7 +399,7 @@
         <translation type="vanished">关闭桌面并退出</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="226"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="227"/>
         <source>peony-qt-desktop</source>
         <translation>пеони-qt-desktop</translation>
     </message>
@@ -412,27 +412,27 @@
         <translation type="vanished">桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="567"/>
         <source>Close the peony desktop window</source>
         <translation>Алдамчылык иш столунун терезени жабуу</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="570"/>
         <source>Take over the dbus service.</source>
         <translation>Дбус кызматын өз мойнуна алгыла.</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="566"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="573"/>
         <source>Take over the desktop displaying</source>
         <translation>Иш столун чагылдыруу</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="569"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="576"/>
         <source>Setup backgrounds</source>
         <translation>Фонду орнотуу</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="572"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="579"/>
         <source>Clear standard icons</source>
         <translation>Так стандарттык белгилер</translation>
     </message>

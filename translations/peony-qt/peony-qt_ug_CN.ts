@@ -398,50 +398,50 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>warn</source>
         <translation>ئاگاھلاندۇرۇش</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>This operation is not supported.</source>
         <translation>بۇ مەشغۇلات قوللىمايدۇ.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>Tips</source>
         <translation>ئەسكەرتىش</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>ئۈسكۈنە ئالدىراش ھالەتتە، بۇ مەشغۇلاتنى بىردەمدىن كېيىن ئىجرا قىلىڭ.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>بۇ بىر بىنورمال ئاۋدىسكى، ئوڭشىۋېلىڭ ياكى فورماتلاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>بۇ بىر قۇرۇق دېسكا، دىسكا قىستۇرۇڭ.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Window</source>
         <translation>يېڭى كۆزنەكتە ئېچىش</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="343"/>
         <source>Can not open %1, %2</source>
         <translation>٪1، ٪2 نى ئاچقىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="327"/>
         <source>Open In New Tab</source>
         <translation>يېڭى بەتتە ئېچىش</translation>
     </message>
@@ -457,12 +457,12 @@ p, li { ئاق بوشلۇق: ئالدىن ئوراش؛ }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="882"/>
         <source>Manager tags...</source>
         <translation>باشقۇرغۇچى بەلگىسى...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="885"/>
         <source>More tags...</source>
         <translation>خەتكۈشلەر تېخىمۇ كۆپ...</translation>
     </message>
@@ -1125,7 +1125,7 @@ Do you want to unmount forcely?</source>
         <translation>ئەسلىگە كەلتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="451"/>
+        <location filename="../../src/control/tab-widget.cpp" line="484"/>
         <source>Computer</source>
         <translation>كومپيۇتېر</translation>
     </message>
@@ -1138,32 +1138,32 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="526"/>
+        <location filename="../../src/control/tab-widget.cpp" line="559"/>
         <source>Select Path</source>
         <translation>يول تاللاش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1347"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1376"/>
         <source>Warning</source>
         <translation type="unfinished">دىققەت</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1349"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1378"/>
         <source>Error</source>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1708"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1737"/>
         <source>Opening such files is not currently supported</source>
         <translation>بۇنداق ھۆججەتلەرنى ئېچىش نۆۋەتتە قوللىمايدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1722"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1751"/>
         <source>Open failed</source>
         <translation>ئېچىش مەغلۇپ بولدى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1723"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1752"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>ئوچۇق مۇندەرىجە مەغلۇپ بولدى، رۇخسەتىڭىز يوق!</translation>
     </message>
@@ -1172,7 +1172,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="441"/>
+        <location filename="../../src/control/tab-widget.cpp" line="474"/>
         <source>Search</source>
         <translation>ئىزدە</translation>
     </message>
@@ -1197,13 +1197,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="586"/>
-        <location filename="../../src/control/tab-widget.cpp" line="746"/>
+        <location filename="../../src/control/tab-widget.cpp" line="624"/>
+        <location filename="../../src/control/tab-widget.cpp" line="775"/>
         <source>is</source>
         <translation>،</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="621"/>
+        <location filename="../../src/control/tab-widget.cpp" line="650"/>
         <source>Please input key words...</source>
         <translation>ئاچقۇچلۇق سۆزلەرنى كىرگۈزۈڭلار...</translation>
     </message>
@@ -1212,110 +1212,110 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="707"/>
-        <location filename="../../src/control/tab-widget.cpp" line="730"/>
+        <location filename="../../src/control/tab-widget.cpp" line="736"/>
+        <location filename="../../src/control/tab-widget.cpp" line="759"/>
         <source>contains</source>
         <translation>ئۆز ئىچىگە ئالغان</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>name</source>
         <translation>ئىسىم</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>type</source>
         <translation>تۈرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>modify time</source>
         <translation>ۋاقىتنى ئۆزگەرتىش</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>file size</source>
         <translation>ھۆججەت چوڭلۇقى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
         <location filename="../../src/control/tab-widget.h" line="314"/>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>all</source>
         <translation>بارلىق</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>file folder</source>
         <translation>ھۆججەت قىسقۇچ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>image</source>
         <translation>رەسىم</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>video</source>
         <translation>ۋىدېئو</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>text file</source>
         <translation>تېكىست ھۆججىتى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>audio</source>
         <translation>ئاۋاز</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>others</source>
         <translation>باشقىلار</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>wps file</source>
         <translation>wps ھۆججىتى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>today</source>
         <translation>تارىخ-بۈگۈن</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this week</source>
         <translation>بۇ ھەپتە</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this month</source>
         <translation>مۇشۇ ئاي</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this year</source>
         <translation>بۇ يىل</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>yesterday</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last year</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1324,37 +1324,37 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">1 يىل ئىلگىرى</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>tiny(0-16K)</source>
         <translation>كىچىك (0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>small(16k-1M)</source>
         <translation>كىچىك (16 k- 1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>empty(0K)</source>
         <translation>بوش(0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>medium(1M-128M)</source>
         <translation>ئوتتۇراھال(1M-128M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>big(128M-1G)</source>
         <translation>چوڭ(128M-1G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>large(1-4G)</source>
         <translation>چوڭ (1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>great(&gt;4G)</source>
         <translation>ئۇلۇغ (&gt;4G)</translation>
     </message>
@@ -1374,7 +1374,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="1023"/>
         <source>Peony</source>
         <translation>مودەنگۈل</translation>
     </message>

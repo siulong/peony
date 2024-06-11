@@ -260,7 +260,7 @@
         <translation type="vanished">Masaüstünü kapatın ve çıkın</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="226"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="227"/>
         <source>peony-qt-desktop</source>
         <translation>Masaüstü</translation>
     </message>
@@ -273,27 +273,27 @@
         <translation type="vanished">Masaüstü</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="567"/>
         <source>Close the peony desktop window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="570"/>
         <source>Take over the dbus service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="566"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="573"/>
         <source>Take over the desktop displaying</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="569"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="576"/>
         <source>Setup backgrounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="572"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="579"/>
         <source>Clear standard icons</source>
         <translation type="unfinished"></translation>
     </message>

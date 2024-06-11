@@ -398,50 +398,50 @@ p， li { white-space： pre-wrap;
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>warn</source>
         <translation>ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="624"/>
         <source>This operation is not supported.</source>
         <translation>ᠲᠤᠰ ᠠᠵᠢᠯᠯᠠᠬᠤᠢ᠎ᠶ᠋ᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠥᠬᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>Tips</source>
         <translation>ᠰᠠᠨᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
         <source>The device is in busy state, please perform this operation later.</source>
         <translation>ᠲᠥᠬᠥᠭᠡᠷᠦᠮᠵᠢ ᠶᠠᠭᠠᠷᠠᠤ ᠪᠠᠢ᠌ᠳᠠᠯ ᠳᠤ ᠣᠷᠣᠰᠢᠵᠤ ᠪᠠᠢ᠌ᠨ᠎ᠠ ᠂ ᠵᠢᠭᠠᠬᠠᠨ ᠤ ᠳᠠᠷᠠᠭ᠎ᠠ ᠡᠭᠦᠨ ᠢ ᠬᠡᠷᠡᠭ᠍ᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="662"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>ᠡᠨᠡ ᠪᠣᠯ ᠨᠢᠭᠡᠨ ᠶᠡᠷᠦ ᠪᠤᠰᠤ ᠶᠢᠨ Udiissk ᠂ ᠰᠡᠯᠪᠢᠨ ᠵᠠᠰᠠᠬᠤ ᠪᠤᠶᠤ ᠬᠡᠯᠪᠡᠷᠢᠵᠢᠭᠦᠯᠦᠭᠡᠷᠡᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="680"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>ᠡᠨᠡ ᠪᠣᠯ ᠨᠢᠭᠡ ᠬᠣᠭᠣᠰᠣᠨ ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ ᠮᠥᠨ ᠂ ᠭᠡᠷᠡᠯ ᠫᠠᠨᠰᠠ ᠬᠠᠪᠴᠢᠭᠤᠯᠤᠨ ᠣᠷᠣᠭᠠᠷᠠᠢ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Window</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠴᠣᠩᠬᠣᠨ᠎ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="343"/>
         <source>Can not open %1, %2</source>
         <translation>アョイ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠵᠦ ᠳᠡᠶᠢᠯᠬᠦ ᠦᠭᠡᠶ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="327"/>
         <source>Open In New Tab</source>
         <translation>ᠰᠢᠨ᠎ᠡ ᠱᠣᠰᠢᠭ᠎ᠠ᠎ᠶ᠋ᠢᠨ ᠬᠠᠭᠤᠳᠠᠰᠤᠨ ᠳ᠋ᠤ᠌ ᠨᠡᠭᠡᠭᠡᠬᠦ</translation>
     </message>
@@ -457,12 +457,12 @@ p， li { white-space： pre-wrap;
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="882"/>
         <source>Manager tags...</source>
         <translation>ᠵᠠᠬᠢᠷᠤᠯ ᠤᠨ ᠱᠣᠰᠢᠭ᠎ᠠ ᠁</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="885"/>
         <source>More tags...</source>
         <translation>ᠨᠡᠩ ᠤᠯᠠᠨ ᠱᠣᠰᠢᠭ᠎ᠠ ᠁</translation>
     </message>
@@ -1125,7 +1125,7 @@ Do you want to unmount forcely?</source>
         <translation>ᠰᠡᠷᠭᠦᠭᠡᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="451"/>
+        <location filename="../../src/control/tab-widget.cpp" line="484"/>
         <source>Computer</source>
         <translation>ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ</translation>
     </message>
@@ -1138,32 +1138,32 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">筛选</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="526"/>
+        <location filename="../../src/control/tab-widget.cpp" line="559"/>
         <source>Select Path</source>
         <translation>ᠵᠠᠮ ᠰᠤᠩᠭ᠋ᠤᠬᠤ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1347"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1376"/>
         <source>Warning</source>
         <translation type="unfinished">ᠰᠡᠷᠡᠮᠵᠢᠯᠡᠬᠦᠯᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1349"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1378"/>
         <source>Error</source>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1708"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1737"/>
         <source>Opening such files is not currently supported</source>
         <translation>ᠣᠳᠣᠬᠠᠨ ᠳᠤ ᠡᠶᠢᠮᠦᠷᠬᠦ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠢ ᠨᠡᠭᠡᠭᠡᠬᠦ ᠶᠢ ᠳᠡᠮᠵᠢᠬᠦ ᠦᠭᠡᠶ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1722"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1751"/>
         <source>Open failed</source>
         <translation>ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="1723"/>
+        <location filename="../../src/control/tab-widget.cpp" line="1752"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠳᠠᠰᠤ ᠵᠢ ᠨᠡᠬᠡᠬᠡᠵᠤ ᠴᠢᠳᠠᠭᠰᠠᠨ ᠦᠬᠡᠢ᠂ᠲᠠᠨ ᠳ᠋ᠤ᠌ ᠳᠤᠰ ᠭᠠᠷᠴᠠᠭ ᠤ᠋ᠨ ᠡᠷᠬᠡ ᠪᠠᠢᠬᠤ ᠦᠬᠡᠢ!</translation>
     </message>
@@ -1172,7 +1172,7 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">关闭高级搜索。</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="441"/>
+        <location filename="../../src/control/tab-widget.cpp" line="474"/>
         <source>Search</source>
         <translation>ᠬᠠᠢᠯᠳᠠ</translation>
     </message>
@@ -1197,13 +1197,13 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">选择路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="586"/>
-        <location filename="../../src/control/tab-widget.cpp" line="746"/>
+        <location filename="../../src/control/tab-widget.cpp" line="624"/>
+        <location filename="../../src/control/tab-widget.cpp" line="775"/>
         <source>is</source>
         <translation>ᠲᠡᠢ᠌ᠮᠦ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="621"/>
+        <location filename="../../src/control/tab-widget.cpp" line="650"/>
         <source>Please input key words...</source>
         <translation>ᠵᠠᠩᠭᠢᠯᠠᠭ᠎ᠠ ᠶᠢᠨ ᠦᠰᠦᠭ ᠢ ᠣᠷᠣᠭᠤᠯᠵᠤ ᠢᠷᠡᠭᠡᠳᠦᠶ ᠁</translation>
     </message>
@@ -1212,110 +1212,110 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">请输入关键词...</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.cpp" line="707"/>
-        <location filename="../../src/control/tab-widget.cpp" line="730"/>
+        <location filename="../../src/control/tab-widget.cpp" line="736"/>
+        <location filename="../../src/control/tab-widget.cpp" line="759"/>
         <source>contains</source>
         <translation>ᠪᠠᠭᠲᠠᠨ᠎ᠠ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>name</source>
         <translation>ᠬᠡᠷᠡᠭᠯᠡᠭᠴᠢ᠎ᠶ᠋ᠢᠨ ᠨᠡᠷ᠎ᠡ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>type</source>
         <translation>ᠲᠥᠷᠥᠯ ᠵᠦᠢᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>modify time</source>
         <translation>ᠴᠠᠭ ᠢᠶᠠᠨ ᠵᠠᠰᠠᠨ᠎ᠠ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="311"/>
+        <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>file size</source>
         <translation>ᠪᠢᠴᠢᠭ᠌ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ ᠃</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
         <location filename="../../src/control/tab-widget.h" line="314"/>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>all</source>
         <translation>ᠪᠦᠬᠦ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>file folder</source>
         <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠪᠴᠢᠭᠤᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>image</source>
         <translation>ᠵᠢᠷᠤᠭ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="312"/>
+        <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>video</source>
         <translation>ᠸᠢᠳᠢᠣ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>text file</source>
         <translation>ᠲᠸᠻᠰᠲ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>audio</source>
         <translation>ᠠᠦ᠋ᠳᠢᠦ᠌</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>others</source>
         <translation>ᠪᠤᠰᠤᠳ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="313"/>
+        <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>wps file</source>
         <translation>WPS ᠹᠠᠢᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>today</source>
         <translation>ᠥᠨᠥᠳᠥᠷ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this week</source>
         <translation>ᠲᠤᠰ ᠭᠠᠷᠠᠭ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this month</source>
         <translation>ᠲᠤᠰ ᠰᠠᠷ᠎ᠠ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>this year</source>
         <translation>ᠲᠤᠰ ᠵᠢᠯ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>yesterday</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="314"/>
+        <location filename="../../src/control/tab-widget.h" line="316"/>
         <source>last year</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1324,37 +1324,37 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">ᠨᠢᠳᠤᠨᠤᠨ</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>tiny(0-16K)</source>
         <translation>ᠮᠠᠰᠢ ᠪᠠᠭ᠎ᠠ(0-16K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>small(16k-1M)</source>
         <translation>ᠨᠡᠯᠢᠶᠡᠳ ᠪᠠᠭ᠎ᠠ(16k-1M)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>empty(0K)</source>
         <translation>ᠬᠣᠭᠣᠰᠣᠨ (0K)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>medium(1M-128M)</source>
         <translation>ᠳᠤᠮᠲᠠ  1ᠮ-128ᠮ </translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>big(128M-1G)</source>
         <translation>ᠲᠣᠮᠣ (128M-1G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>large(1-4G)</source>
         <translation>ᠲᠣᠮᠣ (1-4G)</translation>
     </message>
     <message>
-        <location filename="../../src/control/tab-widget.h" line="315"/>
+        <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>great(&gt;4G)</source>
         <translation>ᠮᠠᠰᠢ ᠰᠠᠢ᠌ᠬᠠᠨ ( &gt;4G )</translation>
     </message>
@@ -1374,7 +1374,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="1023"/>
         <source>Peony</source>
         <translation>ᠹᠠᠢᠯ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ</translation>
     </message>
