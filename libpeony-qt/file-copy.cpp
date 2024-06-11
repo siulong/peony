@@ -158,7 +158,8 @@ void FileCopy::run ()
     GFileInfo*              destFileInfo = nullptr;
     GFileType               srcFileType = G_FILE_TYPE_UNKNOWN;
     GFileType               destFileType = G_FILE_TYPE_UNKNOWN;
-    g_autofree gchar*       buf = (char*)g_malloc0(sizeof (char) * BUF_SIZE);
+    qint64                  blockSize = 0;
+    g_autofree gchar*       buf = nullptr;
 
     g_autoptr (GFile)       destDir = NULL;
 
@@ -250,7 +251,7 @@ void FileCopy::run ()
     // check dest filesystem
     destDir = g_file_get_parent (destFile);
     mIsDestFileLocal = isFileOnLocal(destDir);
-    if (destDir) {
+    if (destDir && mTotalSize >= 4294967296) {
         g_autoptr (GMount) destMount = g_file_find_enclosing_mount (destDir, NULL, NULL);
         if (destMount) {
             g_autoptr (GFile) destMountFile = g_mount_get_default_location (destMount);
@@ -259,11 +260,9 @@ void FileCopy::run ()
                 if (mountPath) {
                     g_autofree gchar* fstype = get_fs_type (mountPath);
                     if (!g_strcmp0 (fstype, "vfat") || !g_strcmp0 (fstype, "fat32")) {
-                        if (mTotalSize >= 4294967296) {
-                            error = g_error_new (1, G_IO_ERROR_NOT_SUPPORTED, "%s", QString(tr("Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!")).toUtf8 ().constData ());
-                            detailError(&error);
-                            goto out;
-                        }
+                        error = g_error_new (1, G_IO_ERROR_NOT_SUPPORTED, "%s", QString(tr("Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!")).toUtf8 ().constData ());
+                        detailError(&error);
+                        goto out;
                     }
                 }
             }
@@ -293,7 +292,8 @@ void FileCopy::run ()
             }
         }
     }
-
+    blockSize = mTotalSize > BUF_SIZE ? BUF_SIZE : (mTotalSize + 1);
+    buf = (char*)g_malloc0(sizeof (char) * blockSize);
     // read io stream
     readIO = g_file_read(srcFile, mCancel ? mCancel : nullptr, &error);
     if (nullptr != error) {
@@ -344,7 +344,7 @@ void FileCopy::run ()
                 continue;
             }
 
-            memset(buf, 0, BUF_SIZE);
+            memset(buf, 0, blockSize);
             if (++syncTim > SYNC_INTERVAL) {
                 syncTim = 0;
                 sync(destFile);
@@ -353,7 +353,7 @@ void FileCopy::run ()
             mPause.lock();
             // read data
             // readSize = g_input_stream_read(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, mCancel ? mCancel : nullptr, &error);
-            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, BUF_SIZE - 1, &readSize, mCancel ? mCancel : nullptr, &error);
+            g_input_stream_read_all(G_INPUT_STREAM(readIO), buf, blockSize - 1, &readSize, mCancel ? mCancel : nullptr, &error);
             if (0 == readSize && nullptr == error) {
                 mStatus = FINISHED;
                 mPause.unlock();
@@ -432,28 +432,8 @@ out:
     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
         // copy file attribute
         // It is possible that some file systems do not support file attributes
-        gboolean readonly_source_fs = FALSE;
-        GFile *source_dir;
-        QString srcParent;
-
-        srcParent = FileUtils::getParentUri(mSrcUri);
-        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
-        /* Query the source dir, not the file because if its a symlink we'll follow it */
-        if (source_dir) {
-            GFileInfo *inf;
-            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
-            if (inf != NULL) {
-                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
-                g_object_unref (inf);
-            }
-            g_object_unref (source_dir);
-        }
-
-        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
-                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
-
         //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
-        g_file_copy_attributes(srcFile, destFile, (GFileCopyFlags)flags, nullptr, &error);
+        g_file_copy_attributes(srcFile, destFile, mParentFlags, nullptr, &error);
         if (nullptr != error) {
             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;
             g_error_free(error);
@@ -598,6 +578,13 @@ bool FileCopy::isFileOnLocal(const GFile* destFile)
         return !g_mount_can_unmount(mount);
     }
     return true;
+}
+
+void FileCopy::setParentFlags(GFileCopyFlags parentFlags)
+{
+    if (parentFlags != mParentFlags) {
+        mParentFlags = parentFlags;
+    }
 }
 
 /**

@@ -189,25 +189,28 @@ fallback_retry:
     }
 
     //fix bug#163573, can not copy readonly folder issue
-    gboolean readonly_source_fs = FALSE;
-    GFile *source_dir;
     QString srcParent;
     srcParent = FileUtils::getParentUri(node->uri());
-    source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
-    /* Query the source dir, not the file because if its a symlink we'll follow it */
-    qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
-    if (source_dir) {
-        GFileInfo *inf;
-        inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
-        if (inf != NULL) {
-            readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
-            g_object_unref (inf);
+    if (m_last_src_parent != srcParent || m_parent_flags == GFileCopyFlags(G_FILE_COPY_NONE)) {
+        GFile *source_dir;
+        gboolean readonly_source_fs = FALSE;
+        source_dir = g_file_new_for_uri(FileUtils::urlEncode(srcParent).toUtf8());
+        /* Query the source dir, not the file because if its a symlink we'll follow it */
+        qDebug() << "node->uri():"<<node->uri()<<"srcParent:"<<QUrl(srcParent).url();
+        if (source_dir) {
+            GFileInfo *inf;
+            inf = g_file_query_filesystem_info (source_dir, "filesystem::readonly", NULL, NULL);
+            if (inf != NULL) {
+                readonly_source_fs = g_file_info_get_attribute_boolean (inf, "filesystem::readonly");
+                g_object_unref (inf);
+            }
+            g_object_unref (source_dir);
         }
-        g_object_unref (source_dir);
+        auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
+                         : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+        m_parent_flags = GFileCopyFlags(flags);
+        m_last_src_parent = srcParent;
     }
-
-    auto flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
-                     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
 
     if (node->isFolder()) {
         GError *err = nullptr;
@@ -500,15 +503,15 @@ fallback_retry:
         if (node->state() == FileNode::Handled || node->responseType() == OverWriteOne || node->responseType() == OverWriteAll) {
             g_file_copy_attributes(srcFile.get()->get(),
                                    destFile.get()->get(),
-                                   GFileCopyFlags(flags),
+                                   m_parent_flags,
                                    nullptr,
                                    &error);
         }
 
         if (error) {
             qDebug() << __func__ << error->code << error->message;
+            g_error_free(error);
         }
-        g_error_free(error);
     } else {
         GError *err = nullptr;
         QUrl url = node->uri();
@@ -583,6 +586,7 @@ fallback_retry:
                            GFileProgressCallback(progress_callback),
                            this,
                            &err);
+        fileCopy.setParentFlags(m_parent_flags);
         if (m_is_pause) fileCopy.pause();
         fileCopy.connect(this, &FileOperation::operationPause, &fileCopy, &FileCopy::pause, Qt::DirectConnection);
         fileCopy.connect(this, &FileOperation::operationResume, &fileCopy, &FileCopy::resume, Qt::DirectConnection);
