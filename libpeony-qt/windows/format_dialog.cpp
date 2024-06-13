@@ -1351,5 +1351,19 @@ void Format_Dialog::resizeEvent(QResizeEvent *event)
         mEraseCkbox->setText(mEraseCkbox->fontMetrics().elidedText(mEraseCkbox->text(), Qt::ElideRight, width));
     }
 
+    updateButtonShow(mFormatBtn, mFormatBtn->text());
+    updateButtonShow(mCancelBtn, mCancelBtn->text());
+
     QWidget::resizeEvent(event);
+}
+
+void Format_Dialog::updateButtonShow(QPushButton *button, const QString &str)
+{
+    int fontSize = button->fontMetrics().width(str);
+    QString tmp = str;
+    if (fontSize > button->width() - 5) {
+        button->setToolTip(str);
+        tmp = button->fontMetrics().elidedText(str, Qt::ElideRight, button->width() - 5);
+    }
+    button->setText(tmp);
 }

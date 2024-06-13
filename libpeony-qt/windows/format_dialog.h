@@ -116,6 +116,7 @@ public:
 protected:
     void closeEvent(QCloseEvent* );
     void resizeEvent(QResizeEvent *event);
+    void updateButtonShow(QPushButton *button, const QString &str);
 
 Q_SIGNALS:
      void ensure_format(bool flags);
