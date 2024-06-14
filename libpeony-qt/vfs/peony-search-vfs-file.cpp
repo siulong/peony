@@ -215,7 +215,7 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
     QStringList paths;
     QStringList keyWords;
 
-    if (args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
+    if (args.size() > 1 && args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
             && !details->search_vfs_directory_uri->contains("search_hidden=")
             && !details->search_vfs_directory_uri->contains("use_regexp=")
             && !details->search_vfs_directory_uri->contains("case_sensitive=")

@@ -1432,7 +1432,7 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
             }
 
             //Fix bug#132638, special # character use in symbolic link open fail issue
-            if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
+            if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///") && !realUri.startsWith("search:///"))
                 realUri = Peony::FileUtils::urlEncode(realUri);
 
             // fix #174653

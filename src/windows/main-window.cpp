@@ -1182,7 +1182,7 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     }
 
     //Fix bug#132638, special # character use in symbolic link open fail issue
-    if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
+    if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///") && !realUri.startsWith("search:///"))
         realUri = Peony::FileUtils::urlEncode(realUri);
 
     //if in search mode and key is not null, need quit search mode, bug#93528
