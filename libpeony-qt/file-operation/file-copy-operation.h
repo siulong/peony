@@ -85,6 +85,9 @@ protected:
      * \deprecated
      */
     int getUsbSafeMode();
+    
+    bool isDlpState();
+
 private:
     /*!
      * \brief m_is_duplicated_copy

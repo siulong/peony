@@ -102,6 +102,8 @@ public:
      */
     void rollbackNodeRecursively(FileNode *node);
 
+    bool isDlpState();
+
     void run() override;
 
     std::shared_ptr<FileOperationInfo> getOperationInfo() override {

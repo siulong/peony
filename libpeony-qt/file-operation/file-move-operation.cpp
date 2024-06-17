@@ -893,7 +893,12 @@ fallback_retry:
                 auto typeData = Invalid;
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     typeData = except.respCode;
                     break;
@@ -1277,7 +1282,12 @@ fallback_retry:
                 auto typeData = Invalid;
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     typeData = except.respCode;
                     break;
@@ -2116,6 +2126,22 @@ int FileMoveOperation::getUsbSafeMode()
     int status = content.toInt();
     file.close();
     return status;
+}
+
+bool FileMoveOperation::isDlpState()
+{
+    QFile file("/sys/kernel/security/dlp/usb_check_status");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return false;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    bool result = (status == 1);
+    file.close();
+    return result;
 }
 
 void FileMoveOperation::cancel()
