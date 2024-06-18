@@ -54,6 +54,7 @@ Architecture: any
 Multi-Arch: foreign
 Depends: libpeony3 (= ${binary:Version}),
          peony-common (= ${source:Version}),
+         peony-utils (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Recommends: gvfs-backends, peony-extensions(>=3.2.2+1015)
