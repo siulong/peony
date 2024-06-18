@@ -1497,6 +1497,9 @@ int FileCopyOperation::getUsbSafeMode()
 
 bool FileCopyOperation::isDlpState()
 {
+    if (!m_dest_dir_uri.startsWith("file:///media/")) {
+        return false;
+    }
     QFile file("/sys/kernel/security/dlp/usb_check_status");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "Error: Unable to open file";
