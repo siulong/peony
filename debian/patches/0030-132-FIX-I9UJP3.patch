@@ -1,0 +1,23 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 19 Jun 2024 01:09:32 +0000
+Subject: =?utf-8?b?ITEzMiBbRklYXSNJOVVKUDPjgJDorr7orqHotbDmn6XjgJHmjpLluo8=?=
+ =?utf-8?b?6YCJ6aG55pi+56S66Zeu6aKYIE1lcmdlIHB1bGwgcmVxdWVzdCAhMTMyIGZyb20g?=
+ =?utf-8?b?5ZCR5paH5p2wL2ZpeC1zb3J0LXR5cGUtc2hvdy1pc3N1ZQ==?=
+
+---
+ translations/peony-qt/peony-qt_zh_CN.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/translations/peony-qt/peony-qt_zh_CN.ts b/translations/peony-qt/peony-qt_zh_CN.ts
+index 6c74338..bcac88c 100644
+--- a/translations/peony-qt/peony-qt_zh_CN.ts
++++ b/translations/peony-qt/peony-qt_zh_CN.ts
+@@ -982,7 +982,7 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/sort-type-menu.cpp" line="102"/>
+         <source>By %1</source>
+-        <translation>按%1排序</translation>
++        <translation>按%1</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/sort-type-menu.cpp" line="111"/>
