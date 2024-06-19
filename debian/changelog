@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0618) nile; urgency=medium
+
+  * fix #I9UJP3
+  * fix #I9P4Y0、#I8M88E、#I8M89K
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 19 Jun 2024 09:10:51 +0800
+
 peony (4.10.0.5-ok1~0611) nile; urgency=medium
 
   * 同步upstream分支拷贝优化代码
