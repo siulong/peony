@@ -1,0 +1,43 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Wed, 19 Jun 2024 13:50:47 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 46.0% (88 of 191 strings)
+
+Translation: openkylin-nile-new/peony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt/ug/
+---
+ translations/peony-qt/peony-qt_ug.ts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/translations/peony-qt/peony-qt_ug.ts b/translations/peony-qt/peony-qt_ug.ts
+index 98d9142..0a01236 100644
+--- a/translations/peony-qt/peony-qt_ug.ts
++++ b/translations/peony-qt/peony-qt_ug.ts
+@@ -689,7 +689,7 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
+     <message>
+         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
+         <source>Force unmount failed</source>
+-        <translation type="unfinished"></translation>
++        <translation>مەجبۇرىي چۈشۈرۈش مەغلۇپ بولدى.</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
+@@ -741,7 +741,7 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
+         <source>Data synchronization is complete and the device can be safely unplugged!</source>
+-        <translation type="unfinished"></translation>
++        <translation>سانلىق مەلۇماتلار ماس قەدەمدە تاماملاندى، ئۈسكۈنىلەرنى بىخەتەر ھالدا ئېلىۋەتكىلى بولىدۇ!</translation>
+     </message>
+     <message>
+         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="682"/>
+@@ -756,7 +756,7 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
+         <source>File Manager</source>
+-        <translation type="unfinished"></translation>
++        <translation>ھۆججەت باشقۇرغۇچ</translation>
+     </message>
+ </context>
+ <context>
