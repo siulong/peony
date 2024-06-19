@@ -6,17 +6,17 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
         <source>label management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>بەلگە باشقۇرۇش. . .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="72"/>
         <source>Remove &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 نى چىقىرىۋېتىدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="92"/>
         <source>add  &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 نى قوشىدۇ</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="55"/>
         <source>Save Password</source>
-        <translation type="unfinished"></translation>
+        <translation>مەخپىي نومۇرنى ساقلاش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="62"/>
@@ -67,17 +67,17 @@
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="477"/>
         <source> is busy!</source>
-        <translation type="unfinished"></translation>
+        <translation> ناھايىتى ئالدىراش!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="516"/>
         <source>is busy!</source>
-        <translation type="unfinished"></translation>
+        <translation>ناھايىتى ئالدىراش!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="563"/>
         <source> not support udf at present.</source>
-        <translation type="unfinished"></translation>
+        <translation> ھازىرچە udf نى قوللىمايدۇ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="570"/>
