@@ -689,7 +689,7 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>مەجبۇرىي چۈشۈرۈش مەغلۇپ بولدى.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
@@ -741,7 +741,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>سانلىق مەلۇماتلار ماس قەدەمدە تاماملاندى، ئۈسكۈنىلەرنى بىخەتەر ھالدا ئېلىۋەتكىلى بولىدۇ!</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="682"/>
@@ -756,7 +756,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەت باشقۇرغۇچ</translation>
     </message>
 </context>
 <context>
