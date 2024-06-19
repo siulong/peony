@@ -40,7 +40,8 @@ Build-Depends: debhelper-compat (=12),
                libukui-search-dev,
                libkysdk-systime-dev,
                libkysdk-datacollect-dev,
-               libqt5remoteobjects5-dev
+               libqt5remoteobjects5-dev,
+	       libkysdk-soundeffects-dev
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Homepage: https://www.ukui.org/
