@@ -356,6 +356,10 @@ void FileMoveOperation::move()
     }
 
     operationStartSnyc();
+    if (m_total_count <= 500 && m_total_size < 300 * 1024 * 1024) {
+        syncDestUri(m_dest_dir_uri);
+    }
+
 
 
 #if 0

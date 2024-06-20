@@ -1187,6 +1187,9 @@ void FileCopyOperation::run()
         }
     }
 
+    if (m_total_count <= 500 && m_total_size < 300 * 1024 * 1024) {
+        syncDestUri(m_dest_dir_uri);
+    }
 
     //comment to fix bug#177163, copy and paste file has error and play success sound issue
     //copy operation has finished, no need reset flag, keep the same with move-operation
@@ -1220,6 +1223,7 @@ void FileCopyOperation::run()
     }
     m_info->m_dest_uris = m_info->m_node_map.values();
     nodes.clear();
+
 #ifdef KY_UDF_BURN
     if (mHelper->isUnixCDDevice() && !isCancelled()) {
         Q_EMIT operationUdfBurnRunning(true);

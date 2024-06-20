@@ -188,6 +188,24 @@ void FileOperation::fileSync(QString srcFile, QString destDir)
     }
 }
 
+bool FileOperation::syncDestUri(const QString &destUri)
+{
+    bool ret = false;
+    g_autoptr (GFile) ddir = g_file_new_for_uri (destUri.toUtf8().constData());
+    char * path = g_file_get_path(ddir);
+    operationStartSnyc();
+    QProcess p;
+    p.start(QString("/usr/bin/sync -f %1").arg(path));
+    ret = p.waitForFinished(-1);
+    if (p.exitCode() == 0) {
+        qDebug() << "sync completed successfully";
+    } else {
+        qDebug() << "sync failed with exit code:" << p.exitCode();
+    }
+    g_free(path);
+    return ret;
+}
+
 void FileOperation::notifyFileWatcherOperationFinished()
 {
     if (!qApp->allWidgets().isEmpty()) {

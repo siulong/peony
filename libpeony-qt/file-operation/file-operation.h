@@ -359,6 +359,7 @@ protected:
     bool nameIsValid (QString& uri);
     bool makeFileNameValidForDestFS (QString& srcPath, QString& destPath, QString* newFileName);
     void OperatorThreadPause();
+    bool syncDestUri(const QString &destUri);
 
     GCancellableWrapperPtr getCancellable() {
         return m_cancellable_wrapper;

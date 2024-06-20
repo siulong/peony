@@ -32,7 +32,7 @@ using namespace Peony;
 
 FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
 {
-    char *basename = nullptr;
+//    char *basename = nullptr;
     m_uri = uri;
     m_parent = parent;
     m_reporter = reporter;
@@ -48,7 +48,7 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
         m_basename = qurl.fileName(QUrl::FullyEncoded);
     }
     m_dest_basename = m_basename;
-    g_free(basename);
+//    g_free(basename);
 
     //use G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS to avoid unnecessary recursion.
     m_is_folder = g_file_query_file_type(file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr) == G_FILE_TYPE_DIRECTORY;
