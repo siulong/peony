@@ -383,6 +383,8 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         m_proxy_model->invalidate();
     });
 
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &QTreeView::doItemsLayout);
+
     connect(Peony::GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString& key){
         if (SHOW_NETWORK == key) {
             for (int i = 0; i < m_proxy_model->rowCount(); ++i) {

@@ -1453,6 +1453,8 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         }
         m_need_resize_header = false;
     });
+
+    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_view, &QTreeView::doItemsLayout);
 }
 
 void ListView2::repaintView()
