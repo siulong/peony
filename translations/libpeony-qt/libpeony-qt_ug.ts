@@ -1983,7 +1983,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="237"/>
         <source>label management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>بەلگە باشقۇرۇش ...</translation>
     </message>
 </context>
 <context>
@@ -1991,7 +1991,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="422"/>
         <source>label management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>بەلگە باشقۇرۇش ...</translation>
     </message>
 </context>
 <context>
@@ -4261,7 +4261,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="54"/>
         <source>Disc Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>دېسكا تۈرى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="62"/>
