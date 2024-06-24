@@ -233,12 +233,12 @@
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="853"/>
         <source>Failed to get screen config</source>
-        <translation type="unfinished"></translation>
+        <translation>ئېكران سەپلىمىسىگە ئېرىشەلمىدى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="853"/>
         <source>Error message is: %1. Using fallback config to setup desktop.</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتالىق ئۇچۇرى: ٪1. ئۈستەل يۈزىنى تەڭشەش ئۈچۈن ئارقىغا قايتىدىغان سەپلىمە ئىشلىتىلىدۇ.</translation>
     </message>
 </context>
 <context>
