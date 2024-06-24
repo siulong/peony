@@ -1,0 +1,31 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 24 Jun 2024 06:14:02 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 100.0% (47 of 47 strings)
+
+Translation: openkylin-nile-new/peony-qt-desktop
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt-desktop/ug/
+---
+ translations/peony-qt-desktop/peony-qt-desktop_ug.ts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+index 7ee4ecc..98f0e90 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+@@ -233,12 +233,12 @@
+     <message>
+         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="853"/>
+         <source>Failed to get screen config</source>
+-        <translation type="unfinished"></translation>
++        <translation>ئېكران سەپلىمىسىگە ئېرىشەلمىدى</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="853"/>
+         <source>Error message is: %1. Using fallback config to setup desktop.</source>
+-        <translation type="unfinished"></translation>
++        <translation>خاتالىق ئۇچۇرى: ٪1. ئۈستەل يۈزىنى تەڭشەش ئۈچۈن ئارقىغا قايتىدىغان سەپلىمە ئىشلىتىلىدۇ.</translation>
+     </message>
+ </context>
+ <context>
