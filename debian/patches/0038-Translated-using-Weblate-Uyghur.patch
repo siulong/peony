@@ -1,0 +1,43 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 24 Jun 2024 06:12:23 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 100.0% (759 of 759 strings)
+
+Translation: openkylin-nile-new/libpeony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/libpeony-qt/ug/
+---
+ translations/libpeony-qt/libpeony-qt_ug.ts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/translations/libpeony-qt/libpeony-qt_ug.ts b/translations/libpeony-qt/libpeony-qt_ug.ts
+index a200cfc..ae1d051 100644
+--- a/translations/libpeony-qt/libpeony-qt_ug.ts
++++ b/translations/libpeony-qt/libpeony-qt_ug.ts
+@@ -1983,7 +1983,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="237"/>
+         <source>label management ...</source>
+-        <translation type="unfinished"></translation>
++        <translation>بەلگە باشقۇرۇش ...</translation>
+     </message>
+ </context>
+ <context>
+@@ -1991,7 +1991,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="422"/>
+         <source>label management ...</source>
+-        <translation type="unfinished"></translation>
++        <translation>بەلگە باشقۇرۇش ...</translation>
+     </message>
+ </context>
+ <context>
+@@ -4261,7 +4261,7 @@ Do you want to unmount forcely?</source>
+     <message>
+         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="54"/>
+         <source>Disc Type:</source>
+-        <translation type="unfinished"></translation>
++        <translation>دېسكا تۈرى:</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="62"/>
