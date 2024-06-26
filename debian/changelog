@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0626) nile; urgency=medium
+
+  * fix #I9JZ3T
+  * 更新ug_CN翻译
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 26 Jun 2024 09:17:35 +0800
+
 peony (4.10.0.5-ok1~0621) nile; urgency=medium
 
   * 新增ug_CN的翻译
