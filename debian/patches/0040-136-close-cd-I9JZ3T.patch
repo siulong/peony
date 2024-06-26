@@ -1,0 +1,38 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 26 Jun 2024 01:11:48 +0000
+Subject: =?utf-8?b?ITEzNiBjbG9zZS1jZCAjSTlKWjNU44CQ5paH566h44CR5aSa5Liq5bqU?=
+ =?utf-8?b?55So5YaF6YOo6LCD6LW355qE5paH566h5by556qX5a2Y5Zyo5byC5bi4IE1lcmdl?=
+ =?utf-8?b?IHB1bGwgcmVxdWVzdCAhMTM2IGZyb20g5p2o6Imz5b6uL29wZW5reWxpbi1uaWxl?=
+ =?utf-8?b?LXRtcDE=?=
+
+---
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 2 ++
+ src/control/navigation-side-bar.cpp                              | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index 970e013..df27439 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -1453,6 +1453,8 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
+         }
+         m_need_resize_header = false;
+     });
++
++    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_view, &QTreeView::doItemsLayout);
+ }
+ 
+ void ListView2::repaintView()
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 7a431dc..2e5d5d0 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -349,6 +349,8 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+         m_proxy_model->invalidate();
+     });
+ 
++    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &QTreeView::doItemsLayout);
++
+     connect(Peony::GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString& key){
+         if (SHOW_NETWORK == key) {
+             for (int i = 0; i < m_proxy_model->rowCount(); ++i) {
