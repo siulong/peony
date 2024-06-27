@@ -1,0 +1,20 @@
+From: hemh <hemeihong@kylinos.cn>
+Date: Thu, 27 Jun 2024 15:17:50 +0800
+Subject: Update changelog of 4.10.0.5-ok1~0627.
+
+---
+ libpeony-qt/volumeManager.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libpeony-qt/volumeManager.cpp b/libpeony-qt/volumeManager.cpp
+index d7ef052..29ffd0d 100644
+--- a/libpeony-qt/volumeManager.cpp
++++ b/libpeony-qt/volumeManager.cpp
+@@ -1944,6 +1944,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
+ 
+     auto thread = static_cast<GetOccupiedAppsInfoThread *>(user_data);
+     thread->signal_occupiedAppInfo(occupiedAppMap, message);
++    g_mount_operation_reply(thread->getMountOp(), G_MOUNT_OPERATION_ABORTED);/* 解决一直弹出信息框问题，link to issue#I9VOWE. */
+ }
+ 
+ GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const
