@@ -1944,6 +1944,7 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
 
     auto thread = static_cast<GetOccupiedAppsInfoThread *>(user_data);
     thread->signal_occupiedAppInfo(occupiedAppMap, message);
+    g_mount_operation_reply(thread->getMountOp(), G_MOUNT_OPERATION_ABORTED);/* 解决一直弹出信息框问题，link to issue#I9VOWE. */
 }
 
 GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const
