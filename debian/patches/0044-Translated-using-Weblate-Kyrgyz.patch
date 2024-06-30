@@ -1,0 +1,255 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Sun, 30 Jun 2024 09:26:54 +0000
+Subject: Translated using Weblate (Kyrgyz)
+
+Currently translated at 2.3% (18 of 759 strings)
+
+Translation: openkylin-nile-new/libpeony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/libpeony-qt/ky/
+---
+ translations/libpeony-qt/libpeony-qt_kk.ts | 33 +++++++++++++++++++-----------
+ translations/libpeony-qt/libpeony-qt_ky.ts | 33 +++++++++++++++++++-----------
+ 2 files changed, 42 insertions(+), 24 deletions(-)
+
+diff --git a/translations/libpeony-qt/libpeony-qt_kk.ts b/translations/libpeony-qt/libpeony-qt_kk.ts
+index 4b3cce1..38d2df0 100644
+--- a/translations/libpeony-qt/libpeony-qt_kk.ts
++++ b/translations/libpeony-qt/libpeony-qt_kk.ts
+@@ -394,7 +394,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
+         <source>Renaming failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>قاتە دىمقىل بەرۋ جەڭىلىپ قالدى، وبالى:%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
+@@ -418,7 +418,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="107"/>
+         <source>Copying failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>نۇسقالاۋ جەڭىلىپ قالدى، وبالى:%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="111"/>
+@@ -428,7 +428,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="116"/>
+         <source>Moving failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>جوتكەۋ جەڭىلىپ قالدى، وبالى:%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="120"/>
+@@ -438,7 +438,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="121"/>
+         <source>The reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>وبالى:%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="140"/>
+@@ -630,7 +630,8 @@
+         <location filename="../../libpeony-qt/volumeManager.cpp" line="1866"/>
+         <source>Forcibly pulling out the device may cause data
+  loss or device exceptions!</source>
+-        <translation type="unfinished"></translation>
++        <translation>اسبابٸن ماجبۇر تارتىپ جاريالاۋ ساندىق مالىمەتتەردى كەتىرىپ جاريالاۋى مۇمكان
++جوعالىپ كەتۋ ياكي جابدىقتار بينورمال بولۋ!</translation>
+     </message>
+ </context>
+ <context>
+@@ -2125,7 +2126,9 @@
+ 	Meihong He &lt;hemeihong@kylinos.cn&gt;
+ 
+ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source>
+-        <translation type="unfinished"></translation>
++        <translation>اۆتور: يۆلەن &lt;lanyue @kylinos. cn&gt;
++خې مېيخوڭ &lt;hemeihong@ kylinos&gt; cn&gt;
++باسىلىم ۇقىعى يەگەرلٸك ۇقىعى (C):2019-يىلىدىن 2020-يىلىغىچە، تيەنجىن KYLIN حابار تەحىنيكا شەكتى سەرىكتى، شەكتى سەرىكتى.</translation>
+     </message>
+     <message>
+         <source>Author: 
+@@ -2832,7 +2835,8 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
+         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="542"/>
+         <source>The linked app is changed or uninstalled, so it can not work correctly. 
+ Do you want to delete the link file?</source>
+-        <translation type="unfinished"></translation>
++        <translation>جالعانعان ئەپلەر وزگەرتٸلدٸ ياكي ٶشٸرٸلدٸ، سوندىقتان نورمال قىزىمەت قىلعالى بولمايدى.
++قولدانبا حۇجاتتى ٶشٸرەسٸزبە؟</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="386"/>
+@@ -3024,7 +3028,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="58"/>
+         <source>Source File:</source>
+-        <translation type="unfinished"></translation>
++        <translation>قاينار حۇجات:</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="59"/>
+@@ -3255,7 +3259,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="446"/>
+         <source>Insufficient storage space</source>
+-        <translation type="unfinished"></translation>
++        <translation>ساقتاۋ بوستٸعٸ جەتىسپەيدى</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="449"/>
+@@ -4385,7 +4389,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="98"/>
+         <source>; %1 file, %2</source>
+-        <translation type="unfinished"></translation>
++        <translation>; %1 حۇجات،  %2</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="105"/>
+@@ -4399,7 +4403,7 @@ Do you want to delete the link file?</source>
+         <location filename="../../libpeony-qt/sync-thread.cpp" line="66"/>
+         <source>notify</source>
+         <translatorcomment>温馨提示</translatorcomment>
+-        <translation type="unfinished"></translation>
++        <translation>ۇقتٸرۋ</translation>
+     </message>
+ </context>
+ <context>
+@@ -4571,7 +4575,12 @@ Do you want to delete the link file?</source>
+ 	Meihong He &lt;hemeihong@kylinos.cn&gt;
+ 
+ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
+-        <translation type="unfinished"></translation>
++        <translation>اۆتورى:
++يۆلەن &lt;lanyue @kylinos.  cn&gt;
++
++خې مېيخوڭ &lt;hemeihong@ kylinos&gt;  cn&gt;
++
++باسىلىم ۇقىعى يەگەرلٸك ۇقىعى (C):2019-جىلدىق تيەنجىن KYLIN حابار تەحىنيكا شەكتى سەرىكتى.</translation>
+     </message>
+     <message>
+         <source>Author: 
+diff --git a/translations/libpeony-qt/libpeony-qt_ky.ts b/translations/libpeony-qt/libpeony-qt_ky.ts
+index c60f928..37fd58a 100644
+--- a/translations/libpeony-qt/libpeony-qt_ky.ts
++++ b/translations/libpeony-qt/libpeony-qt_ky.ts
+@@ -394,7 +394,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
+         <source>Renaming failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>قايرا اتاق بەرۉۉ جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
+@@ -418,7 +418,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="107"/>
+         <source>Copying failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>ۉلگۉسۉن الۇۇ  جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="111"/>
+@@ -428,7 +428,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="116"/>
+         <source>Moving failed, the reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>جۅتكۅۅ جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="120"/>
+@@ -438,7 +438,7 @@
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="121"/>
+         <source>The reason is: %1</source>
+-        <translation type="unfinished"></translation>
++        <translation>سەبەبى :%1</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="140"/>
+@@ -630,7 +630,8 @@
+         <location filename="../../libpeony-qt/volumeManager.cpp" line="1866"/>
+         <source>Forcibly pulling out the device may cause data
+  loss or device exceptions!</source>
+-        <translation type="unfinished"></translation>
++        <translation>اسپاپتى زوردۇق مەنەن  تارتىپ  ۅندۉرۉش  ساندۇۇ باياندامالاردى  كەلىترىپ ۅندۉرۉش ى مۉمكۉن
++جوعولۇپ كەتۉۉ  كۅرۉنۉشتۅرۉ زاپجاستار بۅتۅنچۅ بولۇش !</translation>
+     </message>
+ </context>
+ <context>
+@@ -2125,7 +2126,9 @@
+ 	Meihong He &lt;hemeihong@kylinos.cn&gt;
+ 
+ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source>
+-        <translation type="unfinished"></translation>
++        <translation>اپتور: يۆلەن &lt;lanyue @kylinos. cn&gt;
++خې مېيخوڭ &lt;hemeihong@ kylinos&gt; cn&gt;
++باسما ۇقۇعۇ ەەلىك ۇقۇعۇ (C):2019-يىلىدىن 2020-يىلىغىچە، تيەنجىن KYLIN ۇچۇر تەحنىكا چەكتۉۉ شەركەتى، چەكتۉۉ شەركەتى.</translation>
+     </message>
+     <message>
+         <source>Author: 
+@@ -2832,7 +2835,8 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
+         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="542"/>
+         <source>The linked app is changed or uninstalled, so it can not work correctly. 
+ Do you want to delete the link file?</source>
+-        <translation type="unfinished"></translation>
++        <translation>جالعانعان  ئەپلەر   ۅزگۅرتۉلدۉ كۅرۉنۉشتۅرۉ ۅچۉرۉلدۉ، وشوعو نورماال  قىزمات جاساعالى بولبويت .
++جالعانما   ۅجۅتۉن ۅچۉرۅسۉزبۉ؟</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="386"/>
+@@ -3024,7 +3028,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="58"/>
+         <source>Source File:</source>
+-        <translation type="unfinished"></translation>
++        <translation>كەلۉۉ جەر جانى  ۅجۅت:</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="59"/>
+@@ -3255,7 +3259,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="446"/>
+         <source>Insufficient storage space</source>
+-        <translation type="unfinished"></translation>
++        <translation>ساقتوو بوشتۇعۇ جەتىشبەيت</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="449"/>
+@@ -4385,7 +4389,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="98"/>
+         <source>; %1 file, %2</source>
+-        <translation type="unfinished"></translation>
++        <translation>; %1 ۅجۅت،  %2</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="105"/>
+@@ -4399,7 +4403,7 @@ Do you want to delete the link file?</source>
+         <location filename="../../libpeony-qt/sync-thread.cpp" line="66"/>
+         <source>notify</source>
+         <translatorcomment>温馨提示</translatorcomment>
+-        <translation type="unfinished"></translation>
++        <translation>ۇقتۇرۇۇ</translation>
+     </message>
+ </context>
+ <context>
+@@ -4571,7 +4575,12 @@ Do you want to delete the link file?</source>
+ 	Meihong He &lt;hemeihong@kylinos.cn&gt;
+ 
+ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
+-        <translation type="unfinished"></translation>
++        <translation>اپتورۇ:
++يۆلەن &lt;lanyue @kylinos.  cn&gt;
++
++خې مېيخوڭ &lt;hemeihong@ kylinos&gt;  cn&gt;
++
++باسما ۇقۇعۇ ەەلىك ۇقۇعۇ (C):2019-جلدىق تيەنجىن KYLIN ۇچۇر تەحنىكا چەكتۉۉ شەركەتى.</translation>
+     </message>
+     <message>
+         <source>Author: 
