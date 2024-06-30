@@ -15,7 +15,11 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans CJK SC&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC“//W3C//DTD HTML 4.0//EN”http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=“qrichtext”content=“1”/&gt;&lt;style type=“text/css”&gt;
+p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
+&lt;/style&gt;&lt;/head&gt;&lt;body style=“font-family:&apos;Noto Sans CJK SC&apos;；font-size:10pt；font-كەڭدىگى:400；font-style:نورمال；”&gt;
+&lt;p style=“-qtابزاس تيپى：قۇرعاق；شاراپات جان ارالققا شوقى بولەك：0px；شاراپات جاق ارالققا استٸ بولەك：0px，سول شاراپات جاق ارالققا0px；وڭ شاراپات جان ارالققا0px；-qtپارشا تارايتۋ كولەمى ：0；تەكىسىت تارايتۋ كولەمى ：0px；ٴارىپ ۇلكەن كشىلگى：11pt；”&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
@@ -144,7 +148,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/header-bar.cpp" line="163"/>
         <source>Go Up</source>
-        <translation type="unfinished"></translation>
+        <translation>ٷستٸنەن قاراپ</translation>
     </message>
     <message>
         <source>Details</source>
@@ -435,7 +439,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="309"/>
         <source>Can not open %1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 نى اشۋئاجرىتىششىن بولمادى،  %2</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
@@ -776,7 +780,10 @@ p, li { white-space: pre-wrap; }
 1. Peony-Qt might be running as root, that means you have the higher permission and can do some things which normally forbidden. But, you should learn that if you were in a root, the virtual file system will lose some featrue such as you can not use &quot;My Computer&quot;, the theme and icons might also went wrong. So, run peony-qt in a root is not recommended.
 
 2. You are using a non-qt theme for your system but you didn&apos;t install the platform theme plugin for qt&apos;s applications. If you are using gtk-theme, try installing the qt5-gtk2-platformtheme package to resolve this problem.</source>
-        <translation type="unfinished"></translation>
+        <translation>Peony-Qt سەستاماسىنىڭ اي كۇن ئۇسلۇبىغا قول جەتكٸزبەدٸ.. ەكٸ سەبەپ نۇ ماسەلەنى كەتىرىپ شٸعۋٸ مۇمكان:
+
+1.  Peony-Qtبالكٸم روت سالاۋاتى مەنەن اتقار بولۋٸ مۇمكان، نۇ، ٴٴسىزدىڭ الٸدە جوعارعى ۇقىق دائىرىڭىزنىڭ بارلىقىدىن دەرەك بەرەدٸ  ادەتتە شەكتەلگەن جۇمىستاردى ورىنداسا بولادٸ.  بىراق بٸلۋٸڭٸز كەرەك،  قيسٸق ٴٴسىز جۇلدىز باس مازمۇنىندا بولساڭٸز،  جاساندى حۇجات سەستيماسى بارٸ قابٸلەتتتەردٸ جوعالتادى,  ماسەلەن، ٴٴسىز «مەنىڭ كٶمپيٶتەرٸم» نى ئىشلىتەلمەيٴٴسىز،  باس تەمە ۋا سىنبەلگىدىمۇ قاتەلىك كورىلۋى مۇمكان.  سوندىقتان،  Peony-Qt نى جۇلدىزدا ماڭدۇرۇش ۇسٸنٸس بەرۋ ورىندالمايدى.
+2.  ٴسىزدىڭ سەستاماڭىزعا qt بولماعان سلوب ٸستەتكەن،  ٴبىراق ٴسىز qt جيۋ دەتالىنا سۇپى باس تەمە قىستىرماسىن كىرگىزبەدىڭىز.  قيسٸق ٴسىزدىڭ ٸستەتكەنٸڭٸز gtk سلوبى بولسا،  نۇ ماسەلەنى شەشىم ەتۋ ەتۋ ٷشٸن qt 5 gtk 2 platform theme بۇلاق تۇسىرىپ سىناپ كور.</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="495"/>
@@ -790,7 +797,12 @@ p, li { white-space: pre-wrap; }
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
-        <translation type="unfinished"></translation>
+        <translation>اۆتور:
+يۆلەن &lt;lanyue @kylinos.  cn&gt;
+
+خې مېيخوڭ &lt;hemeihong@ kylinos&gt;  cn&gt;
+
+باسىلىم ۇقىعى يەگەرلٸك ۇقىعى (C):2020،  KylinSoft   جۇمساق دەتال جارنا شەكتى سەرىكتى شەكتى سەرىكتى.</translation>
     </message>
     <message>
         <source>Author:
