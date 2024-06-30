@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -24,7 +24,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>تەكىست ەنى ، تامعاسى</translation>
     </message>
     <message>
         <source>Offical Website: </source>
@@ -38,14 +38,14 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation type="unfinished"></translation>
+        <translation>تەيلۅۅ جانا قولدوش ، دەم بەرىش : </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت باشقارعۇۇچۇ</translation>
     </message>
     <message>
         <source>peony</source>
@@ -55,7 +55,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation type="unfinished"></translation>
+        <translation>Peony بولسو بىر  تۉر  ىشتەتۉۉچۉلۅردۉن ۅجۅت باشقارىش  ساامالىعىنا  جەرلىك  بەرەتۇرعان گىرافىكلاشقان جۇمشاق تەتىك . ال  ىشتەتۉۉچۉلۅرگۅ كۅپ ال چرايدىغان ۅجۅت ماشقۇلدانۇۇ  قۇرباتى  مەنەن  قامدايت، مىسالى، ۅجۅت كۅرۉۉ ، ۅجۅت نۇستۉر اش، چاپتوو، قىيىش ، ۅچۉرۉۉ، قايرا اتاق بەرۉۉ، ۅجۅت تانداش ، ئەپ اچۇۇ، ۅجۅت ىزدۅۅ، ۅجۅتلەرنى قاتارلاش ، ۅجۅتلەرنى الدىن  كۅرۉۉ  قاتارلۇۇلار ىشتەتۉۉچۉلۅرگۅڭ  كۅرۉنمۅ بەتىندە تىكە بارۇۇ ، ۇدۇل بارۇۇ  ابالدا ۅجۅت باشقارىش  ساامالىعىنا  ىڭعايلۇۇ يارىتىپ بەرەت.</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -69,7 +69,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/windows/about-dialog.cpp" line="50"/>
         <location filename="../../src/windows/about-dialog.cpp" line="117"/>
         <source>Version number: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>باسما نومۇرۇ :%1</translation>
     </message>
     <message>
         <source>File manager is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
@@ -85,12 +85,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="72"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>قايرا ات قويۇش</translation>
     </message>
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation type="unfinished"></translation>
+        <translation>تۉس تۅپتۅش</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -114,12 +114,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="136"/>
         <source>Go Back</source>
-        <translation type="unfinished"></translation>
+        <translation>قايتۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="144"/>
         <source>Go Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>الدىنا ىلگەرلۅۅ</translation>
     </message>
     <message>
         <source>Search</source>
@@ -128,22 +128,22 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="236"/>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation>كۅرۉۉ  تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="274"/>
         <source>Sort Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ىرەتتەلگەن تىپ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="356"/>
         <source>Option</source>
-        <translation type="unfinished"></translation>
+        <translation>تانداش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="472"/>
         <source>Operate Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>ماشقۇلدانۇۇ  ەسكەرتمەسى</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="163"/>
@@ -157,115 +157,115 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="369"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>گۅچۉرۉش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="372"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>ۉلگۉسۉن الۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="384"/>
         <source>&amp;Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp; قىيىش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="387"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>قىيىش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="393"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىعىن تانداش (&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="397"/>
         <location filename="../../src/control/header-bar.cpp" line="409"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىعىن تانداڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="414"/>
         <location filename="../../src/control/header-bar.cpp" line="926"/>
         <location filename="../../src/control/header-bar.cpp" line="944"/>
         <source>Deselect All</source>
-        <translation type="unfinished"></translation>
+        <translation>تانداشتى  بەكەر  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="419"/>
         <source>&amp;Delete to trash</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp; شىپىرىندى  ساندىققا تاشتاش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="422"/>
         <source>Delete to trash</source>
-        <translation type="unfinished"></translation>
+        <translation>شىپىرىندى  ساندىققا تاشتاش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="473"/>
         <source>Don&apos;t find any terminal, please install at least one terminal!</source>
-        <translation type="unfinished"></translation>
+        <translation>ەچقانداي تىرمىنال تابالبادىق، از دەگەندە  بىر  تىرمىنال قاچالاڭ!</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="728"/>
         <location filename="../../src/control/header-bar.cpp" line="929"/>
         <location filename="../../src/control/header-bar.cpp" line="939"/>
         <source>Select All Item</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىق تۉردۉ تانداڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="738"/>
         <location filename="../../src/control/header-bar.cpp" line="873"/>
         <location filename="../../src/control/header-bar.cpp" line="912"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>تانداش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="713"/>
         <source>Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>العاچىنا كەلتىرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>چوڭويتۇش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="915"/>
         <source>Select Done</source>
-        <translation type="unfinished"></translation>
+        <translation>تانداپ بۉتۉرۉڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="765"/>
         <source>MoveTo</source>
-        <translation type="unfinished"></translation>
+        <translation>جۅتكۅپ بەرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="207"/>
         <source>Icon View</source>
         <translatorcomment>图标视图</translatorcomment>
-        <translation></translation>
+        <translation>تۉر گۅرۉنۉشۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="217"/>
         <source>List View</source>
-        <translation type="unfinished"></translation>
+        <translation>تىزىمدىك  گۅرۉنۉشۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="774"/>
         <source>CopyTo</source>
-        <translation type="unfinished"></translation>
+        <translation>عا گۅچۉرۉش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="783"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="850"/>
         <source>Select path</source>
-        <translation type="unfinished"></translation>
+        <translation>جولدۇ  تانداش</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -285,7 +285,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>ەڭ كىچىك   ابالى</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
@@ -302,7 +302,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 <context>
@@ -310,12 +310,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="180"/>
         <source>Open In &amp;New Window</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اچۇۇ (&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="204"/>
         <source>Open In New &amp;Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى تانداش  كارتاىسندا اچۇۇ (&amp;T)</translation>
     </message>
 </context>
 <context>
@@ -323,7 +323,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-navigation-side-bar.cpp" line="516"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅتتۅر</translation>
     </message>
 </context>
 <context>
@@ -331,32 +331,32 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/main-window.cpp" line="889"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="411"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>اچۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="418"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>قايرا-قايرا</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>warn</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="790"/>
         <source>This operation is not supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل ماشقۇلدانۇۇنۇ  قولدوبويت.</translation>
     </message>
     <message>
         <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -385,7 +385,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/main-window.cpp" line="902"/>
         <source>New Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى ۅجۅت قىپچىعىچ</translation>
     </message>
 </context>
 <context>
@@ -401,39 +401,39 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>warn</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="590"/>
         <source>This operation is not supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل ماشقۇلدانۇۇنۇ  قولدوبويت.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="224"/>
         <source>The device is in busy state, please perform this operation later.</source>
-        <translation type="unfinished"></translation>
+        <translation>زاپجاستار الدىراش، سەل تۇرۇپ بۇل ماشقۇلدانۇۇنۇ  اتقارماق  قىلىڭ.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="628"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل بىر  بۅتۅنچۅ Udisk، انى  وڭشوڭ كۅرۉنۉشتۅرۉ فورماتتاڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل بىر   كۅڭدۅي قوزعوتقۇچ ، بىر    پارچا دىسكا  قىستىرىڭ.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
         <source>Open In New Window</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اچىلىش</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="275"/>
@@ -444,7 +444,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="293"/>
         <source>Open In New Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى بەلگە  بەتتە  اچىلىش</translation>
     </message>
     <message>
         <source>Open In New &amp;Tab</source>
@@ -460,12 +460,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="848"/>
         <source>Manager tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>باشقارعىچ  ەنى ، تامعاسى  ...</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="851"/>
         <source>More tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>داعى ەلە كۅپ بەلگە ...</translation>
     </message>
 </context>
 <context>
@@ -477,7 +477,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/navigation-tab-bar.cpp" line="131"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 نان %1 نى ىزدۅۅ</translation>
     </message>
 </context>
 <context>
@@ -489,103 +489,103 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="78"/>
         <source>Keep Allow</source>
-        <translation type="unfinished"></translation>
+        <translation>جول قويۇنۇ ساقتاپ  قىلۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۅت</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
         <source>Show File Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت گەڭەيتىلمە  اتاعىن كۅرسۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="103"/>
         <source>Show Create Time</source>
-        <translation type="unfinished"></translation>
+        <translation>قۇرۇۇ ۇباقتىن كۅرسۅتۅت.</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="110"/>
         <source>Show Relative Time</source>
-        <translation type="unfinished"></translation>
+        <translation>سالىشتۇرمالۇۇلۇق ۇباقتىن كۅرسۅتۅت.</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="123"/>
         <source>Forbid thumbnailing</source>
-        <translation type="unfinished"></translation>
+        <translation>تۇرۇقتاندىرۇۇ چەكتەلەت</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="133"/>
         <source>Resident in Backend</source>
-        <translation type="unfinished"></translation>
+        <translation>ارقا تاراپتا  تۇرۇش .</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="142"/>
         <source>Parallel Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>پارالەل ماشقۇلدانۇۇ  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="148"/>
         <source>Set samba password</source>
-        <translation type="unfinished"></translation>
+        <translation>samba جاشىرۇۇن  نومۇرۇن قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation type="unfinished"></translation>
+        <translation>ابونتتارردىن samba جاشىرۇۇن  نومۇرۇ  بار بولدۇ ، سامبا جاشىرۇۇن  نومۇرۇ نى العاچىنا كەلتىرۉۉ كەرەكبى؟</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Samba set user password</source>
-        <translation type="unfinished"></translation>
+        <translation>Samba كەرەكتۅۅچۉ جاشىرۇۇن  نومۇرۇن ورنوتقون</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="171"/>
         <source>Samba password:</source>
-        <translation type="unfinished"></translation>
+        <translation>جاشىرۇۇن  نومۇرۇ  Samba</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="181"/>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="181"/>
         <source>Samba set password failed, Please re-enter!</source>
-        <translation type="unfinished"></translation>
+        <translation>جاشىرۇۇن  نومۇر ورنوتۇ جەڭىلۉۉ بولدۇ ، قايتادان  كىرگىزىڭ Samba</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation type="unfinished"></translation>
+        <translation>ھەمبەھرلىنىش سەپتەمەسى   سان قاينارى نورماال  ەمەس ، ازىر ھەمبەھرلىنىش ماشعۇلاتى يۈزگۈزىلىۋاتقان كۅرۉنۉشتۅرۉ يۈزگۈزىلىۋاتمىغانلىقىنى ايقىنداڭ كۅرۉنۉشتۅرۉ قايتادان  ھەمبەھرلىنىڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="201"/>
         <source>Open each folder in a new window</source>
-        <translation type="unfinished"></translation>
+        <translation>جاڭى كۅزۅنۅكتۅ ار بىر  بىر  ۅجۅت قىپچىعىچتى  اچىڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="207"/>
         <source>Plugin manager Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>قىستىرما باشقارعىچ  تەڭشەگى</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="216"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>جەرلىك</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="220"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>جۅنۉندۅ</translation>
     </message>
 </context>
 <context>
@@ -593,27 +593,27 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="284"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>تۅپتۅش</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="295"/>
         <source>copy</source>
-        <translation type="unfinished"></translation>
+        <translation>ۉلگۉسۉن الۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="304"/>
         <source>paste</source>
-        <translation type="unfinished"></translation>
+        <translation>جولۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="313"/>
         <source>cut</source>
-        <translation type="unfinished"></translation>
+        <translation>سۉرۅت  تۇقتۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="322"/>
         <source>trash</source>
-        <translation type="unfinished"></translation>
+        <translation>شىپىرىندى</translation>
     </message>
 </context>
 <context>
@@ -621,12 +621,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation type="unfinished"></translation>
+        <translation>CloudStorage ساقتوو  سان قاينارى</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="55"/>
         <source>CloudFile</source>
-        <translation type="unfinished"></translation>
+        <translation>Cloud ۅجۅتۉۉ</translation>
     </message>
 </context>
 <context>
@@ -634,7 +634,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-favorite-item.cpp" line="46"/>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>ەڭ جاقشى كۆرىدىغانلىرى</translation>
     </message>
 </context>
 <context>
@@ -642,17 +642,17 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="60"/>
         <source>Computer</source>
-        <translation type="unfinished"></translation>
+        <translation>كومپىيۇتەر</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="79"/>
         <source>文件系统</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>سەستىما  دىسكاسى</translation>
     </message>
 </context>
 <context>
@@ -665,28 +665,28 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>قاسىيەت</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
         <source>Delete Symbolic</source>
-        <translation type="unfinished"></translation>
+        <translation>بەلگىنى ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="132"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="234"/>
         <source>Unmount</source>
-        <translation type="unfinished"></translation>
+        <translation>يۇيىۋېتىش</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="151"/>
         <source>Eject</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅندۉرۉش</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="203"/>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>فورماتتاش</translation>
     </message>
 </context>
 <context>
@@ -694,7 +694,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-personal-item.cpp" line="45"/>
         <source>Personal</source>
-        <translation type="unfinished"></translation>
+        <translation>جەكەلىك</translation>
     </message>
 </context>
 <context>
@@ -702,7 +702,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-separator-item.h" line="70"/>
         <source>(No Sub Directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>(بۅلۉمچۅ  مازمۇۇنۇ  جوق)</translation>
     </message>
 </context>
 <context>
@@ -710,7 +710,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>كەرەكتۅۅچۉ دىسكاسى</translation>
     </message>
 </context>
 <context>
@@ -718,7 +718,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/tablet-side-bar-factory.cpp" line="60"/>
         <source>Intel Side Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Intel  ۇقۇق ،امال  بالدىقى</translation>
     </message>
 </context>
 <context>
@@ -726,7 +726,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
     </message>
 </context>
 <context>
@@ -734,17 +734,17 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation type="unfinished"></translation>
+        <translation>سىز بۇل  ۅجۅتتۅرۉن ۅچۉرۉۉنۉ تۇراقتاندىرا الاسىزبى؟ ۅچۉرۉۉگۅ باشتاعان امان،  ۅچۉرۉلگەن  ۅجۅت تۉبۅلۉك  العاچىنا گەلبەيت .</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="115"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -756,22 +756,22 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/peony-application.cpp" line="170"/>
         <source>peony-qt</source>
-        <translation type="unfinished"></translation>
+        <translation>peony-qt ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="177"/>
         <source>Files or directories to open</source>
-        <translation type="unfinished"></translation>
+        <translation>اچاتۇرعان ۅجۅت كۅرۉنۉشتۅرۉ تىزىمدىك</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="177"/>
         <source>[FILE1, FILE2,...]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ۅجۅت1, ۅجۅت2,...]</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="224"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="224"/>
@@ -788,7 +788,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>Peony Qt</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="496"/>
@@ -855,22 +855,22 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/peony-application.h" line="67"/>
         <source>Close all peony-qt windows and quit</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىق Peony-Qt كۅزۅنۅگۉن تاقاپ جانىپ  چىعىڭ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="68"/>
         <source>Show items</source>
-        <translation type="unfinished"></translation>
+        <translation>كۅرسۅتۉۉ  تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="69"/>
         <source>Show folders</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت قىپچىعىچتى  كۅرسۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="70"/>
         <source>Show properties</source>
-        <translation type="unfinished"></translation>
+        <translation>قاسىيەتىن  كۅرسۅتۉۉ</translation>
     </message>
 </context>
 <context>
@@ -886,74 +886,75 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>زوردۇق مەنەن  تۉشۉرۉ جەڭىلۉۉ بولدۇ .</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="451"/>
         <source>Error: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>قاتاالىق  بايقالدى: %1 /n
+</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>ساندۇۇ بايانداما  شاي  قادامدا  بۉتۉردۉ دىققات ، شايمان ساامالىعى  جەڭىشتۉۉ ابالدا يۇيىۋېتىلدى !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>جۇۇش جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>يۈكنى يۇيغىلى بولبويت ، سىز بالكىم الدىن گەەبىر  پراگراممالاردى ئېتىۋېتىشىڭىز بولۇۇسۇ مۉمكۉن، مىسالى، رايونۇنا بۅلۉنۉپ  راداكسىيالاعىچ  قاتارلۇۇلار.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation type="unfinished"></translation>
+        <translation>قاتاالىق  كۅرۉلدۉ: ٪1 زوردۇق مەنەن  يۇيامدۇق؟</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="630"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="684"/>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
+        <translation>تەز  كۅرۉنمۅ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="631"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="685"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="632"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="686"/>
         <source>Eject Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>قانداقلا بولبوسۇن تەز  كۅرۉنمۅ چاستوتا</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>ساندۇۇ باياندامالار  شاي  قادامدا  بۉتۉردۉ دىققات، زاپچاستارى قووپسۇز ابالدا الىپتاشتاعالى بولوت !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="682"/>
         <source>Unable to eject %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 قاڭقىما كۅزۅنۅكتۉ چىعارعالى بولبويت</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="700"/>
         <source>PeonyNotify</source>
-        <translation type="unfinished"></translation>
+        <translation>Peony ۇقتۇرۇشتۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت باشقارعىچ</translation>
     </message>
 </context>
 <context>
@@ -961,47 +962,47 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت ناامى</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="46"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="50"/>
         <source>Original Path</source>
-        <translation type="unfinished"></translation>
+        <translation>العاچى   جول</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="82"/>
         <source>Use current sorting for all folders</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىق ۅجۅت قىسقىچقا قاراتا گەزەكتەكى  ىرەتتۅۅنۉ ىشتەتىڭ.</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="102"/>
         <source>By %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 تىن</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="111"/>
         <source>Newest to oldest</source>
-        <translation type="unfinished"></translation>
+        <translation>ەڭ يېڭىسىدىن ەڭ كونىسىغىچە</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="112"/>
         <source>Oldest to newest</source>
-        <translation type="unfinished"></translation>
+        <translation>ەڭ كونىسىدىن ەڭ يېڭىسىغىچە</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="114"/>
         <source>Files from large to small</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت چوڭدىن كىچىككە قاراتىپ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="115"/>
         <source>Files from small to large</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت كىچىكتەن چوڭىغا قاراتىپ</translation>
     </message>
     <message>
         <source>Use global sorting</source>
@@ -1010,12 +1011,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="42"/>
         <source>File Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="38"/>
         <source>Modified Date</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅزگۅرتۉلگۅن ۇباقتى</translation>
     </message>
     <message>
         <source>Modified Data</source>
@@ -1025,13 +1026,13 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/sort-type-menu.cpp" line="71"/>
         <location filename="../../src/control/sort-type-menu.cpp" line="118"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>كىچىكتەن چوڭعو قاراتىپ تىزۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="66"/>
         <location filename="../../src/control/sort-type-menu.cpp" line="117"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>چوڭدىن كىچىككە قاراتىپ تىزۉۉ</translation>
     </message>
 </context>
 <context>
@@ -1079,13 +1080,13 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="122"/>
         <source> %1 items </source>
-        <translation type="unfinished"></translation>
+        <translation> %1 تۉر </translation>
     </message>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="109"/>
         <location filename="../../src/control/tab-status-bar.cpp" line="218"/>
         <source>Searching for files ...</source>
-        <translation type="unfinished"></translation>
+        <translation>ازىر ۅجۅت ىزدەپ جاتات. . .</translation>
     </message>
     <message>
         <source>selected%1%2</source>
@@ -1094,7 +1095,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="159"/>
         <source> selected %1 items    %2</source>
-        <translation type="unfinished"></translation>
+        <translation> %1 تۉر %2 نى تاندادى</translation>
     </message>
     <message>
         <source> %1 items    selected %2 items</source>
@@ -1103,7 +1104,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-status-bar.cpp" line="161"/>
         <source> selected %1 items</source>
-        <translation type="unfinished"></translation>
+        <translation> تاندالعانى %1 تۉر</translation>
     </message>
 </context>
 <context>
@@ -1111,22 +1112,22 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="285"/>
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>شىپىرىندى</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="289"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>تازالوو</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="294"/>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>العاچىنا كەلتىرۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="451"/>
         <source>Computer</source>
-        <translation type="unfinished"></translation>
+        <translation>كومپىيۇتەر</translation>
     </message>
     <message>
         <source>Close Filter.</source>
@@ -1139,32 +1140,32 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="526"/>
         <source>Select Path</source>
-        <translation type="unfinished"></translation>
+        <translation>تاندا ش جولۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1347"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1349"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1708"/>
         <source>Opening such files is not currently supported</source>
-        <translation type="unfinished"></translation>
+        <translation>گەزەكتە  بۇل تۉر   ۅجۅتتۅرۉن اچۇۇنۇ قولدوبويت.</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1722"/>
         <source>Open failed</source>
-        <translation type="unfinished"></translation>
+        <translation>اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1723"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>مازمۇۇندۇ  اچۇۇ جەڭىلۉۉ بولدۇ ،  سىزدىن ۇقۇعۇڭۇز جوق!</translation>
     </message>
     <message>
         <source>Close advance search.</source>
@@ -1173,7 +1174,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
@@ -1199,12 +1200,12 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/tab-widget.cpp" line="586"/>
         <location filename="../../src/control/tab-widget.cpp" line="746"/>
         <source>is</source>
-        <translation type="unfinished"></translation>
+        <translation>بولسو</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="621"/>
         <source>Please input key words...</source>
-        <translation type="unfinished"></translation>
+        <translation>تۉيۉندۉۉ سۅزدۅردۉ  كىرگىزۉۉ...</translation>
     </message>
     <message>
         <source>Please input kay words...</source>
@@ -1214,109 +1215,109 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/tab-widget.cpp" line="707"/>
         <location filename="../../src/control/tab-widget.cpp" line="730"/>
         <source>contains</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅز ىچىنە  الات</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>name</source>
-        <translation type="unfinished"></translation>
+        <translation>ناامى</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>type</source>
-        <translation type="unfinished"></translation>
+        <translation>تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>modify time</source>
-        <translation type="unfinished"></translation>
+        <translation>تۉزۅتۉۉ ۇباقتى</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>file size</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="312"/>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>all</source>
-        <translation type="unfinished"></translation>
+        <translation>باردىق</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>file folder</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>image</source>
-        <translation type="unfinished"></translation>
+        <translation>سۉرۅت</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="312"/>
         <source>video</source>
-        <translation type="unfinished"></translation>
+        <translation>ايىپ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>text file</source>
-        <translation type="unfinished"></translation>
+        <translation>تەكىست ۅجۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>audio</source>
-        <translation type="unfinished"></translation>
+        <translation>دووش</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>others</source>
-        <translation type="unfinished"></translation>
+        <translation>باشقالار</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>wps file</source>
-        <translation type="unfinished"></translation>
+        <translation>wps ۅجۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>today</source>
-        <translation type="unfinished"></translation>
+        <translation>بۉگۉن</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this week</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل اپتا</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this month</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل اي</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>this year</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل جىل</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>yesterday</source>
-        <translation type="unfinished"></translation>
+        <translation>كەچە</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last week</source>
-        <translation type="unfinished"></translation>
+        <translation>الدىنقى اپتا</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last month</source>
-        <translation type="unfinished"></translation>
+        <translation>الدىنقى اي</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
         <source>last year</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇلتۇر</translation>
     </message>
     <message>
         <source>year ago</source>
@@ -1325,37 +1326,37 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>tiny(0-16K)</source>
-        <translation type="unfinished"></translation>
+        <translation>ازىرااق (0-16K)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>small(16k-1M)</source>
-        <translation type="unfinished"></translation>
+        <translation>كىچىك  (16k-1M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>empty(0K)</source>
-        <translation type="unfinished"></translation>
+        <translation>كۅڭدۅي (0K)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
-        <translation type="unfinished"></translation>
+        <translation>ئوتتۇراھال (1M-128M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>big(128M-1G)</source>
-        <translation type="unfinished"></translation>
+        <translation>چوڭ (128M-1G)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>large(1-4G)</source>
-        <translation type="unfinished"></translation>
+        <translation>چوڭۇرااق  (1-4G)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>great(&gt;4G)</source>
-        <translation type="unfinished"></translation>
+        <translation>غايەت چوڭ (&gt;4G)</translation>
     </message>
     <message>
         <source>medium(1M-100M)</source>
@@ -1375,7 +1376,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت باشقارعۇۇچۇ</translation>
     </message>
 </context>
 <context>
@@ -1383,17 +1384,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
-        <translation type="unfinished"></translation>
+        <translation>تانداش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>ەڭ كىچىك   ابالى</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 </TS>
