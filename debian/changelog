@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0701) nile; urgency=medium
+
+  * fix #I8WJR7
+  * 更新kk_KZ ky_KG翻译
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 01 Jul 2024 14:30:18 +0800
+
 peony (4.10.0.5-ok1~0627) nile; urgency=medium
 
   * fix #I9VOWE
