@@ -481,7 +481,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
     } else if (destDirUri.startsWith("file:///media/")) {
         auto fsType = Peony::FileUtils::getFsTypeFromFile(destParentDirUri);
         if (fsType.contains("udf") && file.isDir()) {
-            m_truncateLimit = 190;
+            m_truncateLimit = 254;
         }
     }
     auto suffix = baseName;
