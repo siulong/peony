@@ -26,6 +26,7 @@
 #include "file-node-reporter.h"
 
 #define PEONY_TRUNCATE_NAME_LIMIT 225
+#define PEONY_ENCRYPTFS_TRUNCATE_LIMIT 125
 
 using namespace Peony;
 
@@ -158,8 +159,11 @@ void FileNode::truncateDestFileName(const int cateType)
     auto destDirUri = FileUtils::getParentUri(destUri());
     auto fsType = FileUtils::getFsTypeFromFile(destDirUri);
     bool setLimitBytes = true;
+    auto maxLimit = PEONY_TRUNCATE_NAME_LIMIT;
     if (fsType.contains("ntfs")) {
         setLimitBytes = false;
+    } else if (fsType.contains("ecryptfs")) {
+        maxLimit = PEONY_ENCRYPTFS_TRUNCATE_LIMIT;
     }
     auto suffix = m_basename;
     suffix = suffix.remove(newName);
@@ -167,7 +171,7 @@ void FileNode::truncateDestFileName(const int cateType)
 
     if (setLimitBytes) {
         bool useForceChop = false;
-        if (suffix.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+        if (suffix.toLocal8Bit().count() > maxLimit) {
             qWarning()<<"suffix too long:"<<m_uri<<"use force chop instead";
             useForceChop = true;
         } else if (newName == m_basename) {
@@ -179,16 +183,16 @@ void FileNode::truncateDestFileName(const int cateType)
         if (useForceChop) {
             newName = m_basename;
             if (TurnCateType::Post == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+                while (newName.toLocal8Bit().count() > maxLimit) {
                     newName.chop(1);
                 }
             } else if (TurnCateType::Front == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+                while (newName.toLocal8Bit().count() > maxLimit) {
                     newName.remove(0,1);
                 }
             }
         } else {
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.toLocal8Bit().count();
+            int limitBytes = maxLimit - suffix.toLocal8Bit().count();
             if (TurnCateType::Post == cateType) {
                 while (newName.toLocal8Bit().count() > limitBytes) {
                     newName.chop(1);
@@ -203,7 +207,7 @@ void FileNode::truncateDestFileName(const int cateType)
         setDestFileName(newName);
     } else {
         bool useForceChop = false;
-        if (suffix.length() > PEONY_TRUNCATE_NAME_LIMIT) {
+        if (suffix.length() > maxLimit) {
             qWarning()<<"suffix too long:"<<m_uri<<"use force chop instead";
             useForceChop = true;
         } else if (newName == m_basename) {
@@ -214,11 +218,11 @@ void FileNode::truncateDestFileName(const int cateType)
         }
         if (useForceChop) {
             newName = m_basename;
-            while (newName.length() > PEONY_TRUNCATE_NAME_LIMIT) {
+            while (newName.length() > maxLimit) {
                 newName.chop(1);
             }
         } else {
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.length();
+            int limitBytes = maxLimit - suffix.length();
             while (newName.length() > limitBytes) {
                 newName.chop(1);
             }

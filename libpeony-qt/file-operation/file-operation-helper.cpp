@@ -50,6 +50,11 @@ QString FileOperationHelper::getDiscType()
     return m_disc_media_type;
 }
 
+QString FileOperationHelper::getDiscSystemType()
+{
+    return m_disc_system_type;
+}
+
 bool FileOperationHelper::isUnixCDDevice()
 {
     if (!m_unix_device.isEmpty() && m_unix_device.startsWith("/dev/sr")) {

@@ -321,6 +321,12 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     if (fsType.contains("ext")) {
         maxLength = 255 - suffix.toLocal8Bit().length();
         edit->setMaxLengthLimit(maxLength);
+    } else if (fsType == "ecryptfs") {
+        maxLength = 143 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
+    } else if (fsType == "udf") {
+        maxLength = 254 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
         maxLength = 255 - suffix.length();

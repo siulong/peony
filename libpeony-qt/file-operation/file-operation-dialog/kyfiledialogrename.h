@@ -48,6 +48,9 @@ public:
     const QString truncateDestFileName(const QString &uri, const int cateType);
     QWidget *m_currentWidget = nullptr;
 
+    int m_nameLimit = 255;
+    int m_truncateLimit = 225;
+
 private:
         QDBusInterface *m_statusManagerDBus = nullptr;
 };

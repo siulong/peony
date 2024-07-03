@@ -1123,6 +1123,8 @@ void FileCopyOperation::run()
                     burnUris.removeOne(node->uri());
                     break;
                 case BackupOne:
+                case TruncateOne:
+                case RenameOne:
                     burnUris.replaceInStrings(node->uri(), node->destUri());
                     break;
                 default:

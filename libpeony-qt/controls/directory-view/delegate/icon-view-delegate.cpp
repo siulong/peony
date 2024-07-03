@@ -454,6 +454,10 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType == "ecryptfs") {
+        edit->setMaxLengthLimit(143 - suffix.toLocal8Bit().length());
+    } else if (fsType == "udf") {
+        edit->setMaxLengthLimit(254 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
         edit->setMaxLengthLimit(255 - suffix.length());

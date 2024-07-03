@@ -583,6 +583,8 @@ void FileMoveOperation::move()
                 m_burn_uris.removeOne(file->uri());
                 break;
             case BackupOne:
+            case TruncateOne:
+            case RenameOne:
                 m_burn_uris.replaceInStrings(file->uri(), file->destUri());
                 break;
             default:

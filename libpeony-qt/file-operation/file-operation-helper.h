@@ -51,6 +51,8 @@ public:
 
     QString getDestName(const QString &destUri);
 
+    QString getDiscSystemType();
+
     QString getDiscError();
 protected:
     /**

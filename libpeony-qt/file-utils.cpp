@@ -336,6 +336,8 @@ QString FileUtils::getNonSuffixedBaseNameFromUri(const QString &uri)
                     suffix == ".sit") {
                 int secondIndex = suffixedBaseName.lastIndexOf('.');
                 suffixedBaseName.chop(suffixedBaseName.size() - secondIndex);
+            } else {
+                suffixedBaseName.chop(suffixedBaseName.size() - index);
             }
 #else
             suffixedBaseName.chop(suffixedBaseName.size() - index);
@@ -1342,6 +1344,11 @@ QString FileUtils::handleSpecialSymbols(const QString &displayName)
 QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 {
     QString fsType = "ext";
+
+    QString homeDir = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    if (fileUri.startsWith("filesafe:///") || fileUri.startsWith(homeDir + "/.box"))
+        return "ecryptfs";
 
     g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
     g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
