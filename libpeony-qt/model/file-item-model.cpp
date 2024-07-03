@@ -465,6 +465,8 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
                 return Qt::ItemIsDropEnabled;
             } else if(m_root_item->m_info.get()->fileSystemType().contains("udf")) {
                 return Qt::ItemIsDropEnabled;
+            } else {
+                return Qt::ItemIsEnabled;
             }
         }
         return Qt::ItemIsDropEnabled;
