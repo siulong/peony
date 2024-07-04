@@ -591,6 +591,10 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
         parser.process(args);
         if (parser.isSet(quitOption)) {
             QTimer::singleShot(1000, this, [=]() {
+                if (desktopManger) {
+                    delete desktopManger;
+                    desktopManger = nullptr;
+                }
                 qApp->quit();
             });
             return;
