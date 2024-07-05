@@ -218,7 +218,7 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
         }*/
 
         //fix bug#97408,change indicator meanings
-        //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
+        //箭头向上为升序，向下为降序，与通常的理解对应
         //将所有排序对比跟之前的方式反过来，小于改为大于，返回true的改为false
         switch (sortColumn()) {
         case FileItemModel::FileName: {
