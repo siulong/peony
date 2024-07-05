@@ -775,7 +775,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         QMenu *sortOrderMenu = new QMenu(this);
         tmp.clear();
         //fix bug#97408,change indicator meanings
-        //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
+        //箭头向上为升序，向下为降序，与通常的理解对应
         tmp<<sortOrderMenu->addAction(tr("Descending Order"));
         tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
         int sortOrder = m_view->getSortOrder();

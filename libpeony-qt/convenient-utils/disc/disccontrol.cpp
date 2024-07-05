@@ -924,7 +924,7 @@ QString DiscControl::prepareFileBeforeBurn(const QString& srcFile){
         QProcess *createHardlink = new QProcess();
         hardLinkFileName = srcFileAttr.fileName();          //同名硬链接
         hardLinkParentDir = QDir::homePath()+"/.cache/KylinBurner/";
-	//hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//江西银行项目修改硬链接路径
+    //hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//jxyh项目修改硬链接路径
         //先确保指定目录存在,不存在则递归创建
         dirObject.setPath(hardLinkParentDir);
         if(!dirObject.exists()){

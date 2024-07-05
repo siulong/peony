@@ -432,7 +432,7 @@ out:
     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
         // copy file attribute
         // It is possible that some file systems do not support file attributes
-        //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
+        //从只读文件系统复制文件，默认给与文件可写权限，hgzs项目前场反馈需求,task#138082
         g_file_copy_attributes(srcFile, destFile, mParentFlags, nullptr, &error);
         if (nullptr != error) {
             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;
