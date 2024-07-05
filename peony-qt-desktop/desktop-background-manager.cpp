@@ -262,7 +262,7 @@ void DesktopBackgroundManager::switchBackground()
             m_current_bg_path = path;
         } else {
             m_frontPixmap = QPixmap(path);
-            //天翼云项目反馈壁纸问题修复
+            //ctyun项目反馈壁纸问题修复
             //fix jpeg file change suffix name to png, set as wallpaper fail issue
             if (m_frontPixmap.isNull()){
                 QFile file(path);
