@@ -72,7 +72,7 @@ DefaultPreviewPage::DefaultPreviewPage(QWidget *parent) : QStackedWidget (parent
 {
     setContentsMargins(10, 20, 10, 20);
 
-    auto label = new QLabel(tr("Select the file you want to preview..."), this);
+    auto label = new QLabel(tr("Select the file you want to preview"), this);
     label->setWordWrap(true);
     label->setAlignment(Qt::AlignCenter);
     m_empty_tab_widget = label;
@@ -213,7 +213,7 @@ void DefaultPreviewPage::cancel()
     m_preview_tab_widget->cancel();
     setCurrentWidget(m_empty_tab_widget);
     QLabel *label = qobject_cast<QLabel*>(m_empty_tab_widget);
-    label->setText(tr("Select the file you want to preview..."));
+    label->setText(tr("Select the file you want to preview"));
 }
 
 void DefaultPreviewPage::closePreviewPage()
