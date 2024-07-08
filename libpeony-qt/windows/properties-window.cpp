@@ -531,6 +531,7 @@ bool PropertiesWindow::checkUriIsOpen(QStringList &uris, PropertiesWindow *newWi
     qint64 index = PropertiesWindow::getOpenUriIndex(uris);
     if (index != WINDOW_NOT_OPEN) {
         openedPropertiesWindows->at(index)->raise();
+        openedPropertiesWindows->at(index)->activateWindow();
         return true;
     }
 
