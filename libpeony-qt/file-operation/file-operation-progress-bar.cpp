@@ -536,6 +536,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
     QString display_name = strInfo;
     if(fontMetrics.width(strInfo) > 2*width - 20) {
         display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
+        this->setToolTip(m_file_name);
     }
     return display_name;
 
@@ -719,7 +720,7 @@ void MainProgressBar::paintContent(QPainter &painter)
             painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
             painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
         } else {
-            this->setToolTip(m_file_name);
+//            this->setToolTip(m_file_name);
             QString display_name;
             display_name = elideText(this->font(), m_file_name_w, m_file_name);
             //修改藏文下显示不全的问题
