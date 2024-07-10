@@ -258,8 +258,13 @@ NewFileLaunchDialog::NewFileLaunchDialog(const QString &uri, QWidget *parent) : 
     m_layout->addWidget(m_button_box);
 
     //add button translate
-    m_button_box->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-    m_button_box->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+    QPushButton *okButton = m_button_box->button(QDialogButtonBox::Ok);
+    okButton->setText(tr("OK"));
+    okButton->setProperty("isImportant", true);
+
+    QPushButton *cancelButton = m_button_box->button(QDialogButtonBox::Cancel);
+    cancelButton->setText(tr("Cancel"));
+    cancelButton->setProperty("useButtonPalette", true);
 
     connect(this, &QDialog::accepted, [=]() {
         if (!m_launchHashList->m_actionList->currentItem())
@@ -392,8 +397,13 @@ AllFileLaunchDialog::AllFileLaunchDialog(const QString &uri, QWidget *parent) : 
     m_layout->addWidget(m_button_box);
 
     //add button translate
-    m_button_box->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-    m_button_box->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+    QPushButton *okButton = m_button_box->button(QDialogButtonBox::Ok);
+    okButton->setText(tr("OK"));
+    okButton->setProperty("isImportant", true);
+
+    QPushButton *cancelButton = m_button_box->button(QDialogButtonBox::Cancel);
+    cancelButton->setText(tr("Cancel"));
+    cancelButton->setProperty("useButtonPalette", true);
 
     connect(this, &QDialog::accepted, [=]() {
         if (!m_launchHashList->m_actionList->currentItem())

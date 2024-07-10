@@ -483,6 +483,8 @@ void PropertiesWindow::initStatusBar()
 
     okButton->setMinimumSize(PropertiesWindow::s_bottomButtonSize);
     cancelButton->setMinimumSize(PropertiesWindow::s_bottomButtonSize);
+    okButton->setProperty("isImportant", true);
+    cancelButton->setProperty("useButtonPalette", true);
 
     //task#100231 trash page OK button set as restore
     //fix bug#143817, trash properties issue
