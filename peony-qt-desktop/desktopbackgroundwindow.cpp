@@ -24,6 +24,7 @@
 #include "desktop-background-manager.h"
 #include "peony-desktop-application.h"
 #include "desktop-menu.h"
+
 #include <QScreen>
 #include <QPainter>
 #include <QVariantAnimation>
@@ -47,6 +48,10 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
         gTimeLine = new QTimeLine(100);
     }
     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
+
+    QString title = QString("desktop%1").arg(desktopWindowId);
+    setWindowTitle(title);
+
     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
@@ -404,6 +409,7 @@ void DesktopBackgroundWindow::updateWindowGeometry()
         if (screen()->isPrimary()) {
             qInfo()<<"has center widget, raise window";
             KWindowSystem::raiseWindow(this->winId());
+            kdk::WindowManager::activateWindow(m_windowId);
         } else {
             qCritical()<<"raise a window which not in primary screen, but has central widget";
         }
@@ -420,6 +426,16 @@ void DesktopBackgroundWindow::setId(int id)
 {
     m_id = id;
     m_desktopIconView->setId(id);
+}
+
+void DesktopBackgroundWindow::setWindowId(kdk::WindowId  windowId)
+{
+    m_windowId = windowId;
+}
+
+kdk::WindowId DesktopBackgroundWindow::getWindowId()
+{
+    return m_windowId;
 }
 
 //获取iconview中图标的相对位置

@@ -27,6 +27,7 @@
 #include <QGSettings>
 #include "desktop-icon-view.h"
 #include <KF5/KScreen/kscreen/output.h>
+#include "windowmanager/windowmanager.h"
 
 namespace KWayland {
 namespace Client {
@@ -51,6 +52,8 @@ public:
 
     Peony::DesktopIconView *getIconView();
     void setId(int id);
+    void setWindowId(kdk::WindowId id);
+    kdk::WindowId getWindowId();
 
     bool event(QEvent *event) override;
 
@@ -90,6 +93,7 @@ private:
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
     Peony::DesktopMenu *m_menu = nullptr;
     KScreen::OutputPtr m_output = nullptr;
+    kdk::WindowId m_windowId;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H
