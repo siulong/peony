@@ -1,0 +1,21 @@
+From: hemh <hemeihong@kylinos.cn>
+Date: Thu, 11 Jul 2024 15:43:32 +0800
+Subject: Update changelog of 4.10.0.5-ok1~0711.
+
+---
+ peony-qt-desktop/peony-desktop-application.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index 65cbfb4..43ec882 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -857,7 +857,7 @@ void PeonyDesktopApplication::setupDesktop()
+             output->setId(qApp->screens().indexOf(screen));
+             output->setName(qApp->primaryScreen()->name());
+             output->setPos(screen->geometry().topLeft() * screen->devicePixelRatio());
+-            output->setExplicitLogicalSize(screen->size() * devicePixelRatio());
++            output->setLogicalSize(screen->size() * devicePixelRatio());
+             output->setScale(1.0);
+             output->setSize(screen->size() * screen->devicePixelRatio());
+             if (screen == qApp->primaryScreen()) {
