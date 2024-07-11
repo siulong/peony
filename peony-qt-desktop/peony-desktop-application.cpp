@@ -38,6 +38,7 @@
 #include "desktop-background-manager.h"
 #include "desktopbackgroundwindow.h"
 #include "desktop-item-model.h"
+#include "windowmanager/windowmanager.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -553,6 +554,7 @@ void PeonyDesktopApplication::relocateIconView(const KScreen::OutputPtr &output)
         window->setCentralView();
         if (!window->screen()->isPrimary() && 1 != m_mode) {
             KWindowSystem::raiseWindow(window->winId());
+            kdk::WindowManager::activateWindow(window->getWindowId());
         }
         if (0 < id) {
             window->getIconView()->resolutionChange();
@@ -560,6 +562,7 @@ void PeonyDesktopApplication::relocateIconView(const KScreen::OutputPtr &output)
     }
     if(primaryWindow) {
         KWindowSystem::raiseWindow(primaryWindow->winId());
+        kdk::WindowManager::activateWindow(primaryWindow->getWindowId());
     }
 }
 
@@ -829,6 +832,22 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
 
 void PeonyDesktopApplication::setupDesktop()
 {
+    connect(kdk::WindowManager::self(),&kdk::WindowManager::windowAdded,this,[=](const kdk::WindowId& windowId){
+        if((quint32)getpid() == kdk::WindowManager::getPid(windowId)) {
+            for (auto window : m_bg_windows) {
+               QString title = kdk::WindowManager::getWindowTitle(windowId);
+                QString windowTitle = window->windowTitle();
+                if (title == windowTitle) {
+                    window->setWindowId(windowId);
+                    if (window->screen()->isPrimary()) {
+                        kdk::WindowManager::activateWindow(window->getWindowId());
+                    }
+                    break;
+                }
+            }
+        }
+    });
+
     KScreen::GetConfigOperation *op = new KScreen::GetConfigOperation();
     if (op->exec()) {
         setConfig(op);
@@ -852,7 +871,6 @@ void PeonyDesktopApplication::setupDesktop()
         }
         QMessageBox::warning(0, tr("Failed to get screen config"), tr("Error message is: %1. Using fallback config to setup desktop."), op->errorString());
     }
-
 //    connect(op, &KScreen::GetConfigOperation::finished, this, [this](KScreen::ConfigOperation *op) {
 //        setConfig(op);
 //    });
