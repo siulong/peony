@@ -505,7 +505,24 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
             view->m_editValid = false;
             view->m_renameTimer->start();
         }
-        e->ignore();
+        //e->accept();
+        //return;
+        /**
+         * @bug #239593: [File Manager] Click on any folder to enter and then return. After returning, cannot drag the folder directly
+         *
+         * Transfer the mousePressEvent event of IconViewIndexWidget to the IconView class for further processing
+         * Used to handle drag and drop events
+         *
+         * @author Renyg
+         * @date 2024-07-11
+         */
+        return QWidget::mousePressEvent(e);
+//        if (m_edit_trigger.isActive()) {
+//            qDebug()<<"IconViewIndexWidget::mousePressEvent: edit"<<e->type();
+//            m_delegate->getView()->setIndexWidget(m_index, nullptr);
+//            m_delegate->getView()->edit(m_index);
+//            return;
+//        }
     }
     if(e->button() == Qt::RightButton){
         e->accept();
