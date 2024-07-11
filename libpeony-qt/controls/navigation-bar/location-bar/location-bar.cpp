@@ -429,31 +429,16 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     //comment to fix button text show incomplete issue, link to bug#72080
     //button->setStyleSheet("QToolButton{padding-left: 13px; padding-right: 13px}");
 
+    /* hotfix bug#226649 【文件管理器】安装系统时选择英文，安装后切换系统到中文，文件管理器图片等位置的路径栏也翻译成中文，但是点击回车会弹窗报错
     //fix bug#84324
     //    QUrl url = uri;
     QUrl url = FileUtils::urlEncode(uri);
     if (!url.fileName().isEmpty())
     {
-        button->setText(displayName);
         m_current_uri = uri.left(uri.lastIndexOf("/")+1) + displayName;
-    } else {
-        if (uri == "file:///") {
-//            auto text = FileUtils::getFileDisplayName("computer:///root.link");
-//            if (text.isNull()) {
-//                text = tr("File System");
-//            }
-            //fix bug#47597, show as root.link issue
-            QString text = tr("File System");
-            button->setText(text);
-            //comment to fix button text show incomplete issue, link to bug#72080
-            //button->setStyleSheet("QToolButton{padding-left: 15px; padding-right: 15px}");
-        } else {
-            button->setText(displayName);
-        }
-    }
+    } */
 
     //if button text is too long, elide it
-    displayName = button->text();
     if (displayName.length() > ELIDE_TEXT_LENGTH)
     {
         int  charWidth = fontMetrics().averageCharWidth();
