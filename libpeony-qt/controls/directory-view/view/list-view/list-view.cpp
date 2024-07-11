@@ -119,24 +119,6 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setStretchLastSection(false);
     header()->setMinimumSectionSize(130);
     header()->setTextElideMode(Qt::ElideRight);
-    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
-        connect(header(), &QHeaderView::sectionClicked, this, [=](){
-            //update sort policy
-            auto settings = GlobalSettings::getInstance();
-            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-                settings->setValue(SORT_COLUMN, getSortType());
-                settings->setValue(SORT_ORDER, getSortOrder());
-            } else {
-                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
-                if (metaInfo) {
-                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
-                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
-                } else {
-                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
-                }
-            }
-        });
-    }
 
     connect(header(), &QHeaderView::sectionResized, this, [=]{
         m_header_section_resized_manually = true;
@@ -214,6 +196,28 @@ bool ListView::isDragging()
 
 void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortModel *proxyModel)
 {
+    if (topLevelWidget()->objectName() != "_peony_mainwindow") {
+        setFrameShape(QFrame::NoFrame);
+    } else {
+        // note: 如果在构造函数中判断topLevelWidget的objectName，不会找到mainwindow，因为此时还没有设置parent为directoryViewContainer
+        connect(header(), &QHeaderView::sectionClicked, this, [=](){
+            //update sort policy
+            auto settings = GlobalSettings::getInstance();
+            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                settings->setValue(SORT_COLUMN, getSortType());
+                settings->setValue(SORT_ORDER, getSortOrder());
+            } else {
+                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
+                if (metaInfo) {
+                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
+                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+                } else {
+                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                }
+            }
+        });
+    }
+
     if (!sourceModel || !proxyModel)
         return;
     m_model = sourceModel;

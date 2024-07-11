@@ -790,6 +790,10 @@ void IconView::setIgnore_mouse_move_event(bool ignore_mouse_move_event)
 
 void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortModel *proxyModel)
 {
+    // fix: #239734 filedialog has dirty view region
+    if (topLevelWidget()->objectName() != "_peony_mainwindow")
+        setFrameShape(QFrame::NoFrame);
+
     m_model = sourceModel;
     m_sort_filter_proxy_model = proxyModel;
 
