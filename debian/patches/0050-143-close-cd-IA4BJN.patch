@@ -1,0 +1,235 @@
+From: MeihongHe <hemeihong@kylinos.cn>
+Date: Thu, 11 Jul 2024 07:38:35 +0000
+Subject: =?utf-8?b?ITE0MyBjbG9zZS1jZCNJQTRCSk4gW+S4u+imgeOAkeOAkOS4jeWPrw==?=
+ =?utf-8?b?5Y+Y57O757uf44CR44CQ5pi+56S65Zmo44CR5o6l5YWl5Y+M5bGP77yM5qGM6Z2i?=
+ =?utf-8?b?5paH5Lu25aS55raI5aSxIE1lcmdlIHB1bGwgcmVxdWVzdCAhMTQzIGZyb20g5p2o?=
+ =?utf-8?b?6Imz5b6uL25pbGUtSUE0QkpOLXRlbXAy?=
+
+---
+ .../menu/directory-view-menu/directory-view-menu.cpp |  2 +-
+ libpeony-qt/convenient-utils/disc/disccontrol.cpp    |  2 +-
+ libpeony-qt/file-copy.cpp                            |  2 +-
+ .../model/file-item-proxy-filter-sort-model.cpp      |  2 +-
+ peony-qt-desktop/desktop-background-manager.cpp      |  2 +-
+ peony-qt-desktop/desktopbackgroundwindow.cpp         | 16 ++++++++++++++++
+ peony-qt-desktop/desktopbackgroundwindow.h           |  4 ++++
+ peony-qt-desktop/peony-desktop-application.cpp       | 20 +++++++++++++++++++-
+ peony-qt-desktop/peony-qt-desktop.pro                |  4 ++++
+ 9 files changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+index cb87424..3db346c 100644
+--- a/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
++++ b/libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp
+@@ -775,7 +775,7 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
+         QMenu *sortOrderMenu = new QMenu(this);
+         tmp.clear();
+         //fix bug#97408,change indicator meanings
+-        //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
++        //箭头向上为升序，向下为降序，与通常的理解对应
+         tmp<<sortOrderMenu->addAction(tr("Descending Order"));
+         tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
+         int sortOrder = m_view->getSortOrder();
+diff --git a/libpeony-qt/convenient-utils/disc/disccontrol.cpp b/libpeony-qt/convenient-utils/disc/disccontrol.cpp
+index e04f5dd..53531bf 100644
+--- a/libpeony-qt/convenient-utils/disc/disccontrol.cpp
++++ b/libpeony-qt/convenient-utils/disc/disccontrol.cpp
+@@ -924,7 +924,7 @@ QString DiscControl::prepareFileBeforeBurn(const QString& srcFile){
+         QProcess *createHardlink = new QProcess();
+         hardLinkFileName = srcFileAttr.fileName();          //同名硬链接
+         hardLinkParentDir = QDir::homePath()+"/.cache/KylinBurner/";
+-	//hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//江西银行项目修改硬链接路径
++    //hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//jxyh项目修改硬链接路径
+         //先确保指定目录存在,不存在则递归创建
+         dirObject.setPath(hardLinkParentDir);
+         if(!dirObject.exists()){
+diff --git a/libpeony-qt/file-copy.cpp b/libpeony-qt/file-copy.cpp
+index 6de8b03..e9d62f8 100644
+--- a/libpeony-qt/file-copy.cpp
++++ b/libpeony-qt/file-copy.cpp
+@@ -432,7 +432,7 @@ out:
+     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
+         // copy file attribute
+         // It is possible that some file systems do not support file attributes
+-        //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
++        //从只读文件系统复制文件，默认给与文件可写权限，hgzs项目前场反馈需求,task#138082
+         g_file_copy_attributes(srcFile, destFile, mParentFlags, nullptr, &error);
+         if (nullptr != error) {
+             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;
+diff --git a/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp b/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
+index 396e2bd..8096a68 100644
+--- a/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
++++ b/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
+@@ -218,7 +218,7 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
+         }*/
+ 
+         //fix bug#97408,change indicator meanings
+-        //箭头向上为升序，向下为降序，与通常的理解对应，对比了UOS是这样的
++        //箭头向上为升序，向下为降序，与通常的理解对应
+         //将所有排序对比跟之前的方式反过来，小于改为大于，返回true的改为false
+         switch (sortColumn()) {
+         case FileItemModel::FileName: {
+diff --git a/peony-qt-desktop/desktop-background-manager.cpp b/peony-qt-desktop/desktop-background-manager.cpp
+index 9fbee9a..e599c38 100644
+--- a/peony-qt-desktop/desktop-background-manager.cpp
++++ b/peony-qt-desktop/desktop-background-manager.cpp
+@@ -247,7 +247,7 @@ void DesktopBackgroundManager::switchBackground()
+             m_current_bg_path = path;
+         } else {
+             m_frontPixmap = QPixmap(path);
+-            //天翼云项目反馈壁纸问题修复
++            //ctyun项目反馈壁纸问题修复
+             //fix jpeg file change suffix name to png, set as wallpaper fail issue
+             if (m_frontPixmap.isNull()){
+                 QFile file(path);
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.cpp b/peony-qt-desktop/desktopbackgroundwindow.cpp
+index 8daf0e7..3863f5a 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.cpp
++++ b/peony-qt-desktop/desktopbackgroundwindow.cpp
+@@ -24,6 +24,7 @@
+ #include "desktop-background-manager.h"
+ #include "peony-desktop-application.h"
+ #include "desktop-menu.h"
++
+ #include <QScreen>
+ #include <QPainter>
+ #include <QVariantAnimation>
+@@ -47,6 +48,10 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(const KScreen::OutputPtr &outpu
+         gTimeLine = new QTimeLine(100);
+     }
+     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
++
++    QString title = QString("desktop%1").arg(desktopWindowId);
++    setWindowTitle(title);
++
+     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
+     setAttribute(Qt::WA_TranslucentBackground);
+     setWindowFlags(Qt::Window|Qt::FramelessWindowHint);
+@@ -404,6 +409,7 @@ void DesktopBackgroundWindow::updateWindowGeometry()
+         if (screen()->isPrimary()) {
+             qInfo()<<"has center widget, raise window";
+             KWindowSystem::raiseWindow(this->winId());
++            kdk::WindowManager::activateWindow(m_windowId);
+         } else {
+             qCritical()<<"raise a window which not in primary screen, but has central widget";
+         }
+@@ -422,6 +428,16 @@ void DesktopBackgroundWindow::setId(int id)
+     m_desktopIconView->setId(id);
+ }
+ 
++void DesktopBackgroundWindow::setWindowId(kdk::WindowId  windowId)
++{
++    m_windowId = windowId;
++}
++
++kdk::WindowId DesktopBackgroundWindow::getWindowId()
++{
++    return m_windowId;
++}
++
+ //获取iconview中图标的相对位置
+ QPoint DesktopBackgroundWindow::getRelativePos(const QPoint &pos)
+ {
+diff --git a/peony-qt-desktop/desktopbackgroundwindow.h b/peony-qt-desktop/desktopbackgroundwindow.h
+index 9252d42..ab3b4d1 100644
+--- a/peony-qt-desktop/desktopbackgroundwindow.h
++++ b/peony-qt-desktop/desktopbackgroundwindow.h
+@@ -27,6 +27,7 @@
+ #include <QGSettings>
+ #include "desktop-icon-view.h"
+ #include <KF5/KScreen/kscreen/output.h>
++#include "windowmanager/windowmanager.h"
+ 
+ namespace KWayland {
+ namespace Client {
+@@ -51,6 +52,8 @@ public:
+ 
+     Peony::DesktopIconView *getIconView();
+     void setId(int id);
++    void setWindowId(kdk::WindowId id);
++    kdk::WindowId getWindowId();
+ 
+     bool event(QEvent *event) override;
+ 
+@@ -90,6 +93,7 @@ private:
+     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
+     Peony::DesktopMenu *m_menu = nullptr;
+     KScreen::OutputPtr m_output = nullptr;
++    kdk::WindowId m_windowId;
+ };
+ 
+ #endif // DESKTOPBACKGROUNDWINDOW_H
+diff --git a/peony-qt-desktop/peony-desktop-application.cpp b/peony-qt-desktop/peony-desktop-application.cpp
+index 96525df..65cbfb4 100644
+--- a/peony-qt-desktop/peony-desktop-application.cpp
++++ b/peony-qt-desktop/peony-desktop-application.cpp
+@@ -38,6 +38,7 @@
+ #include "desktop-background-manager.h"
+ #include "desktopbackgroundwindow.h"
+ #include "desktop-item-model.h"
++#include "windowmanager/windowmanager.h"
+ 
+ #include <QCommandLineParser>
+ #include <QCommandLineOption>
+@@ -553,6 +554,7 @@ void PeonyDesktopApplication::relocateIconView(const KScreen::OutputPtr &output)
+         window->setCentralView();
+         if (!window->screen()->isPrimary() && 1 != m_mode) {
+             KWindowSystem::raiseWindow(window->winId());
++            kdk::WindowManager::activateWindow(window->getWindowId());
+         }
+         if (0 < id) {
+             window->getIconView()->resolutionChange();
+@@ -560,6 +562,7 @@ void PeonyDesktopApplication::relocateIconView(const KScreen::OutputPtr &output)
+     }
+     if(primaryWindow) {
+         KWindowSystem::raiseWindow(primaryWindow->winId());
++        kdk::WindowManager::activateWindow(primaryWindow->getWindowId());
+     }
+ }
+ 
+@@ -829,6 +832,22 @@ void PeonyDesktopApplication::outputAdded(const KScreen::OutputPtr &output)
+ 
+ void PeonyDesktopApplication::setupDesktop()
+ {
++    connect(kdk::WindowManager::self(),&kdk::WindowManager::windowAdded,this,[=](const kdk::WindowId& windowId){
++        if((quint32)getpid() == kdk::WindowManager::getPid(windowId)) {
++            for (auto window : m_bg_windows) {
++               QString title = kdk::WindowManager::getWindowTitle(windowId);
++                QString windowTitle = window->windowTitle();
++                if (title == windowTitle) {
++                    window->setWindowId(windowId);
++                    if (window->screen()->isPrimary()) {
++                        kdk::WindowManager::activateWindow(window->getWindowId());
++                    }
++                    break;
++                }
++            }
++        }
++    });
++
+     KScreen::GetConfigOperation *op = new KScreen::GetConfigOperation();
+     if (op->exec()) {
+         setConfig(op);
+@@ -852,7 +871,6 @@ void PeonyDesktopApplication::setupDesktop()
+         }
+         QMessageBox::warning(0, tr("Failed to get screen config"), tr("Error message is: %1. Using fallback config to setup desktop."), op->errorString());
+     }
+-
+ //    connect(op, &KScreen::GetConfigOperation::finished, this, [this](KScreen::ConfigOperation *op) {
+ //        setConfig(op);
+ //    });
+diff --git a/peony-qt-desktop/peony-qt-desktop.pro b/peony-qt-desktop/peony-qt-desktop.pro
+index fac6c60..349b9fd 100644
+--- a/peony-qt-desktop/peony-qt-desktop.pro
++++ b/peony-qt-desktop/peony-qt-desktop.pro
+@@ -31,6 +31,10 @@ contains(DEFINES, KY_SDK_KABASE) {
+     PKGCONFIG += kysdk-kabase
+ }
+ 
++contains(DEFINES, KY_SDK_WAYLANDHELPER) {
++    PKGCONFIG += kysdk-waylandhelper
++}
++
+ LIBS += -L$$PWD/../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
+ 
+ TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
