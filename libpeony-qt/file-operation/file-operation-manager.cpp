@@ -288,6 +288,9 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
             questionbox.reject();
         });
         okButton->setFocus();
+        okButton->setProperty("isImportant", true);
+        cancelButton->setProperty("useButtonPalette", true);
+
         questionbox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
         questionbox.setIcon("user-trash");
         auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
