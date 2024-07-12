@@ -1138,6 +1138,7 @@ void FileCopyOperation::run()
     nodes.clear();
 #ifdef KY_UDF_BURN
     if (mHelper->isUnixCDDevice() && !isCancelled()) {
+        Q_EMIT operationUdfBurnRunning(true);
         if(!mHelper->discWriteOperation(burnUris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
@@ -1150,6 +1151,7 @@ void FileCopyOperation::run()
             Q_EMIT errored(except);
         }
         m_is_udf_burn_work = false;
+        Q_EMIT operationUdfBurnRunning(false);
     } else {
         if (m_is_udf_burn_work) {
             m_is_udf_burn_work = false;

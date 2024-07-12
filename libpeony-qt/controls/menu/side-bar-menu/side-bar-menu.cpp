@@ -32,6 +32,7 @@
 #include "file-utils.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-operation-manager.h"
 
 #include <QAction>
 #include <QModelIndex>
@@ -244,7 +245,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 }
             }
 #else
-            if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+            auto isUdfBusy = Peony::FileOperationManager::getInstance()->isUdfBurnRunning();
+            if(!FileUtils::isBusyDevice(m_item->getDevice()) && !isUdfBusy){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
                 UdfBurn::DiscControl *discControl = new UdfBurn::DiscControl(unixDevice);
                 if(discControl->work()){
                    connect(discControl, &UdfBurn::DiscControl::workFinished, this, [=](UdfBurn::DiscControl *discCtrl){
@@ -298,8 +300,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         QAction *actionBurn = addAction(QIcon::fromTheme("preview-file"), tr("burndata"));
         actionBurn->setEnabled(false);
         l.append(actionBurn);
-
-        if(!FileUtils::isBusyDevice(m_item->getDevice())) {
+        auto isUdfBusy = Peony::FileOperationManager::getInstance()->isUdfBurnRunning();
+        if(!FileUtils::isBusyDevice(m_item->getDevice()) && !isUdfBusy) {
             /* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
             DiscControl *discControl = new DiscControl(unixDevice);
             if(discControl->work()){

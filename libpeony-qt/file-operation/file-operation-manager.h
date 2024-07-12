@@ -76,7 +76,7 @@ public:
     bool isAllowParallel();
     void setFsyncStatus(bool synchronizing = true);
     bool isFsynchronizing();
-
+    bool isUdfBurnRunning();
 
     QStringList getFilesOpenedByProc(const QString &procName);
 
@@ -173,6 +173,7 @@ private:
     QDBusInterface* m_iface = nullptr;
     bool m_isFsynchronizing = false;
     QMutex m_fsyncMutex;
+    bool m_isUdfBurnRunning = false;
 
     QThread *m_replicaThread = nullptr;
     RemoteFileEventHelper *m_replica = nullptr;

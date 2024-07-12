@@ -553,7 +553,13 @@ start:
        }
        operation->setHasError(true);
    });
-
+#ifdef KY_UDF_BURN
+   operation->connect(operation, &FileOperation::operationUdfBurnRunning, this, [=](bool udfBurnRunning){
+       if  (m_isUdfBurnRunning != udfBurnRunning) {
+           m_isUdfBurnRunning = udfBurnRunning;
+       }
+   });
+#endif
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
        //story 19796,后续数据处理
@@ -613,6 +619,9 @@ start:
            } else {
                this->clearHistory();
            }
+       }
+       if (isUdfBurnRunning()) {
+           m_isUdfBurnRunning = false;
        }
    }, Qt::BlockingQueuedConnection);
 
@@ -736,6 +745,11 @@ bool FileOperationManager::canUndo()
 bool FileOperationManager::canRedo()
 {
     return !m_redo_stack.isEmpty();
+}
+
+bool FileOperationManager::isUdfBurnRunning()
+{
+    return m_isUdfBurnRunning;
 }
 
 std::shared_ptr<FileOperationInfo> FileOperationManager::getUndoInfo()
