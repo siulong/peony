@@ -1032,6 +1032,19 @@ void DiscControl::setRemoved(bool value)
 */
 bool DiscControl::supportUdf() const{
     //if(mProfile & (MEDIA_CD_RW|MEDIA_DVD_RW_ALL|MEDIA_DVD_PLUS_RW))
+
+    // 判断当前系统中是否集成有udfclient包，如果没有则不支持DVD+RW格式化为udf格式
+    QFileInfo binfile;
+    binfile.setFile("/bin/newfs_udf");
+    if(!binfile.exists() || !binfile.isExecutable()) {
+        return false;
+    }
+
+    binfile.setFile("/usr/bin/newfs_udf");
+    if(!binfile.exists() || !binfile.isExecutable()) {
+        return false;
+    }
+
     if(mProfile & MEDIA_DVD_PLUS_RW)					//2209仅提供DVD+RW的udf格式化
         return true;
 
