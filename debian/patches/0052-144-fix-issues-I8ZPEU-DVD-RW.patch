@@ -1,0 +1,41 @@
+From: MeihongHe <hemeihong@kylinos.cn>
+Date: Tue, 16 Jul 2024 09:46:38 +0000
+Subject: =?utf-8?b?ITE0NCBmaXggaXNzdWVzICNJOFpQRVUg44CQ5Li76KaB44CR44CQ5Yi7?=
+ =?utf-8?b?5b2V44CRRFZEK1JX5YWJ55uY5qC85byP5YyW5aSx6LSlIE1lcmdlIHB1bGwgcmVx?=
+ =?utf-8?b?dWVzdCAhMTQ0IGZyb20g5p2O5b635oiQL29wZW5reWxpbi9uaWxl?=
+
+---
+ libpeony-qt/convenient-utils/disc/disccontrol.cpp | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/libpeony-qt/convenient-utils/disc/disccontrol.cpp b/libpeony-qt/convenient-utils/disc/disccontrol.cpp
+index 53531bf..bcdabca 100644
+--- a/libpeony-qt/convenient-utils/disc/disccontrol.cpp
++++ b/libpeony-qt/convenient-utils/disc/disccontrol.cpp
+@@ -1032,8 +1032,25 @@ void DiscControl::setRemoved(bool value)
+ */
+ bool DiscControl::supportUdf() const{
+     //if(mProfile & (MEDIA_CD_RW|MEDIA_DVD_RW_ALL|MEDIA_DVD_PLUS_RW))
+-    if(mProfile & MEDIA_DVD_PLUS_RW)					//2209仅提供DVD+RW的udf格式化
++
++    // 判断当前系统中是否集成有udfclient包，如果没有则不支持DVD+RW格式化为udf格式
++    bool isExistUDFClient = false;
++    QFileInfo binfile;
++    binfile.setFile("/bin/newfs_udf");
++    if(!isExistUDFClient && binfile.exists() && binfile.isExecutable()) {
++        isExistUDFClient = true;
++    }
++    binfile.setFile("/usr/bin/newfs_udf");
++    if(!isExistUDFClient && binfile.exists() && binfile.isExecutable()) {
++        isExistUDFClient = true;
++    }
++    if (!isExistUDFClient) {
++        return false;
++    }
++
++    if(mProfile & MEDIA_DVD_PLUS_RW) {					//2209仅提供DVD+RW的udf格式化
+         return true;
++    }
+ 
+     return false;
+ }
