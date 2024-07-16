@@ -73,6 +73,12 @@ bool MenuPluginManager::registerPlugin(MenuPluginInterface *plugin)
     if (m_hash.value(plugin->name())) {
         return false;
     }
+    auto pluginObj = dynamic_cast<QObject *>(plugin);
+    if (pluginObj) {
+        if (pluginObj->property("showInComputerView").toBool()) {
+            m_computerViewPlugins.insert(plugin->name(), plugin);
+        }
+    }
     m_hash.insert(plugin->name(), plugin);
     return true;
 }
@@ -97,6 +103,11 @@ MenuPluginManager *MenuPluginManager::getInstance()
 void MenuPluginManager::close()
 {
     this->deleteLater();
+}
+
+QMap<QString, MenuPluginInterface *> MenuPluginManager::getComputerViewPlugins() const
+{
+    return m_computerViewPlugins;
 }
 
 const QStringList MenuPluginManager::getPluginIds()

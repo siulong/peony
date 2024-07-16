@@ -467,6 +467,12 @@ bool PluginManager::isCloudPlatform()
 #endif
 }
 
+QList<MenuPluginInterface *> PluginManager::getComputerViewMenuPlugins()
+{
+    auto plugins = MenuPluginManager::getInstance()->getComputerViewPlugins();
+    return plugins.values();
+}
+
 void PluginManager::init()
 {
     PluginManager::getInstance();
