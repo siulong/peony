@@ -37,6 +37,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <polkit/polkit.h>
 
 #include "global-settings.h"
 #include "clipboard-utils.h"
@@ -146,13 +147,39 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     allowFileOpParallel->setChecked(Peony::FileOperationManager::getInstance()->isAllowParallel());
 
     addAction(tr("Set samba password"), this, [=]() {
+        g_autoptr(GError) error = NULL;
+        PolkitAuthority* mAuth = polkit_authority_get_sync(NULL, &error);
+        if (error) {
+            qWarning() << error->message;
+            return;
+        }
+
+        int pid = getpid();
+        int uid = getuid();
+        QString username = g_get_user_name();
+        PolkitSubject* proj = polkit_unix_process_new_for_owner (pid, 0, uid);
+
+        PolkitAuthorizationResult* res = polkit_authority_check_authorization_sync (mAuth, proj, "org.ukui.samba.share.config.authorization", NULL,
+                                                                                              POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION, nullptr, &error);
+        if (error) {
+            qWarning() << error->message;
+            if (proj) {
+                g_object_unref (proj);
+            }
+            if (res) {
+                g_object_unref (res);
+            }
+            return;
+        }
+
+        if (!polkit_authorization_result_get_is_authorized(res)) {
+            return;
+        }
+
         QDBusInterface *interFace = new QDBusInterface("org.ukui.samba.share.config",
                                                            "/org/ukui/samba/share",
                                                            "org.ukui.samba.share.config",
                                                            QDBusConnection::systemBus());
-        QString username = g_get_user_name();
-        int pid = getpid();
-        int uid = getuid();
         QDBusReply<bool> initReply = interFace->call("init", username, pid, uid);
         if (initReply.isValid()) {
             if (initReply.value()) {
