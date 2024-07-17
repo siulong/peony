@@ -1,0 +1,79 @@
+From: wen-jiexiang <1906465380@qq.com>
+Date: Wed, 17 Jul 2024 11:31:51 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2Qj5omT5byA6K6+572uc2FtYmHlr4bnoIHvvIzngrnlh7s=?=
+ =?utf-8?b?5o6I5p2D5by556qX55WM6Z2i5Y+W5raI5oyJ6ZKuL+WFs+mXreaMiemSru+8jA==?=
+ =?utf-8?b?5LuN5by55Ye6c2FtYmHlr4bnoIHorr7nva7lvLnnqpc=?=
+
+---
+ src/control/operation-menu.cpp | 33 ++++++++++++++++++++++++++++++---
+ src/src.pro                    |  2 +-
+ 2 files changed, 31 insertions(+), 4 deletions(-)
+
+diff --git a/src/control/operation-menu.cpp b/src/control/operation-menu.cpp
+index e685af1..5eab06a 100644
+--- a/src/control/operation-menu.cpp
++++ b/src/control/operation-menu.cpp
+@@ -37,6 +37,7 @@
+ #include <QVariant>
+ #include <QMessageBox>
+ #include <QInputDialog>
++#include <polkit/polkit.h>
+ 
+ #include "global-settings.h"
+ #include "clipboard-utils.h"
+@@ -146,13 +147,39 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
+     allowFileOpParallel->setChecked(Peony::FileOperationManager::getInstance()->isAllowParallel());
+ 
+     addAction(tr("Set samba password"), this, [=]() {
++        g_autoptr(GError) error = NULL;
++        PolkitAuthority* mAuth = polkit_authority_get_sync(NULL, &error);
++        if (error) {
++            qWarning() << error->message;
++            return;
++        }
++
++        int pid = getpid();
++        int uid = getuid();
++        QString username = g_get_user_name();
++        PolkitSubject* proj = polkit_unix_process_new_for_owner (pid, 0, uid);
++
++        PolkitAuthorizationResult* res = polkit_authority_check_authorization_sync (mAuth, proj, "org.ukui.samba.share.config.authorization", NULL,
++                                                                                              POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION, nullptr, &error);
++        if (error) {
++            qWarning() << error->message;
++            if (proj) {
++                g_object_unref (proj);
++            }
++            if (res) {
++                g_object_unref (res);
++            }
++            return;
++        }
++
++        if (!polkit_authorization_result_get_is_authorized(res)) {
++            return;
++        }
++
+         QDBusInterface *interFace = new QDBusInterface("org.ukui.samba.share.config",
+                                                            "/org/ukui/samba/share",
+                                                            "org.ukui.samba.share.config",
+                                                            QDBusConnection::systemBus());
+-        QString username = g_get_user_name();
+-        int pid = getpid();
+-        int uid = getuid();
+         QDBusReply<bool> initReply = interFace->call("init", username, pid, uid);
+         if (initReply.isValid()) {
+             if (initReply.value()) {
+diff --git a/src/src.pro b/src/src.pro
+index de4ece5..b7efe1e 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -23,7 +23,7 @@ include(../plugin-iface/unstable/window-plugin-iface.pri)
+ #include(view/view.pri)
+ DEFINES += QAPPLICATION_CLASS=QApplication
+ 
+-PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf
++PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf polkit-gobject-1
+ LIBS +=-lgio-2.0 -lglib-2.0 -lX11 -lukui-log4qt
+ CONFIG += c++11 link_pkgconfig no_keywords lrelease
+ 
