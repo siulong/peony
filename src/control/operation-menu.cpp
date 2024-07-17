@@ -250,6 +250,10 @@ setPasswd:
         dlg.setWindowModality(Qt::WindowModal);
         dlg.exec();
     });
+
+    //task#335022, add feedback button in menu
+    kdk::KMenuButton* menubutton = new kdk::KMenuButton();
+    addAction(menubutton->feedbackAction());
 }
 
 void OperationMenu::updateMenu()
