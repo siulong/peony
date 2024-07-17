@@ -147,6 +147,16 @@ void DesktopBackgroundManager::setBackground()
     }
 
     m_frontPixmap = QPixmap(defaultBg);
+    //ctyun项目反馈壁纸问题修复
+    //fix jpeg file change suffix name to png, set as wallpaper fail issue
+    //fix bug#242528, can not read jpg wallpaper issue
+    if (m_frontPixmap.isNull()){
+        QFile file(defaultBg);
+        if (file.open(QIODevice::ReadOnly)){
+            m_frontPixmap.loadFromData(file.readAll());
+            file.close();
+        }
+    }
     m_current_bg_path = defaultBg;
     if (defaultBg != accountBack)
         setAccountBackground();
