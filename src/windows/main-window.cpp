@@ -1441,6 +1441,10 @@ QString MainWindow::getLastSearchKey()
     return m_last_key;
 }
 
+void MainWindow::clearLastSearchPath()
+{
+    m_last_search_path = "";
+}
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {

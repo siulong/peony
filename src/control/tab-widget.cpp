@@ -1026,6 +1026,23 @@ void TabWidget::updateSearchBar(bool showSearch)
         //exit advance search, clear search conditions
         clearConditions();
         updateFilter();
+
+        /**
+         * @bug #242210: [File Manager] Enter the folder and click search, switch the search directory,
+         *               repeat the second time you can not switch the search directory.
+         *
+         * Closing the search without resetting MainWindow's m_last_search_path
+         * to null prevents the search from being performed
+         *
+         * @author: Renyg <renyangguang@kylinos.cn>
+         * @date: %{CurrentDate::yyyy-MM-dd}
+         */
+        MainWindow *mainWindow = dynamic_cast<MainWindow *>(this->topLevelWidget());
+        if(mainWindow)
+        {
+            mainWindow->clearLastSearchPath();
+        }
+
     }
 
     //9X0 changes, set default as true, fix bug#70916
