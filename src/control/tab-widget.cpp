@@ -161,12 +161,18 @@ QRect PushButtonStyle::subElementRect(SubElement element, const QStyleOption *op
 
 TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 {
+    QString localeName = QLocale::system().name();
+    if (localeName.contains("ug") || localeName.contains("kk") || localeName.contains("ky")) {
+        setLayoutDirection(Qt::RightToLeft);
+    }
+
     setStyle(PeonyMainWindowStyle::getStyle());
 
     setAttribute(Qt::WA_TranslucentBackground);
 
     m_parent = parent;
     m_tab_bar = new NavigationTabBar(this);
+    m_tab_bar->setLayoutDirection(layoutDirection());
     m_tab_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_stack = new QStackedWidget(this);
     m_stack->setContentsMargins(8, 0, 0, 0);
@@ -271,6 +277,9 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
         });
         auto pTabBar = m_tab_bar->mapToGlobal(m_tab_bar->pos());
         QPoint pos(pTabBar.x() + m_show_page_button->x(), pTabBar.y() + m_tab_bar->sizeHint().height() - 8);
+        if (layoutDirection() == Qt::RightToLeft) {
+            pos = m_show_page_button->mapToGlobal(QPoint(m_show_page_button->width() - menu->sizeHint().width(), m_show_page_button->height()));
+        }
         menu->exec(pos);
     });
 

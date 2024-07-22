@@ -133,6 +133,10 @@ static QWidgetList blur_window_list;
 
 MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent)
 {
+    QString localeName = QLocale::system().name();
+    if (localeName.contains("ug") || localeName.contains("kk") || localeName.contains("ky")) {
+        setLayoutDirection(Qt::RightToLeft);
+    }
     // try fix #162452, filedialog changes peony main windows view type and sort options.
     setObjectName("_peony_mainwindow");
     setAttribute(Qt::WA_AlwaysShowToolTips);
