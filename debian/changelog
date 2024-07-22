@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0722) nile; urgency=medium
+
+  * 修复编译报错
+  * 修复哈维科布局
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 22 Jul 2024 16:45:10 +0800
+
 peony (4.10.0.5-ok1~0711) nile; urgency=medium
 
   * fix #IA4BJN 【主要】【不可变系统】【显示器】接入双屏，桌面文件夹消失
