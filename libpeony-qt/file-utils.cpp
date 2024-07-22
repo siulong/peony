@@ -1481,6 +1481,22 @@ QString FileUtils::updateFileIconName(const QString &uri, bool checkValid)
     return icon_name;
 }
 
+bool FileUtils::isSearchFilesParentWriteable(const QStringList &selectUris, bool isSearch)
+{
+    /* 经过讨论，对于搜索路径，判断每个选中文件的父目录的可写权限，都有可写权限时才返回true，反之则为false */
+    bool canWrite = true;
+    if(isSearch && !selectUris.isEmpty()){
+        for (auto selectUri : selectUris) {
+            auto fileInfo = FileInfo::fromUri(selectUri);
+            if(!fileInfo->canRename()){
+                canWrite = false;
+                break;
+            }
+        }
+    }
+    return canWrite;
+}
+
 QString FileUtilsPrivate::getFileIconName(const QString &uri)
 {
     if (nullptr == uri) return "";

@@ -124,6 +124,7 @@ public:
     static bool isLongNameFileOfNotDel2Trash(const QString &fileUri);/* 判断是否是无法删除到回收站的长文件名文件 */
     static QString getActualDirFromSearchUri(const QString& searchUri);
     static QString updateFileIconName(const QString &uri, bool checkValid = false);
+    static bool isSearchFilesParentWriteable(const QStringList &selectUris, bool isSearch);/* 选中的搜索出来的文件（夹）,其父目录是否有写权限 */
 
 private:
     FileUtils();

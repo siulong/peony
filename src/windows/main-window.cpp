@@ -854,15 +854,14 @@ void MainWindow::setShortCuts()
 
                 QString currentUri = getCurrentUri();
                 if(currentUri.startsWith("search://")){
-                    currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
-                }
-                auto info = Peony::FileInfo::fromUri(currentUri);
-                if (!info->canWrite()) {
-                    if(getCurrentUri().startsWith("search://")){
-                        auto selectInfo = Peony::FileInfo::fromUri(currentSelections.first());
-                        if(!selectInfo->canWrite())
-                            return;
-                    }else{
+                    auto selections = this->getCurrentSelections();
+                    bool canCut = Peony::FileUtils::isSearchFilesParentWriteable(selections, getCurrentUri().startsWith("search://"));
+                    if(!canCut){
+                        return;
+                    }
+                }else{
+                    auto info = Peony::FileInfo::fromUri(currentUri);
+                    if (!info->canWrite()) {
                         return;
                     }
                 }

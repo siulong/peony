@@ -879,11 +879,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 auto info = FileInfo::fromUri(actualDir);
                 if (!info->canWrite()) {
                     canCut = false;
-                    if(m_is_search && !m_selections.isEmpty()){
-                        auto selectInfo = FileInfo::fromUri(m_selections.first());
-                        if(selectInfo->canWrite())
-                            canCut = true;
-                    }//end
+                }
+                if(m_is_search && !m_selections.isEmpty()){/* hotfix bug#222786 */
+                    auto selectInfo = FileInfo::fromUri(m_selections.first());
+                    canCut = FileUtils::isSearchFilesParentWriteable(m_selections, m_is_search);
                 }
                 if (canCut) {
                     l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));

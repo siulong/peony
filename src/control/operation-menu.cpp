@@ -459,6 +459,10 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
 //        isDirectoryCanWrite = false;
 //    }
 
+    if(isSearch && selections.size()){/* hotfix bug#222786 */
+        isDirectoryCanWrite = Peony::FileUtils::isSearchFilesParentWriteable(selections, isSearch);
+    }
+
     m_copy->setEnabled(!isSelectionEmpty && !isRecent && !isTrash && !isComputer);
     m_cut->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isRecent && !isTrash && !isComputer && isDirectoryCanWrite);
     m_trash->setEnabled(!isSelectionEmpty && !isDesktop && !isHome && !isComputer && isDirectoryCanWrite && !hasLongFileName);
