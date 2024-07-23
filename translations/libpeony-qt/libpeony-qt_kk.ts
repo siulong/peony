@@ -4940,7 +4940,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="316"/>
         <source>Cancel</source>
-        <translation>Болдырмау</translation>
+        <translation>كۇشىنەن قالدىرۋ</translation>
     </message>
     <message>
         <source>Eject Anyway</source>
