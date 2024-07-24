@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0725) nile; urgency=medium
+
+  * 优化多选模式体验。
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 24 Jul 2024 11:36:02 +0800
+
 peony (4.10.0.5-ok1~0724) nile; urgency=medium
 
   * fix #242579
