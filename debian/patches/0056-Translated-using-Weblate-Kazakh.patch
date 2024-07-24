@@ -1,0 +1,25 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Wed, 24 Jul 2024 02:20:31 +0000
+Subject: Translated using Weblate (Kazakh)
+
+Currently translated at 100.0% (759 of 759 strings)
+
+Translation: openkylin-nile-new/libpeony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/libpeony-qt/kk/
+---
+ translations/libpeony-qt/libpeony-qt_kk.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/translations/libpeony-qt/libpeony-qt_kk.ts b/translations/libpeony-qt/libpeony-qt_kk.ts
+index 7d87b18..9647098 100644
+--- a/translations/libpeony-qt/libpeony-qt_kk.ts
++++ b/translations/libpeony-qt/libpeony-qt_kk.ts
+@@ -2094,7 +2094,7 @@
+     <message>
+         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="71"/>
+         <source>Cancel</source>
+-        <translation>Болдырмау</translation>
++        <translation>كۇشىنەن قالدىرۋ</translation>
+     </message>
+ </context>
+ <context>
