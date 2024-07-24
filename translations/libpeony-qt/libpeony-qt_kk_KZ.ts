@@ -2088,7 +2088,7 @@
     <message>
         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="71"/>
         <source>Cancel</source>
-        <translation>Болдырмау</translation>
+        <translation>كۇشىنەن قالدىرۋ</translation>
     </message>
 </context>
 <context>
