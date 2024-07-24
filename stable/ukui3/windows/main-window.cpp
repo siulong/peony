@@ -101,6 +101,7 @@
 
 #include <X11/Xlib.h>
 #include <KWindowEffects>
+#include <netwm.h>
 
 // NOTE build failed on Archlinux. Can't detect `QGSettings/QGSettings' header
 // fixed by replaced `QGSettings/QGSettings' with `QGSettings'
@@ -164,6 +165,8 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
         hints.functions = MWM_FUNC_ALL;
         hints.decorations = MWM_DECOR_BORDER;
         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
+        NETWinInfo info(QX11Info::connection(), this->winId(), QX11Info::appRootWindow(), NET::Properties(), NET::WM2DesktopFileName);
+        info.setDesktopFileName("peony");
     }
 
     startMonitorThumbnailForbidStatus();
