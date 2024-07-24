@@ -6,21 +6,21 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
         <source>label management ...</source>
-        <translation>بەلگە باشقۇرۇش ...</translation>
+        <translation>بەلگە  باشقارىش ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="72"/>
         <source>Remove &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 نى چىعارىپ قويوت</translation>
     </message>
     <message>
         <source>delete &quot;%1&quot;</source>
-        <translation type="vanished">&quot;٪1&quot; نى ئۆچۈر</translation>
+        <translation type="vanished">删除“%1”</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="92"/>
         <source>add  &quot;%1&quot;</source>
-        <translation>&quot;٪1&quot; نى قوش</translation>
+        <translation>%1 نى قوشوت</translation>
     </message>
 </context>
 <context>
@@ -28,42 +28,42 @@
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="14"/>
         <source>Connect to Sever</source>
-        <translation>Sever غا ئۇلاش</translation>
+        <translation>مۇلازىمەتىرگە ۇلانۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="32"/>
         <source>Domain</source>
-        <translation>تور نامى</translation>
+        <translation>تور  ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="39"/>
         <source>Password</source>
-        <translation>ئىم</translation>
+        <translation>جاشىرۇۇن  نومۇر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="55"/>
         <source>Save Password</source>
-        <translation>مەخپىي نومۇرنى ساقلاش</translation>
+        <translation>جاشىرۇۇن  نومۇردۇ  ساقتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="62"/>
         <source>User</source>
-        <translation>ئىشلەتكۈچى</translation>
+        <translation>ىشتەتۉۉچۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.ui" line="82"/>
         <source>Anonymous</source>
-        <translation>نامسىز</translation>
+        <translation>اتى جوق</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.cpp" line="35"/>
         <source>Ok</source>
-        <translation>ماقۇل</translation>
+        <translation>بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-server-dialog.cpp" line="36"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -71,22 +71,22 @@
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="477"/>
         <source> is busy!</source>
-        <translation> ئالدىراش!</translation>
+        <translation> ەرەكچە الدىراش!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="516"/>
         <source>is busy!</source>
-        <translation>ئالدىراش!</translation>
+        <translation>ەرەكچە الدىراش!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="563"/>
         <source> not support udf at present.</source>
-        <translation> نۆۋەتتە udf نى قوللىمايدۇ.</translation>
+        <translation> ازىرچا udf نى قولدوبويت.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="570"/>
         <source>unmount disc failed before udf format.</source>
-        <translation>udf فورماتلاشتىن بۇرۇن دىسكىدىن ئايرىلىش مەغلۇپ بولدى.</translation>
+        <translation>udf فورماتتونۇن مۇرۇن  دىسكاسىن ۅچۉرۉۉ جەڭىلۉۉ بولدۇ .</translation>
     </message>
     <message>
         <source>is not properly formatted.</source>
@@ -99,12 +99,12 @@
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="723"/>
         <source>DVD+RW udf format fail.</source>
-        <translation>DVD+RW udf فورماتى مەغلۇپ بولدى.</translation>
+        <translation>DVD+RW udf فورماتى جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="755"/>
         <source>preparation failed before DVD-RW udf format.</source>
-        <translation>DVD-RW udf فورماتتىن بۇرۇن تەييارلىق مەغلۇپ بولدى.</translation>
+        <translation>DVD-RW udf فورماتتونۇن مۇرۇنقۇ داياردىق جەڭىلۉۉ بولدۇ .</translation>
     </message>
 </context>
 <context>
@@ -113,37 +113,37 @@
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="38"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="56"/>
         <source>Red</source>
-        <translation>قىزىل رەڭ</translation>
+        <translation>قىزىل</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="39"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="57"/>
         <source>Orange</source>
-        <translation>ئاپېلسىن رەڭ</translation>
+        <translation>سارعىچ قىزىل</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="40"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="58"/>
         <source>Yellow</source>
-        <translation>سېرىق رەڭ</translation>
+        <translation>سارى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="41"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="59"/>
         <source>Green</source>
-        <translation>يېشىل رەڭ</translation>
+        <translation>جاشىل</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="42"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="60"/>
         <source>Blue</source>
-        <translation>كۆك رەڭ</translation>
+        <translation>كۅك</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="43"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="61"/>
         <source>Purple</source>
-        <translation>سۆسۈن رەڭ</translation>
+        <translation>گۉلگۉن ، قىزعىلت كۅك  تۉس</translation>
     </message>
     <message>
         <source>Gray</source>
@@ -161,13 +161,13 @@
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="130"/>
         <location filename="../../libpeony-qt/model/file-label-model.cpp" line="435"/>
         <source>Label or color is duplicated.</source>
-        <translation>بەلگە ياكى رەڭنى كۆپەيتىش.</translation>
+        <translation>بەلگە  كۅرۉنۉشتۅرۉ تۉس تەكرارلىنىدۇ.</translation>
     </message>
 </context>
 <context>
@@ -176,7 +176,7 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="157"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="175"/>
         <source>Burn failed</source>
-        <translation>كۆيدۈرۈش مەغلۇپ بولدى</translation>
+        <translation>ويۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
 </context>
 <context>
@@ -184,17 +184,17 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="20"/>
         <source>Dialog</source>
-        <translation>دىئالوگ</translation>
+        <translation>ۇباقىت ۅزگۅرتۉش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="32"/>
         <source>rom_size</source>
-        <translation>rom_size</translation>
+        <translation>rom_رەزمېرى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="45"/>
         <source>system</source>
-        <translation>سىستېما</translation>
+        <translation>سەستىما</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="59"/>
@@ -204,12 +204,12 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="64"/>
         <source>exfat</source>
-        <translation>exfat</translation>
+        <translation>exfat ۅجۅت  بۅلۉشتۉرۉ جادىبالى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="69"/>
         <source>ntfs</source>
-        <translation>ntfs</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <source>vfat</source>
@@ -218,32 +218,32 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="74"/>
         <source>ext4</source>
-        <translation>ext4</translation>
+        <translation>ext4 ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="88"/>
         <source>device_name</source>
-        <translation>device_name</translation>
+        <translation>شايمان-ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="114"/>
         <source>clean it total</source>
-        <translation>ئۇنى پاكىزە</translation>
+        <translation>پۉتكۉلدۅي تازالوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="127"/>
         <source>ok</source>
-        <translation>ماقۇل</translation>
+        <translation>بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="140"/>
         <source>close</source>
-        <translation>يېپىش</translation>
+        <translation>جابۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation>تەكىست ەنى ، تامعاسى</translation>
     </message>
     <message>
         <source>qmesg_notify</source>
@@ -285,103 +285,103 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="167"/>
         <source>Rom size:</source>
-        <translation>روم چوڭلۇقى:</translation>
+        <translation>كۅلۅمۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="173"/>
         <source>Filesystem:</source>
-        <translation>ھۆججەت سىستىمىسى:</translation>
+        <translation>ۅجۅت ساامالىعى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="183"/>
         <source>Disk name:</source>
-        <translation>دېسكا ئىسمى:</translation>
+        <translation>دىسكا اتى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="213"/>
         <source>Completely erase(Time is longer, please confirm!)</source>
-        <translation>پۈتۈنلەي ئۆچۈرۈش (ۋاقىت تېخىمۇ ئۇزۇن، جەزىملەشتۈرۈڭ!)</translation>
+        <translation>پۉتكۉلدۅي ۅچۉرۉۉ (ۇزۇن  ۇباقىت كەتەت، ايقىنداڭ!)</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="231"/>
         <source>Set password</source>
-        <translation>پارول بەلگىلەش</translation>
+        <translation>جاشىرۇۇن  نومۇر بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="232"/>
         <source>Set password for volume based on LUKS (only ext4)</source>
-        <translation>LUKS ئاساسىدىكى ئاۋازغا پارول بېكىتىش (پەقەت ext4)</translation>
+        <translation>LUKS عا  نەگىزىنەن تومۇنۇن جاشىرۇۇن  نومۇرۇن بەلگىلۅۅ (جالاڭ عانا  ext 4 مەنەن ەلە چەكتەلەت)</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
         <source>Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive</source>
-        <translation>ext4 ھۆججەت سىستېمىسىغا فورماتلاش باشقا ئىشلەتكۈچىلەرنىڭ USB دېسكىسىنى ئوقۇيالماسلىقى ياكى خەت يازالماسلىقىنى كەلتۈرۈپ چىقىرىشى مۇمكىن</translation>
+        <translation>ext 4 ۅجۅت ساامالىعىنا  فورماتتاش  باشقا ىشتەتۉۉچۉلۅردۉن USB قوزعوتقۇچتۇ  وقۇي الباستىعى كۅرۉنۉشتۅرۉ يازالماسلىقىنى كەلىترىپ ۅندۉرۉشۉ  مۉمكۉن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="246"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="247"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="361"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="238"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="567"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="567"/>
         <source>Device name cannot start with a decimal point, Please re-enter!</source>
-        <translation>ئۈسكۈنە نامىنى دېسكىلىق نۇقتىدىن باشلاشقا بولمايدۇ، قايتا كىرىڭ!</translation>
+        <translation>جابدۇۇسۇنۇن ناامى ، وندۇق كەسىر  چەكىتىنەن باشتالباستىعى كەرەك قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="578"/>
         <source>Enter Password:</source>
-        <translation>مەخپىي نومۇرىنى كىرگۈزۈڭ:</translation>
+        <translation>جاشىرۇۇن  نومۇردۇ  كىرگىزىڭ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="596"/>
         <source>Password too short, please retype a password more than 6 characters</source>
-        <translation>پارول بەك قىسقا، 6 ھەرپتىن ئارتۇق پارولنى قايتا خەت كىرگۈزۈڭ</translation>
+        <translation>جاشىرۇۇن  نومۇر ۅتۅ  قىسقا، 6 تامعانىن ئاشىدىغان جاشىرۇۇن  نومۇردۇ  قايرا كىرگىزىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
         <source>%1/sec, %2 remaining.</source>
-        <translation>٪1/سېز، ٪2 قېلىپ قالدى.</translation>
+        <translation>%1 سىكونت، اشىپ  قالعان %2.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="695"/>
         <source>over one day</source>
-        <translation>بىر كۈندىن ئارتۇق</translation>
+        <translation>بىر  كۉندۅن اشىپ  كەتتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="697"/>
         <source>getting progress...</source>
-        <translation>ئىلگىرلەشكە ئېرىشىۋاتىدۇ...</translation>
+        <translation>ىلگەرلۅۅ قولعو كەلتىرىلمەكتە...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1290"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1290"/>
         <source>Block not existed!</source>
-        <translation>توسۇش مەۋجۇت ئەمەس!</translation>
+        <translation>رايون ،چۅلكۅم  بۅلۅگۉ باربولۇۇسۇ  ەمەس !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1337"/>
         <source>Formatting. Do not close this window</source>
-        <translation>فورماتلاش. بۇ كۆزنەكنى تاقىماسلىق</translation>
+        <translation>فورماتتاش . بۇل كۅزۅنۅكتۉ تاقىۋەتمەڭ</translation>
     </message>
 </context>
 <context>
@@ -389,12 +389,12 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="97"/>
         <source>Renaming &quot;%1&quot;</source>
-        <translation>«٪1» نىڭ نامى ئۆزگەرتىلدى</translation>
+        <translation>قايرا اتاق بەرىلىپ جاتات %1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
         <source>Renaming failed, the reason is: %1</source>
-        <translation>نامىنى ئۆزگەرتىش مەغلۇپ بولدى، سەۋەبى: ٪1</translation>
+        <translation>قايرا اتاق بەرۉۉ جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="98"/>
@@ -402,127 +402,127 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="116"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="121"/>
         <source>Filename too long</source>
-        <translation>ھۆججەت نامى بەك ئۇزۇن</translation>
+        <translation>ۅجۅت اتى  ۅتۅ  ۇزۇن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="102"/>
         <source>Copying &quot;%1&quot;</source>
-        <translation>&quot;٪1&quot; نى كۆچۈرۈش</translation>
+        <translation>%1 ۅرگۅلۅنۉپ جاتات</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="106"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="115"/>
         <source>To &quot;%1&quot;</source>
-        <translation>&quot;٪1&quot; كە</translation>
+        <translation>%1 تۉن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="107"/>
         <source>Copying failed, the reason is: %1</source>
-        <translation>كۆچۈرۈش مەغلۇپ بولدى، سەۋەبى: ٪1</translation>
+        <translation>ۉلگۉسۉن الۇۇ  جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="111"/>
         <source>Moving &quot;%1&quot;</source>
-        <translation>يۆتكەش &quot;٪1&quot;</translation>
+        <translation>جۅتكۅلۉپ جاتات %1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="116"/>
         <source>Moving failed, the reason is: %1</source>
-        <translation>يۆتكەش مەغلۇپ بولدى، سەۋەبى: ٪1</translation>
+        <translation>جۅتكۅۅ جەڭىلۉۉ بولدۇ ، سەبەبى :%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="120"/>
         <source>File operation error:</source>
-        <translation>ھۆججەت مەشغۇلات خاتالىقى:</translation>
+        <translation>ۅجۅت ماشعۇلاتىنداقى قاتاالىق :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="121"/>
         <source>The reason is: %1</source>
-        <translation>سەۋەبى: ٪1</translation>
+        <translation>سەبەبى :%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="140"/>
         <source>Truncation</source>
-        <translation>تىنىپ قېلىش</translation>
+        <translation>قىيىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="141"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="213"/>
         <source>Save</source>
-        <translation>ساقلاش</translation>
+        <translation>ساقتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="171"/>
         <source>All applications</source>
-        <translation>بارلىق قوللىنىشچان پروگراممىلار</translation>
+        <translation>باردىق قولدونۇشچان  پراگراممالار</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="174"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="212"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="272"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="175"/>
         <source>Apply</source>
-        <translation>ئىلتىماس قىلىش</translation>
+        <translation>ئەپ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="208"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="258"/>
         <source>Bytes</source>
-        <translation>بايىتلار</translation>
+        <translation>سۅز مۇۇنۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="264"/>
         <source>Front truncation</source>
-        <translation>ئالدى كەسمە</translation>
+        <translation>الدى   بۅلۅگۉ  كېسىۋېتىلگەن.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="265"/>
         <source>Post truncation</source>
-        <translation>يازما ئورنى</translation>
+        <translation>كېسىۋەتكەندىن كىيىن.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="321"/>
         <source>Description: Skip copying files of the current type</source>
-        <translation>چۈشەندۈرۈلىشى: نۆۋەتتىكى تۈردىكى ھۆججەتلەرنى كۆچۈرۈشنى ئاتلاش</translation>
+        <translation>تۉشۅندۉرۉش :گەزەكتەكى  تۉردۅكۉ    ۅجۅتۉن كۅچۉرۉۉدۅن اتتاپ ۅتۉش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="326"/>
         <source>truncate interval</source>
-        <translation>كەسمە ئارىلىق</translation>
+        <translation>كەسمە ارالىق</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="327"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="345"/>
         <source>.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="328"/>
         <source>Explanation: Truncate the portion of the file name that exceeds 225 bytes and select</source>
-        <translation>ئىزاھات: 225 بايىتتىن ئېشىپ كەتكەن ھۆججەت نامىنىڭ قىسمىنى چۈشۈرۈپ تاللاپ تاللاش</translation>
+        <translation>ەسكەرتۉۉ:ۅجۅت اتىنداقى 225 بايتتىن اشىپ  كەتكەن ،قوروعون  بۅلۅگۉن  كەسىپ جىبەرۉۉ، اندان  تانداپ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="337"/>
         <source>Description: By default, save to &quot;%1/扩展&quot;.</source>
-        <translation>چۈشەندۈرۈلىشى: كۆڭۈلدىكىدەك قىلىپ «٪1/扩»غا ساقلىۋېلىڭ.</translation>
+        <translation>تۉشۅندۉرۉش :ويۇنداقى  ابالدا، %1/گىچە  ساقتوو كەرەك.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="344"/>
         <source>modify the name</source>
-        <translation>ئىسىمنى ئۆزگەرتىش</translation>
+        <translation>اتاعىن ۅزگۅرتۉش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="346"/>
         <source>Explanation: When renaming a file name, ensure it is within 255 bytes and </source>
-        <translation type="unfinished">ئىزاھات: ھۆججەت نامىنى ئۆزگەرتكەندە 225 بايىت ئىچىدە بولۇشىغا كاپالەتلىك قىلىش ۋە  {255 ?}</translation>
+        <translation>تۉشۅندۉرۉش :ۅجۅت اتاعىن قايرا اتتاعاندا، انىن  255 بايت ىچىندە  بولۇشۇنا  ەەبولۇۇ  قىلىڭ، انىن  ۉستۉنۅن </translation>
     </message>
     <message>
         <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
-        <translation type="vanished">ئىزاھات: ھۆججەت نامىنى ئۆزگەرتكەندە 225 بايىت ئىچىدە بولۇشىغا كاپالەتلىك قىلىش ۋە </translation>
+        <translation type="vanished">说明：用户重命名文件名，保证在225字节以内，去</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="139"/>
@@ -536,7 +536,7 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="142"/>
         <source>Rename</source>
-        <translation>قايتا ئىسىم فامىلە قىلىش</translation>
+        <translation>قايرا ات جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <source>Please enter a new name</source>
@@ -545,7 +545,7 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="273"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
 </context>
 <context>
@@ -553,7 +553,7 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="438"/>
         <source>File operation</source>
-        <translation>ھۆججەت مەشغۇلاتى</translation>
+        <translation>ۅجۅت ماشعۇلاتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="493"/>
@@ -564,74 +564,74 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="457"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="598"/>
         <source>cancel all file operations</source>
-        <translation>بارلىق ھۆججەت مەشغۇلاتلىرىنى ئەمەلدىن قالدۇرۇش</translation>
+        <translation>باردىق ۅجۅت ماشعۇلاتىنى ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="447"/>
         <source>Minimize</source>
-        <translation>كىچىكلىتىش</translation>
+        <translation>ەڭ كىچىك   ابالى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="455"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="458"/>
         <source>Are you sure to cancel all file operations?</source>
-        <translation>سىز چوقۇم بارلىق ھۆججەت مەشغۇلاتلىرىنى ئەمەلدىن قالدۇرامسىز؟</translation>
+        <translation>سىز باردىق ۅجۅت ماشعۇلاتىنى ارعادان  قالتىرۇۇنۇ تۇراقتاندىرا الاسىزبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="599"/>
         <source>Are you sure want to cancel all file operations</source>
-        <translation>سىز چوقۇم بارلىق ھۆججەت مەشغۇلاتلىرىنى بىكار قىلماقچىمۇ؟</translation>
+        <translation>چىنعى باردىق ۅجۅت ماشعۇلاتىنى ارعادان  قالدۇرماقچىمۇ؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="460"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="601"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="461"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="602"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="634"/>
         <source>continue</source>
-        <translation>داۋامى بار</translation>
+        <translation>جالعاشتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="636"/>
         <source>pause</source>
-        <translation>توختاش</translation>
+        <translation>ۇباقتىنچا توقتوتۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="716"/>
         <source>canceling ...</source>
-        <translation>ئەمەلدىن قالدۇردى ...</translation>
+        <translation>نازاردان ساق   قىلىنىپ جاتات...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="719"/>
         <source>sync ...</source>
-        <translation>سىنىك ...</translation>
+        <translation>شاي  قەدەملەش ...</translation>
     </message>
 </context>
 <context>
     <name>MessageDialog</name>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1841"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1839"/>
         <source>Peony</source>
-        <translation>مودەنگۈل</translation>
+        <translation>ۅجۅت باشقارعۇۇچۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1868"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1866"/>
         <source>Forcibly pulling out the device may cause data
  loss or device exceptions!</source>
-        <translation>ئۈسكۈنىنى زورلۇق بىلەن تارتىپ چىقىرىش سانلىق مەلۇماتلارنى كەلتۈرۈپ چىقىرىشى مۇمكىن
- زىيان ياكى ئۈسكۈنە ئەھۋاللىرى!</translation>
+        <translation>اسپاپتى زوردۇق مەنەن  تارتىپ  ۅندۉرۉش  ساندۇۇ باياندامالاردى  كەلىترىپ ۅندۉرۉش ى مۉمكۉن
+جوعولۇپ كەتۉۉ  كۅرۉنۉشتۅرۉ زاپجاستار بۅتۅنچۅ بولۇش !</translation>
     </message>
 </context>
 <context>
@@ -639,7 +639,7 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="825"/>
         <source>Other queue</source>
-        <translation>باشقا قاتار</translation>
+        <translation>باشقا ئۆچرەتلەر</translation>
     </message>
 </context>
 <context>
@@ -647,113 +647,113 @@
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="55"/>
         <source>Key Words</source>
-        <translation>ئاچقۇچلۇق سۆزلەر</translation>
+        <translation>الىعىلىقتۇۇ سۅز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="58"/>
         <source>input key words...</source>
-        <translation>كىرگۈزگۈچ ئاچقۇچلۇق سۆزلەر...</translation>
+        <translation>الىعىلىقتۇۇ سۅز كىرگىزۉۉ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="59"/>
         <source>Search Location</source>
-        <translation>ئىزدەش ئورنى</translation>
+        <translation>ىزدۅۅ وردۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="61"/>
         <source>choose search path...</source>
-        <translation>ئىزدەش يولىنى تاللاڭ...</translation>
+        <translation>ىزدۅۅ جولۇن تانداڭ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="68"/>
         <source>browse</source>
-        <translation>كۆرۈش</translation>
+        <translation>كۅرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="69"/>
         <source>File Type</source>
-        <translation>ھۆججەت تۈرى</translation>
+        <translation>ۅجۅت تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="71"/>
         <source>Choose File Type</source>
-        <translation>ھۆججەت تۈرىنى تاللاش</translation>
+        <translation>ۅجۅت تىبىن تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="76"/>
         <source>Modify Time</source>
-        <translation>ۋاقىتنى ئۆزگەرتىش</translation>
+        <translation>تۉزۅتۉۉ ۇباقتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="78"/>
         <source>Choose Modify Time</source>
-        <translation>ۋاقىتنى ئۆزگەرتىشنى تاللاش</translation>
+        <translation>تۉزۅتۉۉ ۇباقتىن تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="83"/>
         <source>File Size</source>
-        <translation>ھۆججەت چوڭلۇقى</translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="85"/>
         <source>Choose file size</source>
-        <translation>ھۆججەت چوڭلۇقىنى تاللاش</translation>
+        <translation>ۅجۅت چوڭدۇعۇن  تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="90"/>
         <source>show hidden file</source>
-        <translation>يوشۇرۇن ھۆججەتنى كۆرسەت</translation>
+        <translation>جاشىرىن  ۅجۅتۉن كۅرسۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="91"/>
         <source>go back</source>
-        <translation>قايت</translation>
+        <translation>قايتۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="92"/>
         <source>hidden advance search page</source>
-        <translation>يوشۇرۇن ئالدىن ئىزدەش بېتى</translation>
+        <translation>جاشىرىن جوعورۇ چەكتۉۉ ىزدۅۅ بىتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="94"/>
         <source>file name</source>
-        <translation>ھۆججەت نامى</translation>
+        <translation>ۅجۅت ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="95"/>
         <source>content</source>
-        <translation>مەزمۇن</translation>
+        <translation>مازمۇن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="100"/>
         <source>search</source>
-        <translation>ئىزدە</translation>
+        <translation>ىزدۅۅ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="101"/>
         <source>start search</source>
-        <translation>ئىزدەشنى باشلاڭ</translation>
+        <translation>ىزدەشتى  باشتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="174"/>
         <source>Select path</source>
-        <translation>يول تاللاش</translation>
+        <translation>جولدۇ  تانداش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="193"/>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="202"/>
         <source>Operate Tips</source>
-        <translation>مەشغۇلات ئەسكەرتىشلىرى</translation>
+        <translation>ماشقۇلدانۇۇ  ەسكەرتمەسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="194"/>
         <source>Have no key words or search location!</source>
-        <translation>ئاچقۇچلۇق سۆز ياكى ئىزدەش ئورنى يوق!</translation>
+        <translation>تۉيۉندۉۉ سۅز كۅرۉنۉشتۅرۉ ىزدۅۅ وردۇ جوق!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/advance-search-bar.cpp" line="203"/>
         <source>Search file name or content at least choose one!</source>
-        <translation>ھۆججەت نامى ياكى مەزمۇننى ئىزدەڭ، ھېچ بولمىغاندا بىرنى تاللاڭ!</translation>
+        <translation>ۅجۅت اتى  كۅرۉنۉشتۅرۉ مازمۇنۇن ىزدۅۅ ۉچۉن  از دەگەندە  بىردى تانداڭ!</translation>
     </message>
     <message>
         <source>Search content or file name at least choose one!</source>
@@ -837,7 +837,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp" line="200"/>
         <source>Search Content...</source>
-        <translation>مەزمۇن ئىزدەش...</translation>
+        <translation>ىزدۅۅ مازمۇنۇ ...</translation>
     </message>
 </context>
 <context>
@@ -846,62 +846,62 @@
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="683"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="901"/>
         <source>Permission refinement settings</source>
-        <translation>ئىجازەت ئىنچىكىلەش تەڭشەكلىرى</translation>
+        <translation>ۇقۇق گۅۅلۅمۉن  ئىنچىكىلەشتۈرۈپ قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="796"/>
         <source>Permission refinement settings tip</source>
-        <translation>ئىجازەتنى ئىنچىكىلەش تەڭشەكلىرى ئەسكەرتىش</translation>
+        <translation>ۇقۇق گۅۅلۅمۉن  ئىنچىكىلەشتۈرۈپ قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ  ەسكەرتمەسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="796"/>
         <source>Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?</source>
-        <translation>ACL رۇخسىتىنى تەڭشىسە، ئابونتلار گۇرۇپپىسىنىڭ ئاساسىي رۇخسىتىنىڭ رۇخسىتىنىڭ ئۆزگىرىشىنى پەيدا قىلىدۇ. ACL ئىجازەتنامىسىنى داۋاملىق بەلگىلەش كېرەكمۇ؟</translation>
+        <translation>ACL ۇقۇق گۅۅلۅمۉ  قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ  نەگىزگى  ۇقۇق گۅۅلۅمۉ  بولعون ابونتتار توبۇنۇن  ۇقۇق گۅۅلۅمۉ نىڭ  ۅزگۅرۉنۉ كەلىترىپ چىعارات. ACL ۇقۇقىنى جالعاشتۇۇ  قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ  كەرەكبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="828"/>
         <source>User</source>
-        <translation>ئىشلەتكۈچى</translation>
+        <translation>ىشتەتۉۉچۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="828"/>
         <source>Read</source>
-        <translation>ئوقۇلدى</translation>
+        <translation>وقۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="828"/>
         <source>Write</source>
-        <translation>يېزىش</translation>
+        <translation>جازۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="828"/>
         <source>Executable</source>
-        <translation>ئىجرا قىلغىلى بولىدۇ</translation>
+        <translation>اتقارماق  جاساعالى بولوتۇرعان ۅجۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="913"/>
         <source>delete</source>
-        <translation>ئۆچۈر</translation>
+        <translation>ۅچۉر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="915"/>
         <source>Inherit permission</source>
-        <translation>ۋارىسلىق رۇخسىتى</translation>
+        <translation>مىراستىق جاسوو ،اتقارۇۇ  ۇقۇق گۅۅلۅمۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="930"/>
         <source>Add</source>
-        <translation>قوش</translation>
+        <translation>قوشۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="947"/>
         <source>Apply</source>
-        <translation>ئىلتىماس قىلىش</translation>
+        <translation>ئەپ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="948"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -909,27 +909,27 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="380"/>
         <source>Choose new application</source>
-        <translation>يېڭى قوللىنىشچان پروگراممىنى تاللاش</translation>
+        <translation>جاڭى قولدونۇشچان  پراگراممانى تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="382"/>
         <source>Choose an Application to open this file</source>
-        <translation>بۇ ھۆججەتنى ئېچىش ئۈچۈن پروگرامما تاللاش</translation>
+        <translation>بىر  ئەپنى تانداپ بۇل  ۅجۅتۉن اچىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="389"/>
         <source>apply now</source>
-        <translation>ھازىر ئىلتىماس قىلىڭ</translation>
+        <translation>داروو  ۅتۉنۉچ  قىلىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="395"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="396"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -944,12 +944,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="935"/>
         <source>Choose a custom icon</source>
-        <translation>خاس سىنبەلگىنى تاللاش</translation>
+        <translation>قاسىيەت بەلگىنى تانداش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="271"/>
         <source>Type:</source>
-        <translation>تۈرى:</translation>
+        <translation>تۉرۉ:</translation>
     </message>
     <message>
         <source>Display Name:</source>
@@ -970,12 +970,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="243"/>
         <source>Name</source>
-        <translation>ئىسىم-فامىلىسى</translation>
+        <translation>ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="244"/>
         <source>Location</source>
-        <translation>ئورنى</translation>
+        <translation>وردۇ</translation>
     </message>
     <message>
         <source>move</source>
@@ -984,38 +984,38 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="451"/>
         <source>symbolLink</source>
-        <translation>symbolLink</translation>
+        <translation>بەلگە  ۇلانماسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="455"/>
         <source>Folder</source>
-        <translation>ھۆججەت قىسقۇچ</translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="278"/>
         <source>Include:</source>
-        <translation>ئۆز ئىچىگە ئالىدۇ:</translation>
+        <translation>ۅز ىچىنە  الات:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="282"/>
         <source>Open with:</source>
-        <translation>ئاچىدىغانلار:</translation>
+        <translation>اچۇۇ ارعاسى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="286"/>
         <source>Description:</source>
-        <translation>چۈشەندۈرۈلۈشى:</translation>
+        <translation>بايان جاسوو ،اتقارۇۇ :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="289"/>
         <source>Select multiple files</source>
-        <translation>كۆپ ھۆججەت تاللاش</translation>
+        <translation>كۅپ  ۅجۅتۉن تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="277"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="295"/>
         <source>Size:</source>
-        <translation>چوڭ - كىچىكلىكى:</translation>
+        <translation>چوڭ - كىچىكتىگى :</translation>
     </message>
     <message>
         <source>Total size:</source>
@@ -1040,55 +1040,55 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="296"/>
         <source>Space Usage:</source>
-        <translation>بوشلۇق ئىشلىتىش:</translation>
+        <translation>بوشتۇقتان كەرەك قىلىش  ابالى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="307"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="315"/>
         <source>Time Create:</source>
-        <translation>ۋاقىت يارىتىش:</translation>
+        <translation>قۇرۇلعان  ۇباقتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="308"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="316"/>
         <source>Time Modified:</source>
-        <translation>ۋاقىت ئۆزگەرتىلگەن:</translation>
+        <translation>تۉزۅتۉۉ كىرگىزۉۉ ۇباقتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="309"/>
         <source>Time Access:</source>
-        <translation>ۋاقىت زىيارەت:</translation>
+        <translation>ۇباقىت زىياراتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="322"/>
         <source>Readonly</source>
-        <translation>Readonly</translation>
+        <translation>جالاڭ عانا وقۇۇعا بولوت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="323"/>
         <source>Hidden</source>
-        <translation>يۇشۇرۇن</translation>
+        <translation>جاشىرۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="332"/>
         <source>Property:</source>
-        <translation>مال-مۈلۈك:</translation>
+        <translation>قاسىيەتىن:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="614"/>
         <source>usershare</source>
-        <translation>usershare</translation>
+        <translation>بۇل ،ۇشۇل  اسپاپتان ھەمبەھرلىنىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="748"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="989"/>
         <source>%1 (%2 Bytes)</source>
-        <translation>٪1 (٪2 بايت)</translation>
+        <translation>%1 (%2 Bytes)</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="943"/>
         <source>Please select a image that is smaller than 1MB.</source>
-        <translation>1MB دىن كىچىكرەك رەسىم تاللاڭ.</translation>
+        <translation>1 MB نان كىچىك  سۉرۅتتۉ تانداڭ.</translation>
     </message>
     <message>
         <source>Choose a new folder:</source>
@@ -1105,7 +1105,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="982"/>
         <source>%1 Bytes</source>
-        <translation>٪1 بايىت</translation>
+        <translation>%1 بايت</translation>
     </message>
     <message>
         <source>%1 KB (%2 Bytes)</source>
@@ -1122,7 +1122,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1002"/>
         <source>%1 files, %2 folders</source>
-        <translation>٪1 ھۆججەت، ٪2 ھۆججەت قىسقۇچلىرى</translation>
+        <translation>%1 ۅجۅت، %2 ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1118"/>
@@ -1130,7 +1130,7 @@
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1125"/>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page.cpp" line="1127"/>
         <source>Can&apos;t get remote file information</source>
-        <translation>ھۆججەت ئۇچۇرىنى يىراقتىن ئالغىلى بولمىدى</translation>
+        <translation>ىرااق ساپاردۇۇ ۅجۅت ۇچۇرۇنا  ەە بولعولۇ بولبويت .</translation>
     </message>
     <message>
         <source>%1 files (include root files), %2 hidden</source>
@@ -1146,87 +1146,87 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="102"/>
         <source>CPU Name:</source>
-        <translation>CPU نامى:</translation>
+        <translation>CPU ناامى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="103"/>
         <source>CPU Core:</source>
-        <translation>CPU Core:</translation>
+        <translation>CPU يادروسى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="104"/>
         <source>Memory Size:</source>
-        <translation>ئەستە ساقلاش چوڭلۇقى:</translation>
+        <translation>ىچكى   ساقتاعىچتىن چوڭ كىچىكتىگى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="116"/>
         <source>User Name: </source>
-        <translation>ئىشلەتكۈچى نامى: </translation>
+        <translation>ىشتەتۉۉچۉ اتى : </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="117"/>
         <source>Desktop: </source>
-        <translation>ئۈستەل يۈزى: </translation>
+        <translation>شىرە  بەتى: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="125"/>
         <source>You should mount this volume first</source>
-        <translation>سىز ئاۋۋال بۇ ئاۋازنى ئۇلاشىڭىز كېرەك.</translation>
+        <translation>سىز الدىن بۇل ورومدۇ قاچالاشىڭىز كەرەك.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="142"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="240"/>
         <source>Name: </source>
-        <translation>ئىسمى : </translation>
+        <translation>ناامى : </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="142"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="142"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="143"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="245"/>
         <source>Total Space: </source>
-        <translation>ئومۇمىي بوشلۇق: </translation>
+        <translation>بااردىعى  بوشتۇق: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="144"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="246"/>
         <source>Used Space: </source>
-        <translation>ئىشلىتىلگەن بوشلۇق: </translation>
+        <translation>ىشتەتىلگەن بوشتۇق: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="145"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="247"/>
         <source>Free Space: </source>
-        <translation>ئەركىن بوشلۇق: </translation>
+        <translation>ىشتەتكەلى  بولوتۇرعان بوشتۇق: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="146"/>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="249"/>
         <source>Type: </source>
-        <translation>تۈرى: </translation>
+        <translation>تۉرۉ: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="262"/>
         <source>Kylin Burner</source>
-        <translation>Kylin Burner</translation>
+        <translation>Kylin كۆيدۈرگۈچى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="268"/>
         <source>Open with: 	</source>
-        <translation>ئاچىدىغانلار: 	</translation>
+        <translation>اچۇۇ ارعاسى: 	</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page.cpp" line="275"/>
         <source>Unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
 </context>
 <context>
@@ -1250,7 +1250,7 @@
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="143"/>
         <source>Connect to server</source>
-        <translation>مۇلازىمېتىرغا ئۇلاش</translation>
+        <translation>مۇلازىمەتىرگە ۇلانۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="168"/>
@@ -1260,44 +1260,44 @@
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="170"/>
         <source>Port</source>
-        <translation>پورت</translation>
+        <translation>ووزۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="171"/>
         <source>Type</source>
-        <translation>تۈرى</translation>
+        <translation>كۅرۉنۉش ۇسلۇبۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="202"/>
         <source>Personal Collection server:</source>
-        <translation>شەخسىي توپلاش مۇلازىمىتېرى:</translation>
+        <translation>جەكەلىك  جىيىپ ساقتوو  سان قاينارى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="215"/>
         <source>Add</source>
-        <translation>قوش</translation>
+        <translation>قوشۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="216"/>
         <source>Delete</source>
-        <translation>ئۆچۈر</translation>
+        <translation>ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="217"/>
         <source>Connect</source>
-        <translation>ئۇلاش</translation>
+        <translation>ۇلانۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="296"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
         <source>Ip input error, please re-enter!</source>
-        <translation>IP كىرگۈزۈش خاتالىقى، قايتا كىرىڭ!</translation>
+        <translation>Ip قاتاا  كىرىپ قاپتۇ، قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="300"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
         <source>Port input error, please re-enter!</source>
-        <translation>پورت كىرىش خاتالىقى، قايتا كىرىڭ!</translation>
+        <translation>ووزدۇ قاتاا كىرگىزۉۉ، قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <source>add</source>
@@ -1318,7 +1318,7 @@
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="387"/>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="391"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <source>ip input error, please re-enter!</source>
@@ -1334,42 +1334,42 @@
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="487"/>
         <source>The login user</source>
-        <translation>كىرىدىغان ئىشلەتكۈچى</translation>
+        <translation>ىشتەتۉۉچۉلۅرگۅ كىرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="496"/>
         <source>Please enter the %1&apos;s user name and password of the server.</source>
-        <translation>مۇلازىمېتىرنىڭ ٪1 نىڭ ئىشلەتكۈچى نامى ۋە مەخپىي نومۇرىنى كىرگۈزۈڭ.</translation>
+        <translation>سان قاينارىنىن %1 كەرەكتۅۅچۉ ناامى  جانا جاشىرۇۇن  نومۇرۇن كىرگىزىڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="503"/>
         <source>User&apos;s identity</source>
-        <translation>ئىشلەتكۈچىنىڭ كىملىكى</translation>
+        <translation>ئابونېنتچىلار كىمدىگى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="504"/>
         <source>Guest</source>
-        <translation>مېھمان</translation>
+        <translation>ۅز ەركىنچە  زىيارەتچى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="520"/>
         <source>Name</source>
-        <translation>ئىسىم-فامىلىسى</translation>
+        <translation>ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="521"/>
         <source>Password</source>
-        <translation>ئىم</translation>
+        <translation>جاشىرۇۇن  نومۇر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="542"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="543"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <source>guest</source>
@@ -1378,7 +1378,7 @@
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="505"/>
         <source>Registered users</source>
-        <translation>رويخەتكە ئالدۇرغان ئىشلەتكۈچىلەر</translation>
+        <translation>تىزىمگە  الدىرعان ابونت</translation>
     </message>
     <message>
         <source>name</source>
@@ -1391,7 +1391,7 @@
     <message>
         <location filename="../../libpeony-qt/connect-to-server-dialog.cpp" line="522"/>
         <source>Remember the password</source>
-        <translation>پارولنى ئەستە ساقلاش</translation>
+        <translation>جاشىرۇۇن  نومۇردۇ  دىلدە  تۇقتۇۇ</translation>
     </message>
     <message>
         <source>cancel</source>
@@ -1405,19 +1405,19 @@
 <context>
     <name>Peony::CreateLinkInternalPlugin</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="146"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="132"/>
         <source>Create Link to Desktop</source>
-        <translation>ئۈستەلئۈستىگە ئۇلىنىش قۇرۇش</translation>
+        <translation>شىرە  بەتىنە ۇلانۇۇ قۇرۇۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="172"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="158"/>
         <source>Create Link to...</source>
-        <translation>ئۇلىنىش قۇرۇشتا...</translation>
+        <translation>قۇرۇۇ ۇلانماسى. . .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="175"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="161"/>
         <source>Choose a Directory to Create Link</source>
-        <translation>ئۇلىنىش قۇرۇش ئۈچۈن مۇندەرىجىنى تاللاڭ</translation>
+        <translation>ۇلانۇۇ قۇرماقچى بولعون مازمۇۇندۇ  تانداڭ</translation>
     </message>
     <message>
         <source>Peony-Qt Create Link Extension</source>
@@ -1431,9 +1431,9 @@
 <context>
     <name>Peony::CreateSharedFileLinkMenuPlugin</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="285"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="271"/>
         <source>Create Link to Desktop</source>
-        <translation>ئۈستەلئۈستىگە ئۇلىنىش قۇرۇش</translation>
+        <translation>شىرە  بەتىنە ۇلانۇۇ قۇرۇۇ</translation>
     </message>
 </context>
 <context>
@@ -1441,23 +1441,23 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="76"/>
         <source>NewFile</source>
-        <translation>NewFile</translation>
+        <translation>جاڭى قۇرۇلعان  ۅجۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="92"/>
         <source>Create file</source>
-        <translation>ھۆججەت قۇرۇش</translation>
+        <translation>ۅجۅت قۇرۇۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="105"/>
+        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="104"/>
         <source>NewFolder</source>
-        <translation>يېڭى قاتلىغۇچ</translation>
+        <translation>جاڭى قاتتاعىچ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="124"/>
-        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="158"/>
+        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="123"/>
+        <location filename="../../libpeony-qt/file-operation/create-template-operation.cpp" line="156"/>
         <source>Create file error</source>
-        <translation>ھۆججەت خاتالىقىنى پەيدا قىلىش</translation>
+        <translation>ۅجۅت  قاتالىعى پايدا قىلۇۇ جاسوو ،اتقارۇۇ</translation>
     </message>
 </context>
 <context>
@@ -1465,12 +1465,12 @@
     <message>
         <location filename="../../libpeony-qt/custom-error-handler.cpp" line="43"/>
         <source>Is Error Handled?</source>
-        <translation>خاتالىق بىر تەرەپ قىلىندىمۇ؟</translation>
+        <translation>قاتاا بىر  تاراپ  قىلىنىپ بولدۇبۇ؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/custom-error-handler.cpp" line="48"/>
         <source>Error not be handled correctly</source>
-        <translation>خاتالىقنى توغرا بىر تەرەپ قىلالماسلىق</translation>
+        <translation>قاتاا بىر  تاراپ جاسوو ،اتقارۇۇ  تۇۇرا  ەمەس</translation>
     </message>
 </context>
 <context>
@@ -1478,7 +1478,7 @@
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="531"/>
         <source>No default app</source>
-        <translation>كۆڭۈلدىكىدەك ئەپ يوق</translation>
+        <translation>ويۇنداقى  ئەپ جوق</translation>
     </message>
 </context>
 <context>
@@ -1486,7 +1486,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="439"/>
         <source>No default app</source>
-        <translation>كۆڭۈلدىكىدەك ئەپ يوق</translation>
+        <translation>ويۇنداقى  ئەپ جوق</translation>
     </message>
 </context>
 <context>
@@ -1495,12 +1495,12 @@
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="75"/>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="216"/>
         <source>Select the file you want to preview...</source>
-        <translation>كۆزەتمەكچى بولغان ھۆججەتنى تاللاڭ...</translation>
+        <translation>الدىن  كۅرمۅكچۉ بولعون  ۅجۅتۉن تانداڭ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="207"/>
         <source>Can not preview this file.</source>
-        <translation>بۇ ھۆججەتنى ئالدىن كۆرەلمىدۇق.</translation>
+        <translation>بۇل  ۅجۅتۉن الدىن  كۅرگـۅلۉ بولبويت .</translation>
     </message>
     <message>
         <source>Can not preivew this file.</source>
@@ -1512,12 +1512,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page-factory.h" line="50"/>
         <source>Default Preview</source>
-        <translation>كۆڭۈلدىكى كۆرۈنمە يۈزى</translation>
+        <translation>ويۇنداقى  الدىن  كۅرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page-factory.h" line="53"/>
         <source>This is the Default Preview of peony-qt</source>
-        <translation>بۇ مودەنگۈل-qt نىڭ كۆڭۈلدىكى كۆرۈنمە يۈزى</translation>
+        <translation>بۇل مۇدەن qt نىڭ  ويۇنداقى  الدىن  كۅرۉۉ</translation>
     </message>
 </context>
 <context>
@@ -1525,17 +1525,17 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="181"/>
         <source>Name:</source>
-        <translation>ئىسمى :</translation>
+        <translation>اتى  :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="184"/>
         <source>File type:</source>
-        <translation>ھۆججەت تۈرى:</translation>
+        <translation>ۅجۅت تۉرۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="200"/>
         <source>Location:</source>
-        <translation>ئورنى:</translation>
+        <translation>وردۇ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="211"/>
@@ -1545,12 +1545,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="204"/>
         <source>Create time:</source>
-        <translation>ۋاقىت يارىتىش:</translation>
+        <translation>ۇباقىت قۇرۇۇ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="208"/>
         <source>Modify time:</source>
-        <translation>ۋاقىتنى ئۆزگەرتىش:</translation>
+        <translation>ۇباقتىن ۅزگۅرتۉش :</translation>
     </message>
     <message>
         <source>yyyy-MM-dd, hh:mm:ss AP</source>
@@ -1559,59 +1559,59 @@
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="232"/>
         <source>File size:</source>
-        <translation>ھۆججەت چوڭلۇقى:</translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="239"/>
         <source>Width:</source>
-        <translation>كەڭلىكى:</translation>
+        <translation>گەڭدىگى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="242"/>
         <source>Height:</source>
-        <translation>ئېگىزلىكى:</translation>
+        <translation>بئيىكتىگى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="250"/>
         <source>Owner</source>
-        <translation>ئىگىسى</translation>
+        <translation>ەەسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="251"/>
         <source>Owner:</source>
-        <translation>ئىگىسى:</translation>
+        <translation>ەەسى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="253"/>
         <source>Computer</source>
-        <translation>كومپيۇتېر</translation>
+        <translation>كومپىيۇتەر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="254"/>
         <source>Computer:</source>
-        <translation>كومپىيۇتېر:</translation>
+        <translation>كومپىيۇتەر:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="309"/>
         <source>%1 (this computer)</source>
-        <translation>٪1 (بۇ كومپيۇتېر)</translation>
+        <translation>%1 (بۇل  كومپىيۇتەر)</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="316"/>
         <source>Unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="358"/>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="359"/>
         <source>Can&apos;t get remote file information</source>
-        <translation>ھۆججەت ئۇچۇرىنى يىراقتىن ئالغىلى بولمىدى</translation>
+        <translation>ىرااق ساپاردۇۇ ۅجۅت ۇچۇرۇنا  ەە بولعولۇ بولبويت .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="368"/>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page.cpp" line="369"/>
         <source>%1 px</source>
-        <translation>٪1 px</translation>
+        <translation>%1 پىكىسل</translation>
     </message>
 </context>
 <context>
@@ -1623,12 +1623,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="334"/>
         <source>warn</source>
-        <translation>ئاگاھلاندۇرۇش</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/view/icon-view/icon-view.cpp" line="334"/>
         <source>This operation is not supported.</source>
-        <translation>بۇ مەشغۇلات قوللىمايدۇ.</translation>
+        <translation>بۇل ماشقۇلدانۇۇنۇ  قولدوبويت.</translation>
     </message>
 </context>
 <context>
@@ -1647,12 +1647,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="605"/>
         <source>warn</source>
-        <translation>ئاگاھلاندۇرۇش</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/view/list-view/list-view.cpp" line="605"/>
         <source>This operation is not supported.</source>
-        <translation>بۇ مەشغۇلات قوللىمايدۇ.</translation>
+        <translation>بۇل ماشقۇلدانۇۇنۇ  قولدوبويت.</translation>
     </message>
 </context>
 <context>
@@ -1682,7 +1682,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="360"/>
         <source>Add to bookmark</source>
-        <translation>شۆھرەت زاكىرغا قوشۇش</translation>
+        <translation>قىستىرما قاعازعا  قوشۇپ  قويۇڭ</translation>
     </message>
     <message>
         <source>&amp;Open &quot;%1&quot;</source>
@@ -1731,7 +1731,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="691"/>
         <source>New Folder</source>
-        <translation>يېڭى ھۆججەت قىسقۇچ</translation>
+        <translation>جاڭى ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <source>Icon View</source>
@@ -1752,17 +1752,17 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="743"/>
         <source>Name</source>
-        <translation>ئىسىم-فامىلىسى</translation>
+        <translation>ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="745"/>
         <source>File Type</source>
-        <translation>ھۆججەت تۈرى</translation>
+        <translation>ۅجۅت تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="746"/>
         <source>File Size</source>
-        <translation>ھۆججەت چوڭلۇقى</translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <source>New...</source>
@@ -1772,72 +1772,72 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="322"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="413"/>
         <source>Open in New Window</source>
-        <translation>يېڭى كۆزنەكتە ئېچىش</translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اچۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="332"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="423"/>
         <source>Open in New Tab</source>
-        <translation>يېڭى بەتتە ئېچىش</translation>
+        <translation>جاڭى بەلگىنى اچىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="380"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="435"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="499"/>
         <source>Open</source>
-        <translation>ئېچىش</translation>
+        <translation>اچۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="391"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="451"/>
         <source>Open with...</source>
-        <translation>... بىلەن ئېچىۋېتىلدى</translation>
+        <translation>اچۇۇ ارعاسى...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="406"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="488"/>
         <source>More applications...</source>
-        <translation>قوللىنىشچان پروگرامما تېخىمۇ كۆپ...</translation>
+        <translation>داعى ەلە كۅپ ئەپلەر....</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="508"/>
         <source>Open %1 selected files</source>
-        <translation>٪1 تاللانغان ھۆججەتلەرنى ئېچىش</translation>
+        <translation>%1 لىق سۉرۅتتۉ اچۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="556"/>
         <source>New</source>
-        <translation>يېڭى</translation>
+        <translation>جاڭى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="675"/>
         <source>Empty File</source>
-        <translation>بوش ھۆججەت</translation>
+        <translation>كۅڭدۅي ۅجۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="687"/>
         <source>Folder</source>
-        <translation>ھۆججەت قىسقۇچ</translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="717"/>
         <source>View Type</source>
-        <translation>كۆرۈش تىپى</translation>
+        <translation>كۅرۉۉ  تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="737"/>
         <source>Sort By</source>
-        <translation>تۈرگە ئايرىش</translation>
+        <translation>ىرەتكە تىزۉۉ  نەگىزى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="744"/>
         <source>Modified Date</source>
-        <translation>ئۆزگەرتىلگەن ۋاقتى</translation>
+        <translation>ۅزگۅرتۉلگۅن ۇباقتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="747"/>
         <source>Original Path</source>
-        <translation>ئەسلى يول</translation>
+        <translation>العاچى   جول</translation>
     </message>
     <message>
         <source>Sort Order...</source>
@@ -1846,17 +1846,23 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="780"/>
         <source>Ascending Order</source>
-        <translation>ئۆرلەش تەرتىپى</translation>
+        <translation>جوعورۇلو  تارتىبى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1513"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1470"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1480"/>
+        <source>Peony-Qt Filesafe Menu Extension</source>
+        <translation>مۇدەن qt ۅجۅت قووپسۇزدۇق  تىزىمدىگى كېڭەيتىلمىسى</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1512"/>
         <source>MultiSelect</source>
-        <translation>MultiSelect</translation>
+        <translation>كۅبۉن تانداش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="779"/>
         <source>Descending Order</source>
-        <translation>پەسكە چۈشىدىغان تەرتىپ</translation>
+        <translation>تۅمۅندۅش  تارتىبى</translation>
     </message>
     <message>
         <source>Sort Preferences...</source>
@@ -1865,17 +1871,17 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="798"/>
         <source>Folder First</source>
-        <translation>ئاۋۋال ھۆججەت قىسقۇچ</translation>
+        <translation>ۅجۅت قىپچىعىچ  الدى   مەنەن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="807"/>
         <source>Chinese First</source>
-        <translation>خىتاي بىرىنچى</translation>
+        <translation>حانزۇ  تىلىن  الدىنقى ورۇنعا قويۇش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="816"/>
         <source>Show Hidden</source>
-        <translation>يوشۇرۇن كۆرسىتىش</translation>
+        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="851"/>
@@ -1883,21 +1889,21 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1039"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1313"/>
         <source>Copy</source>
-        <translation>كۆچۈرۈش</translation>
+        <translation>ۉلگۉسۉن الۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1373"/>
         <source>File:&quot;%1&quot; is not exist, did you moved or deleted it?</source>
-        <translation>ھۆججەت:&quot;٪1&quot; مەۋجۇت ئەمەس، كۆچۈردىڭىزمۇ ياكى ئۆچۈرۋەتتىڭىزمۇ؟</translation>
+        <translation>ۅجۅت:%1 باربولۇۇسۇ  ەمەس ، انى  يۆتكىۋەتتىڭىزمۇ كۅرۉنۉشتۅرۉ ئۆچۈرۋەتتىڭىزمۇ؟</translation>
     </message>
     <message>
         <source>Peony-Qt filesafe menu Extension</source>
-        <translation type="vanished">Peony-Qt filesafe تىزىملىكنى ئۇزارتىش</translation>
+        <translation type="vanished">文件保护箱扩展</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1471"/>
+        <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1470"/>
         <source>Peony File Labels Menu Extension</source>
-        <translation>مودەن ھۆججەت بەلگە تىزىملىكىنى كېڭەيتىش</translation>
+        <translation>مودەن ۅجۅت ەنى ، تامعاسى   تىزىمدىگى كېڭەيتىلمىسى</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
@@ -1907,65 +1913,65 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="889"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1318"/>
         <source>Cut</source>
-        <translation>كېسىش</translation>
+        <translation>قىيىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="916"/>
         <source>Delete to trash</source>
-        <translation>ئەخلەت ساندۇقىغا ئۆچۈرۈش</translation>
+        <translation>شىپىرىندى  تۇڭىغا تاشلىۋېتىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="983"/>
         <source>Paste</source>
-        <translation>چاپلاش</translation>
+        <translation>چاپتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1052"/>
         <source>Refresh</source>
-        <translation>يېڭىلاش</translation>
+        <translation>جاڭىلوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1063"/>
         <source>Select All</source>
-        <translation>ھەممىنى تاللاڭ</translation>
+        <translation>باردىعىن تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1107"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1168"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>قاسىيەتىن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1209"/>
         <source>format</source>
-        <translation>فورمات</translation>
+        <translation>فورماتتاش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1263"/>
         <source>Restore</source>
-        <translation>ئەسلىگە كەلتۈرۈش</translation>
+        <translation>العاچىنا كەلتىرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="928"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1033"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1293"/>
         <source>Delete</source>
-        <translation>ئۆچۈر</translation>
+        <translation>ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="772"/>
         <source>Sort Order</source>
-        <translation>رەت تەرتىپى</translation>
+        <translation>ىرەتكە تىزۉۉ  تارتىبى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="793"/>
         <source>Sort Preferences</source>
-        <translation>تاللىغان مايىللىقلار</translation>
+        <translation>رەتلەشنىڭ باش تاندالماسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1372"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <source>File:&quot;%1 is not exist, did you moved or deleted it?</source>
@@ -1989,12 +1995,12 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="950"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="959"/>
         <source>Delete forever</source>
-        <translation>مەڭگۈلۈك ئۆچۈرۈش</translation>
+        <translation>تۉبۅلۉك ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="966"/>
         <source>Rename</source>
-        <translation>قايتا ئىسىم فامىلە قىلىش</translation>
+        <translation>قايرا ات جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <source>Select &amp;All</source>
@@ -2003,7 +2009,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1072"/>
         <source>Reverse Select</source>
-        <translation>تەتۈر تاللاش</translation>
+        <translation>تەسكەرى   باعىتتۇۇ تانداش</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
@@ -2032,7 +2038,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1236"/>
         <source>&amp;Clean the Trash</source>
-        <translation>ئەخلەت ساندۇقىنى تازىلاش</translation>
+        <translation>&amp; شىپىرىندى  ساندىعىن  تازالوو</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -2053,12 +2059,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1326"/>
         <source>Clean All</source>
-        <translation>ھەممىنى تازىلى</translation>
+        <translation>باردىعىن تازالوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1343"/>
         <source>Open Parent Folder in New Window</source>
-        <translation>يېڭى كۆزنەكتە ئانا ھۆججەت قىسقۇچنى ئېچىش</translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اتا ۅجۅت قىپچىعىچتى  اچۇۇ</translation>
     </message>
 </context>
 <context>
@@ -2073,22 +2079,22 @@
     <message>
         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="64"/>
         <source>Extensions Manager</source>
-        <translation>ئۇزارتىش باشقۇرغۇ</translation>
+        <translation>ئۇزارتىلغان قۇربات ، جۅندۅم  باشقارىش  تارتىبى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="68"/>
         <source>Available extensions</source>
-        <translation>ئىشلەتكىلى بولىدىغان ئۇزارتىش</translation>
+        <translation>ىشتەتكەلى  بولوتۇرعان گەڭەيتىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="70"/>
         <source>Ok</source>
-        <translation>ماقۇل</translation>
+        <translation>بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/extensions-manager-widget.cpp" line="71"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -2096,22 +2102,22 @@
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="93"/>
         <source>File Manager</source>
-        <translation>ھۆججەت باشقۇرغۇ</translation>
+        <translation>ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="171"/>
         <source>advanced search</source>
-        <translation>ئىلغار ئىزدەش</translation>
+        <translation>جوعورۇ چەكتۉۉ ىزدۅۅ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="174"/>
         <source>clear record</source>
-        <translation>روشەن خاتىرىلەر</translation>
+        <translation>تىزىمدىكتى تازالوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="279"/>
         <source>Loaing... Press Esc to stop a loading.</source>
-        <translation>ئايلىنىۋاتىدۇ... Esc نى بېسىپ قاچىلاشنى توختىتىڭ.</translation>
+        <translation>قارىز بەرۉۉ...  Esc كۇنۇپكاسىن باسىپ جۉكتۅشتۉ توقتوتۇڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="395"/>
@@ -2120,11 +2126,9 @@
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source>
-        <translation>ئاپتورى:
-	يۆلەن &lt;lanyue@kylinos.cn&gt;
-	مېيخۇڭ خې &lt;hemeihong@kylinos.cn&gt;
-
-نەشىر ھوقۇقى (C): 2019-2020،تيەنجىن KYLIN ئۇچۇر تېخنىكا چەكلىك شىركىتىگە تەۋە</translation>
+        <translation>اپتور: يۆلەن &lt;lanyue @kylinos. cn&gt;
+خې مېيخوڭ &lt;hemeihong@ kylinos&gt; cn&gt;
+باسما ۇقۇعۇ ەەلىك ۇقۇعۇ (C):2019-يىلىدىن 2020-يىلىغىچە، تيەنجىن KYLIN ۇچۇر تەحنىكا چەكتۉۉ شەركەتى، چەكتۉۉ شەركەتى.</translation>
     </message>
     <message>
         <source>Author: 
@@ -2146,17 +2150,17 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="324"/>
         <source>Undo</source>
-        <translation>Undo</translation>
+        <translation>اچۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="331"/>
         <source>Redo</source>
-        <translation>قايتا-قايتا</translation>
+        <translation>قايرا-قايرا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="394"/>
         <source>Peony Qt</source>
-        <translation>مودەنگۈل Qt</translation>
+        <translation>Peony Qt</translation>
     </message>
     <message>
         <source>Authour: 
@@ -2185,7 +2189,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/fm-window.cpp" line="448"/>
         <source>New Folder</source>
-        <translation>يېڭى ھۆججەت قىسقۇچ</translation>
+        <translation>جاڭى ۅجۅت قىپچىعىچ</translation>
     </message>
 </context>
 <context>
@@ -2193,73 +2197,73 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="75"/>
         <source>File Rename error</source>
-        <translation>ھۆججەت نامى خاتالىقى</translation>
+        <translation>ۅجۅتكۅ قايرا ات قويۇش   قاتالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="76"/>
         <source>Invalid file name %1%2%3 .</source>
-        <translation>ئىناۋەتسىز ھۆججەت نامى ٪1٪2٪3 .</translation>
+        <translation>ەسەپ ەمەس ۅجۅت ناامى  %1 %2 %3.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="91"/>
         <source>File Rename warning</source>
-        <translation>ھۆججەت قايتا ئىسىم ئاگاھلاندۇرۇشى</translation>
+        <translation>ۅجۅتكۅ قايرا اتاق بەرۉۉ ەسكەرتىشى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="92"/>
         <source>Are you sure to hidden these files?</source>
-        <translation>بۇ ھۆججەتلەرنى چوقۇم يوشۇرۇپ قويامسىز؟</translation>
+        <translation>سىز بۇل  ۅجۅتتۅرۉن جاشىرۇۇنۇ تۇراقتاندىرا الاسىزبى؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="209"/>
-        <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="246"/>
+        <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="206"/>
+        <location filename="../../libpeony-qt/file-operation/file-batch-rename-operation.cpp" line="241"/>
         <source>Rename file error</source>
-        <translation>ھۆججەت خاتالىقىنى قايتا ئىسىم قىلىپ ئۆزگەرتىش</translation>
+        <translation>ۅجۅتكۅ قايرا ات قويۇش   قاتالىعى</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileCopy</name>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="174"/>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="182"/>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="202"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="173"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="181"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="201"/>
         <source>Error in source or destination file path!</source>
-        <translation>مەنبە ياكى نىشان ھۆججەت يولىدىكى خاتالىق!</translation>
+        <translation>كەلۉۉ جەر جانى  كۅرۉنۉشتۅرۉ نىشان ۅجۅت جولۇ قاتاا!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="191"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="190"/>
         <source>Error when copy file: %1, can not copy special files, skip this file and continue?</source>
-        <translation>ھۆججەت كۆچۈرگەندە خاتالىق: ٪1، ئالاھىدە ھۆججەتلەرنى كۆچۈرگىلى بولمايدۇ، بۇ ھۆججەتنى ئاتلاپ داۋاملاشتۇرامسىز؟</translation>
+        <translation>ۅجۅت  كۅچۉرگۅندۅ قاتاالىق   كۅرۉلۉۉ:%1، ۆزگۆچۆ  ۅجۅتنى كۅبۅيتكۅلۉ بولبودۇ، بۇل ۅجۅتتىن اتتاپ ۅتۉپ  جالعاشتىراسىزبى؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="214"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="213"/>
         <source>Can not copy %1, file doesn&apos;t exist. Has the file been renamed or moved?</source>
-        <translation>٪1 نى كۆچۈرگىلى بولمايدۇ، ھۆججەت مەۋجۇت ئەمەس. ھۆججەت ئۆزگەرتىلدىمۇ ياكى يۆتكىلىپ بولدىمۇ؟</translation>
+        <translation>%1 كۅبۅيتكۅلۉ بولبويت ، ۅجۅت باربولۇۇسۇ  ەمەس . ۅجۅتكە قايرا اتاق بېرىلدىمۇ كۅرۉنۉشتۅرۉ يۆتكەلدىمۇ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="236"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="235"/>
         <source>The dest file &quot;%1&quot; has existed!</source>
-        <translation>«٪1» نىڭ دەھشەت ھۆججىتى مەۋجۇت!</translation>
+        <translation>نىشان ۅجۅتتۉن %1 ى باربولۇۇسۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="263"/>
         <source>Vfat/FAT32 file systems do not support a single file that occupies more than 4 GB space!</source>
-        <translation>vfat/FAT32 ھۆججەت سېستىمىسى 4 GB تىن ئارتۇق بوشلۇقنى ئىگەللەيدىغان بىر ھۆججەتنى قوللىمايدۇ!</translation>
+        <translation>Vfat/FAT 32 ۅجۅت ساامالىعى  4 GB نان ارتىق بوشتۇقتۇ ئىگىلەيدىغان جەكە ۅجۅتنى قولدوبويت!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="288"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="289"/>
         <source>Error writing to file: Input/output error</source>
-        <translation>ھۆججەتكە يېزىش خاتالىقى: كىرگۈزۈش/چىقىرىش خاتالىقى</translation>
+        <translation>ۅجۅت جازعاندا قاتاالىق :كىرگىزۉۉ/ۅندۉرۉش  قاتاالىق ى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="456"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="476"/>
         <source>Failed to create %1. Please ensure if it is in root directory, or if the device supports gphoto2 protocol correctly.</source>
-        <translation>٪1 قۇرۇش مەغلۇپ بولدى. ROOT مۇندەرىجىسىدە ياكى ئۈسكۈنە GPHOTO2 كېلىشىمىنى توغرا قوللىسا چوقۇم كاپالەتلىك قىلىڭ.</translation>
+        <translation>%1 نى قۇرۇۇعا بولبويت .  انىن  جىلدىز تىزىمدىگىندە كۅرۉنۉشتۅرۉ ەمەستىگىنە ەەبولۇۇ  قىلىڭ،  كۅرۉنۉشتۅرۉ شايمان gphoto 2  كەلىشىمدى تۇۇرا  قوللامدۇ جوق.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="462"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="482"/>
         <source>Failed to create %1.</source>
-        <translation>٪1 قۇرۇش مەغلۇپ بولدى.</translation>
+        <translation>%1 نى قۇرۇۇعا بولبويت .</translation>
     </message>
     <message>
         <source>Error opening source or destination file!</source>
@@ -2268,31 +2272,31 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="391"/>
         <source>Please check whether the device has been removed!</source>
-        <translation>ئۈسكۈنە ئېلىۋېتىلگەن-چۈشۈرۈلمىگەنلىكىنى تەكشۈرۈپ كۆرۈڭ!</translation>
+        <translation>جابدۇۇسۇنۇن ئېلىۋېتىلگەن كۅرۉنۉشتۅرۉ ئېلىۋېتىلمىگەنلىكىنى تەكشەرىپ  باعىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-copy.cpp" line="393"/>
         <source>Write file error: There is no available disk space for device!</source>
-        <translation>ھۆججەت يېزىش خاتالىقى: ئۈسكۈنىگە ئىشلىتىشكە بولىدىغان دېسكا بوشلۇقى يوق!</translation>
+        <translation>ۅجۅت جازۇۇ  قاتالىعى:شايماندا ىشتەتكەلى  بولوتۇرعان ماگىنىتتۉ دىسكا بوشتۇعۇ جوق!</translation>
     </message>
     <message>
         <source>Please confirm that the device controls are insufficient!</source>
         <translation type="vanished">请确认设备空间是否足够!</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="450"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="470"/>
         <source>File opening failure</source>
-        <translation>ھۆججەت ئېچىش مەغلۇپ بولدى</translation>
+        <translation>ۅجۅتۉن اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <source>Reading and Writing files are inconsistent!</source>
         <translation type="vanished">读和写文件不一致！</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-copy.cpp" line="279"/>
+        <location filename="../../libpeony-qt/file-copy.cpp" line="280"/>
         <location filename="../../libpeony-qt/file-copy.cpp" line="408"/>
         <source>operation cancel</source>
-        <translation>مەشغۇلات ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ماشقۇلدانۇۇ  ارعادان  قالتىرىلدى</translation>
     </message>
 </context>
 <context>
@@ -2302,61 +2306,61 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">文件复制</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="231"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="228"/>
         <source>Create folder %1 failed: %2</source>
-        <translation>٪1 ھۆججەت قىسقۇچ قۇرۇش مەغلۇپ بولدى:٪2</translation>
+        <translation>ۅجۅت قىپچىعىچ  قۇرۇۇ %1 جەڭىلۉۉ بولدۇ :%2</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="235"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="625"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1082"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1143"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1321"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="232"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="621"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1078"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1139"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1317"/>
         <source>File copy error</source>
-        <translation>ھۆججەت كۆچۈرۈش خاتالىقى</translation>
+        <translation>ۅجۅتۉن قاتاا گۅچۉرۉپ  قويۇش</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="249"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="276"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="650"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="674"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="246"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="273"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="646"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="670"/>
         <source>The file name exceeds the limit</source>
-        <translation>ھۆججەت نامى چەكتىن ئېشىپ كەتتى</translation>
+        <translation>ۅجۅت ناامى  چەكتەن اشىپ  كەتتى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="633"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="629"/>
         <source>Cannot opening file, permission denied!</source>
-        <translation>ھۆججەتنى ئاچالمىدى، ئىجازەت ئىنكار قىلدى!</translation>
+        <translation>ۅجۅتۉن اچقالى بولبودۇ، ۇقۇق گۅۅلۅمۉ  قاتار اتقارىلدى !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="635"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="631"/>
         <source>File:%1 was not found.</source>
-        <translation>ھۆججەت:٪1 تېپىلمىدى.</translation>
+        <translation>تابىلباعان ۅجۅت:%1.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1069"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1065"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1071"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1067"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1077"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1073"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
-        <translation>٪1 ئۈسكۈنە ئۈستىدە بوشلۇق قالمىدى. ھۆججەت چوڭلۇقىنى كۆچۈرۈش: ٪2 GB، بوشلۇق لازىم: ٪3 GB.</translation>
+        <translation>%1 شايماندا قالدىق بوشتۇق جوق.   كۅبۅيتۉلگۅن ۅجۅت چوڭدۇعۇ :%2 GB،  ەتىياجدۇۇ بوشتۇق:%3 GB.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1189"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1185"/>
         <source>Link file error</source>
-        <translation>ھۆججەت خاتالىقىنى باغلاش</translation>
+        <translation>جالعانما  ۅجۅت  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1323"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="1319"/>
         <source>Burning does not support replacement</source>
-        <translation>كۆيۈش ئالماشتۇرۇشنى قوللىمايدۇ</translation>
+        <translation>كۆيدۈرگۈچى الماشتىرۇۇنۇ قولدوبويت.</translation>
     </message>
     <message>
         <source>Burn failed</source>
@@ -2373,17 +2377,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="84"/>
         <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="110"/>
         <source>File delete error</source>
-        <translation>ھۆججەت ئۆچۈرۈش خاتالىقى</translation>
+        <translation>ۅجۅتۉن قاتاا ۅچۉرۉۉ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="149"/>
+        <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="147"/>
         <source>Delete file error</source>
-        <translation>ھۆججەت خاتالىقىنى ئۆچۈرۈش</translation>
+        <translation>ۅجۅتۉن ۅچۉرۉۉ  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="152"/>
+        <location filename="../../libpeony-qt/file-operation/file-delete-operation.cpp" line="150"/>
         <source>Invalid Operation! Can not delete &quot;%1&quot;.</source>
-        <translation>ئىناۋەتسىز مەشخۇلات! &quot;٪1&quot; نى ئۆچۈرگىلى بولمايدۇ.</translation>
+        <translation>ەسەپ ەمەس ماشقۇلدانۇۇ ! %1 نى ۅچۉرگۅلۉ بولبويت .</translation>
     </message>
 </context>
 <context>
@@ -2395,17 +2399,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="585"/>
         <source>The password dialog box is canceled</source>
-        <translation>پارول دىئالوگ رامكىسى بىكار قىلىندى</translation>
+        <translation>جاشىرۇۇن  نومۇر دىيالوگ كەرەنەسى  ارعادان  قالتىرىلدى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="587"/>
         <source>Message recipient disconnected from message bus without replying!</source>
-        <translation>ئۇچۇر تاپشۇرۇۋالغۇچى جاۋاب قايتۇرماي تۇرۇپ ئۇچۇر يوللاش ئاپتوبۇسى بىلەن ئالاقىسى ئۈزۈلدى!</translation>
+        <translation>ۇچۇردۇ  قابىلدوو  قىلۇۇچۇ جووپ قايتۇرمىغاندا، ۇچۇر باش لەنىياسى مەنەن ۇلانۇۇ ۉزۉلۉپ قالدى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="589"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <source>Did not find target path, do you move or deleted it?</source>
@@ -2415,45 +2419,45 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileInfo</name>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="304"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="309"/>
         <source>data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="450"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="444"/>
         <source>folder</source>
-        <translation>ھۆججەت قىسقۇچ</translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="454"/>
-        <location filename="../../libpeony-qt/file-info.cpp" line="462"/>
-        <location filename="../../libpeony-qt/file-info.cpp" line="464"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="448"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="456"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="458"/>
         <source>file</source>
-        <translation>ھۆججەت</translation>
+        <translation>ۅجۅت</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-info.cpp" line="457"/>
+        <location filename="../../libpeony-qt/file-info.cpp" line="451"/>
         <source>text file</source>
-        <translation>تېكىست ھۆججىتى</translation>
+        <translation>تەكىست ۅجۅتۉۉ</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileInfoJob</name>
     <message>
         <source>Trash</source>
-        <translation type="vanished">ئەخلەت ساندۇقى</translation>
+        <translation type="vanished">回收站</translation>
     </message>
     <message>
         <source>Computer</source>
-        <translation type="vanished">كومپيۇتېر</translation>
+        <translation type="vanished">计算机</translation>
     </message>
     <message>
         <source>Network</source>
-        <translation type="vanished">تور</translation>
+        <translation type="vanished">网络</translation>
     </message>
     <message>
         <source>Recent</source>
-        <translation type="vanished">يېقىندىن بۇيان</translation>
+        <translation type="vanished">最近</translation>
     </message>
 </context>
 <context>
@@ -2475,15 +2479,15 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <name>Peony::FileInfosJob</name>
     <message>
         <source>Computer</source>
-        <translation type="vanished">كومپيۇتېر</translation>
+        <translation type="vanished">计算机</translation>
     </message>
     <message>
         <source>Network</source>
-        <translation type="vanished">تور</translation>
+        <translation type="vanished">网络</translation>
     </message>
     <message>
         <source>Recent</source>
-        <translation type="vanished">يېقىندىن بۇيان</translation>
+        <translation type="vanished">最近</translation>
     </message>
 </context>
 <context>
@@ -2495,7 +2499,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="251"/>
         <source>Warning</source>
-        <translation type="unfinished">دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="253"/>
@@ -2503,27 +2507,27 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="338"/>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="346"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="313"/>
         <source>Open Link failed</source>
-        <translation>ئۇلىنىشنى ئېچىش مەغلۇپ بولدى</translation>
+        <translation>جالعانمانى  اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="314"/>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation>ھۆججەت مەۋجۇت ئەمەس، ئۇلىنىش ھۆججىتىنى ئۆچۈرمەكچىمۇ؟</translation>
+        <translation>ۅجۅت باربولۇۇسۇ  ەمەس ،  جالعانما  ۅجۅتنى ۅچۉرۅسۉزبۉ؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="327"/>
         <source>Can not open path &quot;%1&quot;，permission denied.</source>
-        <translation>«٪1»نىڭ يولىنى ئاچقىلى بولمايدۇ، ئىجازەت ئىنكار قىلىندى.</translation>
+        <translation>%1 جولدۇ  اچقالى بولبويت ، ۇقۇق گۅۅلۅمۉ  قاتار اتقارىلدى .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item.cpp" line="337"/>
         <source>Can not find path &quot;%1&quot;，are you moved or renamed it?</source>
-        <translation>«٪1»نىڭ يولىنى تاپالمايسىز، كۆچتىڭىزمۇ ياكى ئۆزگەرتىلدىڭىزمۇ؟</translation>
+        <translation>%1 جولدۇ  تابالباعان ، ال  يۆتكەلدىمۇ كۅرۉنۉشتۅرۉ قايرا اتاق بېرىلدىمۇ؟</translation>
     </message>
     <message>
         <source>Can not find path &quot;%1&quot; .</source>
@@ -2533,54 +2537,49 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
 <context>
     <name>Peony::FileItemModel</name>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="363"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="357"/>
         <source>child(ren)</source>
-        <translation>بالا(رېن)</translation>
+        <translation>بالا  ۅجۅت</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="350"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="344"/>
         <source>Symbol Link, </source>
-        <translation>بەلگە ئۇلاش ، </translation>
+        <translation>بەلگە  ۇلانماسى، </translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="283"/>
-        <source>System Disk</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="403"/>
+        <source>File Name</source>
+        <translation>ۅجۅت ناامى</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="407"/>
+        <source>Delete Date</source>
+        <translation>ساندۇۇ باياندامانى  ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item-model.cpp" line="409"/>
-        <source>File Name</source>
-        <translation>ھۆججەت نامى</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="413"/>
-        <source>Delete Date</source>
-        <translation>ۋاقتى ئۆچۈرۈش</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="415"/>
         <source>Create Date</source>
-        <translation>ۋاقتىنى يارىتىش</translation>
+        <translation>ساندۇۇ بايانداما  قۇرۇۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="422"/>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="416"/>
         <source>File Size</source>
-        <translation>ھۆججەت چوڭلۇقى</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="424"/>
-        <source>Original Path</source>
-        <translation>ئەسلى يول</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="420"/>
-        <source>File Type</source>
-        <translation>ھۆججەت تۈرى</translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/file-item-model.cpp" line="418"/>
+        <source>Original Path</source>
+        <translation>العاچى   جول</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="414"/>
+        <source>File Type</source>
+        <translation>ۅجۅت تۉرۉ</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/model/file-item-model.cpp" line="412"/>
         <source>Modified Date</source>
-        <translation>ئۆزگەرتىلگەن ۋاقتى</translation>
+        <translation>ۅزگۅرتۉلگۅن ۇباقتى</translation>
     </message>
 </context>
 <context>
@@ -2590,14 +2589,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">添加标记...</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="216"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="202"/>
         <source>Add File Label</source>
-        <translation type="unfinished"></translation>
+        <translation>ۅجۅت ەنىن  قوشۇۇ .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="239"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="225"/>
         <source>Delete All Label</source>
-        <translation>删除所有标记</translation>
+        <translation>باردىق ەندەردى  ۅچۉرۉپ اتىڭ</translation>
     </message>
     <message>
         <source>Peony File Labels Menu Extension</source>
@@ -2608,17 +2607,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">菜单中增加标记功能.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="251"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="237"/>
         <source>label management ...</source>
-        <translation>بەلگە باشقۇرۇش ...</translation>
+        <translation>بەلگە  باشقارىش ...</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileLabelWidget</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="436"/>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="422"/>
         <source>label management ...</source>
-        <translation>بەلگە باشقۇرۇش ...</translation>
+        <translation>بەلگە  باشقارىش ...</translation>
     </message>
 </context>
 <context>
@@ -2648,7 +2647,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="162"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="177"/>
         <source>The opening mode of the %1 %2</source>
-        <translation>٪1 ٪2 نىڭ ئېچىلىش شەكلى</translation>
+        <translation>%1 %2 لىق اچىلىش  ابالى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="146"/>
@@ -2656,33 +2655,33 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="177"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="178"/>
         <source>unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="147"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="178"/>
         <source>No application is set to open file &quot;%1 %2&quot;</source>
-        <translation>&quot;٪1 ٪2&quot; ھۆججىتىنى ئېچىشقا ئىلتىماس قىلىش تەڭشەكسىز</translation>
+        <translation>ەچقانداي ئەپ  ۅجۅتۉن اچۇۇ ۉچۉن  %1 %2 جاساپ  تەڭشەلبەگەن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="152"/>
         <source>Still using the last opened application:</source>
-        <translation>يەنىلا ئەڭ ئاخىرقى ئېچىلغان ئەپنى ئىشلىتىۋاتىدۇ:</translation>
+        <translation>داعى ەلە الدىنقى ىرەت  اچىلعان  ئەپنى ىشتەتىپ جاتات:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="162"/>
         <source>known</source>
-        <translation>بىلىشكە بولىدۇ</translation>
+        <translation>بەلگىلۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="165"/>
         <source>Open application is used by default:</source>
-        <translation>ئېچىۋېتىلگەن پروگراممىنى كۆڭۈلدىكىدەك ئىشلىتىدۇ:</translation>
+        <translation>ويۇنداقى  ابالدا Open ئەپ تەتىگىن  ىشتەتىش :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="186"/>
         <source>You can search in the Software Center for an application that can open this file, or select an existing application on your computer.</source>
-        <translation>يۇمشاق دېتال مەركىزىدىن بۇ ھۆججەتنى ئاچالايدىغان ئەپنى ئىزدەپ باقسىڭىز بولىدۇ، ياكى كومپىيوتېرىڭىزدا مەۋجۇت بولغان بىر پروگراممىنى تاللىسىڭىز بولىدۇ.</translation>
+        <translation>سىز جۇمشاق تەتىك  بوربورۇنان بۇل  ۅجۅتۉن اچقالى بولوتۇرعان ئەپنى ىزدەسەڭىز بولوت ، كۅرۉنۉشتۅرۉ  كومپىيۇتەردەگى ازىر بار بولعون قولدونۇشچان  پراگراممالاردى تانداڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="208"/>
@@ -2692,90 +2691,90 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="210"/>
         <source>Select application:</source>
-        <translation>ئىلتىماسنى تاللاڭ:</translation>
+        <translation>ئەپنى تانداش :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="256"/>
         <source>Always open the %1%2 file with this application</source>
-        <translation>بۇ ئەپ بىلەن دائىم ٪1٪2 ھۆججىتىنى ئاچ</translation>
+        <translation>باشتان ارقاسى بۇل ئەپنى ىشتەتىپ %1 %2  ۅجۅتۉن اچىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="279"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="286"/>
         <source>Choose other application</source>
-        <translation>باشقا قوللىنىشچان پروگراممىنى تاللاش</translation>
+        <translation>باشقا ئەپنى تانداش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="280"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="293"/>
         <source>Go to application center</source>
-        <translation>ئىلتىماس مەركىزىگە بارايلى</translation>
+        <translation>ئەپ بوربورۇنا بەرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="351"/>
         <source>Ok</source>
-        <translation>ماقۇل</translation>
+        <translation>بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="352"/>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="421"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="412"/>
         <source>Desktop files(*.desktop)</source>
-        <translation>ئۈستەل يۈزى ھۆججەتلىرى(*.desktop)</translation>
+        <translation>(*.desktop) شىرە  بەتى  ۅجۅتتۅرۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="419"/>
         <source>Select Open Action</source>
-        <translation>ئوچۇق ھەرىكەتنى تاللاڭ</translation>
+        <translation>اچۇۇ ماشعۇلاتىنى تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-lauch-dialog.cpp" line="420"/>
         <source>Select</source>
-        <translation>تاللاش</translation>
+        <translation>تانداش</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileLaunchAction</name>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="215"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="310"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="498"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="309"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="496"/>
         <source>Execute Directly</source>
-        <translation>بىۋاستە ئىجرا قىلىش</translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="216"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="311"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="499"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="310"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="497"/>
         <source>Execute in Terminal</source>
-        <translation>تېرمىنالدا ئىجرا قىلىش</translation>
+        <translation>تەكىست ۅجۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="219"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="315"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="503"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="314"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="501"/>
         <source>Detected launching an executable file %1, you want?</source>
-        <translation>٪1 ئىجرا قىلىشقا بولىدىغان ھۆججەتنى قوزغاشنى بايقايسىز، سىز ئالامسىز؟</translation>
+        <translation>تىكە بارۇۇ ، ۇدۇل بارۇۇ  اتقارماق  جاسوو ،اتقارۇۇ .</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="256"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="368"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="537"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="255"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="366"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="535"/>
         <source>Open Failed</source>
-        <translation>ئېچىش مەغلۇپ بولدى</translation>
+        <translation>اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="256"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="255"/>
         <source>Can not open %1, file not exist, is it deleted?</source>
-        <translation>٪1 نى ئاچقىلى بولمايدۇ، ھۆججەت مەۋجۇت ئەمەس، ئۆچۈرۋېتەمدۇ؟</translation>
+        <translation>%1 نى اچقالى بولبودۇ،  ۅجۅت باربولۇۇسۇ  ەمەس ،  ئۆچۈرۈلدىمۇ؟</translation>
     </message>
     <message>
         <source>File not exist, is it deleted or moved to other path?</source>
@@ -2788,82 +2787,82 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="189"/>
         <source>No Permission</source>
-        <translation>ئىجازەت بېرىلمەيدۇ</translation>
+        <translation>ۇقۇق بەرىلبەگەن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="189"/>
         <source>File is not readable. Please check if file has read permisson.</source>
-        <translation>ھۆججەتنى ئوقۇغىلى بولمايدۇ. ھۆججەتتە permisson ئوقۇلغان-ئوقۇمىغانلىقىنى تەكشۈرۈپ كۆرۈڭ.</translation>
+        <translation>ۅجۅتۉن وقۇعالى بولبويت .  ۅجۅتۉنڭ وقۇۇ ۇقۇعۇنا ەە بولموق  كۅرۉنۉشتۅرۉ ەە بولموق  ەمەستىگىن  تەكشەرىپ  باعىڭ.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="309"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="497"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="308"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="495"/>
         <source>By Default App</source>
-        <translation>كۆڭۈلدىكىدەك ئەپ</translation>
+        <translation>ويۇنداقى  قولدونۇشچان پراگرامما</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="314"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="502"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="313"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="500"/>
         <source>Launch Options</source>
-        <translation>قوزغىتىدىغان تاللانمىلار</translation>
+        <translation>قوزعوتۇۇ تاندالماسى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="357"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="526"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="355"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="524"/>
         <source>Open Link failed</source>
-        <translation>ئۇلىنىشنى ئېچىش مەغلۇپ بولدى</translation>
+        <translation>جالعانمانى  اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="358"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="527"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="356"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="525"/>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation>ھۆججەت مەۋجۇت ئەمەس، ئۇلىنىش ھۆججىتىنى ئۆچۈرمەكچىمۇ؟</translation>
+        <translation>ۅجۅت باربولۇۇسۇ  ەمەس ،  جالعانما  ۅجۅتنى ۅچۉرۅسۉزبۉ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="369"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="538"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="367"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="536"/>
         <source>Can not open %1, Please confirm you have the right authority.</source>
-        <translation>٪1 نى ئاچقىلى بولمايدۇ، توغرا نوپۇزغا ئىگە ئىكەنلىكىڭىزنى جەزىملەشتۈرۈڭ.</translation>
+        <translation>%1 نى اچقالى بولبودۇ، سىزدىن تۇۇرا  ۇقۇق چۅلكۅمۉڭۉز باردىعىن بەكىتىڭ.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="373"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="543"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="371"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="541"/>
         <source>Open App failed</source>
-        <translation>Open App مەغلۇپ بولدى</translation>
+        <translation>ئەپنى اچۇۇ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="374"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="544"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="372"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="542"/>
         <source>The linked app is changed or uninstalled, so it can not work correctly. 
 Do you want to delete the link file?</source>
-        <translation>ئۇلانغان ئەپ ئۆزگەرتىلگەن ياكى ئۆزگەرتىلمىگەن، شۇڭا توغرا ئىشلىيەلمەيدىكەن. 
-ئۇلىنىش ھۆججىتىنى ئۆچۈرەمسىز؟</translation>
+        <translation>جالعانعان  ئەپلەر   ۅزگۅرتۉلدۉ كۅرۉنۉشتۅرۉ ۅچۉرۉلدۉ، وشوعو نورماال  قىزمات جاساعالى بولبويت .
+جالعانما   ۅجۅتۉن ۅچۉرۅسۉزبۉ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="388"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="393"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="555"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="386"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="391"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="553"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="389"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="387"/>
         <source>File original path not exist, are you deleted or moved it?</source>
-        <translation>ھۆججەت ئەسلى يولى مەۋجۇت ئەمەس، ئۆچۈرىۋاتامسىز ياكى يۆتكىدىڭىزمۇ؟</translation>
+        <translation>ۅجۅتتۉن العاچى   جولۇ، باربولۇۇسۇ  ەمەس  انى  ئۆچۈرىۋەتتىڭىزمۇ كۅرۉنۉشتۅرۉ يۆتكىۋەتتىڭىزمۇ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="393"/>
-        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="555"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="391"/>
+        <location filename="../../libpeony-qt/file-launcher/file-launch-action.cpp" line="553"/>
         <source>Can not get a default application for opening %1, do you want open it with text format?</source>
-        <translation>٪1 نى ئېچىشقا كۆڭۈلدىكىدەك پروگراممىغا ئېرىشەلمىدىم، تېكىست شەكلى ئارقىلىق ئاچقۇڭىز بارمۇ؟</translation>
+        <translation>%1 نى اچىشقا  ىشتەتىلەتۇرعان  ويۇنداقى  قولدونۇشچان پىروگىرامماعا ەە بولعولۇ بولبويت ، تەكىست كەبەتەسىندە  انى  اچۇۇ كەرەكبى؟</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="vanished">دىققەت</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
         <source>Can not open the file, application is disabled</source>
-        <translation type="vanished">ھۆججەتنى ئاچقىلى بولمىدى، ئىلتىماس قىلىش چەكلەنگەن</translation>
+        <translation type="vanished">无法打开文件，应用被禁用。</translation>
     </message>
 </context>
 <context>
@@ -2872,12 +2871,12 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="46"/>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="49"/>
         <source>Symbolic Link</source>
-        <translation>سىمۋوللۇق ئۇلاش</translation>
+        <translation>بەلگە  ۇلانماسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-link-operation.cpp" line="89"/>
         <source>Link file error</source>
-        <translation>ھۆججەت خاتالىقىنى باغلاش</translation>
+        <translation>جالعانما  ۅجۅت  قاتالىعى</translation>
     </message>
     <message>
         <source>Link file</source>
@@ -2900,85 +2899,85 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="186"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="415"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="535"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="867"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1776"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="414"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="534"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="863"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1768"/>
         <source>Move file error</source>
-        <translation>ھۆججەت خاتالىقىنى يۆتكەش</translation>
+        <translation>ۅجۅتۉن  جۅتكۅۅ  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="302"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="301"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="304"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="303"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="310"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="309"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
-        <translation>٪1 ئۈسكۈنە ئۈستىدە بوشلۇق قالمىدى. ھۆججەت چوڭلۇقىنى كۆچۈرۈش: ٪2 GB، بوشلۇق لازىم: ٪3 GB.</translation>
+        <translation>%1 شايماندا قالدىق بوشتۇق جوق.   كۅبۅيتۉلگۅن ۅجۅت چوڭدۇعۇ :%2 GB،  ەتىياجدۇۇ بوشتۇق:%3 GB.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="315"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1952"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="314"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1944"/>
         <source>File move error</source>
-        <translation>ھۆججەت يۆتكەش خاتالىقى</translation>
+        <translation>ۅجۅت  جۅتكۅۅ  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="831"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="841"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="827"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="837"/>
         <source>Invalid move operation, cannot move a file into its sub directories.</source>
-        <translation>ئىناۋەتسىز يۆتكەش مەشغۇلاتى، ھۆججەتنى ئۇنىڭ تارماق مۇندەرىجىسىگە يۆتكىيەلمەيدۇ.</translation>
+        <translation>جۅتكۅۅ ماشعۇلاتى ەسەپ ەمەس،  ۅجۅتۉن انىن  بۅلۉمچۅ  مازمۇۇنۇنا  جۅتكۅگۅلۉۉ بولبويت .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="885"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="916"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="969"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1239"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1263"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1396"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="881"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="912"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="965"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1234"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1258"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1389"/>
         <source>The file name exceeds the limit</source>
-        <translation>ھۆججەت نامى چەكتىن ئېشىپ كەتتى</translation>
+        <translation>ۅجۅت ناامى  چەكتەن اشىپ  كەتتى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1216"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1211"/>
         <source>Create file error</source>
-        <translation>ھۆججەت خاتالىقىنى پەيدا قىلىش</translation>
+        <translation>ۅجۅت  قاتالىعى پايدا قىلۇۇ جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1222"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1217"/>
         <source>Cannot opening file, permission denied!</source>
-        <translation>ھۆججەتنى ئاچالمىدى، ئىجازەت ئىنكار قىلدى!</translation>
+        <translation>ۅجۅتۉن اچقالى بولبودۇ، ۇقۇق گۅۅلۅمۉ  قاتار اتقارىلدى !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1224"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1219"/>
         <source>File:%1 was not found.</source>
-        <translation>ھۆججەت:٪1 تېپىلمىدى.</translation>
+        <translation>تابىلباعان ۅجۅت:%1.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="832"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1683"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="828"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1675"/>
         <source>Invalid Operation.</source>
-        <translation>ئىناۋەتسىز مەشخۇلات</translation>
+        <translation>ەسەپ ەمەس ماشقۇلدانۇۇ .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1743"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1735"/>
         <source>File delete error</source>
-        <translation>ھۆججەت ئۆچۈرۈش خاتالىقى</translation>
+        <translation>ۅجۅتۉن قاتاا ۅچۉرۉۉ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1822"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1814"/>
         <source>Link file error</source>
-        <translation>ھۆججەت خاتالىقىنى باغلاش</translation>
+        <translation>جالعانما  ۅجۅت  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1954"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1946"/>
         <source>Burning does not support replacement</source>
-        <translation>كۆيۈش ئالماشتۇرۇشنى قوللىمايدۇ</translation>
+        <translation>كۆيدۈرگۈچى الماشتىرۇۇنۇ قولدوبويت.</translation>
     </message>
     <message>
         <source>Burn failed</source>
@@ -2989,10 +2988,10 @@ Do you want to delete the link file?</source>
         <translation type="vanished">文件删除</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="839"/>
-        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1745"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="835"/>
+        <location filename="../../libpeony-qt/file-operation/file-move-operation.cpp" line="1737"/>
         <source>Invalid Operation</source>
-        <translation>ئىناۋەتسىز مەشخۇلات</translation>
+        <translation>ەسەپ ەمەس ماشقۇلدانۇۇ</translation>
     </message>
 </context>
 <context>
@@ -3000,7 +2999,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="362"/>
         <source>&amp;More Details</source>
-        <translation>&amp;تەپسىلاتى</translation>
+        <translation>&amp; داعى ەلە كۅپ جۉرۉشتۅر</translation>
     </message>
 </context>
 <context>
@@ -3008,68 +3007,68 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="45"/>
         <source>File Operation Error</source>
-        <translation>ھۆججەت مەشغۇلات خاتالىقى</translation>
+        <translation>ۅجۅت ماشعۇلاتىنداقى قاتاالىق</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="53"/>
         <source>unkwon</source>
-        <translation>unkwon</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="54"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="55"/>
         <source>null</source>
-        <translation>null</translation>
+        <translation>كۉچۉنۅ ەە بولموق  ەمەس</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="57"/>
         <source>Error message:</source>
-        <translation>خاتالىق ئۇچۇرى:</translation>
+        <translation>قاتاا ۇچۇر:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="58"/>
         <source>Source File:</source>
-        <translation>مەنبە ھۆججەت:</translation>
+        <translation>كەلۉۉ جەر جانى  ۅجۅت:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="59"/>
         <source>Dest File:</source>
-        <translation>Dest ھۆججىتى:</translation>
+        <translation>نىشان ۅجۅت:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="63"/>
         <source>Ignore</source>
-        <translation>نەزەردىن ساقىت قىلىش</translation>
+        <translation>نازاردان ساق  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="64"/>
         <source>Ignore All</source>
-        <translation>بارلىقىغا سەل قاراش</translation>
+        <translation>باردىعىنا سەل قاروو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="65"/>
         <source>Overwrite</source>
-        <translation>Overwrite</translation>
+        <translation>ۉستۉنۅن ساقتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="66"/>
         <source>Overwrite All</source>
-        <translation>ھەممىنى بېسىپ</translation>
+        <translation>باردىعىن قاپلىماق</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="67"/>
         <source>Backup</source>
-        <translation>زاپاسلاش</translation>
+        <translation>زاپاستوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="68"/>
         <source>Backup All</source>
-        <translation>بارلىق زاپاسلاش</translation>
+        <translation>باردىعىن  دايار ، دايىن  ساقتوو.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="69"/>
         <source>&amp;Retry</source>
-        <translation>قايتا تىركىشىش</translation>
+        <translation>&amp;قايرا سىناپ باعىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog.cpp" line="70"/>
@@ -3082,7 +3081,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialog-base.cpp" line="82"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 <context>
@@ -3106,27 +3105,27 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="54"/>
         <source>Replace</source>
-        <translation>ئالماشتۇر</translation>
+        <translation>الماشتىرۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="63"/>
         <source>Ignore</source>
-        <translation>نەزەردىن ساقىت قىلىش</translation>
+        <translation>نازاردان ساق  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="82"/>
         <source>Do the same</source>
-        <translation>ئوخشاش ئىش قىلىش</translation>
+        <translation>وقشوش  بىر  جۇمۇشتۇ جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="105"/>
         <source>&lt;p&gt;This location already contains the file &apos;%1&apos;, Do you want to override it?&lt;/p&gt;</source>
-        <translation>&lt;p&gt; بۇ ئورۇن &apos;٪1&apos; ھۆججىتىنى ئۆز ئىچىگە ئالغان بولۇپ، چەكتىن ئاشقانمۇ؟ &lt;/p&gt;</translation>
+        <translation>&lt;p&gt; بۇل ورۇن  ۅجۅتتۉن %1 نى ۅز ىچىنە  العان، انى  قاپتوو كەرەكبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="111"/>
         <source>Unexpected error from %1 to %2</source>
-        <translation>٪1 دىن ٪2 گىچە كۈتۈلمىگەن خاتالىق</translation>
+        <translation>%1 تىن  %2 تۉن  بولعون قوقۇستان قاتاالىق</translation>
     </message>
     <message>
         <source>Then do the same thing in a similar situation</source>
@@ -3135,7 +3134,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="72"/>
         <source>Backup</source>
-        <translation>زاپاسلاش</translation>
+        <translation>زاپاستوو</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3149,14 +3148,14 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::FileOperationErrorDialogNotSupported</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="325"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="320"/>
         <source>Yes</source>
-        <translation>شۇنداق</translation>
+        <translation>وبا</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="317"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="312"/>
         <source>No</source>
-        <translation>ياق</translation>
+        <translation>جوق</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3167,9 +3166,9 @@ Do you want to delete the link file?</source>
         <translation type="vanished">全部应用</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="362"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="357"/>
         <source>Make sure the disk is not full or write protected and that the file is not protected</source>
-        <translation>دىسكازنىڭ تولۇق بولماسلىقى ياكى يېزىش قوغدىنىش ۋە ھۆججەتنىڭ قوغدىلماسلىقىغا كاپالەتلىك قىلىش</translation>
+        <translation>نۇر تاقتاسىنىن تولۇق  كۅرۉنۉشتۅرۉ يېزىلماي قورعولۇۇعا ەەبولۇۇ  قىلىڭ، انىن  ۉستۉنۅن ۅجۅت قورعولبودۇ</translation>
     </message>
 </context>
 <context>
@@ -3177,17 +3176,17 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="204"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="213"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="245"/>
         <source>Make sure the disk is not full or write protected and that the file is not protected</source>
-        <translation>دىسكازنىڭ تولۇق بولماسلىقى ياكى يېزىش قوغدىنىش ۋە ھۆججەتنىڭ قوغدىلماسلىقىغا كاپالەتلىك قىلىش</translation>
+        <translation>نۇر تاقتاسىنىن تولۇق  كۅرۉنۉشتۅرۉ يېزىلماي قورعولۇۇعا ەەبولۇۇ  قىلىڭ، انىن  ۉستۉنۅن ۅجۅت قورعولبودۇ</translation>
     </message>
     <message>
         <source>Please make sure the disk is not full or not is write protected, or file is not being used.</source>
@@ -3197,10 +3196,10 @@ Do you want to delete the link file?</source>
 <context>
     <name>Peony::FileOperationInfo</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1095"/>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1097"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1075"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="1077"/>
         <source>Symbolic Link</source>
-        <translation>سىمۋوللۇق ئۇلاش</translation>
+        <translation>بەلگە  ۇلانماسى</translation>
     </message>
     <message>
         <source> - Symbolic Link</source>
@@ -3214,83 +3213,83 @@ Do you want to delete the link file?</source>
         <translation type="vanished">删除文件警告</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="261"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="244"/>
         <source>Warn</source>
-        <translation>ئاگاھلاندۇرۇش</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="261"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="244"/>
         <source>&apos;%1&apos; is occupied，you cannot operate!</source>
-        <translation>&apos;٪1&apos; ئىشغال قىلىندى، مەشغۇلات قىلىشقا بولمايدۇ!</translation>
+        <translation>1 نى ەەلەگەن، سىز ماشقۇلدانۇۇ  قىلا البايسىز!</translation>
     </message>
     <message>
         <source>No, go to settings</source>
         <translation type="vanished">否，跳转到设置</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="281"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="262"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="285"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="266"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="290"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="271"/>
         <source>Do you want to put selected %1 item(s) into trash?</source>
-        <translation>تاللانغان ٪1 تۈر(لەر) نى ئەخلەت ساندۇقىغا كىرگۈزمەكچىمۇسىز؟</translation>
+        <translation>تاندالعان  %1 تۉردۉ شىپىرىندى  ساندىققا سالۇۇ  كەرەكبى؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="292"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="273"/>
         <source>Do not show again</source>
-        <translation>قايتا كۆرسەتمە</translation>
+        <translation>قايرا جولجوبوولۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="460"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="440"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="462"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="442"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="466"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="446"/>
         <source>Insufficient storage space</source>
-        <translation>ساقلاش بوشلۇقى يېتەرلىك ئەمەس</translation>
+        <translation>ساقتوو بوشتۇعۇ جەتىشبەيت</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="469"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="449"/>
         <source>%1 no space left on device. Copy file size: %2 GB, Space needed: %3 GB.</source>
-        <translation>٪1 ئۈسكۈنە ئۈستىدە بوشلۇق قالمىدى. ھۆججەت چوڭلۇقىنى كۆچۈرۈش: ٪2 GB، بوشلۇق لازىم: ٪3 GB.</translation>
+        <translation>%1 شايماندا قالدىق بوشتۇق جوق.   كۅبۅيتۉلگۅن ۅجۅت چوڭدۇعۇ :%2 GB،  ەتىياجدۇۇ بوشتۇق:%3 GB.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="511"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="491"/>
         <source>Can&apos;t delete.</source>
-        <translation>ئۆچۈرگىلى بولمايدۇ.</translation>
+        <translation>ۅچۉرگۅلۉ بولبويت .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="512"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="492"/>
         <source>You can&apos;t delete a file whenthe file is doing another operation</source>
-        <translation>ھۆججەت باشقا مەشغۇلات قىلىۋاتقاندا ھۆججەت ئۆچۈرگىلى بولمايدۇ</translation>
+        <translation>ۅجۅت باشقا ماشعۇلاتتاردى اتقارىپ جاتقان  ۇچۇردا ، بۇل ۅجۅتنى ۅچۉرگۅلۉ بولبويت</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="633"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="613"/>
         <source>File Operation is Busy</source>
-        <translation>ھۆججەت مەشغۇلاتى ئالدىراش</translation>
+        <translation>ۅجۅت ماشعۇلاتى الدىراش</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="634"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="614"/>
         <source>There have been one or more fileoperation(s) executing before. Youroperation will wait for executinguntil it/them done. If you really want to execute file operations parallelly anyway, you can change the default option &quot;Allow Parallel&quot; in option menu.</source>
-        <translation>ئىلگىرى بىر ياكى بىر قانچە ھۆججەت مەشغۇلاتى (لەر) ئىجرا قىلىنغان. سىلەرنىڭ مەشغۇلاتىڭلار ئىجرا قىلىنغىنىغا/پۈتكەندىن كېيىنمۇ ساقلىنىدۇ. ئىشقىلىپ ھۆججەت مەشغۇلاتلىرىنى پاراللېل ئىجرا قىلىشنى راستىنلا خالىسىڭىز، تاللاش تىزىملىكىدىكى «پاراللېلغا رۇخسەت قىلىش» دېگەن كۆڭۈلدىكى تاللاشنى ئۆزگەرتەلەيسىز.</translation>
+        <translation>الدىدا ، مۇردا ، بىر   كۅرۉنۉشتۅرۉ بىر   قانچا  ۅجۅت ماشعۇلاتى اتقارماق  اتقارىلىپ جاتقان . سىز كۉچۅ تاماملانغىچە اتقارماق  جاسوونۇ  ساقتايسىز. ەگەر  ىراس ەلە جانداش ۅجۅت ماشعۇلاتىنى اتقارماق  قىلماقچى بولسوڭۇز، تانداش  تىزىمدەگىندەكى  ويۇنداقى  تانداش  تۉرۉن  ۅزگۅرتسۅڭۉز بولوت .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="660"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-manager.cpp" line="640"/>
         <source>The long name file is saved to %1</source>
-        <translation>ئۇزۇن ئىسىم ھۆججىتى ٪1 گە ساقلاپ قېلىندى</translation>
+        <translation>ۇزۇن  اتى  بار ۅجۅت %1 تۉن  ساقتالات</translation>
     </message>
     <message>
         <source>The system cannot hibernate or sleep</source>
@@ -3311,12 +3310,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="298"/>
         <source>counting:</source>
-        <translation>ساناش:</translation>
+        <translation>ھېسابلىنىۋاتىدۇ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="299"/>
         <source>state:</source>
-        <translation>ھالەت:</translation>
+        <translation>ابالى:</translation>
     </message>
 </context>
 <context>
@@ -3324,17 +3323,17 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="321"/>
         <source>&amp;More Details</source>
-        <translation>&amp;تەپسىلاتى</translation>
+        <translation>&amp; داعى ەلە كۅپ جۉرۉشتۅر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="332"/>
         <source>From:</source>
-        <translation>ئۇنىڭدىن:</translation>
+        <translation>نان:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="333"/>
         <source>To:</source>
-        <translation>دىمەكچى:</translation>
+        <translation>عا:</translation>
     </message>
 </context>
 <context>
@@ -3342,7 +3341,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="55"/>
         <source>File Manager</source>
-        <translation>ھۆججەت باشقۇرغۇ</translation>
+        <translation>ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="59"/>
@@ -3352,12 +3351,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="68"/>
         <source>Preparing...</source>
-        <translation>تەييارلىنىۋاتىدۇ...</translation>
+        <translation>داياردالىپ جاتات...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="71"/>
         <source>Handling...</source>
-        <translation>بىر تەرەپ قىلىش...</translation>
+        <translation>تۇتۇپ جاتات....</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="74"/>
@@ -3367,45 +3366,45 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="77"/>
         <source>Rollbacking...</source>
-        <translation>قىبلىگە ئېلىش...</translation>
+        <translation>قايتىلىنىۋاتىدۇ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="81"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="94"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="120"/>
         <source>File Operation</source>
-        <translation>ھۆججەت مەشغۇلاتى</translation>
+        <translation>ۅجۅت ماشعۇلاتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="95"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="121"/>
         <source>A file operation is running backend...</source>
-        <translation>بىر ھۆججەت مەشخۇلاتى ئارقا قوشۇ...</translation>
+        <translation>ۅجۅت ماشعۇلاتى ارقا تاراپتا  اتقارماق   قىلىنىپ جاتات...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="160"/>
         <source>%1 files, %2</source>
-        <translation>٪1 ھۆججەت، ٪2</translation>
+        <translation>%1  ۅجۅتتۅر, %2</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="260"/>
         <source>%1 done, %2 total, %3 of %4.</source>
-        <translation>٪1 تۈگىدى، ٪2 جەمئىي، ٪3 ٪4.</translation>
+        <translation>%1 اتقارىلدى، ، باردىعى %2 %3، % باردىعى %4.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="203"/>
         <source>clearing: %1, %2 of %3</source>
-        <translation>تازىلاش: ٪1، ٪2 3</translation>
+        <translation>تازىلىنىۋاتىدۇ:%1، 2 بولۇپ، %2 باردىعى %3</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="248"/>
         <source>copying...</source>
-        <translation>كۆچۈرمە...</translation>
+        <translation>كۅبۅيتۉلۉپ جاتات...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-wizard.cpp" line="278"/>
         <source>Syncing...</source>
-        <translation>ماس قەدەمدە...</translation>
+        <translation>شاي  قادامدا مېڭىۋاتىدۇ...</translation>
     </message>
 </context>
 <context>
@@ -3417,47 +3416,47 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="258"/>
         <source>File Type:</source>
-        <translation>ھۆججەت تۈرى:</translation>
+        <translation>ۅجۅت تۉرۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="286"/>
         <source>Time Access:</source>
-        <translation>ۋاقىت زىيارەت:</translation>
+        <translation>ۇباقىت زىياراتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="279"/>
         <source>Time Modified:</source>
-        <translation>ۋاقىت ئۆزگەرتىلگەن:</translation>
+        <translation>تۉزۅتۉۉ كىرگىزۉۉ ۇباقتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="295"/>
         <source>Children Count:</source>
-        <translation>بالىلار سانى:</translation>
+        <translation>بالا  ۅجۅت سانى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="265"/>
         <source>Size:</source>
-        <translation>چوڭ - كىچىكلىكى:</translation>
+        <translation>چوڭ - كىچىكتىگى :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="272"/>
         <source>Time Created:</source>
-        <translation>قۇرۇلغان ۋاقىت:</translation>
+        <translation>قۇرۇلعان  ۇباقتى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="304"/>
         <source>Image resolution:</source>
-        <translation>سۈرەتنى ئېنىقلاش:</translation>
+        <translation>سۉرۅت ايىرمالاندىرىش  قاتىشى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="311"/>
         <source>color model:</source>
-        <translation>رەڭ مودېلى:</translation>
+        <translation>تۉس نۇسقا ، قالپ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="380"/>
         <source>usershare</source>
-        <translation>usershare</translation>
+        <translation>بۇل ،ۇشۇل  اسپاپتان ھەمبەھرلىنىش</translation>
     </message>
     <message>
         <source>Image size:</source>
@@ -3471,13 +3470,13 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="435"/>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="436"/>
         <source>%1x%2</source>
-        <translation>٪1x٪2</translation>
+        <translation>%1x%2</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="493"/>
         <location filename="../../libpeony-qt/controls/preview-page/default-preview-page/default-preview-page.cpp" line="494"/>
         <source>%1 total, %2 hidden</source>
-        <translation>٪1 ئومۇمىي، ٪2 يوشۇرۇن</translation>
+        <translation>%بولۇپ، باردىعى 1 %2 جاشىرىن</translation>
     </message>
 </context>
 <context>
@@ -3512,22 +3511,22 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="76"/>
         <source>File Rename error</source>
-        <translation>ھۆججەت نامى خاتالىقى</translation>
+        <translation>ۅجۅتكۅ قايرا ات قويۇش   قاتالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="77"/>
         <source>Invalid file name %1%2%3 .</source>
-        <translation>ئىناۋەتسىز ھۆججەت نامى ٪1٪2٪3 .</translation>
+        <translation>ەسەپ ەمەس ۅجۅت ناامى  %1 %2 %3.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="93"/>
         <source>Are you sure to hidden this file?</source>
-        <translation>سىز بۇ ھۆججەتنى چوقۇم يوشۇرۇپ قويامسىز؟</translation>
+        <translation>سىز بۇل  ۅجۅتۉن جاشىرۇۇنۇ تۇراقتاندىرا الاسىزبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="126"/>
         <source>When change the file suffix, the file may be invalid. Are you sure to change it ?</source>
-        <translation>ھۆججەتنى ئۆزگەرتكەندە ھۆججەت ئىناۋەتسىز بولۇشى مۇمكىن. سىز چوقۇم ئۆزگەرتەمسىز؟</translation>
+        <translation>ۅجۅت ارقا قوشۇمچاسىن  ۅزگۅرتكۅندۅ، ۅجۅت ەسەپ ەمەس بولۇۇسۇ مۉمكۉن. سىز ۅزگۅرتۉشتۉ  تۇراقتاندىرا الاسىزبى؟</translation>
     </message>
     <message>
         <source>The file %1%2%3 will be hidden when you refresh or change directory!</source>
@@ -3549,37 +3548,37 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="92"/>
         <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="125"/>
         <source>File Rename warning</source>
-        <translation>ھۆججەت قايتا ئىسىم ئاگاھلاندۇرۇشى</translation>
+        <translation>ۅجۅتكۅ قايرا اتاق بەرۉۉ ەسكەرتىشى</translation>
     </message>
     <message>
         <source>The file &quot;%1&quot; will be hidden!</source>
         <translation type="vanished">文件 &quot;%1&quot; 将会被隐藏！</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="217"/>
-        <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="249"/>
+        <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="215"/>
+        <location filename="../../libpeony-qt/file-operation/file-rename-operation.cpp" line="245"/>
         <source>Rename file error</source>
-        <translation>ھۆججەت خاتالىقىنى قايتا ئىسىم قىلىپ ئۆزگەرتىش</translation>
+        <translation>ۅجۅتكۅ قايرا ات قويۇش   قاتالىعى</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileTrashOperation</name>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="99"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="122"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="72"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="95"/>
         <source>trash:///</source>
-        <translation>trash:///</translation>
+        <translation>شىپىرىندى :///</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="102"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="125"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="75"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="98"/>
         <source>Trash file error</source>
-        <translation>ئەخلەت ھۆججەت خاتالىقى</translation>
+        <translation>شىپىرىندى  ساندىعى ۅجۅت  قاتالىعى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="105"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="78"/>
         <source>Invalid Operation! Can not trash &quot;%1&quot;.</source>
-        <translation>ئىناۋەتسىز مەشخۇلات! «٪1»نى ئەخلەتكە تاشلىغىلى بولمايدۇ.</translation>
+        <translation>ەسەپ ەمەس ماشقۇلدانۇۇ !  %1 نى تاشلىۋەتكىلى بولبويت .</translation>
     </message>
     <message>
         <source>Can not trash</source>
@@ -3590,9 +3589,9 @@ Do you want to delete the link file?</source>
         <translation type="vanished">无法回收大于10G的文件，是否需要永久删除？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="229"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="202"/>
         <source>An unmanageable conflict exists. Please check the recycle bin.</source>
-        <translation>بىر باش ئەگمەس توقۇنۇش مەۋجۇت. يىغىۋېلىش ساندۇقىنى تەكشۈرۈپ كۆرۈڭ.</translation>
+        <translation>تىزگىندۅۅ  جاساعالى بولبويتۇرعان توقۇنۇسۇ باربولۇۇسۇ . جىيناش پونكىتى تەكشەرىپ  باعىڭ.</translation>
     </message>
     <message>
         <source>The user does not have read and write rights to the file &apos;%1&apos; and cannot delete it to the Recycle Bin.</source>
@@ -3628,37 +3627,32 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-untrash-operation.cpp" line="159"/>
         <source>Untrash file error</source>
-        <translation>ھۆججەتنى ئۆچۇرۇش خاتالىقى</translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/file-operation/file-untrash-operation.cpp" line="404"/>
-        <source>Can not find trashed file %1, might be restored or removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Untrash ۅجۅت  قاتالىعى</translation>
     </message>
 </context>
 <context>
     <name>Peony::GlobalSettings</name>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="104"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="564"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="550"/>
         <source>yyyy/MM/dd</source>
-        <translation></translation>
+        <translation>جىل/اي/كۉن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="105"/>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="556"/>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="542"/>
         <source>HH:mm:ss</source>
-        <translation></translation>
+        <translation>ساات : مىنۇت: سىكونت</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/global-settings.cpp" line="539"/>
+        <source>AP hh:mm:ss</source>
+        <translation>AP ساات : مىنۇت: سىكونت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/global-settings.cpp" line="553"/>
-        <source>AP hh:mm:ss</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../libpeony-qt/global-settings.cpp" line="567"/>
         <source>yyyy-MM-dd</source>
-        <translation></translation>
+        <translation>جىل-اي-كۉن</translation>
     </message>
 </context>
 <context>
@@ -3666,17 +3660,17 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="954"/>
         <source>Spread</source>
-        <translation>تارقىلىشى</translation>
+        <translation>تارقاتۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="955"/>
         <source>Minimize</source>
-        <translation>كىچىكلىتىش</translation>
+        <translation>ەڭ كىچىك   ابالى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="956"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 <context>
@@ -3684,48 +3678,48 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="115"/>
         <source>Name</source>
-        <translation>ئىسىم-فامىلىسى</translation>
+        <translation>ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="116"/>
         <source>SideBar</source>
-        <translation>يانبالدىقى</translation>
+        <translation>ۇقۇق ،امال  تاراپ تۉشۉنۉك بەرۉۉ  ىستونۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="117"/>
         <source>Menu</source>
-        <translation>تىزىملىك</translation>
+        <translation>تىزىمدىك</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="124"/>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="178"/>
         <source>Create New Label</source>
-        <translation>يېڭى بەلگە قۇرۇش</translation>
+        <translation>جاڭى بەلگە  پايدا قىلۇۇ جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="126"/>
         <source>Delete Label</source>
-        <translation>بەلگە ئۆچۈرۈش</translation>
+        <translation>بەلگىنى ۅچۉرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="136"/>
         <source>Display the following items in the identification area: (maximum of 6)</source>
-        <translation>كىملىك رايونىدا تۆۋەندىكى تۈرلەرنى كۆرسىتىش: (ئەڭ كۆپ بولغاندا 6)</translation>
+        <translation>ايىرمالاندىرىش  رايونۇندا تۅمۅندۅكۉ  تۉرلۅر كۅرسۅتۉلۅت :(ەڭ كۅپ بولعوندو  التى )</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="153"/>
         <source>Rename</source>
-        <translation>قايتا ئىسىم فامىلە قىلىش</translation>
+        <translation>قايرا ات جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="160"/>
         <source>Edit Color</source>
-        <translation>رەڭ تەھرىرلەش</translation>
+        <translation>تۉس تۅپتۅش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tag-management.cpp" line="175"/>
         <source>Delete This Label</source>
-        <translation>بۇ بەلگە ئۆچۈرۈش</translation>
+        <translation>بۇل بەلگىنى ۅچۉرۉپ اتىڭ</translation>
     </message>
 </context>
 <context>
@@ -3741,18 +3735,18 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="407"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>&quot;٪1&quot; نى ئىزدەش &quot;٪2&quot;</translation>
+        <translation>%2 نان %1 نى ىزدۅۅ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="417"/>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="446"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="417"/>
         <source>Search results for all files marked in  &quot;%1&quot;  in &quot;%2&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 %1 دە بەلگە  قويۇلعان باردىق ۅجۅتتۅردۉن ىزدۅۅ ناتىيجاسى</translation>
     </message>
     <message>
         <source>&amp;Copy Directory</source>
@@ -3761,12 +3755,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="538"/>
         <source>Open In New Tab</source>
-        <translation>يېڭى بەتتە ئېچىش</translation>
+        <translation>جاڭى بەلگە  بەتتە  اچىلىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="542"/>
         <source>Open In New Window</source>
-        <translation>يېڭى كۆزنەكتە ئېچىش</translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اچىلىش</translation>
     </message>
     <message>
         <source>Open In New &amp;Tab</source>
@@ -3779,7 +3773,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/location-bar/location-bar.cpp" line="536"/>
         <source>Copy Directory</source>
-        <translation>مۇندەرىجىنى كۆچۈرۈش</translation>
+        <translation>كۅبۅيتۉۉ مازمۇۇنۇ</translation>
     </message>
 </context>
 <context>
@@ -3787,12 +3781,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/mount-operation.cpp" line="93"/>
         <source>Operation Cancelled</source>
-        <translation>مەشغۇلات ئەمەلدىن قالدۇرۇلدى</translation>
+        <translation>ماشقۇلدانۇۇ  ارعادان  قالتىرىلدى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/mount-operation.cpp" line="190"/>
         <source>Login failed, unknown username or password error, please re-enter!</source>
-        <translation>كىرىش مەغلۇپ بولدى، نامەلۇم ئىشلەتكۈچى نامى ياكى مەخپىي نومۇر خاتالىقى كۆرۈلدى، قايتا كىرىڭ!</translation>
+        <translation>كىرۉۉ  جەڭىلۉۉ بولدۇ ،  بەلگىسىز  كەرەكتۅۅچۉ ناامى  كۅرۉنۉشتۅرۉ جاشىرۇۇن  نومۇرۇ  قاتاا، قايرا كىرگىزىڭ!</translation>
     </message>
 </context>
 <context>
@@ -3800,32 +3794,32 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="35"/>
         <source>Go Back</source>
-        <translation>قايت</translation>
+        <translation>قايتۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="39"/>
         <source>Go Forward</source>
-        <translation>ئالدىغا ماڭ</translation>
+        <translation>الدىنا ىلگەرلۅۅ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="43"/>
         <source>History</source>
-        <translation>تارىخ - مەدەنىيەت</translation>
+        <translation>قويۇش  بايىرقى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="73"/>
         <source>Clear History</source>
-        <translation>تارىخنى ئايدىڭلاشتۇرۇش</translation>
+        <translation>تارىخنى تازالوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="88"/>
         <source>Cd Up</source>
-        <translation>Cd Up</translation>
+        <translation>Cd نان جوعورۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/navigation-tool-bar.cpp" line="94"/>
         <source>Refresh</source>
-        <translation>يېڭىلاش</translation>
+        <translation>جاڭىلوو</translation>
     </message>
 </context>
 <context>
@@ -3833,27 +3827,27 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="246"/>
         <source>Choose new application</source>
-        <translation>يېڭى قوللىنىشچان پروگراممىنى تاللاش</translation>
+        <translation>جاڭى قولدونۇشچان  پراگراممانى تانداڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="248"/>
         <source>Choose an Application to open this file</source>
-        <translation>بۇ ھۆججەتنى ئېچىش ئۈچۈن پروگرامما تاللاش</translation>
+        <translation>بىر  ئەپنى تانداپ بۇل  ۅجۅتۉن اچىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="255"/>
         <source>apply now</source>
-        <translation>ھازىر ئىلتىماس قىلىڭ</translation>
+        <translation>داروو  ۅتۉنۉچ  قىلىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="261"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="262"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
 </context>
 <context>
@@ -3865,29 +3859,29 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="111"/>
         <source>How do you want to open &quot;%1%2&quot; files ?</source>
-        <translation>«٪1٪2» ھۆججەتلىرىنى قانداق ئاچماقچى؟</translation>
+        <translation>سىز %1 %2  ۅجۅتۉن قانداي  اچۇۇنۇ ۉمۉت قىلاسىز؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="116"/>
         <source>Default open with:</source>
-        <translation>كۆڭۈلدىكىدەك ئېچىلىدۇ:</translation>
+        <translation>ويۇنداقى  اچۇۇ ارعاسى:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="135"/>
         <source>Other:</source>
-        <translation>باشقا:</translation>
+        <translation>باشقالار :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="174"/>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="181"/>
         <source>Choose other application</source>
-        <translation>باشقا قوللىنىشچان پروگراممىنى تاللاش</translation>
+        <translation>باشقا ئەپنى تانداش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="175"/>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page.cpp" line="188"/>
         <source>Go to application center</source>
-        <translation>ئىلتىماس مەركىزىگە بارايلى</translation>
+        <translation>ئەپ بوربورۇنا بەرۉۉ</translation>
     </message>
 </context>
 <context>
@@ -3895,7 +3889,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/navigation-bar/path-bar/path-edit.cpp" line="60"/>
         <source>Go To</source>
-        <translation>بار</translation>
+        <translation>بەرۉۉ</translation>
     </message>
 </context>
 <context>
@@ -3928,53 +3922,53 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="84"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="168"/>
         <source>Target: %1</source>
-        <translation>نىشان: ٪1</translation>
+        <translation>نىشان:%1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="146"/>
         <source>Read and Write</source>
-        <translation>ئوقۇش ۋە يېزىش</translation>
+        <translation>وقۇۇ جانا جازۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="146"/>
         <source>Readonly</source>
-        <translation>Readonly</translation>
+        <translation>جالاڭ عانا وقۇۇعا بولوت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="146"/>
         <source>Group or User</source>
-        <translation>توپ ياكى ئىشلەتكۈچى</translation>
+        <translation>توپ  كۅرۉنۉشتۅرۉ ئابونېنتچىلار</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="260"/>
         <source>(Current User)</source>
-        <translation>(نۆۋەتتىكى ئىشلەتكۈچى)</translation>
+        <translation>(گەزەكتەكى  ىشتەتۉۉچۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="343"/>
         <source>Current User</source>
-        <translation>نۆۋەتتىكى ئىشلەتكۈچى</translation>
+        <translation>گەزەكتەكى  ىشتەتۉۉچۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="559"/>
         <source>Permissions modify tip</source>
-        <translation>ئىجازەت ئەسكەرتىشنى ئۆزگەرتىش</translation>
+        <translation>ۇقۇق گۅۅلۅمۉن  ۅزگۅرتۉش  ەسكەرتمەسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="559"/>
         <source>The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?</source>
-        <translation>نۆۋەتتىكى ھۆججەت ياكى ھۆججەت قىسقۇچ ئاللىقاچان ACL ئىجازەتنامىسىنى بەلگىلىگەن. ئىشلەتكۈچى توپ ئىجازەتنامىسىنى ئۆزگەرتىش ACL دا بەلگىلەنگەن ئىجازەتلەرنىڭ ئىشلىتىلمەسلىكنى كەلتۈرۈپ چىقىرىشى مۇمكىن. ئابونتلار گۇرۇپپىسى ئىجازەتنامىسىنى داۋاملىق ئۆزگەرتىشنى خالامسىز؟</translation>
+        <translation>گەزەكتەكى  ۅجۅت كۅرۉنۉشتۅرۉ ۅجۅت قىسقىچقا ACL ۇقۇق گۅۅلۅمۉ  قۇرۇۇ ، اچۇۇ ، باشتوو  اتقارىلدى . ئابۇنتلار توبۇنۇن  ۇقۇق گۅۅلۅمۉ نى ۅزگۅرتۉش  ACL دا قۇرۇۇ ، اچۇۇ ، باشتوو  اتقارىلعان  ۇقۇق گۅۅلۅمۉ نى ىشتەتكەلى  بولبوستۇعۇن  كەلىترىپ ۅندۉرۉشۉ  مۉمكۉن. ئابۇنتلار توبۇنۇن  ۇقۇق گۅۅلۅمۉ نى جالعاشتۇۇ  ۅزگۅرتۉش  كەرەكبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="577"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="598"/>
         <source>Permission refinement settings</source>
-        <translation>ئىجازەت ئىنچىكىلەش تەڭشەكلىرى</translation>
+        <translation>ۇقۇق گۅۅلۅمۉن  ئىنچىكىلەشتۈرۈپ قۇرۇۇ ، اچۇۇ ، باشتوو  جاسوو ،اتقارۇۇ .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="599"/>
         <source>The current user has set advanced sharing. If you still need to modify permissions, advanced sharing may not be available. Do you want to continue setting?</source>
-        <translation>نۆۋەتتىكى ئىشلەتكۈچى ئىلغار ھەمبەھىرلەشنى تەسىس قىلدى. ئەگەر سىز يەنىلا ئىجازەتلەرنى ئۆزگەرتىشكە توغرا كەلسە، ئىلغار ھەمبەھىرلەش مۇمكىن ئەمەس. سىز داۋاملىق تەڭشىمەكچىمۇ؟</translation>
+        <translation>گەزەكتە  ىشتەتكۉۉچۉلۅر  جوعورۇ چەكتۉۉ ورتوق باارلانۇۇ بولۇۇنۇ قۇرۇۇ ، اچۇۇ ، باشتوو  قىلدى. ەگەر  سىز داعى ەلە ۇقۇق گۅۅلۅمۉن  ۅزگـۅرتۉۉگـۅ ەتىياجدۇۇ بولسوڭۇز، اندايدا جوعورۇ چەكتۉۉ ورتوق باارلانۇۇ بولۇۇنۇ ىشتەتكەلى  بولبوستۇعۇ مۉمكۉن.  تەڭشەشتى  جالعاشتىراسىزبى؟</translation>
     </message>
     <message>
         <source>Read</source>
@@ -3992,7 +3986,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="190"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="199"/>
         <source>Can not get the permission info.</source>
-        <translation>ئىجازەت ئۇچۇرىنى ئالالمىدىم.</translation>
+        <translation>ۇقۇق ۇچۇرۇنا  ەە بولعولۇ بولبويت .</translation>
     </message>
     <message>
         <source>(Me)</source>
@@ -4002,7 +3996,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="331"/>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="333"/>
         <source>Others</source>
-        <translation>باشقىلار</translation>
+        <translation>باشقالار</translation>
     </message>
     <message>
         <source>Owner</source>
@@ -4023,7 +4017,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page.cpp" line="339"/>
         <source>You can not change the access of this file.</source>
-        <translation>بۇ ھۆججەتنىڭ زىيارەت قىلىش شەكلىنى ئۆزگەرتەلمەيسىز.</translation>
+        <translation>سىز بۇل ۅجۅتتۉن زىيارات جاسوو ،اتقارۇۇ  ۇقۇعۇنۇ   ۅزگۅرتۅ البايسىز.</translation>
     </message>
     <message>
         <source>Me</source>
@@ -4039,52 +4033,52 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="345"/>
         <source>Trash</source>
-        <translation>ئەخلەت ساندۇقى</translation>
+        <translation>شىپىرىندى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="349"/>
         <source>Recent</source>
-        <translation>يېقىندىن بۇيان</translation>
+        <translation>جاقىندا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="357"/>
         <source>Selected</source>
-        <translation>تاللانغان</translation>
+        <translation>تاندالعان</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="357"/>
         <source> %1 Files</source>
-        <translation> ٪1 ھۆججەتلەر</translation>
+        <translation> %1 ۅجۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="363"/>
         <source>usershare</source>
-        <translation>usershare</translation>
+        <translation>بۇل ،ۇشۇل  اسپاپتان ھەمبەھرلىنىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="374"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="381"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>قاسىيەتىن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="481"/>
         <source>Ok</source>
-        <translation>ماقۇل</translation>
+        <translation>بەكىتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="482"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window.cpp" line="490"/>
         <source>Restore</source>
-        <translation>ئەسلىگە كەلتۈرۈش</translation>
+        <translation>العاچىنا كەلتىرۉۉ</translation>
     </message>
     <message>
         <source>Close</source>
@@ -4100,31 +4094,31 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="121"/>
         <source>Show confirm dialog while trashing.</source>
-        <translation>ئەخلەت تاشلاۋاتقاندا دىئالوگنى جەزىملەشتۈرۈشنى كۆرسەت.</translation>
+        <translation>شىپىرىندى  ساندىققا تاشتاعاندا  بەكىتۉۉ كەرەنەسى  چىعات.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="152"/>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="158"/>
         <source>Origin Path: </source>
-        <translation>كېلىش يولى: </translation>
+        <translation>العاچى   تۉيۉن  جولۇ: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="193"/>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="227"/>
         <source>Deletion Date: </source>
-        <translation>ئۆچۈرۈش ۋاقتى: </translation>
+        <translation>ۅچۉرۉلگەن  ۇباقىت: </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="179"/>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="242"/>
         <source>Size: </source>
-        <translation>چوڭ - كىچىكلىكى: </translation>
+        <translation>چوڭ كىچىكتىگى : </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="236"/>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page.cpp" line="243"/>
         <source>Original Location: </source>
-        <translation>ئەسلى ئورنى: </translation>
+        <translation>العاچى   وردۇ: </translation>
     </message>
 </context>
 <context>
@@ -4132,22 +4126,22 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar.cpp" line="47"/>
         <source>Input the search key of files you would like to find.</source>
-        <translation>ئىزدىمەكچى بولغان ھۆججەتلەرنىڭ ئىزدەش كۇنۇپكىسىنى كىرگۈزۈڭ.</translation>
+        <translation>ىزدەمەكچى بولعون ۅجۅتتۉن ىزدۅۅ تۉيۉندۉۉ سۅزۉن  كىرگىزىڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar.cpp" line="83"/>
         <source>Input search key...</source>
-        <translation>ئىزدەش كۇنۇپكىسىنى كىرگۈزۈڭ...</translation>
+        <translation>ىزدۅۅ تۉيۉندۉۉ سۅزۉن  كىرگىزىڭ. . .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar.cpp" line="121"/>
         <source>advance search</source>
-        <translation>ئالدىن ئىزدەش</translation>
+        <translation>الدىن  ىزدۅۅ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar.cpp" line="122"/>
         <source>clear record</source>
-        <translation>روشەن خاتىرىلەر</translation>
+        <translation>تىزىمدىكتى تازالوو</translation>
     </message>
 </context>
 <context>
@@ -4159,47 +4153,47 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.cpp" line="259"/>
         <source>Clear</source>
-        <translation>تازىلاش</translation>
+        <translation>تازالوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="120"/>
         <source>all</source>
-        <translation>بارلىق</translation>
+        <translation>باردىق</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="120"/>
         <source>file folder</source>
-        <translation>ھۆججەت قىسقۇچ</translation>
+        <translation>ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="120"/>
         <source>image</source>
-        <translation>رەسىم</translation>
+        <translation>سۉرۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="121"/>
         <source>video</source>
-        <translation>ۋىدېئو</translation>
+        <translation>ايىپ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="121"/>
         <source>text file</source>
-        <translation>تېكىست ھۆججىتى</translation>
+        <translation>تەكىست ۅجۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="121"/>
         <source>audio</source>
-        <translation>ئاۋاز</translation>
+        <translation>دووش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="121"/>
         <source>others</source>
-        <translation>باشقىلار</translation>
+        <translation>باشقالار</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/search-bar-container.h" line="121"/>
         <source>wps file</source>
-        <translation>wps ھۆججىتى</translation>
+        <translation>wps ۅجۅتۉۉ</translation>
     </message>
 </context>
 <context>
@@ -4208,17 +4202,17 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="44"/>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="47"/>
         <source>Symbolic Link</source>
-        <translation>سىمۋوللۇق ئۇلاش</translation>
+        <translation>بەلگە  ۇلانماسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="80"/>
         <source>The dest file &quot;%1&quot; has existed!</source>
-        <translation>«٪1» نىڭ دەھشەت ھۆججىتى مەۋجۇت!</translation>
+        <translation>نىشان ۅجۅتتۉن %1 ى باربولۇۇسۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/shared-file-link-operation.cpp" line="86"/>
         <source>Link file error</source>
-        <translation>ھۆججەت خاتالىقىنى باغلاش</translation>
+        <translation>جالعانما  ۅجۅت  قاتالىعى</translation>
     </message>
 </context>
 <context>
@@ -4226,12 +4220,12 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation>CloudStorage</translation>
+        <translation>CloudStorage ساقتوو  سان قاينارى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-cloud-item.cpp" line="55"/>
         <source>CloudFile</source>
-        <translation>CloudFile</translation>
+        <translation>Cloud ۅجۅتۉۉ</translation>
     </message>
 </context>
 <context>
@@ -4239,26 +4233,26 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="84"/>
         <source>Trash</source>
-        <translation>ئەخلەت ساندۇقى</translation>
+        <translation>شىپىرىندى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="87"/>
         <source>Recent</source>
-        <translation>يېقىندىن بۇيان</translation>
+        <translation>جاقىندا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="95"/>
-        <source>Quick Access</source>
-        <translation type="unfinished"></translation>
+        <source>Quick access</source>
+        <translation>تەز زىيارات جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <source>Favorite</source>
-        <translation type="vanished">ئەڭ ياخشى كۆرىدىغانلار</translation>
+        <translation type="vanished">快速访问</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="189"/>
         <source>KmreData</source>
-        <translation>KmreData</translation>
+        <translation>KmreData ساندۇۇ بايانداماسى</translation>
     </message>
 </context>
 <context>
@@ -4278,7 +4272,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="168"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
 </context>
 <context>
@@ -4296,37 +4290,37 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="91"/>
         <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="117"/>
         <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="136"/>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="321"/>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="375"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="317"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="371"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>قاسىيەتىن</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="102"/>
         <source>Delete Symbolic</source>
-        <translation>سىمۋوللۇق ئۆچۈرۈش</translation>
+        <translation>بەلگىنى ۅچۉرۉۉ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="192"/>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="369"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="188"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="365"/>
         <source>Unmount</source>
-        <translation>Unmount</translation>
+        <translation>يۇيىۋېتىش</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="201"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="197"/>
         <source>Eject</source>
-        <translation>چىقىرىش</translation>
+        <translation>ۅندۉرۉش</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="229"/>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="262"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="225"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="258"/>
         <source>Format</source>
-        <translation type="unfinished">فورماتى</translation>
+        <translation>فورماتى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="298"/>
+        <location filename="../../libpeony-qt/controls/menu/side-bar-menu/side-bar-menu.cpp" line="294"/>
         <source>burndata</source>
-        <translation></translation>
+        <translation>ساندۇۇ باياندامالاردى  كۆيدۈرۈش</translation>
     </message>
     <message>
         <source>&amp;Delete Symbolic</source>
@@ -4342,7 +4336,7 @@ Do you want to delete the link file?</source>
     </message>
     <message>
         <source>format</source>
-        <translation type="vanished">فورمات</translation>
+        <translation type="vanished">格式化</translation>
     </message>
 </context>
 <context>
@@ -4362,7 +4356,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-personal-item.cpp" line="42"/>
         <source>Personal</source>
-        <translation>شەخسى</translation>
+        <translation>جەكەلىك</translation>
     </message>
 </context>
 <context>
@@ -4370,7 +4364,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-separator-item.h" line="68"/>
         <source>(No Sub Directory)</source>
-        <translation>(سۇبات مۇندەرىجىسى يوق)</translation>
+        <translation>(بۅلۉمچۅ  مازمۇۇنۇ  جوق)</translation>
     </message>
 </context>
 <context>
@@ -4379,28 +4373,28 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="94"/>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="100"/>
         <source>; %1 folders</source>
-        <translation>; ٪1 ھۆججەت قىسقۇچ</translation>
+        <translation>; %1 ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="95"/>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="102"/>
         <source>; %1 files, %2 total</source>
-        <translation>; ٪1 ھۆججەت، ٪2 جەمئىي</translation>
+        <translation>; %1 ۅجۅت،  باردىعى %2</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="97"/>
         <source>; %1 folder</source>
-        <translation>; ٪1 ھۆججەت قىسقۇچ</translation>
+        <translation>; %1 ۅجۅت قىپچىعىچ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="98"/>
         <source>; %1 file, %2</source>
-        <translation>; ٪1 ھۆججەت، ٪2</translation>
+        <translation>; %1 ۅجۅت،  %2</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/status-bar/status-bar.cpp" line="105"/>
         <source>%1 selected</source>
-        <translation>٪1 تاللاندى</translation>
+        <translation>%1  تاندالعان</translation>
     </message>
 </context>
 <context>
@@ -4409,7 +4403,7 @@ Do you want to delete the link file?</source>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="66"/>
         <source>notify</source>
         <translatorcomment>温馨提示</translatorcomment>
-        <translation>ئۇقتۇرۇش</translation>
+        <translation>ۇقتۇرۇۇ</translation>
     </message>
 </context>
 <context>
@@ -4419,7 +4413,7 @@ Do you want to delete the link file?</source>
         <translation type="vanished">通用</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/tag-management.cpp" line="316"/>
+        <location filename="../../libpeony-qt/controls/tag-management.cpp" line="313"/>
         <source>Mark</source>
         <translation>بەلگە</translation>
     </message>
@@ -4449,73 +4443,73 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="138"/>
         <source>Sort Type</source>
-        <translation>تۈر تۈرى</translation>
+        <translation>ىرەتتەلگەن تىپ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="140"/>
         <source>File Name</source>
-        <translation>ھۆججەت نامى</translation>
+        <translation>ۅجۅت ناامى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="146"/>
         <source>File Type</source>
-        <translation>ھۆججەت تۈرى</translation>
+        <translation>ۅجۅت تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="149"/>
         <source>File Size</source>
-        <translation>ھۆججەت چوڭلۇقى</translation>
+        <translation>ۅجۅت چوڭدۇعۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="143"/>
         <source>Modified Date</source>
-        <translation>ئۆزگەرتىلگەن ۋاقتى</translation>
+        <translation>ۅزگۅرتۉلگۅن ۇباقتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="72"/>
         <source>Open in New window</source>
-        <translation>يېڭى كۆزنەكتە ئېچىش</translation>
+        <translation>جاڭى كۅزۅنۅكتۅ اچىلات</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="74"/>
         <source>Open in new Tab</source>
-        <translation>يېڭى «تاختا» دا ئېچىش</translation>
+        <translation>جاڭى تانداش  كارتاسىنان اچىڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="160"/>
         <source>Ascending</source>
-        <translation>ئۆرلەش</translation>
+        <translation>كىچىكتەن چوڭعو قاراتىپ تىزۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="156"/>
         <source>Descending</source>
-        <translation>پەسكە چۈشمەكتە</translation>
+        <translation>چوڭدىن كىچىككە قاراتىپ تىزۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="190"/>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="340"/>
         <source>Copy</source>
-        <translation>كۆچۈرۈش</translation>
+        <translation>ۉلگۉسۉن الۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="193"/>
         <source>Paste</source>
-        <translation>چاپلاش</translation>
+        <translation>چاپتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="196"/>
         <source>Cut</source>
-        <translation>كېسىش</translation>
+        <translation>قىيىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="199"/>
         <source>Trash</source>
-        <translation>ئەخلەت ساندۇقى</translation>
+        <translation>شىپىرىندى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="216"/>
         <source>Clean Trash</source>
-        <translation>پاكىز ئەخلەت ساندۇقى</translation>
+        <translation>ئەخلەتنى تازالوو</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -4532,47 +4526,47 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="221"/>
         <source>Restore</source>
-        <translation>ئەسلىگە كەلتۈرۈش</translation>
+        <translation>العاچىنا كەلتىرۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="270"/>
         <source>Options</source>
-        <translation>تاللانمىلار</translation>
+        <translation>تاندالما</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="273"/>
         <source>Forbid Thumbnail</source>
-        <translation>چەكلىگەن نادىر تېمىسى</translation>
+        <translation>قىسقارتىلعان سۉرۅت  چەكتۅۅ جاسالات</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="281"/>
         <source>Show Hidden</source>
-        <translation>يوشۇرۇن كۆرسىتىش</translation>
+        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۅت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="288"/>
         <source>Resident in Backend</source>
-        <translation>Backend دا ئولتۇرۇشلۇق</translation>
+        <translation>ارقا تاراپتا  تۇرۇش .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="289"/>
         <source>Let the program still run after closing the last window. This will reduce the time for the next launch, but it will also consume resources in backend.</source>
-        <translation>ئەڭ ئاخىرقى كۆزنەكنى يېپىپ بولغاندىن كېيىنمۇ پروگرامما يەنىلا ئىجرا قىلسۇن. بۇنداق بولغاندا كېيىنكى قېتىم قويۇپ بېرىش ۋاقتى ئازىيىپ كېتىدۇ، ئەمما ئارقا قوشۇمچىلاردىمۇ بايلىق خوراپ كېتىدۇ.</translation>
+        <translation>ەڭ سوڭعۇ كۅزۅنۅكتۉ تاقاعاندان كىيىن، پراگرامما داعى ەلە اتقارماق  قىلىنسۇن. بۇل، كىيىنكى ىرەت  جارنااما  جاسوو ،اتقارۇۇ  ۇباقتىن قىسقارتىدۇ بىروق ارقا سەپتىكى بايلىقلارنىمۇ خورىتىدۇ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="301"/>
         <source>&amp;Help</source>
-        <translation>ياردەم</translation>
+        <translation>جەرلىك  (&amp;H)</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="307"/>
         <source>&amp;About...</source>
-        <translation>&amp; ھەققىدە</translation>
+        <translation>&amp;جۅنۉندۅ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="309"/>
         <source>Peony Qt</source>
-        <translation>مودەنگۈل Qt</translation>
+        <translation>Peony Qt</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/tool-bar/tool-bar.cpp" line="310"/>
@@ -4581,11 +4575,12 @@ Do you want to delete the link file?</source>
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
-        <translation>ئاپتورى:
-	يۆلەن &lt;lanyue@kylinos.cn&gt;
-	مېيخۇڭ خې &lt;hemeihong@kylinos.cn&gt;
+        <translation>اپتورۇ:
+يۆلەن &lt;lanyue @kylinos.  cn&gt;
 
-نەشىر ھوقۇقى (C): 2019-يىل تىيەنجىن KYLIN ئۇچۇر تېخنىكا چەكلىك شىركىتىگە تەۋە</translation>
+خې مېيخوڭ &lt;hemeihong@ kylinos&gt;  cn&gt;
+
+باسما ۇقۇعۇ ەەلىك ۇقۇعۇ (C):2019-جلدىق تيەنجىن KYLIN ۇچۇر تەحنىكا چەكتۉۉ شەركەتى.</translation>
     </message>
     <message>
         <source>Author: 
@@ -4618,7 +4613,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/usershare-manager.cpp" line="115"/>
         <location filename="../../libpeony-qt/usershare-manager.cpp" line="148"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
 </context>
 <context>
@@ -4626,7 +4621,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/volume-manager.cpp" line="160"/>
         <source>Error</source>
-        <translation>خاتالىق</translation>
+        <translation>قاتاا</translation>
     </message>
 </context>
 <context>
@@ -4639,27 +4634,27 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="957"/>
         <source>canceling ...</source>
-        <translation>ئەمەلدىن قالدۇردى ...</translation>
+        <translation>نازاردان ساق   قىلىنىپ جاتات...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="959"/>
         <source>sync ...</source>
-        <translation>سىنىك ...</translation>
+        <translation>شاي  قەدەملەش ...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="1014"/>
         <source>continue</source>
-        <translation type="unfinished">داۋامى بار</translation>
+        <translation>جالعاشتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="1016"/>
         <source>pause</source>
-        <translation type="unfinished">توختاش</translation>
+        <translation>ۇباقتىنچا توقتوتۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-progress-bar.cpp" line="1023"/>
         <source>close</source>
-        <translation type="unfinished"></translation>
+        <translation>جابۇۇ</translation>
     </message>
     <message>
         <source>cancel file operation</source>
@@ -4685,26 +4680,26 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/icon-view-factory.h" line="60"/>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/icon-view-factory.h" line="93"/>
         <source>Icon View</source>
-        <translation>ئايكون كۆرۈش</translation>
+        <translation>تۉر گۅرۉنۉشۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/icon-view-factory.h" line="46"/>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/icon-view-factory.h" line="99"/>
         <source>Show the folder children as icons.</source>
-        <translation>ھۆججەت قىسقۇچ كىچىك دوستلارنى سىنبەلگىلىك قىلىپ كۆرسىتىش</translation>
+        <translation>ۅجۅت قىپچىعىچ  بۅلۉمچۅ  تۉرۉن شارتتۇۇ بەلگى  جاساپ  كۅرسۅتۉۉ .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/list-view-factory.h" line="42"/>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/list-view-factory.h" line="62"/>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/list-view-factory.h" line="95"/>
         <source>List View</source>
-        <translation>تىزىملىك كۆرۈش</translation>
+        <translation>تىزىمدىك  گۅرۉنۉشۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/list-view-factory.h" line="48"/>
         <location filename="../../libpeony-qt/controls/directory-view/directory-view-factory/list-view-factory.h" line="101"/>
         <source>Show the folder children as rows in a list.</source>
-        <translation>ھۆججەت قىسقۇچ كىچىك بالىلارنى تىزىملىكتىكى قۇر قىلىپ كۆرسىتىش.</translation>
+        <translation>ۅجۅت قىپچىعىچ  بۅلۉمچۅ  تۉرۉن جادىبالىنداقى  قۇر  دەپ  كۅرسۅتۉۉڭ.</translation>
     </message>
     <message>
         <source>Basic Preview Page</source>
@@ -4713,12 +4708,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page-factory.h" line="40"/>
         <source>Basic</source>
-        <translation>ئاساسىي</translation>
+        <translation>نەگىزگى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/basic-properties-page-factory.h" line="46"/>
         <source>Show the basic file properties, and allow you to modify the access and name.</source>
-        <translation>ئاساسىي ھۆججەت خاسلىقىنى كۆرسىتىپ، زىيارەت ۋە ئىسىمنى ئۆزگەرتىشكە يول قويىدۇ.</translation>
+        <translation>، نەگىزگى  ۅجۅت قاسىيەتىن  كۅرسۅتۅت داعى زىيارات جاسوو ،اتقارۇۇ  ۇقۇعۇ جانا اتاعىن ۅزگۅرتۉۉڭۉزگۅ جول قويوت .</translation>
     </message>
     <message>
         <source>Permissions Page</source>
@@ -4727,12 +4722,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page-factory.h" line="41"/>
         <source>Permissions</source>
-        <translation>ئىجازەتلەر</translation>
+        <translation>ۇرۇقسات</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/permissions-properties-page-factory.h" line="47"/>
         <source>Show and modify file&apos;s permission, owner and group.</source>
-        <translation>ھۆججەتنىڭ رۇخسىتى، ئىگىسى ۋە توپىنى كۆرسىتىش ۋە ئۆزگەرتىش.</translation>
+        <translation>ۅجۅت ۇقۇعۇ، ەەلىك قىلۇۇچۇ جانا گۇرۇپپانى كۅرسۅتۉۉ  جانا ۅزگۅرتۉش .</translation>
     </message>
     <message>
         <source>Can not trash</source>
@@ -4747,30 +4742,30 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">无法回收大于10G的文件，是否需要永久删除？</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="148"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="135"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="195"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="108"/>
         <source>The file is too large to be moved to the recycle bin. Do you want to permanently delete it?</source>
-        <translation>ھۆججەت بەك چوڭ بولغاچقا يىغىۋىلىش ساندۇقىغا يۆتكەلگىلى بولمايدۇ. مەڭگۈلۈك ئۆچۈرمەكچىمۇ؟</translation>
+        <translation>ۅجۅت ۅتۅ  چوڭ، جىيناش پونكىتىنە جۅتكۅگۅلۉۉ بولبويت . انى  تۉبۅلۉك ۅچۉرمۅكچۉبۉ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="152"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="138"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="199"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="111"/>
         <source>These files are too large to be moved to the recycle bin. Do you want to permanently delete these %1 files?</source>
-        <translation>بۇ ھۆججەتلەر بەك چوڭ ئىكەن، يىغىۋىلىش ساندۇقىغا يۆتكەلگىلى بولمايدۇ. بۇ ٪1 ھۆججەتلىرىنى مەڭگۈلۈك ئۆچۈرمەكچىمۇ؟</translation>
+        <translation>بۇلل  ۅجۅتتۅر، ۅتۅ  چوڭكەن جىيناش پونكىتىنە جۅتكۅگۅلۉۉ بولبويت .  بۇلل %1  ۅجۅتۉن تۉبۅلۉك ۅچۉرمۅكچۉبۉ؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="321"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="311"/>
         <source>Clean the Trash</source>
-        <translation>ئەخلەت ساندۇقىنى تازىلاش</translation>
+        <translation>ئەخلەتلەرنى تازالوو</translation>
     </message>
     <message>
         <source>OK</source>
         <translation type="vanished">清空回收站</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="333"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="323"/>
         <source>Do you want to empty the recycle bin and delete the files permanently? Once it has begun there is no way to restore them.</source>
-        <translation>يىغىۋېلىش ساندۇقىنى بىكار قىلىپ ھۆججەتلەرنى مەڭگۈلۈك ئۆچۈرمەكچىمۇ؟ بىر قېتىم باشلىغاندىن كېيىن ئۇلارنى ئەسلىگە كەلتۈرۈشكە ئامال يوق.</translation>
+        <translation>جىيناش پونكىتى قۇرۇقداپ، بۇل  ۅجۅتتۅرۉن تۉبۅلۉك ئۆچۈرەمدۇ؟ باشتالعان  امان،  الاردى  العاچىنا گەلتىرىشكە  ايلا جوق.</translation>
     </message>
     <message>
         <source>Delete Permanently</source>
@@ -4787,12 +4782,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page-factory.h" line="41"/>
         <source>Computer Properties</source>
-        <translation>كومپيۇتېر خاسلىقلىرى</translation>
+        <translation>كومپىيۇتەر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/computer-properties-page-factory.h" line="47"/>
         <source>Show the computer properties or items in computer.</source>
-        <translation>كومپيۇتېرنىڭ خۇسۇسىيىتىنى ياكى تۈرلىرىنى كومپيۇتېردا كۆرسىتىش.</translation>
+        <translation>ەلەكتىروندۇق مەە  قاسىيەتىن كۅرۉنۉشتۅرۉ  كومپىيۇتەردەگى تۉرلۅردۉ كۅرسۅتۅت.</translation>
     </message>
     <message>
         <source>Trash and Recent Properties Page</source>
@@ -4801,12 +4796,12 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page-factory.h" line="40"/>
         <source>Trash and Recent</source>
-        <translation>ئەخلەت ساندۇقى ۋە يېقىنقى مەزگىللەر</translation>
+        <translation>شىپىرىندى  ساندىعى جانا ەڭ جاقىنداقى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/recent-and-trash-properties-page-factory.h" line="46"/>
         <source>Show the file properties or items in trash or recent.</source>
-        <translation>ھۆججەت خاسلىقىنى ياكى تۈرىنى ئەخلەت ساندۇقىدا ياكى يېقىندىن بۇيان كۆرۈنىدۇ.</translation>
+        <translation>ۅجۅت قاسىيەتىن كۅرۉنۉشتۅرۉ شىپىرىندى  ساندىقتاقى تۉر كۅرۉنۉشتۅرۉ ەڭ جاقىن تۉرنى كۅرسۅتۅت.</translation>
     </message>
     <message>
         <source>eject device failed</source>
@@ -4819,22 +4814,22 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="544"/>
         <source>Format failed</source>
-        <translation>فورمات مەغلۇپ بولدى</translation>
+        <translation>فورماتتاش  جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="546"/>
         <source>YES</source>
-        <translation>شۇنداق</translation>
+        <translation>قوشۇلۇۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1033"/>
         <source>Formatting successful! But failed to set the device name.</source>
-        <translation>فورماتلاش مۇۋەپپەقىيەتلىك بولدى! ئەمما ئۈسكۈنە نامىنى بەلگىلەش مەغلۇپ بولدى.</translation>
+        <translation>فورماتتاش  جەڭىشتۉۉ بولدۇ ! بىروق  جابدۇۇسۇنۇن اتاعىن بەكىتىلبەدى.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1050"/>
         <source>qmesg_notify</source>
-        <translation>qmesg_notify</translation>
+        <translation>qmesg_ ۇقتۇرۇشتۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1065"/>
@@ -4844,17 +4839,17 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1067"/>
         <source>Begin Format</source>
-        <translation>فورماتنى باشلا</translation>
+        <translation>باشتوو كەبەتەسى ، تۇرپاتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1070"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
         <source>Format operation has been finished successfully.</source>
-        <translation>فورمات مەشخۇلاتى ئوڭۇشلۇق تاماملاندى.</translation>
+        <translation>فورماتتاش  ماشعۇلاتى جەڭىشتۉۉ  بۉتۉردۉ دىققات.</translation>
     </message>
     <message>
         <source>Formatting successful! Description Failed to set the device name.</source>
@@ -4863,18 +4858,18 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1050"/>
         <source>Sorry, the format operation is failed!</source>
-        <translation>كەچۈرۈڭ، فورمات مەشغۇلاتى مەغلۇپ بولدى!</translation>
+        <translation>كەچىرۉۉ.  فورماتتاش  ماشعۇلاتى جەڭىلۉۉ بولدۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1063"/>
         <source>Formatting this volume will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
-        <translation>بۇ ئاۋازنى فورماتلاش ئۇنىڭدىكى بارلىق سانلىق مەلۇماتلارنى ئۆچۈرۈۋېتىدۇ. فورماتلاشتىن بۇرۇن ساقلاپ قالغان بارلىق سانلىق مەلۇماتلارنى زاپاسلاپ قويۇڭ. داۋام قىلغۇڭىز بارمۇ؟</translation>
+        <translation>بۇل تومدۇ فورماتلىساق تومدوقۇ باردىق ساندۇۇ باياندامالار  ۅچۉرۉلەت . فورماتتونۇن بۇلرۇن باردىق ساقتالعان ساندۇۇ باياندامالار نى دايار ، دايىن   ساقتاڭ.  داۋاملاشتۇرامدۇق؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1033"/>
         <source>format</source>
-        <translation>فورمات</translation>
+        <translation>فورماتتاش</translation>
     </message>
     <message>
         <source>begin format</source>
@@ -4888,91 +4883,90 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="63"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="950"/>
         <source>File Manager</source>
-        <translation>ھۆججەت باشقۇرغۇ</translation>
+        <translation>ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <source>Default search vfs of peony</source>
         <translation type="vanished">默认文件搜索</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="173"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1756"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="177"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1754"/>
         <source>Force unmount failed</source>
-        <translation>زورلاش مەغلۇپ بولدى</translation>
+        <translation>زوردۇق مەنەن  تۉشۉرۉ جەڭىلۉۉ بولدۇ .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="173"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1756"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="177"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1754"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="542"/>
         <source>Error: %1
 </source>
-        <translation>خاتالىق: ٪1
+        <translation>قاتاالىق  بايقالدى: %1 /n
 </translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="142"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1759"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1809"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1757"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1807"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>سانلىق مەلۇمات ماس قەدەمدە تاماملاندى، ئۈسكۈنە مۇۋەپپەقىيەتلىك ئاخىرلاشتى!</translation>
+        <translation>ساندۇۇ بايانداما  شاي  قادامدا  بۉتۉردۉ دىققات ، شايمان ساامالىعى  جەڭىشتۉۉ ابالدا يۇيىۋېتىلدى !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1788"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1791"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1786"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1789"/>
         <source>Unmount failed</source>
-        <translation>Unmount مەغلۇپ بولدى</translation>
+        <translation>جۇۇش جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1776"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1774"/>
         <source>Not authorized to perform operation.</source>
-        <translation>مەشغۇلات قىلىشقا ھوقۇقلۇق ئەمەس.</translation>
+        <translation>ماشقۇلدانۇۇنۇ  اتقارماق  جاسوو ،اتقارۇۇ  ۇقۇعۇ بەرىلبەگەن.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1788"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1786"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation>ئۈزەلمىسىڭىز بەلكىم بەزى پروگراممىلارنى تاقاشىڭىز مۇمكىن، مەسىلەن: GParted قاتارلىقلار.</translation>
+        <translation>يۈكنى يۇيغىلى بولبويت ، سىز بالكىم الدىن گەەبىر  پراگراممالاردى ئېتىۋېتىشىڭىز بولۇۇسۇ مۉمكۉن، مىسالى، رايونۇنا بۅلۉنۉپ  راداكسىيالاعىچ  قاتارلۇۇلار.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1791"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1789"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation>خاتالىق: ٪1
-سىز مەجبۇرى ھالدا بوشاشتۇرماقچىمۇ؟</translation>
+        <translation>قاتاالىق  كۅرۉلدۉ: ٪1 زوردۇق مەنەن  يۇيامدۇق؟</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="316"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <source>Eject Anyway</source>
         <translation type="vanished">无论如何弹出</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1246"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1250"/>
         <source>Failed to activate device: Incorrect passphrase</source>
-        <translation>ئۈسكۈنىنى قوزغىتىش مەغلۇپ بولدى: خاتا ئىملا</translation>
+        <translation>اسپاپتى   قوزعوتقولۇ بولبودۇ:جاشىرۇۇن  نومۇر سۅز بىرىكمەسى تۇۇرا  ەمەس</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1256"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1260"/>
         <source>The device has been mount successfully!</source>
-        <translation>بۇ ئۈسكۈنە ئوڭۇشلۇق قاچىلاندى!</translation>
+        <translation>زاپچاستارى رايوندورعو  بۅلۉۉ جەڭىشتۉۉ بولدۇ  !</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1451"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1489"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1453"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1491"/>
         <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
-        <translation>چىقىرىش ئۈسكۈنىسى مەغلۇپ بولدى، بۇنىڭ سەۋەبى بەلكىم ئۈسكۈنە ئېلىۋېتىلدى قاتارلىقلار بولۇشى مۇمكىن.</translation>
+        <translation>سەكىرىپ سىندىرۇۇ  جەڭىلۉۉ بولدۇ ، بالكىم ئۈسكۈنىلەرنىڭ ئېلىۋېتىلىشى قاتارلۇۇ  سەبەپتەر بولۇۇسۇ مۉمكۉن.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1457"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1496"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1459"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1498"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation>سانلىق مەلۇماتنى ماس قەدەمدە سىكاننىرلاپ، ئۈسكۈنىنىڭ توكىنى بىخەتەر ئېلىۋالغىلى بولىدۇ!</translation>
+        <translation>ساندۇۇ باياندامالار  شاي  قادامدا  بۉتۉردۉ دىققات، زاپچاستارى قووپسۇز ابالدا الىپتاشتاعالى بولوت !</translation>
     </message>
     <message>
         <source>Unable to eject %1</source>
@@ -4983,21 +4977,21 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">文件管理器通知</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1453"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1491"/>
-        <location filename="../../libpeony-qt/volumeManager.cpp" line="1776"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1455"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1493"/>
+        <location filename="../../libpeony-qt/volumeManager.cpp" line="1774"/>
         <source>Eject failed</source>
-        <translation>چىقىرىش مەغلۇپ بولدى</translation>
+        <translation>تەز  كۅرۉنمۅ جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="266"/>
         <source>favorite</source>
-        <translation>ياخشى كۆرىدىغانلار</translation>
+        <translation>ەڭ جاقشى كۆرىدىغىنى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="269"/>
         <source>Favorites</source>
-        <translation>ياخشى كۆرىدىغانلار</translation>
+        <translation>ەڭ جاقشى كۆرىدىغانلىرى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="304"/>
@@ -5005,25 +4999,25 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="382"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="387"/>
         <source>File is not existed.</source>
-        <translation>ھۆججەت مەۋجۇت ئەمەس.</translation>
+        <translation>ۅجۅت باربولۇۇسۇ  ەمەس .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="317"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="395"/>
         <source>Share Data</source>
-        <translation>سانلىق مەلۇماتلارنى ئورتاقلىشىش</translation>
+        <translation>ساندۇۇ مالىماتتان ورتوق باارلانۇۇ بولۇش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="321"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="399"/>
         <source>Trash</source>
-        <translation>ئەخلەت ساندۇقى</translation>
+        <translation>شىپىرىندى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="325"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="403"/>
         <source>Recent</source>
-        <translation>يېقىندىن بۇيان</translation>
+        <translation>جاقىندا</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-file.cpp" line="337"/>
@@ -5032,32 +5026,32 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="371"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="250"/>
         <source>Operation not supported</source>
-        <translation>مەشغۇلات قوللىمايدۇ</translation>
+        <translation>ماشقۇلدانۇۇ  قولدوبويت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="466"/>
         <source>The virtual file system does not support folder creation</source>
-        <translation>مەۋھۇم ھۆججەت سىستېمىسى ھۆججەت قىسقۇچ قۇرۇشنى قوللىمايدۇ</translation>
+        <translation>جورۇما ۅجۅت ساامالىعى  ۅجۅت قىپچىعىچ  قۇرۇشتۇ  قولدوبويت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="538"/>
         <source>Can not create a symbolic file for vfs location</source>
-        <translation>vfs ئورنى ئۈچۈن سىمۋوللۇق ھۆججەت قۇرغىلى بولمايدۇ</translation>
+        <translation>vfs وردۇ ۉچۉن  بەلگە  ۅجۅتۉۉ قۇرۇۇعا بولبودۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="545"/>
         <source>Symbolic Link</source>
-        <translation>سىمۋوللۇق ئۇلاش</translation>
+        <translation>بەلگە  ۇلانماسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="557"/>
         <source>Can not create symbolic file here, %1</source>
-        <translation>بۇ يەردە سىمۋوللۇق ھۆججەت قۇرغىلى بولمايدۇ،٪1</translation>
+        <translation>بۇل جەردە بەلگە  ۅجۅتۉۉ قۇرۇۇعا بولبويت ، %1</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="566"/>
         <source>Can not add a file to favorite directory.</source>
-        <translation>ياقتۇرغان مۇندەرىجىگە ھۆججەت قوشقىلى بولمايدۇ.</translation>
+        <translation>ۅجۅتۉن جىيىپ ساقتوو مازمۇۇنۇنا  قوشقولۇ  بولبويت .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="624"/>
@@ -5065,7 +5059,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="231"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="267"/>
         <source>The virtual file system cannot be opened</source>
-        <translation>مەۋھۇم ھۆججەت سىستېمىسىنى ئېچىشقا بولمايدۇ</translation>
+        <translation>جورۇما ۅجۅت سەستىمانى اچقالى بولبودۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-file.cpp" line="378"/>
@@ -5078,19 +5072,19 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="582"/>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="600"/>
         <source>Virtual file directories do not support move and copy operations</source>
-        <translation>مەۋھۇم ھۆججەت مۇندەرىجىسى يۆتكەش ۋە كۆچۈرۈش مەشغۇلاتلىرىنى قوللىمايدۇ</translation>
+        <translation>جورۇما ۅجۅت مازمۇۇنۇ   جۅتكۅۅ جانا كۅبۅيتۉۉ ماشعۇلاتىنى قولدوبويت</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-register.h" line="43"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-register.h" line="42"/>
         <source>Default favorite vfs of peony</source>
-        <translation>مودەنگۈلنىڭ كۆڭۈلدىكى ئەڭ ياخشى كۆرىدىغان vfs</translation>
+        <translation>مودەنگۈل ويۇنداقى  جاقشى كۅرۅتۇرعان vfs</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page-factory.h" line="38"/>
         <location filename="../../libpeony-qt/controls/property-page/details-properties-page-factory.h" line="44"/>
         <source>Details</source>
-        <translation>تەپسىلاتى</translation>
+        <translation>ىچكەلەي ، قۇنت قويۇپ  ۇچۇرۇ :</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/mark-properties-page-factory.h" line="40"/>
@@ -5100,50 +5094,50 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/mark-properties-page-factory.h" line="46"/>
         <source>mark this file.</source>
-        <translation>بۇ ھۆججەتنى بەلگە قىلىڭ.</translation>
+        <translation>بۇل ۅجۅتكۅ بەلگە  قويۇڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page-factory.h" line="40"/>
         <source>Open With</source>
-        <translation>بىرگە ئېچىش</translation>
+        <translation>اچۇۇ ارعاسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/property-page/open-with-properties-page-factory.h" line="46"/>
         <source>open with.</source>
-        <translation>بىلەن ئېچىۋېتىلىدۇ.</translation>
+        <translation>اچۇۇ ارعاسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="33"/>
         <source>It need to synchronize before operating the device,place wait!</source>
-        <translation>ئۈسكۈنىنى مەشغۇلات قىلىشتىن بۇرۇن ماس قەدەمدە ماس قەدەمدە ئىشلىشى كېرەك، ئورۇن ساقلاپ تۇرۇڭ!</translation>
+        <translation>اسپاپتى ماشقۇلدانۇۇ  قاسوودون ،اتقارۇۇدان  مۇرۇن شاي  قادامدۇۇ  ساندۇۇ مالىماتقا ەتىياجدۇۇ، سەل ساقتاپ  تۇرۇڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="412"/>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="425"/>
         <source>Unable to discover the file, it may have been removed or deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>بۇل  ۅجۅتۉن بايقاعالى  بولبودۇ، ال  بالكىم ۅچۉرۉلگەن  كۅرۉنۉشتۅرۉ ۅچۉرۉلگەن  بولۇۇسۇ مۉمكۉن.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="419"/>
         <source>permission denied</source>
-        <translation>ئىجازەت ئىنكار قىلدى</translation>
+        <translation>ۇرۇقسات  قاتار اتقارىلدى</translation>
     </message>
     <message>
         <source>file not found</source>
-        <translation type="vanished">ھۆججەت تېپىلمىدى</translation>
+        <translation type="vanished">没有发现该文件</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="539"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="556"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="572"/>
-        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="866"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="536"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="553"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="569"/>
+        <location filename="../../libpeony-qt/file-operation/file-copy-operation.cpp" line="862"/>
         <location filename="../../libpeony-qt/file-utils.cpp" line="162"/>
         <location filename="../../libpeony-qt/file-utils.cpp" line="184"/>
         <location filename="../../libpeony-qt/file-utils.cpp" line="206"/>
         <location filename="../../libpeony-qt/file-utils.cpp" line="213"/>
         <location filename="../../libpeony-qt/file-utils.cpp" line="229"/>
         <source>duplicate</source>
-        <translation>تەكرارلاش</translation>
+        <translation>كۅبۅيتۉۉ</translation>
     </message>
     <message>
         <source>Error when getting information for file : No target file found</source>
@@ -5152,7 +5146,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/file-utils.cpp" line="353"/>
         <source>data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-utils.cpp" line="371"/>
@@ -5164,80 +5158,80 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="185"/>
         <location filename="../../libpeony-qt/vfs/search-vfs-uri-parser.cpp" line="110"/>
         <source>Computer</source>
-        <translation>كومپيۇتېر</translation>
+        <translation>كومپىيۇتەر</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-utils.cpp" line="356"/>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="257"/>
         <source>File System</source>
-        <translation>ھۆججەت سىستېمىسى</translation>
+        <translation>ۅجۅت ساامالىعى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-file-system-item.cpp" line="262"/>
         <source>Data</source>
-        <translation>سانلىق مەلۇمات</translation>
+        <translation>ساندۇۇ بايانداما   دىسكاسى</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="416"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="411"/>
         <source>Failed to open file &quot;%1&quot;: insufficient permissions.</source>
-        <translation>&quot;٪1&quot; ھۆججىتىنى ئېچىش مەغلۇپ بولدى: رۇخسەتلەر يېتەرلىك ئەمەس.</translation>
+        <translation>ۅجۅتۉن اچقالى بولبويت  %1:ۇقۇق گۅۅلۅمۉ  جەتەرلۉۉ ەمەس .</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="427"/>
+        <location filename="../../libpeony-qt/file-operation/file-operation-error-dialogs.cpp" line="422"/>
         <source>File “%1” does not exist. Please check whether the file has been deleted.</source>
-        <translation>&quot;٪1&quot; ھۆججىتى مەۋجۇت ئەمەس. ھۆججەتنىڭ ئۆچۈرۈلگەن ياكى ئۆچمىگەنلىكىنى تەكشۈرۈپ كۆرۈڭ.</translation>
+        <translation>ۅجۅت %1 باربولۇۇسۇ  ەمەس . بۇل ۅجۅتنىڭ ۅچۉرۉلگەن  كۅرۉنۉشتۅرۉ ۅچۉرۉلبۅگۅندۉگۉن تەكشەرىپ  باعىڭ.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="81"/>
         <source>burn operation has been cancelled</source>
-        <translation>كۆيۈك مەشغۇلاتى ئەمەلدىن قالدۇرۇلدى</translation>
+        <translation>كۆيدۈرۈش ماشعۇلاتى ارعادان  قالتىرىلدى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccommand.cpp" line="85"/>
         <source> is busy!</source>
-        <translation> ئالدىراش!</translation>
+        <translation> ەرەكچە الدىراش!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1298"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="156"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="388"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="209"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="203"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="378"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="182"/>
         <source>Are you sure you want to permanently delete this file? Once deletion begins, the file will not be recoverable.</source>
-        <translation>بۇ ھۆججەتنى مەڭگۈلۈك ئۆچۈرەمسىز؟ ئۆچۈرۈش باشلىنىپ بولغاندىن كېيىن، ھۆججەتنى ئەسلىگە كەلتۈرگىلى بولمايدۇ.</translation>
+        <translation>سىز بۇل  ۅجۅتۉن تۉبۅلۉك ۅچۉرۉۉنۉ تۇراقتاندىرا الاسىزبى؟ ۅچۉرۉۉگۅ باشتاعان امان،   ۅجۅتۉن العاچىنا كەلتىرگەلى بولبويت .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1302"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="160"/>
-        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="392"/>
-        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="213"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="207"/>
+        <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="382"/>
+        <location filename="../../libpeony-qt/file-operation/file-trash-operation.cpp" line="186"/>
         <source>Are you sure you want to permanently delete these %1 files? Once deletion begins, these file will not be recoverable.</source>
-        <translation>سىز بۇ ٪1 ھۆججەتلەرنى مەڭگۈلۈك ئۆچۈرەمسىز؟ ئۆچۈرۈش باشلانغان ھامان بۇ ھۆججەتلەر ئەسلىگە كەلتۈرگىلى بولمايدۇ.</translation>
+        <translation>سىز بۇلل %1  ۅجۅتۉن تۉبۅلۉك ۅچۉرۉۉنۉ تۇراقتاندىرا الاسىزبى؟ ۅچۉرۉۉگۅ باشتاعان امان،  بۇلل  ۅجۅتتۅرۉن العاچىنا كەلتىرگەلى بولبويت .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="283"/>
         <location filename="../../libpeony-qt/vfs/label-vfs-file.cpp" line="416"/>
         <source>Virtual file directories do not support move operations</source>
-        <translation>مەۋھۇم ھۆججەت مۇندەرىجىسى يۆتكەش مەشغۇلاتىنى قوللىمايدۇ</translation>
+        <translation>جورۇما ۅجۅت مازمۇۇنۇ  كۅچمۅ ماشقۇلدانۇۇنۇ  قولدوبويت.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-register.h" line="41"/>
         <source>test simplify vfs plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>vfs قىستۇرمىسىنى ئاددىيلاشتۇرۇشنى سىنوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-register.h" line="73"/>
         <source>Default custom vfs info of peony</source>
-        <translation type="unfinished"></translation>
+        <translation>peony      ويۇنداقى  ۅزەركى مەنەن vfs ۇچۇرۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/custom-vfs-register.h" line="115"/>
         <source>Default local vfs info of peony</source>
-        <translation type="unfinished"></translation>
+        <translation>peony جەردىك vfs  ۇچۇردۇ مويۇندوو جاسايت .</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/properties-window-factory.h" line="61"/>
         <source>Show properties plugin window.</source>
-        <translation type="unfinished"></translation>
+        <translation>قاسىيەت   قىستىرما كۅزۅنۅگۉن كۅرسۅتۉۉ .</translation>
     </message>
 </context>
 <context>
@@ -5246,73 +5240,73 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="45"/>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="180"/>
         <source>AppendBurnData</source>
-        <translation>ApanburnData</translation>
+        <translation>ئەپ سالقىنداما كەپىچتى  كۆيدۈرۈشنى ئاخىرلاشتۇردى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="58"/>
         <source>Disc Type:</source>
-        <translation>دېسكا تۈرى:</translation>
+        <translation>وپتىك دىسكا تۉرۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="66"/>
         <source>Device Name:</source>
-        <translation>ئۈسكۈنە نامى:</translation>
+        <translation>Device Name:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="79"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="81"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="89"/>
         <source>Unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="131"/>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="148"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="131"/>
         <source>No burn data, please add!</source>
-        <translation>كۆيدۈرۈش سانلىق مەلۇماتى يوق، قوشۇۋېلىڭ!</translation>
+        <translation>ساندۇۇ باياندامالاردى  ئويمىدى، عىن قوشۇڭلار!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="148"/>
         <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation>دېسكا نامىنى قۇرۇقغا تەڭشىگىلى بولمايدۇ، قايتا كىرگۈزۈڭ!</translation>
+        <translation>وپتىك دىسكا اتاعىن كۅڭدۅي جاساپ  قويۇشقا  بولبويت ، قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="180"/>
         <source>AppendBurnData operation has been finished successfully.</source>
-        <translation>ApanburnData نىڭ مەشغۇلاتى ئوڭۇشلۇق تاماملاندى</translation>
+        <translation>AppendBurn Data ماشعۇلاتى جەڭىشتۉۉ  بۉتۉردۉ دىققات.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="186"/>
         <source>Sorry, the appendBurnData operation is failed!</source>
-        <translation>كەچۈرۈڭ، apanburnData مەشغۇلاتى مەغلۇپ بولدى!</translation>
+        <translation>كەچىرۉۉ.  appendBurn Data ماشعۇلاتى جەڭىلۉۉ بولدۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="187"/>
         <source>Failed</source>
-        <translation>مەغلۇپ بولدى</translation>
+        <translation>جاڭىلوو جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="196"/>
         <source>Burning. Do not close this window</source>
-        <translation>كۆيۈپ كەتتى. بۇ كۆزنەكنى تاقىماسلىق</translation>
+        <translation>بۇل كۅزۅنۅكتۉ ئېتىۋەتمەي كۆيدۈرۈش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="205"/>
         <source>Burning this disc will append datas on it. Do you want to continue ?</source>
-        <translation>بۇ دېسكىنى كۆيدۈرۈپ ئۈستىگە سانلىق مەلۇماتلارنى قوشىدۇ. داۋام قىلغۇڭىز بارمۇ؟</translation>
+        <translation>بۇل  دىسكاسىن كۆيدۈرسە ۉستۉندۆ  قوشۇمچا ساندۇۇ بايانداما  بولوت . داۋاملاشتۇرامدۇق؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="206"/>
@@ -5322,12 +5316,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="208"/>
         <source>Begin Burning</source>
-        <translation>كۆيۈشنى باشلى</translation>
+        <translation>كۆيدۈرۈشنى باشتوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfAppendBurnDataDialog.cpp" line="209"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 <context>
@@ -5342,72 +5336,72 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="60"/>
         <source>Disc Type:</source>
-        <translation>دېسكا تۈرى:</translation>
+        <translation>وپتىك دىسكا تۉرۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="68"/>
         <source>Device Name:</source>
-        <translation>ئۈسكۈنە نامى:</translation>
+        <translation>Device Name:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="82"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="84"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="92"/>
         <source>Unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="131"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="131"/>
         <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation>دېسكا نامىنى قۇرۇقغا تەڭشىگىلى بولمايدۇ، قايتا كىرگۈزۈڭ!</translation>
+        <translation>وپتىك دىسكا اتاعىن كۅڭدۅي جاساپ  قويۇشقا  بولبويت ، قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="166"/>
         <source>Format operation has been finished successfully.</source>
-        <translation>فورمات مەشخۇلاتى ئوڭۇشلۇق تاماملاندى.</translation>
+        <translation>فورماتتاش  ماشعۇلاتى جەڭىشتۉۉ  بۉتۉردۉ دىققات.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="171"/>
         <source>Sorry, the format operation is failed!</source>
-        <translation>كەچۈرۈڭ، فورمات مەشغۇلاتى مەغلۇپ بولدى!</translation>
+        <translation>كەچىرۉۉ.  فورماتتاش  ماشعۇلاتى جەڭىلۉۉ بولدۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="172"/>
         <source>Failed</source>
-        <translation>مەغلۇپ بولدى</translation>
+        <translation>جاڭىلوو جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="206"/>
         <source>Formatting. Do not close this window</source>
-        <translation>فورماتلاش. بۇ كۆزنەكنى تاقىماسلىق</translation>
+        <translation>فورماتتاش . بۇل كۅزۅنۅكتۉ تاقىۋەتمەڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="216"/>
         <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
-        <translation>بۇ دېسكىنى فورماتلاش ئۇنىڭدىكى بارلىق سانلىق مەلۇماتلارنى ئۆچۈرۈۋېتىدۇ. فورماتلاشتىن بۇرۇن ساقلاپ قالغان بارلىق سانلىق مەلۇماتلارنى زاپاسلاپ قويۇڭ. داۋام قىلغۇڭىز بارمۇ؟</translation>
+        <translation>بۇل  دىسكاسىن فورماتلىساق دىسكاداعى باردىق ساندۇۇ باياندامالار  ۅچۉرۉلەت . فورماتتونۇن بۇلرۇن باردىق ساقتالعان ساندۇۇ باياندامالار نى دايار ، دايىن   ساقتاڭ.  جالعاشتىراسىزبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="219"/>
         <source>Begin Format</source>
-        <translation>فورماتنى باشلا</translation>
+        <translation>باشتوو كەبەتەسى ، تۇرپاتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/ky-udf-format-dialog.cpp" line="220"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 <context>
@@ -5422,72 +5416,72 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="54"/>
         <source>Disc Type:</source>
-        <translation>دېسكا تۈرى:</translation>
+        <translation>وپتىك دىسكا تۉرۉ:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="62"/>
         <source>Device Name:</source>
-        <translation>ئۈسكۈنە نامى:</translation>
+        <translation>Device Name:</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="76"/>
         <source>OK</source>
-        <translation>ماقۇل</translation>
+        <translation>ايقىندوو</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="78"/>
         <source>Cancel</source>
-        <translation>ئەمەلدىن قالدۇرۇش</translation>
+        <translation>ارعادان  قالتىرىش</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="86"/>
         <source>Unknown</source>
-        <translation>نامەلۇم</translation>
+        <translation>بەلگىسىز</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="128"/>
         <source>Warning</source>
-        <translation>دىققەت</translation>
+        <translation>ەسكەرتۉۉ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="128"/>
         <source>The disc name cannot be set to empty, please re-enter it!</source>
-        <translation>دېسكا نامىنى قۇرۇقغا تەڭشىگىلى بولمايدۇ، قايتا كىرگۈزۈڭ!</translation>
+        <translation>وپتىك دىسكا اتاعىن كۅڭدۅي جاساپ  قويۇشقا  بولبويت ، قايرا كىرگىزىڭ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="165"/>
         <source>Format operation has been finished successfully.</source>
-        <translation>فورمات مەشخۇلاتى ئوڭۇشلۇق تاماملاندى.</translation>
+        <translation>فورماتتاش  ماشعۇلاتى جەڭىشتۉۉ  بۉتۉردۉ دىققات.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="170"/>
         <source>Sorry, the format operation is failed!</source>
-        <translation>كەچۈرۈڭ، فورمات مەشغۇلاتى مەغلۇپ بولدى!</translation>
+        <translation>كەچىرۉۉ.  فورماتتاش  ماشعۇلاتى جەڭىلۉۉ بولدۇ !</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="171"/>
         <source>Failed</source>
-        <translation>مەغلۇپ بولدى</translation>
+        <translation>جاڭىلوو جەڭىلۉۉ بولدۇ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="205"/>
         <source>Formatting. Do not close this window</source>
-        <translation>فورماتلاش. بۇ كۆزنەكنى تاقىماسلىق</translation>
+        <translation>فورماتتاش . بۇل كۅزۅنۅكتۉ تاقىۋەتمەڭ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="217"/>
         <source>Formatting this disc will erase all data on it. Please backup all retained data before formatting. Do you want to continue ?</source>
-        <translation>بۇ دېسكىنى فورماتلاش ئۇنىڭدىكى بارلىق سانلىق مەلۇماتلارنى ئۆچۈرۈۋېتىدۇ. فورماتلاشتىن بۇرۇن ساقلاپ قالغان بارلىق سانلىق مەلۇماتلارنى زاپاسلاپ قويۇڭ. داۋام قىلغۇڭىز بارمۇ؟</translation>
+        <translation>بۇل  دىسكاسىن فورماتلىساق دىسكاداعى باردىق ساندۇۇ باياندامالار  ۅچۉرۉلەت . فورماتتونۇن بۇلرۇن باردىق ساقتالعان ساندۇۇ باياندامالار نى دايار ، دايىن   ساقتاڭ.  جالعاشتىراسىزبى؟</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="220"/>
         <source>Begin Format</source>
-        <translation>فورماتنى باشلا</translation>
+        <translation>باشتوو كەبەتەسى ، تۇرپاتى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/udfFormatDialog.cpp" line="221"/>
         <source>Close</source>
-        <translation>ياپ</translation>
+        <translation>بەكىتىش</translation>
     </message>
 </context>
 </TS>
