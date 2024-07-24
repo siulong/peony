@@ -1,0 +1,51 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 24 Jul 2024 09:23:14 +0800
+Subject: update changelog.
+
+---
+ src/windows/main-window.cpp          | 3 +++
+ stable/ukui3/windows/main-window.cpp | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/windows/main-window.cpp b/src/windows/main-window.cpp
+index ab8df7c..16d8cba 100644
+--- a/src/windows/main-window.cpp
++++ b/src/windows/main-window.cpp
+@@ -109,6 +109,7 @@
+ #include <QApplication>
+ #include <X11/Xlib.h>
+ #include <KWindowEffects>
++#include <netwm.h>
+ 
+ #include "directoryviewhelper.h"
+ 
+@@ -203,6 +204,8 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
+         hints.functions = MWM_FUNC_ALL;
+         hints.decorations = MWM_DECOR_BORDER;
+         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
++        NETWinInfo info(QX11Info::connection(), this->winId(), QX11Info::appRootWindow(), NET::Properties(), NET::WM2DesktopFileName);
++        info.setDesktopFileName("peony");
+     } else {
+ #ifdef KY_SDK_WAYLANDHELPER
+         kdk::UkuiStyleHelper::self()->removeHeader(this);
+diff --git a/stable/ukui3/windows/main-window.cpp b/stable/ukui3/windows/main-window.cpp
+index d497f89..892051e 100644
+--- a/stable/ukui3/windows/main-window.cpp
++++ b/stable/ukui3/windows/main-window.cpp
+@@ -101,6 +101,7 @@
+ 
+ #include <X11/Xlib.h>
+ #include <KWindowEffects>
++#include <netwm.h>
+ 
+ // NOTE build failed on Archlinux. Can't detect `QGSettings/QGSettings' header
+ // fixed by replaced `QGSettings/QGSettings' with `QGSettings'
+@@ -164,6 +165,8 @@ MainWindow::MainWindow(const QString &uri, QWidget *parent) : QMainWindow(parent
+         hints.functions = MWM_FUNC_ALL;
+         hints.decorations = MWM_DECOR_BORDER;
+         XAtomHelper::getInstance()->setWindowMotifHint(this->winId(), hints);
++        NETWinInfo info(QX11Info::connection(), this->winId(), QX11Info::appRootWindow(), NET::Properties(), NET::WM2DesktopFileName);
++        info.setDesktopFileName("peony");
+     }
+ 
+     startMonitorThumbnailForbidStatus();
