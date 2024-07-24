@@ -1,3 +1,10 @@
+peony (4.10.0.5-ok1~0724.1) nile; urgency=medium
+
+  * 更新哈维科翻译
+  * 修复设置共享密码取消鉴权仍然弹框问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 24 Jul 2024 17:21:50 +0800
+
 peony (4.10.0.5-ok1~0724) nile; urgency=medium
 
   * fix #242579
