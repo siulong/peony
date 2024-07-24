@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0724) nile; urgency=medium
+
+  * fix #242579
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 24 Jul 2024 09:22:14 +0800
+
 peony (4.10.0.5-ok1~0722) nile; urgency=medium
 
   * 修复编译报错
