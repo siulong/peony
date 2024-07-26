@@ -1,0 +1,37 @@
+From: yanglg1 <yangling@kylinos.cn>
+Date: Fri, 26 Jul 2024 15:03:37 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgIzI0MTM4NiDjgJDmtbflhYky5Y+35py644CR44CQ5paH?=
+ =?utf-8?b?5Lu2566h55CG5Zmo44CR5rex5rWF6Imy5Li76aKY5LiL5paw5bu655qEUFBU5ryU?=
+ =?utf-8?b?56S65paH56i/6byg5qCH5Y2V5Ye75a2Y5Zyo5pyq5a6M5YWo6YCJ5Lit6Zeu6aKY?=
+
+---
+ libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp     | 2 +-
+ libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+index 4918749..02cf071 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-delegate.cpp
+@@ -153,7 +153,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
+     int pixelsWide = fontMetrics.width(opt.text);
+     int width = opt.rect.width() - 2*horizalMargin;
+ 
+-    if(pixelsWide <= width){
++    if(pixelsWide < width){
+        opt.rect = opt.rect.adjusted(0,0,0,-31);
+     }
+ 
+diff --git a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+index 99c66b1..eb9ce06 100644
+--- a/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
++++ b/libpeony-qt/controls/directory-view/delegate/icon-view-index-widget.cpp
+@@ -237,7 +237,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
+     int pixelsWide = fontMetrics.width(opt.text);
+     int width = opt.rect.width() - 2*horizalMargin;
+ 
+-    if(pixelsWide <= width){
++    if(pixelsWide < width){
+        opt.rect = opt.rect.adjusted(0,0,0,-31);
+     }
+ 
