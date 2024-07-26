@@ -153,7 +153,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     int pixelsWide = fontMetrics.width(opt.text);
     int width = opt.rect.width() - 2*horizalMargin;
 
-    if(pixelsWide <= width){
+    if(pixelsWide < width){
        opt.rect = opt.rect.adjusted(0,0,0,-31);
     }
 
