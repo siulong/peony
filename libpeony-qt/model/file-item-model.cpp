@@ -38,7 +38,7 @@
 #include "global-settings.h"
 
 #include "file-operation-utils.h"
-
+#include "directory-view-container.h"
 #include "emblem-provider.h"
 #include "sound-effect.h"
 #ifdef KY_SDK_SOUND_EFFECTS
@@ -312,6 +312,73 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             {
                 auto displayName = FileUtils::handleDesktopFileName(item->m_info->uri(), item->m_info->displayName());
                 return QVariant(displayName);
+            } else if (m_root_uri.startsWith("trash://") &&
+                       (Peony::GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ID).toString() == "Icon View"))
+            {
+                /**
+                 * @bug #217516: 【tooltips specification】tooltips display in recycle bin
+                 *
+                 * detailed tooltips are only shown if the Recycle Bin is in icon mode
+                 *
+                 * @author: Renyg <renyangguang@kylinos.cn>
+                 * @date:   2024-07-24
+                 */
+                QString _displayName = item->m_info->displayName();
+                QString _deletionDate;
+                if (!item->m_info->deletionDate().isNull())
+                {
+                    _deletionDate = item->m_info->deletionDate();
+                }
+                else if (Peony::GlobalSettings::getInstance()->getShowCreateTime())
+                {
+                    _deletionDate = item->m_info->createDate();
+                }
+                else
+                {
+                    _deletionDate = item->m_info->modifiedDate();
+                }
+
+                QString _deletionDateLab = tr("Delete Date: ");
+                QString _fileType = item->m_info->fileType();
+                QString _fileTypeLab = tr("Type: ");
+                QString _fileSize = item->m_info->fileSize();
+                QString _fileSizeLab = tr("Size: ");
+                QString _originPath = item->m_info->property("orig-path").toString();
+                QString _originPathLab = tr("Origin Path: ");
+                if (_originPath.isEmpty()) {
+                    auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
+                    if (targetInfo->isEmptyInfo()) {
+                        FileInfoJob j(targetInfo);
+                        j.querySync();
+                        _originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
+                        item->m_info->setProperty("orig-path", _originPath);
+                    }
+                }
+
+                QString _toolTips = QString(
+                    "<html>"
+                        "<head>"
+                            "<style>"
+                            "table { border-collapse: collapse; }"
+                            "td { word-break: break-word; max-width: 50ch; padding: 1px; }"
+                            "</style>"
+                        "</head>"
+                        "<body>"
+                            "<table>"
+                            "<tr><td>%1</td></tr>"
+                            "<tr><td>%2%3</td></tr>"
+                            "<tr><td>%4%5</td></tr>"
+                            "<tr><td>%6%7</td></tr>"
+                            "<tr><td>%8%9</td></tr>"
+                            "</table>"
+                        "</body>"
+                    "</html>"
+                ).arg(_displayName.toHtmlEscaped(),
+                       _deletionDateLab, _deletionDate,
+                       _fileTypeLab, _fileType,
+                       _fileSizeLab, _fileSize,
+                       _originPathLab, _originPath.toHtmlEscaped());
+                return QVariant(_toolTips);
             }
             return QVariant(item->m_info->displayName());
         }
