@@ -41,7 +41,8 @@ Build-Depends: debhelper-compat (=12),
                libkysdk-systime-dev,
                libkysdk-datacollect-dev,
                libqt5remoteobjects5-dev,
-	       libkysdk-soundeffects-dev
+	       libkysdk-soundeffects-dev,
+	       libpolkit-gobject-1-dev
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Homepage: https://www.ukui.org/
