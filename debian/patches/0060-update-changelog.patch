@@ -1,0 +1,39 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Mon, 29 Jul 2024 10:53:22 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/file-operation/file-operation-manager.cpp | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/libpeony-qt/file-operation/file-operation-manager.cpp b/libpeony-qt/file-operation/file-operation-manager.cpp
+index 664336d..8593cd1 100644
+--- a/libpeony-qt/file-operation/file-operation-manager.cpp
++++ b/libpeony-qt/file-operation/file-operation-manager.cpp
+@@ -90,6 +90,13 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
+         m_progressbar->removeAllProgressbar();
+     });
+ 
++    // 智能数据管理远程事件转发
++    m_replicaThread = new QThread;
++    m_replica = new RemoteFileEventHelper;
++    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
++    m_replica->moveToThread(m_replicaThread);
++    m_replicaThread->start();
++
+     // 休眠检测
+     GDBusConnection* pconnection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
+     if (pconnection) {
+@@ -121,12 +128,6 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
+                                           "moveFilesToAnotherProcCompleted",
+                                           this,
+                                           SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
+-
+-    m_replicaThread = new QThread;
+-    m_replica = new RemoteFileEventHelper;
+-    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
+-    m_replica->moveToThread(m_replicaThread);
+-    m_replicaThread->start();
+ }
+ 
+ FileOperationManager::~FileOperationManager()
