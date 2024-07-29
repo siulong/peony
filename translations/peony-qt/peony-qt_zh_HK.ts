@@ -45,7 +45,7 @@ p， li { white-space： pre-wrap;
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation>牡丹</translation>
+        <translation>文件管理器</translation>
     </message>
     <message>
         <source>peony</source>
@@ -55,7 +55,7 @@ p， li { white-space： pre-wrap;
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>牡丹是一個圖形軟體，幫助使用者管理系統檔。它為使用者提供了常用的檔案操作功能，如檔查看、檔案複製、粘貼、剪切、刪除、重命名、檔案選擇、應用程式打開、檔案搜索、檔排序、檔預覽等，方便使用者在介面上直觀地管理系統檔。</translation>
+        <translation>文件管理器是一個圖形軟體，幫助使用者管理系統檔。它為使用者提供了常用的檔案操作功能，如檔查看、檔案複製、粘貼、剪切、刪除、重命名、檔案選擇、應用程式打開、檔案搜索、檔排序、檔預覽等，方便使用者在介面上直觀地管理系統檔。</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -755,7 +755,7 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/peony-application.cpp" line="170"/>
         <source>peony-qt</source>
-        <translation>牡丹-QT</translation>
+        <translation>文件管理器</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="177"/>
@@ -788,7 +788,7 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
-        <translation>牡丹Qt</translation>
+        <translation>文件管理器</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="496"/>
@@ -949,7 +949,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="700"/>
         <source>PeonyNotify</source>
-        <translation>牡丹通知</translation>
+        <translation>文件管理器通知</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
@@ -1376,7 +1376,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="989"/>
         <source>Peony</source>
-        <translation>牡丹</translation>
+        <translation>文件管理器</translation>
     </message>
 </context>
 <context>
