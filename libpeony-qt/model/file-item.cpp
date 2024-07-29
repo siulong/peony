@@ -1000,6 +1000,12 @@ void FileItem::connectFunc()
                             item->setProperty("isFileForBurning", true);
                         }
             #endif
+
+                        //Fix bug#232425 Connecting to shared folders with confusing file sorting
+                        if (item->uri().startsWith("computer:///") && item->uri().endsWith(".mount")) {
+                            return;
+                        }
+
                         m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                         m_children->append(item);
                         m_uri_item_hash.insert(item->uri(), item);
