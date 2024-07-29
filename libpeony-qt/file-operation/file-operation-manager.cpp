@@ -131,12 +131,6 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
                                           "moveFilesToAnotherProcCompleted",
                                           this,
                                           SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
-
-    m_replicaThread = new QThread;
-    m_replica = new RemoteFileEventHelper;
-    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
-    m_replica->moveToThread(m_replicaThread);
-    m_replicaThread->start();
 }
 
 FileOperationManager::~FileOperationManager()
