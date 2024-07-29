@@ -90,6 +90,13 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
         m_progressbar->removeAllProgressbar();
     });
 
+    // 智能数据管理远程事件转发
+    m_replicaThread = new QThread;
+    m_replica = new RemoteFileEventHelper;
+    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
+    m_replica->moveToThread(m_replicaThread);
+    m_replicaThread->start();
+
     // 休眠检测
     GDBusConnection* pconnection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
     if (pconnection) {
@@ -121,12 +128,6 @@ FileOperationManager::FileOperationManager(QObject *parent) : QObject(parent)
                                           "moveFilesToAnotherProcCompleted",
                                           this,
                                           SLOT(slot_moveFilesToAnotherProcCompleted(QStringList)));
-
-    m_replicaThread = new QThread;
-    m_replica = new RemoteFileEventHelper;
-    connect(this, &FileOperationManager::remoteFileEvent, m_replica, &RemoteFileEventHelper::handleFileEventRequest);
-    m_replica->moveToThread(m_replicaThread);
-    m_replicaThread->start();
 }
 
 FileOperationManager::~FileOperationManager()
