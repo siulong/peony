@@ -1,0 +1,35 @@
+From: wen-jiexiang <1906465380@qq.com>
+Date: Wed, 31 Jul 2024 10:09:03 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QjSThaWkJHIOOAkOS6pOS6kuWKqOaViOOAkeWNlemAiQ==?=
+ =?utf-8?b?6YCJ5Lit5oyJ6ZKu5Yqo5pWI5pyq6L+Y5Y6f?=
+
+---
+ .../controls/property-page/permissions-properties-page.cpp        | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/libpeony-qt/controls/property-page/permissions-properties-page.cpp b/libpeony-qt/controls/property-page/permissions-properties-page.cpp
+index b59943a..a97909e 100644
+--- a/libpeony-qt/controls/property-page/permissions-properties-page.cpp
++++ b/libpeony-qt/controls/property-page/permissions-properties-page.cpp
+@@ -398,7 +398,7 @@ void PermissionsPropertiesPage::changePermission(int row, int column, bool check
+     }
+     this->thisPageChanged();
+ 
+-    this->updateCheckBox();
++    //this->updateCheckBox();
+ }
+ 
+ /*!
+@@ -558,9 +558,9 @@ void PermissionsPropertiesPage::updateCheckBox()
+                     m_isShow = true;
+                     auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                     if (QMessageBox::No == res) {
+-                        // FIXME:
+-                        //checkbox->setChecked(!checkbox->isChecked());
+-                        updateCheckBox();
++                        //按钮编号只有0-1，所以使用!id反转选择
++                        auto checkbox = permissionsBtGroup->button(!id);
++                        checkbox->setChecked(!checkbox->isChecked());
+                         return;
+                     }
+                 }
