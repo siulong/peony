@@ -398,7 +398,7 @@ void PermissionsPropertiesPage::changePermission(int row, int column, bool check
     }
     this->thisPageChanged();
 
-    this->updateCheckBox();
+    //this->updateCheckBox();
 }
 
 /*!
@@ -558,9 +558,9 @@ void PermissionsPropertiesPage::updateCheckBox()
                     m_isShow = true;
                     auto res = QMessageBox::question(nullptr, tr("Permissions modify tip"), tr("The current file or folder has already set ACL permissions. Modifying user group permissions may cause the permissions set in ACL to be unusable. Do you want to continue modifying user group permissions?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (QMessageBox::No == res) {
-                        // FIXME:
-                        //checkbox->setChecked(!checkbox->isChecked());
-                        updateCheckBox();
+                        //按钮编号只有0-1，所以使用!id反转选择
+                        auto checkbox = permissionsBtGroup->button(!id);
+                        checkbox->setChecked(!checkbox->isChecked());
                         return;
                     }
                 }
