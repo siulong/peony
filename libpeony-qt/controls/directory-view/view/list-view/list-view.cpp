@@ -407,7 +407,7 @@ void ListView::mousePressEvent(QMouseEvent *e)
 
     //if click left button at blank space, it should select nothing
     //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid() << isIndexSelected;
-    if(indexAt(e->pos()).column() < model()->columnCount()-1 && isEnableMultiSelect() && m_ctrl_key_pressed == false && isIndexSelected == false) {
+    if(indexAt(e->pos()).column() < model()->columnCount()-1 && isEnableMultiSelect() && m_ctrl_key_pressed == false && !e->modifiers().testFlag(Qt::ShiftModifier) && isIndexSelected == false) {
         this->clearSelection();
         disableMultiSelect();
         setCurrentIndex(index);
