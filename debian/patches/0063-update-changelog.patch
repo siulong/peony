@@ -1,0 +1,27 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 31 Jul 2024 14:38:16 +0800
+Subject: update changelog.
+
+---
+ libpeony-qt/controls/directory-view/view/list-view/list-view.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+index df27439..6985f61 100644
+--- a/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
++++ b/libpeony-qt/controls/directory-view/view/list-view/list-view.cpp
+@@ -406,11 +406,11 @@ void ListView::mousePressEvent(QMouseEvent *e)
+     }
+ 
+     //if click left button at blank space, it should select nothing
+-    //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid();
+-    if(!indexAt(e->pos()).isValid())
+-    {
++    //qDebug() << "indexAt(e->pos()):" <<indexAt(e->pos()).column() << indexAt(e->pos()).row() <<indexAt(e->pos()).isValid() << isIndexSelected;
++    if(indexAt(e->pos()).column() < model()->columnCount()-1 && isEnableMultiSelect() && m_ctrl_key_pressed == false && !e->modifiers().testFlag(Qt::ShiftModifier) && isIndexSelected == false) {
+         this->clearSelection();
+         disableMultiSelect();
++        setCurrentIndex(index);
+         return;
+     }
+ 

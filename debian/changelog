@@ -1,3 +1,17 @@
+peony (4.10.0.5-ok1~0731) nile; urgency=medium
+
+  * 继续优化列表视图多选体验
+  * fix #I9P7MK
+  * fix #I8ZZBG
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 31 Jul 2024 14:37:01 +0800
+
+peony (4.10.0.5-ok1~0729.1) nile; urgency=medium
+
+  * 优化多选模式体验。
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Wed, 29 Jul 2024 11:36:02 +0800
+
 peony (4.10.0.5-ok1~0729) nile; urgency=medium
 
   * fix #241386
