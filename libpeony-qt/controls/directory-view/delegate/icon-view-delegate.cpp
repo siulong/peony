@@ -573,6 +573,10 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                     auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
                     infoJob->setAutoDelete();
                     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        /* hotfix bug#225573 【文件管理器】多次进行重命名文档中的文件操作后，文档中文件选中、重命名异常;modified on 2024-08-01 */
+                        if(index != getView()->m_last_index && getView()->m_last_index.isValid() ){
+                            return;
+                        }//end
                         getView()->setSelections(QStringList()<<uri);
                         getView()->scrollToSelection(uri);
                         //set focus to fix bug#54061
@@ -593,6 +597,10 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                     auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
                     infoJob->setAutoDelete();
                     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        /* hotfix bug#225573 【文件管理器】多次进行重命名文档中的文件操作后，文档中文件选中、重命名异常;modified on 2024-08-01 */
+                        if(index != getView()->m_last_index && getView()->m_last_index.isValid() ){
+                            return;
+                        }//end
                         getView()->setSelections(QStringList()<<uri);
                         getView()->scrollToSelection(uri);
                         //set focus to fix bug#54061
