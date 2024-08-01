@@ -314,7 +314,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
 {
     setIcon ("dialog-warning");
 
-    QPushButton* b = addButton (tr("No"));
+    QPushButton* b = addButton (tr("Cancel"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = false;
@@ -322,7 +322,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         done(QDialog::Rejected);
     });
 
-    b = addButton (tr("Yes"));
+    b = addButton (tr("Delete"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = true;

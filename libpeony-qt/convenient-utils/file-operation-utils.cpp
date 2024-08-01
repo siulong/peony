@@ -162,8 +162,16 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
                                   "these file will not be recoverable.").arg(uris.length());
         }
 
-        auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        if (result == QMessageBox::Yes) {
+        //auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        QMessageBox msgBox;
+        msgBox.setText(message);
+        msgBox.setIcon(QMessageBox::Question);
+        QPushButton *deleteButton = msgBox.addButton(QObject::tr("Delete"), QMessageBox::AcceptRole);
+        msgBox.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
+        deleteButton->setDefault(true);
+
+        int result = msgBox.exec();
+        if (msgBox.clickedButton() == deleteButton) {
             op = FileOperationUtils::remove(uris);
         }
         return op;
@@ -394,9 +402,16 @@ void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
                               "these file will not be recoverable.").arg(uris.length());
     }
 
-    result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    //result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    QMessageBox msgBox;
+    msgBox.setText(message);
+    msgBox.setIcon(QMessageBox::Question);
+    QPushButton *deleteButton = msgBox.addButton(QObject::tr("Delete"), QMessageBox::AcceptRole);
+    msgBox.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
+    deleteButton->setDefault(true);
 
-    if (result == QMessageBox::Yes) {
+    result = msgBox.exec();
+    if (msgBox.clickedButton() == deleteButton) {
         FileOperationUtils::remove(uris);
     }
 }

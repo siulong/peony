@@ -1303,8 +1303,16 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                           "these file will not be recoverable.").arg(m_selections.count());
                 }
 
-                result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-                if (result == QMessageBox::Yes) {
+
+                QMessageBox msgBox;
+                msgBox.setText(message);
+                msgBox.setIcon(QMessageBox::Question);
+                QPushButton *deleteButton = msgBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+                msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                deleteButton->setDefault(true);
+
+                result = msgBox.exec();
+                if (msgBox.clickedButton() == deleteButton) {
 //                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
                 }
