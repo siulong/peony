@@ -34,6 +34,7 @@
 #include "thumbnail-manager.h"
 #include "file-utils.h"
 #include "vfs-plugin-manager.h"
+#include "volume-manager.h"
 #include "xatom-helper.h"
 //#include "properties-window-factory.h"
 
@@ -368,6 +369,29 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                 iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), true);
                 if (iconName.isEmpty()) {
                     iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
+                }
+
+                if (!m_fileInfo->unixDeviceFile().isEmpty() && (m_fileInfo->unixDeviceFile().startsWith("/dev/sd")
+                                                                || m_fileInfo->unixDeviceFile().startsWith("/dev/dm"))) {
+                    std::shared_ptr<Volume> volume = nullptr;
+                    QString targetUri = FileUtils::getTargetUri(m_fileInfo->uri());
+                    if (!targetUri.isEmpty()) {
+                        volume = VolumeManager::getVolumeFromUri(targetUri.toUtf8().constData());
+                        if (volume) {
+                            iconName = volume->iconName();
+                        }
+                    }
+
+                    qDebug() << __LINE__ << __func__ << iconName << m_fileInfo->uri();
+
+                    if (iconName == "drive-harddisk-usb") {
+                        double size = FileUtils::getDeviceSize(m_fileInfo->unixDeviceFile().toUtf8().constData());
+                        if (size > 128) {
+                            iconName = "drive-harddisk-usb";
+                        } else {
+                            iconName = "drive-removable-media-usb";
+                        }
+                    }
                 }
 
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
