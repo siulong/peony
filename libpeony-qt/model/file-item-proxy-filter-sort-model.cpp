@@ -324,6 +324,12 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
     if (childIndex.isValid()) {
         auto item = static_cast<FileItem*>(childIndex.internalPointer());
         FileInfo* fileInfo =  item->m_info.get();/*FileInfo::fromUri(item->uri()).get()*/;
+        //use same way with v101-latest code, fix set more than one file hide has no effect issue
+        bool isHidden = fileInfo->property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN).toBool();
+        //qDebug()<<"File view .hidden file hidden,uri:"<<item->uri()<<" isHidden:"<<isHidden;
+        if(!m_show_hidden && isHidden){
+           return false;
+        }//end
 
         if(!item->shouldShow())
             return false;
