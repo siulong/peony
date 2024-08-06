@@ -25,6 +25,8 @@
 #include "file-info-job.h"
 #include "volume-manager.h"
 #include "linux-pwd-helper.h"
+#include "volumeManager.h"
+#include "global-fstabdata.h"
 #include <QUrl>
 #include <QFileInfo>
 #include <QFileInfoList>
@@ -1495,6 +1497,29 @@ bool FileUtils::isSearchFilesParentWriteable(const QStringList &selectUris, bool
         }
     }
     return canWrite;
+}
+
+bool FileUtils::isMountMatchFstab(GVolume *volume, const QString &mountPoint)
+{
+    if (G_IS_VOLUME(volume)) {
+        Experimental_Peony::Volume *vol = new Experimental_Peony::Volume(volume);
+        if(!Peony::GlobalFstabData::getInstance()->getUuidState()){
+            if(Peony::GlobalFstabData::getInstance()->isMountPoints(vol->device(), mountPoint)){
+                return true;
+            }
+        }else{
+            if(Peony::GlobalFstabData::getInstance()->isMountPoints(vol->uuid(), mountPoint)){
+                return true;
+            }
+        }
+
+        if (vol) {
+            delete vol;
+        }
+    }
+
+    return false;
+
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)

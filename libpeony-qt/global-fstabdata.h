@@ -34,12 +34,12 @@ class PEONYCORESHARED_EXPORT GlobalFstabData : public QObject
     Q_OBJECT
 public:
     static GlobalFstabData *getInstance();
-    explicit GlobalFstabData(QObject *parent = nullptr);
     bool isMountPoints(const QString& name, const QString& mountPoint);
     bool getUuidState();
     bool isEmptyList();
 
 private:
+    explicit GlobalFstabData(QObject *parent = nullptr);
     const QList<fstabData*> readFstabFile();
     QList<fstabData*> m_fstabDataLists;
     QFileSystemWatcher *m_fstab_data_watcher;

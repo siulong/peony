@@ -289,6 +289,10 @@ void SideBarFileSystemItem::slot_volumeDeviceAdd(const Experimental_Peony::Volum
         }
     }
 
+    if (FileUtils::isMountMatchFstab(addItem.getGVolume(), "/backup")) {
+        return;
+    }
+
     qDebug()<<__func__<<__LINE__<<addItem.device()<<addItem.getHidden();
     SideBarFileSystemItem *item = new SideBarFileSystemItem(nullptr,
                                                           addItem,

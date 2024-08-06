@@ -125,6 +125,7 @@ public:
     static QString getActualDirFromSearchUri(const QString& searchUri);
     static QString updateFileIconName(const QString &uri, bool checkValid = false);
     static bool isSearchFilesParentWriteable(const QStringList &selectUris, bool isSearch);/* 选中的搜索出来的文件（夹）,其父目录是否有写权限 */
+    static bool isMountMatchFstab(GVolume* volume, const QString &mountPoint);
 
 private:
     FileUtils();
