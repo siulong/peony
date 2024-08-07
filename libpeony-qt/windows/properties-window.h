@@ -215,6 +215,8 @@ public:
      */
     bool handleKMREUri(QString &uri);
 
+    void onVolumeRemoveClosePropertiesPage();
+
 protected:
     /**
      * 在窗口关闭时，将存储的窗口指针从openPropertiesWindows中删除

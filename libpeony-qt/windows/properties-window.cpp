@@ -35,6 +35,7 @@
 #include "file-utils.h"
 #include "vfs-plugin-manager.h"
 #include "volume-manager.h"
+#include "volumeManager.h"
 #include "xatom-helper.h"
 //#include "properties-window-factory.h"
 
@@ -262,6 +263,8 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
             }
         });
     }
+
+   this->onVolumeRemoveClosePropertiesPage();
 }
 
 void PropertiesWindow::init()
@@ -726,6 +729,20 @@ void PropertiesWindow::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
+void PropertiesWindow::onVolumeRemoveClosePropertiesPage()
+{
+    QString unixDevice;
+    if (m_uris.count() == 1 && m_uris.at(0).startsWith("computer:///")) {
+        unixDevice = FileUtils::getUnixDevice(m_uris.first());
+
+        connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::volumeRemove, this, [=](const QString &removeDevice){
+            qDebug() << __func__ << removeDevice;
+            if (unixDevice == removeDevice) {
+                saveAllChanged();
+            }
+        });
+    }
+}
 
 #ifdef KY_SDK_QT_WIDGETS
 class TabBar : public kdk::KTabBar
