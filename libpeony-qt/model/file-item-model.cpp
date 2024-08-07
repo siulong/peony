@@ -528,9 +528,10 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         return flags;
     } else {
         if (m_root_item) {
+            QString fsType = m_root_item->m_info.get()->fileSystemType();
             if (m_root_item->m_info->canWrite()) {
                 return Qt::ItemIsDropEnabled;
-            } else if(m_root_item->m_info.get()->fileSystemType().contains("udf")) {
+            } else if(fsType.contains("udf") || fsType.isEmpty()) {
                 return Qt::ItemIsDropEnabled;
             } else {
                 return Qt::ItemIsEnabled;
