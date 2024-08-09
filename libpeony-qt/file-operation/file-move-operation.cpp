@@ -46,8 +46,10 @@ static void handleDuplicate(FileNode *node)
 
 FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    //origin code from dj, for sangfor clound project change
+    //fix bug#249783, copy absolute file crash issue
     for (auto u : sourceUris) {
-        if (u.split("://").length() != 2) {
+        if (u.split("://").length() > 2) {
             sourceUris.removeOne (u);
         }
     }
@@ -65,7 +67,12 @@ FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri,
     m_dest_dir_uri = FileUtils::urlEncode(destDirUri);
     m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Move);
 
-    QString srcId = FileUtils::getFileSystemId(m_src_uris.first());
+    //fix bug#249783, copy absolute file crash issue
+    QString srcId = "";
+    if (m_src_uris.length() > 0)
+        srcId = FileUtils::getFileSystemId(m_src_uris.first());
+    if (! srcId.startsWith("file://") && !srcId.contains("://"))
+        srcId = "file://" + srcId;
     QString destId = FileUtils::getFileSystemId(m_dest_dir_uri);
     if (srcId.length() > 0 && srcId == destId)
         m_is_same_fs = true;

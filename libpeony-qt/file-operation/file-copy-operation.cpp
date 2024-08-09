@@ -49,14 +49,22 @@ static void handleDuplicate(FileNode *node)
 
 FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    //origin code from dj, for sangfor clound project change
+    //fix bug#249783, copy absolute file crash issue
     for (auto u : sourceUris) {
-        if (u.split ("://").length () != 2) {
+        if (u.split("://").length () > 2) {
             sourceUris.removeOne (u);
         }
     }
 
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
-    QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
+    //fix bug#249783, copy absolute file crash issue
+    QString srcId = "";
+    if (m_src_uris.length() > 0)
+        srcId = Peony::FileUtils::urlEncode(sourceUris.first());
+    if (! srcId.startsWith("file://") && !srcId.contains("://"))
+        srcId = "file://" + srcId;
+    QUrl firstSrcUrl = srcId;
     if("label" == firstSrcUrl.scheme())
     {
         QString scheme = firstSrcUrl.path().section("?schema=",-1,-1);
