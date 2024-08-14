@@ -546,6 +546,18 @@ void IconViewIndexWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    /**
+     * @bug #250731: [File Manager] Right clicking on the same folder several times in the file manager will take you to the folder
+     *
+     * Prevent double-click events from triggering on right-click
+     * Only double left clicks will be processed
+     *
+     * @author Renyg
+     * @date 2024-08-12
+     */
+    if (event->button() == Qt::RightButton) {
+        return;
+    }
     bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
     bool isPreviewMode = m_delegate->getView()->topLevelWidget()->property("isPreviewMode").toBool();
     if (!singleClicked || isPreviewMode) {

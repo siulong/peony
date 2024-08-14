@@ -442,6 +442,18 @@ void DesktopIndexWidget::mousePressEvent(QMouseEvent *event)
 
 void DesktopIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    /**
+     * @bug #250731: [File Manager] Right clicking on the same folder several times in the file manager will take you to the folder
+     *
+     * Prevent double-click events from triggering on right-click
+     * Only double left clicks will be processed
+     *
+     * @author Renyg
+     * @date 2024-08-13
+     */
+    if (event->button() == Qt::RightButton) {
+        return;
+    }
     auto view = m_delegate->getView();
     if (!view->selectionModel()->selectedIndexes().contains(m_index)) {
         view->m_real_do_edit = false;
