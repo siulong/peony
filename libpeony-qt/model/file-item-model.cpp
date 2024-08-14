@@ -127,7 +127,11 @@ void FileItemModel::setRootUri(const QString &uri)
 void FileItemModel::setRootItem(FileItem *item)
 {
     beginResetModel();
-    m_root_item->deleteLater();
+    /* 解决光盘弹出切换到计算机视图后，偶现fileitem没有析构的问题；link to bug#208641 向UDF格式R盘拖拽添加文件，文管内文件图标显示错乱。modified on 2024-8-13 */
+    delete m_root_item;
+    m_root_item = nullptr;
+    //m_root_item->deleteLater();
+    //end hotfix bug#208641
 
     m_root_item = item;
 

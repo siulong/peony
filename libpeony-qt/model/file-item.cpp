@@ -640,6 +640,7 @@ void FileItem::onDeleted(const QString &thisUri)
             m_parent->onChildAdded(m_info->uri());
         }
         this->deleteLater();
+        m_model->updated();
     } else {
         //cd up.
         auto tmpItem = this;
@@ -662,7 +663,6 @@ void FileItem::onDeleted(const QString &thisUri)
             m_model->sendPathChangeRequest("file:///", tmpItem->uri());
         }
     }
-    m_model->updated();
 }
 
 void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
