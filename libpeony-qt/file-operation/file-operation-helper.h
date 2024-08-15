@@ -63,6 +63,8 @@ protected:
      */
     QString matchingUnixDevice(QString uri);
 
+    void deleteDirectoryRecursively(const QString &dirPath);
+
 private:
     bool m_is_disk_work = false;
     QString m_unix_device = nullptr;
