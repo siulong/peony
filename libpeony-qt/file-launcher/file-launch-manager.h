@@ -62,6 +62,8 @@ public:
     static void openAsync(const QStringList &files, bool forceWithArg = false, bool skipDialog = true);
     static bool isGlibForceUsePortal();
 
+    static void openFilesByDefaultApplications(const QStringList &files);
+
 private:
     explicit FileLaunchManager(QObject *parent = nullptr);
 };

@@ -309,6 +309,32 @@ bool FileLaunchManager::isGlibForceUsePortal()
     return glib_force_use_portal;
 }
 
+
+void FileLaunchManager::openFilesByDefaultApplications(const QStringList &files)
+{
+    QMap<QString, QStringList> fileMap;
+    for (auto uri : files) {
+        QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
+        QStringList list;
+        if (fileMap.contains(defaultAppName)) {
+            list = fileMap[defaultAppName];
+            list << uri;
+            fileMap.insert(defaultAppName, list);
+        } else {
+            list << uri;
+            fileMap.insert(defaultAppName, list);
+        }
+    }
+    if(!fileMap.empty()) {
+        QMap<QString, QStringList>::iterator iter = fileMap.begin();
+        while (iter != fileMap.end())
+        {
+            Peony::FileLaunchManager::openAsync(iter.value());
+            iter++;
+        }
+    }
+}
+
 void FileLaunchManager::setDefaultLauchAction(const QString &uri, FileLaunchAction *action)
 {
     //FIXME: replace BLOCKING api in ui thread.

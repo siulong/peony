@@ -46,6 +46,8 @@
 #include <QMessageBox>
 #include <QtConcurrent>
 
+#include <file-launch-manager.h>
+
 #include <QUrl>
 #include <QDir>
 #include <QStandardPaths>
@@ -226,11 +228,8 @@ const QList<QAction *> DesktopMenu::constructOpenOpActions()
                 }
                 if (!dirs.isEmpty())
                     this->openWindow(dirs);
-                if (!files.isEmpty()) {
-                    for (auto uri : files) {
-                        FileLaunchManager::openAsync(uri);
-                    }
-                }
+
+                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
             });
         }
 

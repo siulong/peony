@@ -961,27 +961,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                 m_tab->addPage(uri);
             }
 
-            QMap<QString, QStringList> fileMap;
-            for (auto uri : files) {
-                QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
-                QStringList list;
-                if (fileMap.contains(defaultAppName)) {
-                    list = fileMap[defaultAppName];
-                    list << uri;
-                    fileMap.insert(defaultAppName, list);
-                } else {
-                    list << uri;
-                    fileMap.insert(defaultAppName, list);
-                }
-            }
-            if(!fileMap.empty()) {
-                QMap<QString, QStringList>::iterator iter = fileMap.begin();
-                while (iter != fileMap.end())
-                {
-                    Peony::FileLaunchManager::openAsync(iter.value());
-                    iter++;
-                }
-            }
+            Peony::FileLaunchManager::openFilesByDefaultApplications(files);
         }
     }
 
