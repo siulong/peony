@@ -309,7 +309,6 @@ bool FileLaunchManager::isGlibForceUsePortal()
     return glib_force_use_portal;
 }
 
-
 void FileLaunchManager::openFilesByDefaultApplications(const QStringList &files)
 {
     QMap<QString, QStringList> fileMap;
