@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0819.1) nile; urgency=medium
+
+  * 更新desktop文件翻译
+
+ -- Kevin Duan <duankaiwen@kylinos.cn>  Mon, 19 Aug 2024 09:24:40 +0800
+
 peony (4.10.0.5-ok1~0819) nile; urgency=medium
 
   * 修改运行依赖libblockdev-crypto2 -> libblockdev-crypto3
