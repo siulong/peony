@@ -1,0 +1,39 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 19 Aug 2024 09:12:04 +0000
+Subject: update data/peony.desktop.
+
+Signed-off-by: KevinDuan <duankaiwen@kylinos.cn>
+---
+ data/peony.desktop | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/data/peony.desktop b/data/peony.desktop
+index 207d42e..3431b82 100644
+--- a/data/peony.desktop
++++ b/data/peony.desktop
+@@ -5,9 +5,9 @@ GenericName[tr]=UKUI Dosya Yöneticisi
+ GenericName[de]=Dateimanager
+ GenericName[es]=Gestor de archivos
+ GenericName[fr]=Gestionnaire de fichiers
+-GenericName[kk]=Файл менеджері
+-GenericName[ug]=ھۆججەت باشقۇرغۇچ
+-GenericName[ky]=Файл менеджери
++GenericName[kk_KZ]=حۇجات باسقارۋشى
++GenericName[ug_CN]=ھۆججەت باشقۇرغۇچ
++GenericName[ky_KG]=ۅجۅت باشقارعىچ
+ GenericName[zh_CN]=文件管理器
+ GenericName[bo_CN]=ཡིག་ཆ་དོ་དམ་ཆས།
+ GenericName[mn]=ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ
+@@ -16,9 +16,9 @@ Name[tr]=Peony
+ Name[de]=Dateimanager
+ Name[es]=Gestor de archivos
+ Name[fr]=Gestionnaire de fichiers
+-Name[kk]=Файл менеджері
+-Name[ug]=ھۆججەت باشقۇرغۇچ
+-Name[ky]=Файл менеджери
++Name[kk_KZ]=حۇجات باسقارۋشى
++Name[ug_CN]=ھۆججەت باشقۇرغۇچ
++Name[ky_KG]=ۅجۅت باشقارعىچ
+ Name[zh_CN]=文件管理器
+ Name[bo_CN]=ཡིག་ཆ་དོ་དམ་ཆས།
+ Name[mn]=ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠢᠶᠠᠷᠤᠭᠤᠷ
