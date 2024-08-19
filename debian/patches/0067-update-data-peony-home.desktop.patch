@@ -1,0 +1,39 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 19 Aug 2024 11:59:15 +0000
+Subject: update data/peony-home.desktop.
+
+Signed-off-by: KevinDuan <duankaiwen@kylinos.cn>
+---
+ data/peony-home.desktop | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/data/peony-home.desktop b/data/peony-home.desktop
+index d992924..bb5f751 100644
+--- a/data/peony-home.desktop
++++ b/data/peony-home.desktop
+@@ -5,9 +5,9 @@ GenericName[tr]=Giriş
+ GenericName[de]=Persönliches Verzeichnis
+ GenericName[es]=Catálogo personal
+ GenericName[fr]=Catalogue personnel
+-GenericName[kk]=Жеке каталогтар
+-GenericName[ug]=شەخسىي مۇندەرىجە
+-GenericName[ky]=Жеке каталогдор
++GenericName[kk_KZ]=شەخسلەر باسمازمۇن
++GenericName[ug_CN]=شەخسلەر مۇندەرىجىسى
++GenericName[ky_KG]=شەخسلەر مازمۇۇنۇ
+ GenericName[zh_CN]=打开个人目录
+ GenericName[bo_CN]=སྒེར་གྱི་དཀར་ཆག
+ GenericName[mn]=ᠬᠤᠪᠢ ᠬᠦᠮᠦᠨ
+@@ -16,9 +16,9 @@ Name[tr]=Giriş
+ Name[de]=Persönliches Verzeichnis
+ Name[es]=Catálogo personal
+ Name[fr]=Catalogue personnel
+-Name[kk]=Жеке каталогтар
+-Name[ug]=شەخسىي مۇندەرىجە
+-Name[ky]=Жеке каталогдор
++Name[kk_KZ]=شەخسلەر باسمازمۇن
++Name[ug_CN]=شەخسلەر مۇندەرىجىسى
++Name[ky_KG]=شەخسلەر مازمۇۇنۇ
+ Name[zh_CN]=个人目录
+ Name[bo_CN]=སྒེར་གྱི་དཀར་ཆག
+ Name[mn]=ᠬᠤᠪᠢ ᠬᠦᠮᠦᠨ
