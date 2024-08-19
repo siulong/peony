@@ -1,0 +1,23 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 19 Aug 2024 12:01:19 +0000
+Subject: update data/peony-computer.desktop.
+
+Signed-off-by: KevinDuan <duankaiwen@kylinos.cn>
+---
+ data/peony-computer.desktop | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/data/peony-computer.desktop b/data/peony-computer.desktop
+index f976de5..de3601e 100644
+--- a/data/peony-computer.desktop
++++ b/data/peony-computer.desktop
+@@ -5,6 +5,9 @@ GenericName[tr]=Bilgisayar
+ GenericName[zh_CN]=打开计算机
+ Name[tr]=Bilgisayar
+ Name[zh_CN]=计算机
++Name[ug_CN]=كومپيۇتېر
++Name[kk_KZ]=كومپيۋتەر
++Name[ky_KG]=كومپىيۇتەر
+ Exec=/usr/bin/peony computer:///
+ Icon=computer
+ Terminal=false
