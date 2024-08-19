@@ -1,0 +1,39 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Mon, 19 Aug 2024 09:14:03 +0000
+Subject: update data/peony-trash.desktop.
+
+Signed-off-by: KevinDuan <duankaiwen@kylinos.cn>
+---
+ data/peony-trash.desktop | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/data/peony-trash.desktop b/data/peony-trash.desktop
+index 21e7d47..c6d8a41 100644
+--- a/data/peony-trash.desktop
++++ b/data/peony-trash.desktop
+@@ -5,9 +5,9 @@ GenericName[tr]=Çöp
+ GenericName[de]=Papierkorb
+ GenericName[es]=Estación de reciclaje
+ GenericName[fr]=La station de recyclage
+-GenericName[kk]=себет
+-GenericName[ug]=يىغىۋېلىش پونكىتى
+-GenericName[ky]=кайра иштетүү бин
++GenericName[kk_KZ]=قايتارىپ الۋ پونكيتٸ
++GenericName[ug_CN]=قايتۇرۇۋېلىش پونكىتى
++GenericName[ky_KG]=قايتارىپ الۇۇ پونكىتى
+ GenericName[zh_CN]=打开回收站
+ GenericName[bo_CN]=སྙིགས་སྒམ།
+ GenericName[mn]=ᠬᠤᠭᠯᠠᠭᠤᠷ
+@@ -16,9 +16,9 @@ Name[tr]=Çöp
+ Name[de]=Papierkorb
+ Name[es]=Estación de reciclaje
+ Name[fr]=La station de recyclage
+-Name[kk]=себет
+-Name[ug]=يىغىۋېلىش پونكىتى
+-Name[ky]=кайра иштетүү бин
++Name[kk_KZ]=قايتارىپ الۋ پونكيتٸ
++Name[ug_CN]=قايتۇرۇۋېلىش پونكىتى
++Name[ky_KG]=قايتارىپ الۇۇ پونكىتى
+ Name[zh_CN]=回收站
+ Name[bo_CN]=སྙིགས་སྒམ།
+ Name[mn]=ᠬᠤᠭᠯᠠᠭᠤᠷ
