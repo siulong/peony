@@ -81,7 +81,7 @@ Package: libpeony3
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
-Depends: dvd+rw-tools, gvfs, gvfs-backends, gvfs-fuse, libblockdev-crypto2, ${misc:Depends}, ${shlibs:Depends}
+Depends: dvd+rw-tools, gvfs, gvfs-backends, gvfs-fuse, libblockdev-crypto3, ${misc:Depends}, ${shlibs:Depends}
 Provides: libpeony
 Breaks: libpeony2, peony (<< 2.2.0-1)
 Replaces: libpeony2, peony (<< 2.2.0-1)
