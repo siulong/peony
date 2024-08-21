@@ -1,0 +1,22 @@
+From: yanglg1 <yangling@kylinos.cn>
+Date: Wed, 21 Aug 2024 10:29:18 +0800
+Subject: =?utf-8?b?Y2xvc2UtY2QgI0lBSDBXVOOAkOaWh+S7tueuoeeQhuWZqOOAkee7tA==?=
+ =?utf-8?b?5ZOI5p+v6K+t6KiA5LiL5re75Yqg6aG1562+5oyJ6ZKu5L2N572u5byC5bi4?=
+
+---
+ src/control/tab-widget.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index 1e604e3..e1dd45a 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -1891,7 +1891,7 @@ void TabWidget::updateTabBarGeometry()
+     if (layoutDirection() == Qt::LeftToRight)
+         m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+     else
+-        m_tab_bar->setGeometry(this->width() - tabBarWidth, 1, tabBarWidth, m_tab_bar->sizeHint().height());
++        m_tab_bar->setGeometry(this->width() - addPageX + 2, 1, addPageX, m_tab_bar->sizeHint().height());
+     m_tab_bar->raise();
+ 
+     if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
