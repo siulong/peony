@@ -1891,7 +1891,7 @@ void TabWidget::updateTabBarGeometry()
     if (layoutDirection() == Qt::LeftToRight)
         m_tab_bar->setGeometry(0, 1, tabBarWidth, m_tab_bar->sizeHint().height());
     else
-        m_tab_bar->setGeometry(this->width() - tabBarWidth, 1, tabBarWidth, m_tab_bar->sizeHint().height());
+        m_tab_bar->setGeometry(this->width() - addPageX + 2, 1, addPageX, m_tab_bar->sizeHint().height());
     m_tab_bar->raise();
 
     if (Peony::GlobalSettings::getInstance()->getProjectName() == V10_SP1_EDU) {
