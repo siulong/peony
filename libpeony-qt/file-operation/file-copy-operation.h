@@ -78,6 +78,8 @@ protected:
     ExceptionResponse udfCopyWarningDialog();
 
     bool saveAsOtherPath();
+
+    int getUsbSafeMode();
 private:
     /*!
      * \brief m_is_duplicated_copy

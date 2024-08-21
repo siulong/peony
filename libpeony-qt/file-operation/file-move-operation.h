@@ -149,6 +149,8 @@ protected:
      */
     ExceptionResponse prehandle(GError *err);
 
+    int getUsbSafeMode();
+
 private:
     //QStringList m_source_uris;
     QString m_dest_dir_uri = nullptr;

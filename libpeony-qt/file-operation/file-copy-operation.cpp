@@ -1056,6 +1056,24 @@ void FileCopyOperation::run()
 
     Q_EMIT operationRequestShowWizard();
 
+    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
+        int usbSafeMode = getUsbSafeMode();
+        if (usbSafeMode != 0) {
+            FileOperationError except;
+            except.dlgType = ED_WARNING;
+            except.errorType = ET_GIO;
+            except.srcUri = m_source_uris.isEmpty()? nullptr: m_source_uris.first();
+            except.destDirUri = m_dest_dir_uri;
+            except.op = FileOpCopy;
+            except.title = tr("File copy error");
+            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
+            errored(except);
+            setHasError(true);
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
     goffset *total_size = new goffset(0);
 
     QList<FileNode*> nodes;
@@ -1408,6 +1426,25 @@ bool FileCopyOperation::saveAsOtherPath()
         m_is_long_name_file_operation = true;
     }
     return true;
+}
+
+int FileCopyOperation::getUsbSafeMode()
+{
+    QFile file("/sys/devices/platform/hw_trans_bios_variable/usb_safe_mode");
+    if (!file.exists()) {
+        qDebug() << "The file does not exist";
+        return 0;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return 0;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    file.close();
+    return status;
 }
 
 void FileCopyOperation::cancel()

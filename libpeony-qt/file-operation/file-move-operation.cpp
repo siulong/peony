@@ -1741,6 +1741,25 @@ void FileMoveOperation::run()
         }
     }
 
+    //fix bug 232253,手机管控下，拖拽至对应目录直接报错
+    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
+        int usbSafeMode = getUsbSafeMode();
+        if (usbSafeMode != 0) {
+            FileOperationError except;
+            except.dlgType = ED_WARNING;
+            except.errorType = ET_GIO;
+            except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+            except.destDirUri = m_dest_dir_uri;
+            except.op = FileOpMove;
+            except.title = tr("File move error");
+            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
+            errored(except);
+            setHasError(true);
+            Q_EMIT operationFinished();
+            return;
+        }
+    }
+
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
     if (mHelper->isUnixCDDevice()) {
@@ -2033,6 +2052,25 @@ bool FileMoveOperation::saveAsOtherPath()
         m_is_long_name_file_operation = true;
     }
     return true;
+}
+
+int FileMoveOperation::getUsbSafeMode()
+{
+    QFile file("/sys/devices/platform/hw_trans_bios_variable/usb_safe_mode");
+    if (!file.exists()) {
+        qDebug() << "The file does not exist";
+        return 0;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return 0;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    file.close();
+    return status;
 }
 
 void FileMoveOperation::cancel()
