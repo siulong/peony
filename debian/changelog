@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0821) nile; urgency=medium
+
+  * fix #IAH0WT
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 21 Aug 2024 11:22:16 +0800
+
 peony (4.10.0.5-ok1~0819.1) nile; urgency=medium
 
   * 更新desktop文件翻译
