@@ -60,7 +60,7 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
     //fix bug#249783, copy absolute file crash issue
     QString srcId = "";
-    if (m_src_uris.length() > 0)
+    if (sourceUris.length() > 0)
         srcId = Peony::FileUtils::urlEncode(sourceUris.first());
     if (! srcId.startsWith("file://") && !srcId.contains("://"))
         srcId = "file://" + srcId;
