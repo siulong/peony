@@ -11,7 +11,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="72"/>
         <source>Remove &quot;%1&quot;</source>
-        <translation>ア  ᠶᠢ ᠬᠠᠰᠤᠪᠠ</translation>
+        <translation>ᠢ ᠬᠠᠰᠤᠪᠠ &quot;%1&quot;</translation>
     </message>
     <message>
         <source>delete &quot;%1&quot;</source>
@@ -20,7 +20,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="92"/>
         <source>add  &quot;%1&quot;</source>
-        <translation>《 1 》 ᠨᠡᠮᠡᠪᠡ ᠃</translation>
+        <translation>ᠨᠡᠮᠡᠪᠡ &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -518,7 +518,7 @@
     <message>
         <location filename="../../libpeony-qt/file-operation/file-operation-dialog/kyfiledialogrename.cpp" line="346"/>
         <source>Explanation: When renaming a file name, ensure it is within 255 bytes and </source>
-        <translation type="unfinished">ᠲᠠᠶᠢᠯᠪᠤᠷᠢᠯᠠᠯᠲᠠ ᠄ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠨᠡᠷ᠎ᠡ ᠶᠢ ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠶᠢᠳᠬᠦ ᠦᠶᠡᠰ ᠂ ᠲᠡᠭᠦᠨ ᠢ 225 ᠦᠰᠦᠭ ᠦᠨ ᠪᠠᠶᠠᠷ ᠤᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠪᠠᠶᠢᠬᠤ ᠶᠢ ᠦᠨᠡᠨᠬᠦ ᠪᠠᠲᠤᠯᠠᠬᠤ ᠶᠢᠨ ᠬᠠᠮᠲᠤ ᠃  {255 ?}</translation>
+        <translation>ᠲᠠᠶᠢᠯᠪᠤᠷᠢᠯᠠᠯᠲᠠ ᠄ ᠪᠢᠴᠢᠭ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ ᠤᠨ ᠨᠡᠷ᠎ᠡ ᠶᠢ ᠳᠠᠬᠢᠨ ᠨᠡᠷᠡᠶᠢᠳᠬᠦ ᠦᠶᠡᠰ ᠂ ᠲᠡᠭᠦᠨ ᠢ 225 ᠦᠰᠦᠭ ᠦᠨ ᠪᠠᠶᠠᠷ ᠤᠨ ᠳᠣᠲᠣᠷ᠎ᠠ ᠪᠠᠶᠢᠬᠤ ᠶᠢ ᠦᠨᠡᠨᠬᠦ ᠪᠠᠲᠤᠯᠠᠬᠤ ᠶᠢᠨ ᠬᠠᠮᠲᠤ ᠃  {255 ?} </translation>
     </message>
     <message>
         <source>Explanation: When renaming a file name, ensure it is within 225 bytes and </source>
@@ -1852,7 +1852,7 @@
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1470"/>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1480"/>
         <source>Peony-Qt Filesafe Menu Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠹᠠᠢᠯ ᠤ᠋ᠨ ᠬᠠᠮᠠᠭᠠᠯᠠᠯᠳᠠ ᠵᠢᠨ ᠬᠠᠢᠷᠴᠠᠭ ᠢ᠋ ᠳᠡᠯᠡᠬᠦ</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1512"/>
@@ -4245,7 +4245,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="95"/>
         <source>Quick access</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠲᠦᠷᠭᠡᠨ ᠰᠤᠷᠪᠤᠯᠵᠢᠯᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
         <source>Favorite</source>
