@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ug">
+<TS version="2.1" language="kk">
 <context>
     <name>Peony::DesktopIconView</name>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.h" line="89"/>
         <source>Desktop Icon View</source>
-        <translation>ئۈستەل يۈزى سىنبەلگىسى كۆرۈش</translation>
+        <translation>ۇستەل بەتى اي كۇن كورىنۋى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="669"/>
         <source>New Folder</source>
-        <translation>يېڭى ھۆججەت قىسقۇچ</translation>
+        <translation>جاڭا حۇجات قىسقىش</translation>
     </message>
     <message>
         <source>set background</source>
-        <translation type="vanished">تەگلىك بەلگىلەش</translation>
+        <translation type="vanished">设置背景</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -24,38 +24,42 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1031"/>
         <source>Open failed</source>
-        <translation>ئېچىش مەغلۇپ بولدى</translation>
+        <translation>ٸشٸۋ جەڭىلىپ قالدى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1032"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>ئوچۇق مۇندەرىجە مەغلۇپ بولدى، رۇخسەتىڭىز يوق!</translation>
+        <translation>باسمازمۇندى ٸشٸۋ جەڭىلىپ قالدى،  سىزدىڭ ۇقىعىڭىز جوق!</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1014"/>
         <source>Open Link failed</source>
-        <translation>ئۇلىنىشنى ئېچىش مەغلۇپ بولدى</translation>
+        <translation>جالعانبانى ٸشٸۋ جەڭىلىپ قالدى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>تام قاعازى بەكٸتۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation>ھۆججەت مەۋجۇت ئەمەس، ئۇلىنىش ھۆججىتىنى ئۆچۈرمەكچىمۇ؟</translation>
+        <translation>حۇجات ساقتالعان ەمەس،  قولدانبا حۇجاتنى ٶشٸرەسٸزبە؟</translation>
     </message>
 </context>
 <context>
     <name>Peony::DesktopItemModel</name>
     <message>
         <source>Computer</source>
-        <translation type="vanished">كومپيۇتېر</translation>
+        <translation type="vanished">计算机</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="vanished">ئەخلەت ساندۇقى</translation>
+        <translation type="vanished">回收站</translation>
+    </message>
+    <message>
+        <source>My Document</source>
+        <translation type="vanished">我的文档</translation>
     </message>
 </context>
 <context>
@@ -99,7 +103,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="237"/>
         <source>Reverse Select</source>
-        <translation>تەتۈر تاللاش</translation>
+        <translation>كەرٸ باعىتتالۋ تالداۋ</translation>
     </message>
     <message>
         <source>&amp;New...</source>
@@ -120,7 +124,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="355"/>
         <source>New Folder</source>
-        <translation>يېڭى ھۆججەت قىسقۇچ</translation>
+        <translation>جاڭا حۇجات قىسقىش</translation>
     </message>
     <message>
         <source>View Type...</source>
@@ -145,12 +149,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="109"/>
         <source>Open in new Window</source>
-        <translation>يېڭى كۆزنەكتە ئېچىش</translation>
+        <translation>جاڭا تەرەزەدە اشٸلدٸ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="114"/>
         <source>Select All</source>
-        <translation>ھەممىنى تاللاڭ</translation>
+        <translation>ٴبارىن تالدا</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="137"/>
@@ -158,49 +162,53 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="199"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="210"/>
         <source>Open</source>
-        <translation>ئېچىش</translation>
+        <translation>ٸشٸۋ</translation>
+    </message>
+    <message>
+        <source>Can not open path &quot;%1&quot;，permission denied.</source>
+        <translation type="vanished">无法打开路径 &quot;%1&quot;, 权限被拒绝。</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="145"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="170"/>
         <source>Open with...</source>
-        <translation>... بىلەن ئېچىۋېتىلدى</translation>
+        <translation>ٸشٸۋ ٴتاسٸلٸ...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="158"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="193"/>
         <source>More applications...</source>
-        <translation>قوللىنىشچان پروگرامما تېخىمۇ كۆپ...</translation>
+        <translation>الٸدە كوپ ئەپلەر</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="213"/>
         <source>Open %1 selected files</source>
-        <translation>٪1 تاللانغان ھۆججەتلەرنى ئېچىش</translation>
+        <translation>تالدانعان حۇجاتىن %1 نى ٸشٸۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation>يېڭى</translation>
+        <translation>جاڭا</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="339"/>
         <source>Empty File</source>
-        <translation>بوش ھۆججەت</translation>
+        <translation>قۇرعاق حۇجات</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
         <source>Folder</source>
-        <translation>ھۆججەت قىسقۇچ</translation>
+        <translation>حۇجات قىسقىش</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="374"/>
         <source>View Type</source>
-        <translation>كۆرۈش تىپى</translation>
+        <translation>كورۋ تيپى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
         <source>Small</source>
-        <translation>كىچىك</translation>
+        <translation>كشكەنە</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
@@ -210,17 +218,17 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
         <source>Large</source>
-        <translation>چوڭ</translation>
+        <translation>ۇلكەن</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
         <source>Huge</source>
-        <translation>غايەت زور</translation>
+        <translation>وتە ۇلكەن</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="417"/>
         <source>Sort By</source>
-        <translation>تۈرگە ئايرىش</translation>
+        <translation>تارتٸپكە تىزۋ نەگىزىنەن</translation>
     </message>
     <message>
         <source>Sort By...</source>
@@ -229,32 +237,32 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation>ئىسىم-فامىلىسى</translation>
+        <translation>ئاتى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
         <source>File Type</source>
-        <translation>ھۆججەت تۈرى</translation>
+        <translation>حۇجات تۇرى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="425"/>
         <source>File Size</source>
-        <translation>ھۆججەت چوڭلۇقى</translation>
+        <translation>حۇجات ۇلكەندىگى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="497"/>
         <source>Clean the trash</source>
-        <translation>ئەخلەت ساندۇقىنى تازىلاش</translation>
+        <translation>قوقسىقتاردى تازالاۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="518"/>
         <source>Copy</source>
-        <translation>كۆچۈرۈش</translation>
+        <translation>كوشىرۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="545"/>
         <source>Delete to trash</source>
-        <translation>ئەخلەت ساندۇقىغا ئۆچۈرۈش</translation>
+        <translation>قوقسىق ساندىعىنا تاستاۋ</translation>
     </message>
     <message>
         <source>Error</source>
@@ -267,7 +275,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="423"/>
         <source>Modified Date</source>
-        <translation>ئۆزگەرتىلگەن ۋاقتى</translation>
+        <translation>وزگەرتىلگەن ۋاقىتى</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -276,7 +284,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="524"/>
         <source>Cut</source>
-        <translation>كېسىش</translation>
+        <translation>كەسۋ</translation>
     </message>
     <message>
         <source>&amp;Delete to trash</source>
@@ -285,28 +293,28 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="554"/>
         <source>Delete forever</source>
-        <translation>مەڭگۈلۈك ئۆچۈرۈش</translation>
+        <translation>ماڭگىلىك ٴوشىرۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="567"/>
         <source>Rename</source>
-        <translation>قايتا ئىسىم فامىلە قىلىش</translation>
+        <translation>قاتە ات فاميليا ەتۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="574"/>
         <source>Paste</source>
-        <translation>چاپلاش</translation>
+        <translation>شاپتاۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="580"/>
         <source>Refresh</source>
-        <translation>يېڭىلاش</translation>
+        <translation>جاڭالاۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
-        <translation>خاسلىق</translation>
+        <translation>سۋرەت قاسيەتى</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
@@ -378,6 +386,13 @@
     </message>
 </context>
 <context>
+    <name>Peony::DesktopModeFactory</name>
+    <message>
+        <source>desktop icon mode</source>
+        <translation type="vanished">桌面图标模式</translation>
+    </message>
+</context>
+<context>
     <name>Peony::DesktopWindow</name>
     <message>
         <source>Desktop</source>
@@ -393,15 +408,34 @@
     </message>
 </context>
 <context>
+    <name>Peony::StudyCenterMode</name>
+    <message>
+        <source>math</source>
+        <translation type="vanished">数学</translation>
+    </message>
+    <message>
+        <source>english</source>
+        <translation type="vanished">英语</translation>
+    </message>
+    <message>
+        <source>chinese</source>
+        <translation type="vanished">语文</translation>
+    </message>
+    <message>
+        <source>other</source>
+        <translation type="vanished">其他</translation>
+    </message>
+</context>
+<context>
     <name>PeonyDesktopApplication</name>
     <message>
         <source>Close the peony-qt desktop window</source>
         <translation type="vanished">关闭桌面并退出</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="227"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="226"/>
         <source>peony-qt-desktop</source>
-        <translation>مودەنگۈل-qt-ئۈستەل يۈزى</translation>
+        <translation>peony-qt-ۇستەل بەتى</translation>
     </message>
     <message>
         <source>Peony-Qt Desktop</source>
@@ -412,29 +446,33 @@
         <translation type="vanished">桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="567"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
         <source>Close the peony desktop window</source>
-        <translation>مودەنگۈل ئۈستەل يۈزى كۆزنىكىنى تاقاش</translation>
+        <translation>peony ۇستەل بەتى تەرەزەنى جابىپ الۋ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="570"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
         <source>Take over the dbus service.</source>
-        <translation>DBUS مۇلازىمىتىنى قولىغا ئالماق</translation>
+        <translation>dbus قىزىمەتتى ئۆتكۈزۈۋالىدۇ.</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="573"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="566"/>
         <source>Take over the desktop displaying</source>
-        <translation>ئۈستەل يۈزىنى كۆرسىتىشنى ئۆتكۈزۈۋېلىش</translation>
+        <translation>وتكىزىلىپ ۇستەل بەتى كورسەتۋ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="576"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="569"/>
         <source>Setup backgrounds</source>
-        <translation>ئارقا كۆرۈنۈشلەرنى تەڭشەش</translation>
+        <translation>ارتى كورىنۋ ورنالاسترعان ەتۋ</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="579"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="572"/>
         <source>Clear standard icons</source>
-        <translation>ئۆلچەملىك سىنبەلگىلەرنى تازىلاش</translation>
+        <translation>ولشەمدى گرافيىكتى تازالاۋ</translation>
+    </message>
+    <message>
+        <source>Open learning center.</source>
+        <translation type="vanished">打开学习中心</translation>
     </message>
     <message>
         <source>set background</source>
@@ -445,25 +483,70 @@
     <name>QObject</name>
     <message>
         <source>set background</source>
-        <translation type="vanished">تەگلىك بەلگىلەش</translation>
+        <translation type="vanished">设置背景</translation>
     </message>
     <message>
         <source>display settings</source>
-        <translation type="vanished">كۆرسىتىش تەڭشەكلىرى</translation>
+        <translation type="vanished">显示设置</translation>
     </message>
     <message>
         <source>set resolution</source>
         <translation type="vanished">设置分辨率</translation>
     </message>
     <message>
+        <source>Error</source>
+        <translation type="vanished">错误</translation>
+    </message>
+    <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>تام قاعازى بەكٸتۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>Display Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تەڭگەرگٸشتٸ كورسەتۋ</translation>
+    </message>
+</context>
+<context>
+    <name>StudyStatusWidget</name>
+    <message>
+        <source>学情中心</source>
+        <translation type="vanished">学情中心</translation>
+    </message>
+    <message>
+        <source>STATISTICS</source>
+        <translation type="vanished">统计数据</translation>
+    </message>
+    <message>
+        <source>今日使用时长</source>
+        <translation type="vanished">今日使用时长</translation>
+    </message>
+    <message>
+        <source>本周使用时长</source>
+        <translation type="vanished">本周使用时长</translation>
+    </message>
+    <message>
+        <source>本月使用时长</source>
+        <translation type="vanished">本月使用时长</translation>
+    </message>
+    <message>
+        <source>最常使用 (本周累计)</source>
+        <translation type="vanished">最常使用 (本周累计)</translation>
+    </message>
+</context>
+<context>
+    <name>TabletMenu</name>
+    <message>
+        <source>Uninstall</source>
+        <translation type="vanished">卸载</translation>
+    </message>
+</context>
+<context>
+    <name>TabletPluginWidget</name>
+    <message>
+        <source>Search</source>
+        <translation type="vanished">搜索</translation>
     </message>
 </context>
 </TS>
