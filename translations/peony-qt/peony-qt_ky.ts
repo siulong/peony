@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation>ۇباقىت ۅزگۅرتۉش</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -38,7 +38,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation>تەيلۅۅ جانا قولدوش ، دەم بەرىش : </translation>
+        <translation>تەيلۅۅ جانا قولدوش ، دەم بەرىش  كوللېكتىپى: </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
@@ -85,12 +85,12 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="72"/>
         <source>Rename</source>
-        <translation>قايرا ات قويۇش</translation>
+        <translation>قايرا ات تەك ات  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>تۉس تۅپتۅش</translation>
+        <translation>تۉس مونتاژلاش</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -119,7 +119,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="144"/>
         <source>Go Forward</source>
-        <translation>الدىنا ىلگەرلۅۅ</translation>
+        <translation>الدىنا ماڭ</translation>
     </message>
     <message>
         <source>Search</source>
@@ -128,7 +128,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="236"/>
         <source>View Type</source>
-        <translation>كۅرۉۉ  تۉرۉ</translation>
+        <translation>كۅرۉنۉش تۉرۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="274"/>
@@ -138,7 +138,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="356"/>
         <source>Option</source>
-        <translation>تانداش</translation>
+        <translation>تاندالما</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="472"/>
@@ -162,7 +162,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="372"/>
         <source>Copy</source>
-        <translation>ۉلگۉسۉن الۇۇ</translation>
+        <translation>گۅچۉرۉش</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="384"/>
@@ -229,7 +229,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>Maximize</source>
-        <translation>چوڭويتۇش</translation>
+        <translation>ەڭ چوڭ چەككە</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="915"/>
@@ -265,7 +265,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="850"/>
         <source>Select path</source>
-        <translation>جولدۇ  تانداش</translation>
+        <translation>جول تانداش</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -285,7 +285,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
-        <translation>ەڭ كىچىك   ابالى</translation>
+        <translation>كىچىرەيتۉۉ</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
@@ -356,7 +356,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
-        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
+        <translation>ىزدۅۅ</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -477,7 +477,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/navigation-tab-bar.cpp" line="131"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>%2 نان %1 نى ىزدۅۅ</translation>
+        <translation>ىزدۅۅ &quot;%1&quot; in &quot;%2&quot;</translation>
     </message>
 </context>
 <context>
@@ -494,7 +494,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۅت</translation>
+        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
@@ -585,7 +585,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="220"/>
         <source>About</source>
-        <translation>جۅنۉندۅ</translation>
+        <translation>تۇراسىندا</translation>
     </message>
 </context>
 <context>
@@ -621,7 +621,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation>CloudStorage ساقتوو  سان قاينارى</translation>
+        <translation>CloudStorage ساقتاعىچ</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="55"/>
@@ -634,7 +634,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-favorite-item.cpp" line="46"/>
         <source>Favorites</source>
-        <translation>ەڭ جاقشى كۆرىدىغانلىرى</translation>
+        <translation>جاقشى كۆرىدىغانلار</translation>
     </message>
 </context>
 <context>
@@ -665,7 +665,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation>قاسىيەت</translation>
+        <translation>سۉرۅت قاسىيەتىن</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
@@ -726,7 +726,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
+        <translation>ىزدۅۅ</translation>
     </message>
 </context>
 <context>
@@ -788,7 +788,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
-        <translation>Peony Qt</translation>
+        <translation>Peony Qt ۅجۅت باشقارعىچ</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="496"/>
@@ -1165,7 +1165,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1723"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>مازمۇۇندۇ  اچۇۇ جەڭىلۉۉ بولدۇ ،  سىزدىن ۇقۇعۇڭۇز جوق!</translation>
+        <translation>مازمۇۇندۇ  اچۇۇ جەڭىلۉۉ بولدۇ ، سىزدىن ۇقۇعۇڭۇز جوق!</translation>
     </message>
     <message>
         <source>Close advance search.</source>
@@ -1174,7 +1174,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
-        <translation>ىزدەمەكچى بولعون مازمۇنۇن كىرگىزىڭ</translation>
+        <translation>ىزدۅۅ</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
@@ -1277,7 +1277,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>wps file</source>
-        <translation>wps ۅجۅتۉۉ</translation>
+        <translation>wpsۅجۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
@@ -1384,12 +1384,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
-        <translation>تانداش</translation>
+        <translation>تاندالما</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
-        <translation>ەڭ كىچىك   ابالى</translation>
+        <translation>كىچىرەيتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
