@@ -237,7 +237,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation>گرۋپپا مى</translation>
+        <translation>ئاتى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
@@ -257,7 +257,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="518"/>
         <source>Copy</source>
-        <translation>نۇسقالاۋ</translation>
+        <translation>كوشىرۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="545"/>
@@ -299,7 +299,7 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="567"/>
         <source>Rename</source>
-        <translation>قاتە ات قويۋ</translation>
+        <translation>قاتە ات فاميليا ەتۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="574"/>
@@ -314,7 +314,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
-        <translation>قاسيەت</translation>
+        <translation>سۋرەت قاسيەتى</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
