@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation>ۋاقىت وزگەرتۋ</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
@@ -38,7 +38,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
         <location filename="../../src/windows/about-dialog.cpp" line="47"/>
         <location filename="../../src/windows/about-dialog.cpp" line="168"/>
         <source>Service &amp; Support: </source>
-        <translation>قىزىمەت ۋا قولداۋ: </translation>
+        <translation>قىزىمەت ۋا قولداۋ كوللېكتىپى: </translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
@@ -85,12 +85,12 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="72"/>
         <source>Rename</source>
-        <translation>قاتە ات قويۋ</translation>
+        <translation>قاتە ات فاميليا ەتۋ</translation>
     </message>
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>رەڭ تالداۋجاساۋ</translation>
+        <translation>رەڭ مونتاژلاش</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -119,7 +119,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="144"/>
         <source>Go Forward</source>
-        <translation>الدىنا ىلگەرلەۋ</translation>
+        <translation>الدىنا ماڭ</translation>
     </message>
     <message>
         <source>Search</source>
@@ -128,7 +128,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="236"/>
         <source>View Type</source>
-        <translation>كورۋ تيپى</translation>
+        <translation>كورىنۋ تيپى</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="274"/>
@@ -138,7 +138,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="356"/>
         <source>Option</source>
-        <translation>تالداۋ</translation>
+        <translation>تالدانبا</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="472"/>
@@ -162,7 +162,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="372"/>
         <source>Copy</source>
-        <translation>نۇسقالاۋ</translation>
+        <translation>كوشىرۋ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="384"/>
@@ -229,7 +229,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="716"/>
         <source>Maximize</source>
-        <translation>ۇلكەيتۋ</translation>
+        <translation>ەڭ ۇلكەن شەككە</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="915"/>
@@ -265,7 +265,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="850"/>
         <source>Select path</source>
-        <translation>جولىن تالداۋ</translation>
+        <translation>جول تالداۋ</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -285,7 +285,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1295"/>
         <source>Minimize</source>
-        <translation>ەڭ كشكەنە بەينە</translation>
+        <translation>كىشرەيتۋ</translation>
     </message>
     <message>
         <source>Maximize/Restore</source>
@@ -302,7 +302,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
-        <translation>تاقاۋ</translation>
+        <translation>اتىسۋ</translation>
     </message>
 </context>
 <context>
@@ -356,7 +356,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/windows/main-window.cpp" line="887"/>
         <source>Search</source>
-        <translation>ٸزدەمەكشٸ بولعان مازمۇندى كىرگىزىڭىز</translation>
+        <translation>ٸزدەۋ</translation>
     </message>
     <message>
         <source>Tips info</source>
@@ -477,7 +477,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/navigation-tab-bar.cpp" line="131"/>
         <source>Search &quot;%1&quot; in &quot;%2&quot;</source>
-        <translation>%2 دان %1 نى ٸزدەۋ</translation>
+        <translation>ٸزدەۋ &quot;%1&quot; in &quot;%2&quot;</translation>
     </message>
 </context>
 <context>
@@ -494,7 +494,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>جاسىرىن تۇرلەردى كورسەتەدى</translation>
+        <translation>جاسىرىن تۇرلەردى كورسەتۋ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
@@ -585,7 +585,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="220"/>
         <source>About</source>
-        <translation>جونٸندە</translation>
+        <translation>جايٸندا</translation>
     </message>
 </context>
 <context>
@@ -621,7 +621,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="40"/>
         <source>CloudStorage</source>
-        <translation>CloudStorage ساقتاۋ قىزىمەت وتەۋى</translation>
+        <translation>CloudStorage ساقتاعىش</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-cloud-item.cpp" line="55"/>
@@ -634,7 +634,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-favorite-item.cpp" line="46"/>
         <source>Favorites</source>
-        <translation>ەڭ جاقسى كۆرىدىغانلىرى</translation>
+        <translation>جاقسى كۆرىدىغانلار</translation>
     </message>
 </context>
 <context>
@@ -665,7 +665,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="174"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="242"/>
         <source>Properties</source>
-        <translation>قاسيەت</translation>
+        <translation>سۋرەت قاسيەتى</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="82"/>
@@ -726,7 +726,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/search-widget.cpp" line="50"/>
         <source>Search</source>
-        <translation>ٸزدەمەكشٸ بولعان مازمۇندى كىرگىزىڭىز</translation>
+        <translation>ٸزدەۋ</translation>
     </message>
 </context>
 <context>
@@ -788,7 +788,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/peony-application.cpp" line="495"/>
         <source>Peony Qt</source>
-        <translation>Peony Qt</translation>
+        <translation>Peony Qt حۇجات باسقارۋشى</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="496"/>
@@ -1165,7 +1165,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="1723"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation>باسمازمۇندى ٸشٸۋ جەڭىلىپ قالدى،  سىزدىڭ ۇقىعىڭىز جوق!</translation>
+        <translation>باسمازمۇندى ٸشٸۋ جەڭىلىپ قالدى، سىزدىڭ ۇقىعىڭىز جوق!</translation>
     </message>
     <message>
         <source>Close advance search.</source>
@@ -1174,7 +1174,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="441"/>
         <source>Search</source>
-        <translation>ٸزدەمەكشٸ بولعان مازمۇندى كىرگىزىڭىز</translation>
+        <translation>ٸزدەۋ</translation>
     </message>
     <message>
         <source>Choose other path to search.</source>
@@ -1225,7 +1225,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
         <source>type</source>
-        <translation>تيپى</translation>
+        <translation>تۇرى</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="311"/>
@@ -1277,7 +1277,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="313"/>
         <source>wps file</source>
-        <translation>wps حۇجاتى</translation>
+        <translation>wpsحۇجاتى</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="314"/>
@@ -1384,17 +1384,17 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1097"/>
         <source>Option</source>
-        <translation>تالداۋ</translation>
+        <translation>تالدانبا</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1110"/>
         <source>Minimize</source>
-        <translation>ەڭ كشكەنە بەينە</translation>
+        <translation>كىشرەيتۋ</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation>تاقاۋ</translation>
+        <translation>اتىسۋ</translation>
     </message>
 </context>
 </TS>
