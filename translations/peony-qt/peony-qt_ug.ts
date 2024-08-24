@@ -24,7 +24,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="115"/>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation>تېكىست بەلگىسى</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.cpp" line="46"/>
