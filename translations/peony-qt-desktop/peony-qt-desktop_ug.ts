@@ -246,7 +246,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation>تام قەغىزى بېكىتىش</translation>
+        <translation>ئارقا تەگلىك تەڭشەش</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
