@@ -39,7 +39,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation>تام قاعازى بەكىتۉۉ</translation>
+        <translation>ارقا تۅشۅنمۅ  تەڭشۅۅ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
@@ -237,7 +237,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation>توپ  ناامى</translation>
+        <translation>ئاتى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
@@ -257,7 +257,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="518"/>
         <source>Copy</source>
-        <translation>ۉلگۉسۉن الۇۇ</translation>
+        <translation>گۅچۉرۉش</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="545"/>
@@ -299,7 +299,7 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="567"/>
         <source>Rename</source>
-        <translation>قايرا ات قويۇش</translation>
+        <translation>قايرا ات تەك ات  جاسوو ،اتقارۇۇ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="574"/>
@@ -314,7 +314,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
-        <translation>قاسىيەت</translation>
+        <translation>سۉرۅت قاسىيەتىن</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
@@ -500,7 +500,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation>تام قاعازى بەكىتۉۉ</translation>
+        <translation>ارقا تۅشۅنمۅ  تەڭشۅۅ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
