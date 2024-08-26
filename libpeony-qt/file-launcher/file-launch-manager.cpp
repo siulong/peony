@@ -277,6 +277,14 @@ void FileLaunchManager::openAsync(const QString &uri, bool forceWithArg, bool sk
     if (!targetUri.isNull()) {
         tmp = targetUri;
         qDebug()<<"open async"<<targetUri;
+        // fix #256959
+        // note: 当软链接指向的文件信息有缓存时，应该更新软链接指向文件信息后再进行打开操作
+        // 否则可能会导致打开文件异常报错
+        auto info = FileInfo::fromUri(tmp);
+        if (!info->isEmptyInfo()) {
+            FileInfoJob job(info);
+            job.querySync();
+        }
     }
     auto action = getDefaultAction(tmp);
     action->lauchFileAsync(forceWithArg, skipDialog);
