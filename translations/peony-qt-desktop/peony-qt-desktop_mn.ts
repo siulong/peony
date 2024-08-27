@@ -180,7 +180,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation>new</translation>
+        <translation>ᠰᠢᠨ᠎ᠡ ᠡᠬᠦᠳᠭᠦ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="339"/>
@@ -200,7 +200,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
         <source>Small</source>
-        <translation>ᠪᠠᠭ᠎ᠠ ᠃</translation>
+        <translation>ᠪᠠᠭ᠎ᠠ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
@@ -210,7 +210,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
         <source>Large</source>
-        <translation>ᠶᠡᠬᠡ ᠃</translation>
+        <translation>ᠶᠡᠬᠡ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
@@ -458,12 +458,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>Display Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠦᠵᠡᠭᠦᠯᠦᠯᠭᠡ ᠶ᠋ᠢᠨ ᠪᠠᠢᠷᠢᠯᠠᠭᠤᠯᠤᠯᠲᠠ ᠶ᠋ᠢ ᠢᠯᠡᠷᠡᠭᠦᠯᠦᠨ᠎ᠡ</translation>
     </message>
 </context>
 </TS>
