@@ -1,0 +1,25 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Wed, 28 Aug 2024 04:08:50 +0000
+Subject: Translated using Weblate (Mongolian)
+
+Currently translated at 100.0% (45 of 45 strings)
+
+Translation: openkylin-nile-new/peony-qt-desktop
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt-desktop/mn/
+---
+ translations/peony-qt-desktop/peony-qt-desktop_mn.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_mn.ts b/translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+index 02eddd5..a73ad9b 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_mn.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+@@ -39,7 +39,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
+         <source>Set Background</source>
+-        <translation type="unfinished"></translation>
++        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
