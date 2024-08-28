@@ -39,7 +39,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>ᠠᠷᠤ ᠦᠵᠡᠭᠳᠡᠯ ᠢ᠋ ᠳᠤᠬᠢᠷᠠᠭᠤᠯᠬᠤ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
