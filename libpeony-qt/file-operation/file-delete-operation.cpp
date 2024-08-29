@@ -191,12 +191,20 @@ void FileDeleteOperation::run()
 
     //fix delete file not sync issue,link to bug#113826
     if (isMobileDevice) {
-        auto path = FileUtils::getParentUri(m_src_uris.first());
-        if (! path.isEmpty()) {
+        auto uri = FileUtils::getParentUri(m_src_uris.first());
+        if (! uri.isEmpty()) {
+            g_autoptr (GFile) ddir = g_file_new_for_uri (uri.toUtf8().constData());
+            char * path = g_file_get_path(ddir);
             operationStartSnyc();
             QProcess p;
-            p.start(QString("/usr/bin/sync -f '%1'").arg(path));
+            p.start(QString("/usr/bin/sync -f %1").arg(path));
             p.waitForFinished(-1);
+            if (p.exitCode() == 0) {
+                qDebug() << "sync completed successfully";
+            } else {
+                qDebug() << "sync failed with exit code:" << p.exitCode();
+            }
+            g_free(path);
         }
     }
 
