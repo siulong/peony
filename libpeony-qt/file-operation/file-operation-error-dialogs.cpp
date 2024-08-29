@@ -130,9 +130,15 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
         setTipFileicon(file.getInfo()->iconName());
         setTipFilename(file.getInfo()->displayName());
     } else {
+        QString url;
         QString fileName = FileUtils::urlDecode(error.srcUri).split("/").back();
         //fix bug 148806, matches end path name
-        QString url = error.destDirUri.split("/").back().contains(fileName) ? error.destDirUri : error.destDirUri + "/" + fileName;
+        if (error.destDirUri.split("/").back().contains(fileName) ||
+                FileUtils::urlDecode(error.destDirUri).split("/").back().contains(fileName)) {
+            url = error.destDirUri;
+        } else {
+            url = error.destDirUri + "/" + fileName;
+        }
         FileInfoJob file(url, nullptr);
         file.querySync();
         setTipFileicon(file.getInfo()->iconName());
