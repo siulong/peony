@@ -144,6 +144,11 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
     //m_refresh_timer.setInterval(500);
     //m_refresh_timer.setSingleShot(true);
+    QString localeName = QLocale::system().name();
+    if (localeName.contains("ug") || localeName.contains("kk") || localeName.contains("ky")) {
+         setLayoutDirection(Qt::RightToLeft);
+    }
+
     setAttribute(Qt::WA_AlwaysStackOnTop);
 
     installEventFilter(this);
@@ -196,7 +201,7 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
     setViewMode(QListView::IconMode);
     setMovement(QListView::Snap);
     setFlow(QListView::TopToBottom);
-    setResizeMode(QListView::Fixed);
+    setResizeMode(QListView::Adjust);
     setWordWrap(true);
 
     setDragDropMode(QListView::DragDrop);
@@ -325,11 +330,11 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
             this->saveAllItemPosistionInfos();
             for (int i = 0; i < m_proxy_model->rowCount(); i++) {
                 auto index = m_proxy_model->index(i, 0);
-                m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), QListView::visualRect(index));
-                updateItemPosByUri(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
+                m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), visualRectInRightToLeft(index));
+                updateItemPosByUri(index.data(Qt::UserRole).toString(), visualRectInRightToLeft(index).topLeft());
 
                 if (geo.width() != 0 && geo.height() != 0) {
-                    QRect itemRect = QListView::visualRect(index);
+                    QRect itemRect = visualRectInRightToLeft(index);
                     if (verifyBoundaries(itemRect, Direction::All)) {
                         isFull = true;
                     }
@@ -1093,7 +1098,7 @@ void DesktopIconView::saveAllItemPosistionInfos()
     //qDebug()<<"======================save";
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
         auto index = m_proxy_model->index(i, 0);
-        auto indexRect = QListView::visualRect(index);
+        auto indexRect = visualRectInRightToLeft(index);
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
@@ -1124,7 +1129,7 @@ void DesktopIconView::resetAllItemPositionInfos()
     m_item_rect_hash.clear();
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
         auto index = m_proxy_model->index(i, 0);
-        auto indexRect = QListView::visualRect(index);
+        auto indexRect = visualRectInRightToLeft(index);
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
@@ -1225,7 +1230,7 @@ void DesktopIconView::ensureItemPosByUri(const QString &uri)
 {
     auto srcIndex = m_model->indexFromUri(uri);
     auto index = m_proxy_model->mapFromSource(srcIndex);
-    auto rect = QListView::visualRect(index);
+    auto rect = visualRectInRightToLeft(index);
     if (index.isValid()) {
         m_item_rect_hash.remove(uri);
         m_item_rect_hash.insert(uri, rect);
@@ -1305,9 +1310,9 @@ void DesktopIconView::setSortType(int sortType)
     if (geo.width() != 0 && geo.height() != 0) {
         for (int i = 0; i < m_proxy_model->rowCount(); i++) {
             auto index = m_proxy_model->index(i, 0);
-            m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), QListView::visualRect(index));
-            updateItemPosByUri(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
-            QRect itemRect = QListView::visualRect(index);
+            m_item_rect_hash.insert(index.data(Qt::UserRole).toString(), visualRectInRightToLeft(index));
+            updateItemPosByUri(index.data(Qt::UserRole).toString(), visualRectInRightToLeft(index).topLeft());
+            QRect itemRect = visualRectInRightToLeft(index);
             //itemRect.moveTo(itemRect.topLeft()+offset());
             if (verifyBoundaries(itemRect, Direction::All)) {
                 isFull = true;
@@ -1637,10 +1642,10 @@ bool DesktopIconView::isItemsOverlapped()
     if (model()) {
         for (int i = 0; i < model()->rowCount(); i++) {
             auto index = model()->index(i, 0);
-            auto rect = QListView::visualRect(index);
+            auto rect = visualRectInRightToLeft(index);
             if (itemRects.contains(rect))
                 return true;
-            itemRects<<QListView::visualRect(index);
+            itemRects<<visualRectInRightToLeft(index);
         }
     }
 
@@ -1662,7 +1667,7 @@ const QRect DesktopIconView::getBoundingRect()
     QRegion itemsRegion;
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
         auto index = m_proxy_model->index(i, 0);
-        QRect indexRect = QListView::visualRect(index);
+        QRect indexRect = visualRectInRightToLeft(index);
         itemsRegion += indexRect;
     }
     return itemsRegion.boundingRect();
@@ -2264,7 +2269,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             for (auto index : unoverlappedIndexes) {
                 // save pos
                 QTimer::singleShot(1, this, [=]() {
-                    setFileMetaInfoPos(index.data(Qt::UserRole).toString(), QListView::visualRect(index).topLeft());
+                    setFileMetaInfoPos(index.data(Qt::UserRole).toString(), visualRectInRightToLeft(index).topLeft());
                 });
             }
 
@@ -2277,7 +2282,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
             }
 
             for (auto dragedIndex : overlappedIndexes) {
-                auto indexRect = QListView::visualRect(dragedIndex);
+                auto indexRect = visualRectInRightToLeft(dragedIndex);
                 auto dataRect = getDataRect(dragedIndex);
                 if (notEmptyRegion.intersects(dataRect)) {
                     // move index to closest empty grid.
@@ -2321,7 +2326,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
             // check if there is any item out of view
             for (auto index : m_drag_indexes) {
-                auto indexRect = QListView::visualRect(index);
+                auto indexRect = visualRectInRightToLeft(index);
                 if (!verifyBoundaries(indexRect, Direction::All)) {
                     continue;
                 }
@@ -2790,7 +2795,7 @@ void DesktopIconView::fileCreated(const QString &uri)
     if (geo.width() != 0 && geo.height() != 0) {
         QModelIndex index = m_proxy_model->mapToSource(m_model->indexFromUri(uri));
         if (index.isValid()) {
-            QRect indexRect = QListView::visualRect(index);
+            QRect indexRect = visualRectInRightToLeft(index);
             if (verifyBoundaries(indexRect, Direction::All)) {
                 resolutionChange();
             }
@@ -2902,6 +2907,11 @@ bool DesktopIconView::dragToOtherScreen(QDropEvent *e)
                     }
                 }
                 else{
+                    if (layoutDirection() == Qt::RightToLeft) {
+                        int vewportX = viewport()->rect().topRight().x();
+                        int x = vewportX - rect.topRight().x() ;
+                        rect = QRect(x, rect.y(), rect.width(), rect.height());
+                    }
                      setFileMetaInfoPos(index.data(Qt::UserRole).toString(), rect.topLeft());
                      notEmptyRegion += rect;
                 }
@@ -2950,7 +2960,7 @@ void DesktopIconView::saveExtendItemInfo()
     //task#74174 扩展屏的元素记录到metInfo,以便以后恢复
     for (int i = 0; i < m_proxy_model->rowCount(); i++) {
         auto index = m_proxy_model->index(i, 0);
-        auto indexRect = QListView::visualRect(index);
+        auto indexRect = visualRectInRightToLeft(index);
         QStringList topLeft;
         topLeft<<QString::number(indexRect.top());
         topLeft<<QString::number(indexRect.left());
@@ -2987,7 +2997,7 @@ bool DesktopIconView::isFull()
 
     if (m_proxy_model->rowCount() > 1) {
         auto index = m_proxy_model->index(0, 0);
-        auto indexRect = QListView::visualRect(index);
+        auto indexRect = visualRectInRightToLeft(index);
         auto left = viewport()->width() - colNum * gridSize().width() - offset().x();
         if (left >= indexRect.width()) {
             colNum++;
@@ -3079,7 +3089,7 @@ QRect DesktopIconView::getDataRect(const QModelIndex &index)
     DesktopIconViewDelegate *delegate = qobject_cast<DesktopIconViewDelegate *>(itemDelegate());
     QStyleOptionViewItem opt = viewOptions();
     delegate->initStyleOption(&opt, index);
-    opt.rect = QListView::visualRect(index);
+    opt.rect = visualRectInRightToLeft(index);
     QWidget *widget = indexWidget(index);
     QFont font = qApp->font();
     auto fm = QFontMetrics(font);
@@ -3179,6 +3189,17 @@ void DesktopIconView::initViewport()
         setAllRestoreInfo();
         m_initialized = true;
     }
+}
+
+QRect DesktopIconView::visualRectInRightToLeft(const QModelIndex &index)
+{
+    QRect rect = QListView::visualRect(index);
+    if (layoutDirection() == Qt::RightToLeft) {
+        int vewportX = viewport()->rect().topRight().x();
+        int x = vewportX - rect.topRight().x() ;
+        rect = QRect(x, rect.y(), rect.width(), rect.height());
+    }
+    return rect;
 }
 
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)
