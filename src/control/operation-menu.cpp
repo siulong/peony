@@ -49,6 +49,7 @@
 #include "file-meta-info.h"
 #include "file-utils.h"
 #include "extensions-manager-widget.h"
+#include "connect-to-server-dialog.h"
 
 OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent)
 {
@@ -236,6 +237,20 @@ setPasswd:
         widget->raise();
         widget->show();
     });
+
+    addAction(tr("Connect to Server"), this, [=](){
+        Peony::ConnectServerDialog dlg;
+        if (dlg.exec()) {
+            if (!dlg.uri().isEmpty()) {
+                m_window->goToUri(dlg.uri(), true);
+            }
+        }
+    });
+
+    m_showNetwork = addAction(tr("Show Network"), this, [=](bool checked){
+        Peony::GlobalSettings::getInstance()->setValue(SHOW_NETWORK, checked);
+    });
+    m_showNetwork->setCheckable(true);
 
     addSeparator();
 
