@@ -216,8 +216,13 @@ retry_create_template:
         if (path) {
             operationStartSnyc();
             QProcess p;
-            p.start(QString("/usr/bin/sync -f '%1'").arg(path));
-            p.waitForFinished(-1);
+            p.start(QString("/usr/bin/sync -f %1").arg(path));
+            p.waitForFinished(-1);            
+            if (p.exitCode() == 0) {
+                qDebug() << "sync completed successfully";
+            } else {
+                qDebug() << "sync failed with exit code:" << p.exitCode();
+            }
             g_free(path);
         }
     }
