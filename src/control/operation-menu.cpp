@@ -247,11 +247,6 @@ setPasswd:
         }
     });
 
-    m_showNetwork = addAction(tr("Show Network"), this, [=](bool checked){
-        Peony::GlobalSettings::getInstance()->setValue(SHOW_NETWORK, checked);
-    });
-    m_showNetwork->setCheckable(true);
-
     addSeparator();
 
     //comment icon to design request
