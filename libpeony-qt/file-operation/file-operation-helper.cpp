@@ -161,12 +161,9 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
                 } else {
                     m_disc_error_msg = tr("Burn failed");
                 }
-                qDebug() << "udf clint error message: " << errinfo;
+                qDebug() << "udf clint start error message: " << errinfo;
                 for (QString filePath : list) {
-                    QFile file(filePath);
-                    if (file.exists()) {
-                        file.remove();
-                    }
+                    deleteDirectoryRecursively(filePath);
                 }               
                 udfwrite->closeUdfClient();
                 free(errinfo);
