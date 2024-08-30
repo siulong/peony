@@ -138,6 +138,7 @@ public:
     int radius() const;
     void setMarginsBasedOnPosition(int position, int margins);
 
+    QRect visualRectInRightToLeft(const QModelIndex &index);
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);
