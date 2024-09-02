@@ -126,16 +126,30 @@ void SearchWidget::initAnimation()
         auto height  = m_searchButton->sizeHint().height();
         auto y = locationBarRect.y();
         if (mode) {
-            m_locationBarAnimation->setStartValue(QRect(this->width() - actionSize - 9, y, actionSize, height));
-            m_locationBarAnimation->setEndValue(QRect(this->width() - width - 9, y, width,height));
-            m_closeSearchAnimation->setStartValue(QRect(9, searchRect.y(), width,actionSize));
-            m_closeSearchAnimation->setEndValue(QRect(9, searchRect.y(), actionSize,actionSize));
+            if (layoutDirection() == Qt::RightToLeft) {
+                m_locationBarAnimation->setStartValue(QRect(9, y, actionSize, height));
+                m_locationBarAnimation->setEndValue(QRect(9, y, width,height));
+                m_closeSearchAnimation->setStartValue(QRect(this->width() - width - 9, searchRect.y(), width,actionSize));
+                m_closeSearchAnimation->setEndValue(QRect(this->width() - actionSize - 9, searchRect.y(), actionSize,actionSize));
+            } else {
+                m_locationBarAnimation->setStartValue(QRect(this->width() - actionSize - 9, y, actionSize, height));
+                m_locationBarAnimation->setEndValue(QRect(this->width() - width - 9, y, width,height));
+                m_closeSearchAnimation->setStartValue(QRect(9, searchRect.y(), width,actionSize));
+                m_closeSearchAnimation->setEndValue(QRect(9, searchRect.y(), actionSize,actionSize));
+            }
             m_searchGroup->start();
         } else {
-            m_closeLocationBarAnimation->setStartValue(QRect(9, y, actionSize,height));
-            m_closeLocationBarAnimation->setEndValue(QRect(9, y,width,height));
-            m_searchAnimation->setStartValue(QRect(actionSize + 9, searchRect.y(), width,actionSize));
-            m_searchAnimation->setEndValue(QRect(this->width() - actionSize - 9, searchRect.y(), actionSize,actionSize));
+            if (layoutDirection() == Qt::RightToLeft) {
+                m_closeLocationBarAnimation->setStartValue(QRect(this->width() - actionSize - 9, y, actionSize,height));
+                m_closeLocationBarAnimation->setEndValue(QRect(actionSize + 9 + 9, y,width,height));
+                m_searchAnimation->setStartValue(QRect(9, searchRect.y(), width,actionSize));
+                m_searchAnimation->setEndValue(QRect(9, searchRect.y(), actionSize,actionSize));
+            } else {
+                m_closeLocationBarAnimation->setStartValue(QRect(9, y, actionSize,height));
+                m_closeLocationBarAnimation->setEndValue(QRect(9, y,width,height));
+                m_searchAnimation->setStartValue(QRect(actionSize + 9, searchRect.y(), width,actionSize));
+                m_searchAnimation->setEndValue(QRect(this->width() - actionSize - 9, searchRect.y(), actionSize,actionSize));
+            }
             m_locationBar->setAnimationMode(true);
             m_closeSearchGroup->start();
         }
