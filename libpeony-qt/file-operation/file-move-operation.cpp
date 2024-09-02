@@ -965,7 +965,7 @@ fallback_retry:
                 node->setErrorResponse(OverWriteOne);
                 setHasError(true);
                 if (G_IO_ERROR_EXISTS == err->code) {
-                    GFileInfo *info = g_file_query_info(destFile.get()->get()
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
                                                         , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
                                                         , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
                     if (info) {
@@ -973,10 +973,10 @@ fallback_retry:
                             g_file_delete(destFile.get()->get(), nullptr, &error);
                             if (error) {
                                 qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
                             }
                         }
-                        g_object_unref(info);
-                        goto fallback_retry;
                     }
                 }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
@@ -1020,7 +1020,7 @@ fallback_retry:
                 setHasError(true);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
                 if (G_IO_ERROR_EXISTS == err->code) {
-                    GFileInfo *info = g_file_query_info(destFile.get()->get()
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
                                                         , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
                                                         , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
                     if (info) {
@@ -1028,10 +1028,10 @@ fallback_retry:
                             g_file_delete(destFile.get()->get(), nullptr, &error);
                             if (error) {
                                 qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
                             }
                         }
-                        g_object_unref(info);
-                        goto fallback_retry;
                     }
                 }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
