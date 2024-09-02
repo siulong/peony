@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0831) nile; urgency=medium
+
+  * fix #I9SGT2
+
+ -- yangyanwei <yangyanwei@kylinos.cn>  Fri, 30 Aug 2024 17:25:23 +0800
+
 peony (4.10.0.5-ok1~0830) nile; urgency=medium
 
   * fix #IALGGQ
