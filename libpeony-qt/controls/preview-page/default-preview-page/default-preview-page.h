@@ -95,6 +95,7 @@ public:
     void wrapData(QLabel *p_label, const QString &text);
     void updateForm(QSize size);
     void addSeparator();
+    void setLabelProperties(QLabel *label);
 
 private Q_SLOTS:
     void updateInfo(FileInfo *info);
