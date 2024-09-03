@@ -47,6 +47,8 @@ public:
     void close();
     PluginInterface* getPluginByFileName(QString &fileName);
     void registerPlugin(PluginInterface* piface, QObject* plugin);
+    bool isFileSafePlugin(const QJsonObject &metaData);
+    bool isCloudPlatform();
 
 Q_SIGNALS:
     void pluginStateChanged(const QString &pluginName, bool enable);

@@ -73,6 +73,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 //        pluginsDir = QDir("/usr/lib/peony-qt-extensions");
     pluginsDir.setFilter(QDir::Files);
     QStringList disabledExtensions = GlobalSettings::getInstance()->getValue(DISABLED_EXTENSIONS).toStringList();
+    bool isCloudPlat = isCloudPlatform();
 
     qDebug()<<pluginsDir.entryList().count();
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
@@ -94,6 +95,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         if (!piface)
             continue;
 
+        bool isFileSafe = isFileSafePlugin(pluginLoader.metaData());
         QFileInfo fileInfo(pluginLoader.fileName());
         if (fileInfo.exists()) {
             if (disabledExtensions.contains(fileInfo.fileName())
@@ -116,7 +118,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
             if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
                 qApp->setProperty("deviceRenamePluginLoaded", true);
             }
-            if (pluginLoader.metaData().value("MetaData").toObject().value("pluginName").toString() == "PeonyFileSafePlugin") {
+            if (isFileSafe) {
                 MenuPluginManager::getInstance()->insertFileSafePlugin(menuPlugin);
             }
             break;
@@ -152,22 +154,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         }
         case PluginInterface::VFSPlugin: {
             auto p = dynamic_cast<VFSPluginIface *>(plugin);
-#ifdef KY_SDK_SYSINFO
-            if (p->name() == "file-safe vfs") {
-                g_autofree char *isCloudPlat = kdk_system_get_hostVirtType();
-                if (isCloudPlat != nullptr) {
-                    qDebug() << "isCloudPlat is " << isCloudPlat;
-                    if (strcmp(isCloudPlat, "none") == 0) {
-                        VFSPluginManager::getInstance()->registerPlugin(p);
-                    }
-                    //delete isCloudPlat;
-                }
-            } else {
+            if (!isFileSafe || !isCloudPlat) {
                 VFSPluginManager::getInstance()->registerPlugin(p);
             }
-#else
-            VFSPluginManager::getInstance()->registerPlugin(p);
-#endif
             break;
         }
         case PluginInterface::EmblemPlugin: {
@@ -183,7 +172,10 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         default:
             break;
         }
-        registerPlugin(piface, plugin);
+
+        if (!isFileSafe || !isCloudPlat) {
+            registerPlugin(piface, plugin);
+        }
     }
 
     connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=](const QString &key){
@@ -451,6 +443,28 @@ void PluginManager::registerPlugin(PluginInterface *piface, QObject *plugin)
     default:
         break;
     }
+}
+
+bool PluginManager::isFileSafePlugin(const QJsonObject &metaData)
+{
+    return metaData.value("MetaData").toObject().value("pluginName").toString() == "PeonyFileSafePlugin";
+}
+
+bool PluginManager::isCloudPlatform()
+{
+    bool isCloudPlat = false;
+#ifdef KY_SDK_SYSINFO
+    g_autofree char *virtType = kdk_system_get_hostVirtType();
+    if (virtType != nullptr) {
+        qDebug() << "virtType is " << virtType;
+        if (strcmp(virtType, "none") != 0) {
+            isCloudPlat = true;
+        }
+    }
+    return isCloudPlat;
+#else
+    return isCloudPlat;
+#endif
 }
 
 void PluginManager::init()
