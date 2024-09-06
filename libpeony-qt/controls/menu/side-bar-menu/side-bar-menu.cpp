@@ -152,7 +152,19 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     QList<QAction *> l;
     /* 卸载 */
     bool isWayland = qApp->property("isWayland").toBool(); // related to #105070
-    bool isReddisk = false;
+    bool isCloud = QFile::exists("/etc/ecloud") || QFile::exists("/usr/local/share/Ecloud");
+    bool hideUnmount = false;
+    bool hideFormat = false;
+    //除samba, ftp, sftp 外的远程目录，云桌面环境下，不显示卸载和格式化选项
+    if (isCloud) {
+        hideFormat = true;
+        if ( ! m_item->uri().startsWith("smb:///") &&
+             ! m_item->uri().startsWith("ftp:///") &&
+             ! m_item->uri().startsWith("sftp:///")) {
+             hideUnmount = true;
+        }
+    }
+
     QString unixDevice = m_item->getDevice();
     QString uri;
     if(m_uri=="file:///") /* 文件系统特殊处理 */
@@ -175,6 +187,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         }
     }
 
+    bool isReddisk = false;
     //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
     if (unixDevice.startsWith("/dev/dm") && QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui"))
         isReddisk = true;
@@ -189,7 +202,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
 //        }
 //    } else {
     /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
-    if (! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
+    /* 云桌面重定向的盘，不显示卸载选项和格式化选项 bug#255725, task#185121 */
+    if (! hideFormat && ! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
         l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
             m_item->unmount();
         });
@@ -221,7 +235,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             && (!unixDevice.isNull())
             && !unixDevice.startsWith("/dev/bus/usb")
             && (m_item->isVolume()) && !m_item->uri().isEmpty()
-            && ! isReddisk;
+            && ! isReddisk && ! hideFormat;
 
     //fix bug133116, not allow format data disk
     if(showFormatDialog && ! isData)
