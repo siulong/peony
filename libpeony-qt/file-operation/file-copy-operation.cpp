@@ -62,8 +62,12 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
     QString srcId = "";
     if (sourceUris.length() > 0)
         srcId = Peony::FileUtils::urlEncode(sourceUris.first());
-    if (! srcId.startsWith("file://") && !srcId.contains("://"))
+    if (! srcId.startsWith("file://") && !srcId.contains("://")) {
+    //关联bug# 261581蓝信复制失败问题，主要问题为蓝信的复制至剪切版MimeData中的url存在异常，导致url编码后是绝对路径
+    //由于蓝信无批量复制功能且不支持拖拽，故当前只处理拷贝第一个文件
         srcId = "file://" + srcId;
+        sourceUris.replace(0, srcId);
+    }
     QUrl firstSrcUrl = srcId;
     if("label" == firstSrcUrl.scheme())
     {
