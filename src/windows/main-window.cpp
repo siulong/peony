@@ -1832,6 +1832,10 @@ void MainWindow::initUI(const QString &uri)
                     m_tab->setUpdatesEnabled(true);
                 }
             });
+            //fix bug#250273，right menu not show complete issue
+            QScreen *screen=qApp->primaryScreen();
+            QRect geometry = screen->availableGeometry();
+            menu.setMaximumHeight(geometry.height());
             menu.exec(pos);
             m_tab->setUpdatesEnabled(true);//end
             m_uris_to_edit = menu.urisToEdit();

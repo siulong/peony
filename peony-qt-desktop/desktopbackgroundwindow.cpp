@@ -128,6 +128,10 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
 //                        setUpdatesEnabled(true);
 //                    }
 //                });
+                //fix bug#250273，right menu not show complete issue
+                QScreen *screen=qApp->primaryScreen();
+                QRect geometry = screen->availableGeometry();
+                m_menu->setMaximumHeight(geometry.height());
                 m_menu->exec(mapToGlobal(pos));
 //                setUpdatesEnabled(true);//end
 //            }
