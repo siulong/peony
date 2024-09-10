@@ -254,7 +254,6 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
 {
     QIcon thumbnail;
     QUrl url = uri;
-    QString path = url.path();
 
     if (!uri.startsWith("file:///")) {
         g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
@@ -265,6 +264,15 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
         }
     }
 
+    /**
+     * @bug #260905: [File Manager] The icon of the Youhong Reader shortcut deleted to the Recycle Bin is displayed abnormally
+     *
+     * If the uri doesn't start with “file:///”, get the path correctly after re-fetching the url
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-09-10
+     */
+    QString path = url.path();
     QString string;
     g_autoptr (GDesktopAppInfo) desktop_app_info = g_desktop_app_info_new_from_filename(path.toUtf8().constData());
     if (desktop_app_info) {
