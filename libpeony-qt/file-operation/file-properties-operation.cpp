@@ -164,16 +164,20 @@ void FilePropertiesOperation::setPropertiesRecursively(FileNode *node, bool *can
                 if (hidden_file_path)
                     g_file_set_contents(hidden_file_path, contents.toUtf8().constData(), -1, nullptr);
 
-                //隐藏自身
-                //setPropertiesOne(node);
+                //顶级目录需要隐藏自身
+                if (!node->parent()) {
+                    setPropertiesOne(node);
+                }
             } else {
                 //删除该目录下的.hidden文件
                 g_autoptr (GFile) folder = g_file_new_for_uri (node->uri().toUtf8().constData());
                 g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(folder, ".hidden");
                 g_file_delete (hidden_file, nullptr, nullptr);
 
-                //取消自身隐藏
-                //setPropertiesOne(node);
+                //顶级目录取消自身隐藏
+                if (!node->parent()) {
+                    setPropertiesOne(node);
+                }
             }
         }
     } else {
