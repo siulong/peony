@@ -325,6 +325,10 @@ void BasicPropertiesPage::initFloorTwo()
         m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
         m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
 
+        if (m_info->isDir()) {
+            m_readOnly->setText(tr("Readonly (just applied by subfiles)"));
+        }
+
         QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
         checkboxLayout->addSpacing(1);
         checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
