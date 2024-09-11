@@ -61,7 +61,7 @@ void FileDeleteOperation::deleteRecursively(FileNode *node)
         return;
     OperatorThreadPause();
     auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(node->uri()));
-    GFile *file = g_file_new_for_uri(FileUtils::urlEncode(node->uri()).toUtf8().constData());
+    GFile *file = g_file_new_for_uri(node->uri().toUtf8().constData());
     if (node->isFolder()) {
         for (auto child : *(node->children())) {
             deleteRecursively(child);
@@ -165,7 +165,7 @@ void FileDeleteOperation::run()
 
     QList<FileNode*> nodes;
     for (auto uri : m_src_uris) {
-        FileNode *node = new FileNode(FileUtils::urlEncode(uri), nullptr, m_reporter);
+        FileNode *node = new FileNode(uri, nullptr, m_reporter);
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
         nodes<<node;

@@ -142,7 +142,7 @@ void FileTrashOperation::run()
 
 retry:
             GError *err = nullptr;
-            auto srcFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(src).toUtf8().constData()));
+            auto srcFile = wrapGFile(g_file_new_for_uri(src.toUtf8().constData()));
 
             g_file_trash(srcFile.get()->get(), getCancellable().get()->get(), &err);
             if (err) {

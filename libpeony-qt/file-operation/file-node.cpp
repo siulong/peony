@@ -36,11 +36,8 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
     m_parent = parent;
     m_reporter = reporter;
     GFile *file = g_file_new_for_uri(uri.toUtf8().constData());
-    basename = g_file_get_basename(file);
-    m_basename = basename;
-    m_dest_basename = basename;
     //此处再次修正m_basename目的为解决编码问题，但截断方式后续仍需要优化
-    m_basename =  FileUtils::urlDecode(m_uri).split("/").last();
+    m_basename =  m_uri.split("/").last();
     m_dest_basename = m_basename;
     g_free(basename);
 

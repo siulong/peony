@@ -51,7 +51,7 @@ void FileUntrashOperation::cacheOriginalUri()
         if (isCancelled())
             break;
 
-        auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
+        auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
         auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
                                   G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
@@ -393,8 +393,8 @@ void FileUntrashOperation::run()
             }
         }
 
-        auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
-        auto destFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(originUri).toUtf8().constData()));
+        auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
+        auto destFile = wrapGFile(g_file_new_for_uri(originUri.toUtf8().constData()));
 
 retry:
         if (isCancelled())
