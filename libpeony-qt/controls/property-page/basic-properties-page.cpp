@@ -325,7 +325,7 @@ void BasicPropertiesPage::initFloorTwo()
         m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
         m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
 
-        if (m_info->isDir()) {
+        if (m_info->isDir() && m_uris.count() == 1) {
             m_readOnly->setText(tr("Readonly (just applied by subfiles)"));
         }
 
