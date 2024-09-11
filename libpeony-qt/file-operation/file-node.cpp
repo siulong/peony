@@ -41,7 +41,7 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
 //    m_basename = basename;
 //    m_dest_basename = basename;
     //此处再次修正m_basename目的为解决编码问题，但截断方式后续仍需要优化
-    m_basename =  FileUtils::urlDecode(m_uri).split("/").last();
+    m_basename =  m_uri.split("/").last();
     //fix bug 247683复制百分号+数字或字母的文件/文件夹，粘贴成功后名称显示异常
     if (m_basename.contains("%")) {
         QUrl qurl = QUrl(m_uri);
