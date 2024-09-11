@@ -1,0 +1,87 @@
+From: lizhuoan <lizhuoan>
+Date: Wed, 11 Sep 2024 11:32:02 +0800
+Subject: =?utf-8?b?SUFCNjNZ77yM5aSE55CG5peg5pWI57yW56CB5Yig6Zmk6Zeu6aKY?=
+
+---
+ libpeony-qt/file-operation/file-delete-operation.cpp  | 4 ++--
+ libpeony-qt/file-operation/file-node.cpp              | 5 +----
+ libpeony-qt/file-operation/file-trash-operation.cpp   | 2 +-
+ libpeony-qt/file-operation/file-untrash-operation.cpp | 6 +++---
+ 4 files changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/libpeony-qt/file-operation/file-delete-operation.cpp b/libpeony-qt/file-operation/file-delete-operation.cpp
+index edcc8f4..bcffee0 100644
+--- a/libpeony-qt/file-operation/file-delete-operation.cpp
++++ b/libpeony-qt/file-operation/file-delete-operation.cpp
+@@ -61,7 +61,7 @@ void FileDeleteOperation::deleteRecursively(FileNode *node)
+         return;
+     OperatorThreadPause();
+     auto fileIconName = FileUtilsPrivate::getFileIconName(FileUtils::urlEncode(node->uri()));
+-    GFile *file = g_file_new_for_uri(FileUtils::urlEncode(node->uri()).toUtf8().constData());
++    GFile *file = g_file_new_for_uri(node->uri().toUtf8().constData());
+     if (node->isFolder()) {
+         for (auto child : *(node->children())) {
+             deleteRecursively(child);
+@@ -165,7 +165,7 @@ void FileDeleteOperation::run()
+ 
+     QList<FileNode*> nodes;
+     for (auto uri : m_src_uris) {
+-        FileNode *node = new FileNode(FileUtils::urlEncode(uri), nullptr, m_reporter);
++        FileNode *node = new FileNode(uri, nullptr, m_reporter);
+         node->findChildrenRecursively();
+         node->computeTotalSize(total_size);
+         nodes<<node;
+diff --git a/libpeony-qt/file-operation/file-node.cpp b/libpeony-qt/file-operation/file-node.cpp
+index 3efebbb..2fa64dd 100644
+--- a/libpeony-qt/file-operation/file-node.cpp
++++ b/libpeony-qt/file-operation/file-node.cpp
+@@ -36,11 +36,8 @@ FileNode::FileNode(QString uri, FileNode *parent, FileNodeReporter *reporter)
+     m_parent = parent;
+     m_reporter = reporter;
+     GFile *file = g_file_new_for_uri(uri.toUtf8().constData());
+-    basename = g_file_get_basename(file);
+-    m_basename = basename;
+-    m_dest_basename = basename;
+     //此处再次修正m_basename目的为解决编码问题，但截断方式后续仍需要优化
+-    m_basename =  FileUtils::urlDecode(m_uri).split("/").last();
++    m_basename =  m_uri.split("/").last();
+     m_dest_basename = m_basename;
+     g_free(basename);
+ 
+diff --git a/libpeony-qt/file-operation/file-trash-operation.cpp b/libpeony-qt/file-operation/file-trash-operation.cpp
+index 8c44846..470f26d 100644
+--- a/libpeony-qt/file-operation/file-trash-operation.cpp
++++ b/libpeony-qt/file-operation/file-trash-operation.cpp
+@@ -142,7 +142,7 @@ void FileTrashOperation::run()
+ 
+ retry:
+             GError *err = nullptr;
+-            auto srcFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(src).toUtf8().constData()));
++            auto srcFile = wrapGFile(g_file_new_for_uri(src.toUtf8().constData()));
+ 
+             g_file_trash(srcFile.get()->get(), getCancellable().get()->get(), &err);
+             if (err) {
+diff --git a/libpeony-qt/file-operation/file-untrash-operation.cpp b/libpeony-qt/file-operation/file-untrash-operation.cpp
+index 6f57099..a156712 100644
+--- a/libpeony-qt/file-operation/file-untrash-operation.cpp
++++ b/libpeony-qt/file-operation/file-untrash-operation.cpp
+@@ -51,7 +51,7 @@ void FileUntrashOperation::cacheOriginalUri()
+         if (isCancelled())
+             break;
+ 
+-        auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
++        auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
+         auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
+                                   G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+@@ -393,8 +393,8 @@ void FileUntrashOperation::run()
+             }
+         }
+ 
+-        auto file = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(uri).toUtf8().constData()));
+-        auto destFile = wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(originUri).toUtf8().constData()));
++        auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
++        auto destFile = wrapGFile(g_file_new_for_uri(originUri.toUtf8().constData()));
+ 
+ retry:
+         if (isCancelled())
