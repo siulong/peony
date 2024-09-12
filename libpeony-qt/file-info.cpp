@@ -385,6 +385,7 @@ FileInfo &FileInfo::operator=(const FileInfo &other)
         this->m_finalDisplayName = other.m_finalDisplayName;
         this->m_create_time = other.m_create_time;
         this->m_create_date = other.m_create_date;
+        this->m_is_hidden = other.m_is_hidden;
         this->setProperty("orig-path", other.property("orig-path"));
         this->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, other.property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
     }

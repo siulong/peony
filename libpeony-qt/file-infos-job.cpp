@@ -211,7 +211,11 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
     info = queryFileType(info, new_info);
 
     /* 获取info的G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN字段的值 */
-    info->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
+    info->m_is_hidden = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN);
+    if (info->m_is_hidden) {
+        qDebug() << info->uri() << "is hidden";
+    }
+    info->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, info->m_is_hidden);
 
     info->m_is_symbol_link = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK);
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ)) {
