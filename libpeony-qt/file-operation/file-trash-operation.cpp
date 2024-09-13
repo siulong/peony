@@ -23,7 +23,7 @@
 #include "file-trash-operation.h"
 #include "file-operation-manager.h"
 #include "file-enumerator.h"
-
+#include "global-settings.h"
 #include <QProcess>
 #include <file-info-job.h>
 #include <file-info.h>
@@ -348,6 +348,28 @@ retry:
                     m_info.get()->m_dest_uris.clear();
                     m_info.get()->m_dest_uris<<destUris;
                 }
+            }
+        }
+    }
+
+    bool trashMobileFile = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+    if (trashMobileFile) {
+        bool isMobileDevice = FileUtils::isMobileDeviceFile(m_src_uris.first());
+        if (isMobileDevice) {
+            auto uri = FileUtils::getParentUri(m_src_uris.first());
+            if (! uri.isEmpty()) {
+                g_autoptr (GFile) ddir = g_file_new_for_uri (uri.toUtf8().constData());
+                char * path = g_file_get_path(ddir);
+                operationStartSnyc();
+                QProcess p;
+                p.start(QString("/usr/bin/sync -f %1").arg(path));
+                p.waitForFinished(-1);
+                if (p.exitCode() == 0) {
+                    qDebug() << "sync completed successfully";
+                } else {
+                    qDebug() << "sync failed with exit code:" << p.exitCode();
+                }
+                g_free(path);
             }
         }
     }
