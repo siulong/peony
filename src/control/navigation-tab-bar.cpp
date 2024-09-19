@@ -49,6 +49,10 @@
 
 #include <QStyleOption>
 
+#include <QtX11Extras/QX11Info>
+
+#include <kstartupinfo.h>
+
 #include "FMWindowIface.h"
 #include "main-window.h"
 #include "file-info.h"
@@ -315,6 +319,19 @@ void NavigationTabBar::mouseMoveEvent(QMouseEvent *e)
         if (auto tab = qobject_cast<NavigationTabBar *>(d->target())) {
             //do nothing for target tab bar helped us handling yet.
         } else {
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+            quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+            KStartupInfoId startInfoId;
+            startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+            startInfoId.setupStartupEnv();
+            KStartupInfoData startData;
+            startData.setHostname();
+            startData.addPid(QCoreApplication::applicationPid());
+            QRect rect(-1, -1, -1, -1);
+            startData.setIconGeometry(rect);
+            startData.setLaunchedBy(QCoreApplication::applicationPid());
+            KStartupInfo::sendStartup(startInfoId, startData);
+#endif
             auto window = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
             auto newWindow = dynamic_cast<QWidget *>(window->create(this->tabData(currentIndex()).toString()));
             newWindow->show();
