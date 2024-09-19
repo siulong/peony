@@ -534,6 +534,9 @@ void BasicPropertiesPage::loadOptionalData()
         BatchStatusThread *batchStatusThread = new BatchStatusThread(m_uris);
         batchStatusThread->start();
         connect(batchStatusThread, &BatchStatusThread::updateState, this, [=](Qt::CheckState readOnlyState, Qt::CheckState hiddenState){
+            if(fileType == BP_Folder){/* 单选一个文件夹的场景，参照windows 只读复选框显示为部分勾选状态；link to bug#265731 一级目录设置只读后再次打开属性界面，只读为未勾选状态  */
+                readOnlyState = Qt::CheckState::PartiallyChecked;
+            }//end
             m_readOnly->setCheckState(readOnlyState);
             m_hidden->setCheckState(hiddenState);
             m_readOnlyState = readOnlyState;
