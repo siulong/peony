@@ -277,6 +277,12 @@ AdvancedDesktopItemModel::AdvancedDesktopItemModel(QObject *parent)
                     ThumbnailManager::getInstance()->createThumbnail(uri, m_thumbnail_watcher, true);
                     this->dataChanged(indexFromUri(uri), indexFromUri(uri));
                     Q_EMIT this->requestClearIndexWidget(QStringList()<<uri);
+
+                    // task #355895
+                    // 触发更新异常软链接，如果一直异常，则会进入轮询知道查询到正常信息
+                    if (info->isSymbolLink() && !info->canRead()) {
+                        this->pendingQuery(uri);
+                    }
                 });
                 job->queryAsync();
                 this->dataChanged(indexFromUri(uri), indexFromUri(uri));
@@ -532,6 +538,12 @@ void AdvancedDesktopItemModel::onEnumerateFinished(bool successed)
             if (asyncJob->property("isCancelled").toBool()) {
                 // quit loop to avoid invalid data inserted;
                 return;
+            }
+
+            // task #355895
+            // 初始化时无法获取软链接源文件信息，进入轮询
+            if (info->isSymbolLink() && !info->canRead()) {
+                this->pendingQuery(info->uri());
             }
 
             if (m_querying_files.isEmpty()) {
@@ -969,6 +981,26 @@ void AdvancedDesktopItemModel::fileCreated(const QString &uri)
         job->setAutoDelete();
         job->querySync();
     }
+}
+
+void AdvancedDesktopItemModel::pendingQuery(const QString &uri)
+{
+    // task: #355895
+    // note: 指向外部分区的软链接在桌面初始化时可能查询不到链接的源文件，
+    // 这可能是因为外部分区挂载比桌面拉起慢导致的，这里增加一个pending机制
+    if (!m_pending_query_timer) {
+        m_pending_query_timer = new QTimer(this);
+        m_pending_query_timer->setInterval(1000);
+        connect(m_pending_query_timer, &QTimer::timeout, this, [=]{
+            for (auto uri : m_pending_query_uris) {
+                // 使用现有文件改变流程触发更新
+                m_desktop_watcher->fileChanged(uri);
+            }
+            m_pending_query_uris.clear();
+        });
+    }
+    m_pending_query_uris.insert(uri);
+    m_pending_query_timer->start();
 }
 
 void AdvancedDesktopItemModel::saveExtendItemInfo(int id)

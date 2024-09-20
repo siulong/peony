@@ -29,6 +29,7 @@
 #include <QPoint>
 #include <memory>
 #include <QStandardItem>
+#include <QSet>
 
 #include "user-dir-manager.h"
 //#include "desktop-icon-view.h"
@@ -160,6 +161,7 @@ protected Q_SLOTS:
     void onEnumerateFinished(bool successed);
     //void clearFloatItems();
     void fileCreated(const QString &uri);
+    void pendingQuery(const QString &uri);
 
 private:
     FileEnumerator *m_enumerator;
@@ -186,6 +188,8 @@ private:
 //    bool m_accept_drop_action = true;
     bool m_showFileExtension = true;
 //    AdvancedDesktopIconView *view = nullptr;
+    QSet<QString> m_pending_query_uris;
+    QTimer *m_pending_query_timer = nullptr;
 
 private:
     void refreshInternal();
