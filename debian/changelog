@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~0920) nile; urgency=medium
+
+  * fix #IAB63Y
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 20 Sep 2024 14:38:01 +0800
+
 peony (4.10.0.5-ok1~0831) nile; urgency=medium
 
   * fix #I9SGT2
