@@ -1743,6 +1743,8 @@ void FileMoveOperation::run()
         }
     }
 
+    bool writeable = true;
+
     //fix bug 232253,手机管控下，拖拽至对应目录直接报错
 //    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
 //        int usbSafeMode = getUsbSafeMode();
@@ -1792,7 +1794,7 @@ void FileMoveOperation::run()
     }
 #endif
 
-    if (!queryDirIsReadOnly(m_dest_dir_uri, true, m_is_udf_burn_work)) {
+    if (queryDirIsReadOnlyFS(m_dest_dir_uri, false, m_is_udf_burn_work, &writeable)) {
         FileOperationError except;
         except.dlgType = ED_WARNING;
         except.errorType = ET_GIO;
@@ -1803,6 +1805,21 @@ void FileMoveOperation::run()
         QUrl srcUrl(except.srcUri);
         QUrl destUrl(except.destDirUri);
         except.errorStr = tr("Can not move %1 to %2: Read-only file system").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    } else if (!writeable) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpMove;
+        except.title = tr("File move error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not move %1 to %2: Permission denied").arg(srcUrl.fileName()).arg(destUrl.fileName());
         errored(except);
         setHasError(true);
         Q_EMIT operationFinished();

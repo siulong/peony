@@ -51,7 +51,7 @@ void FileTrashOperation::run()
     } else {
         auto srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
         auto parentUri = FileUtils::getParentUri(srcUri);
-        if (!queryDirIsReadOnly(parentUri)) {
+        if (queryDirIsReadOnlyFS(parentUri)) {
             FileOperationError except;
             except.dlgType = ED_WARNING;
             except.errorType = ET_GIO;

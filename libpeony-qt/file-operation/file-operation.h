@@ -373,7 +373,7 @@ protected:
     /* 发送给dbus服务关于：复制dsps文件时将复制成功文件的原路径和目的路径通过发信号通知WPS,Link to story#11452 */
     void sendSrcAndDestUrisOfCopyDspsFiles();
 
-    static bool queryDirIsReadOnly(const QString &dirUri, bool defaultResult = true, bool isUdfBurnWork = false);
+    static bool queryDirIsReadOnlyFS(const QString &dirUri, bool defaultResult = false, bool isUdfBurnWork = false, bool *writeable = nullptr);
 
 protected:
     QAtomicInteger<bool>        m_is_pause = false;

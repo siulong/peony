@@ -72,7 +72,7 @@ void CreateTemplateOperation::run()
     Q_EMIT operationStarted();
     Q_EMIT operationPrepared();
 
-    if (!queryDirIsReadOnly(m_dest_dir_uri)) {
+    if (queryDirIsReadOnlyFS(m_dest_dir_uri)) {
         FileOperationError except;
         except.dlgType = ED_WARNING;
         except.errorType = ET_GIO;

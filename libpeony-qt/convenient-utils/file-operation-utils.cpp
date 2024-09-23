@@ -59,6 +59,7 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
     FileOperation *op = nullptr;
     bool canNotTrash = false;
     bool isBigFile = false;
+    bool skipDialog = false;
 
     QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
@@ -86,6 +87,21 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
         }
         if (uri.contains("kydrive") && uri.startsWith("file:///media")) {
             canNotTrash = true;
+        }
+    }
+
+    // 只读文件系统场景需要跳过确认弹框，直接走文件操作异常报错弹框流程
+    // fixme: 这里的判断条件不充分，只是必要条件
+    if (uris.count() > 0) {
+        auto uri = uris.first();
+        auto parentUri = FileUtils::getParentUri(uri);
+        auto info = FileInfo::fromUri(parentUri);
+        if (info->isEmptyInfo()) {
+            FileInfoJob j(info);
+            j.querySync();
+        }
+        if (!info->canWrite()) {
+            skipDialog = true;
         }
     }
 
@@ -141,7 +157,7 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
 //        }
 //    }
 
-    if (canNotTrash) {
+    if (canNotTrash && !skipDialog) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
         //task #155670,155671 improve delete file permanently message
         QString message;

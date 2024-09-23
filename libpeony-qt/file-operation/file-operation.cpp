@@ -232,16 +232,36 @@ void FileOperation::sendSrcAndDestUrisOfCopyDspsFiles()
         qDebug()<<"fail to send source and dest uris of copy!";
 }
 
-bool FileOperation::queryDirIsReadOnly(const QString &dirUri, bool defaultResult, bool isUdfBurnWork)
+bool FileOperation::queryDirIsReadOnlyFS(const QString &dirUri, bool defaultResult, bool isUdfBurnWork, bool *writeable)
 {
+    // udf 刻录操作默认可写
     if (isUdfBurnWork)
-        return true;
+        return false;
 
     g_autoptr (GFile) dest_dir_file = g_file_new_for_uri(dirUri.toUtf8().constData());
     g_autoptr (GFileInfo) dest_dir_info = g_file_query_info(dest_dir_file, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
     if (g_file_info_has_attribute(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
-        return g_file_info_get_attribute_boolean(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+        if (writeable) {
+            *writeable = true;
+        }
+        if (!g_file_info_get_attribute_boolean(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
+            if (writeable) {
+                *writeable = false;
+            }
+            // 如果目录不可写，创建临时文件进行错误码匹配
+            g_autoptr (GFile) temp_file = g_file_resolve_relative_path(dest_dir_file, "peony-template-file");
+            GError *err = nullptr;
+            if (!g_file_create(temp_file, G_FILE_CREATE_NONE, nullptr, &err)) {
+                bool is_erofs = g_error_matches(err, G_IO_ERROR, G_IO_ERROR_READ_ONLY);
+                g_error_free (err);
+                return is_erofs;
+            }
+        }
+        return defaultResult;
     } else {
+        if (writeable) {
+            *writeable = true;
+        }
         return defaultResult;
     }
 }
