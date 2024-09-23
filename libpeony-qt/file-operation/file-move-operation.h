@@ -149,6 +149,11 @@ protected:
      */
     ExceptionResponse prehandle(GError *err);
 
+    /*!
+     * \brief getUsbSafeMode
+     * \return
+     * \deprecated
+     */
     int getUsbSafeMode();
 
 private:

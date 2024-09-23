@@ -1744,23 +1744,23 @@ void FileMoveOperation::run()
     }
 
     //fix bug 232253,手机管控下，拖拽至对应目录直接报错
-    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
-        int usbSafeMode = getUsbSafeMode();
-        if (usbSafeMode != 0) {
-            FileOperationError except;
-            except.dlgType = ED_WARNING;
-            except.errorType = ET_GIO;
-            except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
-            except.destDirUri = m_dest_dir_uri;
-            except.op = FileOpMove;
-            except.title = tr("File move error");
-            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
-            errored(except);
-            setHasError(true);
-            Q_EMIT operationFinished();
-            return;
-        }
-    }
+//    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
+//        int usbSafeMode = getUsbSafeMode();
+//        if (usbSafeMode != 0) {
+//            FileOperationError except;
+//            except.dlgType = ED_WARNING;
+//            except.errorType = ET_GIO;
+//            except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+//            except.destDirUri = m_dest_dir_uri;
+//            except.op = FileOpMove;
+//            except.title = tr("File move error");
+//            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
+//            errored(except);
+//            setHasError(true);
+//            Q_EMIT operationFinished();
+//            return;
+//        }
+//    }
 
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
@@ -1791,6 +1791,23 @@ void FileMoveOperation::run()
         }
     }
 #endif
+
+    if (!queryDirIsReadOnly(m_dest_dir_uri, true, m_is_udf_burn_work)) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpMove;
+        except.title = tr("File move error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not move %1 to %2: Read-only file system").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    }
 
 start:
     if (!isValid()) {
@@ -2058,6 +2075,7 @@ bool FileMoveOperation::saveAsOtherPath()
 
 int FileMoveOperation::getUsbSafeMode()
 {
+    return 0;
     QFile file("/sys/devices/platform/hw_trans_bios_variable/usb_safe_mode");
     if (!file.exists()) {
         qDebug() << "The file does not exist";

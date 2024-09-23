@@ -79,6 +79,11 @@ protected:
 
     bool saveAsOtherPath();
 
+    /*!
+     * \brief getUsbSafeMode
+     * \return
+     * \deprecated
+     */
     int getUsbSafeMode();
 private:
     /*!

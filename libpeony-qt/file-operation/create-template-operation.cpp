@@ -71,6 +71,23 @@ void CreateTemplateOperation::run()
 {
     Q_EMIT operationStarted();
     Q_EMIT operationPrepared();
+
+    if (!queryDirIsReadOnly(m_dest_dir_uri)) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uri;
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpCreateTemp;
+        except.title = tr("File create error");
+        QUrl srcUrl(except.srcUri);
+        except.errorStr = tr("Can not create %1: Read-only file system").arg(srcUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    }
+
     switch (m_type) {
     case EmptyFile: {
         m_target_uri = m_dest_dir_uri + "/" + tr("NewFile") + ".txt";

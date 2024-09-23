@@ -48,6 +48,24 @@ void FileTrashOperation::run()
 
     if (m_is_search) {
         m_info.get()->m_is_search = true;
+    } else {
+        auto srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        auto parentUri = FileUtils::getParentUri(srcUri);
+        if (!queryDirIsReadOnly(parentUri)) {
+            FileOperationError except;
+            except.dlgType = ED_WARNING;
+            except.errorType = ET_GIO;
+            except.srcUri = srcUri;
+            except.destDirUri = nullptr;
+            except.op = FileOpTrash;
+            except.title = tr("File trash error");
+            QUrl srcUrl(except.srcUri);
+            except.errorStr = tr("Can not trash %1: Read-only file system").arg(srcUrl.fileName());
+            errored(except);
+            setHasError(true);
+            Q_EMIT operationFinished();
+            return;
+        }
     }
 
     // #Bug #218579 【模块单元测试】【需求25097】【文件管理器】删除两个同名文件，第一次撤销时还原的是第一次删除的文件，再次点击撤销时，文管闪退

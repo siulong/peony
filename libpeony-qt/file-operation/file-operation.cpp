@@ -232,6 +232,20 @@ void FileOperation::sendSrcAndDestUrisOfCopyDspsFiles()
         qDebug()<<"fail to send source and dest uris of copy!";
 }
 
+bool FileOperation::queryDirIsReadOnly(const QString &dirUri, bool defaultResult, bool isUdfBurnWork)
+{
+    if (isUdfBurnWork)
+        return true;
+
+    g_autoptr (GFile) dest_dir_file = g_file_new_for_uri(dirUri.toUtf8().constData());
+    g_autoptr (GFileInfo) dest_dir_info = g_file_query_info(dest_dir_file, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    if (g_file_info_has_attribute(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
+        return g_file_info_get_attribute_boolean(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+    } else {
+        return defaultResult;
+    }
+}
+
 bool FileOperation::URISorter::operator()(const QString &uri1, const QString &uri2) const {
     bool isFolder1 = FileUtils::isFileDirectory(uri1);
     bool isFolder2 = FileUtils::isFileDirectory(uri2);
