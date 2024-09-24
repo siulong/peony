@@ -241,7 +241,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         //paint access emblems
         //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
-        if (info->uri().startsWith("file:")) {
+        if (info->uri().startsWith("file:") || info->uri().startsWith("mtp:") || info->uri().startsWith("gphoto2:")) {
             /**
              * @bug #262561: [File Manager] PDF desktop shortcut files with deleted source files
              *  do not display the same icon on the desktop folder as on the desktop.
