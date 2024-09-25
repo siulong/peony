@@ -1804,7 +1804,7 @@ void FileMoveOperation::run()
         except.title = tr("File move error");
         QUrl srcUrl(except.srcUri);
         QUrl destUrl(except.destDirUri);
-        except.errorStr = tr("Can not move %1 to %2: Read-only file system").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        except.errorStr = tr("Can not move %1 to %2: Read-only mode, can not write-in").arg(srcUrl.fileName()).arg(destUrl.fileName());
         errored(except);
         setHasError(true);
         Q_EMIT operationFinished();

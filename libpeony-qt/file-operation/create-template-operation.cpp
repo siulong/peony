@@ -81,7 +81,7 @@ void CreateTemplateOperation::run()
         except.op = FileOpCreateTemp;
         except.title = tr("File create error");
         QUrl srcUrl(except.srcUri);
-        except.errorStr = tr("Can not create %1: Read-only file system").arg(srcUrl.fileName());
+        except.errorStr = tr("Can not create %1: Read-only mode, can not write-in").arg(srcUrl.fileName());
         errored(except);
         setHasError(true);
         Q_EMIT operationFinished();
