@@ -119,6 +119,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_model->endRemoveRows();
                         FileLabelModel::getGlobalModel()->removeFileLabel(uri);
                         delete child;
+                        child = nullptr;
                         break;
                     }
                 }
@@ -172,10 +173,12 @@ FileItem::~FileItem()
 
     for (auto child : *m_children) {
         delete child;
+        child = nullptr;
     }
     m_children->clear();
 
     delete m_children;
+    m_children = nullptr;
     m_uri_item_hash.clear();
 
     if (m_batchProcessThread->isRunning()) {
@@ -816,6 +819,7 @@ void FileItem::batchRemoveItems()
             auto old = m_children;
             m_children = children;
             delete old;
+            old = nullptr;
             m_uri_item_hash = uri_item_hash;
             m_model->endResetModel();
             m_model->updated();/* 更新状态栏 */
@@ -1073,6 +1077,7 @@ void FileItem::clearChildren()
     m_model->removeRows(0, m_model->rowCount(parent), parent);
     for (auto child : *m_children) {
         delete child;
+        child = nullptr;
     }
     m_children->clear();
     m_uri_item_hash.clear();
@@ -1208,6 +1213,7 @@ void BatchProcessItems::slot_removeItems()
     Q_EMIT removeItemsFinished(m_children, m_uri_item_hash, needHandleLabelUris);
     for (auto child : itemsToBeDeleted) {
         delete child;
+        child = nullptr;
     }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
     qDebug()<<"execute deletion finished, cost"<<time1 - time0;

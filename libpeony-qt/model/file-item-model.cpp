@@ -93,14 +93,17 @@ FileItemModel::~FileItemModel()
 {
     qDebug()<<"~FileItemModel";
     disconnect();
-    if (m_root_item)
+    if (m_root_item){
         delete m_root_item;
+        m_root_item = nullptr;
+    }
 
     if(m_fileManagerThread){
         m_fileManagerThread->quit();
         m_fileManagerThread->wait();
         // 无法使用deleteLater()删除，因为此线程已经被移入自身，而且已经退出无法处理事件
         delete m_fileManagerThread;
+        m_fileManagerThread = nullptr;
     }
 }
 
