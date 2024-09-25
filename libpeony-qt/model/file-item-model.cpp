@@ -127,13 +127,16 @@ void FileItemModel::setRootUri(const QString &uri)
 void FileItemModel::setRootItem(FileItem *item)
 {
     beginResetModel();
-    /* 解决光盘弹出切换到计算机视图后，偶现fileitem没有析构的问题；link to bug#208641 向UDF格式R盘拖拽添加文件，文管内文件图标显示错乱。modified on 2024-8-13 */
-    delete m_root_item;
-    m_root_item = nullptr;
-    //m_root_item->deleteLater();
-    //end hotfix bug#208641
 
+    /* 解决使用'm_root_item->deleteLater();'时光盘弹出切换到计算机视图后，偶现旧数据没有析构的问题；link bug#208641 向UDF格式R盘拖拽添加文件，文管内文件图标显示错乱。修改于2024-8-13
+     * 解决使用'delete m_root_item;'时双击侧边栏远程服务，第二次m_root_item未被赋值新item，未挂载路径回退时导致二次析构；link bug#267007 双击共享文件夹链接地址文件管理闪退。修改于2024-9-25 */
+    FileItem *oldData = m_root_item;
     m_root_item = item;
+    if(oldData){
+        delete oldData;
+        oldData = nullptr;
+    }
+    //end hotfix bug#208641、267007
 
     m_root_item->connectFunc();
     if(m_infosJob){
