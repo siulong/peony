@@ -89,9 +89,10 @@ int main(int argc, char *argv[])
     //qputenv("QT_QPA_PLATFORM", "wayland");
 
     //bug#249961, limit set to wayland product
-    bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
-    if (isWayland)
-        qunsetenv("SESSION_MANAGER");
+    //bug#267883, comment set code to avoid new bug
+//    bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
+//    if (isWayland)
+//        qunsetenv("SESSION_MANAGER");
 
     PeonyDesktopApplication::peony_desktop_start_time = QDateTime::currentMSecsSinceEpoch();
 
