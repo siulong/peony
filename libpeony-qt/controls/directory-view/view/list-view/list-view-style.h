@@ -44,7 +44,6 @@ public:
 //                     const QWidget *widget) const override;
 //    //绘制列表视图文本
 //    void viewItemDrawText(QPainter *p, const QStyleOptionViewItem *option, const QRect &rect) const;
-
 private:
     explicit ListViewStyle(QObject *parent = nullptr);
 };

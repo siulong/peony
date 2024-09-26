@@ -127,6 +127,26 @@ public:
     static bool isSearchFilesParentWriteable(const QStringList &selectUris, bool isSearch);/* 选中的搜索出来的文件（夹）,其父目录是否有写权限 */
     static bool isMountMatchFstab(GVolume* volume, const QString &mountPoint);
 
+    /**
+      * @brief Determines if the given file content type is a compressed file.
+      *
+      * This method checks the MIME type of the file against a predefined list
+      * of compressed file types.
+      *
+      * @param contentType The contentType to be checked.
+      * @return true if the contentType is compressed, false otherwise.
+      */
+    NO_BLOCKING static bool isCompressedFile(const QString &contentType);
+    /**
+     * @brief Gets the list of compressed file MIME types.
+     *
+     * This method returns a static QStringList containing MIME types
+     * associated with various compressed file formats.
+     *
+     * @return A const reference to the QStringList of compressed file MIME types.
+     */
+    NO_BLOCKING static const QStringList& getCompressedTypes();
+
 private:
     FileUtils();
 };

@@ -1184,6 +1184,40 @@ bool FileUtils::isRemoteServerUri(const QString &uri)
     return false;
 }
 
+bool FileUtils::isCompressedFile(const QString &contentType)
+{
+    // Check if the content type is in the list of compressed file types
+    return getCompressedTypes().contains(contentType);
+}
+
+const QStringList &FileUtils::getCompressedTypes()
+{
+    /**
+     * @brief Static list of MIME types for compressed files.
+     *
+     * This list is initialized only once and contains MIME types
+     * for various compressed file formats.
+     */
+    static const QStringList compressedTypes = {
+        "application/zip", "application/x-rar-compressed", "application/x-gzip",
+        "application/gzip", "application/x-bzip2", "application/x-7z-compressed",
+        "application/x-xz", "application/x-lzma", "application/x-lzip",
+        "application/x-lzop", "application/x-snappy-framed", "application/zstd",
+        "application/x-compress", "application/x-compressed", "application/x-zip-compressed",
+        "application/x-gtar", "application/x-tar", "application/x-bzip",
+        "application/x-lzh", "application/x-lha", "application/vnd.rar",
+        "application/x-ace-compressed", "application/x-astrotite-afa", "application/x-alz-compressed",
+        "application/x-arj", "application/x-b1", "application/vnd.ms-cab-compressed",
+        "application/x-cfs-compressed", "application/x-dar", "application/x-dgc-compressed",
+        "application/x-apple-diskimage", "application/x-gca-compressed", "application/java-archive",
+        "application/x-lzx", "application/x-lzh-compressed", "application/x-stuffit",
+        "application/x-stuffitx", "application/x-par2", "application/x-rar",
+        "application/x-sit", "application/x-squashfs-image", "application/x-xar",
+        "application/x-zoo"
+    };
+    return compressedTypes;
+}
+
 bool FileUtils::isEmptyDisc(const QString &unixDevice)
 {
     if (unixDevice.isEmpty()) //没有设备时不做后续处理
