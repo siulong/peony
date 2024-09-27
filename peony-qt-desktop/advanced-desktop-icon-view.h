@@ -237,6 +237,7 @@ protected:
 
     void wheelEvent(QWheelEvent *e);
     void keyPressEvent(QKeyEvent *e);
+    void keyReleaseEvent(QKeyEvent *e);
 
     void checkItemsOver();
     static GAsyncReadyCallback queryZoomLevelAsyncCallback(GObject *obj,
@@ -330,6 +331,8 @@ private:
     bool m_ctrl_or_shift_pressed = false;
 
     bool  m_ctrl_key_pressed = false;
+
+    bool m_shift_key_pressed = false;
 
     bool m_show_hidden;
 

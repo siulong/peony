@@ -153,7 +153,6 @@ AdvancedDesktopIconView::AdvancedDesktopIconView(QWidget *parent) : QAbstractIte
 
     setModel(m_proxy_model);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-
     setDragDropMode(QAbstractItemView::DragDrop);
     setMouseTracking(true);//追踪鼠标
     setEditTriggers(QListView::NoEditTriggers);
@@ -760,6 +759,37 @@ void AdvancedDesktopIconView::setSelection(const QRect &rect, QItemSelectionMode
     QItemSelection selection;
     if (tmpRect.isEmpty())
         return;
+
+    bool notMultiSelection = (rect.width() == 1 && rect.height() == 1) || state() == DragSelectingState ;
+    if (m_shift_key_pressed && !notMultiSelection) {
+        //shift 按键连选，获取首尾相对坐标，中间的所有项都选中
+        QPoint leftPos ,rightPos;
+        auto leftIndex = indexAt(tmpRect.topLeft());
+        bool leftOk = false;
+        leftPos = getIndexGridPos(leftIndex, &leftOk);
+        auto rightIndex= indexAt(tmpRect.bottomRight());
+        bool rightOk = false;
+        rightPos = getIndexGridPos(rightIndex, &rightOk);
+
+        if (leftOk && rightOk) {
+            for (int i = 0; i < model()->rowCount(); i++) {
+            auto index = model()->index(i, 0);
+            bool ok = false;
+            auto pos = getIndexGridPos(index, &ok);
+
+            if (gridPosLesserThan(pos, leftPos)|| gridPosLesserThan(rightPos, pos)) {
+                continue;
+            }
+            selection.select(index, index);
+            // 单击重叠的图标只选中一个
+            if (command == QItemSelectionModel::ClearAndSelect || command == QItemSelectionModel::Select)
+                break;
+            }
+
+            selectionModel()->select(selection, command);
+            return;
+        }
+    }
 
     // todo 性能优化
     for (int i = 0; i < model()->rowCount(); i++) {
@@ -1467,6 +1497,7 @@ void AdvancedDesktopIconView::keyPressEvent(QKeyEvent *e)
         return;
     }
     case Qt::Key_Shift:
+        m_shift_key_pressed = true;
     case Qt::Key_Control:
         m_ctrl_or_shift_pressed = true;
         break;
@@ -1483,6 +1514,14 @@ void AdvancedDesktopIconView::keyPressEvent(QKeyEvent *e)
     default:
         return QAbstractItemView::keyPressEvent(e);
     }
+}
+
+void AdvancedDesktopIconView::keyReleaseEvent(QKeyEvent *e)
+{
+    QAbstractItemView::keyReleaseEvent(e);
+    m_ctrl_or_shift_pressed = false;
+    m_ctrl_key_pressed = false;
+    m_shift_key_pressed = false;
 }
 
 void AdvancedDesktopIconView::recalculateAvailableRowAndColumnCount()
@@ -1886,11 +1925,17 @@ void AdvancedDesktopIconView::mousePressEvent(QMouseEvent *e)
     // bug extend selection bug
     m_real_do_edit = false;
 
+    if (e->modifiers() & Qt::ShiftModifier) {
+        m_shift_key_pressed = true;
+    } else {
+        m_shift_key_pressed = false;
+    }
+
     if (e->modifiers() & Qt::ControlModifier)
         m_ctrl_key_pressed = true;
     else {
         m_ctrl_key_pressed = false;
-        if (! (e->modifiers() & Qt::ShiftModifier))
+        if (!m_shift_key_pressed)
             m_ctrl_or_shift_pressed = false;
     }
 
