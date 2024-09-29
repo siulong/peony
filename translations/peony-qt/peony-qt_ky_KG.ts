@@ -55,7 +55,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>Peony بولسو بىر  تۉر  ىشتەتۉۉچۉلۅردۉن ۅجۅت باشقارىش  ساامالىعىنا  جەرلىك  بەرەتۇرعان گىرافىكلاشقان جۇمشاق تەتىك . ال  ىشتەتۉۉچۉلۅرگۅ كۅپ ال چرايدىغان ۅجۅت ماشقۇلدانۇۇ  قۇرباتى  مەنەن  قامدايت، مىسالى، ۅجۅت كۅرۉۉ ، ۅجۅت نۇستۉر اش، چاپتوو، قىيىش ، ۅچۉرۉۉ، قايرا اتاق بەرۉۉ، ۅجۅت تانداش ، ئەپ اچۇۇ، ۅجۅت ىزدۅۅ، ۅجۅتلەرنى قاتارلاش ، ۅجۅتلەرنى الدىن  كۅرۉۉ  قاتارلۇۇلار ىشتەتۉۉچۉلۅرگۅڭ  كۅرۉنمۅ بەتىندە تىكە بارۇۇ ، ۇدۇل بارۇۇ  ابالدا ۅجۅت باشقارىش  ساامالىعىنا  ىڭعايلۇۇ يارىتىپ بەرەت.</translation>
+        <translation>Peony بولسو بىر  تۉر  ابونىتتاردىن ۅجۅت باشقارىش  ساامالىعىنا  جەرلىك  بەرەتۇرعان گىرافىك  جۇمشاق تەتىك . ال  ىشتەتۉۉچۉلۅرگۅ كۅپ ال چرايدىغان ۅجۅت ماشقۇلدانۇۇ  قۇرباتى  مەنەن  قامدايت، مىسالى، ۅجۅت كۅرۉۉ ، ۅجۅت نۇستۉر اش، چاپتوو، قىيىش ، ۅچۉرۉۉ، قايرا اتاق بەرۉۉ، ۅجۅت تانداش ، ئەپ اچۇۇ، ۅجۅت ىزدۅۅ، ۅجۅتلەرنى قاتارلاش ، ۅجۅتلەرنى الدىن  كۅرۉۉ  قاتارلۇۇلار ىشتەتۉۉچۉلۅرگۅڭ  كۅرۉنمۅ بەتىندە تىكەلەي ، تۉز ەلە ابالدا ۅجۅت باشقارىش  ساامالىعىنا  ىڭعايلۇۇ يارىتىپ بەرەت.</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -90,7 +90,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>تۉس مونتاژلاش</translation>
+        <translation>تۉس مونتاژلىق</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -302,7 +302,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
-        <translation>بەكىتىش</translation>
+        <translation>جابۇۇ</translation>
     </message>
 </context>
 <context>
@@ -494,7 +494,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>جاشىرىن  تۉرلۅردۉ كۅرسۅتۉۉ</translation>
+        <translation>جاشىرىن تۉرلۅردۉ كۅرسۅتۉۉ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
@@ -539,7 +539,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation>ابونتتارردىن samba جاشىرۇۇن  نومۇرۇ  بار بولدۇ ، سامبا جاشىرۇۇن  نومۇرۇ نى العاچىنا كەلتىرۉۉ كەرەكبى؟</translation>
+        <translation>ابونىتتاردىن samba جاشىرۇۇن  نومۇرۇ  بار بولدۇ ، سامبا جاشىرۇۇن  نومۇرۇ نى العاچىنا كەلتىرۉۉ كەرەكبى؟</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="173"/>
@@ -565,7 +565,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation>ھەمبەھرلىنىش سەپتەمەسى   سان قاينارى نورماال  ەمەس ، ازىر ھەمبەھرلىنىش ماشعۇلاتى يۈزگۈزىلىۋاتقان كۅرۉنۉشتۅرۉ يۈزگۈزىلىۋاتمىغانلىقىنى ايقىنداڭ كۅرۉنۉشتۅرۉ قايتادان  ھەمبەھرلىنىڭ</translation>
+        <translation>ھەمبەھىرلىنىش سەپتەمەسى   سان قاينارى نورماال  ەمەس ، ازىر ھەمبەھىرلىنىش ماشعۇلاتى يۈرگۈزۈلۈۋاتقان كۅرۉنۉشتۅرۉ يۈزگۈزىلىۋاتمىغانلىقىنى ايقىنداڭ كۅرۉنۉشتۅرۉ قايتادان  ھەمبەھىرلىنىڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="201"/>
@@ -652,7 +652,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation>سەستىما  دىسكاسى</translation>
+        <translation>ساامالىق   دىسكاسى</translation>
     </message>
 </context>
 <context>
@@ -676,7 +676,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="132"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="234"/>
         <source>Unmount</source>
-        <translation>يۇيىۋېتىش</translation>
+        <translation>جۇۇپ جىبەر</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="151"/>
@@ -710,7 +710,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation>كەرەكتۅۅچۉ دىسكاسى</translation>
+        <translation>كەرەكتۅۅچۉ  دىسكاسى</translation>
     </message>
 </context>
 <context>
@@ -734,7 +734,7 @@ p、 li｛كۅڭدۅي：الدىن  قاچالوو；｝
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>سىز بۇل  ۅجۅتتۅرۉن ۅچۉرۉۉنۉ تۇراقتاندىرا الاسىزبى؟ ۅچۉرۉۉگۅ باشتاعان امان،  ۅچۉرۉلگەن  ۅجۅت تۉبۅلۉك  العاچىنا گەلبەيت .</translation>
+        <translation>سىز بۇل  ۅجۅتتۅرۉن ۅچۉرۉۉنۉ جەزملەشتۈرەلەمسىز؟ ۅچۉرۉۉگۅ باشتاعان امان،  ۅچۉرۉلگەن  ۅجۅت تۉبۅلۉك  العاچىنا گەلبەيت .</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
@@ -899,7 +899,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>ساندۇۇ بايانداما  شاي  قادامدا  بۉتۉردۉ دىققات ، شايمان ساامالىعى  جەڭىشتۉۉ ابالدا يۇيىۋېتىلدى !</translation>
+        <translation>ساندۇۇ بايانداما  شاي  قادامدا  بۉتۉردۉ دىققات ، شايمان ساامالىعى  جەڭىشتۉۉ ابالدا يۇيۇۋېتىلدى !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
@@ -910,7 +910,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation>يۈكنى يۇيغىلى بولبويت ، سىز بالكىم الدىن گەەبىر  پراگراممالاردى ئېتىۋېتىشىڭىز بولۇۇسۇ مۉمكۉن، مىسالى، رايونۇنا بۅلۉنۉپ  راداكسىيالاعىچ  قاتارلۇۇلار.</translation>
+        <translation>يۈكنى جۇۇعالى بولبويت ، سىز بالكىم الدىن گەەبىر پىروگىراممالاردى ئېتىۋېتىشىڭىز بولۇۇسۇ مۉمكۉن، مىسالى، رايونۇنا بۅلۉنۉپ  راداكسىيالاعىچ  قاتارلۇۇلار.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
@@ -1341,7 +1341,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
-        <translation>ئوتتۇراھال (1M-128M)</translation>
+        <translation>ورتوسۇ ابال (1M-128M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
@@ -1394,7 +1394,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation>بەكىتىش</translation>
+        <translation>جابۇۇ</translation>
     </message>
 </context>
 </TS>
