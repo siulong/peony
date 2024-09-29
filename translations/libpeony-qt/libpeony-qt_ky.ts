@@ -243,7 +243,7 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation>تەكىست ەنى ، تامعاسى</translation>
     </message>
     <message>
         <source>qmesg_notify</source>
