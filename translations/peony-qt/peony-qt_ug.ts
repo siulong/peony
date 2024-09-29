@@ -49,7 +49,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>Peony بولسا بىر خىل ئابۇنىتلارنىڭ ھۆججەت باشقۇرۇش سىستېمىسىغا ياردەم بېرىدىغان گىرافىكلاشقان يۇمشاق دېتال. ئۇ ئىشلەتكۈچىلەرنى كۆپ ئۇچرايدىغان ھۆججەت مەشغۇلات ئىقتىدارى بىلەن تەمىنلەيدۇ، مەسىلەن، ھۆججەت كۆرۈش، ھۆججەت نۇسخىلاش، چاپلاش، كېسىش، ئۆچۈرۈش، قايتا نام بېرىش، ھۆججەت تاللاش، ئەپ ئېچىش، ھۆججەت ئىزدەش، ھۆججەتلەرنى رەتلەش، ھۆججەتلەرنى ئالدىن كۆرۈش قاتارلىقلار ئىشلەتكۈچىلەرنىڭ كۆرۈنمە يۈزدە بىۋاستە ھالدا ھۆججەت باشقۇرۇش سىستېمىسىغا قولايلىق يارىتىپ بېرىدۇ.</translation>
+        <translation>Peony بولسا بىر خىل ئابونتلارنىڭ ھۆججەت باشقۇرۇش سىستېمىسىغا ياردەم بېرىدىغان گىرافىك يۇمشاق دېتال. ئۇ ئىشلەتكۈچىلەرنى كۆپ ئۇچرايدىغان ھۆججەت مەشغۇلات ئىقتىدارى بىلەن تەمىنلەيدۇ، مەسىلەن، ھۆججەت كۆرۈش، ھۆججەت نۇسخىلاش، چاپلاش، كېسىش، ئۆچۈرۈش، قايتا نام بېرىش، ھۆججەت تاللاش، ئەپ ئېچىش، ھۆججەت ئىزدەش، ھۆججەتلەرنى رەتلەش، ھۆججەتلەرنى ئالدىن كۆرۈش قاتارلىقلار ئىشلەتكۈچىلەرنىڭ كۆرۈنمە يۈزدە بىۋاسىتە ھالدا ھۆججەت باشقۇرۇش سىستېمىسىغا قولايلىق يارىتىپ بېرىدۇ.</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>رەڭ مونتاژلاش</translation>
+        <translation>رەڭ مونتاژلىق</translation>
     </message>
 </context>
 <context>
@@ -225,7 +225,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
-        <translation>ئىتىش</translation>
+        <translation>ئېتىش</translation>
     </message>
 </context>
 <context>
@@ -335,7 +335,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation>بۇ بىر قۇرۇق قوزغاتقۇچ، بىر پارچە دېسكا قىستۇرۇڭ.</translation>
+        <translation>بۇ بىر قۇرۇق قوزغاتقۇچ، بىر پارچە دىسكا قىستۇرۇڭ.</translation>
     </message>
 </context>
 <context>
@@ -369,7 +369,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="90"/>
         <source>Show Hidden</source>
-        <translation>يۇشۇرۇن تۈرلەرنى كۆرسىتىش</translation>
+        <translation>يوشۇرۇن تۈرلەرنى كۆرسىتىش</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="98"/>
@@ -414,7 +414,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation>ئابونىتلارنىڭ samba مەخپىي نومۇرى بار بولدى، سامبا مەخپىي نومۇرىنى ئەسلىگە كەلتۈرۈش كېرەكمۇ؟</translation>
+        <translation>ئابونتلارنىڭ samba مەخپىي نومۇرى بار بولدى، سامبا مەخپىي نومۇرىنى ئەسلىگە كەلتۈرۈش كېرەكمۇ؟</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="171"/>
@@ -424,7 +424,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Samba set user password</source>
-        <translation>Samba ئابونت مەخپىي نومۇرىنى ئورناتقان</translation>
+        <translation>Samba ئابۇنت مەخپىي نومۇرىنى ئورناتقان</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="181"/>
@@ -440,7 +440,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation>ھەمبەھرلىنىش سەپلىمىسى مۇلازىمىتى نورمال ئەمەس، ھازىر ھەمبەھرلىنىش مەشغۇلاتى يۈزگۈزىلىۋاتقان ياكى يۈزگۈزىلىۋاتمىغانلىقىنى جەزملەشتۈرۈڭ ياكى قايتىدىن ھەمبەھرلىنىڭ</translation>
+        <translation>ھەمبەھىرلىنىش سەپلىمىسى مۇلازىمىتى نورمال ئەمەس، ھازىر ھەمبەھىرلىنىش مەشغۇلاتى يۈرگۈزۈلۈۋاتقان ياكى يۈزگۈزىلىۋاتمىغانلىقىنى جەزملەشتۈرۈڭ ياكى قايتىدىن ھەمبەھىرلىنىڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="201"/>
@@ -527,7 +527,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation>سىستىما دىسكىسى</translation>
+        <translation>سىستېما دىسكىسى</translation>
     </message>
 </context>
 <context>
@@ -551,7 +551,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="132"/>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="234"/>
         <source>Unmount</source>
-        <translation>يۇيىۋېتىش</translation>
+        <translation>يۇيۇۋېتىش</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-menu.cpp" line="151"/>
@@ -585,7 +585,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation>ئابونت دېسكىسى</translation>
+        <translation>ئابۇنت دىسكىسى</translation>
     </message>
 </context>
 <context>
@@ -609,7 +609,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>سىز بۇ ھۆججەتلەرنى ئۆچۈرۈشنى جەزىملەشتۈرەلەمسىز؟ ئۆچۈرۈشكە باشلىغان ھامان،  ئۆچۈرۈلگەن ھۆججەت مەڭگۈ ئەسلىگە كەلمەيدۇ.</translation>
+        <translation>سىز بۇ ھۆججەتلەرنى ئۆچۈرۈشنى جەزملەشتۈرەلەمسىز؟ ئۆچۈرۈشكە باشلىغان ھامان،  ئۆچۈرۈلگەن ھۆججەت مەڭگۈ ئەسلىگە كەلمەيدۇ.</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
@@ -668,7 +668,7 @@ p、 li｛قۇرۇق：ئالدىن قاچىلاش；｝
 	Meihong He &lt;hemeihong@kylinos.cn&gt;
 
 Copyright (C): 2020, KylinSoft Co., Ltd.</source>
-        <translation>ئاپتۇر:
+        <translation>ئاپتور:
 يۆلەن &lt;lanyue @kylinos.  cn&gt;
 
 خې مېيخوڭ &lt;hemeihong@ kylinos&gt;  cn&gt;
@@ -714,7 +714,7 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>سانلىق مەلۇمات ماس قەدەمدە تاماملاندى ، ئۈسكۈنە سىستېمىسى مۇۋەپپەقىيەتلىك ھالدا يۇيىۋېتىلدى !</translation>
+        <translation>سانلىق مەلۇمات ماس قەدەمدە تاماملاندى ، ئۈسكۈنە سىستېمىسى مۇۋەپپەقىيەتلىك ھالدا يۇيۇۋېتىلدى !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
@@ -725,7 +725,7 @@ Copyright (C): 2020, KylinSoft Co., Ltd.</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation>يۈكنى يۇيغىلى بولمايدۇ، سىز بەلكىم ئاۋۋال بەزى پروگراممىلارنى ئېتىۋېتىشىڭىز بولۇشى مۇمكىن، مەسىلەن، رايونغا بۆلۈنۈپ تەھرىرلىگۈچ قاتارلىقلار.</translation>
+        <translation>يۈكنى يۇغىلى بولمايدۇ، سىز بەلكىم ئاۋۋال بەزى پىروگراممىلارنى ئېتىۋېتىشىڭىز بولۇشى مۇمكىن، مەسىلەن، رايونغا بۆلۈنۈپ تەھرىرلىگۈچ قاتارلىقلار.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
@@ -1060,7 +1060,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>medium(1M-128M)</source>
-        <translation>ئوتتۇراھال (1M-128M)</translation>
+        <translation>ئوتتۇرا ھال (1M-128M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="317"/>
@@ -1101,7 +1101,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation>ئىتىش</translation>
+        <translation>ئېتىش</translation>
     </message>
 </context>
 </TS>
