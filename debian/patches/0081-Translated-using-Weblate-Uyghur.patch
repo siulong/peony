@@ -1,0 +1,71 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Sun, 29 Sep 2024 04:02:52 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 100.0% (47 of 47 strings)
+
+Translation: openkylin-nile-new/peony-qt-desktop
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt-desktop/ug/
+---
+ translations/peony-qt-desktop/peony-qt-desktop_kk.ts | 6 +++---
+ translations/peony-qt-desktop/peony-qt-desktop_ky.ts | 2 +-
+ translations/peony-qt-desktop/peony-qt-desktop_ug.ts | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_kk.ts b/translations/peony-qt-desktop/peony-qt-desktop_kk.ts
+index e7cbe32..9561b43 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_kk.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_kk.ts
+@@ -39,7 +39,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
+         <source>Set Background</source>
+-        <translation>تام قاعازى بەكٸتۋ</translation>
++        <translation>ارتى تەڭدٸك تەڭشەۋ</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
+@@ -237,7 +237,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
+         <source>Name</source>
+-        <translation>ئاتى</translation>
++        <translation>شايۋ</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
+@@ -500,7 +500,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
+         <source>Set Background</source>
+-        <translation>تام قاعازى بەكٸتۋ</translation>
++        <translation>ارتى تەڭدٸك تەڭشەۋ</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ky.ts b/translations/peony-qt-desktop/peony-qt-desktop_ky.ts
+index 3450feb..6d597ab 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_ky.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_ky.ts
+@@ -237,7 +237,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
+         <source>Name</source>
+-        <translation>ئاتى</translation>
++        <translation>ئېتى</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+index 5863931..ff01b27 100644
+--- a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
++++ b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+@@ -134,7 +134,7 @@
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
+         <source>Name</source>
+-        <translation>ئاتى</translation>
++        <translation>ئېتى</translation>
+     </message>
+     <message>
+         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="423"/>
