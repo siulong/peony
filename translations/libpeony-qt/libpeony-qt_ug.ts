@@ -215,7 +215,7 @@
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation>تېكىست بەلگىسى</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="154"/>
