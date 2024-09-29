@@ -134,7 +134,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation>ئاتى</translation>
+        <translation>ئېتى</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="423"/>
