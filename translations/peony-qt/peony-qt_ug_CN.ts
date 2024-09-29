@@ -55,7 +55,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>Peony بولسا بٸر ٴتۇر قاريدارلاردىڭ حۇجات باسقارۋ سەستاماسىعا جاردەم بەرەتٸن گىرافىكلاشقان جۇمساق دەتال. ول ٸستەتۋشٸلەردٸ كوپ ولچرايدىغان حۇجات جوبالاۋ رولدارٸ مەنەن قامدالادٸ، ماسەلەن، حۇجات كورۋ، حۇجات نۇسٴتۇراش، شاپتاۋ، كەسۋ، ٴوشىرۋ، قاتە دىمقىل بەرۋ، حۇجات تالداۋ، جيۋ ٸشٸۋ، حۇجات ٸزدەۋ، حۇجاتلەرنى رەتتەۋ، حۇجاتلەرنى الدىن كورۋ قاتارلىلار ٸستەتۋشٸلەردٸڭ كورىنبە بەتتە تٸكە قالدا حۇجات باسقارۋ سەستاماسىعا قولايلىق جاراتىپ بەرەدٸ.</translation>
+        <translation>Peony بولسا بٸر ٴتۇر قاريدارلاردىڭ حۇجات باسقارۋ سەستاماسىعا جاردەم بەرەتٸن گرافيىك جۇمساق دەتال. ول ٸستەتۋشٸلەردٸ كوپ ولچرايدىغان حۇجات جوبالاۋ رولدارٸ مەنەن قامدالادٸ، ماسەلەن، حۇجات كورۋ، حۇجات نۇسٴتۇراش، شاپتاۋ، كەسۋ، ٴوشىرۋ، قاتە دىمقىل بەرۋ، حۇجات تالداۋ، جيۋ ٸشٸۋ، حۇجات ٸزدەۋ، حۇجاتلەرنى رەتتەۋ، حۇجاتلەرنى الدىن كورۋ قاتارلىلار ٸستەتۋشٸلەردٸڭ كورىنبە بەتتە بىرباستا قالدا حۇجات باسقارۋ سەستاماسىعا قولايلىق جاراتىپ بەرەدٸ.</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -90,7 +90,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="77"/>
         <source>Edit Color</source>
-        <translation>رەڭ مونتاژلاش</translation>
+        <translation>رەڭ مونتاژلىق</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -302,7 +302,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1307"/>
         <source>Close</source>
-        <translation>اتىسۋ</translation>
+        <translation>تىعنداۋ</translation>
     </message>
 </context>
 <context>
@@ -428,7 +428,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="646"/>
         <source>This is an empty drive, please insert a Disc.</source>
-        <translation>نۇ بٸر قۇرعاق قوزعالتۋ اسبابى، بٸر پارشا ديسكا قىستىرىڭىز.</translation>
+        <translation>نۇ بٸر قۇرعاق قوزعالتۋ اسبابى، بٸر پارشا ديسكا ديسكا قىستىرىڭىز.</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="259"/>
@@ -539,12 +539,12 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="162"/>
         <source>The user already has a samba password, do you need to reset the samba password?</source>
-        <translation>ابونتتارىنڭ samba قۇپيا نومەرى بار قالدى، سامبا قۇپيا نومەرىنى قالپىنا كەلتىرىلگەن كەرەكپە؟</translation>
+        <translation>قاريدارلاردىڭ samba قۇپيا نومەرى بار قالدى، سامبا قۇپيا نومەرىنى قالپىنا كەلتىرىلگەن كەرەكپە؟</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="173"/>
         <source>Samba set user password</source>
-        <translation>Samba الارمان قۇپيا نۇمىردى ورناتقان</translation>
+        <translation>Samba ابونت قۇپيا نۇمىردى ورناتقان</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="171"/>
@@ -565,7 +565,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="192"/>
         <source>Shared configuration service exception, please confirm if there is an ongoing shared configuration operation, or please reset the share!</source>
-        <translation>ھەمبەھرلىنىش تولىقتاماسى قىزىمەت وتەۋى نورمال ەمەس، قازىر ھەمبەھرلىنىش جوبالاۋى يۈزگۈزىلىۋاتقان ياكي يۈزگۈزىلىۋاتمىغانلىقىنى انىقتاڭىز ياكي قايتادان ھەمبەھرلىنىڭ</translation>
+        <translation>ھەمبەھىرلىنىش تولىقتاماسى قىزىمەت وتەۋى نورمال ەمەس، قازىر ھەمبەھىرلىنىش جوبالاۋى يۈرگۈزۈلۈۋاتقان ياكي يۈزگۈزىلىۋاتمىغانلىقىنى انىقتاڭىز ياكي قايتادان ھەمبەھىرلىنىڭ</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="201"/>
@@ -652,7 +652,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="80"/>
         <source>System Disk</source>
-        <translation>سەستما ديسكاسى</translation>
+        <translation>سەستيما ديسكاسى</translation>
     </message>
 </context>
 <context>
@@ -710,7 +710,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="722"/>
         <source>User Disk</source>
-        <translation>الارمان ديسكاسى</translation>
+        <translation>ابونت ديسكاسى</translation>
     </message>
 </context>
 <context>
@@ -734,7 +734,7 @@ p、 li｛قۇرعاق：الدىن تۇسىرۋ；｝
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="101"/>
         <source>Are you sure that you want to delete these files? Once you start a deletion, the files deleting will never be restored again.</source>
-        <translation>ٴسىز نۇ حۇجاتتاردى ٶشٸرۋشٸنٸ جەزىملەشتۈرەلەمٴسىز؟ ٶشٸرۋگە باستاعان اقىرىندا،  ٶشٸرٸلگەن حۇجات ماڭگى قالپىنا كەلمەيدى.</translation>
+        <translation>ٴسىز نۇ حۇجاتتاردى ٶشٸرۋشٸنٸ جەزملەشتۈرەلەمٴسىز؟ ٶشٸرۋگە باستاعان اقىرىندا،  ٶشٸرٸلگەن حۇجات ماڭگى قالپىنا كەلمەيدى.</translation>
     </message>
     <message>
         <location filename="../../src/windows/trash-warn-dialog.cpp" line="114"/>
@@ -899,7 +899,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>ساندىق مالىمەت بۇرشاق قادامدا تامامدالدٸ ، اسباب سەستيماسى ناتيجەلى قالدا يۇيىۋېتىلدى !</translation>
+        <translation>ساندىق مالىمەت بۇرشاق قادامدا تامامدالدٸ ، اسباب سەستيماسى ناتيجەلى قالدا يۇيۇۋېتىلدى !</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
@@ -910,7 +910,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation>جۇكتى يۇيغىلى بولمايدى، ٴسىز بالكٸم الدٸمەن بارٸ پٸروگٸراممالاردٸ ئېتىۋېتىشىڭىز بولۋٸ مۇمكان، ماسەلەن، رايونعا بولىنىپ رەدەكسيا اسبابٸ قاتارلىلار.</translation>
+        <translation>جۇكتى جۋعالى بولمايدى، ٴسىز بالكٸم الدٸمەن بارٸ پرٶگراممالاردى ئېتىۋېتىشىڭىز بولۋٸ مۇمكان، ماسەلەن، رايونعا بولىنىپ رەدەكسيا اسبابٸ قاتارلىلار.</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="478"/>
@@ -1341,7 +1341,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
         <source>medium(1M-128M)</source>
-        <translation>ئوتتۇراھال (1M-128M)</translation>
+        <translation>ورتا كۇي (1M-128M)</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="315"/>
@@ -1394,7 +1394,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="1133"/>
         <source>Close</source>
-        <translation>اتىسۋ</translation>
+        <translation>تىعنداۋ</translation>
     </message>
 </context>
 </TS>
