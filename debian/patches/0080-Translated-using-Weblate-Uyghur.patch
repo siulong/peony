@@ -1,0 +1,53 @@
+From: KevinDuan <duankaiwen@kylinos.cn>
+Date: Sun, 29 Sep 2024 02:42:27 +0000
+Subject: Translated using Weblate (Uyghur)
+
+Currently translated at 100.0% (759 of 759 strings)
+
+Translation: openkylin-nile-new/libpeony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/libpeony-qt/ug/
+---
+ translations/libpeony-qt/libpeony-qt_kk.ts | 2 +-
+ translations/libpeony-qt/libpeony-qt_ky.ts | 2 +-
+ translations/libpeony-qt/libpeony-qt_ug.ts | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/translations/libpeony-qt/libpeony-qt_kk.ts b/translations/libpeony-qt/libpeony-qt_kk.ts
+index 3f77617..0fb21ed 100644
+--- a/translations/libpeony-qt/libpeony-qt_kk.ts
++++ b/translations/libpeony-qt/libpeony-qt_kk.ts
+@@ -243,7 +243,7 @@
+     <message>
+         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
+         <source>TextLabel</source>
+-        <translation>TextLabel</translation>
++        <translation>تەكىسىت بەلگىسى</translation>
+     </message>
+     <message>
+         <source>qmesg_notify</source>
+diff --git a/translations/libpeony-qt/libpeony-qt_ky.ts b/translations/libpeony-qt/libpeony-qt_ky.ts
+index 8f7c7c0..185f4e2 100644
+--- a/translations/libpeony-qt/libpeony-qt_ky.ts
++++ b/translations/libpeony-qt/libpeony-qt_ky.ts
+@@ -243,7 +243,7 @@
+     <message>
+         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
+         <source>TextLabel</source>
+-        <translation>TextLabel</translation>
++        <translation>تەكىست ەنى ، تامعاسى</translation>
+     </message>
+     <message>
+         <source>qmesg_notify</source>
+diff --git a/translations/libpeony-qt/libpeony-qt_ug.ts b/translations/libpeony-qt/libpeony-qt_ug.ts
+index 3073e0c..1b7f7fe 100644
+--- a/translations/libpeony-qt/libpeony-qt_ug.ts
++++ b/translations/libpeony-qt/libpeony-qt_ug.ts
+@@ -215,7 +215,7 @@
+     <message>
+         <location filename="../../libpeony-qt/windows/format_dialog.ui" line="179"/>
+         <source>TextLabel</source>
+-        <translation>TextLabel</translation>
++        <translation>تېكىست بەلگىسى</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="154"/>
