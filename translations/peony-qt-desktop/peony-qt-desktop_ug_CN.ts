@@ -39,7 +39,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation>تام قاعازى بەكٸتۋ</translation>
+        <translation>ارتى تەڭدٸك تەڭشەۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
@@ -237,7 +237,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation>ئاتى</translation>
+        <translation>شايۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
@@ -500,7 +500,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation>تام قاعازى بەكٸتۋ</translation>
+        <translation>ارتى تەڭدٸك تەڭشەۋ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
