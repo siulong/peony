@@ -111,8 +111,18 @@ QIcon GenericThumbnailer::generateThumbnail(const QString &path, bool shadow, co
         return icon;
 
     QSize targetSize = size.isValid()? size: QSize(128, 128);
-
     QImage img = scaleImageWithAspectRatio(path, targetSize);
+
+    //fix bug#268817, image thumbnail is null issue
+    if (img.isNull()) {
+        QFile file(path);
+        if (file.open(QIODevice::ReadOnly)){
+            img.loadFromData(file.readAll());
+            file.close();
+        }
+
+        img = img.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
 
     if (img.hasAlphaChannel()) {
         //skip shadow
