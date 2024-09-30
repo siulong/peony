@@ -6,8 +6,10 @@
 #include "file-info-job.h"
 #include "file-infos-job.h"
 #include "file-info.h"
+#include "file-utils.h"
 
 #include <QObject>
+#include <QUrl>
 
 using namespace Peony;
 
@@ -62,6 +64,19 @@ QStringList ConvenientUtils::getFileUrisInSequence(const QString &uri) const
         proxy_model = nullptr;
     }
     return orderedFileUris;
+}
+
+QStringList ConvenientUtils::getFilePathsInSequence(const QString &filePath) const
+{
+    QString encodeUri = FileUtils::urlEncode("file://" + filePath);
+    QStringList orderedFileUris = getFileUrisInSequence(encodeUri);
+
+    QStringList orderedFilePaths;
+    for (QString fileUri : orderedFileUris) {
+        QString filePath = QUrl(fileUri).path();
+        orderedFilePaths.append(filePath);
+    }
+    return orderedFilePaths;
 }
 
 

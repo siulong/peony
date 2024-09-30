@@ -14,7 +14,8 @@ class PEONYCORESHARED_EXPORT ConvenientUtils: public QObject
 public:
     static ConvenientUtils *getInstance();
 
-    QStringList getFileUrisInSequence(const QString& uri) const;
+    QStringList getFileUrisInSequence(const QString& uri) const; /* 传入和输出都是encoded uri */
+    QStringList getFilePathsInSequence(const QString& filePath) const;/* 传入和输出都是decoded absolute path，目前只用于‘file://’开头的目录 */
 
 private:
     explicit ConvenientUtils(QObject *parent = nullptr);
