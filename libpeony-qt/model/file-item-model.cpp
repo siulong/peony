@@ -830,6 +830,28 @@ void FileItemModel::setShowFileExtensions(bool show)
     GlobalSettings::getInstance()->setGSettingValue(SHOW_FILE_EXTENSION, show);
 }
 
+void FileItemModel::insetFileInfoData(std::vector<std::shared_ptr<FileInfo> > &fileInfoVec, FileItem *parentItem)
+{
+    if(!parentItem || 0 == fileInfoVec.size())
+        return;
+
+    FileItem *oldData = m_root_item;
+    m_root_item = parentItem;
+    if(oldData){
+        delete oldData;
+        oldData = nullptr;
+    }
+    m_root_uri = m_root_item->uri();
+
+    beginInsertRows(QModelIndex(), 0, fileInfoVec.size() -1);
+    for (auto& info : fileInfoVec) {
+        FileItem *item = new FileItem(info, m_root_item, this);
+        m_root_item->m_children->append(item);
+        m_root_item->m_uri_item_hash.insert(item->uri(), item);
+    }
+    endInsertRows();
+}
+
 const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QString &uri)
 {
     if(!item)

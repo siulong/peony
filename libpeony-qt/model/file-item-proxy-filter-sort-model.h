@@ -136,6 +136,7 @@ public:
     QMap<int, int> getFileModifyTimeCount();
     QMap<int, int> getFileSizeCount();
     QMap<int, int> getFileLabelCount();
+    void checkSettingsAndSort();
 
 public Q_SLOTS:
     void update();

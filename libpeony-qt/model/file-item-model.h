@@ -225,6 +225,8 @@ public:
 
     void setShowFileExtensions(bool show);
 
+    void insetFileInfoData(std::vector<std::shared_ptr<FileInfo> >& fileInfoVec, FileItem *parentItem);
+
 private:
     const QModelIndex indexFromItemAndUri(FileItem *item, const QString &uri);
 

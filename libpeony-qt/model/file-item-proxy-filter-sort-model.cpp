@@ -55,7 +55,7 @@ const QString getModelDirectoryUri(FileItemProxyFilterSortModel *model)
 {
     FileItemModel *srcModel = qobject_cast<FileItemModel *>(model->sourceModel());
     if (!srcModel) {
-        qInfo()<<"source model not available now";
+        qInfo()<<"source model not avaliable now";
         return nullptr;
     }
     return srcModel->getRootUri();
@@ -1248,6 +1248,27 @@ QMap<int, int> FileItemProxyFilterSortModel::getFileLabelCount()
 {
     return m_file_label_map;
 }
+
+void FileItemProxyFilterSortModel::checkSettingsAndSort()
+{
+    checkSortSettings();
+    invalidateFilter();
+
+    auto settings = Peony::GlobalSettings::getInstance();
+    if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+        m_sortType = settings->isExist(SORT_COLUMN)? settings->getValue(SORT_COLUMN).toInt(): 0;
+        m_sortOrder = Qt::SortOrder(settings->isExist(SORT_ORDER)? settings->getValue(SORT_ORDER).toInt(): 1);
+    } else {
+        auto info = FileInfo::fromUri(getModelDirectoryUri(this));
+        auto fileMetaInfo = FileMetaInfo::fromUri(getModelDirectoryUri(this));
+        if (fileMetaInfo && !info->isEmptyInfo()) {
+            m_sortType = fileMetaInfo->getMetaInfoVariant(SORT_COLUMN).isValid()? fileMetaInfo->getMetaInfoInt(SORT_COLUMN): 0;
+            m_sortOrder = Qt::SortOrder(fileMetaInfo->getMetaInfoVariant(SORT_ORDER).isValid()? fileMetaInfo->getMetaInfoInt(SORT_ORDER): 1);
+        }
+    }
+    QSortFilterProxyModel::sort(m_sortType, m_sortOrder);
+}
+
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()
 {
