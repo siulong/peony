@@ -1306,6 +1306,10 @@ void TabWidget::addPage(const QString &uri, bool jumpTo)
                 realUri = "file:///";
             }
 
+            if (!t.isEmpty()) {
+                realUri = t;
+            }
+
             //m_stack->addWidget(viewContainer);
             viewContainer->goToUri(realUri, false, true);
 
