@@ -235,8 +235,11 @@ void FileOperation::sendSrcAndDestUrisOfCopyDspsFiles()
 bool FileOperation::queryDirIsReadOnlyFS(const QString &dirUri, bool defaultResult, bool isUdfBurnWork, bool *writeable)
 {
     // udf 刻录操作默认可写
-    if (isUdfBurnWork)
+    if (isUdfBurnWork) {
+        if (writeable)
+            *writeable = true;
         return false;
+    }
 
     g_autoptr (GFile) dest_dir_file = g_file_new_for_uri(dirUri.toUtf8().constData());
     g_autoptr (GFileInfo) dest_dir_info = g_file_query_info(dest_dir_file, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
