@@ -763,13 +763,20 @@ void AdvancedDesktopIconView::setSelection(const QRect &rect, QItemSelectionMode
     bool notMultiSelection = (rect.width() == 1 && rect.height() == 1) || state() == DragSelectingState ;
     if (m_shift_key_pressed && !notMultiSelection) {
         //shift 按键连选，获取首尾相对坐标，中间的所有项都选中
+        QPoint first = rect.topLeft();
+        QPoint last = rect.bottomRight();
+        if (first.x() > last.x())
+            qSwap(first, last);
         QPoint leftPos ,rightPos;
-        auto leftIndex = indexAt(tmpRect.topLeft());
+        auto leftIndex = indexAt(first);
         bool leftOk = false;
         leftPos = getIndexGridPos(leftIndex, &leftOk);
-        auto rightIndex= indexAt(tmpRect.bottomRight());
+        auto rightIndex= indexAt(last);
         bool rightOk = false;
         rightPos = getIndexGridPos(rightIndex, &rightOk);
+
+        if (leftPos.x() == rightPos.x() && leftPos.y() > rightPos.y())
+            qSwap(leftPos, rightPos);
 
         if (leftOk && rightOk) {
             for (int i = 0; i < model()->rowCount(); i++) {
