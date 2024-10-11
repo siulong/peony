@@ -850,7 +850,7 @@ void BasicPropertiesPage::saveAllChange()
         if (m_info->isDir()) {
             bool isReadOnly = false;
             bool isHidden = false;
-            if (m_readOnly && m_isReadOnly != m_readOnly->isChecked() && m_readOnly->isChecked()) {
+            if (m_readOnly && m_isReadOnly != m_readOnly->isChecked() && m_readOnly->checkState() == Qt::Checked) {
                 isReadOnly = true;
             }
             if (m_hidden && m_hidden->isChecked()) {
