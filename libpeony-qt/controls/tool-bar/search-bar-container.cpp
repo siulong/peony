@@ -110,10 +110,11 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
 
     ProgressLineEdit *edit = new ProgressLineEdit(this);
     m_search_box = edit;
-
+    setMaximumWidth(194);
     QAction *searchAction = new QAction(m_search_box);
     searchAction->setIcon(QIcon::fromTheme("edit-find-symbolic"));
     m_search_box->addAction(searchAction,QLineEdit::LeadingPosition);
+    m_search_box->setPlaceholderText(tr("Search File"));
     //fix bug#180920, contents and icon overlap issue
     edit->setTextMargins(0, 0, 20, 0);
 
@@ -152,15 +153,15 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     m_search_trigger.setInterval(500);
     m_clear_action = true;
     connect(&m_search_trigger, SIGNAL(timeout()), this, SLOT(startSearch()));
-    connect(m_search_box, &QLineEdit::textChanged, [=](const QString &text)
-    {
+//    connect(m_search_box, &QLineEdit::textChanged, [=](const QString &text)
+//    {
         //fix input key words can not search issue, link to bug#77977
-        if (m_clear_action && ! m_search_trigger.isActive()) {
-            m_search_trigger.start();
-        } else {
-            m_clear_action = false;
-        }
-    });
+//        if (m_clear_action && ! m_search_trigger.isActive()) {
+//            m_search_trigger.start();
+//        } else {
+//            m_clear_action = false;
+//        }
+//    });
 
 //    connect(m_filter_box, &QComboBox::currentTextChanged, [=]()
 //    {
@@ -171,24 +172,11 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     QHBoxLayout* editlayout = new QHBoxLayout(edit);
     editlayout->addStretch();
 
-    QToolButton *searchButton = new QToolButton(edit);
-    searchButton->setObjectName("toolButton");
-    searchButton->setStyle(ToolButtonStyle::getStyle());
-    searchButton->setIcon(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/icons/ukui-down-symbolic")));
-    searchButton->setProperty("isWindowButton", 1);
-    searchButton->setProperty("useIconHighlightEffect", 0x2);
-    searchButton->setAutoRaise(true);
-    editlayout->addWidget(searchButton,Qt::AlignRight);
-    connect(searchButton, &QToolButton::clicked, this, [=]() {
-        //qDebug() << "triggered search history!";
-        m_search_box->completer()->complete();
-    });
-
-    QToolButton* clearButton = new QToolButton(edit);
-    clearButton->setObjectName("toolButton");
-    clearButton->setStyle(ToolButtonStyle::getStyle());
-    editlayout->addWidget(clearButton,Qt::AlignRight);
-    clearButton->setAutoRaise(true);
+    m_stopSearchButton= new QToolButton(edit);
+    m_stopSearchButton->setObjectName("toolButton");
+    m_stopSearchButton->setStyle(ToolButtonStyle::getStyle());
+    editlayout->addWidget(m_stopSearchButton,Qt::AlignRight);
+    m_stopSearchButton->setAutoRaise(true);
 //    QToolButton* goToButton = new QToolButton(edit);
 //    goToButton->setAttribute(Qt::WA_TranslucentBackground);
 //    goToButton->setObjectName("toolButton");
@@ -202,10 +190,10 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     editlayout->setMargin(2);
     edit->setLayout(editlayout);
 
-    clearButton->setIcon(QIcon::fromTheme("edit-clear-symbolic"));
-    clearButton->setProperty("isWindowButton", 1);
-    clearButton->setProperty("useIconHighlightEffect", 2);
-    clearButton->hide();
+    m_stopSearchButton->setIcon(QIcon::fromTheme("edit-clear-symbolic"));
+    m_stopSearchButton->setProperty("isWindowButton", 1);
+    m_stopSearchButton->setProperty("useIconHighlightEffect", 2);
+    m_stopSearchButton->hide();
 
 //    goToButton->setIcon(QIcon::fromTheme("go-next-symbolic"));
 //    goToButton->setProperty("useIconHighlightEffect", true);
@@ -217,24 +205,10 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
 //        startSearch();
 //    });
 
-    connect(clearButton, &QToolButton::clicked, this, [=](){
-        //停止搜索
-        edit->clear();
-    });
-    connect(edit, &QLineEdit::textChanged, this,  [=](const QString &text){
-        if(text.isEmpty())
-        {
-            //goToButton->hide();
-            clearButton->hide();
-            searchButton->show();
-        }
-        else
-        {
-            //goToButton->show();
-            clearButton->show();
-            searchButton->hide();
-        }
-    });
+    connect(m_stopSearchButton, &QToolButton::clicked, this, &SearchBarContainer::stopSearch);
+
+    connect(edit, &QLineEdit::textChanged, this,  &SearchBarContainer::changeSearchStatus);
+
     connect(this, &Peony::SearchBarContainer::updateSearchProgress, edit, &ProgressLineEdit::updateSearchProgress);
     connect(m_list_view, SIGNAL(clicked(const QModelIndex &)), this, SLOT(onTableClicked(const QModelIndex &)));
 }
@@ -260,6 +234,18 @@ void SearchBarContainer::onTableClicked(const QModelIndex &index)
     m_model->setStringList(l);
 }
 
+void SearchBarContainer::changeSearchStatus()
+{
+    if(!m_searching) {
+        m_searching = true;
+        m_stopSearchButton->show();
+        if (!m_search_trigger.isActive()) {
+            m_search_trigger.start();
+        }
+
+    }
+}
+
 void SearchBarContainer::startSearch()
 {
     auto l = m_model->stringList();
@@ -273,11 +259,22 @@ void SearchBarContainer::startSearch()
     Q_EMIT this->returnPressed();
 }
 
+void SearchBarContainer::stopSearch()
+{
+    //停止搜索
+    clearSearchBox();
+    updateSearchProgress(false);
+    Q_EMIT updateLastLocationPath();
+}
+
 void SearchBarContainer::clearSearchBox()
 {
     m_search_box->setText("");
     m_search_box->deselect();
+    m_search_box->setPlaceholderText(tr("Search File"));
     m_clear_action = true;
+    m_searching = false;
+    m_stopSearchButton->hide();
     //need stop search action
     m_search_trigger.stop();
 }

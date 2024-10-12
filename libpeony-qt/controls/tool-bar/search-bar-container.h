@@ -98,10 +98,13 @@ Q_SIGNALS:
     void returnPressed();
     void filterUpdate(const int &index);
     void updateSearchProgress(bool searching);
+    void updateLastLocationPath();
 
 public Q_SLOTS:
     void onTableClicked(const QModelIndex &index);
+    void changeSearchStatus();
     void startSearch();
+    void stopSearch();
     void clearSearchBox();
 
 private:
@@ -112,10 +115,12 @@ private:
 
     QStringListModel *m_model = nullptr;
     QListView *m_list_view = nullptr;
+    QToolButton* m_stopSearchButton = nullptr;
 
     QTimer m_search_trigger;
 
     bool m_clear_action = true;
+    bool m_searching = false;
 
     QStringList m_file_type_list = {tr("all"), tr("file folder"), tr("image"),
                                     tr("video"), tr("text file"), tr("audio"), tr("wps file"), tr("others")

@@ -130,9 +130,7 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         //qDebug() << "updateLocation text:" <<displayName <<uri << iconName;
         if (uri.startsWith("search:///"))
         {
-            QString nameRegexp = Peony::SearchVFSUriParser::getSearchUriNameRegexp(uri);
-            QString targetDirectory = Peony::SearchVFSUriParser::getSearchUriTargetDirectory(uri);
-            displayName = tr("Search \"%1\" in \"%2\"").arg(nameRegexp).arg(targetDirectory);
+            displayName = Peony::SearchVFSUriParser::getSearchUriTargetDirectory(uri);
         }
 
         //elide text if it is too long

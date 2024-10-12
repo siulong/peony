@@ -45,7 +45,7 @@ public:
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool forceUpdate = false);
     void refreshRequest();
-    void searchRequest(const QString &path, const QString &key);
+    void searchRequest(const QString &path, const QString &key, bool searchMode = true);
     void updateFileTypeFilter(const int &index);
 //    void clearTrash();
     void updateSearchProgress(bool searching);

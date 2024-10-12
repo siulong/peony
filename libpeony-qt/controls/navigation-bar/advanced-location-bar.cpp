@@ -36,9 +36,10 @@ using namespace Peony;
 
 AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
 {
-    QStackedLayout *layout = new QStackedLayout(this);
+    QStackedLayout *layout = new QStackedLayout;
+    QHBoxLayout *mainlayout = new QHBoxLayout(this);
     m_layout = layout;
-
+    mainlayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     layout->setSizeConstraint(QLayout::SetDefaultConstraint);
@@ -104,6 +105,11 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         }
     });
 
+    m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::updateLastLocationPath, [=]() {
+        //关闭搜索后，需要更新路径
+        Q_EMIT searchRequest(m_last_non_search_path, "", false);
+    });
+
     m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::filterUpdate, [=](const int &index)
     {
         Q_EMIT this->updateFileTypeFilter(index);
@@ -121,7 +127,10 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
 
     layout->addWidget(m_bar);
     layout->addWidget(m_edit);
-    layout->addWidget(m_search_bar);
+
+    mainlayout->addLayout(layout);
+    mainlayout->addWidget(m_search_bar);
+    setLayout(mainlayout);
 
     setLayout(layout);
     auto iscleaned = Peony::TrashCleanedWatcher::getInstance();
@@ -153,13 +162,19 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
     m_edit->setUri(uri);
     m_text = uri;
     //qDebug() << "m_edit visible:"<<isEditing();
-    if (! uri.startsWith("search://"))
-    {
+    if (! uri.startsWith("search://")) {
         m_last_non_search_path = uri;
         //from search mode go to other non search path, stop search
         //fix bug#97807, change path in search mode crash issue
         if (m_last_key != "")
             clearSearchBox();
+    } else {
+        QString key = SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        if (key != m_last_key) {
+            m_search_bar->setText(key);
+            m_search_bar->setFocus();
+            m_last_key = key;
+        }
     }
     Q_EMIT this->refreshRequest();
 }
@@ -195,9 +210,7 @@ void AdvancedLocationBar::switchEditMode(bool bSearchMode)
 {
     if (bSearchMode)
     {
-        m_edit->setVisible(false);
-        m_layout->setCurrentWidget(m_search_bar);
-        m_search_bar->setPlaceholderText(tr("Search Content..."));
+        m_search_bar->setPlaceholderText(tr("Search File"));
         m_search_bar->setFocus();
         m_in_search_mode = true;
     }

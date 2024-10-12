@@ -179,6 +179,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
         Q_EMIT m_searchWidget->clearSearchBox();
+
     });
 
     connect(m_searchWidget, &Peony::SearchWidget::refreshRequest, [=]() {
@@ -195,7 +196,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(this, &HeaderBar::cancelEdit, m_searchWidget, &Peony::SearchWidget::cancelEdit);
     connect(this, &HeaderBar::startEdit, m_searchWidget, &Peony::SearchWidget::startEdit);
     connect(this, &HeaderBar::finishEdit, m_searchWidget, &Peony::SearchWidget::finishEdit);
-    connect(m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, &HeaderBar::updateSearchRequest);
+    //connect(m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, &HeaderBar::updateSearchRequest);
     connect(m_searchWidget, &Peony::SearchWidget::updateLocationRequest, this, &HeaderBar::updateLocationRequest);
     connect(this, &HeaderBar::setLocation, this, &HeaderBar::quitMultiSelect);
 
