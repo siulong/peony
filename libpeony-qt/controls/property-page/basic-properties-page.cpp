@@ -1349,7 +1349,7 @@ void FileNameThread::run()
         }
     } else {
         QStringList stringList;
-        for (auto uri : m_uris) {
+        for (const auto &uri : m_uris) {
             //FIXME: replace BLOCKING api in ui thread.(finish) **
             std::shared_ptr<FileInfo> fileInfo = FileInfo::fromUri(uri);
             FileInfoJob *fileInfoJob = new FileInfoJob(fileInfo);
@@ -1372,7 +1372,7 @@ BatchStatusThread::BatchStatusThread(const QStringList &uris)
 
 void BatchStatusThread::run()
 {
-    for (auto uri : m_uris) {
+    for (const auto &uri : m_uris) {
         QStringList stringList;
         FileEnumerator e;
         e.setEnumerateDirectory(uri);

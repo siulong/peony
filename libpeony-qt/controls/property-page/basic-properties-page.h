@@ -93,7 +93,7 @@ Q_SIGNALS:
     void updateIsAllDir(const bool &isAllDir);
 
 private:
-    const QStringList &m_uris;
+    const QStringList m_uris;
     bool m_existReadOnly = false;
     bool m_existWrite = false;
     bool m_existHidden = false;
@@ -106,7 +106,7 @@ private:
 class FileNameThread : public QThread {
     Q_OBJECT
 private:
-    const QStringList &m_uris;
+    const QStringList m_uris;
 public:
     FileNameThread(const QStringList &uris) : m_uris(uris){}
 
