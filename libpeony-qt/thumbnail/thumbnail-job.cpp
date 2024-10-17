@@ -79,19 +79,6 @@ Peony::ThumbnailJob::~ThumbnailJob()
 
 void Peony::ThumbnailJob::run()
 {
-    /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
-    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
-        auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
-        QMutexLocker lk(mutex);
-        auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
-        if(occupiedVolume){
-            QString volumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(occupiedVolume->device());
-            qDebug()<<occupiedVolume->device()<<volumeUri<<m_uri;
-            if(m_uri.startsWith(volumeUri))
-                return;
-        }
-    }//end
-
     if (!parent())
         return;
 
@@ -102,6 +89,25 @@ void Peony::ThumbnailJob::run()
     if (type() == Invalid && !m_uri.endsWith(".desktop")|| !Peony::FileUtils::isFileExsit(m_uri)) {
         return;
     }
+
+    /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
+    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+        auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
+        QMutexLocker lk(mutex);
+        auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
+        if(occupiedVolume){
+            if(m_occupiedVolumeDevice != occupiedVolume->device()){
+                m_occupiedVolumeDevice = occupiedVolume->device();
+                m_occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(occupiedVolume->device());
+            }
+            qDebug()<<occupiedVolume->device()<<m_occupiedVolumeDevice<<m_occupiedVolumeUri<<m_uri;
+            if(!m_occupiedVolumeUri.isEmpty() && m_uri.startsWith(m_occupiedVolumeUri))
+                return;
+        }else{
+            m_occupiedVolumeDevice = QString();
+            m_occupiedVolumeUri =  QString();
+        }
+    }//end
 
     runCount++;
 

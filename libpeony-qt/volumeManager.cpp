@@ -209,7 +209,8 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
         if(0 == occupiedAppMap.size()){
             QTimer::singleShot(500,[=](){
                 QMutexLocker lk(&m_mutex);
-                m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
+                if(m_occupiedVolume)
+                    m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
             });
             //QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
         }else{
@@ -217,6 +218,13 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
             dlg->init(occupiedAppMap, message);
             dlg->setAttribute(Qt::WA_DeleteOnClose);
             dlg->exec();
+        }
+        {
+            QMutexLocker lk(&m_mutex);
+            if(m_occupiedVolume){
+                delete m_occupiedVolume;
+                m_occupiedVolume = nullptr;
+            }
         }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
@@ -553,7 +561,13 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->mountRemove(mountPoint);
     }
 
-
+    {
+        QMutexLocker lk(&pThis->m_mutex);
+        if(pThis->m_occupiedVolume && volumeItem && volumeItem->device() == pThis->m_occupiedVolume->device()){
+            delete pThis->m_occupiedVolume;
+            pThis->m_occupiedVolume = nullptr;
+        }
+    }
     delete mountItem;
 }
 

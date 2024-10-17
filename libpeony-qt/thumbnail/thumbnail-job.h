@@ -67,6 +67,9 @@ public Q_SLOTS:
 private:
     QString m_uri;
     std::weak_ptr<FileWatcher> m_watcher;
+    QString m_occupiedVolumeDevice;
+    QString m_occupiedVolumeUri;
+
 };
 
 }
