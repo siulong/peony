@@ -405,15 +405,22 @@ void IconView::mousePressEvent(QMouseEvent *e)
     else
         m_ctrl_key_pressed = false;
 
-    QModelIndex itemIndex = indexAt(e->pos());
+    QModelIndex itemIndex = QModelIndex();
+    for (int i = 0; i < model()->rowCount(); i++) {
+        auto index = model()->index(i, 0);
+        if (visualRect(index).contains(e->pos())) {
+            itemIndex = index;
+            break;
+        }
+    }
+
     if (itemIndex.isValid() && m_multi_select) {
         m_mouse_release_unselect = selectedIndexes().contains(itemIndex);
     } else {
         m_mouse_release_unselect = false;
     }
 
-    auto index = indexAt(e->pos());
-    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(itemIndex)) {
         m_noSelectOnPress = true;
     } else {
         m_noSelectOnPress = false;
