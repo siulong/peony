@@ -210,10 +210,7 @@ void BasicPropertiesPage::loadData()
 
     this->loadPartOne();
     this->loadPartTwo();
-
-    if (m_fileType != BP_MultipleFIle) {
-        this->loadOptionalData();
-    }
+    this->loadOptionalData();
 }
 
 void BasicPropertiesPage::initFloorOne()
@@ -320,24 +317,24 @@ void BasicPropertiesPage::initFloorTwo()
             default:
                 break;
         }
-
-        //===只读和隐藏选择框===
-        m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
-        m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
-
-        if (m_info->isDir() && m_uris.count() == 1) {
-            m_readOnly->setText(tr("Readonly (just applied by subfiles)"));
-        }
-
-        QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
-        checkboxLayout->addSpacing(1);
-        checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
-        checkboxLayout->addSpacing(35);
-        checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
-        checkboxLayout->addStretch(1);
-
-        baseLayout->addRow(tr("Property:"), checkboxLayout);
     }
+
+    //===只读和隐藏选择框===
+    m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
+    m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
+
+    if (m_info->isDir() && m_uris.count() == 1) {
+        m_readOnly->setText(tr("Readonly (just applied by subfiles)"));
+    }
+
+    QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
+    checkboxLayout->addSpacing(1);
+    checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
+    checkboxLayout->addSpacing(35);
+    checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
+    checkboxLayout->addStretch(1);
+
+    baseLayout->addRow(tr("Property:"), checkboxLayout);
 
     m_layout->addWidget(baseFrame);
 }
@@ -491,50 +488,53 @@ void BasicPropertiesPage::loadPartTwo()
 
 void BasicPropertiesPage::loadOptionalData()
 {
-    this->setSysTimeFormat();
-    // set time
-    if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
-        QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
-        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-            if ("hoursystem" == key) {
-                setSysTimeFormat();
-                updateInfo(m_info->uri());
-            }
+    if (m_fileType != BP_MultipleFIle) {
+        this->setSysTimeFormat();
+        // set time
+        if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
+            QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
+            connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+                if ("hoursystem" == key) {
+                    setSysTimeFormat();
+                    updateInfo(m_info->uri());
+                }
+            });
+        }
+
+#ifdef KY_SDK_DATE
+        connect(GlobalSettings::getInstance(),
+                &GlobalSettings::updateLongDataFormat,
+                this,
+                &BasicPropertiesPage::updateDateFormat);
+#endif
+
+        updateInfo(m_info.get()->uri());
+        connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
+            this->updateInfo(uri);
         });
     }
 
-#ifdef KY_SDK_DATE
-    connect(GlobalSettings::getInstance(),
-            &GlobalSettings::updateLongDataFormat,
-            this,
-            &BasicPropertiesPage::updateDateFormat);
-#endif
-
-    updateInfo(m_info.get()->uri());
-    connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
-        this->updateInfo(uri);
-    });
-
-    //底部隐藏多选框和只读选择框
-    if(m_info.get()->canRead() && !m_info.get()->canWrite()) {
-        m_readOnly->setCheckState(Qt::Checked);
-
+    if (m_fileType != BP_MultipleFIle && m_fileType != BP_Folder) {
         bool isHidden = m_info.get()->property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN).toBool();
-        if(m_info.get()->displayName().startsWith(".") || isHidden)
-            m_hidden->setCheckState(Qt::Checked);
+        if(m_info.get()->canRead() && !m_info.get()->canWrite()) {
+            m_readOnly->setCheckState(Qt::Checked);
 
-        m_readOnly->setDisabled(!m_info->canRename());
+            if(m_info.get()->displayName().startsWith(".") || isHidden)
+                m_hidden->setCheckState(Qt::Checked);
 
-        QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-        bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
-        //fix bug#113890,hiden Desktop folder change desktop show
-        m_hidden->setDisabled(!m_info->canRename() || isDesktop);
-        m_isReadOnly = m_readOnly->isChecked();
+            m_readOnly->setDisabled(!m_info->canRename());
+
+            QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+            bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
+            //fix bug#113890,hiden Desktop folder change desktop show
+            m_hidden->setDisabled(!m_info->canRename() || isDesktop);
+            m_isReadOnly = m_readOnly->isChecked();
+        }
     } else {
         BatchStatusThread *batchStatusThread = new BatchStatusThread(m_uris);
         batchStatusThread->start();
         connect(batchStatusThread, &BatchStatusThread::updateState, this, [=](Qt::CheckState readOnlyState, Qt::CheckState hiddenState){
-            if(fileType == BP_Folder){/* 单选一个文件夹的场景，参照windows 只读复选框显示为部分勾选状态；link to bug#265731 一级目录设置只读后再次打开属性界面，只读为未勾选状态  */
+            if(m_fileType == BP_Folder){/* 单选一个文件夹的场景，参照windows 只读复选框显示为部分勾选状态；link to bug#265731 一级目录设置只读后再次打开属性界面，只读为未勾选状态  */
                 readOnlyState = Qt::CheckState::PartiallyChecked;
             }//end
             m_readOnly->setCheckState(readOnlyState);
@@ -552,10 +552,9 @@ void BasicPropertiesPage::loadOptionalData()
         connect(batchStatusThread, &BatchStatusThread::finished, batchStatusThread, &BatchStatusThread::deleteLater);
     }
 
-
     //确认被修改
-    connect(m_readOnly,&QCheckBox::stateChanged,this,&BasicPropertiesPage::thisPageChanged);
-    connect(m_hidden,&QCheckBox::stateChanged,this,&BasicPropertiesPage::thisPageChanged);
+    connect(m_readOnly, &QCheckBox::stateChanged, this, &BasicPropertiesPage::thisPageChanged);
+    connect(m_hidden, &QCheckBox::stateChanged, this, &BasicPropertiesPage::thisPageChanged);
 }
 
 BasicPropertiesPage::FileType BasicPropertiesPage::checkFileType(const QStringList &uris)
