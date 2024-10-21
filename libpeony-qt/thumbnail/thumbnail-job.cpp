@@ -96,16 +96,10 @@ void Peony::ThumbnailJob::run()
         QMutexLocker lk(mutex);
         auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
         if(occupiedVolume){
-            if(m_occupiedVolumeDevice != occupiedVolume->device()){
-                m_occupiedVolumeDevice = occupiedVolume->device();
-                m_occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(occupiedVolume->device());
-            }
-            qDebug()<<occupiedVolume->device()<<m_occupiedVolumeDevice<<m_occupiedVolumeUri<<m_uri;
-            if(!m_occupiedVolumeUri.isEmpty() && m_uri.startsWith(m_occupiedVolumeUri))
+            QString occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolumeUri();
+            qDebug()<<occupiedVolume->device()<<occupiedVolumeUri<<m_uri;
+            if(!occupiedVolumeUri.isEmpty() && m_uri.startsWith(occupiedVolumeUri))
                 return;
-        }else{
-            m_occupiedVolumeDevice = QString();
-            m_occupiedVolumeUri =  QString();
         }
     }//end
 

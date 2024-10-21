@@ -224,6 +224,7 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
             if(m_occupiedVolume){
                 delete m_occupiedVolume;
                 m_occupiedVolume = nullptr;
+                m_occupiedVolumeUri = QString();
             }
         }
     }, Qt::QueuedConnection);
@@ -260,6 +261,7 @@ VolumeManager::~VolumeManager(){
         if(m_occupiedVolume){
             delete m_occupiedVolume;
             m_occupiedVolume = nullptr;
+            m_occupiedVolumeUri = QString();
         }
     }
 }
@@ -566,6 +568,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         if(pThis->m_occupiedVolume && volumeItem && volumeItem->device() == pThis->m_occupiedVolume->device()){
             delete pThis->m_occupiedVolume;
             pThis->m_occupiedVolume = nullptr;
+            pThis->m_occupiedVolumeUri = QString();
         }
     }
     delete mountItem;
@@ -672,7 +675,8 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
         {
             QMutexLocker lk(pThis->getMutex());
             pThis->m_occupiedVolume = volume;
-            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume;
+            pThis->m_occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(volume->device());
+            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume<<pThis->m_occupiedVolumeUri ;
         }
     }
 }
@@ -767,6 +771,7 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
         if(pThis->m_occupiedVolume){
             delete pThis->m_occupiedVolume;
             pThis->m_occupiedVolume = nullptr;
+            pThis->m_occupiedVolumeUri = QString();
         }
     }
 }
