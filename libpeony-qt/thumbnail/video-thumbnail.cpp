@@ -127,80 +127,56 @@ QMap<QString, QString> VideoThumbnail::videoInfo()
     return map;
 }
 
-/*
-* 函数功能：
-* 通过ffmpeg从视频文件中提取出缩略图显示的图片，该图片存放到tmp目录下，不会主动删除，
-* tmp是内存文件系统，系统重启会自动清除图片
-*
-* 性能测试：
-* 转化性能和文件大小以及视频文件格式有关。在V10上面测试ffmpeg不支持mpeg格式的视频文件
-* 这个可能和解码器的配置有关，可以通过视频格式转换后,再提取图片，效率很低，暂时未实现。
-*
-* 后续优化方式：
-* 通过调用ffpmeg的api实现视频格式转换和图片文件提取，需要验证性能的提升情况。
-*/
 QIcon VideoThumbnail::generateThumbnail()
 {
     QIcon thumbnailImage;
-    QString thumbnail= GenericThumbnailer::thumbnaileCachDir();
-    QString md5Name=GenericThumbnailer::codeMd5WithModifyTime(m_url.path(), m_modifyTime);
-    QString fileThumbnail=thumbnail+"/"+md5Name;
+    static const QString thumbnailDir = GenericThumbnailer::thumbnaileCachDir();
+    const QString md5Name = GenericThumbnailer::codeMd5WithModifyTime(m_url.path(), m_modifyTime);
+    const QString fileThumbnail = thumbnailDir + "/" + md5Name;
 
+    /**
+     * @bug #192691: [M900] [Audio/Video] The probability of adding a video will be stuttered,
+     *  and the added video will not be played until it has stuttered for more than 20s (Probability of recurrence: 2/10)
+     *
+     * Use the ffmpegthumbnailer command to get the thumbnail of a video file to improve the efficiency of getting it.
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-10-21
+     */
+    // Check if thumbnail already exists
     if (!QFile::exists(fileThumbnail)) {
-        static bool isWayland = qApp->property("isWayland").toBool();
-        QStringList list;
-        if (isWayland) {
-            QMap<QString, QString> map=  videoInfo();
-            QString pos=map.value("Pos");
+        QStringList arguments;
+        arguments << "-i" << m_url.path()     // Input file
+                  << "-o" << fileThumbnail    // Output file
+                  << "-s" << "640";           // Thumbnail size
+        // Uncomment the following lines to add more options
+        // << "-t" << "10%"                   // Seek to 10% of the video
+        // << "-q" << "8"                     // JPEG quality
+        // << "-f";                           // Add film strip effect
 
-            //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
-            list<<"-hwaccel"<<"auto"    /*try using hardware accel*/
-               <<"-i"<<m_url.path()     /*Input File Name*/
-               <<"-y"                    /*Overwrite*/
-               <<"-ss"<<pos              /* seeks in this position*/
-               <<"-vframes"<<"1"         /* Num Frames */
-               <<"-f"<<"image2"          /* file format.  */
-              // <<"-s"<<"128x128"         /*<<"-vf"<<scal*/
-               <<"-s"<<"640x640"         /*<<"-vf"<<scal*/
-               <<fileThumbnail; /*output file Name */
-            qDebug()<<"the ffmpeg cmd: " << list;
-        } else {
-            //ffmpeg -i ./kofar-bi-amirica.mp4 -y -ss 10.0 -vframes 1 -f image2 -s 128x128 thumbnail
-            list<<"-i"<<m_url.path()     /*Input File Name*/
-               <<"-y"                    /*Overwrite*/
-               <<"-ss"<<"10.0"              /* seeks in this position*/
-               <<"-vframes"<<"1"         /* Num Frames */
-               <<"-f"<<"image2"          /* file format.  */
-              // <<"-s"<<"128x128"         /*<<"-vf"<<scal*/
-               <<"-s"<<"640x640"         /*<<"-vf"<<scal*/
-               <<fileThumbnail; /*output file Name */
-            qDebug()<<"the ffmpeg cmd: " << list;
+        QProcess ffmpegProcess;
+        ffmpegProcess.start("ffmpegthumbnailer", arguments);
+
+        // Wait for the process to start
+        if (!ffmpegProcess.waitForStarted()) {
+            qWarning() << "Failed to start ffmpegthumbnailer process.";
         }
 
-        QProcess p;
-        p.start("/usr/bin/ffmpeg",list);
-
-        if (!p.waitForStarted()) {
-            qWarning()<<"start get video image failed.";
-            return thumbnailImage;
+        // Wait for the process to finish with a timeout
+        constexpr int timeout = 10000; // 10 seconds
+        if (!ffmpegProcess.waitForFinished(timeout)) {
+            qWarning() << "ffmpegthumbnailer process timed out.";
+            ffmpegProcess.kill();
         }
 
-        if (!p.waitForFinished(40000)) {
-            qWarning()<<"wait video image too long time.";
-            return thumbnailImage;
-        }
-
-        QString err=p.readAllStandardError();
-        QString read=p.readAll();
-        if (err.contains("not contain any stream")) {
-            qWarning()<<"get video image failed.";
-            return thumbnailImage;
+        // Check for any errors
+        const QString errorOutput = ffmpegProcess.readAllStandardError();
+        if (!errorOutput.isEmpty()) {
+            qWarning() << "ffmpegthumbnailer process reported an error:" << errorOutput;
         }
     }
 
-    /*
-     *不知道会不会出现无效的图片的情况，可能需要对这种情况做处理
-    */
+    // Generate the thumbnail icon
     thumbnailImage = GenericThumbnailer::generateThumbnail(fileThumbnail, true);
 
     return thumbnailImage;

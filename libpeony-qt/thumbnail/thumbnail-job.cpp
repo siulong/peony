@@ -131,11 +131,9 @@ void Peony::ThumbnailJob::run()
     } else if (mimeType.contains("djvu")) {
         setType(ImagePdf);
     } else if (mimeType.startsWith("video")
-               || mimeType.endsWith("vnd.trolltech.linguist")
                || mimeType.endsWith("vnd.adobe.flash.movie")
                || mimeType.endsWith("vnd.rn-realmedia")
-               || mimeType.endsWith("vnd.ms-asf")
-               || mimeType.endsWith("octet-stream")) {
+               || mimeType.endsWith("vnd.ms-asf")) {
         setType(Video);
     } else {
         int idx = 0;
