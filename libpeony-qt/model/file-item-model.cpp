@@ -247,7 +247,7 @@ QModelIndex FileItemModel::parent(const QModelIndex &child) const
 int FileItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (m_root_uri == "trash:///") {
+    if (m_root_uri == "trash:///" || m_root_uri.startsWith("search:///")) {
         return FileSize + 2;
     }
     return FileSize+1;
@@ -447,22 +447,34 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     }
-    case TrashOriginPath: {
+    case FilePath: {
         switch (role) {
         case Qt::DisplayRole:
         case Qt::ToolTipRole: {
-            QString originPath = item->m_info->property("orig-path").toString();
-            if (originPath.isEmpty()) {
-                auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
-                if (targetInfo->isEmptyInfo()) {
-                    FileInfoJob j(targetInfo);
-                    j.querySync();
-                    originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
-                    item->m_info->setProperty("orig-path", originPath);
+            if(m_root_uri.startsWith("trash://")){
+                QString originPath = item->m_info->property("orig-path").toString();
+                if (originPath.isEmpty()) {
+                    auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
+                    if (targetInfo->isEmptyInfo()) {
+                        FileInfoJob j(targetInfo);
+                        j.querySync();
+                        originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
+                        item->m_info->setProperty("orig-path", originPath);
+                    }
+                    return originPath;
                 }
                 return originPath;
+            }else if(m_root_uri.startsWith("search:///")){
+                QString path = item->m_info->filePath();
+                if(!path.isEmpty()){
+                    return path;
+                }else if(item->uri().startsWith("trash://")){
+                    return item->m_info->property("orig-path").toString();
+                }else{
+                    QString targetUri = item->m_info.get()->targetUri();
+                    return QUrl(targetUri).path();
+                }
             }
-            return originPath;
             break;
         }
         default:
@@ -497,8 +509,12 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Type");
         case FileSize:
             return tr("File Size");
-        case TrashOriginPath:
-            return tr("Original Path");
+        case FilePath:{
+            if (m_root_uri.startsWith("trash:///"))
+                return tr("Original Path");
+            if(m_root_uri.startsWith("search:///"))
+                return tr("Path");
+        }
 
         default:
             return QVariant();

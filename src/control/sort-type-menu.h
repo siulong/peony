@@ -32,6 +32,7 @@ public:
     explicit SortTypeMenu(QWidget *parent = nullptr);
 
     void setOriginPathVisible(bool visible);
+    void setFilePathVisible(bool visible);
     QString getSortTypeName(int type);
     void updateSortOrderName(int type);
 
@@ -49,6 +50,8 @@ private:
     Qt::SortOrder m_sort_order = Qt::AscendingOrder;
 
     QAction *m_origin_path = nullptr;
+    QAction *m_file_path = nullptr;
+
     QActionGroup *m_sort_types;
     QActionGroup *m_sort_orders;
 };

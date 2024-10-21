@@ -749,6 +749,10 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         if (m_top_window->getCurrentUri() != "trash:///") {
             tmp.last()->setVisible(false);
         }
+        if(m_top_window->getCurrentUri().startsWith("search:///")){
+            tmp<<sortTypeMenu->addAction(tr("Path"));
+        }
+
         int sortType = m_view->getSortType();
         if (sortType >= 0) {
             tmp.at(sortType)->setCheckable(true);
