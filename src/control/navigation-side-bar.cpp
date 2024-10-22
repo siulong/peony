@@ -599,6 +599,10 @@ void NavigationSideBar::scrollTo(const QModelIndex &index, QAbstractItemView::Sc
 
 void NavigationSideBar::paintEvent(QPaintEvent *event)
 {
+    QPalette pal = qApp->palette();
+    pal.setColor(QPalette::Base, QColor(Qt::transparent));
+    setPalette(pal);
+    viewport()->setPalette(pal);
     QTreeView::paintEvent(event);
 }
 
