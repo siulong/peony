@@ -48,6 +48,7 @@
 #include "desktop-icon-view-delegate.h"
 #include "desktop-menu-plugin-manager.h"
 #include "emblem-provider.h"
+#include "tooltips-manager.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -628,23 +629,14 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
             return QVariant(displayName);
     }
     case Qt::ToolTipRole: {
-//        // fix #80257
-//        switch (index.row()) {
-//        case 0:
-//            return tr("Computer");
-//        case 1:
-//            return tr("Trash");
-//        default:
-//            break;
-//        }
-
-        //fix bug#53504, desktop files not show same name issue
-        if (info->isDesktopFile())
-        {
-            auto displayName = FileUtils::handleDesktopFileName(info->uri(), info->displayName());
-            return displayName;
-        }
-        return info->displayName();
+        /**
+         * @task #346285: 【Tooltips specification】Change the desktop icon (including the management-desktop-application icon) tooltips display,
+         *  add supplementary text
+         *
+         * @author: Renyg <renyangguang@kylinos.cn>
+         * @date:   2024-09-25
+         */
+        return QVariant(TooltipsManagerInstance.generateTooltip(info.get()));
     }
     case Qt::DecorationRole: {
         auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(info->uri());
@@ -659,6 +651,14 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
         return info->isSymbolLink();
     }
     return QVariant();
+}
+
+std::shared_ptr<FileInfo> DesktopItemModel::getFileInfo(const QModelIndex &index) const
+{
+    if (!index.isValid() || m_files.isEmpty() || index.row() >= m_files.length())
+        return nullptr;
+
+    return m_files.at(index.row());
 }
 
 void DesktopItemModel::onEnumerateFinished(bool successed)

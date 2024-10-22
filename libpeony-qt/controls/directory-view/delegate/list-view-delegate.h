@@ -23,6 +23,7 @@
 #ifndef LISTVIEWDELEGATE_H
 #define LISTVIEWDELEGATE_H
 
+#include <memory>
 #include <QStyledItemDelegate>
 #include <QTextEdit>
 #include "peony-core_global.h"
@@ -33,6 +34,7 @@ class QPushButton;
 namespace Peony {
 
 class TextEdit;
+class FileInfo;
 
 class ListViewDelegate : public QStyledItemDelegate
 {
@@ -59,6 +61,18 @@ public:
     //QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const override;
     void setSearchKeyword(QString regFindKeyWords);
     void paintLabel(QStyleOptionViewItem &opt, int aalignment, QList<QColor> colors, QPainter *painter) const;
+
+    /**
+     * @brief Sets the elided name policy for a file item.
+     *
+     * This function determines whether the display name of a file needs to be elided
+     * based on the available space in the view. It sets a property on the FileInfo
+     * object to indicate whether the name is elided or not.
+     *
+     * @param info Shared pointer to the FileInfo object.
+     * @param opt The style option containing display information.
+     */
+    static void setElidedNamePolicy(const std::shared_ptr<FileInfo>& info, const QStyleOptionViewItem &opt);
 
 Q_SIGNALS:
     void isEditing(bool editing) const;

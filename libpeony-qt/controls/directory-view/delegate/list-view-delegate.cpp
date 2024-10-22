@@ -35,7 +35,9 @@
 #include "file-info-job.h"
 #include "emblem-provider.h"
 #include "global-settings.h"
+#include "list-view-style.h"
 
+#include <memory>
 #include <QTimer>
 #include <QPushButton>
 
@@ -136,6 +138,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         opt.text = text1;
         painter->save();
 
+        setElidedNamePolicy(info, opt);
         QString text = opt.text;
         QFont font = opt.font;
         QFontMetrics fontMetrics = opt.fontMetrics;
@@ -186,6 +189,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         document.drawContents(painter, textRect);
         painter->restore();
     } else {
+        setElidedNamePolicy(info, opt);
         opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
     }
     if(view->isEnableMultiSelect()) {
@@ -588,6 +592,21 @@ void ListViewDelegate::paintLabel(QStyleOptionViewItem &opt, int aalignment, QLi
         break;
     }
     }
+}
+
+void ListViewDelegate::setElidedNamePolicy(const std::shared_ptr<FileInfo>& info, const QStyleOptionViewItem &opt)
+{
+    // Early return if the display name doesn't match the text in the style option
+    if (info->displayName() != opt.text) {
+        return;
+    }
+
+    const QFontMetrics fm(opt.font);
+    const QRect textRect = opt.widget->style()->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+    const QString elidedText = fm.elidedText(info->displayName(), Qt::ElideRight, textRect.width());
+
+    // Set the 'isElided' property based on whether the text is truncated
+    info->setProperty("isElided", elidedText != info->displayName());
 }
 
 //TextEdit

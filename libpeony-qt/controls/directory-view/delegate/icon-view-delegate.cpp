@@ -335,7 +335,8 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                                   xoffset,
                                   m_regFindKeyWords,
                                   2,
-                                  2);
+                                  2,
+                                  info);
 
     painter->restore();
 
@@ -670,7 +671,7 @@ const QString IconViewDelegate::getRegFindKeyWords() const
     return m_regFindKeyWords;
 }
 
-void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
+void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount, std::shared_ptr<FileInfo> info)
 {
     painter->save();
     QFont font = option.font;
@@ -727,6 +728,13 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     document.setPlainText(elidedText);
 
+    if (isElided && info != nullptr) {
+        if (option.text != elidedText) {
+            info->setProperty("isElided", true);
+        } else {
+            info->setProperty("isElided", false);
+        }
+    }
     painter->translate(horizalMargin, 0);
 
     //设置关键字高亮
@@ -934,7 +942,7 @@ QSize IconViewTextHelper::getTextSizeForIndex(const QStyleOptionViewItem &option
     return QSize(fixedWidth, textHight);
 }
 
-void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, int textMaxHeight, int horizalMargin, int maxLineCount, bool useSystemPalette, const QColor &customColor)
+void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, int textMaxHeight, int horizalMargin, int maxLineCount, bool useSystemPalette, const QColor &customColor, std::shared_ptr<FileInfo> info)
 {
     painter->save();
     painter->translate(horizalMargin, 0);
@@ -969,6 +977,8 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     int width = option.rect.width() - 2*horizalMargin;
 
     int y = 0;
+    bool isElided= false;
+    QString elidedText = option.text;
     while (true) {
         QTextLine line = textLayout.createLine();
         if (!line.isValid())
@@ -984,6 +994,10 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         } else {
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+                elidedText = elidedLastLine;
+            }
             auto rect = QRect(horizalMargin, y /*+ fontMetrics.ascent()*/, width, textMaxHeight);
             //opt.setWrapMode(QTextOption::NoWrap);
             opt.setWrapMode(QTextOption::NoWrap);
@@ -995,5 +1009,12 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     textLayout.endLayout();
 
+    if (isElided && info != nullptr) {
+        if (option.text != elidedText) {
+            info->setProperty("isElided", true);
+        } else {
+            info->setProperty("isElided", false);
+        }
+    }
     painter->restore();
 }

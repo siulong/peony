@@ -22,6 +22,7 @@
 
 #include "desktop-icon-view-delegate.h"
 #include "desktop-icon-view.h"
+#include "desktop-item-proxy-model.h"
 
 #include "icon-view-editor.h"
 
@@ -66,6 +67,12 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 {
     painter->save();
     auto view = qobject_cast<Peony::DesktopIconView*>(parent());
+
+    auto info = getFileInfo(index);
+    if (!info) {
+        painter->restore();
+        return;
+    }
 
     auto style = option.widget->style();
 
@@ -184,7 +191,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     QPainter shadowPainter(&pixmap);
     QColor shadow = Qt::black;
     shadowPainter.setPen(shadow);
-    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, maxLineCount, false, shadow);
+    IconViewTextHelper::paintText(&shadowPainter, opt, index, maxTextHight, 0, maxLineCount, false, shadow, info);
     shadowPainter.end();
 
     QImage shadowImage(expectedSize + QSize(4, 4), QImage::Format_ARGB32_Premultiplied);
@@ -233,7 +240,9 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
                                   maxTextHight,
                                   0,
                                   maxLineCount,
-                                  false);
+                                  false,
+                                  Qt::transparent,
+                                  info);
     painter->restore();
 
     painter->restore();
@@ -634,4 +643,36 @@ DesktopIconView *DesktopIconViewDelegate::getView() const
 void DesktopIconViewDelegate::initIndexOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
     return initStyleOption(option, index);
+}
+
+std::shared_ptr<FileInfo> DesktopIconViewDelegate::getFileInfo(const QModelIndex &index) const
+{
+    // Get the associated view
+    auto view = getView();
+    if (!view) {
+        return nullptr;
+    }
+
+    // Cast the model to DesktopItemProxyModel
+    auto proxyModel = qobject_cast<Peony::DesktopItemProxyModel*>(view->model());
+    if (!proxyModel) {
+        return nullptr;
+    }
+
+    // Get the source model (AdvancedDesktopItemModel)
+    auto originalModel = qobject_cast<Peony::DesktopItemModel*>(proxyModel->sourceModel());
+    if (!originalModel) {
+        return nullptr;
+    }
+
+    // Map the proxy index to the source index
+    QModelIndex sourceIndex = proxyModel->mapToSource(index);
+
+    // Retrieve and return the FileInfo from the original model
+    auto info = originalModel->getFileInfo(sourceIndex);
+    if (!info) {
+        return nullptr;
+    }
+
+    return info;
 }

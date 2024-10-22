@@ -24,12 +24,14 @@
 #define DESKTOPICONVIEWDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <memory>
 
 class QPushButton;
 
 namespace Peony {
 
 class DesktopIconView;
+class FileInfo;
 
 class DesktopIconViewDelegate : public QStyledItemDelegate
 {
@@ -48,6 +50,14 @@ public:
     //初始化option
      void initIndexOption(QStyleOptionViewItem *option,
                           const QModelIndex &index) const;
+
+     /**
+      * @brief Retrieves the FileInfo object associated with a given model index
+      * @param index The QModelIndex for which to retrieve the FileInfo
+      * @return std::shared_ptr<FileInfo> The FileInfo object, or nullptr if not found
+      */
+     std::shared_ptr<FileInfo> getFileInfo(const QModelIndex &index) const;
+
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
