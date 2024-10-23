@@ -315,6 +315,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
 
                     QAction *action = new QAction(tmpIcon, qinfo.baseName(), this);
                     connect(action, &QAction::triggered, this, [=]() {
+                        Q_EMIT markFilePos(mapToParent(this->pos()));
                         CreateTemplateOperation op(m_directory, CreateTemplateOperation::Template, t);
                         op.run();
                         auto target = op.target();
@@ -339,6 +340,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
         actions<<createEmptyFileAction;
         connect(actions.last(), &QAction::triggered, this, [=]() {
             //FileOperationUtils::create(m_directory);
+            Q_EMIT markFilePos(mapToParent(this->pos()));
             CreateTemplateOperation op(m_directory);
             op.run();
             auto targetUri = op.target();
@@ -350,6 +352,7 @@ const QList<QAction *> DesktopMenu::constructCreateTemplateActions()
         auto createFolderActions = new QAction(QIcon::fromTheme("folder-new-symbolic"), tr("Folder"), this);
         actions<<createFolderActions;
         connect(actions.last(), &QAction::triggered, this, [=]() {
+            Q_EMIT markFilePos(mapToParent(this->pos()));
             //FileOperationUtils::create(m_directory, nullptr, CreateTemplateOperation::EmptyFolder);
             CreateTemplateOperation op(m_directory, CreateTemplateOperation::EmptyFolder, tr("New Folder"));
             op.run();
@@ -370,39 +373,48 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
     QList<QAction *> l;
 
     if (m_selections.isEmpty()) {
+        auto useAutoLayoutAction = addAction(tr("Auto arrange"));
+        useAutoLayoutAction->setCheckable(true);
+        useAutoLayoutAction->setChecked(GlobalSettings::getInstance()->getValue(DESKTOP_USE_AUTO_LAYOUT).toBool());
+        connect(useAutoLayoutAction, &QAction::triggered, [=](bool checked){
+            useAutoLayoutAction->setChecked(checked);
+            GlobalSettings::getInstance()->setGSettingValue(DESKTOP_USE_AUTO_LAYOUT, checked);
+        });
+        l<<useAutoLayoutAction;
+
         auto viewTypeAction = addAction(tr("View Type"));
         l<<viewTypeAction;
         QMenu *viewTypeSubMenu = new QMenu(this);
-        auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+        auto desktopView = dynamic_cast<AdvancedDesktopIconView*>(m_view);
         auto zoomLevel = desktopView->zoomLevel();
 
         auto smallAction = viewTypeSubMenu->addAction(tr("Small"), this, [=]() {
-            Q_EMIT setDefaultZoomLevel(DesktopIconView::Small);
+            Q_EMIT setDefaultZoomLevel(AdvancedDesktopIconView::Small);
         });
         auto normalAction = viewTypeSubMenu->addAction(tr("Normal"), this, [=]() {
-            Q_EMIT setDefaultZoomLevel(DesktopIconView::Normal);
+            Q_EMIT setDefaultZoomLevel(AdvancedDesktopIconView::Normal);
         });
         auto largeAction = viewTypeSubMenu->addAction(tr("Large"), this, [=]() {
-            Q_EMIT setDefaultZoomLevel(DesktopIconView::Large);
+            Q_EMIT setDefaultZoomLevel(AdvancedDesktopIconView::Large);
         });
         auto hugeAction = viewTypeSubMenu->addAction(tr("Huge"), this, [=]() {
-            Q_EMIT setDefaultZoomLevel(DesktopIconView::Huge);
+            Q_EMIT setDefaultZoomLevel(AdvancedDesktopIconView::Huge);
         });
 
         switch (zoomLevel) {
-        case DesktopIconView::Small:
+        case AdvancedDesktopIconView::Small:
             smallAction->setCheckable(true);
             smallAction->setChecked(true);
             break;
-        case DesktopIconView::Normal:
+        case AdvancedDesktopIconView::Normal:
             normalAction->setCheckable(true);
             normalAction->setChecked(true);
             break;
-        case DesktopIconView::Large:
+        case AdvancedDesktopIconView::Large:
             largeAction->setCheckable(true);
             largeAction->setChecked(true);
             break;
-        case DesktopIconView::Huge:
+        case AdvancedDesktopIconView::Huge:
             hugeAction->setCheckable(true);
             hugeAction->setChecked(true);
             break;
@@ -442,32 +454,32 @@ const QList<QAction *> DesktopMenu::constructViewOpActions()
 
         sortTypeAction->setMenu(sortTypeMenu);
 
-        /*
         //sort order
-        auto sortOrderAction = addAction(tr("Sort Order..."));
+        auto sortOrderAction = addAction(tr("Sort Order"));
         l<<sortOrderAction;
         QMenu *sortOrderMenu = new QMenu(this);
         tmp.clear();
-        tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
         tmp<<sortOrderMenu->addAction(tr("Descending Order"));
-        //        int sortOrder = m_view->getSortOrder();
-        //        tmp.at(sortOrder)->setCheckable(true);
-        //        tmp.at(sortOrder)->setChecked(true);
+        tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
+        int sortOrder = m_view->getSortOrder();
+        tmp.at(sortOrder)->setCheckable(true);
+        tmp.at(sortOrder)->setChecked(true);
 
         for (int i = 0; i < tmp.count(); i++) {
             connect(tmp.at(i), &QAction::triggered, this, [=](){
-                m_view->setSortOrder(i);
+                Q_EMIT setSortOrder(i);
+                GlobalSettings::getInstance()->setValue(DESKTOP_SORT_ORDER, i);
             });
         }
 
         sortOrderAction->setMenu(sortOrderMenu);
-
+        /*
         l<<addAction(QIcon::fromTheme("zoom-in-symbolic"), tr("Zoom &In"), this, [=](){
-            auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+            auto desktopView = dynamic_cast<AdvancedDesktopIconView*>(m_view);
             desktopView->zoomIn();
         });
         l<<addAction(QIcon::fromTheme("zoom-out-symbolic"), tr("Zoom &Out"), this, [=](){
-            auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+            auto desktopView = dynamic_cast<AdvancedDesktopIconView*>(m_view);
             desktopView->zoomOut();
         });
         */
@@ -578,7 +590,7 @@ const QList<QAction *> DesktopMenu::constructFileOpActions()
         });
         l<<addAction(QIcon::fromTheme("view-refresh-symbolic"), tr("Refresh"));
         connect(l.last(), &QAction::triggered, this, [=]() {
-            auto desktopView = dynamic_cast<DesktopIconView*>(m_view);
+            auto desktopView = dynamic_cast<AdvancedDesktopIconView*>(m_view);
             desktopView->refresh();
         });
     }

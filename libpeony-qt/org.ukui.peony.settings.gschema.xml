@@ -2,6 +2,12 @@
 <schemalist>
   <schema id="org.ukui.peony.settings" path="/org/ukui/peony/settings/">
     <!--General-->
+    <key type="b" name="desktop-use-auto-layout">
+      <default>false</default>
+      <summary>setting layout mode for desktop icons</summary>
+      <description>Control the display of desktop icons, true for layout without space</description>
+    </key>
+
     <key type="b" name="trash-mobile-files">
       <default>false</default>
       <summary>trash mobile files</summary>

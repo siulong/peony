@@ -25,7 +25,7 @@
 
 #include <QMainWindow>
 #include <QGSettings>
-#include "desktop-icon-view.h"
+#include "advanced-desktop-icon-view.h"
 
 namespace KWayland {
 namespace Client {
@@ -46,16 +46,19 @@ public:
     int id() const;
 
     QScreen *screen() const;
-    Peony::DesktopIconView *getIconView();
+    AdvancedDesktopIconView *getIconView();
     void setId(int id);
 
     bool event(QEvent *event) override;
     void invaidScreen();
 
 Q_SIGNALS:
-    void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
+    void setDefaultZoomLevel(AdvancedDesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
+    void setSortOrder(int sortOrder);
     void updateWindow(const QRect &geometry);
+    void markFilePos(QPoint pos);
+    void clearOtherViewSelection();
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
@@ -80,7 +83,7 @@ private:
     int m_id = -1;
     QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
-    Peony::DesktopIconView *m_desktopIconView = nullptr;
+    AdvancedDesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
     Peony::DesktopMenu *m_menu = nullptr;

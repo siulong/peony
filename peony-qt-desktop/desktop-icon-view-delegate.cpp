@@ -21,9 +21,9 @@
  */
 
 #include "desktop-icon-view-delegate.h"
-#include "desktop-icon-view.h"
+#include "advanced-desktop-icon-view.h"
 #include "desktop-item-proxy-model.h"
-
+#include "advanced-desktop-item-model.h"
 #include "icon-view-editor.h"
 
 #include "file-operation-manager.h"
@@ -33,7 +33,7 @@
 
 #include "icon-view-delegate.h"
 #include "clipboard-utils.h"
-#include "desktop-item-model.h"
+
 #include "emblem-provider.h"
 
 #include <QPushButton>
@@ -66,7 +66,7 @@ DesktopIconViewDelegate::~DesktopIconViewDelegate()
 void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
-    auto view = qobject_cast<Peony::DesktopIconView*>(parent());
+    auto view = qobject_cast<AdvancedDesktopIconView*>(parent());
 
     auto info = getFileInfo(index);
     if (!info) {
@@ -82,7 +82,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     opt.font = qApp->font();
     opt.fontMetrics = qApp->fontMetrics();
 
-    if (view->state() == DesktopIconView::DraggingState) {
+    if (view->state() == AdvancedDesktopIconView::DraggingState) {
         if (auto widget = view->indexWidget(index)) {
             view->setIndexWidget(index, nullptr);
         }
@@ -99,7 +99,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     bool bCutFile = false;
     auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
     if (!clipedUris.isEmpty()){
-        if (clipedUris.contains(index.data(DesktopItemModel::UriRole).toString())) {
+        if (clipedUris.contains(index.data(AdvancedDesktopIconView::UriRole).toString())) {
             painter->setOpacity(0.5);
             bCutFile = true;
             qDebug()<<"cut item in desktop"<<index.data();
@@ -160,6 +160,9 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected))
     {
         opt.state &= ~QStyle::State_Selected;
+        opt.state &= ~QStyle::State_MouseOver;
+    } else if (opt.state.testFlag(QStyle::State_MouseOver)){
+        opt.state &= ~QStyle::State_MouseOver;
     }
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -248,40 +251,39 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    QRect emblemRect = iconRect;
+    int emblemsSize = 16;
+    switch (view->zoomLevel()) {
+    case AdvancedDesktopIconView::Small: {
+        emblemsSize = 8;
+        break;
+    }
+    case AdvancedDesktopIconView::Normal: {
+        break;
+    }
+    case AdvancedDesktopIconView::Large: {
+        emblemsSize = 24;
+        break;
+    }
+    case AdvancedDesktopIconView::Huge: {
+        emblemsSize = 32;
+        break;
+    }
+    default: {
+        break;
+    }
+    }
+    auto rect = opt.rect;
+    int topLeftX = emblemRect.x()-emblemsSize/2+3 < rect.x()? rect.x() : emblemRect.x()-emblemsSize/2+3;
+    int topLeftY = emblemRect.y()-emblemsSize/2 < rect.y() - y_delta/2? rect.y() - y_delta/2 : emblemRect.y()-emblemsSize/2;
+    int bottomRightX = emblemRect.right()-emblemsSize/2 <= topLeftX + emblemsSize? topLeftX + emblemsSize + 5 : emblemRect.right()-emblemsSize/2 ;
+    int bottomRightY = emblemRect.bottom()-emblemsSize <= topLeftY + emblemsSize? topLeftY + emblemsSize + 5 : emblemRect.bottom()-emblemsSize;
 
     //paint link icon and locker icon
-    FileInfo* file = FileInfo::fromUri(index.data(Qt::UserRole).toString()).get();
-    if ((index.data(Qt::UserRole).toString() != "computer:///") && (index.data(Qt::UserRole).toString() != "trash:///")) {
-        QSize lockerIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            lockerIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            lockerIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            lockerIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-        auto topRight = opt.rect.topRight();
-        topRight.setX(topRight.x() - opt.rect.width() + 10);
-        topRight.setY(topRight.y() + 10);
-        auto linkRect = QRect(topRight, lockerIconSize);
-
+    QString uri = index.data(AdvancedDesktopIconView::UriRole).toString();
+    FileInfo* file = FileInfo::fromUri(uri).get();
+    if ((uri != "computer:///") && (uri != "trash:///")) {
+        auto linkRect = QRect(QPoint(topLeftX, topLeftY), QSize(emblemsSize, emblemsSize));
         if (! file->canRead())
         {
             emblemPoses.removeOne(1);
@@ -305,40 +307,8 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
     if (index.data(Qt::UserRole + 1).toBool()) {
         emblemPoses.removeOne(3);
-        QSize symbolicIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            symbolicIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            symbolicIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            symbolicIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-//        auto topRight = opt.rect.topRight();
-//        topRight.setX(topRight.x() - offset - symbolicIconSize.width());
-//        topRight.setY(topRight.y() + offset);
-//        auto linkRect = QRect(topRight, symbolicIconSize);
         //Adjust link emblem to topLeft.link story#8354
-        auto topLeft = opt.rect.topLeft();
-        topLeft.setX(opt.rect.topLeft().x() + 10);
-        topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
-        auto linkRect = QRect(topLeft, symbolicIconSize);
+        auto linkRect = QRect(QPoint(topLeftX, bottomRightY), QSize(emblemsSize, emblemsSize));
         QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
         painter->save();
         painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -355,71 +325,25 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
         QIcon icon = QIcon::fromTheme(extensionsEmblem);
 
-        QSize emblemsIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            emblemsIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            emblemsIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            emblemsIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-
         if (!icon.isNull()) {
             int pos = emblemPoses.takeFirst();
             painter->save();
             painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             switch (pos) {
             case 1: {
-                icon.paint(painter,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 2: {
-                icon.paint(painter,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 3: {
-                icon.paint(painter,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(painter, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 4: {
-                icon.paint(painter,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             default:
@@ -440,48 +364,17 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
     //return QStyledItemDelegate::paint(painter, option, index);
 }
 
-QSize DesktopIconViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
-
-    auto view = qobject_cast<DesktopIconView*>(this->parent());
-    auto iconSize = view->iconSize();
-    QFont font = view->font();
-    //font.setFamily(view->font().defaultFamily());
-    // asume max text size.
-    font.setPointSize(15);
-    auto fm = QFontMetrics(font);
-    int width = iconSize.width() + 41;
-    int height = iconSize.height() + fm.ascent()*2 + 20;
-    return QSize(width, height);
-}
-
 QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     auto edit = new IconViewEditor(parent);
     auto font = option.font;
-    auto view = qobject_cast<Peony::DesktopIconView*>(this->parent());
-//    switch (view->zoomLevel()) {
-//    case DesktopIconView::Small:
-//        font.setPixelSize(int(font.pixelSize() * 0.8));
-//        break;
-//    case DesktopIconView::Large:
-//        font.setPixelSize(int(font.pixelSize() * 1.2));
-//        break;
-//    case DesktopIconView::Huge:
-//        font.setPixelSize(int(font.pixelSize() * 1.4));
-//        break;
-//    default:
-//        break;
-//    }
+    auto view = qobject_cast<AdvancedDesktopIconView*>(this->parent());
 
     edit->setFont(font);
 
     edit->setContentsMargins(0, 0, 0, 0);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    edit->setMinimumSize(sizeHint(option, index).width(), 54);
-
+    edit->setMinimumSize(option.rect.width(), 54);
     edit->blockSignals(true);
     auto displayString = index.data(Qt::DisplayRole).toString();
     auto uri = index.data(Qt::UserRole).toString();
@@ -513,7 +406,7 @@ QWidget *DesktopIconViewDelegate::createEditor(QWidget *parent, const QStyleOpti
     auto editDestroyConn = connect(edit, &IconViewEditor::destroyed, getView(), [=](){
         getView()->setEditFlag(false);
     });
-    connect(getView(), &DesktopIconView::destroyed, edit, [=](){
+    connect(getView(), &AdvancedDesktopIconView::destroyed, edit, [=](){
         disconnect(editDestroyConn);
     });
 
@@ -560,7 +453,7 @@ void DesktopIconViewDelegate::updateEditorGeometry(QWidget *editor, const QStyle
     //edit->move(opt.rect.x(), opt.rect.y() + y_delta + 10);
     edit->move(opt.rect.x(), opt.rect.y() + iconExpectedSize.height() + 5);
 
-    edit->resize(edit->document()->size().width(), edit->document()->size().height() + 10);
+    edit->resize(edit->size().width(), edit->document()->size().height() + 10);
 }
 
 void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -597,7 +490,7 @@ void DesktopIconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *
             fileOpMgr->startOperation(renameOp, true);
         } else {
             auto fileOpMgr = FileOperationManager::getInstance();
-            auto renameOp = new FileRenameOperation(index.data(Qt::UserRole).toString(), newName);
+            auto renameOp = new FileRenameOperation(index.data(AdvancedDesktopIconView::UriRole).toString(), newName);
             getView()->setRenaming(true);
 
             //select file when rename finished
@@ -634,9 +527,9 @@ void DesktopIconViewDelegate::slot_finishEdit()
     getView()->setEditFlag(false);
 }
 
-DesktopIconView *DesktopIconViewDelegate::getView() const
+AdvancedDesktopIconView *DesktopIconViewDelegate::getView() const
 {
-    auto view = qobject_cast<Peony::DesktopIconView*>(parent());
+    auto view = qobject_cast<AdvancedDesktopIconView*>(parent());
     return view;
 }
 
@@ -660,7 +553,7 @@ std::shared_ptr<FileInfo> DesktopIconViewDelegate::getFileInfo(const QModelIndex
     }
 
     // Get the source model (AdvancedDesktopItemModel)
-    auto originalModel = qobject_cast<Peony::DesktopItemModel*>(proxyModel->sourceModel());
+    auto originalModel = qobject_cast<Peony::AdvancedDesktopItemModel*>(proxyModel->sourceModel());
     if (!originalModel) {
         return nullptr;
     }

@@ -68,6 +68,9 @@ DesktopItemProxyModel::DesktopItemProxyModel(QObject *parent) : QSortFilterProxy
     });
     //qDebug() <<"DesktopItemProxyModel:" <<settings->isExist(SHOW_HIDDEN_PREFERENCE)<<m_show_hidden;
 
+    m_sort_type = settings->getValue(LAST_DESKTOP_SORT_ORDER).toInt();
+    m_sort_order = settings->getValue(DESKTOP_SORT_ORDER).toInt();
+
     m_bwListInfo = new BWListInfo();
     m_jsonOp = new PeonyJsonOperation();
     QString jsonPath=QDir::homePath()+"/.config/peony-security-config.json";
@@ -100,13 +103,13 @@ bool DesktopItemProxyModel::filterAcceptsRow(int source_row, const QModelIndex &
         return false;
     }
     //task#74174 通过id筛选出需要在该view中显示项
-    auto metaInfo = FileMetaInfo::fromUri(uri);
-    if (metaInfo) {
-        int id = metaInfo->getMetaInfoInt("peony-qt-desktop-id");
-        if (id != m_id) {
-            return false;
-        }
+    int id = sourceIndex.data(Qt::UserRole+3).toInt();
+    QPoint pos = sourceIndex.data(Qt::UserRole + 2).toPoint();
+
+    if (m_id != id) {
+        return false;
     }
+
     //fix desktop show Desktop folder issue, bug#20293
     if (QUrl(uri).path() == QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/Desktop"
         || QUrl(uri).path() == QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/Desktop" + "/Desktop")
@@ -212,21 +215,7 @@ bool DesktopItemProxyModel::lessThan(const QModelIndex &source_left, const QMode
         if (FileOperationUtils::leftNameIsDuplicatedFileOfRightName(leftInfo->displayName(), rightInfo->displayName())) {
             return FileOperationUtils::leftNameLesserThanRightName(leftInfo->displayName(), rightInfo->displayName());
         }
-        if (startWithChinese(leftInfo->displayName())) {
-            if (!startWithChinese(rightInfo->displayName())) {
-                return (sortOrder()==Qt::AscendingOrder)? true: false;
-            } else {
-                //chinese pinyin sort order is reversed compared with english.
-                //return !QSortFilterProxyModel::lessThan(source_left, source_right);
-                //fix bug#89115, chinese files not sort by name pinyin
-                return comparer.compare(leftInfo->displayName(), rightInfo->displayName()) > 0;
-            }
-        } else {
-            if (startWithChinese(rightInfo->displayName())) {
-                return (sortOrder()==Qt::AscendingOrder)? false: true;
-            }
-        }
-        return comparer.compare(leftInfo->displayName(), rightInfo->displayName()) > 0;
+        goto default_sort;
     }
     case ModifiedDate: {
         if (leftInfo->modifiedTime() == rightInfo->modifiedTime())
@@ -234,9 +223,9 @@ bool DesktopItemProxyModel::lessThan(const QModelIndex &source_left, const QMode
         return leftInfo->modifiedTime() > rightInfo->modifiedTime();
     }
     case FileType: {
-        if (leftInfo->type() == rightInfo->type())
+        if (leftInfo->fileType() == rightInfo->fileType())
             goto default_sort;
-        return leftInfo->type() > rightInfo->type();
+        return leftInfo->fileType() > rightInfo->fileType();
     }
     case FileSize: {
         if (leftInfo->size() == rightInfo->size())
@@ -251,12 +240,21 @@ default_sort:
     QString leftDisplayName = leftInfo->displayName();
     QString rightDisplayName = rightInfo->displayName();
 
-    if(startWithChinese(leftDisplayName) && ! startWithChinese(rightDisplayName))
-        return true;
-    else if(! startWithChinese(leftDisplayName) && startWithChinese(rightDisplayName))
-        return false;
-    else
+    if (startWithChinese(leftInfo->displayName())) {
+        if (!startWithChinese(rightInfo->displayName())) {
+            return (sortOrder()==Qt::AscendingOrder)? true: false;
+        } else {
+            //chinese pinyin sort order is reversed compared with english.
+            //return !QSortFilterProxyModel::lessThan(source_left, source_right);
+            //fix bug#89115, chinese files not sort by name pinyin
+            return comparer.compare(leftInfo->displayName(), rightInfo->displayName()) > 0;
+        }
+    } else {
+        if (startWithChinese(rightInfo->displayName())) {
+            return (sortOrder()==Qt::AscendingOrder)? false: true;
+        }
         return comparer.compare(leftDisplayName, rightDisplayName) > 0;
+    }
 
     return QSortFilterProxyModel::lessThan(source_left, source_right);
 }
@@ -279,12 +277,12 @@ int DesktopItemProxyModel::updateBlackAndWriteLists()
 
 void DesktopItemProxyModel::invalidateModel()
 {
-   invalidateFilter();
+    invalidateFilter();
 }
 
 void DesktopItemProxyModel::setId(int id)
 {
-   m_id = id;
+    m_id = id;
 }
 
 QString DesktopItemProxyModel::getBlackAndWhiteModel()
@@ -300,4 +298,49 @@ bool DesktopItemProxyModel::getBlackAndWhiteListExist(QString name)
 QSet<QString> DesktopItemProxyModel::getBWListInfo()
 {
     return m_bwListInfo->getBWListInfo();
+}
+
+void DesktopItemProxyModel::setDesktopUseAutoLayout(bool desktopUseAutoLayout)
+{
+    m_desktopUseAutoLayout = desktopUseAutoLayout;
+}
+
+bool DesktopItemProxyModel::getDesktopUseAutoLayout() const
+{
+    return m_desktopUseAutoLayout;
+}
+
+QStringList DesktopItemProxyModel::getSortedUris() const
+{
+    return m_sortedUris;
+}
+
+void DesktopItemProxyModel::setSortedUris(const QStringList &sortedUris)
+{
+    m_sortedUris = sortedUris;
+//    Q_EMIT requestSyncSortedUrisWithDelay();
+}
+
+QModelIndexList DesktopItemProxyModel::getAllFileIndexes()
+{
+    QModelIndexList l;
+    int i = 0;
+    while (this->index(i, 0, QModelIndex()).isValid()) {
+        auto index = this->index(i, 0, QModelIndex());
+        if (m_show_hidden) {
+            l<<index;
+        } else {
+            auto disyplayName = index.data(Qt::DisplayRole).toString();
+            if (disyplayName.isEmpty()) {
+                auto uri = this->index(i, 0, QModelIndex()).data(Qt::UserRole).toString();
+                disyplayName = FileUtils::getFileDisplayName(uri);
+            }
+            if (!disyplayName.startsWith(".")) {
+                l<<index;
+            }
+        }
+
+        i++;
+    }
+    return l;
 }

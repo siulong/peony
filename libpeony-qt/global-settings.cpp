@@ -173,7 +173,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         connect(m_peony_gsettings, &QGSettings::changed, this, [=](const QString &key) {
             bool sendChanged = false;
             if ((SHOW_HIDDEN_PREFERENCE == key) || (SHOW_FILE_EXTENSION == key) || key == DISPLAY_STANDARD_ICONS || key == USE_GLOBAL_DEFAULT_SORTING ||
-                 SHOW_CREATE_TIME == key || SHOW_RELATIVE_DATE == key) {
+                 SHOW_CREATE_TIME == key || SHOW_RELATIVE_DATE == key || key == DESKTOP_USE_AUTO_LAYOUT) {
                 if (m_cache.value(key) != m_peony_gsettings->get(key).toBool())
                 {
                     m_cache.remove(key);
@@ -200,6 +200,14 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         }
         m_showCreateTime = m_cache.value(SHOW_CREATE_TIME).toBool();
         m_showRelativeTime = m_cache.value(SHOW_RELATIVE_DATE).toBool();
+
+        if (m_peony_gsettings->keys().contains(DESKTOP_USE_AUTO_LAYOUT)) {
+            m_cache.remove(DESKTOP_USE_AUTO_LAYOUT);
+            m_cache.insert(DESKTOP_USE_AUTO_LAYOUT, m_peony_gsettings->get(DESKTOP_USE_AUTO_LAYOUT).toBool());
+        } else {
+            m_cache.remove(DESKTOP_USE_AUTO_LAYOUT);
+            m_cache.insert(DESKTOP_USE_AUTO_LAYOUT, false);
+        }
     }
 
     m_cache.insert(SIDEBAR_BG_OPACITY, 100);

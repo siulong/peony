@@ -31,11 +31,9 @@
 #include <QScreen>
 #include <QWindow>
 
-class DesktopBackgroundWindow;
-
+class DesktopWindowManager;
 namespace Peony {
-class DesktopIconView;
-class DesktopItemModel;
+class AdvancedDesktopItemModel;
 }
 
 using namespace Peony;
@@ -54,22 +52,14 @@ public:
     static void gotoSetResolution();
 
     static qint64 peony_desktop_start_time;
-    static Peony::DesktopItemModel* getModel();
-    Peony::DesktopIconView *getIconView(QPoint pos);
-    Peony::DesktopIconView *getIconView(int id);
-    Peony::DesktopIconView *getIconView(QScreen *screen);
-    Peony::DesktopIconView * removeUri(const QString& uri);
-    int checkScreenMode(const QRect &geometry);
-    Peony::DesktopIconView *getNotFullView();
-    void singleScreenMode();
-    void multiscreenMode();
+    static Peony::AdvancedDesktopItemModel *getModel();
+    static DesktopWindowManager *getDesktopWindowManager();
 
     // only used in model refresh.
     void clearViewCache();
 
 Q_SIGNALS:
     void requestSetUKUIOutputEnable(bool enable);
-    void emitFinish();
 
 protected Q_SLOTS:
     void parseCmd(QString msg, bool isPrimary);
@@ -87,24 +77,14 @@ public Q_SLOTS:
     void checkWindowProcess();
     void updateVirtualDesktopGeometryByWindows();
 
-    void addBgWindow(QScreen *screen);
-    void relocateIconView();
-    void raiseWid();
-
 private:
     void setupDesktop();
     void setupBgAndDesktop();
     void clearIcons(const QStringList &args);
-    int getDesktopWindowId();
     void autoMountLocalDriver();
     void monitoringVolumesChanges();
 
     bool m_first_parse = true;
-
-    QList<DesktopBackgroundWindow *> m_bg_windows;
-
-    QTimeLine *m_primaryScreenSettingsTimeLine = nullptr;
-    int m_mode = 0;
 };
 
 #endif // PEONYDESKTOPAPPLICATION_H

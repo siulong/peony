@@ -56,13 +56,15 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
     setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_screen = screen;
-    m_desktopIconView = new Peony::DesktopIconView(this);
+    m_desktopIconView = new AdvancedDesktopIconView(this);
     m_desktopIconView->setId(desktopWindowId);
     m_id = desktopWindowId;
     move(screen->geometry().topLeft());
     setFixedSize(screen->geometry().size());
     setContentsMargins(0, 0, 0, 0);
     m_desktopIconView->resize(screen->geometry().size());
+    setCentralWidget(m_desktopIconView);
+
     connect(screen, &QScreen::geometryChanged, this, QOverload<const QRect&>::of(&DesktopBackgroundWindow::updateWindow));
 
     auto manager = DesktopBackgroundManager::globalInstance();
@@ -95,6 +97,10 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
             m_menu = new DesktopMenu(m_desktopIconView, this);
             connect(m_menu, &DesktopMenu::setDefaultZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
             connect(m_menu, &DesktopMenu::setSortType, this, &DesktopBackgroundWindow::setSortType);
+            connect(m_menu, &DesktopMenu::setSortOrder, this, &DesktopBackgroundWindow::setSortOrder);
+            connect(m_menu, &DesktopMenu::markFilePos, this, [=](){
+                markFilePos(relativePos);
+            });
 
             if (m_desktopIconView->getSelections().isEmpty()) {
                 auto action = m_menu->addAction(QObject::tr("Set Background"));
@@ -110,10 +116,10 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
 
             }
 
-            for (auto screen : qApp->screens()) {
-                if (screen->geometry().contains(relativePos));
-                //menu.windowHandle()->setScreen(screen);
-            }
+//            for (auto screen : qApp->screens()) {
+//                if (screen->geometry().contains(relativePos));
+//                //menu.windowHandle()->setScreen(screen);
+//            }
 
             /* 菜单执行弹出操作时停止更新，超过1s或者结束菜单都启用更新; 解决：点击鼠标右键，右键菜单会闪烁（偶现） */
 //            if (manager->AnimationRunning()) {
@@ -147,6 +153,9 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
 //            }
         });
     });
+
+    connect(m_desktopIconView, &AdvancedDesktopIconView::clearOtherViewSelection, this, &DesktopBackgroundWindow::clearOtherViewSelection);
+    connect(m_desktopIconView, &AdvancedDesktopIconView::setZoomLevel, this, &DesktopBackgroundWindow::setDefaultZoomLevel);
 }
 
 DesktopBackgroundWindow::~DesktopBackgroundWindow()
@@ -551,7 +560,7 @@ QRect DesktopBackgroundWindow::getDestRect(const QPixmap &pixmap)
     return QRect(offsetPoint, sourceSize);
 }
 
-Peony::DesktopIconView *DesktopBackgroundWindow::getIconView()
+AdvancedDesktopIconView *DesktopBackgroundWindow::getIconView()
 {
     return m_desktopIconView;
 }

@@ -24,7 +24,7 @@
 #include "desktop-index-widget.h"
 
 #include "desktop-icon-view-delegate.h"
-#include "desktop-icon-view.h"
+#include "advanced-desktop-icon-view.h"
 #include "file-info.h"
 #include "emblem-provider.h"
 
@@ -59,11 +59,11 @@ DesktopIndexWidget::DesktopIndexWidget(DesktopIconViewDelegate *delegate,
     updateItem();
 
     //FIXME: how to handle it in old version?
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
-    connect(qApp, &QApplication::fontChanged, this, [=]() {
-        m_delegate->getView()->setIndexWidget(m_index, nullptr);
-    });
-#endif
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+//    connect(qApp, &QApplication::fontChanged, this, [=]() {
+//        m_delegate->getView()->setIndexWidget(m_index, nullptr);
+//    });
+//#endif
 
     auto view = m_delegate->getView();
     view->m_real_do_edit = false;
@@ -197,40 +197,38 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
     p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    QRect emblemRect = iconRect;
+    int emblemsSize = 16;
+    switch (view->zoomLevel()) {
+    case AdvancedDesktopIconView::Small: {
+        emblemsSize = 8;
+        break;
+    }
+    case AdvancedDesktopIconView::Normal: {
+        break;
+    }
+    case AdvancedDesktopIconView::Large: {
+        emblemsSize = 24;
+        break;
+    }
+    case AdvancedDesktopIconView::Huge: {
+        emblemsSize = 32;
+        break;
+    }
+    default: {
+        break;
+    }
+    }
+    auto rect = opt.rect;
+    int topLeftX = emblemRect.x()-emblemsSize/2+3 < rect.x()? rect.x() : emblemRect.x()-emblemsSize/2+3;
+    int topLeftY = emblemRect.y()-emblemsSize/2 < rect.y() - y_delta/2? rect.y() - y_delta/2 : emblemRect.y()-emblemsSize/2;
+    int bottomRightX = emblemRect.right()-emblemsSize/2 <= topLeftX + emblemsSize? topLeftX + emblemsSize + 5 : emblemRect.right()-emblemsSize/2 ;
+    int bottomRightY = emblemRect.bottom()-emblemsSize <= topLeftY + emblemsSize? topLeftY + emblemsSize + 5 : emblemRect.bottom()-emblemsSize;
 
     //paint link icon and locker icon
     FileInfo *file = FileInfo::fromUri(m_index.data(Qt::UserRole).toString()).get();
     if ((m_index.data(Qt::UserRole).toString() != "computer:///") && (m_index.data(Qt::UserRole).toString() != "trash:///")) {
-        QSize lockerIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            lockerIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            lockerIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            lockerIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-        auto topRight = opt.rect.topRight();
-        topRight.setX(topRight.x() - opt.rect.width() + 10);
-        topRight.setY(topRight.y() + 10);
-        auto linkRect = QRect(topRight, lockerIconSize);
-
+        auto linkRect = QRect(QPoint(topLeftX, topLeftY), QSize(emblemsSize, emblemsSize));
         if (! file->canRead())
         {
             emblemPoses.removeOne(1);
@@ -254,37 +252,7 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
 
     if (m_index.data(Qt::UserRole + 1).toBool()) {
         emblemPoses.removeOne(3);
-        QSize symbolicIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            symbolicIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            symbolicIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            symbolicIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-
-        //Adjust link emblem to topLeft.link story#8354
-        auto topLeft = opt.rect.topLeft();
-        topLeft.setX(opt.rect.topLeft().x() + 10);
-        topLeft.setY(opt.rect.topLeft().y() + offset + iconRect.height() - symbolicIconSize.height());
-        auto linkRect = QRect(topLeft, symbolicIconSize);
+        auto linkRect = QRect(QPoint(topLeftX, bottomRightY), QSize(emblemsSize, emblemsSize));
         QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-link-symbolic");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -301,71 +269,25 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
 
         QIcon icon = QIcon::fromTheme(extensionsEmblem);
 
-        QSize emblemsIconSize = QSize(16, 16);
-        int offset = 8;
-        switch (view->zoomLevel()) {
-        case DesktopIconView::Small: {
-            emblemsIconSize = QSize(8, 8);
-            offset = 10;
-            break;
-        }
-        case DesktopIconView::Normal: {
-            break;
-        }
-        case DesktopIconView::Large: {
-            offset = 4;
-            emblemsIconSize = QSize(24, 24);
-            break;
-        }
-        case DesktopIconView::Huge: {
-            offset = 2;
-            emblemsIconSize = QSize(32, 32);
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-
         if (!icon.isNull()) {
             int pos = emblemPoses.takeFirst();
             p.save();
             p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
             switch (pos) {
             case 1: {
-                icon.paint(&p,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 2: {
-                icon.paint(&p,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + 10,
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(&p, bottomRightX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 3: {
-                icon.paint(&p,
-                           opt.rect.topLeft().x() + 10,
-                           opt.rect.topLeft().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(&p, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 4: {
-                icon.paint(&p,
-                           opt.rect.topRight().x() - offset - emblemsIconSize.width(),
-                           opt.rect.topRight().y() + offset + iconRect.height() - emblemsIconSize.height(),
-                           emblemsIconSize.width(),
-                           emblemsIconSize.height(),
-                           Qt::AlignCenter);
+                icon.paint(&p, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             default:
@@ -500,8 +422,8 @@ void DesktopIndexWidget::updateItem()
 //    }
 
 //    qDebug() << "updateItem fixedHeight:" <<fixedHeight <<rawHeight <<m_option.text;
-    if (fixedHeight < rawHeight)
-        fixedHeight = rawHeight;
+//    if (fixedHeight < rawHeight)
+//        fixedHeight = rawHeight;
 
     m_option.text = m_index.data().toString();
     //qDebug()<<m_option.text;
@@ -528,4 +450,5 @@ void DesktopIndexWidget::updateItem()
     fixedHeight = qMin(view->viewport()->height() - this->geometry().y(), fixedHeight);
 
     setFixedHeight(fixedHeight);
+    m_option.rect.setHeight(fixedHeight);
 }
