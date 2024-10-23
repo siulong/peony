@@ -450,7 +450,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true);
 
-    m_title = tr("File operation");
+    m_title = tr("File Operation");
 
     m_btn_pause = new QToolButton (this);
     m_btn_close = new QPushButton(this);
@@ -845,7 +845,7 @@ void OtherButton::paintEvent(QPaintEvent *event)
     painter.setFont(font);
     pen.setBrush(QBrush(btn->palette().color(QPalette::WindowText)));
     painter.setPen(pen);
-    painter.drawText(textArea, Qt::AlignLeft | Qt::AlignVCenter, tr("Other queue"));
+    painter.drawText(textArea, Qt::AlignLeft | Qt::AlignVCenter, tr("Other Queue"));
 
     painter.restore();
 
