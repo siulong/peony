@@ -700,6 +700,11 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                     volume->setHidden(false);
                     qDebug() << "uuid=0 && size=0 but has media, show volume:"<<volume->device();
                 }
+            }else if(uuid.isEmpty() && size != 0 && gdrive){/* hotfix bug#274521 【浪潮计算机】【CE520L2】红盘识别异常问题 */
+                qDebug()<<__func__<<__LINE__<<volume->device()<<"the icon of volume"<<volume->icon()<<"can-stop:"<<volume->canStop()<<"isHidden:"<<volume->getHidden();
+                if(!volume->canStop()){
+                    volume->setHidden(true);
+                }
             }
         }
         // 如果有volume，应该被隐藏
@@ -936,10 +941,9 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                             qDebug() << "uuid=0 && size=0 but has gdrive, show volume:"<<volumeItem->device();
                         }
                     }
-                }
-                else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
+                }else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
                     qDebug()<<__func__<<__LINE__<<volumeItem->device()<<"the icon of volume:"<<volumeItem->icon()<<"can-stop:"<<volumeItem->canStop()<<"isHidden:"<<volumeItem->getHidden()<<"hasVolume:"<<bHasVolume;
-                    if("drive-removable-media" == volumeItem->icon()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                    if("drive-removable-media" == volumeItem->icon() || !volumeItem->canStop())){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
                         //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
                         volumeItem->setHidden(true);
                     }
