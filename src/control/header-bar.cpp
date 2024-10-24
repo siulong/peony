@@ -302,7 +302,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         bool originPathVisible = m_window->getCurrentUri() == "trash:///";
         m_sort_type_menu->setOriginPathVisible(originPathVisible);
         bool isSearchTab = m_window->getCurrentUri().startsWith("search:///");
-        sortTypeMenu->setFilePathVisible(isSearchTab);
+        m_sort_type_menu->setFilePathVisible(isSearchTab);
         m_sort_type_menu->setSortType(m_window->getCurrentSortColumn());
         m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
     });
