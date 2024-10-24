@@ -266,9 +266,11 @@ setPasswd:
         dlg.exec();
     });
 
+#ifdef BUILD_WITH_SDK_FEEDBACK_MENU_ACTION
     //task#335022, add feedback button in menu
     kdk::KMenuButton* menubutton = new kdk::KMenuButton();
     addAction(menubutton->feedbackAction());
+#endif
 }
 
 void OperationMenu::updateMenu()
