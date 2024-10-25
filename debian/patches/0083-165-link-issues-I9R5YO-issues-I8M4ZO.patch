@@ -1,0 +1,26 @@
+From: =?utf-8?b?5p2o546y?= <11334668+yanglg1@user.noreply.gitee.com>
+Date: Fri, 25 Oct 2024 07:30:45 +0000
+Subject: =?utf-8?b?ITE2NSDop6PlhrPvvJrmlofnrqHkvqfovrnmoI/lsZXlvIDlkI7mlLY=?=
+ =?utf-8?b?6LW35pyJ5byC5bi45Y+N55m977yMbGluayBpc3N1ZXMjSTlSNVlP44CBaXNzdWVz?=
+ =?utf-8?b?I0k4TTRaTyBNZXJnZSBwdWxsIHJlcXVlc3QgITE2NSBmcm9tIOadqOeOsi9pc3N1?=
+ =?utf-8?b?ZXMjSTlSNVkw?=
+
+---
+ src/control/navigation-side-bar.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 2e5d5d0..68f247b 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -565,6 +565,10 @@ void NavigationSideBar::scrollTo(const QModelIndex &index, QAbstractItemView::Sc
+ 
+ void NavigationSideBar::paintEvent(QPaintEvent *event)
+ {
++    QPalette pal = qApp->palette();
++    pal.setColor(QPalette::Base, QColor(Qt::transparent));
++    setPalette(pal);
++    viewport()->setPalette(pal);
+     QTreeView::paintEvent(event);
+ }
+ 
