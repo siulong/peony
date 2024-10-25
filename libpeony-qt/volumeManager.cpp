@@ -943,7 +943,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     }
                 }else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
                     qDebug()<<__func__<<__LINE__<<volumeItem->device()<<"the icon of volume:"<<volumeItem->icon()<<"can-stop:"<<volumeItem->canStop()<<"isHidden:"<<volumeItem->getHidden()<<"hasVolume:"<<bHasVolume;
-                    if("drive-removable-media" == volumeItem->icon() || !volumeItem->canStop())){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                    if("drive-removable-media" == volumeItem->icon() || !volumeItem->canStop()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
                         //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
                         volumeItem->setHidden(true);
                     }
