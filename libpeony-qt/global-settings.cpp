@@ -673,7 +673,7 @@ void GlobalSettings::sendNotifyMessage(const QString &msg)
     args << QObject::tr("File Manager").toUtf8().constData()
          << ((unsigned int) 0)
          << "system-file-manager"
-         << QObject::tr("notify")
+         << QObject::tr("Notify")
          << msg
          << actions
          << hints

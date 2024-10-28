@@ -63,7 +63,7 @@ void SyncThread::notifyUser(QString notifyContent)
     args << QObject::tr("File Manager").toUtf8().constData()
          << ((unsigned int) 0)
          << "system-file-manager"
-         << tr("notify")
+         << tr("Notify")
          << notifyContent
          << actions
          << hints
