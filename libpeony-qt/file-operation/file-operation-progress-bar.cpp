@@ -298,6 +298,16 @@ void FileOperationProgressBar::showMore()
     update();
 }
 
+void FileOperationProgressBar::closeEvent(QCloseEvent *event)
+{
+    if (event) {
+        for (auto pg = m_widget_list->constBegin(); pg != m_widget_list->constEnd(); ++pg) {
+            Q_EMIT pg.value()->cancelled();
+        }
+        Q_EMIT canceled();
+    }
+}
+
 bool FileOperationProgressBar::inhibit()
 {
     g_autoptr(GError) error = NULL;
