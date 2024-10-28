@@ -101,6 +101,7 @@ void DesktopBackgroundManager::initGSettings()
            m_animationRunning = true;
            if (key == "pictureFilename") {
                 m_current_bg_path = m_backgroundSettings->get("pictureFilename").toString();
+                m_shouldSyncAccountBackground = true;
                 setAccountBackground();
             }
             if (key == "pictureFilename" || key == "primaryColor" || key == "pictureOptions") {
