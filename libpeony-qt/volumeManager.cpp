@@ -26,7 +26,6 @@
 #include <QThread>
 #include<QMessageBox>
 #include<QProcess>
-#include <QInputDialog>
 #include <QTimer>
 #include"sync-thread.h"
 #include "file-utils.h"
@@ -1225,7 +1224,7 @@ static void mount_async_callback(GVolume *volume, GAsyncResult *res, Volume *p_t
         if (g_error_matches(err, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
             bool need_password = bool (g_object_get_data(G_OBJECT (volume), "need-password"));
             if (need_password) {
-                QInputDialog d;
+                PasswordInputDlg d;
                 d.setTextEchoMode(QLineEdit::Password);
                 d.setLabelText(QString(static_cast<char *>(g_object_get_data(G_OBJECT (volume), "message"))));
                 if (d.exec()) {
@@ -1980,3 +1979,17 @@ void UdfBurn::UdfFormatDialogWrapper::show()
 #endif
 
 
+PasswordInputDlg::PasswordInputDlg(QWidget *parent)
+{
+
+}
+
+void PasswordInputDlg::accept()
+{
+    QString password = textValue();
+    if(password.isEmpty()){
+        QMessageBox::critical(this, 0, QObject::tr("Password is empty, please re-enter!"));
+   }else{
+        QDialog::accept();
+    }
+}
