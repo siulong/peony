@@ -60,6 +60,7 @@ private:
 protected:
     void showWidgetList(bool show);
     void closeEvent(QCloseEvent *event);
+    bool event(QEvent *event);
 #if 0
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
