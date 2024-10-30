@@ -537,7 +537,7 @@ X316Xཡི་རིམ་པ། X476Xཡིན། X482Xཡིན། X486Xཡི
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="150"/>
         <source>Set samba password</source>
-        <translation>གསང་གྲངས་samaaརྩིས་འཛུགས་བྱེད་པ།</translation>
+        <translation>གསང་གྲངས་sambaརྩིས་འཛུགས་བྱེད་པ།</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="190"/>
