@@ -581,7 +581,7 @@ void HeaderBar::updatePreviewPageVisible()
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
     for (auto name : pluginNames) {
-        if (m_view_type_menu->menuAction()->isVisible() && m_preview_action->isChecked()) {
+        if (m_preview_action->isChecked() && m_preview_action->isVisible()) {
             auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
             m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
         } else {
