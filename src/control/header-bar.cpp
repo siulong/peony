@@ -538,10 +538,8 @@ void HeaderBar::switchSelectStatus(bool select)
         m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
     }
     //fix bug#100105 After the selected status changes, the view type is grayed out.
-    if (!select) {
-        updateViewTypeEnable();
-        updateSortTypeEnable();
-    }
+    updateViewTypeEnable();
+    updateSortTypeEnable();
 }
 
 void HeaderBar::addSpacing(int pixel)
