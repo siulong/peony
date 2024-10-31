@@ -29,6 +29,7 @@
 #include <QString>
 #include <QHash>
 #include <QMutex>
+#include <QInputDialog>
 
 #undef slots
 #undef signals
@@ -301,5 +302,16 @@ private:
 }
 
 #endif
+
+
+
+class PasswordInputDlg : public QInputDialog{
+    Q_OBJECT
+public:
+    explicit PasswordInputDlg(QWidget *parent = nullptr);
+    ~PasswordInputDlg(){}
+
+    void accept();
+};
 
 #endif // VOLUMEMANAGER_H
