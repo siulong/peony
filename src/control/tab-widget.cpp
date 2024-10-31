@@ -228,7 +228,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 
     m_show_page_button = new QToolButton(this);
     m_show_page_button->setPopupMode(QToolButton::DelayedPopup);
-    m_show_page_button->setFixedSize(QSize(48, 48));
+    m_show_page_button->setFixedSize(QSize(38, 38));
     m_show_page_button->setIconSize(QSize(16, 16));
     m_show_page_button->setIcon(QIcon::fromTheme("ukui-all-tabs-symbolic"));
     m_show_page_button->setAutoRaise(true);
