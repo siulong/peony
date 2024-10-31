@@ -1014,13 +1014,13 @@ TitleLabel::TitleLabel(QWidget *parent):QWidget(parent)
     X11WindowManager::getInstance()->registerWidget(this);
     m_pix_label = new QLabel(this);
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，修改应用图标可以跟随主题框架
-    m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(32,32));
+    m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
 
     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
         m_gSettings = new QGSettings("org.ukui.style", QByteArray(), this);
         connect(m_gSettings, &QGSettings::changed, this, [=](const QString &key) {
             if("iconThemeName" == key){
-                m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(32,32));
+                m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
             }
         });
     }
