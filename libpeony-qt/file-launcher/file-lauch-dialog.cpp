@@ -238,7 +238,10 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
     m_view->setAlternatingRowColors(true);
     m_view->setIconSize(QSize(40, 40));
     m_view->setStyleSheet("QListWidget::Item{margin-left:22px;}");
-
+    /**
+     * Default unfocusing when opening the “More Apps” pop-up window
+     */
+    m_view->setFocusPolicy(Qt::NoFocus);
     connect(m_view, &QListWidget::currentItemChanged, [=](QListWidgetItem *current) {
         if (!current)
             return ;
@@ -254,7 +257,10 @@ void FileLauchDialog::initFloorTwo(const QString &uri)
 
     this->m_layout->addWidget(floor2);
     m_check_box = new QCheckBox(tr("Always open the %1%2 file with this application").arg(".").arg(m_info.get()->displayName().split(".").last()));
-
+    /**
+     * Initialize the checkbox state
+     */
+    m_check_box->setChecked(m_info->property("isAlwaysOpenWithThisApp").toBool());
     this->m_layout->addWidget(m_check_box);
     if(!m_info.get()->displayName().contains("."))
     m_check_box->setVisible(false);
@@ -357,6 +363,15 @@ void FileLauchDialog::initFloorFour()
 
     connect(cancelButton, &QPushButton::clicked, this, &QMainWindow::close);
     connect(okButton, &QPushButton::clicked, this, [=]() {
+        /**
+         * @bug #278503:  [File Manager] Re-enter the open mode screen without checking “Always open files with this application”.
+         *
+         * Record the checkbox selection of m_check_box in the property attribute of m_info
+         *
+         * @author: Renyg <renyangguang@kylinos.cn>
+         * @date:   2024-10-31
+         */
+        m_info->setProperty("isAlwaysOpenWithThisApp", m_check_box->isChecked());
         bool doLaunch = true;
         auto var = this->property("doLaunch");
         if (var.isValid() && !var.toBool()) {
