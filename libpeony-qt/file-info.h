@@ -360,6 +360,11 @@ public:
 
     bool isExistTargetOfSymlink() const;
 
+    /**
+     * Obtaining the correct icon for a file through more methods
+     */
+    QIcon getIcon();
+
 Q_SIGNALS:
     void updated();
 

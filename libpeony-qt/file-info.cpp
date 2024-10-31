@@ -414,6 +414,27 @@ bool FileInfo::isExistTargetOfSymlink() const
     return true;
 }
 
+QIcon FileInfo::getIcon()
+{
+    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(m_uri);
+    if (!icon.isNull()) {
+        qDebug() << __FILE__ << __FUNCTION__ << "tryGetThumbnail icon is not null";
+        return icon;
+    }
+
+    icon = QIcon::fromTheme(m_icon_name, QIcon::fromTheme("unknown"));
+    if (icon.name() == "unknown") {
+        QFileInfo iconInfo(m_icon_name);
+        if (iconInfo.exists()) {
+            // Get the filename without suffix
+            QString iconNameWithoutSuffix = iconInfo.completeBaseName();
+            qDebug() << __FILE__ << __FUNCTION__ << m_icon_name << " iconNameWithoutSuffix: " << iconNameWithoutSuffix;
+            icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+        }
+    }
+    return icon;
+}
+
 const QString FileInfo::unixDeviceFile()
 {
     GFile* file;

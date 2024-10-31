@@ -425,10 +425,38 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
         });
     }
 
-    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
     this->setWindowTitle(windowTitle);
-    headerBar->setIcon(iconName);
     headerBar->setTitle(windowTitle);
+    /**
+     * @bug #267587: [Window Manager] Youhong Layout Reader has no icon in the upper left corner of the properties popup window.
+     *
+     * prioritize getting icons from the cache
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-09-26
+     */
+    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(m_fileInfo->uri());
+    if (!icon.isNull()) {
+        qDebug() << __FILE__ << __FUNCTION__ << "tryGetThumbnail icon is not null";
+        this->setWindowIcon(icon);
+        headerBar->setIcon(iconName);
+        return;
+    }
+
+    icon = QIcon::fromTheme(iconName, QIcon::fromTheme("unknown"));
+    if (icon.name() == "unknown") {
+        QFileInfo iconInfo(iconName);
+        if (iconInfo.exists()) {
+            // Get the filename without suffix
+            QString iconNameWithoutSuffix = iconInfo.completeBaseName();
+            qDebug() << __FILE__ << __FUNCTION__ << iconName << " iconNameWithoutSuffix: " << iconNameWithoutSuffix;
+            icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+            iconName = iconNameWithoutSuffix;
+        }
+    }
+    this->setWindowIcon(icon);
+    headerBar->setIcon(iconName);
+    return;
 }
 
 void PropertiesWindow::notDir()

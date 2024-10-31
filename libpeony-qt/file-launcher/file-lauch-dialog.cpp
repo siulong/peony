@@ -55,7 +55,15 @@ ActionGlobalData *FileLauchDialog::actionGlobalData = nullptr;
 FileLauchDialog::FileLauchDialog(const QString &uri, QWidget *parent) : QDialog(parent)
 {
     this->getFIleInfo(uri);
-    QIcon windowicon = QIcon::fromTheme(m_info->iconName());
+    /**
+     * @bug #278567: [File Manager] There is no icon in the upper left corner of the Unknown Open Method page
+     *
+     * Obtaining the correct icon for a file through more methods
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-10-31
+     */
+    QIcon windowicon = m_info->getIcon();
     setWindowIcon(windowicon);
     this->setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint );
     init(uri);
