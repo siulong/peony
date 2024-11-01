@@ -481,6 +481,16 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
+
+    /**
+     * @bug #278107: [Requirement 35207] [Start Menu] [Ribbon] Shortcut Entry-Computer Jump to the left side of the computer interface positioning error
+     *
+     * comment the following code
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-11-01
+     */
+#if 0
     /* 打开文件管理器默认聚焦在家目录上 */
     QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QItemSelectionModel *selectionModel = this->selectionModel();
@@ -495,6 +505,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             selectionModel->select(selection, QItemSelectionModel::Select);
         }
     }//end
+#endif
 }
 
 void NavigationSideBar::sendKdkDataAsync()
