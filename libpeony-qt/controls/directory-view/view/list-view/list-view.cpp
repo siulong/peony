@@ -417,6 +417,12 @@ void ListView::mousePressEvent(QMouseEvent *e)
         setCurrentIndex(index);
         return;
     }
+    /* hotfix bug#279385 选中一个文件后，鼠标左键点击文管空白位置，文件的选中状态未消失 */
+    if(e->button() == Qt::LeftButton && (!indexAt(e->pos()).isValid()) )
+    {
+        this->clearSelection();
+        return;
+    }//end
 
     //m_renameTimer
     if(!m_renameTimer->isActive())
