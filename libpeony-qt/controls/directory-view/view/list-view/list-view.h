@@ -183,6 +183,7 @@ private:
     bool  m_editValid;
     bool  m_ctrl_key_pressed = false;
     bool  m_delegate_editing = false;
+    bool m_flag = false;
 
     QRubberBand *m_rubberBand;
     QPoint m_lastPressedLogicPoint;

@@ -714,6 +714,8 @@ void ListView::reUpdateScrollBar()
 
 void ListView::updateGeometries()
 {
+    if (m_flag)
+        return;
     setUpdatesEnabled(false);
     QTreeView::updateGeometries();
     reUpdateScrollBar();
@@ -1401,6 +1403,9 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     connect(m_model, &FileItemModel::updated, m_view->viewport(), QOverload<>::of(&QWidget::update));
 
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        m_view->m_flag = true;
+        m_view->doItemsLayout();
+        m_view->m_flag = false;
         Q_EMIT viewSelectionChanged();
     });
 
@@ -1474,8 +1479,6 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         }
         m_need_resize_header = false;
     });
-
-    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_view, &QTreeView::doItemsLayout);
 }
 
 void ListView2::repaintView()
