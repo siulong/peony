@@ -147,6 +147,11 @@ bool RecentVFSManager::write()
     return ok;
 }
 
+bool RecentVFSManager::exists(QString uri)
+{
+    return false;
+}
+
 bool RecentVFSManager::exists(QString uri, QString mimetype, QString name, QString exec)
 {
     if (!read()) {

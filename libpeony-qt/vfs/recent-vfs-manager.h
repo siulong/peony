@@ -40,6 +40,13 @@ private:
     explicit RecentVFSManager(QObject *parent = nullptr);
     bool read ();
     bool write ();
+    /*!
+     * \brief exists
+     * \param uri
+     * \return
+     * \deprecated
+     */
+    bool exists(QString uri);
     bool exists (QString uri, QString mimetype, QString name, QString exec);
     bool createNode (QString uri, QString mimetype, QString name, QString exec);
 
