@@ -331,14 +331,23 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
                     //光盘
                     if (!unixDeviceName.isNull() && !unixDeviceName.isEmpty() && unixDeviceName.startsWith("/dev/sr")) {
                         isCDDisk = true;
-                        DataCDROM *cdrom = new DataCDROM(unixDeviceName);
+#ifdef KY_UDF_BURN
+                        UdfBurn::DataCDROM *cdrom = new UdfBurn::DataCDROM(unixDeviceName);
+#else
+                        Peony::DataCDROM *cdrom = new Peony::DataCDROM(unixDeviceName);
+#endif
                         if (cdrom) {
                             cdrom->getCDROMInfo();
                             //usedSpace = used;
                             //used无法正确获取追加刻录后光盘的使用容量，getCDROMUsedCapacity()无法获取可擦除光盘的使用容量
                             usedSpace = cdrom->getCDROMUsedCapacity();
                             if((cdrom->getCDROMType()).contains("DVD+RW") || (cdrom->getCDROMType()).contains("DVD-RW")){
-                                  usedSpace =used;
+                                QString fsType = getFileSystemType(uri);
+                                if(fsType.toLower().startsWith("iso")){/* "iso9660"文件系统类型"DVD+RW"和"DVD-RW"光盘的使用容量从libkyudfburn中获取,link bug#271455. */
+                                    usedSpace = cdrom->getCDROMUsedCapacity();
+                                }else{
+                                    usedSpace =used;
+                                }
                             }
                             totalSpace = cdrom->getCDROMCapacity();
                             availableSpace = totalSpace - usedSpace;
