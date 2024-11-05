@@ -52,7 +52,7 @@ protected:
 private:
     QVariantAnimation *m_animation = nullptr;
     bool m_searching = false;
-    int m_value = 0;
+    double m_value = 0;
 };
 
 class SearchBarContainer : public QWidget

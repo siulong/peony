@@ -48,8 +48,8 @@ ProgressLineEdit::ProgressLineEdit(QWidget *parent)
 
     connect(m_animation, &QVariantAnimation::valueChanged, this, [=](){
         if (m_animation->state() == QVariantAnimation::Running) {
-            m_value = m_animation->currentValue().toReal();
-            if (m_searching && 0.7 < m_value/m_animation->endValue().toReal()*1.0)
+            m_value = m_animation->currentValue().toReal()/m_animation->endValue().toReal()*1.0;
+            if (m_searching && 0.7 < m_value)
                m_animation->pause();
             update();
         }
@@ -86,7 +86,7 @@ void ProgressLineEdit::paintEvent(QPaintEvent *e)
     p.setOpacity(0.25);
     QBrush b;
     QRect backgroundRect = this->rect();
-    backgroundRect.setWidth(m_value);
+    backgroundRect.setWidth(m_value*this->width());
     backgroundRect.adjust(2, 2,-2, -2);
     p.fillRect(backgroundRect, this->palette().highlight().color());
 }
