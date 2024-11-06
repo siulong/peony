@@ -780,8 +780,20 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         tmp.clear();
         //fix bug#97408,change indicator meanings
         //箭头向上为升序，向下为降序，与通常的理解对应
-        tmp<<sortOrderMenu->addAction(tr("Descending Order"));
-        tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
+        QStringList sortNames;
+        sortNames.append(tr("Descending Order"));
+        sortNames.append(tr("Ascending Order"));
+        if (sortType == 1) {
+            sortNames.clear();
+            sortNames.append(tr("Newest to oldest"));
+            sortNames.append(tr("Oldest to newest"));
+        } else if (sortType == 3) {
+            sortNames.clear();
+            sortNames.append(tr("Files from large to small"));
+            sortNames.append(tr("Files from small to large"));
+        }
+        tmp<<sortOrderMenu->addAction(sortNames.at(0));
+        tmp<<sortOrderMenu->addAction(sortNames.at(1));
         int sortOrder = m_view->getSortOrder();
         tmp.at(sortOrder)->setCheckable(true);
         tmp.at(sortOrder)->setChecked(true);
