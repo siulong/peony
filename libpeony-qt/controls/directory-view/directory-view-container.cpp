@@ -128,13 +128,15 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
     connect(m_proxy_model, &FileItemProxyFilterSortModel::sortFinished, this, [=] () {
         //task 143767, select previous folder when goBack or cdUp
         //story 23918, improve select effect
-        if (m_view && m_select_previous_folder){
+        bool mSelectPreviousFolder = this->property("mSelectPreviousFolder").toBool();
+        if (m_view && mSelectPreviousFolder){
             //add 10ms delay to show and select previous folder
             QTimer::singleShot(10, this, [=](){
-                qDebug() << "set m_select_previous_folder:"<<m_previous_uri;
-                m_view->setSelections(QStringList()<<m_previous_uri);
-                m_view->scrollToSelection(m_previous_uri);
-                m_select_previous_folder = false;
+                QString mPreviousUri = this->property("mPreviousUri").toString();
+                qDebug() << "set mPreviousUri:"<<mPreviousUri;
+                m_view->setSelections(QStringList()<<mPreviousUri);
+                m_view->scrollToSelection(mPreviousUri);
+                this->setProperty("mSelectPreviousFolder", false);
             });
         }
     });
@@ -181,7 +183,7 @@ void DirectoryViewContainer::goBack()
     if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
         m_forward_list.prepend(getCurrentUri());
 
-    m_select_previous_folder = true;
+    this->setProperty("mSelectPreviousFolder", true);
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -225,7 +227,7 @@ void DirectoryViewContainer::cdUp()
     if (uri.isNull())
         return;
 
-    m_select_previous_folder = true;
+    this->setProperty("mSelectPreviousFolder", true);
     Q_EMIT updateWindowLocationRequest(uri, true);
 }
 
@@ -341,7 +343,7 @@ update:
     if (m_view)
         m_view->setCurrentZoomLevel(zoomLevel);
 
-    m_previous_uri = m_current_uri;
+    this->setProperty("mPreviousUri", m_current_uri);
     m_current_uri = uri;
 
     //special uri process
