@@ -1204,7 +1204,7 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
     {
         m_is_search = false;
-        m_header_bar->m_searchWidget->updateSearchRequest(m_is_search);
+        m_tab->closeSearch();
     }
 
     if (getCurrentUri() == realUri) {
@@ -1825,7 +1825,7 @@ void MainWindow::initUI(const QString &uri)
 
     //bind signals
     connect(m_tab, &TabWidget::searchRecursiveChanged, m_header_bar, &HeaderBar::updateSearchRecursive);
-    connect(m_tab, &TabWidget::closeSearch, m_header_bar, &HeaderBar::closeSearch);
+    connect(m_tab, &TabWidget::closeSearch, m_header_bar->m_searchWidget, &Peony::SearchWidget::closeSearch);
     connect(m_tab, &TabWidget::closeSearch, this, [=](){
         this->updateSearchStatus(false);
     });

@@ -1650,8 +1650,16 @@ void TabWidget::changeCurrentIndex(int index)
 {
     m_tab_bar->setCurrentIndex(index);
     m_stack->setCurrentIndex(index);
+
     Q_EMIT currentIndexChanged(index);
     Q_EMIT activePageChanged();
+    if (m_tab_bar->getCurrentUris().count() > index) {
+        QString uri = m_tab_bar->getCurrentUris().at(index);
+        if (! uri.startsWith("search://"))
+        {
+            closeSearch();
+        }
+    }
 }
 
 int TabWidget::count()

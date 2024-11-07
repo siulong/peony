@@ -189,7 +189,6 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         m_window->getCurrentPage()->setSortFilter(index);
     });
 
-    connect(this, &HeaderBar::closeSearch, m_searchWidget, &Peony::SearchWidget::closeSearch );
     connect(this, &HeaderBar::setGlobalFlag, m_searchWidget, &Peony::SearchWidget::setGlobalFlag );
     connect(this, &HeaderBar::updateSearchRecursive, m_searchWidget, &Peony::SearchWidget::updateSearchRecursive);
     connect(this, &HeaderBar::setLocation, m_searchWidget, &Peony::SearchWidget::updateLocation);
