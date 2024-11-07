@@ -157,6 +157,8 @@ protected:
 
 private:
     QString m_current_uri;
+    QString m_previous_uri;
+    bool m_select_previous_folder = false;
 
     DirectoryViewProxyIface *m_proxy = nullptr;
     DirectoryViewWidget *m_view = nullptr;
