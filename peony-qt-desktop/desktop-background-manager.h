@@ -50,6 +50,7 @@ public:
     bool getPaintBackground() const;
 
     const QString &getBackgroundOption();
+    void forceUpdateBackground();
 
     bool AnimationRunning();
 

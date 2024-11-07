@@ -164,6 +164,51 @@ void DesktopBackgroundManager::setBackground()
     m_animation->finished();
 }
 
+/*
+* 1.为解决云桌面批量推送同名壁纸，重新设置壁纸不生效问题，增加强制更新接口；
+* 2.接口可以通过peony-qt-desktop -u 命令调用；
+* 3.接口目前只会使用gsettings设置的壁纸值做刷新，然后备份到个人壁纸数据；
+* 4.壁纸数据备份后，如果用户将壁纸文件本身删除，重新刷新也会使用备份的壁纸，不会丢失；
+*/
+void DesktopBackgroundManager::forceUpdateBackground()
+{
+    if (!m_backgroundSettings){
+        qWarning() << "forceUpdateBackground failed, m_backgroundSettings not exist";
+        return;
+    }
+
+    m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+    auto path = m_backgroundSettings->get("pictureFilename").toString();
+    if (! QFile::exists(path)){
+        qWarning() << "forceUpdateBackground failed, pictureFilename not exist";
+        return;
+    }
+
+    if (m_animation->state() == QVariantAnimation::Running) {
+        m_pendingPixmap = QPixmap(path);
+        m_current_bg_path = path;
+    } else {
+        m_frontPixmap = QPixmap(path);
+        //天翼云项目反馈壁纸问题修复
+        //fix jpeg file change suffix name to png, set as wallpaper fail issue
+        if (m_frontPixmap.isNull()){
+            QFile file(path);
+            if (file.open(QIODevice::ReadOnly)){
+                m_frontPixmap.loadFromData(file.readAll());
+                file.close();
+            }
+        }
+        if (m_backPixmap.isNull()) {
+            m_backPixmap = m_frontPixmap;
+        }
+        m_current_bg_path = path;
+        m_animation->start();
+    }
+
+    updateScreens();
+    setAccountBackground();
+}
+
 QString DesktopBackgroundManager::getAccountBackground()
 {
     if (!m_shouldSyncAccountBackground) {

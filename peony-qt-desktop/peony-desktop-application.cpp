@@ -497,6 +497,10 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
     QCommandLineOption layoutOption(QStringList()<<"l"<<"layout-items", tr("Layout item with top to bottom left to right"));
     parser.addOption(layoutOption);
 
+    //story28307, 28308, force update background
+    QCommandLineOption UpdateOption(QStringList()<<"u"<<"update-background", tr("Force update backgrounds"));
+    parser.addOption(UpdateOption);
+
     if (isPrimary) {
         if (m_first_parse) {
             auto helpOption = parser.addHelpOption();
@@ -582,6 +586,11 @@ void PeonyDesktopApplication::parseCmd(QString msg, bool isPrimary)
         }
         if (parser.isSet(layoutOption)) {
             desktopManger->layoutViewItems();
+        }
+
+        if (parser.isSet(UpdateOption)) {
+            //force update background use gsettings pictureFile
+            DesktopBackgroundManager::globalInstance()->forceUpdateBackground();
         }
 
         connect(this, &QApplication::paletteChanged, this, [=](const QPalette &pal) {
