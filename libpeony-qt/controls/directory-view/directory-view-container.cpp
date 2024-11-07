@@ -40,6 +40,7 @@
 
 #include <QVBoxLayout>
 #include <QAction>
+#include <QTimer>
 
 #include <QApplication>
 
@@ -123,6 +124,20 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         if (m_view)
             m_view->setCurrentZoomLevel(zoomLevel);
     });
+
+    connect(m_proxy_model, &FileItemProxyFilterSortModel::sortFinished, this, [=] () {
+        //task 143767, select previous folder when goBack or cdUp
+        //story 23918, improve select effect
+        if (m_view && m_select_previous_folder){
+            //add 10ms delay to show and select previous folder
+            QTimer::singleShot(10, this, [=](){
+                qDebug() << "set m_select_previous_folder:"<<m_previous_uri;
+                m_view->setSelections(QStringList()<<m_previous_uri);
+                m_view->scrollToSelection(m_previous_uri);
+                m_select_previous_folder = false;
+            });
+        }
+    });
 }
 
 DirectoryViewContainer::~DirectoryViewContainer()
@@ -165,6 +180,8 @@ void DirectoryViewContainer::goBack()
     int count = m_forward_list.count();
     if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
         m_forward_list.prepend(getCurrentUri());
+
+    m_select_previous_folder = true;
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -208,6 +225,7 @@ void DirectoryViewContainer::cdUp()
     if (uri.isNull())
         return;
 
+    m_select_previous_folder = true;
     Q_EMIT updateWindowLocationRequest(uri, true);
 }
 
@@ -323,6 +341,7 @@ update:
     if (m_view)
         m_view->setCurrentZoomLevel(zoomLevel);
 
+    m_previous_uri = m_current_uri;
     m_current_uri = uri;
 
     //special uri process

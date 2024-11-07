@@ -141,6 +141,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void setSelectionModeChanged();
+    void sortFinished();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
