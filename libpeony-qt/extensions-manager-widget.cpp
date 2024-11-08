@@ -62,7 +62,7 @@ void Peony::ExtensionsManagerWidget::initUI()
     this->resize(EXTENSIONS_SHOW_WIDTH, EXTENSIONS_SHOW_HEIGHT);
     this->setMinimumWidth(EXTENSIONS_SHOW_WIDTH);
     this->setWindowTitle(tr("Extensions Manager"));
-    this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
+    //this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
 
     m_mainLayout = new QVBoxLayout(this);
     m_useLabel = new QLabel(tr("Available extensions"));
