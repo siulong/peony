@@ -598,7 +598,7 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="258"/>
         <source>Help</source>
-        <translation>説明</translation>
+        <translation>幫助</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="262"/>
