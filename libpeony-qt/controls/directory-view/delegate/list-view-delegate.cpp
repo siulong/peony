@@ -411,13 +411,17 @@ void ListViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
     edit->setTextCursor(cursor);
 }
 
-//void ListViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-//{
-//    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
-//    TextEdit *edit = qobject_cast<TextEdit*>(editor);
-//    edit->setFixedHeight(editor->height());
-//    edit->resize(edit->document()->size().width(), -1);
-//}
+void ListViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+    TextEdit *edit = qobject_cast<TextEdit*>(editor);
+    edit->m_backgroundEdit->setGeometry(1, 2, edit->size().width() - 2, edit->size().height() - 4);
+    QTimer::singleShot(0, edit, [=]() {
+        int top = (edit->height() - edit->document()->size().height())/2;
+        top = top < 2 ? 2 : top;
+        edit->setMargins(1, top, 1, 2);
+    });
+}
 
 void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
@@ -626,6 +630,14 @@ TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
     setFrameShape(QFrame::NoFrame);
     setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     setViewportMargins(1, 2, 1, 2);
+    if (m_backgroundEdit == nullptr) {
+        m_backgroundEdit = new QTextEdit(this);
+        m_backgroundEdit->setReadOnly(true);
+        m_backgroundEdit->setFrameShape(QTextEdit::NoFrame);
+
+        m_backgroundEdit->setGeometry(1, 2, size().width() - 2, size().height() - 4);
+        m_backgroundEdit->lower();
+    }
 }
 
 void TextEdit::adjustText()
@@ -676,4 +688,9 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
         return;
     }
     return QTextEdit::keyPressEvent(e);
+}
+
+void TextEdit::setMargins(int left, int top, int right, int bottom)
+{
+    setViewportMargins(left, top, right, bottom);
 }

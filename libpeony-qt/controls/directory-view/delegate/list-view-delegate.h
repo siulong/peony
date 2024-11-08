@@ -53,7 +53,7 @@ public:
     //edit
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-    //void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
     int getCurrentCheckboxColumn(){
         return m_checkbox_column;
@@ -95,6 +95,9 @@ public:
     void adjustText();
     void setMaxLengthLimit(int length);
     void setLimitBytes(bool limitBytes);
+
+    QTextEdit *m_backgroundEdit = nullptr;
+    void setMargins(int left, int top, int right, int bottom);
 
 Q_SIGNALS:
     void finishEditRequest();
