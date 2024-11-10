@@ -396,23 +396,26 @@ int TabBarStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *opt
 
 QRect TabBarStyle::subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
+    int offset = 8;
     if (!m_need_adjust) {
-        return QProxyStyle::subElementRect(element, option, widget);
+        offset = 8;
     } else {
-        switch (element) {
-        case SE_TabBarScrollLeftButton:{
-            QRect tabRect = option->rect;
-            tabRect.setRight(tabRect.left() + 48);
-            return tabRect;
-        }
-        case SE_TabBarScrollRightButton:{
-            QRect tabRect = option->rect;
-            tabRect.setLeft(tabRect.right() - 48);
-            return tabRect;
-        }
-        default:
-            return QProxyStyle::subElementRect(element, option, widget);
-        }
+        offset = 48;
+    }
+
+    switch (element) {
+    case SE_TabBarScrollLeftButton:{
+        QRect tabRect = option->rect;
+        tabRect.setRight(tabRect.left() + offset);
+        return tabRect;
+    }
+    case SE_TabBarScrollRightButton:{
+        QRect tabRect = option->rect;
+        tabRect.setLeft(tabRect.right() - offset);
+        return tabRect;
+    }
+    default:
+        return QProxyStyle::subElementRect(element, option, widget);
     }
 }
 
