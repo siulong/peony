@@ -52,6 +52,8 @@ public:
 
     PropertiesWindowFactoryPluginIface *getFactory(const QString &id);
 
+    void show();
+
     explicit PropertiesWindowFactoryPluginManager(QObject *parent = nullptr);
 
     ~PropertiesWindowFactoryPluginManager() override;

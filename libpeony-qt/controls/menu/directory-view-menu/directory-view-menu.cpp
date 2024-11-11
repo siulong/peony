@@ -51,7 +51,7 @@
 
 #include "volume-manager.h"
 
-//#include "properties-window.h"
+#include "properties-window.h"
 #include "properties-window-factory-plugin-manager.h"
 #include "windows/format_dialog.h"
 #include "file-launch-manager.h"
@@ -1158,7 +1158,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                     p->setParent(this->parentWidget());
                 }
                 p->setAttribute(Qt::WA_DeleteOnClose);
-                p->show();
+                PropertiesWindowFactoryPluginManager::getInstance()->show();
+                //p->show();
             } else {
                 QStringList selectUriList;
                 if (m_selections.first().contains("favorite:///")) {
@@ -1173,7 +1174,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                                 p->setParent(this->parentWidget());
                             }
                             p->setAttribute(Qt::WA_DeleteOnClose);
-                            p->show();
+                            PropertiesWindowFactoryPluginManager::getInstance()->show();
+                            //p->show();
                         } else {
                             selectUriList<< m_selections.at(uriIndex);
                         }
@@ -1188,7 +1190,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                             p->setParent(this->parentWidget());
                         }
                         p->setAttribute(Qt::WA_DeleteOnClose);
-                        p->show();
+                        PropertiesWindowFactoryPluginManager::getInstance()->show();
+                        //p->show();
                     }
                 }else {
                     selectUriList = m_selections;
@@ -1201,7 +1204,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                         p->setParent(this->parentWidget());
                     }
                     p->setAttribute(Qt::WA_DeleteOnClose);
-                    p->show();
+                    PropertiesWindowFactoryPluginManager::getInstance()->show();
+                    //p->show();
                 }
             }
         });
@@ -1215,7 +1219,8 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                 p->setParent(this->parentWidget());
             }
             p->setAttribute(Qt::WA_DeleteOnClose);
-            p->show();
+            PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //p->show();
         });
     }
 

@@ -41,8 +41,8 @@ PropertiesWindowFactory *PropertiesWindowFactory::getInstance()
 
 QMainWindow *PropertiesWindowFactory::create(const QStringList &uris)
 {
-    auto window = new PropertiesWindow(uris);
-    return window;
+    m_window = new PropertiesWindow(uris);
+    return m_window;
 }
 
 void PropertiesWindowFactory::closeFactory()
@@ -60,4 +60,11 @@ bool PropertiesWindowFactory::unregisterFactory(QObject *factory)
 {
     PropertiesWindowTabPagePluginIface *Iface = dynamic_cast<PropertiesWindowTabPagePluginIface*>(factory);
     return PropertiesWindowPluginManager::getInstance()->unregisterFactory(Iface);
+}
+
+void PropertiesWindowFactory::show()
+{
+    if (m_window) {
+        m_window->show();
+    }
 }

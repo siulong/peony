@@ -1624,7 +1624,8 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
     if (info->uri().startsWith("trash://")) {
         QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(QStringList()<<uri);
         //auto w = new Peony::PropertiesWindow(QStringList()<<uri);
-        w->show();
+        //w->show();
+        Peony::PropertiesWindowFactoryPluginManager::getInstance()->show();
         return;
     }
     if (info->isDir() || info->isVolume() || info->isVirtual()) {

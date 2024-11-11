@@ -446,7 +446,8 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
                 }
             }
             window->setAttribute(Qt::WA_DeleteOnClose);
-            window->show();
+            Peony::PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //window->show();
             KWindowSystem::raiseWindow(window->winId());
             if (KWindowSystem::activeWindow() != window->winId()) {
                 KWindowSystem::activateWindow(window->winId());

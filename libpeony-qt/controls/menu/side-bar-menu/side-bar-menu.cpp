@@ -121,7 +121,8 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
         if(this->parentWidget() && this->parentWidget()->isModal()){
             w->setParent(this->parentWidget());
         }
-        w->show();
+        PropertiesWindowFactoryPluginManager::getInstance()->show();
+        //w->show();
     });
     if (!m_item->firstColumnIndex().parent().isValid()) {
         l.last()->setEnabled(false);
@@ -140,7 +141,8 @@ const QList<QAction *> SideBarMenu::constructPersonalActions()
         if(this->parentWidget() && this->parentWidget()->isModal()){
             w->setParent(this->parentWidget());
         }
-        w->show();
+        PropertiesWindowFactoryPluginManager::getInstance()->show();
+        //w->show();
     });
 
     return l;
@@ -346,7 +348,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             if(this->parentWidget() && this->parentWidget()->isModal()){
                 w->setParent(this->parentWidget());
             }
-            w->show();
+            PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //w->show();
         }
     });
     if ((0 != QString::compare(m_uri, "computer:///")) &&
@@ -409,7 +412,8 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                         if(this->parentWidget() && this->parentWidget()->isModal()){
                             w->setParent(this->parentWidget());
                         }
-                        w->show();
+                        PropertiesWindowFactoryPluginManager::getInstance()->show();
+                        //w->show();
                         break;
                     }
                 }
@@ -420,7 +424,8 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                 if(this->parentWidget() && this->parentWidget()->isModal()){
                     w->setParent(this->parentWidget());
                 }
-                w->show();
+                PropertiesWindowFactoryPluginManager::getInstance()->show();
+                //w->show();
             }
         });
         if(m_item->isVolume())

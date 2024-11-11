@@ -32,6 +32,7 @@
 namespace Peony {
 
 class PropertiesWindowTabPagePluginIface;
+class PropertiesWindow;
 
 /*!
  * \brief The PropertiesWindowFactory class
@@ -79,6 +80,10 @@ public:
     bool registerFactory(QObject *factory);
     bool unregisterFactory(QObject *factory);
 
+    void show();
+
+private:
+    PropertiesWindow* m_window = nullptr;
 };
 
 }

@@ -154,3 +154,13 @@ PropertiesWindowFactoryPluginIface *PropertiesWindowFactoryPluginManager::getFac
     }
     return factory;
 }
+
+void PropertiesWindowFactoryPluginManager::show()
+{
+    QString version = qApp->property("version").toString();
+    if (version == "") {
+        version = "ukui4.0";
+    }
+    PropertiesWindowFactoryPluginIface *iface = getFactory(version);
+    return iface->show();
+}

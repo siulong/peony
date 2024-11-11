@@ -47,6 +47,7 @@ public:
     virtual void closeFactory() = 0;
     virtual bool registerFactory(QObject *factory) = 0;
     virtual bool unregisterFactory(QObject *factory) = 0;
+    virtual void show() = 0;
 };
 }
 
