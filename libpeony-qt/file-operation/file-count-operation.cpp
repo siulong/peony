@@ -67,7 +67,7 @@ void FileCountOperation::run()
         auto node = new FileNode(FileUtils::urlEncode(uri), nullptr, m_reporter);
         node->findChildrenRecursively();
         //add skip some uri function for calculate /data/* size
-        if (/*m_skip_uris.length() > 0 && ! m_skip_uris.contains(node->uri()) || */!m_count_root)
+        if (m_skip_uris.length() > 0 && ! m_skip_uris.contains(node->uri()))
             nodes<<node;
     }
     if (!this->isCancelled()) {

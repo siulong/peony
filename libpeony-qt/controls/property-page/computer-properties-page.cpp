@@ -25,6 +25,9 @@
 #include "linux-pwd-helper.h"
 
 #include "file-utils.h"
+#include "file-info.h"
+#include "file-enumerator.h"
+#include "file-count-operation.h"
 
 #ifndef KY_UDF_BURN
 #include "datacdrom.h"
@@ -44,6 +47,7 @@ using namespace UdfBurn;
 #include <QProcess>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QTimer>
 
 #include <glib.h>
 
@@ -142,6 +146,137 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             m_layout->addRow(tr("Name: "), new QLabel(targetUri == "file:///" ? tr("System Disk") : tr("Data"), this));
             m_layout->addRow(tr("Total Space: "), new QLabel(formatCapacityString(total), this));
             m_layout->addRow(tr("Used Space: "), new QLabel(formatCapacityString(used), this));
+
+            //story 28545, improve data block solution
+            if (targetUri == "file:///data" && Peony::FileUtils::isFileExsit("file:///data/usershare") &&
+                    Peony::FileUtils::isFileExsit("file:///data/root") && Peony::FileUtils::isFileExsit("file:///data/home")) {
+               QLabel* rootUsedLabel = new QLabel(tr("In calculation..."), this);
+               QLabel* homeUsedLabel = new QLabel(tr("In calculation..."), this);
+               QLabel* usershareLabel = new QLabel(tr("In calculation..."), this);
+               m_layout->addRow(tr("/root used: "), rootUsedLabel);
+               m_layout->addRow(tr("/home used: "), homeUsedLabel);
+               m_layout->addRow(tr("/usershare used: "), usershareLabel);
+
+               QLabel* othersLabel = new QLabel(tr("In calculation..."), this);
+               othersLabel->setVisible(false);
+               if (FileUtils::isDataBlockHasUserFile()) {
+                   othersLabel->setVisible(true);
+                   m_layout->addRow(tr("/data/* used: "), othersLabel);
+               }
+
+               m_timer = new QTimer(this);
+               m_timer->setInterval(500);
+               connect(m_timer, &QTimer::timeout, this, [=]{
+                   homeUsedLabel->setText(formatCapacityString(m_home_counted_size));
+                   usershareLabel->setText(formatCapacityString(m_usershare_counted_size));
+                   if (FileUtils::isDataBlockHasUserFile()) {
+                       othersLabel->setText(formatCapacityString(m_others_counted_size));
+                   }else {
+                       m_count_others_done = true;
+                   }
+
+                   if (m_count_home_done && m_count_usershare_done && m_count_others_done) {
+                       m_timer->stop();
+                       if (used > (m_home_counted_size + m_root_counted_size + m_others_counted_size)) {
+                           rootUsedLabel->setText(formatCapacityString(used - (m_home_counted_size + m_root_counted_size + m_others_counted_size)));
+                       }else {
+                           rootUsedLabel->setText(tr("Unknow (No permission)"));
+                       }
+                   }
+               });
+               m_timer->start();
+
+               m_home_counted_size = 0;
+               m_root_counted_size = 0;
+               m_usershare_counted_size = 0;
+               m_others_counted_size = 0;
+               m_count_home_done = false;
+               m_count_usershare_done = false;
+               m_count_others_done = false;
+
+               //计算家目录占用空间
+               FileCountOperation *homeCountOp = new FileCountOperation(QStringList() << "file:///home", false);
+               connect(homeCountOp, &FileOperation::operationPreparedOne, this, [=](QString uri, quint64 countSize) {
+                   m_home_counted_size += countSize;
+               }, Qt::BlockingQueuedConnection);
+               connect(homeCountOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+                   homeUsedLabel->setText(formatCapacityString(total_size));
+                   m_count_home_done = true;
+               }, Qt::BlockingQueuedConnection);
+
+               //计算useshare目录占用空间
+               FileCountOperation *useshareCountOp = new FileCountOperation(QStringList() << "file:///data/usershare", false);
+               connect(useshareCountOp, &FileOperation::operationPreparedOne, this, [=](QString uri, quint64 countSize) {
+                   m_usershare_counted_size += countSize;
+               }, Qt::BlockingQueuedConnection);
+               connect(useshareCountOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+                   usershareLabel->setText(formatCapacityString(total_size));
+                   m_count_usershare_done = true;
+               }, Qt::BlockingQueuedConnection);
+
+               //计算除了useshare，home, root之外的目录占用空间
+               FileCountOperation *othersCountOp = new FileCountOperation(QStringList() << "file:///data", false);
+               QStringList systemUris;
+               systemUris<< "file:///data/root"<< "file:///data/home" <<"file:///data/usershare" << "file:///root" <<"file:///home";
+               othersCountOp->setSkipUris(systemUris);
+               connect(othersCountOp, &FileOperation::operationPreparedOne, this, [=](QString uri, quint64 countSize) {
+                   m_others_counted_size += countSize;
+               }, Qt::BlockingQueuedConnection);
+               connect(othersCountOp, &FileCountOperation::countDone, this, [=](quint64 file_count, quint64 hidden_file_count, quint64 total_size) {
+                   if (FileUtils::isDataBlockHasUserFile()) {
+                       othersLabel->setText(formatCapacityString(m_others_counted_size));
+                   }else {
+                       m_others_counted_size = 0;
+                   }
+                   m_count_others_done = true;
+               }, Qt::BlockingQueuedConnection);
+
+               QThreadPool::globalInstance()->start(homeCountOp);
+               QThreadPool::globalInstance()->start(useshareCountOp);
+               QThreadPool::globalInstance()->start(othersCountOp);
+
+
+               //阻塞方式，文件数量大场景阻塞，替换为异步方式
+//               QTimer::singleShot(500, this, [=]() {
+//                   quint64 homeUsed = FileUtils::getFileTotalSize("file:///home");
+//                   quint64 usershareUsed = FileUtils::getFileTotalSize("file:///data/usershare");
+//                   homeUsedLabel->setText(formatCapacityString(homeUsed));
+//                   usershareLabel->setText(formatCapacityString(usershareUsed));
+//                   quint64 rootUsed = 0;
+//                   if (used > (homeUsed + usershareUsed)) {
+//                       rootUsed = used - homeUsed -usershareUsed;
+//                       rootUsedLabel->setText(formatCapacityString(rootUsed));
+//                   }
+//                   else
+//                       rootUsedLabel->setText(tr("Unknow (No permission)"));
+
+//                   if (FileUtils::isDataBlockHasUserFile()) {
+//                       FileEnumerator e;
+//                       e.setEnumerateDirectory("file:///data");
+//                       e.enumerateSync();
+//                       QStringList systemUris;
+//                       systemUris<< "file:///data/root"<< "file:///data/home" <<"file:///data/usershare" << "file:///root" <<"file:///home";
+
+//                       quint64 others = 0;
+//                       for (auto fileInfo : e.getChildren()) {
+//                          QString childUri = fileInfo->uri();
+//                          if (systemUris.contains(childUri))
+//                              continue;
+
+//                          others += FileUtils::getFileTotalSize(childUri);
+//                       }
+
+//                       if (rootUsed > others) {
+//                           rootUsed -= others;
+//                           rootUsedLabel->setText(formatCapacityString(rootUsed));
+//                       }else {
+//                           rootUsedLabel->setText(tr("Unknow (No permission)"));
+//                       }
+//                       othersLabel->setText(formatCapacityString(others));
+//                   }
+//               });
+            }
+
             m_layout->addRow(tr("Free Space: "), new QLabel(formatCapacityString(available), this));
             m_layout->addRow(tr("Type: "), new QLabel(fs_type, this));
 

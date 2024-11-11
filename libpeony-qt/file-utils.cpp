@@ -23,6 +23,7 @@
 #include "file-utils.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-enumerator.h"
 #include "volume-manager.h"
 #include "linux-pwd-helper.h"
 #include "volumeManager.h"
@@ -45,6 +46,8 @@
 #include <gio/gunixmounts.h>
 #include <QCoreApplication>
 #include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 using namespace Peony;
 
@@ -666,6 +669,58 @@ bool FileUtils::isFileExsit(const QString &uri)
     g_object_unref(file);
     return exist;
 }
+
+/*
+ * 1.用于默认安装创建的数据盘场景；
+ * 2.默认会有绑定挂载目录/data/root, /data/home, /data/usershare;
+ * 3.自定义安装的数据盘，没有绑定挂载，不适用；
+ * 4.除默认目录之外，还存在其他文件夹或文件，才属于用户数据；
+ * 5./data/.Trash-*,/data/lost+found此类目录也属于默认目录；
+*/
+bool FileUtils::isDataBlockHasUserFile()
+{
+    QString configFilePath = "/etc/xdg/peony-data.conf";
+    if (! QFile::exists(configFilePath))
+        return true;
+
+    QFile file(configFilePath);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString line = in.readLine();
+        // 判断标识是否为true, 是的话，存在用户数据，如果是false, 则是干净的数据盘，可以使用新方案
+        if (line != "true")
+            return false;
+        file.close();
+    } else {
+        qWarning() << "open /etc/xdg/peony-data.conf failed";
+    }
+
+    return true;
+
+    //之前的阻塞方法，文件量大时会造成卡顿，屏蔽
+//    Peony::FileEnumerator e;
+//    e.setEnumerateDirectory("file:///data");
+//    e.enumerateSync();
+//    QStringList systemUris;
+//    systemUris<< "file:///data/root"<< "file:///data/home" <<"file:///data/usershare" << "file:///data/lost+found";
+//    qDebug() << "/data children:"<<e.getChildrenUris().length();
+//    if (e.getChildrenUris().length() <= systemUris.length()) {
+//        return false;
+//    } else {
+//        for (auto fileInfo : e.getChildren()) {
+//           QString childUri = fileInfo->uri();
+//           qDebug() << "data childUri:"<<childUri;
+//           //确认别的子文件不是回收站目录，用户id不同，回收站目录名不同，则可以跳转/data目录
+//           if (! systemUris.contains(childUri) && ! childUri.startsWith("file:///data/.Trash") &&
+//                   childUri != "file:///home" && childUri != "file:///root"){
+//               return true;
+//           }
+//        }
+//    }
+
+//    return false;
+}
+
 
 const QStringList FileUtils::toDisplayUris(const QStringList &args)
 {

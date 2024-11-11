@@ -120,7 +120,8 @@ void SideBarFavoriteItem::initChildren()
     //m_children->append(videoItem);
 
 
-    if (FileUtils::isFileExsit("file:///data/usershare")) {
+    //story 28545, improve data block solution
+    if (FileUtils::isFileExsit("file:///data/usershare") && FileUtils::isDataBlockHasUserFile()) {
         m_children->append(new SideBarFavoriteItem("favorite:///data/usershare?schema=file", this, m_model));
     }
 

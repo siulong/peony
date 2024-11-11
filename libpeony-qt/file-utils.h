@@ -85,6 +85,7 @@ public:
 
 
     BLOCKING static bool isFileExsit(const QString &uri);
+    BLOCKING static bool isDataBlockHasUserFile();
 
     NO_BLOCKING static const QStringList toDisplayUris(const QStringList &args);
 

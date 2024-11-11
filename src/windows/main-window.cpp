@@ -1140,6 +1140,14 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     if (uri == "computer:///ukui-data-volume") {
         realUri = "file:///data";
     }
+
+    //story 28545, improve data block solution, when has no user file in /data, go to usershare
+    if ((uri == "file:///data" || realUri == "file:///data") &&
+            Peony::FileUtils::isFileExsit("file:///data/usershare") &&
+            ! Peony::FileUtils::isDataBlockHasUserFile()) {
+        realUri = "file:///data/usershare";
+    }
+
     //process open symbolic link
     auto info = Peony::FileInfo::fromUri(uri);
     if (info->isSymbolLink() && info->symlinkTarget().length() >0 &&
