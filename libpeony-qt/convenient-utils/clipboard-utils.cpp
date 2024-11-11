@@ -85,7 +85,8 @@ ClipboardUtils::ClipboardUtils(QObject *parent) : QObject(parent)
             gCutFileUris.clear();
         }
 
-        if (!QApplication::clipboard()->ownsClipboard()) {
+        qDebug()<<"XDG_SESSION_TYPE:"<<qgetenv("XDG_SESSION_TYPE")<<" ownsClipboard:"<<QApplication::clipboard()->ownsClipboard();
+        if ("wayland" != qgetenv("XDG_SESSION_TYPE").toLower() && !QApplication::clipboard()->ownsClipboard()) {
             gCutFileUris.clear();
         }
     });
