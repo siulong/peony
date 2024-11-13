@@ -205,9 +205,9 @@ void LabelBoxStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
 QSize LabelBoxStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &size, const QWidget *widget) const
 {
     if (type == CT_ItemViewItem) {
-        QSize size = QApplication::style()->sizeFromContents(type, option, size, widget);
-        size += QSize(0, 8);
-        return size;
+        QSize tmpsize = QApplication::style()->sizeFromContents(type, option, size, widget);
+        tmpsize += QSize(0, 8);
+        return tmpsize;
     }
     return QApplication::style()->sizeFromContents(type, option, size, widget);
 }

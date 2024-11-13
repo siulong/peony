@@ -791,7 +791,7 @@ void guessContentTypeCallback(GObject* object, GAsyncResult *res,gpointer data)
     root = g_mount_get_default_location(G_MOUNT(object));
 
     // fix #205338
-    g_autoptr(GFileInfo) access_info = g_file_query_info(root, G_FILE_ATTRIBUTE_ACCESS_CAN_READ","G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    g_autoptr(GFileInfo) access_info = g_file_query_info(root, G_FILE_ATTRIBUTE_ACCESS_CAN_READ "," G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
     openFolder = g_file_info_get_attribute_boolean(access_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ) && g_file_info_get_attribute_boolean(access_info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
 
     mountUri = g_file_get_uri(root);
