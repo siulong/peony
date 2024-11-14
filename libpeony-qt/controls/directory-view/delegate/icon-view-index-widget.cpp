@@ -203,14 +203,25 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
     QWidget::paintEvent(e);
     QPainter p(this);
-//    p.fillRect(0, 0, 999, 999, qApp->palette().base());
 
-    //adjustPos();
+    auto opt = m_option;
+    auto rawRect = m_option.rect;
+    opt.rect = this->rect();
+
+    int horizalMargin = 2;
+    auto fontMetrics = opt.fontMetrics;
+    int pixelsWide = fontMetrics.width(opt.text);
+    int width = opt.rect.width() - 2*horizalMargin;
+
+    if(pixelsWide < width){
+       opt.rect = opt.rect.adjusted(0,0,0,-31);
+    }
+
     auto bgColor = QApplication::palette().base().color();
     p.save();
     p.setPen(Qt::transparent);
     p.setBrush(bgColor);
-    p.drawRoundedRect(this->rect(), 6, 6);
+    p.drawRoundedRect(opt.rect, 6, 6);
     p.restore();
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
@@ -228,19 +239,6 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         }
     }//end
 #endif
-
-    auto opt = m_option;
-    auto rawRect = m_option.rect;
-    opt.rect = this->rect();
-
-    int horizalMargin = 2;
-    auto fontMetrics = opt.fontMetrics;
-    int pixelsWide = fontMetrics.width(opt.text);
-    int width = opt.rect.width() - 2*horizalMargin;
-
-    if(pixelsWide < width){
-       opt.rect = opt.rect.adjusted(0,0,0,-31);
-    }
 
     opt.palette = QApplication::palette();
     //p.fillRect(opt.rect, m_delegate->selectedBrush());
