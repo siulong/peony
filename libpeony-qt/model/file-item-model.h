@@ -257,6 +257,8 @@ Q_SIGNALS:
      */
     void updated();
     void updateFilter();
+    void signal_updateTabPageTitle(const QString& uri);
+    void signal_updateLocationBar(const QString& uri);
     void selectRequest(const QStringList &uris);
     void changePathRequest(const QString &destUri, const QString &sourceUri);
 

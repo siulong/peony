@@ -57,6 +57,8 @@ struct LabelVFSFileMonitor
     GList                        *fileList = nullptr;
     QMetaObject::Connection      add;
     QMetaObject::Connection      remove;
+    QMetaObject::Connection      dirAttrChanged;
+
 };
 
 struct LabelVFSFileMonitorClass
@@ -67,6 +69,7 @@ struct LabelVFSFileMonitorClass
 
 GType  vfs_label_file_monitor_get_type  (void) G_GNUC_CONST;
 void   vfs_label_file_monitor_dir(LabelVFSFileMonitor *obj, const QString &label_vfs_directory_uri);
+void   vfs_label_file_monitor_file(LabelVFSFileMonitor *obj, const QString &label_vfs_directory_uri);
 
 
 G_END_DECLS

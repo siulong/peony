@@ -67,21 +67,19 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
 
             Peony::FMWindowIface *windowIface = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
             menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
-                QString name = index.data(Qt::DisplayRole).toString();
                 int id = index.data(Qt::UserRole).toInt();
                 if (id)
                 {
-                    QString uri = "label:///" + name;
+                    QString uri = "label:///" + QString::number(id);
                     auto newWindow = windowIface->create(uri);
                     dynamic_cast<QWidget *>(newWindow)->show();
                 }
             });
             menu.addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open In New Tab"), [=](){
-                QString name = index.data(Qt::DisplayRole).toString();
                 int id = index.data(Qt::UserRole).toInt();
                 if (id)
                 {
-                    QString uri = "label:///" + name;
+                    QString uri = "label:///" + QString::number(id);
                     windowIface->addNewTabs(QStringList()<<uri);
                 }
             });

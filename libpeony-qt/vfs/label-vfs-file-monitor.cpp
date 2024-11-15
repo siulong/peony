@@ -54,6 +54,7 @@ static void vfs_label_file_monitor_dispose (GObject* obj)
 
     QObject::disconnect(self->add);
     QObject::disconnect(self->remove);
+    QObject::disconnect(self->dirAttrChanged);
 }
 
 static void vfs_label_file_monitor_finalize (GObject* obj)
@@ -93,6 +94,20 @@ void vfs_label_file_monitor_dir(LabelVFSFileMonitor *obj, const QString &label_v
         if (successed && uri.startsWith(label_vfs_directory_uri)) {
             GFile* file = g_file_new_for_uri(uri.toUtf8().constData());
             g_file_monitor_emit_event(G_FILE_MONITOR(obj), file, nullptr, G_FILE_MONITOR_EVENT_DELETED);
+            vfs_label_file_monitor_free_gfile (VFS_LABEL_FILE_MONITOR(obj), G_FILE(file));
+        }
+    });
+}
+
+void vfs_label_file_monitor_file(LabelVFSFileMonitor *obj, const QString &label_vfs_directory_uri)
+{
+    g_return_if_fail(VFS_IS_LABEL_FILE_MONITOR(obj));
+
+    FileLabelModel* fileLabel = FileLabelModel::getGlobalModel();
+    obj->dirAttrChanged = QObject::connect(fileLabel, &FileLabelModel::labelColorNameChanged, [=] (const QString uri, const QString& oldColorName, const QString& newColorName) {
+        if (oldColorName != newColorName && uri.startsWith(label_vfs_directory_uri)) {
+            GFile* file = g_file_new_for_uri(label_vfs_directory_uri.toUtf8().constData());
+            g_file_monitor_emit_event(G_FILE_MONITOR(obj), file, nullptr, G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED);
             vfs_label_file_monitor_free_gfile (VFS_LABEL_FILE_MONITOR(obj), G_FILE(file));
         }
     });

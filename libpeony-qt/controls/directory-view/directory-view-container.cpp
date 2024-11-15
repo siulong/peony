@@ -84,6 +84,13 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         }
     });
 
+    connect(m_model, &FileItemModel::signal_updateTabPageTitle, [=](const QString& uri){
+        Q_EMIT this->signal_updateTabPageTitle(uri);
+    });
+    connect(m_model, &FileItemModel::signal_updateLocationBar, [=](const QString& uri){
+        Q_EMIT this->signal_updateLocationBar(uri);
+    });
+
 //    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
 //        refresh();
 //    });

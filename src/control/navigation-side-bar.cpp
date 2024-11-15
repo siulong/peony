@@ -866,8 +866,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         int id = index.data(Qt::UserRole).toInt();
         if (id)
         {
-            //QString uri = "label:///" + QString::number(id);
-            QString uri = "label:///" + name;
+            QString uri = "label:///" + QString::number(id);
             Q_EMIT m_sidebar->updateWindowLocationRequest(uri);
         }
     });
