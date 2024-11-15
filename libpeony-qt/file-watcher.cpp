@@ -284,6 +284,9 @@ void FileWatcher::file_changed_callback(GFileMonitor *monitor,
         char *uri = g_file_get_uri(file);
         //qDebug()<<uri;
         Q_EMIT p_this->fileChanged(uri);
+        if(QString(uri).startsWith("label:///")){
+            Q_EMIT p_this->directoryAttrChanged(uri);
+        }
         g_free(uri);
         break;
     }

@@ -1950,6 +1950,23 @@ void TabWidget::bindContainerSignal(Peony::DirectoryViewContainer *container)
     connect(container, &Peony::DirectoryViewContainer::statusBarChanged, this, [=](){
         m_status_bar->update();
     });
+
+    connect(container, &Peony::DirectoryViewContainer::signal_updateTabPageTitle, this, [=](const QString& uri){
+        for(int index = 0; index < m_stack->count(); index++){
+            if(uri.startsWith("label:///") && uri == m_tab_bar->tabData(index).toString()){
+                m_tab_bar->updateLocation(index, uri.toLocal8Bit());
+            }
+        }
+    });
+
+    connect(container, &Peony::DirectoryViewContainer::signal_updateLocationBar, this, [=](const QString& uri){
+        auto mainWindow = dynamic_cast<MainWindow *>(this->topLevelWidget());
+        for(int index = 0; index < m_stack->count(); index++){
+            if(uri.startsWith("label:///") && uri == m_tab_bar->tabData(index).toString()){
+                mainWindow->updateHeaderBar();
+            }
+        }
+    });
 }
 
 void TabWidget::updatePreviewPage()

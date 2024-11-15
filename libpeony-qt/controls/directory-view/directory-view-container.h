@@ -104,6 +104,9 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void updatePreviewPageRequest();
     void statusBarChanged();
+    void signal_updateTabPageTitle(const QString& uri);
+    void signal_updateLocationBar(const QString& uri);
+
 
 public Q_SLOTS:
     void goToUri(const QString &uri, bool addHistory, bool forceUpdate = false);

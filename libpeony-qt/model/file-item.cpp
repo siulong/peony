@@ -439,7 +439,9 @@ void FileItem::findChildrenAsync()
                 Q_EMIT this->deleted(uri);
                 this->onDeleted(uri);
             });
-
+            connect(m_watcher.get(), &FileWatcher::directoryAttrChanged, this, [=](QString uri) {
+                this->slot_directoryAttrChanged(uri);
+            });
             connect(m_watcher.get(), &FileWatcher::locationChanged, this, [=](QString oldUri, QString newUri) {
                 //this might use FileItemModel::setRootItem()
                 Q_EMIT this->renamed(oldUri, newUri);
@@ -522,6 +524,9 @@ void FileItem::findChildrenAsync()
                 //this might use FileItemModel::setRootItem()
                 Q_EMIT this->deleted(uri);
                 this->onDeleted(uri);
+            });
+            connect(m_watcher.get(), &FileWatcher::directoryAttrChanged, this, [=](QString uri) {
+                this->slot_directoryAttrChanged(uri);
             });
             connect(m_watcher.get(), &FileWatcher::locationChanged, this, [=](QString oldUri, QString newUri) {
                 //this might use FileItemModel::setRootItem()
@@ -715,6 +720,23 @@ void FileItem::onChanged(const QString &uri)
     if (!m_changeChildTimer->isActive()) {
         m_changeChildTimer->start(100);
     }
+}
+
+void FileItem::slot_directoryAttrChanged(const QString &uri)
+{
+    auto fileInfo = FileInfo::fromUri(uri);
+    auto infoJob = new FileInfoJob(fileInfo);
+    infoJob->setAutoDelete();
+    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+        if(!successed)
+            return;
+        qDebug()<<"__func__<<__LINE__"<<fileInfo->uri()<<fileInfo->displayName();
+        m_model->signal_updateTabPageTitle(uri);
+        m_model->signal_updateLocationBar(uri);
+
+    });
+    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+    infoJob->queryAsync();
 }
 
 void FileItem::onUpdateDirectoryRequest()
