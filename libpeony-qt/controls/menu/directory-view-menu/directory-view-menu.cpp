@@ -382,7 +382,13 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 connect(l.last(), &QAction::triggered, this, [=]() {
                     if (!m_top_window)
                         return;
-                    m_top_window->goToUri(m_selections.first(), true);
+                    bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
+                    if (check) {
+                        auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(m_selections.first()));
+                        newWindow->show();
+                    } else {
+                        m_top_window->goToUri(m_selections.first(), true);
+                    }
                 });
 
                 auto recommendActions = FileLaunchManager::getRecommendActions(m_selections.first());
@@ -519,8 +525,17 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                         files << uri;
                     }
                 }
-                if (!dirs.isEmpty())
-                    m_top_window->addNewTabs(dirs);
+                if (!dirs.isEmpty()) {
+                    bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
+                    if (check) {
+                        for (QString uri : dirs) {
+                            auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(uri));
+                            newWindow->show();
+                        }
+                    } else {
+                        m_top_window->addNewTabs(dirs);
+                    }
+                }
 
                 if (!files.isEmpty())
                     FileLaunchManager::openFilesByDefaultApplications(files);
