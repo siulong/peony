@@ -474,12 +474,8 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
     QModelIndex itemIndex = indexAt(e->pos());
     if (!itemIndex.isValid()) {
         if (QToolTip::isVisible()) {
-            QToolTip::hideText();
-        }
-    } else {
-        if (0 != itemIndex.column() && QToolTip::isVisible()) {
-            QToolTip::hideText();
-        }
+             QToolTip::hideText();
+         }
     }
 
     QTreeView::mouseMoveEvent(e);
