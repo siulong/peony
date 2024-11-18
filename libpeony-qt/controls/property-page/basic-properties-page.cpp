@@ -848,25 +848,30 @@ void BasicPropertiesPage::saveAllChange()
         this->changeFileIcon();
 
         if (m_info->isDir()) {
-            bool isReadOnly = false;
-            bool isHidden = false;
-            if (m_readOnly && m_isReadOnly != m_readOnly->isChecked() && m_readOnly->checkState() == Qt::Checked) {
-                isReadOnly = true;
-            }
-            if (m_hidden && m_hidden->isChecked()) {
-                isHidden = true;
-            }
+            if ((m_readOnly && m_readOnlyState != m_readOnly->checkState())
+                    || (m_hidden && m_hiddenState != m_hidden->checkState())) {
+                bool isReadOnly = false;
+                bool isHidden = false;
 
-            PropertiesSetDialog *dialog = new PropertiesSetDialog();
-            connect(dialog, &PropertiesSetDialog::sendSelectRadioButton, this, [=](int id){
-                //id == 0 设置当前所选项   id == 1 递归设置
-                bool isRecursive = false;
-                if (id) {
-                    isRecursive = true;
+                if (m_readOnlyState != m_readOnly->checkState() && m_readOnly->checkState() == Qt::Checked) {
+                    isReadOnly = true;
                 }
-                FileOperationUtils::setReadOnlyAndHidden(QStringList() << m_info->uri(), isReadOnly, isHidden, isRecursive);
-            });
-            dialog->exec();
+
+                if (m_hiddenState != m_hidden->checkState()) {
+                    isHidden = true;
+                }
+
+                PropertiesSetDialog *dialog = new PropertiesSetDialog();
+                connect(dialog, &PropertiesSetDialog::sendSelectRadioButton, this, [=](int id){
+                    //id == 0 设置当前所选项   id == 1 递归设置
+                    bool isRecursive = false;
+                    if (id) {
+                        isRecursive = true;
+                    }
+                    FileOperationUtils::setReadOnlyAndHidden(QStringList() << m_info->uri(), isReadOnly, isHidden, isRecursive);
+                });
+                dialog->exec();
+            }
         } else {
             if (m_readOnly && m_isReadOnly != m_readOnly->isChecked()) {
                 mode_t mod = 0;
@@ -961,22 +966,6 @@ void BasicPropertiesPage::saveAllChange()
                 }
             }
         }
-
-        //FIX:修复桌面快捷方式文件的缩略图改变后需要手动刷新才更新的问题
-        //fix the problem that the thumbnails of desktop shortcut files need to be manually refreshed before they are updated after being changed.
-        QString desktopPath = "file://" + QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-        QString desktopUri = Peony::FileUtils::getEncodedUri(desktopPath);
-        //if (m_info.get()->uri().contains(desktopUri) && m_info.get()->isSymbolLink()) {
-            QProcess p;
-            p.setProgram("touch");
-            p.setArguments(QStringList()<<"-h"<<m_info->filePath());
-        #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-            p.startDetached();
-        #else
-            p.startDetached("touch", QStringList()<<"-h"<<m_info->filePath());
-        #endif
-            p.waitForFinished(-1);
-        //}
     } else {
         if ((m_readOnly && m_readOnlyState != m_readOnly->checkState())
                 || (m_hidden && m_hiddenState != m_hidden->checkState())) {
