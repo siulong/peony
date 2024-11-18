@@ -240,7 +240,8 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
     m_treeView = new QTreeView(this);
     m_treeView->setWindowFlag(Qt::Popup);
     m_treeView->move(m_show_page_button->x(), m_tab_bar->sizeHint().height());
-    m_treeView->setFixedSize(QSize(162, 212));
+//    m_treeView->setFixedSize(QSize(162, 212));
+    m_treeView->setFixedWidth(162);
     m_treeView->setHeaderHidden(true);
     m_treeView->header()->setStretchLastSection(true);
     m_treeView->header()->setSectionResizeMode(QHeaderView::Fixed);
