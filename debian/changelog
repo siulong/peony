@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok1~1118) nile; urgency=medium
+
+  * fix I9V8VT, #I9R5YO, #I8M4ZO.
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 18 Nov 2024 18:05:31 +0800
+
 peony (4.10.0.5-ok1~0929) nile; urgency=medium
 
   * 更新0920维哈柯翻译
