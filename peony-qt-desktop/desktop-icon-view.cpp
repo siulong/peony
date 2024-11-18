@@ -1538,9 +1538,23 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Return:
     {
         auto selections = this->getSelections();
-        for (auto uri : selections)
+        if (selections.count() > 1)
         {
-           openFileByUri(uri);
+            QStringList files;
+            QStringList dirs;
+            for (auto uri : selections) {
+                auto info = Peony::FileInfo::fromUri(uri);
+                if (info->isDir() || info->isVolume()) {
+                    dirs<<uri;
+                } else {
+                    files<<uri;
+                }
+            }
+            for (auto uri : dirs) {
+                openFileByUri(uri);
+            }
+
+            Peony::FileLaunchManager::openFilesByDefaultApplications(files);
         }
     }
         break;

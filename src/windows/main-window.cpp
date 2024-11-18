@@ -988,7 +988,9 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                 m_tab->addPage(uri);
             }
 
-            Peony::FileLaunchManager::openFilesByDefaultApplications(files);
+            if (!files.isEmpty()) {
+                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
+            }
         }
     }
 
