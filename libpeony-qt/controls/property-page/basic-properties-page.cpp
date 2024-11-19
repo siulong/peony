@@ -853,11 +853,10 @@ void BasicPropertiesPage::saveAllChange()
                 bool isReadOnly = false;
                 bool isHidden = false;
 
-                if (m_readOnlyState != m_readOnly->checkState() && m_readOnly->checkState() == Qt::Checked) {
+                if (Qt::Checked == m_readOnly->checkState()) {
                     isReadOnly = true;
                 }
-
-                if (m_hiddenState != m_hidden->checkState()) {
+                if (Qt::Checked == m_hidden->checkState()) {
                     isHidden = true;
                 }
 
