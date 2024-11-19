@@ -53,6 +53,7 @@ public:
      * @return handled name
      */
     BLOCKING static QString handleDuplicateName (const QString& uri);
+    BLOCKING static QString handleFolderName (const QString& folderName);
     BLOCKING static bool getFileHasChildren(const GFileWrapperPtr &file);
     BLOCKING static bool getFileIsFolder(const GFileWrapperPtr &file);
     BLOCKING static bool getFileIsFolder(const QString &uri);

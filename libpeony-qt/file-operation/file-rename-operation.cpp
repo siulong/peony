@@ -37,9 +37,14 @@ static QString set_desktop_name (QString file, QString& name, GError** error);
 
 using namespace Peony;
 
-static QString handleDuplicate(QString name)
+static QString handleDuplicate(QString name, bool isFolder)
 {
-    return FileUtils::handleDuplicateName(name);
+    if (isFolder) {
+        return FileUtils::handleFolderName(name);
+    } else {
+        return FileUtils::handleDuplicateName(name);
+    }
+
 }
 
 FileRenameOperation::FileRenameOperation(QString uri, QString newName)
@@ -273,7 +278,7 @@ retry:
                     setAutoBackup();
                 case BackupOne:{
                     while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
-                        QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
+                        QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile), isFolder);
                         m_new_name = FileUtils::getUriBaseName(fileUri);
                         newFile = FileUtils::resolveRelativePath(parent, m_new_name);
                         getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);

@@ -222,6 +222,30 @@ QString FileUtils::handleDuplicateName(const QString& uri)
     return handledName;
 }
 
+QString FileUtils::handleFolderName(const QString &folderName)
+{
+    QRegExp regExpNum("\\(\\d+\\)");
+    QRegExp regExp (QString("\\ -\\ %1\\(\\d+\\)(\\.[0-9a-zA-Z\\.]+|)$").arg(QObject::tr("duplicate")));
+    QString handledName = nullptr;
+    QString name = folderName;
+    if (name.contains(regExp)) {
+        int num = 0;
+        QString numStr = "";
+        QString ext = regExp.cap(0);
+        if (ext.contains(regExpNum)) {
+            numStr = regExpNum.cap(0);
+        }
+        numStr.remove(0, 1);
+        numStr.chop(1);
+        num = numStr.toInt();
+        ++num;
+        handledName = name.replace(regExp, ext.replace(regExpNum, QString("(%1)").arg(num)));
+    } else {
+        handledName = name + QString(" - %1(1)").arg(QObject::tr("duplicate"));
+    }
+    return handledName;
+}
+
 QString FileUtils::handleDesktopFileName(const QString& uri, const QString& displayName)
 {
     //no need self handle, add return to fix bug#72642

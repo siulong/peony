@@ -44,7 +44,11 @@ using namespace Peony;
 
 static void handleDuplicate(FileNode *node)
 {
-    node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    if (node->isFolder()) {
+        node->setDestFileName(FileUtils::handleFolderName(node->destBaseName()));
+    } else {
+        node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    }
 }
 
 FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
