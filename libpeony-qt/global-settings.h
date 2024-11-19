@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QMutex>
 #include <QDBusInterface>
+#include <QJsonObject>
 
 #include "peony-core_global.h"
 #include <gio/gio.h>
@@ -158,6 +159,13 @@
 #define SDK_DATE_SERVER_INTERFACE "com.kylin.kysdk.DateInterface"
 #endif
 
+// Configuration paths and schema
+#define CONFIG_BASE_PATH          "/usr/share/ukui-config"
+#define PEONY_SCHEMA_ID           "org.ukui.peony.settings"
+#define PEONY_SCHEMA_PATH         "/org/ukui/peony/settings/"
+#define PEONY_CONFIG_NAME         "org.ukui.peony.settings"
+#define PEONY_SETTINGS_KEY        "org.ukui.peony.settings"
+
 class QGSettings;
 
 namespace Peony {
@@ -223,6 +231,15 @@ public Q_SLOTS:
 
     bool isGuestOSMachine();
 
+    /**
+     * @brief Slot for handling configuration file changes
+     * @param username The username
+     * @param configName The configuration name
+     * @param configPath The configuration file path
+     */
+    void onConfigFileChanged(const QString &username, const QString &configName,
+                            const QString &configPath);
+
 private:
     explicit GlobalSettings(QObject *parent = nullptr);
     ~GlobalSettings();
@@ -230,6 +247,63 @@ private:
     void getUkuiStyle();
     void getMachineMode();
     void getDualScreenMode();
+    /**
+     * @brief Initialize safe manage control configuration sources
+     */
+    void initManageControl();
+
+    /**
+     * @brief Load and parse JSON configuration file
+     *
+     * This function attempts to load and parse a JSON configuration file from the specified path.
+     * If the file cannot be opened, parsed, or contains invalid data, the JSON cache will be cleared.
+     *
+     * The JSON structure should follow the format:
+     * {
+     *     "org.ukui.peony.settings": {
+     *         "setting-key1": "value1",
+     *         "setting-key2": "value2"
+     *     }
+     * }
+     *
+     * @param configPath The full path to the JSON configuration file
+     * @return bool Returns true if the configuration was successfully loaded and parsed,
+     *              false if any error occurred during the process
+     *
+     * @note On any failure (file not found, parse error, empty content),
+     *       the internal JSON cache (m_jsonCache) will be cleared
+     *
+     * @see updateConfigCache()
+     */
+    bool loadJsonConfig(const QString &configPath);
+
+    /**
+     * @brief Initialize DBus connection
+     */
+    void initDBus();
+
+    /**
+     * @brief Convert JSON configuration key to internal key format
+     * @param jsonKey The key in JSON format
+     * @return QString The converted internal key
+     */
+    QString convertJsonKeyToInternalKey(const QString &jsonKey);
+
+    /**
+     * @brief Update configuration cache and emit signals for changed values
+     * @param newConfig The new configuration object
+     */
+    void updateConfigCache(const QJsonObject &peonySettings);
+
+    /**
+     * @brief Construct configuration file path
+     * @param username The username
+     * @return QString The complete configuration file path
+     */
+    QString constructConfigPath(const QString &username) const;
+
+    QMap<QString, QVariant>     m_jsonCache;       ///< Cache for JSON configuration values
+    QString                     m_currentConfigPath;
 
     QSettings*                  m_settings;
     QMap<QString, QVariant>     m_cache;
