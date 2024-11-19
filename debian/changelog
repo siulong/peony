@@ -1,3 +1,9 @@
+peony (4.10.1.0-ok1~1120) huanghe; urgency=medium
+
+  * story #32417，管控适配
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 19 Nov 2024 15:06:43 +0800
+
 peony (4.10.1.0-ok1~1119) huanghe; urgency=medium
 
   * 删除错误的symbols文件，避免编包报错
