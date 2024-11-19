@@ -1,0 +1,302 @@
+From: renyangguang <renyangguang@kylinos.cn>
+Date: Tue, 19 Nov 2024 15:01:03 +0800
+Subject: =?utf-8?b?5Z+f5o6n5py65Yi26YCC6YWNIC8g5paH5Lu2566h55CG5Zmo5Z+f5o6n?=
+ =?utf-8?b?5o6l5Y+j6YCC6YWN?=
+
+---
+ libpeony-qt/global-settings.cpp                 | 139 ++++++++++++++++++++++++
+ libpeony-qt/global-settings.h                   |  74 +++++++++++++
+ peony-qt-desktop/advanced-desktop-icon-view.cpp |   3 +-
+ 3 files changed, 215 insertions(+), 1 deletion(-)
+
+diff --git a/libpeony-qt/global-settings.cpp b/libpeony-qt/global-settings.cpp
+index ca9ed7b..09205d0 100644
+--- a/libpeony-qt/global-settings.cpp
++++ b/libpeony-qt/global-settings.cpp
+@@ -311,6 +311,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
+     }
+ #endif
+     initDateFormatDBus();
++
++    initManageControl();
+ }
+ 
+ GlobalSettings::~GlobalSettings()
+@@ -404,6 +406,118 @@ void GlobalSettings::getDualScreenMode()
+     }
+ }
+ 
++void GlobalSettings::initManageControl()
++{
++    // Get user name and construct config path
++    const char* user = getenv("USER");
++    if (user) {
++        m_currentConfigPath = constructConfigPath(QString(user));
++        loadJsonConfig(m_currentConfigPath);
++    }
++
++    initDBus();
++}
++
++bool GlobalSettings::loadJsonConfig(const QString &configPath)
++{
++    // Clear JSON cache if config file doesn't exist or can't be opened
++    QFile file(configPath);
++    if (!file.exists() || !file.open(QFile::ReadOnly)) {
++        qWarning() << "Failed to open config file:" << configPath;
++        m_jsonCache.clear();
++        return false;
++    }
++
++    QJsonParseError error;
++    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
++    file.close();
++
++    // Clear cache if JSON parsing fails
++    if (error.error != QJsonParseError::NoError) {
++        qWarning() << "Failed to parse JSON config:" << error.errorString();
++        m_jsonCache.clear();
++        return false;
++    }
++
++    const QJsonObject root = doc.object();
++    const QJsonObject peonySettings = root[PEONY_SETTINGS_KEY].toObject();
++
++    // Clear cache if no valid settings found
++    if (peonySettings.isEmpty()) {
++        m_jsonCache.clear();
++        return false;
++    }
++
++    // Update cache with new settings
++    updateConfigCache(peonySettings);
++    return true;
++}
++
++void GlobalSettings::initDBus()
++{
++    QDBusConnection::systemBus().connect(
++        "",
++        "/securityConfig",
++        "com.kylin.ukui.SettingsDaemon.interface",
++        "configChanged",
++        this,
++        SLOT(onConfigFileChanged(QString, QString, QString))
++    );
++}
++
++QString GlobalSettings::convertJsonKeyToInternalKey(const QString &jsonKey)
++{
++    QStringList parts = jsonKey.split(QRegExp("[-_]"));
++    QString result = parts[0];
++    for (int i = 1; i < parts.size(); ++i) {
++        if (!parts[i].isEmpty()) {
++            result += parts[i][0].toUpper() + parts[i].mid(1);
++        }
++    }
++    return result;
++}
++
++void GlobalSettings::updateConfigCache(const QJsonObject &peonySettings)
++{
++    // Create a set of new configuration keys
++    QSet<QString> newKeys;
++
++    // Process new and modified settings
++    for (auto it = peonySettings.begin(); it != peonySettings.end(); ++it) {
++        const QString internalKey = convertJsonKeyToInternalKey(it.key());
++        const QVariant newValue = it.value().toVariant();
++        newKeys.insert(internalKey);
++
++        // Check if value has changed
++        auto existingValue = m_jsonCache.find(internalKey);
++        if (existingValue == m_jsonCache.end() || existingValue.value() != newValue) {
++            m_jsonCache[internalKey] = newValue;
++            Q_EMIT this->valueChanged(internalKey);
++        }
++    }
++
++    // Find and remove cached items that no longer exist in the configuration file
++    QList<QString> keysToRemove;
++    for (auto it = m_jsonCache.begin(); it != m_jsonCache.end(); ++it) {
++        if (!newKeys.contains(it.key())) {
++            keysToRemove.append(it.key());
++        }
++    }
++
++    // Remove obsolete items and emit signals
++    for (const QString &keyToRemove : keysToRemove) {
++        m_jsonCache.remove(keyToRemove);
++        Q_EMIT this->valueChanged(keyToRemove);
++    }
++}
++
++QString GlobalSettings::constructConfigPath(const QString &username) const
++{
++    return QString("%1/%2/%3.json").arg(CONFIG_BASE_PATH,
++                                      username,
++                                      PEONY_CONFIG_NAME);
++}
++
+ bool GlobalSettings::isDesktopStartUp() const
+ {
+     return m_isDesktopStartUp;
+@@ -416,6 +530,13 @@ void GlobalSettings::setDesktopStartUp(bool startUp)
+ 
+ const QVariant GlobalSettings::getValue(const QString &key)
+ {
++    // First try to get value from JSON cache
++    auto jsonIt = m_jsonCache.find(key);
++    if (jsonIt != m_jsonCache.end()) {
++        return jsonIt.value();
++    }
++
++    // Fallback to GSettings cache
+     return m_cache.value(key);
+ }
+ 
+@@ -555,6 +676,24 @@ bool GlobalSettings::isGuestOSMachine()
+     return m_cache.value(IS_GUESTOS_MACHINE).toBool();
+ }
+ 
++void GlobalSettings::onConfigFileChanged(const QString &username, const QString &configName, const QString &configPath)
++{
++    // Only process if it's our config
++    if (configName != PEONY_CONFIG_NAME) {
++        return;
++    }
++
++    // Verify the config path
++    QString expectedPath = constructConfigPath(username);
++    if (configPath != expectedPath) {
++        qWarning() << "Unexpected config path:" << configPath;
++        return;
++    }
++
++    m_currentConfigPath = configPath;
++    loadJsonConfig(configPath);
++}
++
+ void GlobalSettings::setTimeFormat(const QString &value)
+ {
+     if (value == "12"){
+diff --git a/libpeony-qt/global-settings.h b/libpeony-qt/global-settings.h
+index a1fac86..412abc4 100644
+--- a/libpeony-qt/global-settings.h
++++ b/libpeony-qt/global-settings.h
+@@ -27,6 +27,7 @@
+ #include <QSettings>
+ #include <QMutex>
+ #include <QDBusInterface>
++#include <QJsonObject>
+ 
+ #include "peony-core_global.h"
+ #include <gio/gio.h>
+@@ -158,6 +159,13 @@
+ #define SDK_DATE_SERVER_INTERFACE "com.kylin.kysdk.DateInterface"
+ #endif
+ 
++// Configuration paths and schema
++#define CONFIG_BASE_PATH          "/usr/share/ukui-config"
++#define PEONY_SCHEMA_ID           "org.ukui.peony.settings"
++#define PEONY_SCHEMA_PATH         "/org/ukui/peony/settings/"
++#define PEONY_CONFIG_NAME         "org.ukui.peony.settings"
++#define PEONY_SETTINGS_KEY        "org.ukui.peony.settings"
++
+ class QGSettings;
+ 
+ namespace Peony {
+@@ -223,6 +231,15 @@ public Q_SLOTS:
+ 
+     bool isGuestOSMachine();
+ 
++    /**
++     * @brief Slot for handling configuration file changes
++     * @param username The username
++     * @param configName The configuration name
++     * @param configPath The configuration file path
++     */
++    void onConfigFileChanged(const QString &username, const QString &configName,
++                            const QString &configPath);
++
+ private:
+     explicit GlobalSettings(QObject *parent = nullptr);
+     ~GlobalSettings();
+@@ -230,6 +247,63 @@ private:
+     void getUkuiStyle();
+     void getMachineMode();
+     void getDualScreenMode();
++    /**
++     * @brief Initialize safe manage control configuration sources
++     */
++    void initManageControl();
++
++    /**
++     * @brief Load and parse JSON configuration file
++     *
++     * This function attempts to load and parse a JSON configuration file from the specified path.
++     * If the file cannot be opened, parsed, or contains invalid data, the JSON cache will be cleared.
++     *
++     * The JSON structure should follow the format:
++     * {
++     *     "org.ukui.peony.settings": {
++     *         "setting-key1": "value1",
++     *         "setting-key2": "value2"
++     *     }
++     * }
++     *
++     * @param configPath The full path to the JSON configuration file
++     * @return bool Returns true if the configuration was successfully loaded and parsed,
++     *              false if any error occurred during the process
++     *
++     * @note On any failure (file not found, parse error, empty content),
++     *       the internal JSON cache (m_jsonCache) will be cleared
++     *
++     * @see updateConfigCache()
++     */
++    bool loadJsonConfig(const QString &configPath);
++
++    /**
++     * @brief Initialize DBus connection
++     */
++    void initDBus();
++
++    /**
++     * @brief Convert JSON configuration key to internal key format
++     * @param jsonKey The key in JSON format
++     * @return QString The converted internal key
++     */
++    QString convertJsonKeyToInternalKey(const QString &jsonKey);
++
++    /**
++     * @brief Update configuration cache and emit signals for changed values
++     * @param newConfig The new configuration object
++     */
++    void updateConfigCache(const QJsonObject &peonySettings);
++
++    /**
++     * @brief Construct configuration file path
++     * @param username The username
++     * @return QString The complete configuration file path
++     */
++    QString constructConfigPath(const QString &username) const;
++
++    QMap<QString, QVariant>     m_jsonCache;       ///< Cache for JSON configuration values
++    QString                     m_currentConfigPath;
+ 
+     QSettings*                  m_settings;
+     QMap<QString, QVariant>     m_cache;
+diff --git a/peony-qt-desktop/advanced-desktop-icon-view.cpp b/peony-qt-desktop/advanced-desktop-icon-view.cpp
+index 63c6000..cd3592c 100644
+--- a/peony-qt-desktop/advanced-desktop-icon-view.cpp
++++ b/peony-qt-desktop/advanced-desktop-icon-view.cpp
+@@ -220,7 +220,8 @@ AdvancedDesktopIconView::AdvancedDesktopIconView(QWidget *parent) : QAbstractIte
+             key == TRASH_ICON_VISIBLE ||
+             key == COMPUTER_ICON_VISIBLE) {
+             //this->refresh();
+-            m_proxy_model->invalidate();
++            //m_proxy_model->invalidate();
++            m_proxy_model->invalidateModel();
+             this->resolutionChange();
+             checkItemsOver();
+         } else if (SHOW_HIDDEN_PREFERENCE == key) {
