@@ -385,6 +385,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
                     if (check) {
                         auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(m_selections.first()));
+                        newWindow->setAttribute(Qt::WA_DeleteOnClose);
                         newWindow->show();
                     } else {
                         m_top_window->goToUri(m_selections.first(), true);
@@ -530,6 +531,7 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                     if (check) {
                         for (QString uri : dirs) {
                             auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(uri));
+                            newWindow->setAttribute(Qt::WA_DeleteOnClose);
                             newWindow->show();
                         }
                     } else {

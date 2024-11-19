@@ -1001,8 +1001,15 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                     files<<uri;
                 }
             }
+            bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
             for (auto uri : dirs) {
-                m_tab->addPage(uri);
+                if (check) {
+                    auto newWindow = dynamic_cast<QWidget *>(create(uri));
+                    newWindow->setAttribute(Qt::WA_DeleteOnClose);
+                    newWindow->show();
+                } else {
+                    m_tab->addPage(uri);
+                }
             }
 
             if (!files.isEmpty()) {
