@@ -48,6 +48,7 @@ public:
         Office = 6,
         Desktop = 7,
         CustomIcon = 8,
+        TextPlain = 9,
         Other
     };
     Q_ENUM (Type)

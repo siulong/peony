@@ -291,6 +291,11 @@ public:
         return m_mime_type_string.contains("djvu");
     }
 
+    bool isTextFile(){
+        //纯文本文档文件太多，全都都生成缩略图会影响效率，先只限定txt文件类型
+        return m_mime_type_string.contains("text/plain") && m_uri.endsWith(".txt");
+    }
+
     bool isVideoFile();
 
     bool isAudioFile();

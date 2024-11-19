@@ -91,6 +91,7 @@ private:
     void createImageFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher);
     void createOfficeFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher);
     void createDesktopFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher);
+    void createTextFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher);
 
     //djvu file process
     void findAtril();

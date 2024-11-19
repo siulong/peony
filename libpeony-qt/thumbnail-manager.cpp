@@ -32,6 +32,7 @@
 #include "thumbnail/video-thumbnail.h"
 #include "thumbnail/office-thumbnail.h"
 #include "thumbnail/image-pdf-thumbnail.h"
+#include "thumbnail/text-plain-thumbnail.h"
 #include "generic-thumbnailer.h"
 #include "thumbnail-job.h"
 
@@ -250,6 +251,22 @@ void ThumbnailManager::createOfficeFileThumbnail(const QString &uri, std::shared
     return;
 }
 
+void ThumbnailManager::createTextFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher)
+{
+    QIcon thumbnail;
+
+    textPlainThumbnail textThumbnail(uri);
+    thumbnail = textThumbnail.generateThumbnail();;
+    if (!thumbnail.isNull()) {
+        insertOrUpdateThumbnail(uri, thumbnail);
+        if (watcher) {
+            watcher->fileChanged(uri);
+        }
+    }
+
+    return;
+}
+
 void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher)
 {
     QIcon thumbnail;
@@ -401,6 +418,63 @@ void ThumbnailManager::findAtril()
 void ThumbnailManager::createThumbnailInternal(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
 {
     // deprecated
+    auto settings = GlobalSettings::getInstance();
+    if (settings->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
+        bool do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+        if (do_not_thumbnail && !force) {
+            qDebug()<<"setting is not thumbnail";
+            return;
+        }
+    }
+
+    //NOTE: we should do createThumbnail() after we have queried the file's info.
+    auto info = FileInfo::fromUri(uri);
+    //qDebug()<<"file uri:"<< uri << " mime type:" << info->mimeType();
+    //qDebug()<<"file path:" << info->filePath();
+    //qDebug()<<"file modify time:" << info->modifiedTime();
+
+    if (!info->mimeType().isEmpty()) {
+        if (!info->customIcon().isEmpty()) {
+            auto icon = GenericThumbnailer::generateThumbnail(info->customIcon());
+            if (!icon.isNull()) {
+                insertOrUpdateThumbnail(uri, icon);
+                if (watcher) {
+                    watcher->fileChanged(uri);
+                }
+            }
+        }
+        else if (info->isImagePdfFile())
+        {
+             qDebug() <<"isImagePdfFile m_tril_exist:" <<m_tril_exist;
+             if (m_tril_exist)
+             {
+                 createImagePdfFileThumbnail(uri, watcher);
+             }
+        }
+        else if (info->isImageFile()) {
+            createImageFileThumbnail(uri, watcher);
+        }
+        else if (info->mimeType().contains("pdf")) {
+            createPdfFileThumbnail(uri, watcher);
+        }
+        else if(info->isVideoFile()) {
+            createVideFileThumbnail(uri, watcher);
+        }
+        else if (info->isOfficeFile()) {
+            createOfficeFileThumbnail(uri, watcher);
+        }
+        else if (info->isTextFile()){
+            //text file also use libreoffice create thumbnail,related to task#82064
+            createTextFileThumbnail(uri, watcher);
+        }
+        else if (info->isDesktopFile()) {
+            createDesktopFileThumbnail(uri, watcher);
+        }
+        else {
+            //qDebug()<<"the file type: " << info->mimeType();
+            //qDebug()<<"the mime type can not generate thumbnail.";
+        }
+    }
 }
 
 void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
@@ -438,6 +512,9 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
             needThumbnail = true;
         }
         else if (info->isOfficeFile()) {
+            needThumbnail = true;
+        }
+        else if (info->isTextFile()) {
             needThumbnail = true;
         }
         else if (info->uri().endsWith(".desktop")) {

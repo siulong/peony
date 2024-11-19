@@ -135,6 +135,9 @@ void Peony::ThumbnailJob::run()
                || mimeType.endsWith("vnd.rn-realmedia")
                || mimeType.endsWith("vnd.ms-asf")) {
         setType(Video);
+    } else if (mimeType.contains("text/plain") && m_uri.endsWith(".txt")) {
+        //task#383521, support pure txt file preview
+        setType(TextPlain);
     } else {
         int idx = 0;
         QString mtype = nullptr;
@@ -191,6 +194,11 @@ void Peony::ThumbnailJob::run()
                     strongPtr->fileChanged(m_uri);
                 }
             }
+            break;
+        }
+        case TextPlain: {
+            //task#383521, support pure txt file preview
+            ThumbnailManager::getInstance()->createTextFileThumbnail(m_uri, strongPtr);
             break;
         }
         default: {
