@@ -1,3 +1,9 @@
+peony (4.10.1.0-ok1~1119) huanghe; urgency=medium
+
+  * 删除错误的symbols文件，避免编包报错
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 19 Nov 2024 14:30:09 +0800
+
 peony (4.10.1.0-ok1~1115) nile; urgency=medium
 
   * new upstream release.
