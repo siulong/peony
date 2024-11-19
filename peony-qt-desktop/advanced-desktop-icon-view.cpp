@@ -220,7 +220,8 @@ AdvancedDesktopIconView::AdvancedDesktopIconView(QWidget *parent) : QAbstractIte
             key == TRASH_ICON_VISIBLE ||
             key == COMPUTER_ICON_VISIBLE) {
             //this->refresh();
-            m_proxy_model->invalidate();
+            //m_proxy_model->invalidate();
+            m_proxy_model->invalidateModel();
             this->resolutionChange();
             checkItemsOver();
         } else if (SHOW_HIDDEN_PREFERENCE == key) {

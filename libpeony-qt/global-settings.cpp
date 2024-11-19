@@ -374,6 +374,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 #endif
     initDateFormatDBus();
+
+    initManageControl();
 }
 
 GlobalSettings::~GlobalSettings()
@@ -467,6 +469,118 @@ void GlobalSettings::getDualScreenMode()
     }
 }
 
+void GlobalSettings::initManageControl()
+{
+    // Get user name and construct config path
+    const char* user = getenv("USER");
+    if (user) {
+        m_currentConfigPath = constructConfigPath(QString(user));
+        loadJsonConfig(m_currentConfigPath);
+    }
+
+    initDBus();
+}
+
+bool GlobalSettings::loadJsonConfig(const QString &configPath)
+{
+    // Clear JSON cache if config file doesn't exist or can't be opened
+    QFile file(configPath);
+    if (!file.exists() || !file.open(QFile::ReadOnly)) {
+        qWarning() << "Failed to open config file:" << configPath;
+        m_jsonCache.clear();
+        return false;
+    }
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    file.close();
+
+    // Clear cache if JSON parsing fails
+    if (error.error != QJsonParseError::NoError) {
+        qWarning() << "Failed to parse JSON config:" << error.errorString();
+        m_jsonCache.clear();
+        return false;
+    }
+
+    const QJsonObject root = doc.object();
+    const QJsonObject peonySettings = root[PEONY_SETTINGS_KEY].toObject();
+
+    // Clear cache if no valid settings found
+    if (peonySettings.isEmpty()) {
+        m_jsonCache.clear();
+        return false;
+    }
+
+    // Update cache with new settings
+    updateConfigCache(peonySettings);
+    return true;
+}
+
+void GlobalSettings::initDBus()
+{
+    QDBusConnection::systemBus().connect(
+        "",
+        "/securityConfig",
+        "com.kylin.ukui.SettingsDaemon.interface",
+        "configChanged",
+        this,
+        SLOT(onConfigFileChanged(QString, QString, QString))
+    );
+}
+
+QString GlobalSettings::convertJsonKeyToInternalKey(const QString &jsonKey)
+{
+    QStringList parts = jsonKey.split(QRegExp("[-_]"));
+    QString result = parts[0];
+    for (int i = 1; i < parts.size(); ++i) {
+        if (!parts[i].isEmpty()) {
+            result += parts[i][0].toUpper() + parts[i].mid(1);
+        }
+    }
+    return result;
+}
+
+void GlobalSettings::updateConfigCache(const QJsonObject &peonySettings)
+{
+    // Create a set of new configuration keys
+    QSet<QString> newKeys;
+
+    // Process new and modified settings
+    for (auto it = peonySettings.begin(); it != peonySettings.end(); ++it) {
+        const QString internalKey = convertJsonKeyToInternalKey(it.key());
+        const QVariant newValue = it.value().toVariant();
+        newKeys.insert(internalKey);
+
+        // Check if value has changed
+        auto existingValue = m_jsonCache.find(internalKey);
+        if (existingValue == m_jsonCache.end() || existingValue.value() != newValue) {
+            m_jsonCache[internalKey] = newValue;
+            Q_EMIT this->valueChanged(internalKey);
+        }
+    }
+
+    // Find and remove cached items that no longer exist in the configuration file
+    QList<QString> keysToRemove;
+    for (auto it = m_jsonCache.begin(); it != m_jsonCache.end(); ++it) {
+        if (!newKeys.contains(it.key())) {
+            keysToRemove.append(it.key());
+        }
+    }
+
+    // Remove obsolete items and emit signals
+    for (const QString &keyToRemove : keysToRemove) {
+        m_jsonCache.remove(keyToRemove);
+        Q_EMIT this->valueChanged(keyToRemove);
+    }
+}
+
+QString GlobalSettings::constructConfigPath(const QString &username) const
+{
+    return QString("%1/%2/%3.json").arg(CONFIG_BASE_PATH,
+                                      username,
+                                      PEONY_CONFIG_NAME);
+}
+
 bool GlobalSettings::isDesktopStartUp() const
 {
     return m_isDesktopStartUp;
@@ -479,6 +593,13 @@ void GlobalSettings::setDesktopStartUp(bool startUp)
 
 const QVariant GlobalSettings::getValue(const QString &key)
 {
+    // First try to get value from JSON cache
+    auto jsonIt = m_jsonCache.find(key);
+    if (jsonIt != m_jsonCache.end()) {
+        return jsonIt.value();
+    }
+
+    // Fallback to GSettings cache
     return m_cache.value(key);
 }
 
@@ -641,6 +762,24 @@ void GlobalSettings::slot_updateRemoteServer(const QString& server, bool add)
 bool GlobalSettings::isGuestOSMachine()
 {
     return m_cache.value(IS_GUESTOS_MACHINE).toBool();
+}
+
+void GlobalSettings::onConfigFileChanged(const QString &username, const QString &configName, const QString &configPath)
+{
+    // Only process if it's our config
+    if (configName != PEONY_CONFIG_NAME) {
+        return;
+    }
+
+    // Verify the config path
+    QString expectedPath = constructConfigPath(username);
+    if (configPath != expectedPath) {
+        qWarning() << "Unexpected config path:" << configPath;
+        return;
+    }
+
+    m_currentConfigPath = configPath;
+    loadJsonConfig(configPath);
 }
 
 void GlobalSettings::setTimeFormat(const QString &value)
