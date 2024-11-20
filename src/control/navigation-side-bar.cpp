@@ -583,6 +583,10 @@ bool NavigationSideBar::viewportEvent(QEvent *e)
             QToolTip::hideText();
             e->ignore();
             return true;
+        } else {
+            QString itemText = firstColumnIndex.data(Qt::ToolTipRole).toString();
+            QToolTip::showText(helpEvent->globalPos(), itemText);
+            return true;
         }
     }
     return QTreeView::viewportEvent(e);
