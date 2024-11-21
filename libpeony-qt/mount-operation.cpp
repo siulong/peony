@@ -204,6 +204,26 @@ void MountOperation::ask_password_cb(GMountOperation *op,
             auto code = p_this->m_dlg->exec();
             auto dlg = p_this->m_dlg;
             if (code == QDialog::Accepted) {
+                /**
+                 * @bug #214389: [File Manager] Login to remote share, only enter the user name to connect, the two prompts are inconsistent
+                 *
+                 * The value entered by the user is again checked again and if it is not legal,
+                 *  the ask_password_cb method is called recursively
+                 *
+                 * @author: Renyg <renyangguang@kylinos.cn>
+                 * @date:   2024-11-21
+                 */
+                 // Check for anonymous login
+                if (dlg->anonymous()) {
+                    g_mount_operation_set_anonymous(op, true);
+                    g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
+                    return;
+                }
+                // Validating user input for non-anonymous logins
+                if (dlg->user().isEmpty() || dlg->password().isEmpty()) {
+                    ask_password_cb(op, message, default_user, default_domain, flags, p_this);
+                    return;
+                }
                 g_mount_operation_set_username(op, dlg->user().toUtf8().constData());
                 g_mount_operation_set_password(op, dlg->password().toUtf8().constData());
                 g_mount_operation_set_domain(op, dlg->domain().toUtf8().constData());
@@ -214,6 +234,10 @@ void MountOperation::ask_password_cb(GMountOperation *op,
             }
             if (code == QDialog::Rejected) {
                 g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
+                p_this->cancel();
+                QMessageBox msg;
+                msg.setText(tr("Operation Cancelled"));
+                msg.exec();
                 return;
             }
         }
