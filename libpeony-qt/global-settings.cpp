@@ -73,6 +73,9 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(HOME_ICON_VISIBLE, true);
     m_cache.insert(TRASH_ICON_VISIBLE, true);
     m_cache.insert(COMPUTER_ICON_VISIBLE, true);
+
+    //story 28073, control the right menu open terminal option
+    m_cache.insert(SHOW_OPEN_TERMINAL, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -84,6 +87,19 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             m_cache.remove(key);
             m_cache.insert(key, m_peonyGSettings->get(key));
         }
+    }
+
+    connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+        if (key == SHOW_OPEN_TERMINAL) {
+            m_cache.remove(SHOW_OPEN_TERMINAL);
+            m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+        }
+        Q_EMIT this->valueChanged(key);
+    });
+
+    if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
+        m_cache.remove(SHOW_OPEN_TERMINAL);
+        m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
     }
 
     m_cache.insert(TRASH_MOBILE_FILES, false);

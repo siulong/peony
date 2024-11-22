@@ -117,6 +117,9 @@
 //control the mobile device trash file issue, if be true can trash mobile files
 #define TRASH_MOBILE_FILES            "trashMobileFiles"
 
+//control the display of right menu terminal
+#define SHOW_OPEN_TERMINAL           "showOpenTerminal"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'

@@ -227,5 +227,11 @@
      <description>4 is ukui4.0 version, 3 is ukui3.0 version, other is ukui4.0</description>
     </key>
 
+    <key type="b" name="show-open-terminal">
+      <default>true</default>
+      <summary>show open terminal</summary>
+      <description>Control show right menu open terminal option</description>
+    </key>
+
   </schema>
 </schemalist>
