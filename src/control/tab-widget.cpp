@@ -1654,6 +1654,12 @@ void TabWidget::changeCurrentIndex(int index)
 
     Q_EMIT currentIndexChanged(index);
     Q_EMIT activePageChanged();
+
+    //fix bug#291259, when index is -1 crash issue
+    if (index < 0) {
+        return;
+    }
+
     if (m_tab_bar->getCurrentUris().count() > index) {
         QString uri = m_tab_bar->getCurrentUris().at(index);
         if (! uri.startsWith("search://"))
