@@ -485,6 +485,16 @@ int FileLabelModel::getLabelIdFromLabelName(const QString &colorName)
     return 0;
 }
 
+QColor FileLabelModel::getLableColorFromLabelName(const QString &colorName)
+{
+    for (auto item : m_labels) {
+        if (item->name() == colorName) {
+            return item->color();
+        }
+    }
+    return QColor(Qt::transparent);
+}
+
 QString FileLabelModel::getLabelNameFromLabelId(int id)
 {
     for (auto item : m_labels) {

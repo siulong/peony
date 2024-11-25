@@ -1211,6 +1211,10 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
        needUpdate = true;
     }
 
+    if (m_last_key != key && key != "") {
+        m_tab->clearAllMapsCount();
+    }
+
     if (updateKey)
     {
         needUpdate = true;

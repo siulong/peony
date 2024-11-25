@@ -134,6 +134,7 @@ public Q_SLOTS:
     void setUseDefaultNameSortOrder(bool use);
     void setSortFolderFirst(bool folderFirst);
     void setFilterLabelConditions(QString name);
+    void setMutipleLabelConditions(QStringList names, QList<QColor> colors);
 
     //mutiple filter conditions for new advance search
     void addFileNameFilter(QString key, bool updateNow = false);
@@ -151,6 +152,12 @@ public Q_SLOTS:
 
     void addFileContentFilter(QString key, bool updateNow = false);
     void clearFileContentConditions();
+
+    void clearAllMapsCount();
+    QMap<int, int> getFileTypeCount();
+    QMap<int, int> getFileModifyTimeCount();
+    QMap<int, int> getFileSizeCount();
+    QMap<int, int> getFileLabelCount();
 
 protected:
     /*!
