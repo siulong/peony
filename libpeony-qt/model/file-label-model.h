@@ -86,6 +86,7 @@ public:
     QSet<QString> getFileUrisFromLabelId(int labelId);
     QString getLabelNameFromLabelId(int id);
     int getLabelIdFromLabelName(const QString &colorName);
+    QColor getLableColorFromLabelName(const QString &colorName);
 
 
 Q_SIGNALS:

@@ -131,6 +131,11 @@ public:
     Qt::SortOrder expectedSortOrder();
 
     void manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order);
+    void clearAllMapsCount();
+    QMap<int, int> getFileTypeCount();
+    QMap<int, int> getFileModifyTimeCount();
+    QMap<int, int> getFileSizeCount();
+    QMap<int, int> getFileLabelCount();
 
 public Q_SLOTS:
     void update();
@@ -160,6 +165,11 @@ private:
 
     QVariant getDirectorySettings(const QString &key);
     void setDirectorySettings(const QString &key, const QVariant &value);
+    void calculationFileTypeCount(QString type) const;
+    void calculationFileModifyTimeCount(quint64 modifiedTime) const;
+    void calculationFileSizeCount(quint64 size) const;
+    void calculationFileLabelCount(QStringList names, QList<QColor> colors) const;
+    void calculationAll(FileItem *item) const;
 
 private:
     GlobalSettings *m_settings = nullptr;
@@ -176,6 +186,11 @@ private:
     QColor m_label_color = Qt::transparent;
     const int ALL_FILE = 0;
     const quint64 K_BASE = 1024;
+    const quint64 TINY_BASE = 16 * K_BASE;
+    const quint64 SMALL_BASE = K_BASE * K_BASE;
+    const quint64 MEDIUM_BASE = 128 * K_BASE * K_BASE;
+    const quint64 BIG_BASE = K_BASE * K_BASE * K_BASE;
+    const quint64 LARGE_BASE = 4 * K_BASE * K_BASE * K_BASE;
     int m_show_file_type=ALL_FILE, m_show_modify_time=ALL_FILE, m_show_file_size=ALL_FILE;
     QList<int> m_file_type_list, m_modify_time_list, m_file_size_list;
     QStringList m_file_name_list;
@@ -193,6 +208,11 @@ private:
 
     QDBusInterface *mDbusPeonyServer = nullptr;
     QString m_fileContent;
+
+    mutable QMap<int, int> m_file_type_map;
+    mutable QMap<int, int> m_file_modify_time_map;
+    mutable QMap<int, int> m_file_size_map;
+    mutable QMap<int, int> m_file_label_map;
 };
 
 }
