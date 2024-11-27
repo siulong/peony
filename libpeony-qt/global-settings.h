@@ -126,6 +126,9 @@
 //Control double click desktop file
 #define ENABLE_DOUBLE_CLICK_DESKTOP  "enableDoubleClickDesktop"
 
+//Control file operation of shortcut keys, such as Ctrl+C、Ctrl+V、Ctrl+A、Delete、Shift+Delete、Ctrl+X
+#define ENABLE_SHORTCUT_KEYS         "enableShortcutKeys"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'

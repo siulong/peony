@@ -308,6 +308,10 @@ void AdvancedDesktopIconView::initShoutCut()
     QAction *copyAction = new QAction(this);
     copyAction->setShortcut(QKeySequence::Copy);
     connect(copyAction, &QAction::triggered, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
         auto selectedUris = this->getSelections();
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris)){
             ClipboardUtils::setClipboardFiles(selectedUris, false);
@@ -319,6 +323,10 @@ void AdvancedDesktopIconView::initShoutCut()
     QAction *cutAction = new QAction(this);
     cutAction->setShortcut(QKeySequence::Cut);
     connect(cutAction, &QAction::triggered, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
         auto selectedUris = this->getSelections();
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris))
         {
@@ -332,6 +340,10 @@ void AdvancedDesktopIconView::initShoutCut()
     QAction *pasteAction = new QAction(this);
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, &QAction::triggered, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
         if (qApp->clipboard()->mimeData()->hasFormat ("uos/remote-copy")) {
             auto op = ClipboardUtils::pasteClipboardFiles(this->getDirectoryUri());
             if (!op) {
@@ -353,6 +365,10 @@ void AdvancedDesktopIconView::initShoutCut()
     auto trashAction = new QAction(this);
     trashAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_Delete<<QKeySequence(Qt::CTRL + Qt::Key_D));
     connect(trashAction, &QAction::triggered, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
         auto selectedUris = getSelections();
         if (!selectedUris.isEmpty() && !meetSpecialConditions(selectedUris)){
            FileOperationUtils::trash(selectedUris, true);
@@ -407,6 +423,10 @@ void AdvancedDesktopIconView::initShoutCut()
     QAction *removeAction = new QAction(this);
     removeAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_Delete));
     connect(removeAction, &QAction::triggered, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
         auto selectedUris = this->getSelections();
         if (!meetSpecialConditions(selectedUris)){
             qDebug() << "delete" << selectedUris;
@@ -526,6 +546,17 @@ void AdvancedDesktopIconView::initShoutCut()
         }
     });
     addAction(cancelAction);
+
+    auto *selectAllAction = new QAction(this);
+    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    connect(selectAllAction, &QAction::triggered, this, [=]() {
+        if (! GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+            return ;
+        }
+
+        this->selectAll();
+    });
+    addAction(selectAllAction);
 }
 
 void AdvancedDesktopIconView::openFileByUri(QString uri)

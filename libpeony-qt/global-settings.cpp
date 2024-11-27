@@ -82,6 +82,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(ENABLE_START_PEONY, true);
     //story 28081, control double click desktop files in desktop
     m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, true);
+    //story 28083, control file operation of shortcut keys
+    m_cache.insert(ENABLE_SHORTCUT_KEYS, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -131,6 +133,19 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         if (m_peonyGSettings->keys().contains(ENABLE_DOUBLE_CLICK_DESKTOP)) {
             m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
             m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_SHORTCUT_KEYS) {
+                m_cache.remove(ENABLE_SHORTCUT_KEYS);
+                m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_SHORTCUT_KEYS)) {
+            m_cache.remove(ENABLE_SHORTCUT_KEYS);
+            m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
         }
     }
 

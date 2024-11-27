@@ -433,6 +433,10 @@ void MainWindow::setShortCuts()
         auto trashAction = new QAction(this);
         trashAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_Delete<<QKeySequence(Qt::CTRL + Qt::Key_D));
         connect(trashAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if(currentUri.startsWith("search://")){
                 currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
@@ -476,6 +480,10 @@ void MainWindow::setShortCuts()
         deleteAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::SHIFT + Qt::Key_Delete));
         addAction(deleteAction);
         connect(deleteAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if(currentUri.startsWith("search://")){
                 currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
@@ -734,6 +742,10 @@ void MainWindow::setShortCuts()
         auto *selectAllAction = new QAction(this);
         selectAllAction->setShortcut(QKeySequence::SelectAll);
         connect(selectAllAction, &QAction::triggered, this, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             if (this->getCurrentPage()->getView())
             {
                 /// note: 通过getAllFileUris设置的全选效率过低，如果增加接口则会导致二进制兼容性问题
@@ -750,6 +762,10 @@ void MainWindow::setShortCuts()
         auto *copyAction = new QAction(this);
         copyAction->setShortcut(QKeySequence::Copy);
         connect(copyAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             bool is_recent = false;
             QStringList currentSelections = this->getCurrentSelections();
             if (!currentSelections.isEmpty())
@@ -787,6 +803,10 @@ void MainWindow::setShortCuts()
         auto *pasteAction = new QAction(this);
         pasteAction->setShortcut(QKeySequence::Paste);
         connect(pasteAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
                 || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
@@ -840,6 +860,10 @@ void MainWindow::setShortCuts()
         auto *cutAction = new QAction(this);
         cutAction->setShortcut(QKeySequence::Cut);
         connect(cutAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             QStringList currentSelections = this->getCurrentSelections();
             if (!currentSelections.isEmpty()) {
 //                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {

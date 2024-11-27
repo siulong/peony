@@ -245,5 +245,11 @@
       <description>Control double click desktop files in desktop</description>
     </key>
 
+    <key type="b" name="enable-shortcut-keys">
+      <default>true</default>
+      <summary>enable shortcut keys</summary>
+      <description>Control file operation of shortcut keys </description>
+    </key>
+
   </schema>
 </schemalist>
