@@ -239,5 +239,11 @@
       <description>Control start peony or show peony UI</description>
     </key>
 
+    <key type="b" name="enable-double-click-desktop">
+      <default>true</default>
+      <summary>enable double click desktop</summary>
+      <description>Control double click desktop files in desktop</description>
+    </key>
+
   </schema>
 </schemalist>

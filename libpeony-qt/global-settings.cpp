@@ -80,6 +80,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(SHOW_OPEN_TERMINAL, true);
     //story 28077, control start peony or show peony UI
     m_cache.insert(ENABLE_START_PEONY, true);
+    //story 28081, control double click desktop files in desktop
+    m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -91,32 +93,45 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
             m_cache.remove(key);
             m_cache.insert(key, m_peonyGSettings->get(key));
         }
-    }
 
-    connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
-        if (key == SHOW_OPEN_TERMINAL) {
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == SHOW_OPEN_TERMINAL) {
+                m_cache.remove(SHOW_OPEN_TERMINAL);
+                m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
             m_cache.remove(SHOW_OPEN_TERMINAL);
             m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
         }
-        Q_EMIT this->valueChanged(key);
-    });
 
-    if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
-        m_cache.remove(SHOW_OPEN_TERMINAL);
-        m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
-    }
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_START_PEONY) {
+                m_cache.remove(ENABLE_START_PEONY);
+                m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
 
-    connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
-        if (key == ENABLE_START_PEONY) {
+        if (m_peonyGSettings->keys().contains(ENABLE_START_PEONY)) {
             m_cache.remove(ENABLE_START_PEONY);
             m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
         }
-        Q_EMIT this->valueChanged(key);
-    });
 
-    if (m_peonyGSettings->keys().contains(ENABLE_START_PEONY)) {
-        m_cache.remove(ENABLE_START_PEONY);
-        m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_DOUBLE_CLICK_DESKTOP) {
+                m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+                m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_DOUBLE_CLICK_DESKTOP)) {
+            m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+            m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+        }
     }
 
     m_cache.insert(TRASH_MOBILE_FILES, false);

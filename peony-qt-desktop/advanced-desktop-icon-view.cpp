@@ -1935,6 +1935,9 @@ void AdvancedDesktopIconView::mouseMoveEvent(QMouseEvent *event)
 
 void AdvancedDesktopIconView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if (! GlobalSettings::getInstance()->getValue(ENABLE_DOUBLE_CLICK_DESKTOP).toBool())
+        return;
+
     QAbstractItemView::mouseDoubleClickEvent(event);
     m_real_do_edit = false;
 }

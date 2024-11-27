@@ -123,6 +123,9 @@
 //Control start peony
 #define ENABLE_START_PEONY           "enableStartPeony"
 
+//Control double click desktop file
+#define ENABLE_DOUBLE_CLICK_DESKTOP  "enableDoubleClickDesktop"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'
