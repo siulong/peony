@@ -41,6 +41,8 @@
 #include <kysdk/kysdk-system/libkysysinfo.h>
 #endif
 
+#include <QDBusInterface>
+
 using namespace Peony;
 
 static GlobalSettings *global_instance = nullptr;
@@ -76,6 +78,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
     //story 28073, control the right menu open terminal option
     m_cache.insert(SHOW_OPEN_TERMINAL, true);
+    //story 28077, control start peony or show peony UI
+    m_cache.insert(ENABLE_START_PEONY, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -100,6 +104,19 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
         m_cache.remove(SHOW_OPEN_TERMINAL);
         m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+    }
+
+    connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+        if (key == ENABLE_START_PEONY) {
+            m_cache.remove(ENABLE_START_PEONY);
+            m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+        }
+        Q_EMIT this->valueChanged(key);
+    });
+
+    if (m_peonyGSettings->keys().contains(ENABLE_START_PEONY)) {
+        m_cache.remove(ENABLE_START_PEONY);
+        m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
     }
 
     m_cache.insert(TRASH_MOBILE_FILES, false);
@@ -487,6 +504,31 @@ void GlobalSettings::sendLongDataFormat(const QString &format)
 bool GlobalSettings::isExist(const QString &key)
 {
     return !m_cache.value(key).isNull();
+}
+
+void GlobalSettings::sendNotifyMessage(const QString &msg)
+{
+    if (! QDBusConnection::sessionBus().isConnected())
+        return;
+
+    QDBusInterface iface ("org.freedesktop.Notifications",
+                         "/org/freedesktop/Notifications",
+                         "org.freedesktop.Notifications", QDBusConnection::sessionBus ());
+
+    QList <QVariant> args;
+    QStringList actions;
+    QMap <QString, QVariant> hints;
+
+    args << QObject::tr("File Manager").toUtf8().constData()
+         << ((unsigned int) 0)
+         << "system-file-manager"
+         << QObject::tr("notify")
+         << msg
+         << actions
+         << hints
+         << (int) -1;
+
+    iface.callWithArgumentList (QDBus::AutoDetect, "Notify", args);
 }
 
 void GlobalSettings::reset(const QString &key)

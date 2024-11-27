@@ -233,5 +233,11 @@
       <description>Control show right menu open terminal option</description>
     </key>
 
+    <key type="b" name="enable-start-peony">
+      <default>true</default>
+      <summary>enable start peony</summary>
+      <description>Control start peony or show peony UI</description>
+    </key>
+
   </schema>
 </schemalist>

@@ -120,6 +120,9 @@
 //control the display of right menu terminal
 #define SHOW_OPEN_TERMINAL           "showOpenTerminal"
 
+//Control start peony
+#define ENABLE_START_PEONY           "enableStartPeony"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'
@@ -186,6 +189,7 @@ public:
     QString getProjectName();
     bool isDesktopStartUp() const;
     void setDesktopStartUp(bool startUp);/* 桌面启动和结束时使用，谨慎调用 */
+    void sendNotifyMessage(const QString &msg);
 
     bool getShowCreateTime() const;
 
