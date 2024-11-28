@@ -37,6 +37,7 @@ public:
     explicit textPlainThumbnail(const QString &uri);
     ~textPlainThumbnail();
     QIcon generateThumbnail();
+    QImage gernerateTextImage();
 
 private:
     /*

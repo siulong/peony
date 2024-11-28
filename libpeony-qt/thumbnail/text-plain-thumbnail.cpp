@@ -30,6 +30,11 @@
 #include <QMessageAuthenticationCode>
 #include <QPainter>
 #include <QImageReader>
+#include <QFile>
+#include <QFont>
+#include <QPen>
+#include <QPainter>
+#include <QTextOption>
 #include <qglobal.h>
 
 textPlainThumbnail::textPlainThumbnail(const QString &uri)
@@ -63,6 +68,14 @@ QIcon textPlainThumbnail::generateThumbnail()
     QString fileName = m_url.fileName();
     qint16 idx = fileName.lastIndexOf(".");
     QString fileThumbnail=thumbnail_dir + "/" + fileName.left(idx) + ".jpg";
+
+    QImage image= gernerateTextImage();
+    if (! image.isNull()) {
+        QPixmap pixmap = QPixmap::fromImage(image);
+        //thumbnailImage.addPixmap(pixmap);
+        thumbnailImage = QIcon(pixmap);
+        return thumbnailImage;
+    }
 
     //优化无效流程，未安装libreoffice则直接返回
     if (! QFile::exists("/usr/bin/libreoffice"))
@@ -123,5 +136,45 @@ QIcon textPlainThumbnail::generateThumbnail()
     thumbnailImage = GenericThumbnailer::generateThumbnail(fileThumbnail, true);
 
     return thumbnailImage;
+}
+
+/*
+*函数功能：
+现将文本文档读取开头部分内容，绘制生成图片供缩略图使用
+解决使用libreofice文本转图片看不清内容问题
+同时可以不依赖libreofice库接口
+*/
+QImage textPlainThumbnail::gernerateTextImage()
+{
+    QImage thumbnailImg;
+    QSize size(128*0.707070, 128);
+
+    QFile file(m_url.path());
+    if (! file.exists() || ! file.open(QIODevice::ReadOnly)) {
+        qWarning() << "file not exist or can not open: "<<m_url.path();
+    }
+
+    QString text = file.read(800);
+    qDebug() << "read text: "<<text;
+
+    QFont font;
+    font.setPixelSize(13);
+
+    QPen pen;
+    pen.setColor(Qt::black);
+
+    thumbnailImg = QImage(size, QImage::Format_ARGB32_Premultiplied);
+    thumbnailImg.fill(Qt::white);
+
+    QPainter painter(&thumbnailImg);
+    painter.setFont(font);
+    painter.setPen(pen);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QTextOption option;
+    option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    painter.drawText(thumbnailImg.rect(), text, option);
+
+    return thumbnailImg;
 }
 
