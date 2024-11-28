@@ -65,8 +65,6 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
     setProperty("isWindowButton", 0x1);
     setProperty("useIconHighlightEffect", 0x2);
 
-    setFocusPolicy(Qt::StrongFocus);
-
     setAcceptDrops(true);
     m_drag_timer.setInterval(750);
     m_drag_timer.setSingleShot(true);

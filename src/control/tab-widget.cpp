@@ -172,6 +172,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 
     m_parent = parent;
     m_tab_bar = new NavigationTabBar(this);
+    m_tab_bar->setFocusPolicy(Qt::TabFocus);
     m_tab_bar->setLayoutDirection(layoutDirection());
     m_tab_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_stack = new QStackedWidget(this);
@@ -212,6 +213,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
 
     //bug#94981 修改添加控件的位置和形状
     m_add_page_button = new QPushButton(this);
+    m_add_page_button->setFocusPolicy(Qt::TabFocus);
     m_add_page_button->setFixedSize(QSize(38, 38));
     m_add_page_button->setIconSize(QSize(16, 16));
     m_add_page_button->setIcon(QIcon::fromTheme("list-add-symbolic"));
