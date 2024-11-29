@@ -38,6 +38,9 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <polkit/polkit.h>
+#include <QToolTip>
+#include <QSize>
+#include <QScreen>
 
 #include "global-settings.h"
 #include "clipboard-utils.h"
@@ -433,6 +436,12 @@ OperationMenuEditWidget::OperationMenuEditWidget(MainWindow *window, QWidget *pa
     trash->setProperty("useIconHighlightEffect", true);
     trash->setProperty("iconHighlightEffectMode", 1);
     trash->setProperty("fillIconSymbolicColor", true);
+
+    // Install event filters for tooltip handling on operation buttons
+    installTooltipFilter(copy);
+    installTooltipFilter(paste);
+    installTooltipFilter(cut);
+    installTooltipFilter(trash);
 }
 
 void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const QStringList &selections)
@@ -489,4 +498,73 @@ void OperationMenuEditWidget::updateActions(const QString &currentDirUri, const 
 
     bool isClipboradHasFile = Peony::ClipboardUtils::isClipboardHasFiles();
     m_paste->setEnabled(isClipboradHasFile && !isSearch && !isRecent && !isTrash && !isComputer && !isFileBox && isDirectoryCanWrite);
+}
+
+/**
+ * @bug #288997: [File Manager] Mouse hover option bar for copy and paste operations, hover tips are displayed outside of the file manager.
+ *
+ * Handles tooltip events by:
+ * - Calculating appropriate tooltip position relative to mouse cursor
+ * - Ensuring tooltip remains within screen boundaries
+ * - Adjusting position if tooltip would overlap screen edges
+ * - Providing debug information about tooltip positioning
+ *
+ * Normally, just call setToolTip is ok.
+ * TODO: need to troubleshoot the underlying qt calculation of the position under wayland to solve this problem completely.
+ * @author: Renyg <renyangguang@kylinos.cn>
+ * @date:   2024-11-29
+ */
+bool OperationMenuEditWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::ToolTip) {
+        QToolButton *btn = qobject_cast<QToolButton*>(watched);
+        if (btn) {
+            QHelpEvent *he = static_cast<QHelpEvent*>(event);
+            QPoint globalPos = he->globalPos();
+
+            // Default offset values for tooltip positioning
+            const int VERTICAL_OFFSET = 5;
+            const int HORIZONTAL_OFFSET = 2;
+            // Position tooltip slightly below and to the right of cursor
+            globalPos += QPoint(HORIZONTAL_OFFSET, VERTICAL_OFFSET);
+
+            // Calculate tooltip dimensions
+            QFontMetrics fm(QToolTip::font());
+            QSize tooltipSize = fm.size(Qt::TextSingleLine, btn->toolTip()) + QSize(10, 6);
+
+            // Adjust position to keep tooltip within screen boundaries
+            QScreen *screen = QGuiApplication::screenAt(globalPos);
+            if (screen) {
+                QRect screenGeometry = screen->geometry();
+
+                // Prevent tooltip from extending beyond right edge
+                if (globalPos.x() + tooltipSize.width() > screenGeometry.right()) {
+                    // If it will go beyond the right border, offset it to the left
+                    globalPos.setX(screenGeometry.right() - tooltipSize.width() - HORIZONTAL_OFFSET);
+                }
+
+                // Prevent tooltip from extending beyond bottom edge
+                if (globalPos.y() + tooltipSize.height() > screenGeometry.bottom()) {
+                    // If it will go beyond the lower border, display it above the mouse
+                    globalPos.setY(he->globalPos().y() - tooltipSize.height() - VERTICAL_OFFSET);
+                }
+            }
+
+            QToolTip::showText(globalPos, btn->toolTip());
+
+            // Output debug information
+            qDebug() << "btn Tooltip:" << btn->toolTip();
+            qDebug() << "Mouse pos:" << he->globalPos();
+            qDebug() << "Tooltip pos:" << globalPos;
+            qDebug() << "Tooltip size:" << tooltipSize;
+
+            return true;
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+void OperationMenuEditWidget::installTooltipFilter(QToolButton *btn)
+{
+    btn->installEventFilter(this);
 }
