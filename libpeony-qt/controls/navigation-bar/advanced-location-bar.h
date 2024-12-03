@@ -41,6 +41,7 @@ public:
     explicit AdvancedLocationBar(QWidget *parent = nullptr);
     bool isEditing();
     void setAnimationMode(bool isAnimation);
+    void setSearchBarFocus();
 
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool forceUpdate = false);

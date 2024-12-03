@@ -505,6 +505,8 @@ void MainWindow::setShortCuts()
         connect(searchAction, &QAction::triggered, this, [=]() {
             if (! m_is_search){
                 m_is_search = true;
+            }
+            if (m_is_search) {
                 m_header_bar->startEdit(m_is_search);
             }
         });

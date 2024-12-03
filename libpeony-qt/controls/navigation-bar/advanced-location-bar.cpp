@@ -183,6 +183,12 @@ void AdvancedLocationBar::setAnimationMode(bool isAnimation)
     m_bar->setAnimationMode(isAnimation);
 }
 
+void AdvancedLocationBar::setSearchBarFocus()
+{
+    if (m_search_bar)
+        return m_search_bar->setFocus();
+}
+
 bool AdvancedLocationBar::isEditing()
 {
     return m_edit->isVisible();

@@ -103,6 +103,7 @@ void SearchWidget::startEdit(bool bSearch)
 {
     //qDebug() << "bSearch" <<bSearch <<m_searchMode;
     if (bSearch && m_searchMode) {
+        m_locationBar->setSearchBarFocus();
         return;
     }
 
