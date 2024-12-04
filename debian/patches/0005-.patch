@@ -1,0 +1,68 @@
+From: yanglg1 <yangling@kylinos.cn>
+Date: Wed, 4 Dec 2024 11:48:55 +0800
+Subject: =?utf-8?b?5L+u5pS55L+h5Y+35Y+C5pWw5pS55Y+Y5a+86Ie05paH5Lu25a+56K+d?=
+ =?utf-8?b?5qGG5omT5LiN5byA?=
+
+---
+ libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp | 4 +++-
+ libpeony-qt/controls/navigation-bar/advanced-location-bar.h   | 6 ++++--
+ src/control/search-widget.cpp                                 | 3 ++-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp b/libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp
+index 28b4400..72b9c56 100644
+--- a/libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp
++++ b/libpeony-qt/controls/navigation-bar/advanced-location-bar.cpp
+@@ -95,6 +95,7 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
+         qDebug() << "search key:" <<key <<m_last_key;
+         if (key != m_last_key)
+         {
++            m_in_search_mode = true;
+             Q_EMIT searchRequest(m_last_non_search_path, key);
+             m_last_key = key;
+             if (key == "") {
+@@ -107,7 +108,8 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
+ 
+     m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::updateLastLocationPath, [=]() {
+         //关闭搜索后，需要更新路径
+-        Q_EMIT searchRequest(m_last_non_search_path, "", false);
++        m_in_search_mode = false;
++        Q_EMIT searchRequest(m_last_non_search_path, "");
+     });
+ 
+     m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::filterUpdate, [=](const int &index)
+diff --git a/libpeony-qt/controls/navigation-bar/advanced-location-bar.h b/libpeony-qt/controls/navigation-bar/advanced-location-bar.h
+index 6859740..78eae37 100644
+--- a/libpeony-qt/controls/navigation-bar/advanced-location-bar.h
++++ b/libpeony-qt/controls/navigation-bar/advanced-location-bar.h
+@@ -42,11 +42,13 @@ public:
+     bool isEditing();
+     void setAnimationMode(bool isAnimation);
+     void setSearchBarFocus();
+-
++    bool getSearchMode() {
++        return m_in_search_mode;
++    }
+ Q_SIGNALS:
+     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool forceUpdate = false);
+     void refreshRequest();
+-    void searchRequest(const QString &path, const QString &key, bool searchMode = true);
++    void searchRequest(const QString &path, const QString &key);
+     void updateFileTypeFilter(const int &index);
+ //    void clearTrash();
+     void updateSearchProgress(bool searching);
+diff --git a/src/control/search-widget.cpp b/src/control/search-widget.cpp
+index 2611834..529ad73 100644
+--- a/src/control/search-widget.cpp
++++ b/src/control/search-widget.cpp
+@@ -44,8 +44,9 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
+ 
+     connect(m_locationBar, &AdvancedLocationBar::updateFileTypeFilter, this, &SearchWidget::updateFileTypeFilter);
+ 
+-    connect(m_locationBar, &AdvancedLocationBar::searchRequest, [=](const QString &path, const QString &key, const bool searchMode){
++    connect(m_locationBar, &AdvancedLocationBar::searchRequest, [=](const QString &path, const QString &key){
+         //key is null, clean search content, show all files
++        bool searchMode = m_locationBar->getSearchMode();
+         if (key == "" || key.isNull()) {
+             Q_EMIT this->updateSearchRequest(searchMode);
+             Q_EMIT this->updateLocationRequest(path, false);
