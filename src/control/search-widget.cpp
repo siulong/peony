@@ -44,8 +44,9 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
 
     connect(m_locationBar, &AdvancedLocationBar::updateFileTypeFilter, this, &SearchWidget::updateFileTypeFilter);
 
-    connect(m_locationBar, &AdvancedLocationBar::searchRequest, [=](const QString &path, const QString &key, const bool searchMode){
+    connect(m_locationBar, &AdvancedLocationBar::searchRequest, [=](const QString &path, const QString &key){
         //key is null, clean search content, show all files
+        bool searchMode = m_locationBar->getSearchMode();
         if (key == "" || key.isNull()) {
             Q_EMIT this->updateSearchRequest(searchMode);
             Q_EMIT this->updateLocationRequest(path, false);
