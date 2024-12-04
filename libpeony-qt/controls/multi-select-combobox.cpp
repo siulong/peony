@@ -25,6 +25,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QDebug>
+#include <QPainterPath>
 
 using namespace Peony;
 MultiSelectComboBox::MultiSelectComboBox(QWidget *parent)
