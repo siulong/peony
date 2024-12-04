@@ -1,0 +1,2278 @@
+From: Yue-Lan <lanyue@kylinos.cn>
+Date: Wed, 4 Dec 2024 15:01:53 +0800
+Subject: update changelog.
+
+---
+ 3rd-parties/layouts/flowlayout.cpp                 | 230 +++++++++
+ 3rd-parties/layouts/flowlayout.h                   |  89 ++++
+ 3rd-parties/layouts/layouts.pri                    |   5 +
+ libpeony-qt/controls/controls.pri                  |   2 +
+ .../directory-view/directory-view-container.cpp    |  30 ++
+ .../directory-view/directory-view-container.h      |   7 +
+ libpeony-qt/controls/multi-select-combobox.cpp     | 444 ++++++++++++++++
+ libpeony-qt/controls/multi-select-combobox.h       | 113 ++++
+ .../model/file-item-proxy-filter-sort-model.cpp    | 173 ++++++-
+ .../model/file-item-proxy-filter-sort-model.h      |  20 +
+ libpeony-qt/model/file-label-model.cpp             |  10 +
+ libpeony-qt/model/file-label-model.h               |   1 +
+ src/control/tab-widget.cpp                         | 566 ++++++---------------
+ src/control/tab-widget.h                           |  62 +--
+ src/src.pro                                        |   1 +
+ src/windows/main-window.cpp                        |   4 +
+ 16 files changed, 1307 insertions(+), 450 deletions(-)
+ create mode 100644 3rd-parties/layouts/flowlayout.cpp
+ create mode 100644 3rd-parties/layouts/flowlayout.h
+ create mode 100644 3rd-parties/layouts/layouts.pri
+ create mode 100644 libpeony-qt/controls/multi-select-combobox.cpp
+ create mode 100644 libpeony-qt/controls/multi-select-combobox.h
+
+diff --git a/3rd-parties/layouts/flowlayout.cpp b/3rd-parties/layouts/flowlayout.cpp
+new file mode 100644
+index 0000000..2af2cc0
+--- /dev/null
++++ b/3rd-parties/layouts/flowlayout.cpp
+@@ -0,0 +1,230 @@
++/****************************************************************************
++**
++** Copyright (C) 2016 The Qt Company Ltd.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the examples of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:BSD$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** BSD License Usage
++** Alternatively, you may use this file under the terms of the BSD license
++** as follows:
++**
++** "Redistribution and use in source and binary forms, with or without
++** modification, are permitted provided that the following conditions are
++** met:
++**   * Redistributions of source code must retain the above copyright
++**     notice, this list of conditions and the following disclaimer.
++**   * Redistributions in binary form must reproduce the above copyright
++**     notice, this list of conditions and the following disclaimer in
++**     the documentation and/or other materials provided with the
++**     distribution.
++**   * Neither the name of The Qt Company Ltd nor the names of its
++**     contributors may be used to endorse or promote products derived
++**     from this software without specific prior written permission.
++**
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include <QtWidgets>
++
++#include "flowlayout.h"
++//! [1]
++FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
++    : QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing)
++{
++    setContentsMargins(margin, margin, margin, margin);
++}
++
++FlowLayout::FlowLayout(int margin, int hSpacing, int vSpacing)
++    : m_hSpace(hSpacing), m_vSpace(vSpacing)
++{
++    setContentsMargins(margin, margin, margin, margin);
++}
++//! [1]
++
++//! [2]
++FlowLayout::~FlowLayout()
++{
++    QLayoutItem *item;
++    while ((item = takeAt(0)))
++        delete item;
++}
++//! [2]
++
++//! [3]
++void FlowLayout::addItem(QLayoutItem *item)
++{
++    itemList.append(item);
++}
++//! [3]
++
++//! [4]
++int FlowLayout::horizontalSpacing() const
++{
++    if (m_hSpace >= 0) {
++        return m_hSpace;
++    } else {
++        return smartSpacing(QStyle::PM_LayoutHorizontalSpacing);
++    }
++}
++
++int FlowLayout::verticalSpacing() const
++{
++    if (m_vSpace >= 0) {
++        return m_vSpace;
++    } else {
++        return smartSpacing(QStyle::PM_LayoutVerticalSpacing);
++    }
++}
++//! [4]
++
++//! [5]
++int FlowLayout::count() const
++{
++    return itemList.size();
++}
++
++QLayoutItem *FlowLayout::itemAt(int index) const
++{
++    return itemList.value(index);
++}
++
++QLayoutItem *FlowLayout::takeAt(int index)
++{
++    if (index >= 0 && index < itemList.size())
++        return itemList.takeAt(index);
++    else
++        return 0;
++}
++
++int FlowLayout::getMaxinumHeight(int width) const
++{
++    return doLayout(QRect(0, 0, width, 0), true);
++}
++//! [5]
++
++//! [6]
++Qt::Orientations FlowLayout::expandingDirections() const
++{
++    return 0;
++}
++//! [6]
++
++//! [7]
++bool FlowLayout::hasHeightForWidth() const
++{
++    return true;
++}
++
++int FlowLayout::heightForWidth(int width) const
++{
++    int height = doLayout(QRect(0, 0, width, 0), true);
++    return height;
++}
++//! [7]
++
++//! [8]
++void FlowLayout::setGeometry(const QRect &rect)
++{
++    QLayout::setGeometry(rect);
++    doLayout(rect, false);
++}
++
++QSize FlowLayout::sizeHint() const
++{
++    return minimumSize();
++}
++
++QSize FlowLayout::minimumSize() const
++{
++    QSize size;
++    for (auto item : itemList)
++        size = size.expandedTo(item->minimumSize());
++
++    size += QSize(2*margin(), 2*margin());
++    return size;
++}
++//! [8]
++
++//! [9]
++int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
++{
++    int left, top, right, bottom;
++    getContentsMargins(&left, &top, &right, &bottom);
++
++    QRect effectiveRect = rect.adjusted(+left, +top, -right, -bottom);
++    //特殊处理，右侧留白
++    effectiveRect.setWidth(effectiveRect.width() - 80);
++    int x = effectiveRect.x();
++    int y = effectiveRect.y();
++    int lineHeight = 0;
++//! [9]
++
++//! [10]
++    for (auto item : itemList) {
++        QWidget *wid = item->widget();
++        int spaceX = horizontalSpacing();
++        if (spaceX == -1)
++            spaceX = wid->style()->layoutSpacing(
++                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
++        int spaceY = verticalSpacing();
++        if (spaceY == -1)
++            spaceY = wid->style()->layoutSpacing(
++                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
++//! [10]
++//! [11]
++        int nextX = x + item->sizeHint().width() + spaceX;
++        if (nextX - spaceX > effectiveRect.right() && lineHeight > 0) {
++            x = effectiveRect.x();
++            y = y + lineHeight + spaceY;
++            nextX = x + item->sizeHint().width() + spaceX;
++            lineHeight = 0;
++        }
++
++        if (!testOnly)
++            item->setGeometry(QRect(QPoint(x, y), item->sizeHint()));
++
++        x = nextX;
++        lineHeight = qMax(lineHeight, item->sizeHint().height());
++    }
++
++    return y + lineHeight - rect.y() + bottom;
++}
++//! [11]
++//! [12]
++int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const
++{
++    QObject *parent = this->parent();
++    if (!parent) {
++        return -1;
++    } else if (parent->isWidgetType()) {
++        QWidget *pw = static_cast<QWidget *>(parent);
++        return pw->style()->pixelMetric(pm, 0, pw);
++    } else {
++        return static_cast<QLayout *>(parent)->spacing();
++    }
++}
++//! [12]
+diff --git a/3rd-parties/layouts/flowlayout.h b/3rd-parties/layouts/flowlayout.h
+new file mode 100644
+index 0000000..f46b782
+--- /dev/null
++++ b/3rd-parties/layouts/flowlayout.h
+@@ -0,0 +1,89 @@
++/****************************************************************************
++**
++** Copyright (C) 2016 The Qt Company Ltd.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the examples of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:BSD$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** BSD License Usage
++** Alternatively, you may use this file under the terms of the BSD license
++** as follows:
++**
++** "Redistribution and use in source and binary forms, with or without
++** modification, are permitted provided that the following conditions are
++** met:
++**   * Redistributions of source code must retain the above copyright
++**     notice, this list of conditions and the following disclaimer.
++**   * Redistributions in binary form must reproduce the above copyright
++**     notice, this list of conditions and the following disclaimer in
++**     the documentation and/or other materials provided with the
++**     distribution.
++**   * Neither the name of The Qt Company Ltd nor the names of its
++**     contributors may be used to endorse or promote products derived
++**     from this software without specific prior written permission.
++**
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef FLOWLAYOUT_H
++#define FLOWLAYOUT_H
++
++#include <QLayout>
++#include <QRect>
++#include <QStyle>
++//! [0]
++class FlowLayout : public QLayout
++{
++public:
++    explicit FlowLayout(QWidget *parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
++    explicit FlowLayout(int margin = -1, int hSpacing = -1, int vSpacing = -1);
++    ~FlowLayout();
++
++    void addItem(QLayoutItem *item) override;
++    int horizontalSpacing() const;
++    int verticalSpacing() const;
++    Qt::Orientations expandingDirections() const override;
++    bool hasHeightForWidth() const override;
++    int heightForWidth(int) const override;
++    int count() const override;
++    QLayoutItem *itemAt(int index) const override;
++    QSize minimumSize() const override;
++    void setGeometry(const QRect &rect) override;
++    QSize sizeHint() const override;
++    QLayoutItem *takeAt(int index) override;
++    int getMaxinumHeight(int width) const;
++
++private:
++    int doLayout(const QRect &rect, bool testOnly) const;
++    int smartSpacing(QStyle::PixelMetric pm) const;
++
++    QList<QLayoutItem *> itemList;
++    int m_hSpace;
++    int m_vSpace;
++};
++//! [0]
++
++#endif // FLOWLAYOUT_H
+diff --git a/3rd-parties/layouts/layouts.pri b/3rd-parties/layouts/layouts.pri
+new file mode 100644
+index 0000000..e1b851e
+--- /dev/null
++++ b/3rd-parties/layouts/layouts.pri
+@@ -0,0 +1,5 @@
++INCLUDEPATH += $$PWD
++
++SOURCES += $$PWD/flowlayout.cpp
++
++HEADERS += $$PWD/flowlayout.h
+diff --git a/libpeony-qt/controls/controls.pri b/libpeony-qt/controls/controls.pri
+index 67bb028..e455f51 100644
+--- a/libpeony-qt/controls/controls.pri
++++ b/libpeony-qt/controls/controls.pri
+@@ -12,9 +12,11 @@ include(tab-page/tab-page.pri)
+ 
+ HEADERS += \
+     $$PWD/icon-container.h              \
++    $$PWD/multi-select-combobox.h       \
+     $$PWD/tag-management.h
+ 
+ SOURCES += \
+     $$PWD/icon-container.cpp            \
++    $$PWD/multi-select-combobox.cpp     \
+     $$PWD/tag-management.cpp
+ 
+diff --git a/libpeony-qt/controls/directory-view/directory-view-container.cpp b/libpeony-qt/controls/directory-view/directory-view-container.cpp
+index f18dbff..fc6edb1 100644
+--- a/libpeony-qt/controls/directory-view/directory-view-container.cpp
++++ b/libpeony-qt/controls/directory-view/directory-view-container.cpp
+@@ -249,6 +249,11 @@ void DirectoryViewContainer::setFilterLabelConditions(QString name)
+     m_proxy_model->setFilterLabelConditions(name);
+ }
+ 
++void DirectoryViewContainer::setMutipleLabelConditions(QStringList names, QList<QColor> colors)
++{
++    m_proxy_model->setMutipleLabelConditions(names, colors);
++}
++
+ void DirectoryViewContainer::setShowHidden(bool showHidden)
+ {
+     m_proxy_model->setShowHidden(showHidden);
+@@ -668,6 +673,31 @@ void DirectoryViewContainer::clearFileContentConditions()
+     m_proxy_model->clearFileContentConditions();
+ }
+ 
++void DirectoryViewContainer::clearAllMapsCount()
++{
++    m_proxy_model->clearAllMapsCount();
++}
++
++QMap<int, int> DirectoryViewContainer::getFileTypeCount()
++{
++    return m_proxy_model->getFileTypeCount();
++}
++
++QMap<int, int> DirectoryViewContainer::getFileModifyTimeCount()
++{
++    return m_proxy_model->getFileModifyTimeCount();
++}
++
++QMap<int, int> DirectoryViewContainer::getFileSizeCount()
++{
++    return m_proxy_model->getFileSizeCount();
++}
++
++QMap<int, int> DirectoryViewContainer::getFileLabelCount()
++{
++    return m_proxy_model->getFileLabelCount();
++}
++
+ void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)
+ {
+     if (m_proxy_model) {
+diff --git a/libpeony-qt/controls/directory-view/directory-view-container.h b/libpeony-qt/controls/directory-view/directory-view-container.h
+index 602a0ca..5792ec7 100644
+--- a/libpeony-qt/controls/directory-view/directory-view-container.h
++++ b/libpeony-qt/controls/directory-view/directory-view-container.h
+@@ -134,6 +134,7 @@ public Q_SLOTS:
+     void setUseDefaultNameSortOrder(bool use);
+     void setSortFolderFirst(bool folderFirst);
+     void setFilterLabelConditions(QString name);
++    void setMutipleLabelConditions(QStringList names, QList<QColor> colors);
+ 
+     //mutiple filter conditions for new advance search
+     void addFileNameFilter(QString key, bool updateNow = false);
+@@ -152,6 +153,12 @@ public Q_SLOTS:
+     void addFileContentFilter(QString key, bool updateNow = false);
+     void clearFileContentConditions();
+ 
++    void clearAllMapsCount();
++    QMap<int, int> getFileTypeCount();
++    QMap<int, int> getFileModifyTimeCount();
++    QMap<int, int> getFileSizeCount();
++    QMap<int, int> getFileLabelCount();
++
+ protected:
+     /*!
+      * \brief bindNewProxy
+diff --git a/libpeony-qt/controls/multi-select-combobox.cpp b/libpeony-qt/controls/multi-select-combobox.cpp
+new file mode 100644
+index 0000000..b4f963a
+--- /dev/null
++++ b/libpeony-qt/controls/multi-select-combobox.cpp
+@@ -0,0 +1,444 @@
++/*
++ * Copyright (C) 2024, KylinSoft Co., Ltd.
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ *
++ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
++ *
++ */
++
++#include "multi-select-combobox.h"
++#include <QLineEdit>
++#include <QEvent>
++#include <QMouseEvent>
++#include <QPainter>
++#include <QApplication>
++#include <QDebug>
++
++using namespace Peony;
++MultiSelectComboBox::MultiSelectComboBox(QWidget *parent)
++    : QComboBox(parent)
++{
++    m_lineEdit = new MultiSelectLineEdit(this);
++    m_lineEdit->setReadOnly(true);
++    this->setLineEdit(m_lineEdit);
++    this->lineEdit()->disconnect();
++    m_lineEdit->installEventFilter(this);
++
++    m_listView = new QListView(this);
++    this->setView(m_listView);
++    this->setModel(&m_model);
++    m_listView->setItemDelegate(new MultiSelectComboBoxDelegate(this));
++
++    connect(this, QOverload<int>::of(&MultiSelectComboBox::activated), this, &MultiSelectComboBox::slotActivated);
++}
++
++MultiSelectComboBox::~MultiSelectComboBox()
++{
++
++}
++
++void MultiSelectComboBox::addItem(const QString &text, bool checked, const int count, const QColor &color)
++{
++    QStandardItem *item = new QStandardItem(text);
++    item->setCheckable(true);
++    item->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
++    item->setData(count, Qt::UserRole + 1);
++    item->setData(color, Qt::UserRole + 2);
++    m_model.appendRow(item);
++
++    this->updateText();
++    this->updateMultiComboBoxItemWidth();
++}
++
++void MultiSelectComboBox::addItems(const QStringList &texts)
++{
++    for (auto text : texts) {
++        this->addItem(text);
++    }
++    this->updateMultiComboBoxItemWidth();
++}
++
++void MultiSelectComboBox::removeItem(int index)
++{
++    m_model.removeRow(index);
++    this->updateText();
++}
++
++void MultiSelectComboBox::clear()
++{
++    m_model.clear();
++    this->updateText();
++}
++
++QStringList MultiSelectComboBox::getSelectItemsText()
++{
++    QStringList texts;
++    for (int i = 0; i < m_model.rowCount(); i++) {
++        QStandardItem *item = m_model.item(i);
++        if (item->checkState() == Qt::Checked) {
++            texts.append(item->text());
++        }
++    }
++    return texts;
++}
++
++QList<int> MultiSelectComboBox::getSelectItemsIndex()
++{
++    QList<int> indexs;
++    for (int i = 0; i < m_model.rowCount(); i++) {
++        QStandardItem *item = m_model.item(i);
++        if (item->checkState() == Qt::Checked) {
++            indexs.append(i);
++        }
++    }
++    return indexs;
++}
++
++QString MultiSelectComboBox::getItemText(int index)
++{
++    if (index < 0 || index >= m_model.rowCount()) {
++        return QString("");
++    }
++
++    return m_model.item(index)->text();
++}
++
++void MultiSelectComboBox::setDefaultItem(int index)
++{
++    if (index < 0 || index >= m_model.rowCount()) {
++        return;
++    }
++
++    QStandardItem *item = m_model.item(index);
++    item->setCheckState(Qt::Checked);
++    this->updateText();
++}
++
++void MultiSelectComboBox::setEnableItem(int index, bool enabled)
++{
++    if (index < 0 || index >= m_model.rowCount()) {
++        return;
++    }
++
++    QStandardItem *item = m_model.item(index);
++    item->setEnabled(enabled);
++    this->updateText();
++}
++
++QString MultiSelectComboBox::getShowText()
++{
++    return m_lineEdit->text();
++}
++
++void MultiSelectComboBox::setCheckedItem(int index, bool checked)
++{
++    if (index < 0 || index >= m_model.rowCount()) {
++        return;
++    }
++
++    QStandardItem *item = m_model.item(index);
++    item->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
++    this->updateText();
++}
++
++void MultiSelectComboBox::uncheckAllItem()
++{
++    for (int i = 0; i < m_model.rowCount(); i++) {
++        this->setCheckedItem(i);
++    }
++}
++
++void MultiSelectComboBox::setPlaceholderText(const QString &placeholderText)
++{
++    m_lineEdit->setPlaceholderText(placeholderText);
++    m_lineEdit->updateWidth();
++}
++
++void MultiSelectComboBox::setCountFromItemText(const QString &text, int count)
++{
++    for(int i = 0; i < m_model.rowCount(); i++) {
++        QStandardItem *item = m_model.item(i);
++        if (item->text() == text) {
++            item->setData(count, Qt::UserRole + 1);
++            break;
++        }
++    }
++}
++
++void MultiSelectComboBox::setCountFromItemIndex(int index, int count)
++{
++    QStandardItem *item = m_model.item(index);
++    if (item) {
++        item->setData(count, Qt::UserRole + 1);
++    }
++}
++
++void MultiSelectComboBox::showPopup()
++{
++    Q_EMIT showingPopup();
++    QComboBox::showPopup();
++}
++
++void MultiSelectComboBox::hidePopup()
++{
++    QRect rectView = this->view()->geometry();
++    rectView.moveTopLeft(this->view()->mapToGlobal(QPoint(0, 0)));
++
++    QPoint globalPos = QCursor::pos();
++
++    if (!rectView.contains(globalPos)) {
++        Q_EMIT hidingPopup();
++        QComboBox::hidePopup();
++    }
++}
++
++void MultiSelectComboBox::mousePressEvent(QMouseEvent *event)
++{
++    QComboBox::mousePressEvent(event);
++    event->accept();
++}
++
++void MultiSelectComboBox::mouseReleaseEvent(QMouseEvent *event)
++{
++    QComboBox::mouseReleaseEvent(event);
++    event->accept();
++}
++
++void Peony::MultiSelectComboBox::mouseMoveEvent(QMouseEvent *event)
++{
++    QComboBox::mouseMoveEvent(event);
++    event->accept();
++}
++
++bool MultiSelectComboBox::eventFilter(QObject *watched, QEvent *event)
++{
++    if (watched == m_lineEdit && event->type() == QEvent::MouseButtonRelease) {
++        showPopup();
++        return true;
++    }
++    return false;
++}
++
++void MultiSelectComboBox::updateText()
++{
++    QList<QPair<QString, QColor>> items;
++    for (int i = 0; i < m_model.rowCount(); i++) {
++        QStandardItem *item = m_model.item(i);
++        if (item->checkState() == Qt::Checked) {
++            QString text = item->text();
++            QColor color = item->data(Qt::UserRole + 2).value<QColor>();
++            items.append(qMakePair(text, color));
++        }
++    }
++
++    // 将选中项及颜色传递给自定义 LineEdit
++    dynamic_cast<MultiSelectLineEdit *>(m_lineEdit)->setItems(items);
++}
++
++void MultiSelectComboBox::slotActivated(int index)
++{
++    QStandardItem *item = m_model.item(index);
++    if (nullptr == item) {
++        return;
++    }
++
++    Qt::CheckState state = (item->checkState() == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
++    item->setCheckState(state);
++
++    this->updateText();
++    Q_EMIT currentItemStateChanged();
++}
++
++void MultiSelectComboBox::updateMultiComboBoxItemWidth()
++{
++    int maximumWidth = 0;
++    for (int i = 0; i < m_model.rowCount(); i++) {
++        QStandardItem *item = m_model.item(i);
++        QString text = item->text();
++        QColor color = item->data(Qt::UserRole + 2).value<QColor>();
++        int offset = (color.isValid() && color != Qt::transparent)  ? 25 : 5;
++        //加上间距
++        offset += 10;
++        offset += fontMetrics().horizontalAdvance(text);
++        //加上后面数字宽度
++        offset += 80;
++        if (maximumWidth == 0 || offset > maximumWidth) {
++            maximumWidth = offset;
++        }
++    }
++
++    m_listView->setMinimumWidth(maximumWidth);
++}
++
++MultiSelectComboBoxDelegate::MultiSelectComboBoxDelegate(QObject *parent)
++    : QStyledItemDelegate(parent)
++{
++
++}
++
++void MultiSelectComboBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
++{
++    painter->save();
++
++    // 获取数据
++    QString text = index.data(Qt::DisplayRole).toString();
++    int count = index.data(Qt::UserRole + 1).toInt();
++    QColor color = index.data(Qt::UserRole + 2).value<QColor>();
++    bool isChecked = index.data(Qt::CheckStateRole).toInt() == Qt::Checked;
++    QRect rect = option.rect;
++    int checkIconWidth = 16;
++    int circleDiameter = 12;
++    int countTextWidth = 60;
++
++    // 绘制选中项背景为圆角矩形
++    if (option.state & QStyle::State_Selected) {
++        QPainterPath path;
++        path.addRoundedRect(rect.adjusted(2, 2, -2, -2), 6, 6);  // 圆角矩形
++        painter->fillPath(path, option.palette.highlight());
++    }
++
++    // 绘制勾选图标
++    if (isChecked) {
++        QRect checkRect(rect.left() + 5, rect.top() + (rect.height() - checkIconWidth) / 2, checkIconWidth, checkIconWidth);  // 勾选图标区域
++        QPixmap checkIcon = QApplication::style()->standardPixmap(QStyle::SP_DialogApplyButton);
++        painter->drawPixmap(checkRect, checkIcon);
++    }
++
++    int offset = (color.isValid() && color != Qt::transparent)  ? 25 : 5;
++    QRect circleRect(rect.left() + offset, rect.top() + (rect.height() - circleDiameter) / 2, circleDiameter, circleDiameter);
++    painter->setBrush(color);
++    painter->setPen(Qt::NoPen);
++    if (color.isValid())
++        painter->drawEllipse(circleRect);
++
++    // 绘制文字
++    int textX = circleRect.right() + 10;  // 文字起始位置
++    int textWidth = rect.width() - textX - countTextWidth;  // 文字区域宽度
++    QRect textRect(textX, rect.top(), textWidth, rect.height());
++    painter->setPen(option.palette.text().color());
++    painter->drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, text);
++
++    // 绘制数量
++    QRect countRect(rect.right() - countTextWidth - 10, rect.top(), countTextWidth, rect.height());
++    painter->setPen(QColor(0xA6A6A6));
++    painter->drawText(countRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(count));
++
++    painter->restore();
++}
++
++QSize MultiSelectComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
++{
++    QSize size = QStyledItemDelegate::sizeHint(option, index);
++    size.setHeight(36);
++    return size;
++}
++
++MultiSelectLineEdit::MultiSelectLineEdit(QWidget *parent)
++    : QLineEdit(parent), m_items()
++{
++
++}
++
++MultiSelectLineEdit::~MultiSelectLineEdit()
++{
++
++}
++
++void MultiSelectLineEdit::setItems(const QList<QPair<QString, QColor> > &items)
++{
++    m_items = items;
++    updateWidth();
++}
++
++int MultiSelectLineEdit::calculateContentWidth() const
++{
++    int width = 5;
++    QFontMetrics metrics(font());
++
++    if (m_items.isEmpty()) {
++        width += metrics.horizontalAdvance(this->placeholderText()) + 10;
++    } else {
++        for(int i = 0; i < m_items.size(); i++) {
++            if (m_items[i].second.isValid() && m_items[i].second != Qt::transparent) {
++                width += m_radius + 5;
++            }
++            width += metrics.horizontalAdvance(m_items[i].first) + 5;
++
++            const QColor &color = m_items[i].second;
++            bool isValid = (color.isValid() && color != Qt::transparent);
++            if (i != m_items.size() - 1) {
++                QString separator = isValid ? " " : ", ";
++                width += fontMetrics().horizontalAdvance(separator);
++            }
++        }
++    }
++
++    return width;
++}
++
++void MultiSelectLineEdit::updateWidth()
++{
++    int width = calculateContentWidth();
++    setFixedWidth(width + 10);
++    update();
++
++    if (parentWidget()) {
++        parentWidget()->setFixedWidth(width + 35);
++    }
++}
++
++void MultiSelectLineEdit::paintEvent(QPaintEvent *event)
++{
++    Q_UNUSED(event);
++    QPainter painter(this);
++    painter.setRenderHint(QPainter::Antialiasing);
++
++    int x = 5; // 起始位置
++    int y = (height() - fontMetrics().height()) / 2; // 垂直居中
++
++    for (int i = 0; i < m_items.size(); i++) {
++        const QString &text = m_items[i].first;
++        const QColor &color = m_items[i].second;
++
++        bool isValid = (color.isValid() && color != Qt::transparent);
++        if (isValid) {
++            int topY = (height() - m_radius) / 2;
++            painter.setBrush(color);
++            painter.setPen(Qt::NoPen);
++            painter.drawEllipse(x, topY, m_radius, m_radius);
++            x += m_radius + 5; // 移动位置
++        }
++
++        // 绘制文字
++        painter.setPen(palette().text().color());
++        painter.drawText(x, y + fontMetrics().ascent(), text);
++
++        x += fontMetrics().horizontalAdvance(text) + 5; // 文字宽度 + 间隔
++
++        if (i != m_items.size() - 1) {
++            QString separator = isValid ? " " : ", ";
++            painter.drawText(x, y + fontMetrics().ascent(), separator);
++            x += fontMetrics().horizontalAdvance(separator);
++        }
++    }
++
++    if (m_items.isEmpty()) {
++        if (!this->placeholderText().isEmpty()) {
++            QString text = this->placeholderText();
++            painter.setPen(palette().placeholderText().color());
++            painter.drawText(x, y + fontMetrics().ascent(), text);
++        }
++    }
++}
+diff --git a/libpeony-qt/controls/multi-select-combobox.h b/libpeony-qt/controls/multi-select-combobox.h
+new file mode 100644
+index 0000000..5cf2145
+--- /dev/null
++++ b/libpeony-qt/controls/multi-select-combobox.h
+@@ -0,0 +1,113 @@
++/*
++ * Copyright (C) 2024, KylinSoft Co., Ltd.
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ *
++ * Authors: Wenjie Xiang <xiangwenjie@kylinos.cn>
++ *
++ */
++
++#ifndef MULTISELECTCOMBOBOX_H
++#define MULTISELECTCOMBOBOX_H
++
++#include "peony-core_global.h"
++#include <QObject>
++#include <QComboBox>
++#include <QListView>
++#include <QStandardItemModel>
++#include <QStyledItemDelegate>
++#include <QLineEdit>
++
++namespace Peony {
++
++class PEONYCORESHARED_EXPORT MultiSelectComboBoxDelegate : public QStyledItemDelegate
++{
++    Q_OBJECT
++public:
++    explicit MultiSelectComboBoxDelegate(QObject *parent = nullptr);
++
++    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
++
++    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
++};
++
++class PEONYCORESHARED_EXPORT MultiSelectLineEdit :  public QLineEdit
++{
++    Q_OBJECT
++public:
++    explicit MultiSelectLineEdit(QWidget *parent = nullptr);
++    ~MultiSelectLineEdit();
++
++    void setItems(const QList<QPair<QString, QColor>> &items);
++    int calculateContentWidth() const;
++    void updateWidth();
++
++protected:
++    void paintEvent(QPaintEvent *event) override;
++
++private:
++    QList<QPair<QString, QColor>> m_items; // 存储选项及其颜色
++    int m_radius = 12;
++};
++
++class PEONYCORESHARED_EXPORT MultiSelectComboBox : public QComboBox
++{
++    Q_OBJECT
++public:
++    explicit MultiSelectComboBox(QWidget *parent = nullptr);
++    ~MultiSelectComboBox();
++    void addItem(const QString &text, bool checked = false, const int count = 0, const QColor &color = Qt::transparent);
++    void addItems(const QStringList &texts);
++    void removeItem(int index);
++    void clear();
++    QStringList getSelectItemsText();
++    QList<int> getSelectItemsIndex();
++    QString getItemText(int index);
++    void setDefaultItem(int index);
++    void setEnableItem(int index, bool enabled = true);
++    QString getShowText();
++    void setCheckedItem(int index, bool checked = false);
++    void uncheckAllItem();
++    void setPlaceholderText(const QString &placeholderText);
++    void setCountFromItemText(const QString &text, int count);
++    void setCountFromItemIndex(int index, int count);
++
++Q_SIGNALS:
++    void showingPopup();
++    void hidingPopup();
++    void currentItemStateChanged();
++
++protected:
++    void showPopup();
++    void hidePopup();
++    virtual void mousePressEvent(QMouseEvent *event);
++    virtual void mouseReleaseEvent(QMouseEvent *event);
++    virtual void mouseMoveEvent(QMouseEvent *event);
++    virtual bool eventFilter(QObject *watched, QEvent *event);
++
++private:
++    void updateText();
++
++private Q_SLOTS:
++    void slotActivated(int index);
++    void updateMultiComboBoxItemWidth();
++
++private:
++    MultiSelectLineEdit *m_lineEdit;
++    QListView *m_listView;
++    QStandardItemModel m_model;
++};
++
++}
++#endif // MULTISELECTCOMBOBOX_H
+diff --git a/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp b/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
+index 8cb9155..885572e 100644
+--- a/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
++++ b/libpeony-qt/model/file-item-proxy-filter-sort-model.cpp
+@@ -367,6 +367,10 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
+         if (item->m_info->displayName().contains("839 MB"))
+             return false;
+ 
++        if (model->getRootUri().startsWith("search://")) {
++            calculationAll(item);
++        }
++
+         //check the file info filter conditions
+         //qDebug()<<"start filter conditions check"<<item->m_info->displayName()<<item->m_info->type();
+         if (! checkFileTypeFilter(item->m_info->type()))
+@@ -413,11 +417,11 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
+         }
+ 
+         //check multiple label filter conditions, file has any one of these label is accepted
+-        if(m_show_label_names.size() >0 || m_show_label_colors.size() >0)
++        if(m_show_label_names.size() > 0 || m_show_label_colors.size() > 0)
+         {
+             bool bfind = false;
+             QString uri = item->m_info->uri();
+-            if (m_show_label_names.size() >0 )
++            if (m_show_label_names.size() > 0)
+             {
+                 auto names = FileLabelModel::getGlobalModel()->getFileLabels(uri);
+                 for(auto temp : m_show_label_names)
+@@ -430,7 +434,7 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
+                 }
+             }
+ 
+-            if (! bfind && m_show_label_colors.size() >0)
++            if (! bfind && m_show_label_colors.size() > 0)
+             {
+                 auto colors = FileLabelModel::getGlobalModel()->getFileColors(uri);
+                 for(auto temp : m_show_label_colors)
+@@ -621,6 +625,109 @@ void FileItemProxyFilterSortModel::setDirectorySettings(const QString &key, cons
+     }
+ }
+ 
++void FileItemProxyFilterSortModel::calculationFileTypeCount(QString type) const
++{
++    int fileType = ALL_TYPE;
++    if (type == Folder_Type) {
++        fileType = FILE_FOLDER;
++    } else if (type.contains(Image_Type)) {
++        fileType = PICTURE;
++    } else if (type.contains(Video_Type)) {
++        fileType = VIDEO;
++    } else if (type.contains(Text_Type)) {
++        fileType = TXT_FILE;
++    } else if (type.contains(Wps_Type)) {
++        fileType = WPS_FILE;
++    } else if (type.contains(Audio_Type) || type.contains("application/x-smaf")) {
++        fileType = AUDIO;
++    } else if (type != Folder_Type && ! type.contains(Image_Type) && ! type.contains(Video_Type)
++               && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type) && !type.contains("application/x-smaf")) {
++        fileType = OTHERS;
++    }
++
++    m_file_type_map[fileType]++;
++}
++
++void FileItemProxyFilterSortModel::calculationFileModifyTimeCount(quint64 modifiedTime) const
++{
++    auto time = QDateTime::currentMSecsSinceEpoch();
++    auto dateTime = QDateTime::fromMSecsSinceEpoch(time);
++    QDate date = dateTime.date();
++    int year = date.year();
++    int month = date.month();
++    int day = date.day();
++    QDate md_date =  QDateTime::fromMSecsSinceEpoch(modifiedTime * 1000).date();
++    int md_year= md_date.year();
++    int md_month = md_date.month();
++    int md_day = md_date.day();
++
++    int lastMonth = (month == 1) ? 12 : month - 1;
++
++    int fileModifyTime = ALL_TIME;
++    if (year == md_year && month == md_month && day == md_day) {
++        fileModifyTime = TODAY;
++    } else if (date.addDays(-1) == md_date) {
++        fileModifyTime = YESTERDAY;
++    } else if (date.weekNumber() == md_date.weekNumber() && year == md_year) {
++        fileModifyTime = THIS_WEEK;
++    } else if (date.addDays(-date.dayOfWeek() + 1).addDays(-7) <= md_date && md_date <= date.addDays(-date.dayOfWeek())) {
++        fileModifyTime = LAST_WEEK;
++    } else if (year == md_year && month == md_month) {
++        fileModifyTime = THIS_MONTH;
++    } else if (md_month == lastMonth) {
++        if ((month == 1 && md_year == (year - 1)) || (month !=1 && year == md_year)) {
++            fileModifyTime = LAST_MONTH;
++        }
++    } else if (year == md_year) {
++        fileModifyTime = THIS_YEAR;
++    } else if (md_year == year - 1) {
++        fileModifyTime = LAST_YEAR;
++    }
++
++    m_file_modify_time_map[fileModifyTime]++;
++}
++
++void FileItemProxyFilterSortModel::calculationFileSizeCount(quint64 size) const
++{
++    int fileSize = ALL_SIZE;
++    if (size == 0) {
++        fileSize = EMPTY;
++    } else if (size > 0 && size <= TINY_BASE) {
++        fileSize = TINY;
++    } else if (size > TINY_BASE && size <= SMALL_BASE) {
++        fileSize = SMALL;
++    } else if (size > SMALL_BASE && size <= MEDIUM_BASE) {
++        fileSize = MEDIUM;
++    } else if (size > MEDIUM_BASE && size <= BIG_BASE) {
++        fileSize = BIG;
++    } else if (size > BIG_BASE && size <= LARGE_BASE) {
++        fileSize = LARGE;
++    } else if (size > LARGE_BASE) {
++        fileSize = GREAT;
++    }
++
++    m_file_size_map[fileSize]++;
++}
++
++void FileItemProxyFilterSortModel::calculationFileLabelCount(QStringList names, QList<QColor> colors) const
++{
++    QList<FileLabelItem *> allLabels = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
++    int size = allLabels.size();
++    for (int i = 0; i < size; i++) {
++        if (names.contains(allLabels.at(i)->name()) && colors.contains(allLabels.at(i)->color())) {
++            m_file_label_map[i]++;
++        }
++    }
++}
++
++void FileItemProxyFilterSortModel::calculationAll(FileItem *item) const
++{
++    calculationFileTypeCount(item->m_info->type());
++    calculationFileModifyTimeCount(item->m_info->modifiedTime());
++    calculationFileSizeCount(item->m_info->size());
++    calculationFileLabelCount(FileLabelModel::getGlobalModel()->getFileLabels(item->m_info->uri()), FileLabelModel::getGlobalModel()->getFileColors(item->m_info->uri()));
++}
++
+ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
+ {
+     //qDebug()<<"m_show_file_type: "<<m_show_file_type<<" "<<type;
+@@ -636,7 +743,8 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
+     if (! totalTypeList.contains(m_show_file_type) && m_show_file_type != ALL_FILE)
+         totalTypeList.append(m_show_file_type);
+ 
+-    for(int i=0; i<totalTypeList.count(); i++)
++    int count = totalTypeList.count();
++    for(int i = 0; i < count; i++)
+     {
+         auto cur = totalTypeList[i];
+         switch (cur)
+@@ -713,7 +821,8 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
+     int md_month = md_date.month();
+     int md_day = md_date.day();
+ 
+-    for(int i=0; i<m_modify_time_list.size(); i++)
++    int count = m_modify_time_list.size();
++    for(int i = 0; i < count; i++)
+     {
+         auto cur = m_modify_time_list[i];
+         switch(cur)
+@@ -744,7 +853,7 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
+         case LAST_WEEK:
+         {
+             QDate monDate = date.addDays(-date.dayOfWeek() + 1);
+-            if(monDate.addDays(-7)<= md_date &&  md_date <= monDate.addDays(-1))/* 判断给定日期是否在上周 */
++            if(monDate.addDays(-7) <= md_date &&  md_date <= monDate.addDays(-1))/* 判断给定日期是否在上周 */
+                 return true;
+             break;
+         }
+@@ -792,50 +901,51 @@ bool FileItemProxyFilterSortModel::checkFileSizeFilter(quint64 size) const
+     if (m_file_size_list.count() == 0 || m_file_size_list.contains(ALL_FILE))
+         return true;
+ 
+-    for(int i=0; i<m_file_size_list.count(); i++)
++    int count = m_file_size_list.count();
++    for(int i = 0; i < count; i++)
+     {
+         auto cur = m_file_size_list[i];
+         switch (cur)
+         {
+         case EMPTY: //[0K]
+         {           
+-            if (size ==0 )
++            if (size == 0)
+                 return true;
+             break;
+         }
+         case TINY: //（0-16K]
+         {          
+-            if (size > 0  &&size <=16 * K_BASE)
++            if (size > 0 && size <= TINY_BASE)
+                 return true;
+             break;
+         }
+         case SMALL:  //（16k-1M]
+         {
+-            if(size > 16 * K_BASE && size <=K_BASE * K_BASE)
++            if(size > TINY_BASE && size <= SMALL_BASE)
+                 return true;
+             break;
+         }
+         case MEDIUM: //(1M-128M]
+         {
+-            if(size > K_BASE * K_BASE && size <= 128 * K_BASE * K_BASE)
++            if(size > SMALL_BASE && size <= MEDIUM_BASE)
+                 return true;
+             break;
+         }
+         case BIG:  //(128M-1G]
+         {
+-            if(size > 128 * K_BASE * K_BASE && size <= K_BASE * K_BASE * K_BASE)
++            if(size > MEDIUM_BASE && size <= BIG_BASE)
+                 return true;
+             break;
+         }
+         case LARGE: //(1-4G]
+         {
+-            if (size > K_BASE * K_BASE * K_BASE&& size <= 4*K_BASE * K_BASE * K_BASE)
++            if (size > BIG_BASE && size <= LARGE_BASE)
+                 return true;
+             break;
+         }
+         case GREAT: //>4G
+         {
+-            if (size > 4*K_BASE * K_BASE * K_BASE)
++            if (size > LARGE_BASE)
+                 return true;
+             break;
+         }
+@@ -974,6 +1084,13 @@ void FileItemProxyFilterSortModel::clearConditions()
+     m_mimeTypeFilters.clear();
+     m_nameFilters.clear();
+     m_dirFilters = -1;
++
++    m_show_label_names.clear();
++    m_show_label_colors.clear();
++    m_file_type_map.clear();
++    m_file_modify_time_map.clear();
++    m_file_size_map.clear();
++    m_file_label_map.clear();
+ }
+ 
+ void FileItemProxyFilterSortModel::addFileContentFilter(QString key, bool updateNow)
+@@ -1104,6 +1221,34 @@ void FileItemProxyFilterSortModel::manualUpdateExpectedSortInfo(int sortType, Qt
+     m_sortOrder = order;
+ }
+ 
++void FileItemProxyFilterSortModel::clearAllMapsCount()
++{
++    m_file_type_map.clear();
++    m_file_modify_time_map.clear();
++    m_file_size_map.clear();
++    m_file_label_map.clear();
++}
++
++QMap<int, int> FileItemProxyFilterSortModel::getFileTypeCount()
++{
++    return m_file_type_map;
++}
++
++QMap<int, int> FileItemProxyFilterSortModel::getFileModifyTimeCount()
++{
++    return m_file_modify_time_map;
++}
++
++QMap<int, int> FileItemProxyFilterSortModel::getFileSizeCount()
++{
++    return m_file_size_map;
++}
++
++QMap<int, int> FileItemProxyFilterSortModel::getFileLabelCount()
++{
++    return m_file_label_map;
++}
++
+ QStringList FileItemProxyFilterSortModel::getAllFileUris()
+ {
+     QStringList l;
+diff --git a/libpeony-qt/model/file-item-proxy-filter-sort-model.h b/libpeony-qt/model/file-item-proxy-filter-sort-model.h
+index deeb38b..75f7041 100644
+--- a/libpeony-qt/model/file-item-proxy-filter-sort-model.h
++++ b/libpeony-qt/model/file-item-proxy-filter-sort-model.h
+@@ -131,6 +131,11 @@ public:
+     Qt::SortOrder expectedSortOrder();
+ 
+     void manualUpdateExpectedSortInfo(int sortType, Qt::SortOrder order);
++    void clearAllMapsCount();
++    QMap<int, int> getFileTypeCount();
++    QMap<int, int> getFileModifyTimeCount();
++    QMap<int, int> getFileSizeCount();
++    QMap<int, int> getFileLabelCount();
+ 
+ public Q_SLOTS:
+     void update();
+@@ -160,6 +165,11 @@ private:
+ 
+     QVariant getDirectorySettings(const QString &key);
+     void setDirectorySettings(const QString &key, const QVariant &value);
++    void calculationFileTypeCount(QString type) const;
++    void calculationFileModifyTimeCount(quint64 modifiedTime) const;
++    void calculationFileSizeCount(quint64 size) const;
++    void calculationFileLabelCount(QStringList names, QList<QColor> colors) const;
++    void calculationAll(FileItem *item) const;
+ 
+ private:
+     GlobalSettings *m_settings = nullptr;
+@@ -176,6 +186,11 @@ private:
+     QColor m_label_color = Qt::transparent;
+     const int ALL_FILE = 0;
+     const quint64 K_BASE = 1024;
++    const quint64 TINY_BASE = 16 * K_BASE;
++    const quint64 SMALL_BASE = K_BASE * K_BASE;
++    const quint64 MEDIUM_BASE = 128 * K_BASE * K_BASE;
++    const quint64 BIG_BASE = K_BASE * K_BASE * K_BASE;
++    const quint64 LARGE_BASE = 4 * K_BASE * K_BASE * K_BASE;
+     int m_show_file_type=ALL_FILE, m_show_modify_time=ALL_FILE, m_show_file_size=ALL_FILE;
+     QList<int> m_file_type_list, m_modify_time_list, m_file_size_list;
+     QStringList m_file_name_list;
+@@ -193,6 +208,11 @@ private:
+ 
+     QDBusInterface *mDbusPeonyServer = nullptr;
+     QString m_fileContent;
++
++    mutable QMap<int, int> m_file_type_map;
++    mutable QMap<int, int> m_file_modify_time_map;
++    mutable QMap<int, int> m_file_size_map;
++    mutable QMap<int, int> m_file_label_map;
+ };
+ 
+ }
+diff --git a/libpeony-qt/model/file-label-model.cpp b/libpeony-qt/model/file-label-model.cpp
+index 912bcd4..ec380b3 100644
+--- a/libpeony-qt/model/file-label-model.cpp
++++ b/libpeony-qt/model/file-label-model.cpp
+@@ -485,6 +485,16 @@ int FileLabelModel::getLabelIdFromLabelName(const QString &colorName)
+     return 0;
+ }
+ 
++QColor FileLabelModel::getLableColorFromLabelName(const QString &colorName)
++{
++    for (auto item : m_labels) {
++        if (item->name() == colorName) {
++            return item->color();
++        }
++    }
++    return QColor(Qt::transparent);
++}
++
+ QString FileLabelModel::getLabelNameFromLabelId(int id)
+ {
+     for (auto item : m_labels) {
+diff --git a/libpeony-qt/model/file-label-model.h b/libpeony-qt/model/file-label-model.h
+index 903b8a9..d8f3178 100644
+--- a/libpeony-qt/model/file-label-model.h
++++ b/libpeony-qt/model/file-label-model.h
+@@ -86,6 +86,7 @@ public:
+     QSet<QString> getFileUrisFromLabelId(int labelId);
+     QString getLabelNameFromLabelId(int id);
+     int getLabelIdFromLabelName(const QString &colorName);
++    QColor getLableColorFromLabelName(const QString &colorName);
+ 
+ 
+ Q_SIGNALS:
+diff --git a/src/control/tab-widget.cpp b/src/control/tab-widget.cpp
+index e35fc44..e8e04ab 100644
+--- a/src/control/tab-widget.cpp
++++ b/src/control/tab-widget.cpp
+@@ -337,14 +337,14 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
+                   "QWidget#w {background-color: transparent;"
+                   "border: 0px solid transparent;}");
+ 
+-
+-
+     auto vbox = new QVBoxLayout();
+     m_top_layout = vbox;
+     vbox->setSpacing(0);
+     vbox->setContentsMargins(0, 0, 0, 0);
+     vbox->addLayout(trash);
+     vbox->addLayout(m_search_bar_layout);
++    //vbox->addLayout(m_search_filter_layout);
++    vbox->addWidget(m_filter_container);
+ 
+     m_preview_splitter = new QSplitter(this);
+     m_preview_splitter->setChildrenCollapsible(false);
+@@ -471,6 +471,25 @@ void TabWidget::setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize
+     }
+ }
+ 
++void TabWidget::updateSearchFilterHeight()
++{
++    m_filter_container->setMaximumHeight(m_search_filter_layout->getMaxinumHeight(m_filter_container->width()));
++    m_conditions_clear_btn->move(m_filter_container->geometry().right() - 46, m_filter_container->geometry().top() + 120);
++    m_conditions_clear_btn->raise();
++}
++
++void TabWidget::updateAdvanceShow(bool isVisible)
++{
++    m_filter_container->setVisible(isVisible);
++    m_condition_label->setVisible(isVisible);
++    m_file_type_box->setVisible(isVisible);
++    m_file_mtime_box->setVisible(isVisible);
++    m_file_size_box->setVisible(isVisible);
++    m_file_label_box->setVisible(isVisible);
++    m_input_edit->setVisible(isVisible);
++    m_conditions_clear_btn->setVisible(isVisible);
++}
++
+ void TabWidget::initAdvanceSearch()
+ {
+     //advance search bar
+@@ -536,9 +555,86 @@ void TabWidget::initAdvanceSearch()
+     m_home_search->setFixedHeight(TRASH_BUTTON_HEIGHT + 20);
+     m_home_search->setStyleSheet("border: 1px solid transparent;");
+ 
+-    m_add_filter_button = new QPushButton(QIcon::fromTheme("list-add-symbolic"), "", this);
+-    m_add_filter_button->setFixedHeight(TRASH_BUTTON_HEIGHT + 20);
+-    m_add_filter_button->setStyleSheet("border: 1px solid transparent;");
++    m_add_filter_button = new QPushButton(QIcon::fromTheme("list-add-symbolic"), "Filter", this);
++    m_add_filter_button->setCheckable(true);
++    m_add_filter_button->setFixedHeight(TRASH_BUTTON_HEIGHT);
++    connect(m_add_filter_button, &QPushButton::toggled, this, [=](bool checked){
++       if (checked) {
++           updateAdvanceShow(true);
++           updateSearchFilterHeight();
++       } else {
++           updateAdvanceShow(false);
++       }
++    });
++
++    m_filter_container = new QWidget(this);
++    m_filter_container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
++    m_filter_container->setContentsMargins(0, 0, 0, 0);
++
++    m_file_label_model = FileLabelModel::getGlobalModel();
++    QList<FileLabelItem *> allLabels = m_file_label_model->getAllFileLabelItems();
++
++    m_search_filter_layout = new FlowLayout(10, 12, 15);
++    m_condition_label = new QLabel(tr("Condition"));
++    m_file_type_box = new Peony::MultiSelectComboBox();
++    m_file_type_box->addItems(m_file_type_list);
++    m_file_type_box->setPlaceholderText(tr("File Type"));
++
++    m_file_mtime_box = new Peony::MultiSelectComboBox();
++    m_file_mtime_box->addItems(m_file_mtime_list);
++    m_file_mtime_box->setPlaceholderText(tr("Modify time"));
++
++    m_file_size_box = new Peony::MultiSelectComboBox();
++    m_file_size_box->addItems(m_file_size_list);
++    m_file_size_box->setPlaceholderText(tr("File Size"));
++
++    m_file_label_box = new Peony::MultiSelectComboBox();
++    m_file_label_box->setPlaceholderText(tr("File Label"));
++
++    for (int i = 0; i < allLabels.size(); ++i) {
++        m_file_label_box->addItem(allLabels.at(i)->name(), false, 0, allLabels.at(i)->color());
++    }
++
++    m_input_edit = new QLineEdit();
++    m_input_edit->setFixedHeight(TRASH_BUTTON_HEIGHT);
++    m_input_edit->setFixedWidth(TRASH_BUTTON_WIDTH *4);
++    m_input_edit->setPlaceholderText(tr("Please input key words..."));
++    m_input_edit->setText("");
++    //m_input_edit->setTextMargins(0, 0, 20, 0);
++
++    m_conditions_clear_btn = new QPushButton(this);
++    m_conditions_clear_btn->setIcon(QIcon::fromTheme("edit-delete-symbolic"));
++    m_conditions_clear_btn->setFixedSize(TRASH_BUTTON_HEIGHT, TRASH_BUTTON_HEIGHT);
++
++    m_search_filter_layout->addWidget(m_condition_label);
++    m_search_filter_layout->addWidget(m_file_type_box);
++    m_search_filter_layout->addWidget(m_file_mtime_box);
++    m_search_filter_layout->addWidget(m_file_size_box);
++    m_search_filter_layout->addWidget(m_file_label_box);
++    m_search_filter_layout->addWidget(m_input_edit);
++
++    m_filter_container->setLayout(m_search_filter_layout);
++    connect(m_file_type_box, &Peony::MultiSelectComboBox::hidingPopup, this, &TabWidget::updateAdvanceConditions);
++    connect(m_file_mtime_box, &Peony::MultiSelectComboBox::hidingPopup, this, &TabWidget::updateAdvanceConditions);
++    connect(m_file_size_box, &Peony::MultiSelectComboBox::hidingPopup, this, &TabWidget::updateAdvanceConditions);
++    connect(m_file_label_box, &Peony::MultiSelectComboBox::hidingPopup, this, &TabWidget::updateAdvanceConditions);
++    connect(m_file_type_box, &Peony::MultiSelectComboBox::showingPopup, this, &TabWidget::updateMultiComboBoxCount);
++    connect(m_file_mtime_box, &Peony::MultiSelectComboBox::showingPopup, this, &TabWidget::updateMultiComboBoxCount);
++    connect(m_file_size_box, &Peony::MultiSelectComboBox::showingPopup, this, &TabWidget::updateMultiComboBoxCount);
++    connect(m_file_label_box, &Peony::MultiSelectComboBox::showingPopup, this, &TabWidget::updateMultiComboBoxCount);
++    connect(m_input_edit, &QLineEdit::textChanged, this, &TabWidget::updateAdvanceConditions);
++    connect(m_conditions_clear_btn, &QPushButton::clicked, this, [=](){
++        for (int i = 0; i < m_conditions_list.size(); ++i) {
++            m_conditions_list.at(i)->uncheckAllItem();
++        }
++        m_file_label_box->uncheckAllItem();
++        m_input_edit->setText("");
++        updateAdvanceConditions();
++    });
++
++    m_conditions_list.append(m_file_type_box);
++    m_conditions_list.append(m_file_size_box);
++    m_conditions_list.append(m_file_mtime_box);
+ 
+     connect(m_home_search, &QPushButton::clicked, m_home_search, [=]() {
+         m_jumpToComputer = true;
+@@ -553,8 +649,6 @@ void TabWidget::initAdvanceSearch()
+         }
+     });
+ 
+-    connect(m_add_filter_button, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
+-
+     search->addWidget(title, 0, Qt::AlignLeft);
+     search->addSpacing(10);
+     search->addWidget(m_current_search, 0, Qt::AlignLeft);
+@@ -573,6 +667,7 @@ void TabWidget::initAdvanceSearch()
+     m_home_search->setVisible(false);
+     m_add_filter_button->setVisible(false);
+     searchTypeCommobox->setVisible(false);
++    updateAdvanceShow(false);
+ }
+ 
+ //search conditions changed, update filter
+@@ -646,267 +741,6 @@ void TabWidget::browsePath()
+     }
+ }
+ 
+-void TabWidget::addNewConditionBar()
+-{
+-    QHBoxLayout *layout = new QHBoxLayout();
+-    m_layout_list.append(layout);
+-
+-    QToolBar *optionBar = new QToolBar(this);
+-    m_search_bar_list.append(optionBar);
+-
+-    QComboBox *conditionCombox = new QComboBox(optionBar);
+-    m_conditions_list.append(conditionCombox);
+-    conditionCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
+-    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+-        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+-        double fontSize = fontSetting->get("systemFontSize").toDouble();
+-        setCondWidthWithFont(conditionCombox, fontSize);
+-    }else{
+-        conditionCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2);
+-    }
+-
+-    auto conditionModel = new QStringListModel(optionBar);
+-    conditionModel->setStringList(m_option_list);
+-    conditionCombox->setModel(conditionModel);
+-    auto index = m_search_bar_count;
+-    if (index > m_option_list.count()-1)
+-        index = m_option_list.count()-1;
+-    conditionCombox->setCurrentIndex(index);
+-
+-    //qDebug() << "addNewConditionBar:" <<index;
+-
+-    QLabel *linkLabel = new QLabel(tr("is"));
+-    m_link_label_list.append(linkLabel);
+-    linkLabel->setFixedHeight(TRASH_BUTTON_HEIGHT);
+-    linkLabel->setFixedWidth(TRASH_BUTTON_HEIGHT);
+-
+-    QComboBox *classifyCombox = new QComboBox(optionBar);
+-    m_classify_list.append(classifyCombox);
+-    classifyCombox->setFixedHeight(TRASH_BUTTON_HEIGHT);
+-    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+-        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+-        double fontSize = fontSetting->get("systemFontSize").toDouble();
+-        setClassifyWidthWithFont(classifyCombox, fontSize);
+-    }
+-    else{
+-        classifyCombox->setFixedWidth(TRASH_BUTTON_WIDTH *2+45);
+-    }
+-
+-    auto classifyModel = new QStringListModel(optionBar);
+-    auto list = getCurrentClassify(index);
+-    classifyModel->setStringList(list);
+-    classifyCombox->setModel(classifyModel);
+-
+-    QLineEdit *inputBox = new QLineEdit(optionBar);
+-    m_input_list.append(inputBox);
+-    inputBox->setFixedHeight(TRASH_BUTTON_HEIGHT);
+-    inputBox->setFixedWidth(TRASH_BUTTON_WIDTH *4);
+-    inputBox->setPlaceholderText(tr("Please input key words..."));
+-    inputBox->setText("");
+-    //fix bug#180920, contents and icon overlap issue
+-    inputBox->setTextMargins(0, 0, 20, 0);
+-
+-    //bug#93521 添加清除按钮
+-    QToolButton* clearButton = new QToolButton(inputBox);
+-    clearButton->setAttribute(Qt::WA_TranslucentBackground);
+-    clearButton->setObjectName("toolButton");
+-    clearButton->installEventFilter(this);
+-    clearButton->setAutoRaise(true);
+-    clearButton->setStyle(TabBarStyle::getStyle());
+-    clearButton->setFixedSize(inputBox->height() - 4, inputBox->height() - 4);
+-    QHBoxLayout* clearlayout = new QHBoxLayout(inputBox);
+-    clearlayout->addStretch();
+-    clearlayout->addWidget(clearButton,Qt::AlignRight);
+-    clearlayout->setMargin(2);
+-    inputBox->setLayout(clearlayout);
+-    clearButton->setIcon(QIcon::fromTheme("edit-clear-symbolic"));
+-    clearButton->setProperty("isWindowButton", 1);
+-    //clearButton->setProperty("useIconHighlightEffect", 0x2);
+-    //clearButton->setAutoRaise(true);
+-    clearButton->hide();
+-
+-
+-    connect(clearButton, &QPushButton::clicked, this, [=](){
+-        inputBox->clear();
+-    });
+-    connect(inputBox, &QLineEdit::textChanged, this,  [=](const QString &text){
+-        if(text.isEmpty())
+-        {
+-            clearButton->hide();
+-        }
+-        else
+-        {
+-            clearButton->show();
+-        }
+-    });
+-
+-    QPushButton *addButton = new QPushButton(QIcon::fromTheme("list-add-symbolic"), "", optionBar);
+-    m_add_button_list.append(addButton);
+-    addButton->setFixedHeight(20);
+-    addButton->setFixedWidth(20);
+-    addButton->setFlat(true);
+-    addButton->setProperty("isWindowButton", 1);
+-    //addButton->setProperty("useIconHighlightEffect", 2);
+-    addButton->setProperty("isIcon", true);
+-    connect(addButton, &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
+-
+-    QPushButton *removeButton = new QPushButton(QIcon::fromTheme("list-remove-symbolic"), "", optionBar);
+-    m_remove_button_list.append(removeButton);
+-    removeButton->setFixedHeight(20);
+-    removeButton->setFixedWidth(20);
+-    removeButton->setFlat(true);
+-    removeButton->setProperty("isWindowButton", 1);
+-    //removeButton->setProperty("useIconHighlightEffect", 2);
+-    removeButton->setProperty("isIcon", true);
+-    //mapper for button clicked parse index
+-    auto signalMapper = new QSignalMapper(this);
+-    connect(removeButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+-    signalMapper->setMapping(removeButton, index);
+-    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(removeConditionBar(int)));
+-    m_remove_mapper_list.append(signalMapper);
+-
+-//    layout->addWidget(addButton, Qt::AlignRight);
+-//    layout->addSpacing(10);
+-//    layout->addWidget(removeButton, Qt::AlignRight);
+-//    layout->addSpacing(10);
+-//    layout->addSpacing(TRASH_BUTTON_WIDTH - 20);
+-    //对齐搜索按钮，留出间距
+-    layout->addSpacing(m_search_title->width() + 10);
+-    layout->addWidget(conditionCombox, Qt::AlignLeft);
+-    layout->addSpacing(10);
+-    layout->addWidget(linkLabel, Qt::AlignLeft);
+-    layout->addSpacing(10);
+-    layout->addWidget(classifyCombox, Qt::AlignLeft);
+-    layout->addWidget(inputBox, Qt::AlignLeft);
+-    layout->addWidget(optionBar);
+-    layout->addWidget(removeButton, Qt::AlignRight);
+-    layout->addSpacing(10);
+-    layout->addWidget(addButton, Qt::AlignRight);
+-    layout->setContentsMargins(10, 0, 10, 5);
+-
+-    if (index%4 >= 3)
+-    {
+-        classifyCombox->hide();
+-        linkLabel->setText(tr("contains"));
+-        //adjust label width to language
+-        //use 1.5 rate width to fix big size font issue, link to bug#58824
+-        QLocale locale;
+-        if (locale.language() == QLocale::Chinese)
+-            linkLabel->setFixedWidth(1.5 * TRASH_BUTTON_HEIGHT);
+-        else
+-            linkLabel->setFixedWidth(TRASH_BUTTON_WIDTH);
+-    }
+-    else
+-    {
+-       inputBox->hide();
+-    }
+-
+-
+-    connect(conditionCombox, &QComboBox::currentTextChanged, [=]()
+-    {
+-        auto cur = conditionCombox->currentIndex();
+-        if (cur%4 >= 3)
+-        {
+-            classifyCombox->setCurrentIndex(0);
+-            classifyCombox->hide();
+-            inputBox->show();
+-            linkLabel->setText(tr("contains"));
+-            //adjust label width to language
+-            //use 1.5 rate width to fix big size font issue, link to bug#58824
+-            QLocale locale;
+-            if (locale.language() == QLocale::Chinese)
+-                linkLabel->setFixedWidth(1.5 * TRASH_BUTTON_HEIGHT);
+-            else
+-                linkLabel->setFixedWidth(TRASH_BUTTON_WIDTH);
+-        }
+-        else
+-        {
+-            classifyCombox->show();
+-            //clear old filter conditions, fix bug#83559
+-            inputBox->setText("");
+-            inputBox->hide();
+-            linkLabel->setFixedWidth(TRASH_BUTTON_HEIGHT);
+-            linkLabel->setText(tr("is"));
+-            auto classifyList = getCurrentClassify(cur);
+-            classifyModel->setStringList(classifyList);
+-            classifyCombox->setModel(classifyModel);
+-            classifyCombox->setCurrentIndex(0);
+-        }
+-    });
+-
+-    connect(classifyCombox, &QComboBox::currentTextChanged, this, &TabWidget::updateAdvanceConditions);
+-    connect(inputBox, &QLineEdit::textChanged, this, &TabWidget::updateAdvanceConditions);
+-
+-    m_top_layout->insertLayout(m_top_layout->count()-1, layout);
+-    m_search_bar_count++;
+-    updateAdvanceConditions();
+-    updateButtons();
+-}
+-
+-void TabWidget::removeConditionBar(int index)
+-{
+-    //disconnect signals after index search bars
+-    for(int cur=0; cur<m_layout_list.count(); cur++)
+-    {
+-        disconnect(m_add_button_list[cur], &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
+-        disconnect(m_remove_button_list[cur], SIGNAL(clicked()), m_remove_mapper_list[cur], SLOT(map()));
+-        disconnect(m_remove_mapper_list[cur], SIGNAL(mapped(int)), this, SLOT(removeConditionBar(int)));
+-    }
+-
+-    //qDebug() << "removeConditionBar:" <<index <<m_conditions_list.count();
+-    m_layout_list[index]->deleteLater();
+-    m_conditions_list[index]->deleteLater();
+-    m_link_label_list[index]->deleteLater();
+-    m_classify_list[index]->deleteLater();
+-    m_input_list[index]->deleteLater();
+-    m_search_bar_list[index]->deleteLater();
+-    m_add_button_list[index]->deleteLater();
+-    m_remove_button_list[index]->deleteLater();
+-    m_remove_mapper_list[index]->deleteLater();
+-
+-    m_layout_list.removeAt(index);
+-    m_conditions_list.removeAt(index);
+-    //qDebug() << "removeConditionBar:"<<m_conditions_list.count();
+-    m_link_label_list.removeAt(index);
+-    m_classify_list.removeAt(index);
+-    m_input_list.removeAt(index);
+-    m_search_bar_list.removeAt(index);
+-    m_add_button_list.removeAt(index);
+-    m_remove_button_list.removeAt(index);
+-    m_remove_mapper_list.removeAt(index);
+-
+-    //reconnect signals after index search bars
+-    for(int cur=0; cur<m_layout_list.count(); cur++)
+-    {
+-        connect(m_add_button_list[cur], &QPushButton::clicked, this, &TabWidget::addNewConditionBar);
+-        connect(m_remove_button_list[cur], SIGNAL(clicked()), m_remove_mapper_list[cur], SLOT(map()));
+-        m_remove_mapper_list[cur]->setMapping(m_remove_button_list[cur], cur);
+-        connect(m_remove_mapper_list[cur], SIGNAL(mapped(int)), this, SLOT(removeConditionBar(int)));
+-    }
+-    m_search_bar_count--;
+-    updateAdvanceConditions();
+-    updateButtons();
+-}
+-
+-QStringList TabWidget::getCurrentClassify(int rowCount)
+-{
+-    QStringList currentList;
+-    currentList.clear();
+-
+-    switch (rowCount%4) {
+-    case 0:
+-        return m_file_type_list;
+-    case 1:
+-        return m_file_size_list;
+-    case 2:
+-        return m_file_mtime_list;
+-    default:
+-        break;
+-    }
+-
+-    return currentList;
+-}
+-
+ void TabWidget::updateStatusBarSliderState()
+ {
+     if (currentPage() && currentPage()->getView()) {
+@@ -934,11 +768,6 @@ void TabWidget::updateTrashBarVisible(const QString &uri)
+     m_trash_label->setVisible(visible);
+     m_clear_button->setVisible(visible);
+     m_recover_button->setVisible(visible);
+-
+-//    if (uri.startsWith("trash://") || uri.startsWith("recent://"))
+-//        m_tool_bar->setVisible(false);
+-//    else
+-//        m_tool_bar->setVisible(true);
+ }
+ 
+ void TabWidget::handleZoomLevel(int zoomLevel)
+@@ -974,34 +803,6 @@ void TabWidget::handleZoomLevel(int zoomLevel)
+     }
+ }
+ #include"windows/FMWindowIface.h"
+-void TabWidget::enableSearchBar(bool enable)
+-{
+-    //qDebug() << "enable:" <<enable;
+-    //m_search_path->setEnabled(enable);
+-    //m_search_close->setEnabled(enable);
+-    m_search_title->setEnabled(enable);
+-    m_search_bar->setEnabled(enable);
+-    if (m_search_bar_count >0)
+-    {
+-        //already had a list,just set to show
+-        for(int i=0; i<m_search_bar_list.count(); i++)
+-        {
+-            m_conditions_list[i]->setEnabled(enable);
+-            m_link_label_list[i]->setEnabled(enable);
+-            if (m_conditions_list[i]->currentIndex()%4 < 3)
+-                m_classify_list[i]->setEnabled(enable);
+-            else
+-                m_input_list[i]->setEnabled(enable);
+-            m_search_bar_list[i]->setEnabled(enable);
+-            m_add_button_list[i]->setEnabled(enable);
+-            /* When there is only one filter item,remove button set disable */
+-            if(m_search_bar_count==1)
+-                m_remove_button_list[0]->setEnabled(false);
+-            else
+-                m_remove_button_list[i]->setEnabled(enable);
+-        }
+-    }
+-}
+ 
+ #include <KWindowSystem>
+ void TabWidget::slot_responseUnmounted(const QString &destUri, const QString &sourceUri)
+@@ -1074,10 +875,50 @@ bool TabWidget::isSearchIndex()
+     return isSearchIndex;
+ }
+ 
++void TabWidget::setMutipleLabelConditions(QStringList names, QList<QColor> colors)
++{
++    if(!currentPage())
++        return;
++    currentPage()->setMutipleLabelConditions(names, colors);
++}
++
++void TabWidget::updateMultiComboBoxCount()
++{
++    if (!currentPage())
++        return;
++    QMap<int, int> fileTypeMap = currentPage()->getFileTypeCount();
++    for (int i = 0; i < m_file_type_box->count(); ++i) {
++        m_file_type_box->setCountFromItemIndex(i, fileTypeMap.value(i + 1));
++    }
++
++    QMap<int, int> fileModifyTimeMap = currentPage()->getFileModifyTimeCount();
++    for (int i = 0; i < m_file_mtime_box->count(); ++i) {
++        m_file_mtime_box->setCountFromItemIndex(i, fileModifyTimeMap.value(i + 1));
++    }
++
++    QMap<int, int> fileSizeMap = currentPage()->getFileSizeCount();
++    for (int i = 0; i < m_file_size_box->count(); ++i) {
++        m_file_size_box->setCountFromItemIndex(i, fileSizeMap.value(i + 1));
++    }
++
++    QMap<int, int> fileLabelMap = currentPage()->getFileLabelCount();
++    for (int i = 0; i < m_file_label_box->count(); ++i) {
++        m_file_label_box->setCountFromItemIndex(i, fileLabelMap.value(i));
++    }
++}
++
++void TabWidget::clearAllMapsCount()
++{
++    if(!currentPage())
++        return;
++
++    currentPage()->clearAllMapsCount();
++    updateFilter();
++}
++
+ void TabWidget::updateSearchBar(bool showSearch)
+ {
+     qDebug() << "updateSearchBar:" <<showSearch;
+-    m_show_search_bar = showSearch;
+     if (showSearch && !qApp->property("tabletMode").toBool())
+     {
+         m_search_title->show();
+@@ -1098,15 +939,14 @@ void TabWidget::updateSearchBar(bool showSearch)
+         m_search_bar->hide();
+         m_current_search->hide();
+         m_home_search->hide();
++        m_add_filter_button->setChecked(false);
+         m_add_filter_button->hide();
+         m_jumpToComputer = false;
+         m_search_type_box->hide();
+         m_search_bar_layout->setContentsMargins(10, 0, 10, 0);
++        updateAdvanceShow(false);
+     }
+ 
+-    //if (m_search_bar_count >0)
+-    updateSearchList();
+-
+     if (! showSearch)
+     {
+         //exit advance search, clear search conditions
+@@ -1132,35 +972,7 @@ void TabWidget::updateSearchBar(bool showSearch)
+     }
+ 
+     //9X0 changes, set default as true, fix bug#70916
+-    enableSearchBar(true);
+-}
+-
+-void TabWidget::updateButtons()
+-{
+-    //only one condition, set disabled
+-    //since ukui3.20,can delete all
+-//    if (m_search_bar_count ==1)
+-//        m_remove_button_list[0]->setDisabled(true);
+-//    else
+-//        m_remove_button_list[0]->setDisabled(false);
+-
+-    //limit total number to 10
+-    if (m_search_bar_count >= 10)
+-    {
+-        for(int i=0;i<m_search_bar_count;i++)
+-        {
+-            m_add_button_list[i]->setDisabled(true);
+-        }
+-        m_add_filter_button->setDisabled(true);
+-    }
+-    else
+-    {
+-        for(int i=0;i<m_search_bar_count;i++)
+-        {
+-            m_add_button_list[i]->setDisabled(false);
+-        }
+-        m_add_filter_button->setDisabled(false);
+-    }
++    //enableSearchBar(true);
+ }
+ 
+ void TabWidget::updateCurrentSearchPath()
+@@ -1213,7 +1025,6 @@ void TabWidget::updateSearchPathButton(const QString &uri)
+             curUri = getCurrentUri();
+     }
+     auto info = Peony::FileInfo::fromUri(curUri);
+-    m_search_button_info = info;
+     if (info.get()->isEmptyInfo()) {
+         // TODO: use async method.
+         Peony::FileInfoJob j(info);
+@@ -1234,57 +1045,6 @@ void TabWidget::updateSearchPathButton(const QString &uri)
+     m_current_search->adjustSize();
+ }
+ 
+-void TabWidget::updateSearchList()
+-{
+-    m_show_search_list = !m_show_search_list;
+-    //if not show search bar, then don't show search list
+-    if (m_show_search_list && m_show_search_bar)
+-    {
+-        //m_search_more->setIcon(QIcon::fromTheme("go-up"));
+-        //first click to show advance serach
+-        if(m_search_bar_list.count() ==0)
+-        {
+-            //default can has 0 conditions in new design
+-            //addNewConditionBar();
+-            return;
+-        }
+-
+-        //already had a list,just set to show
+-        for(int i=0; i<m_search_bar_list.count(); i++)
+-        {
+-            m_conditions_list[i]->show();
+-            m_link_label_list[i]->show();
+-            if (m_conditions_list[i]->currentIndex()%4 < 3)
+-                m_classify_list[i]->show();
+-            else
+-                m_input_list[i]->show();
+-            m_search_bar_list[i]->show();
+-            m_add_button_list[i]->show();
+-            m_remove_button_list[i]->show();
+-            m_layout_list[i]->setContentsMargins(10, 0, 10, 5);
+-        }
+-    }
+-    else
+-    {
+-        //hide search list
+-        //m_search_more->setIcon(QIcon::fromTheme("go-down"));
+-        for(int i=0; i<m_search_bar_list.count(); i++)
+-        {
+-            m_conditions_list[i]->hide();
+-            //m_conditions_list[i]->setCurrentIndex(0);
+-            m_link_label_list[i]->hide();
+-            m_classify_list[i]->hide();
+-            m_classify_list[i]->setCurrentIndex(0);
+-            m_input_list[i]->hide();
+-            m_input_list[i]->setText("");
+-            m_search_bar_list[i]->hide();
+-            m_add_button_list[i]->hide();
+-            m_remove_button_list[i]->hide();
+-            m_layout_list[i]->setContentsMargins(10, 0, 10, 0);
+-        }
+-    }
+-}
+-
+ Peony::DirectoryViewContainer *TabWidget::currentPage()
+ {
+     return qobject_cast<Peony::DirectoryViewContainer *>(m_stack->currentWidget());
+@@ -1785,28 +1545,35 @@ void TabWidget::updateAdvanceConditions()
+ {
+     clearConditions();
+ 
+-    //get key list for proxy-filter
+-    //input name not show, must be empty
+-    QStringList keyList;
+-    for(int i=0; i<m_layout_list.count(); i++)
+-    {
+-        QString input = m_input_list[i]->text();
+-        if(input != "" && ! keyList.contains(input))
+-        {
+-            keyList.append(input);
++    for (int i = 0; i < m_conditions_list.size(); ++i) {
++        QList<int> selectIndexs = m_conditions_list.at(i)->getSelectItemsIndex();
++        if (!selectIndexs.isEmpty()) {
++            for (int j = 0; j < selectIndexs.size(); j++) {
++                addFilterCondition(i, selectIndexs.at(j) + 1);
++            }
+         }
+-        else
+-        {
+-            addFilterCondition(m_conditions_list[i]->currentIndex(), m_classify_list[i]->currentIndex());
++    }
++
++    QStringList selectTexts = m_file_label_box->getSelectItemsText();
++    if (!selectTexts.isEmpty()) {
++        QList<QColor> colors;
++        for (auto text : selectTexts) {
++            QColor tmpColor = FileLabelModel::getGlobalModel()->getLableColorFromLabelName(text);
++            if (tmpColor != Qt::transparent) {
++                colors.append(tmpColor);
++            }
+         }
++        setMutipleLabelConditions(selectTexts, colors);
+     }
+ 
++    QStringList keyList = m_input_edit->text().split(",");
+     //update file name filter
+     for(auto key : keyList)
+     {
+         if(!currentPage())
+             continue;
+-        currentPage()->addFileNameFilter(key);
++        if (key != "")
++            currentPage()->addFileNameFilter(key);
+     }
+ 
+     updateFilter();
+@@ -1986,6 +1753,7 @@ void TabWidget::resizeEvent(QResizeEvent *e)
+     QMainWindow::resizeEvent(e);
+     updateTabBarGeometry();
+     //updateStatusBarGeometry();
++    updateSearchFilterHeight();
+ }
+ 
+ void TabWidget::updateTabBarGeometry()
+diff --git a/src/control/tab-widget.h b/src/control/tab-widget.h
+index 368920d..0183cae 100644
+--- a/src/control/tab-widget.h
++++ b/src/control/tab-widget.h
+@@ -39,6 +39,9 @@
+ #include "navigation-tab-bar.h"
+ #include "file-info.h"
+ #include "tab-status-bar.h"
++#include "multi-select-combobox.h"
++#include "flowlayout.h"
++#include "file-label-model.h"
+ 
+ class NavigationTabBar;
+ class QStackedWidget;
+@@ -51,6 +54,7 @@ namespace Peony {
+ class PreviewPageIface;
+ class DirectoryViewContainer;
+ class FileInfo;
++class MultiSelectComboBox;
+ }
+ 
+ /*!
+@@ -193,16 +197,11 @@ public Q_SLOTS:
+     void updateTrashBarVisible(const QString &uri = "");
+     void updateSearchPathButton(const QString &uri = "");
+     void updateSearchBar(bool showSearch);
+-    void updateSearchList();
+-    void updateButtons();
+-    void addNewConditionBar();
+-    void removeConditionBar(int index);
+     void searchUpdate();
+     void searchChildUpdate();
+     void browsePath();
+ 
+     void handleZoomLevel(int zoomLevel);
+-    void enableSearchBar(bool enable);
+ 
+     void updateCurrentSearchPath();
+     void switchSearchPath (bool isCurrent);
+@@ -213,6 +212,9 @@ public Q_SLOTS:
+     void updateSearchTypeShow();
+     void updateFilterContent(const QString& key);
+     bool isSearchIndex();
++    void setMutipleLabelConditions(QStringList names, QList<QColor> colors);
++    void updateMultiComboBoxCount();
++    void clearAllMapsCount();
+ 
+ protected:
+     void changeCurrentIndex(int index);
+@@ -227,8 +229,6 @@ protected:
+ 
+     void initAdvanceSearch();
+ 
+-    QStringList getCurrentClassify(int rowCount);
+-
+     void updatePreviewPageVisible();
+     void updateStatusBarSliderState();
+     void updatePreviewButtonStatus(bool status);
+@@ -238,6 +238,8 @@ protected:
+     bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
+     void setCondWidthWithFont(QComboBox *conditionCombox, int fontSize);
+     void setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize);
++    void updateSearchFilterHeight();
++    void updateAdvanceShow(bool isVisible);
+ 
+ private:
+     NavigationTabBar *m_tab_bar;
+@@ -247,26 +249,14 @@ private:
+     QTreeView *m_treeView;
+     QStandardItemModel *m_model;
+ 
+-    //QWidget *m_tab_bar_bg;
+-    QWidget *m_header_bar_bg;
+-
+     QStackedWidget *m_stack;
+ 
+-    PreviewPageButtonGroups *m_buttons;
+-
+-    QToolBar *m_tool_bar;
+-
+     Peony::PreviewPageIface *m_preview_page = nullptr;
+     QStackedWidget *m_preview_page_container;
+ 
+-    QAction *m_current_preview_action = nullptr;
+-    QAction *m_preview_action = nullptr;
+-    QActionGroup *m_preview_action_group = nullptr;
+-
+     QToolBar *m_trash_bar;
+     QToolBar *m_search_bar;
+     QVBoxLayout *m_top_layout;
+-    QHBoxLayout *m_header_bar_layout;
+     QHBoxLayout *m_trash_bar_layout;
+     QHBoxLayout *m_search_bar_layout;
+     QLabel *m_trash_label;
+@@ -285,16 +275,20 @@ private:
+     QComboBox* m_search_type_box;
+ 
+     //use qlist for dynamic generated search conditions list
+-    QList<QHBoxLayout*> m_layout_list;
+-    QList<QComboBox*> m_conditions_list;
++    //QList<QHBoxLayout*> m_layout_list;
+     QList<QComboBox*> m_classify_list;
+-    QList<QLabel*> m_link_label_list;
+-    QList<QPushButton*> m_add_button_list;
+-    QList<QPushButton*> m_remove_button_list;
+-    QList<QToolBar*> m_search_bar_list;
+-    QList<QLineEdit*> m_input_list;
+-    QList<QSignalMapper*> m_add_mappper_list;
+-    QList<QSignalMapper*> m_remove_mapper_list;
++
++    QList<Peony::MultiSelectComboBox *> m_conditions_list;
++    Peony::MultiSelectComboBox *m_file_type_box;
++    Peony::MultiSelectComboBox *m_file_mtime_box;
++    Peony::MultiSelectComboBox *m_file_size_box;
++    Peony::MultiSelectComboBox *m_file_label_box;
++    QLineEdit *m_input_edit;
++    QLabel *m_condition_label;
++    FlowLayout *m_search_filter_layout;
++    QWidget *m_filter_container;
++    QPushButton *m_conditions_clear_btn;
++    FileLabelModel *m_file_label_model;
+ 
+     int m_search_bar_count = 0;
+     const int ELIDE_TEXT_LENGTH = 6;
+@@ -302,8 +296,6 @@ private:
+     TabStatusBar *m_status_bar = nullptr;
+ 
+     bool m_triggered_preview_page = false;
+-    bool m_show_search_list = false;
+-    bool m_show_search_bar = false;
+     bool m_search_child_flag = true;
+     bool m_isTabletMode = false;
+     bool m_jumpToComputer = false;
+@@ -315,16 +307,12 @@ private:
+ 
+     //advance search filter options
+     QStringList m_option_list = {tr("type"), tr("file size"), tr("modify time"), tr("name")};
+-    QStringList m_file_type_list = {tr("all"), tr("file folder"), tr("image"), tr("video"),
++    QStringList m_file_type_list = {/*tr("all"), */tr("file folder"), tr("image"), tr("video"),
+                                     tr("text file"), tr("audio"), tr("wps file"), tr("others")};
+-    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
+-    QStringList m_file_size_list = {tr("all"),tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
++    QStringList m_file_mtime_list = {/*tr("all"), */tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
++    QStringList m_file_size_list = {/*tr("all"),*/tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
+     QStringList m_search_type_list = {tr("file name and content"), tr("file name")};
+ 
+-    bool m_first_add_page = true;
+-
+-    std::shared_ptr<Peony::FileInfo> m_search_button_info;
+-
+     QWidget* m_parent = nullptr;
+ };
+ 
+diff --git a/src/src.pro b/src/src.pro
+index 8ed4cd0..8bc4ce7 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -21,6 +21,7 @@ include(windows/windows-peony.pri)
+ include(control/control.pri)
+ include(../plugin-iface/unstable/window-plugin-iface.pri)
+ #include(view/view.pri)
++include(../3rd-parties/layouts/layouts.pri)
+ DEFINES += QAPPLICATION_CLASS=QApplication
+ 
+ PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf polkit-gobject-1
+diff --git a/src/windows/main-window.cpp b/src/windows/main-window.cpp
+index beef903..b314d08 100644
+--- a/src/windows/main-window.cpp
++++ b/src/windows/main-window.cpp
+@@ -1211,6 +1211,10 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
+        needUpdate = true;
+     }
+ 
++    if (m_last_key != key && key != "") {
++        m_tab->clearAllMapsCount();
++    }
++
+     if (updateKey)
+     {
+         needUpdate = true;
