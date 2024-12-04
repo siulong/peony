@@ -42,11 +42,13 @@ public:
     bool isEditing();
     void setAnimationMode(bool isAnimation);
     void setSearchBarFocus();
-
+    bool getSearchMode() {
+        return m_in_search_mode;
+    }
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool forceUpdate = false);
     void refreshRequest();
-    void searchRequest(const QString &path, const QString &key, bool searchMode = true);
+    void searchRequest(const QString &path, const QString &key);
     void updateFileTypeFilter(const int &index);
 //    void clearTrash();
     void updateSearchProgress(bool searching);
