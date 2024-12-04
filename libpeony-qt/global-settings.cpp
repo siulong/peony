@@ -41,6 +41,8 @@
 #include <kysdk/kysdk-system/libkysysinfo.h>
 #endif
 
+#include <QDBusInterface>
+
 using namespace Peony;
 
 static GlobalSettings *global_instance = nullptr;
@@ -73,6 +75,15 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(HOME_ICON_VISIBLE, true);
     m_cache.insert(TRASH_ICON_VISIBLE, true);
     m_cache.insert(COMPUTER_ICON_VISIBLE, true);
+
+    //story 28073, control the right menu open terminal option
+    m_cache.insert(SHOW_OPEN_TERMINAL, true);
+    //story 28077, control start peony or show peony UI
+    m_cache.insert(ENABLE_START_PEONY, true);
+    //story 28081, control double click desktop files in desktop
+    m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, true);
+    //story 28083, control file operation of shortcut keys
+    m_cache.insert(ENABLE_SHORTCUT_KEYS, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -83,6 +94,58 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         for (auto key : m_peonyGSettings->keys()) {
             m_cache.remove(key);
             m_cache.insert(key, m_peonyGSettings->get(key));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == SHOW_OPEN_TERMINAL) {
+                m_cache.remove(SHOW_OPEN_TERMINAL);
+                m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
+            m_cache.remove(SHOW_OPEN_TERMINAL);
+            m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_START_PEONY) {
+                m_cache.remove(ENABLE_START_PEONY);
+                m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_START_PEONY)) {
+            m_cache.remove(ENABLE_START_PEONY);
+            m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_DOUBLE_CLICK_DESKTOP) {
+                m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+                m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_DOUBLE_CLICK_DESKTOP)) {
+            m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+            m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_SHORTCUT_KEYS) {
+                m_cache.remove(ENABLE_SHORTCUT_KEYS);
+                m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_SHORTCUT_KEYS)) {
+            m_cache.remove(ENABLE_SHORTCUT_KEYS);
+            m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
         }
     }
 
@@ -592,6 +655,31 @@ void GlobalSettings::sendLongDataFormat(const QString &format)
 bool GlobalSettings::isExist(const QString &key)
 {
     return !m_cache.value(key).isNull();
+}
+
+void GlobalSettings::sendNotifyMessage(const QString &msg)
+{
+    if (! QDBusConnection::sessionBus().isConnected())
+        return;
+
+    QDBusInterface iface ("org.freedesktop.Notifications",
+                         "/org/freedesktop/Notifications",
+                         "org.freedesktop.Notifications", QDBusConnection::sessionBus ());
+
+    QList <QVariant> args;
+    QStringList actions;
+    QMap <QString, QVariant> hints;
+
+    args << QObject::tr("File Manager").toUtf8().constData()
+         << ((unsigned int) 0)
+         << "system-file-manager"
+         << QObject::tr("notify")
+         << msg
+         << actions
+         << hints
+         << (int) -1;
+
+    iface.callWithArgumentList (QDBus::AutoDetect, "Notify", args);
 }
 
 void GlobalSettings::reset(const QString &key)

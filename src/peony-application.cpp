@@ -332,6 +332,13 @@ QString PeonyApplication::getUriMessage(QStringList& strList)
 
 void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
 {
+    //story 28077, control start of peony
+    if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_START_PEONY).toBool()){
+        qWarning() << "peony is diablsed to start";
+        Peony::GlobalSettings::getInstance()->sendNotifyMessage(tr("Peony is disabled to start !"));
+        return;
+    }
+
     QCommandLineParser parser;
     if (m_first_parse) {
         parser.addHelpOption();

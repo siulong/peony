@@ -118,6 +118,18 @@
 //control the mobile device trash file issue, if be true can trash mobile files
 #define TRASH_MOBILE_FILES            "trashMobileFiles"
 
+//control the display of right menu terminal
+#define SHOW_OPEN_TERMINAL           "showOpenTerminal"
+
+//Control start peony
+#define ENABLE_START_PEONY           "enableStartPeony"
+
+//Control double click desktop file
+#define ENABLE_DOUBLE_CLICK_DESKTOP  "enableDoubleClickDesktop"
+
+//Control file operation of shortcut keys, such as Ctrl+C、Ctrl+V、Ctrl+A、Delete、Shift+Delete、Ctrl+X
+#define ENABLE_SHORTCUT_KEYS         "enableShortcutKeys"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'
@@ -191,6 +203,7 @@ public:
     QString getProjectName();
     bool isDesktopStartUp() const;
     void setDesktopStartUp(bool startUp);/* 桌面启动和结束时使用，谨慎调用 */
+    void sendNotifyMessage(const QString &msg);
 
     bool getShowCreateTime() const;
 

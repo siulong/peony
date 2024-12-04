@@ -27,6 +27,7 @@
 #include "advanced-desktop-icon-view.h"
 #include "file-info.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QPainter>
 #include <QStyle>
@@ -364,6 +365,9 @@ void DesktopIndexWidget::mousePressEvent(QMouseEvent *event)
 
 void DesktopIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if (! GlobalSettings::getInstance()->getValue(ENABLE_DOUBLE_CLICK_DESKTOP).toBool())
+        return;
+
     /**
      * @bug #250731: [File Manager] Right clicking on the same folder several times in the file manager will take you to the folder
      *
