@@ -367,6 +367,10 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         if (item->m_info->displayName().contains("839 MB"))
             return false;
 
+        if (model->getRootUri().startsWith("search://")) {
+            calculationAll(item);
+        }
+
         //check the file info filter conditions
         //qDebug()<<"start filter conditions check"<<item->m_info->displayName()<<item->m_info->type();
         if (! checkFileTypeFilter(item->m_info->type()))
@@ -413,11 +417,11 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
         }
 
         //check multiple label filter conditions, file has any one of these label is accepted
-        if(m_show_label_names.size() >0 || m_show_label_colors.size() >0)
+        if(m_show_label_names.size() > 0 || m_show_label_colors.size() > 0)
         {
             bool bfind = false;
             QString uri = item->m_info->uri();
-            if (m_show_label_names.size() >0 )
+            if (m_show_label_names.size() > 0)
             {
                 auto names = FileLabelModel::getGlobalModel()->getFileLabels(uri);
                 for(auto temp : m_show_label_names)
@@ -430,7 +434,7 @@ bool FileItemProxyFilterSortModel::filterAcceptsRow(int sourceRow, const QModelI
                 }
             }
 
-            if (! bfind && m_show_label_colors.size() >0)
+            if (! bfind && m_show_label_colors.size() > 0)
             {
                 auto colors = FileLabelModel::getGlobalModel()->getFileColors(uri);
                 for(auto temp : m_show_label_colors)
@@ -621,6 +625,109 @@ void FileItemProxyFilterSortModel::setDirectorySettings(const QString &key, cons
     }
 }
 
+void FileItemProxyFilterSortModel::calculationFileTypeCount(QString type) const
+{
+    int fileType = ALL_TYPE;
+    if (type == Folder_Type) {
+        fileType = FILE_FOLDER;
+    } else if (type.contains(Image_Type)) {
+        fileType = PICTURE;
+    } else if (type.contains(Video_Type)) {
+        fileType = VIDEO;
+    } else if (type.contains(Text_Type)) {
+        fileType = TXT_FILE;
+    } else if (type.contains(Wps_Type)) {
+        fileType = WPS_FILE;
+    } else if (type.contains(Audio_Type) || type.contains("application/x-smaf")) {
+        fileType = AUDIO;
+    } else if (type != Folder_Type && ! type.contains(Image_Type) && ! type.contains(Video_Type)
+               && ! type.contains(Text_Type) && !type.contains(Wps_Type) && ! type.contains(Audio_Type) && !type.contains("application/x-smaf")) {
+        fileType = OTHERS;
+    }
+
+    m_file_type_map[fileType]++;
+}
+
+void FileItemProxyFilterSortModel::calculationFileModifyTimeCount(quint64 modifiedTime) const
+{
+    auto time = QDateTime::currentMSecsSinceEpoch();
+    auto dateTime = QDateTime::fromMSecsSinceEpoch(time);
+    QDate date = dateTime.date();
+    int year = date.year();
+    int month = date.month();
+    int day = date.day();
+    QDate md_date =  QDateTime::fromMSecsSinceEpoch(modifiedTime * 1000).date();
+    int md_year= md_date.year();
+    int md_month = md_date.month();
+    int md_day = md_date.day();
+
+    int lastMonth = (month == 1) ? 12 : month - 1;
+
+    int fileModifyTime = ALL_TIME;
+    if (year == md_year && month == md_month && day == md_day) {
+        fileModifyTime = TODAY;
+    } else if (date.addDays(-1) == md_date) {
+        fileModifyTime = YESTERDAY;
+    } else if (date.weekNumber() == md_date.weekNumber() && year == md_year) {
+        fileModifyTime = THIS_WEEK;
+    } else if (date.addDays(-date.dayOfWeek() + 1).addDays(-7) <= md_date && md_date <= date.addDays(-date.dayOfWeek())) {
+        fileModifyTime = LAST_WEEK;
+    } else if (year == md_year && month == md_month) {
+        fileModifyTime = THIS_MONTH;
+    } else if (md_month == lastMonth) {
+        if ((month == 1 && md_year == (year - 1)) || (month !=1 && year == md_year)) {
+            fileModifyTime = LAST_MONTH;
+        }
+    } else if (year == md_year) {
+        fileModifyTime = THIS_YEAR;
+    } else if (md_year == year - 1) {
+        fileModifyTime = LAST_YEAR;
+    }
+
+    m_file_modify_time_map[fileModifyTime]++;
+}
+
+void FileItemProxyFilterSortModel::calculationFileSizeCount(quint64 size) const
+{
+    int fileSize = ALL_SIZE;
+    if (size == 0) {
+        fileSize = EMPTY;
+    } else if (size > 0 && size <= TINY_BASE) {
+        fileSize = TINY;
+    } else if (size > TINY_BASE && size <= SMALL_BASE) {
+        fileSize = SMALL;
+    } else if (size > SMALL_BASE && size <= MEDIUM_BASE) {
+        fileSize = MEDIUM;
+    } else if (size > MEDIUM_BASE && size <= BIG_BASE) {
+        fileSize = BIG;
+    } else if (size > BIG_BASE && size <= LARGE_BASE) {
+        fileSize = LARGE;
+    } else if (size > LARGE_BASE) {
+        fileSize = GREAT;
+    }
+
+    m_file_size_map[fileSize]++;
+}
+
+void FileItemProxyFilterSortModel::calculationFileLabelCount(QStringList names, QList<QColor> colors) const
+{
+    QList<FileLabelItem *> allLabels = FileLabelModel::getGlobalModel()->getAllFileLabelItems();
+    int size = allLabels.size();
+    for (int i = 0; i < size; i++) {
+        if (names.contains(allLabels.at(i)->name()) && colors.contains(allLabels.at(i)->color())) {
+            m_file_label_map[i]++;
+        }
+    }
+}
+
+void FileItemProxyFilterSortModel::calculationAll(FileItem *item) const
+{
+    calculationFileTypeCount(item->m_info->type());
+    calculationFileModifyTimeCount(item->m_info->modifiedTime());
+    calculationFileSizeCount(item->m_info->size());
+    calculationFileLabelCount(FileLabelModel::getGlobalModel()->getFileLabels(item->m_info->uri()), FileLabelModel::getGlobalModel()->getFileColors(item->m_info->uri()));
+}
+
 bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
 {
     //qDebug()<<"m_show_file_type: "<<m_show_file_type<<" "<<type;
@@ -636,7 +743,8 @@ bool FileItemProxyFilterSortModel::checkFileTypeFilter(QString type) const
     if (! totalTypeList.contains(m_show_file_type) && m_show_file_type != ALL_FILE)
         totalTypeList.append(m_show_file_type);
 
-    for(int i=0; i<totalTypeList.count(); i++)
+    int count = totalTypeList.count();
+    for(int i = 0; i < count; i++)
     {
         auto cur = totalTypeList[i];
         switch (cur)
@@ -713,7 +821,8 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
     int md_month = md_date.month();
     int md_day = md_date.day();
 
-    for(int i=0; i<m_modify_time_list.size(); i++)
+    int count = m_modify_time_list.size();
+    for(int i = 0; i < count; i++)
     {
         auto cur = m_modify_time_list[i];
         switch(cur)
@@ -744,7 +853,7 @@ bool FileItemProxyFilterSortModel::checkFileModifyTimeFilter(quint64 modifiedTim
         case LAST_WEEK:
         {
             QDate monDate = date.addDays(-date.dayOfWeek() + 1);
-            if(monDate.addDays(-7)<= md_date &&  md_date <= monDate.addDays(-1))/* 判断给定日期是否在上周 */
+            if(monDate.addDays(-7) <= md_date &&  md_date <= monDate.addDays(-1))/* 判断给定日期是否在上周 */
                 return true;
             break;
         }
@@ -792,50 +901,51 @@ bool FileItemProxyFilterSortModel::checkFileSizeFilter(quint64 size) const
     if (m_file_size_list.count() == 0 || m_file_size_list.contains(ALL_FILE))
         return true;
 
-    for(int i=0; i<m_file_size_list.count(); i++)
+    int count = m_file_size_list.count();
+    for(int i = 0; i < count; i++)
     {
         auto cur = m_file_size_list[i];
         switch (cur)
         {
         case EMPTY: //[0K]
         {           
-            if (size ==0 )
+            if (size == 0)
                 return true;
             break;
         }
         case TINY: //（0-16K]
         {          
-            if (size > 0  &&size <=16 * K_BASE)
+            if (size > 0 && size <= TINY_BASE)
                 return true;
             break;
         }
         case SMALL:  //（16k-1M]
         {
-            if(size > 16 * K_BASE && size <=K_BASE * K_BASE)
+            if(size > TINY_BASE && size <= SMALL_BASE)
                 return true;
             break;
         }
         case MEDIUM: //(1M-128M]
         {
-            if(size > K_BASE * K_BASE && size <= 128 * K_BASE * K_BASE)
+            if(size > SMALL_BASE && size <= MEDIUM_BASE)
                 return true;
             break;
         }
         case BIG:  //(128M-1G]
         {
-            if(size > 128 * K_BASE * K_BASE && size <= K_BASE * K_BASE * K_BASE)
+            if(size > MEDIUM_BASE && size <= BIG_BASE)
                 return true;
             break;
         }
         case LARGE: //(1-4G]
         {
-            if (size > K_BASE * K_BASE * K_BASE&& size <= 4*K_BASE * K_BASE * K_BASE)
+            if (size > BIG_BASE && size <= LARGE_BASE)
                 return true;
             break;
         }
         case GREAT: //>4G
         {
-            if (size > 4*K_BASE * K_BASE * K_BASE)
+            if (size > LARGE_BASE)
                 return true;
             break;
         }
@@ -974,6 +1084,13 @@ void FileItemProxyFilterSortModel::clearConditions()
     m_mimeTypeFilters.clear();
     m_nameFilters.clear();
     m_dirFilters = -1;
+
+    m_show_label_names.clear();
+    m_show_label_colors.clear();
+    m_file_type_map.clear();
+    m_file_modify_time_map.clear();
+    m_file_size_map.clear();
+    m_file_label_map.clear();
 }
 
 void FileItemProxyFilterSortModel::addFileContentFilter(QString key, bool updateNow)
@@ -1102,6 +1219,34 @@ void FileItemProxyFilterSortModel::manualUpdateExpectedSortInfo(int sortType, Qt
 {
     m_sortType = sortType;
     m_sortOrder = order;
+}
+
+void FileItemProxyFilterSortModel::clearAllMapsCount()
+{
+    m_file_type_map.clear();
+    m_file_modify_time_map.clear();
+    m_file_size_map.clear();
+    m_file_label_map.clear();
+}
+
+QMap<int, int> FileItemProxyFilterSortModel::getFileTypeCount()
+{
+    return m_file_type_map;
+}
+
+QMap<int, int> FileItemProxyFilterSortModel::getFileModifyTimeCount()
+{
+    return m_file_modify_time_map;
+}
+
+QMap<int, int> FileItemProxyFilterSortModel::getFileSizeCount()
+{
+    return m_file_size_map;
+}
+
+QMap<int, int> FileItemProxyFilterSortModel::getFileLabelCount()
+{
+    return m_file_label_map;
 }
 
 QStringList FileItemProxyFilterSortModel::getAllFileUris()

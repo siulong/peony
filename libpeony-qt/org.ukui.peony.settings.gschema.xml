@@ -227,5 +227,29 @@
      <description>4 is ukui4.0 version, 3 is ukui3.0 version, other is ukui4.0</description>
     </key>
 
+    <key type="b" name="show-open-terminal">
+      <default>true</default>
+      <summary>show open terminal</summary>
+      <description>Control show right menu open terminal option</description>
+    </key>
+
+    <key type="b" name="enable-start-peony">
+      <default>true</default>
+      <summary>enable start peony</summary>
+      <description>Control start peony or show peony UI</description>
+    </key>
+
+    <key type="b" name="enable-double-click-desktop">
+      <default>true</default>
+      <summary>enable double click desktop</summary>
+      <description>Control double click desktop files in desktop</description>
+    </key>
+
+    <key type="b" name="enable-shortcut-keys">
+      <default>true</default>
+      <summary>enable shortcut keys</summary>
+      <description>Control file operation of shortcut keys </description>
+    </key>
+
   </schema>
 </schemalist>

@@ -84,6 +84,13 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         }
     });
 
+    connect(m_model, &FileItemModel::signal_updateTabPageTitle, [=](const QString& uri){
+        Q_EMIT this->signal_updateTabPageTitle(uri);
+    });
+    connect(m_model, &FileItemModel::signal_updateLocationBar, [=](const QString& uri){
+        Q_EMIT this->signal_updateLocationBar(uri);
+    });
+
 //    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
 //        refresh();
 //    });
@@ -240,6 +247,11 @@ void DirectoryViewContainer::setSortFilter(int FileTypeIndex, int FileMTimeIndex
 void DirectoryViewContainer::setFilterLabelConditions(QString name)
 {
     m_proxy_model->setFilterLabelConditions(name);
+}
+
+void DirectoryViewContainer::setMutipleLabelConditions(QStringList names, QList<QColor> colors)
+{
+    m_proxy_model->setMutipleLabelConditions(names, colors);
 }
 
 void DirectoryViewContainer::setShowHidden(bool showHidden)
@@ -659,6 +671,31 @@ void DirectoryViewContainer::addFileContentFilter(QString key, bool updateNow)
 void DirectoryViewContainer::clearFileContentConditions()
 {
     m_proxy_model->clearFileContentConditions();
+}
+
+void DirectoryViewContainer::clearAllMapsCount()
+{
+    m_proxy_model->clearAllMapsCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileTypeCount()
+{
+    return m_proxy_model->getFileTypeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileModifyTimeCount()
+{
+    return m_proxy_model->getFileModifyTimeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileSizeCount()
+{
+    return m_proxy_model->getFileSizeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileLabelCount()
+{
+    return m_proxy_model->getFileLabelCount();
 }
 
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)

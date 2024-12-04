@@ -95,6 +95,7 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         qDebug() << "search key:" <<key <<m_last_key;
         if (key != m_last_key)
         {
+            m_in_search_mode = true;
             Q_EMIT searchRequest(m_last_non_search_path, key);
             m_last_key = key;
             if (key == "") {
@@ -107,7 +108,8 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
 
     m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::updateLastLocationPath, [=]() {
         //关闭搜索后，需要更新路径
-        Q_EMIT searchRequest(m_last_non_search_path, "", false);
+        m_in_search_mode = false;
+        Q_EMIT searchRequest(m_last_non_search_path, "");
     });
 
     m_search_bar->connect(m_search_bar, &Peony::SearchBarContainer::filterUpdate, [=](const int &index)
@@ -181,6 +183,12 @@ void AdvancedLocationBar::updateLocation(const QString &uri)
 void AdvancedLocationBar::setAnimationMode(bool isAnimation)
 {
     m_bar->setAnimationMode(isAnimation);
+}
+
+void AdvancedLocationBar::setSearchBarFocus()
+{
+    if (m_search_bar)
+        return m_search_bar->setFocus();
 }
 
 bool AdvancedLocationBar::isEditing()

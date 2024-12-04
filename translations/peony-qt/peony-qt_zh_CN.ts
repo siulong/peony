@@ -83,12 +83,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FileLabelBox</name>
     <message>
-        <location filename="../../src/control/file-label-box.cpp" line="72"/>
+        <location filename="../../src/control/file-label-box.cpp" line="69"/>
+        <source>Open In New Window</source>
+        <translation>在新窗口中打开</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/file-label-box.cpp" line="78"/>
+        <source>Open In New Tab</source>
+        <translation>在新标签页中打开</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/file-label-box.cpp" line="87"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../../src/control/file-label-box.cpp" line="77"/>
+        <location filename="../../src/control/file-label-box.cpp" line="92"/>
         <source>Edit Color</source>
         <translation>编辑颜色</translation>
     </message>
@@ -399,19 +409,19 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="626"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="630"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="626"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="630"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="664"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="682"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="668"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="686"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
@@ -421,12 +431,12 @@ p, li { white-space: pre-wrap; }
         <translation>设备正忙, 请稍后执行此操作.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="664"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="668"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="682"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="686"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
@@ -458,12 +468,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="884"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="887"/>
         <source>Manager tags...</source>
         <translation>标识模式</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="887"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="890"/>
         <source>More tags...</source>
         <translation>更多标识</translation>
     </message>
@@ -1407,7 +1417,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="1025"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="1028"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>

@@ -127,7 +127,7 @@ ExceptionResponse FileCopyOperation::prehandle(GError *err)
         case G_IO_ERROR_CANCELLED:
         case G_IO_ERROR_INVALID_DATA:
         case G_IO_ERROR_NOT_SUPPORTED:
-        case G_IO_ERROR_PERMISSION_DENIED:
+//        case G_IO_ERROR_PERMISSION_DENIED:
         case G_IO_ERROR_CANT_CREATE_BACKUP:
         case G_IO_ERROR_TOO_MANY_OPEN_FILES:
             return Other;

@@ -41,6 +41,8 @@
 #include <kysdk/kysdk-system/libkysysinfo.h>
 #endif
 
+#include <QDBusInterface>
+
 using namespace Peony;
 
 static GlobalSettings *global_instance = nullptr;
@@ -73,6 +75,15 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(HOME_ICON_VISIBLE, true);
     m_cache.insert(TRASH_ICON_VISIBLE, true);
     m_cache.insert(COMPUTER_ICON_VISIBLE, true);
+
+    //story 28073, control the right menu open terminal option
+    m_cache.insert(SHOW_OPEN_TERMINAL, true);
+    //story 28077, control start peony or show peony UI
+    m_cache.insert(ENABLE_START_PEONY, true);
+    //story 28081, control double click desktop files in desktop
+    m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, true);
+    //story 28083, control file operation of shortcut keys
+    m_cache.insert(ENABLE_SHORTCUT_KEYS, true);
     if (QGSettings::isSchemaInstalled("org.ukui.peony.settings")) {
         connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
             m_cache.remove(key);
@@ -83,6 +94,58 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         for (auto key : m_peonyGSettings->keys()) {
             m_cache.remove(key);
             m_cache.insert(key, m_peonyGSettings->get(key));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == SHOW_OPEN_TERMINAL) {
+                m_cache.remove(SHOW_OPEN_TERMINAL);
+                m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(SHOW_OPEN_TERMINAL)) {
+            m_cache.remove(SHOW_OPEN_TERMINAL);
+            m_cache.insert(SHOW_OPEN_TERMINAL, m_peonyGSettings->get(SHOW_OPEN_TERMINAL));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_START_PEONY) {
+                m_cache.remove(ENABLE_START_PEONY);
+                m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_START_PEONY)) {
+            m_cache.remove(ENABLE_START_PEONY);
+            m_cache.insert(ENABLE_START_PEONY, m_peonyGSettings->get(ENABLE_START_PEONY));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_DOUBLE_CLICK_DESKTOP) {
+                m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+                m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_DOUBLE_CLICK_DESKTOP)) {
+            m_cache.remove(ENABLE_DOUBLE_CLICK_DESKTOP);
+            m_cache.insert(ENABLE_DOUBLE_CLICK_DESKTOP, m_peonyGSettings->get(ENABLE_DOUBLE_CLICK_DESKTOP));
+        }
+
+        connect(m_peonyGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+            if (key == ENABLE_SHORTCUT_KEYS) {
+                m_cache.remove(ENABLE_SHORTCUT_KEYS);
+                m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
+            }
+            Q_EMIT this->valueChanged(key);
+        });
+
+        if (m_peonyGSettings->keys().contains(ENABLE_SHORTCUT_KEYS)) {
+            m_cache.remove(ENABLE_SHORTCUT_KEYS);
+            m_cache.insert(ENABLE_SHORTCUT_KEYS, m_peonyGSettings->get(ENABLE_SHORTCUT_KEYS));
         }
     }
 
@@ -311,6 +374,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 #endif
     initDateFormatDBus();
+
+    initManageControl();
 }
 
 GlobalSettings::~GlobalSettings()
@@ -404,6 +469,118 @@ void GlobalSettings::getDualScreenMode()
     }
 }
 
+void GlobalSettings::initManageControl()
+{
+    // Get user name and construct config path
+    const char* user = getenv("USER");
+    if (user) {
+        m_currentConfigPath = constructConfigPath(QString(user));
+        loadJsonConfig(m_currentConfigPath);
+    }
+
+    initDBus();
+}
+
+bool GlobalSettings::loadJsonConfig(const QString &configPath)
+{
+    // Clear JSON cache if config file doesn't exist or can't be opened
+    QFile file(configPath);
+    if (!file.exists() || !file.open(QFile::ReadOnly)) {
+        qWarning() << "Failed to open config file:" << configPath;
+        m_jsonCache.clear();
+        return false;
+    }
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    file.close();
+
+    // Clear cache if JSON parsing fails
+    if (error.error != QJsonParseError::NoError) {
+        qWarning() << "Failed to parse JSON config:" << error.errorString();
+        m_jsonCache.clear();
+        return false;
+    }
+
+    const QJsonObject root = doc.object();
+    const QJsonObject peonySettings = root[PEONY_SETTINGS_KEY].toObject();
+
+    // Clear cache if no valid settings found
+    if (peonySettings.isEmpty()) {
+        m_jsonCache.clear();
+        return false;
+    }
+
+    // Update cache with new settings
+    updateConfigCache(peonySettings);
+    return true;
+}
+
+void GlobalSettings::initDBus()
+{
+    QDBusConnection::systemBus().connect(
+        "",
+        "/securityConfig",
+        "com.kylin.ukui.SettingsDaemon.interface",
+        "configChanged",
+        this,
+        SLOT(onConfigFileChanged(QString, QString, QString))
+    );
+}
+
+QString GlobalSettings::convertJsonKeyToInternalKey(const QString &jsonKey)
+{
+    QStringList parts = jsonKey.split(QRegExp("[-_]"));
+    QString result = parts[0];
+    for (int i = 1; i < parts.size(); ++i) {
+        if (!parts[i].isEmpty()) {
+            result += parts[i][0].toUpper() + parts[i].mid(1);
+        }
+    }
+    return result;
+}
+
+void GlobalSettings::updateConfigCache(const QJsonObject &peonySettings)
+{
+    // Create a set of new configuration keys
+    QSet<QString> newKeys;
+
+    // Process new and modified settings
+    for (auto it = peonySettings.begin(); it != peonySettings.end(); ++it) {
+        const QString internalKey = convertJsonKeyToInternalKey(it.key());
+        const QVariant newValue = it.value().toVariant();
+        newKeys.insert(internalKey);
+
+        // Check if value has changed
+        auto existingValue = m_jsonCache.find(internalKey);
+        if (existingValue == m_jsonCache.end() || existingValue.value() != newValue) {
+            m_jsonCache[internalKey] = newValue;
+            Q_EMIT this->valueChanged(internalKey);
+        }
+    }
+
+    // Find and remove cached items that no longer exist in the configuration file
+    QList<QString> keysToRemove;
+    for (auto it = m_jsonCache.begin(); it != m_jsonCache.end(); ++it) {
+        if (!newKeys.contains(it.key())) {
+            keysToRemove.append(it.key());
+        }
+    }
+
+    // Remove obsolete items and emit signals
+    for (const QString &keyToRemove : keysToRemove) {
+        m_jsonCache.remove(keyToRemove);
+        Q_EMIT this->valueChanged(keyToRemove);
+    }
+}
+
+QString GlobalSettings::constructConfigPath(const QString &username) const
+{
+    return QString("%1/%2/%3.json").arg(CONFIG_BASE_PATH,
+                                      username,
+                                      PEONY_CONFIG_NAME);
+}
+
 bool GlobalSettings::isDesktopStartUp() const
 {
     return m_isDesktopStartUp;
@@ -416,6 +593,13 @@ void GlobalSettings::setDesktopStartUp(bool startUp)
 
 const QVariant GlobalSettings::getValue(const QString &key)
 {
+    // First try to get value from JSON cache
+    auto jsonIt = m_jsonCache.find(key);
+    if (jsonIt != m_jsonCache.end()) {
+        return jsonIt.value();
+    }
+
+    // Fallback to GSettings cache
     return m_cache.value(key);
 }
 
@@ -471,6 +655,31 @@ void GlobalSettings::sendLongDataFormat(const QString &format)
 bool GlobalSettings::isExist(const QString &key)
 {
     return !m_cache.value(key).isNull();
+}
+
+void GlobalSettings::sendNotifyMessage(const QString &msg)
+{
+    if (! QDBusConnection::sessionBus().isConnected())
+        return;
+
+    QDBusInterface iface ("org.freedesktop.Notifications",
+                         "/org/freedesktop/Notifications",
+                         "org.freedesktop.Notifications", QDBusConnection::sessionBus ());
+
+    QList <QVariant> args;
+    QStringList actions;
+    QMap <QString, QVariant> hints;
+
+    args << QObject::tr("File Manager").toUtf8().constData()
+         << ((unsigned int) 0)
+         << "system-file-manager"
+         << QObject::tr("notify")
+         << msg
+         << actions
+         << hints
+         << (int) -1;
+
+    iface.callWithArgumentList (QDBus::AutoDetect, "Notify", args);
 }
 
 void GlobalSettings::reset(const QString &key)
@@ -553,6 +762,24 @@ void GlobalSettings::slot_updateRemoteServer(const QString& server, bool add)
 bool GlobalSettings::isGuestOSMachine()
 {
     return m_cache.value(IS_GUESTOS_MACHINE).toBool();
+}
+
+void GlobalSettings::onConfigFileChanged(const QString &username, const QString &configName, const QString &configPath)
+{
+    // Only process if it's our config
+    if (configName != PEONY_CONFIG_NAME) {
+        return;
+    }
+
+    // Verify the config path
+    QString expectedPath = constructConfigPath(username);
+    if (configPath != expectedPath) {
+        qWarning() << "Unexpected config path:" << configPath;
+        return;
+    }
+
+    m_currentConfigPath = configPath;
+    loadJsonConfig(configPath);
 }
 
 void GlobalSettings::setTimeFormat(const QString &value)
