@@ -1,3 +1,9 @@
+peony (5.0.0.0-ok1~1204) huanghe; urgency=medium
+
+  * new upstream release.
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 04 Dec 2024 19:22:01 +0800
+
 peony (4.10.1.0-ok1~1205) huanghe; urgency=medium
 
   * 修复qt5.15编译问题
