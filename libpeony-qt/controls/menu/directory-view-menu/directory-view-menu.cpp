@@ -1515,9 +1515,10 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
         for (auto id : pluginIds) {
             auto plugin = MenuPluginManager::getInstance()->getPlugin(id);
             auto tPlugin = MenuPluginManager::getInstance()->getFileSafePlugin(id);
+            auto pluginObj = dynamic_cast<QObject *>(plugin);
             if(m_is_filesafe||m_is_filebox_file) {
                 if((plugin && tPlugin && plugin == tPlugin)
-                        || plugin->name() == tr("Peony File Labels Menu Extension")) {
+                        || pluginObj->property("IsFileSafeShow").toBool()) {
                     auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
                     l<<actions;
                     for (auto action : actions) {

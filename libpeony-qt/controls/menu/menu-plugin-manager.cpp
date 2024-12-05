@@ -192,7 +192,7 @@ QList<QAction *> CreateLinkInternalPlugin::menuActions(MenuPluginInterface::Type
 //FileLabelInternalMenuPlugin
 FileLabelInternalMenuPlugin::FileLabelInternalMenuPlugin(QObject *parent)
 {
-
+    this->setProperty("IsFileSafeShow", true);
 }
 
 QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::Types types, const QString &uri, const QStringList &selectionUris)
