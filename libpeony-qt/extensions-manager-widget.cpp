@@ -30,6 +30,7 @@
 #include <QPluginLoader>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QCloseEvent>
 
 static Peony::ExtensionsManagerWidget *global_instance = nullptr;
 
@@ -39,6 +40,14 @@ Peony::ExtensionsManagerWidget *Peony::ExtensionsManagerWidget::getInstance()
         global_instance = new Peony::ExtensionsManagerWidget;
     }
     return global_instance;
+}
+
+void Peony::ExtensionsManagerWidget::deleteInstance()
+{
+    if (global_instance) {
+        global_instance->deleteLater();
+        global_instance = nullptr;
+    }
 }
 
 Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
@@ -106,11 +115,9 @@ void Peony::ExtensionsManagerWidget::initUI()
 
     connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
         this->close();
-        if (global_instance) {
-            delete global_instance;
-            global_instance = nullptr;
-        }
+        deleteInstance();
     });
+
 }
 
 void Peony::ExtensionsManagerWidget::initTableWidget()
@@ -239,4 +246,11 @@ void Peony::ExtensionsManagerWidget::addSeparator()
     separate->setFocusPolicy(Qt::NoFocus);
     separate->setEnabled(false);
     m_mainLayout->addWidget(separate);
+}
+
+void Peony::ExtensionsManagerWidget::closeEvent(QCloseEvent *event)
+{
+    if (event) {
+        deleteInstance();
+    }
 }
