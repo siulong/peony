@@ -33,7 +33,7 @@
 #include <QString>
 
 namespace Peony {
-
+class FileInfo;
 class PEONYCORESHARED_EXPORT FileUtils
 {
 public:
@@ -148,6 +148,8 @@ public:
      */
     NO_BLOCKING static const QStringList& getCompressedTypes();
 
+    static bool isExecuteTargetUribyTrashUri(const QUrl& url, FileInfo * fileInfo);
+    
 private:
     FileUtils();
 };

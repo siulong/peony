@@ -1272,6 +1272,38 @@ const QStringList &FileUtils::getCompressedTypes()
     return compressedTypes;
 }
 
+bool FileUtils::isExecuteTargetUribyTrashUri(const QUrl& url, FileInfo * fileInfo)
+{
+    if (QFileInfo::exists(url.path().toUtf8()) && fileInfo->property("enable_trash_target").toBool())
+    {
+        GFile * _file = g_file_new_for_uri(url.toString().toUtf8().constData());
+        GError *err = nullptr;
+        bool _can_excute = false;
+        auto gFileInfo = g_file_query_info(_file,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       &err);
+
+        if (err) {
+            qDebug()<<__func__<<__LINE__<<err->code<<err->message;
+            g_error_free(err);
+        }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE)) {
+                _can_excute = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+            } else {
+                _can_excute = true;
+            }
+        }
+
+        g_object_unref(_file);
+        if (_can_excute)
+            return true;
+    }
+
+    return false;
+}
+
 bool FileUtils::isEmptyDisc(const QString &unixDevice)
 {
     if (unixDevice.isEmpty()) //没有设备时不做后续处理
