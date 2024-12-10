@@ -95,7 +95,7 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
         if(uri.startsWith("label://"))
         {
             QUrl url(uri);
-            QString scheme = url.path().section("?schema=",-1,-1);
+            QString scheme = uri.section("?schema=",-1,-1);
             QString path = url.path().section("?schema=", 0, 0).section("/",2,-1);
             uri = QString(scheme).append(":///").append(path);
         }
