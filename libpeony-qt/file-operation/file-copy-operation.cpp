@@ -508,25 +508,6 @@ fallback_retry:
             }
         } else {
             node->setState(FileNode::Handled);
-            // if copy sucessed, flush all data
-            g_autoptr(GFile) destFile = g_file_new_for_uri(destFileUri.toUtf8().constData());
-            if (g_file_query_exists(destFile, nullptr)) {
-                // copy file attribute
-                // It is possible that some file systems do not support file attributes
-                g_autoptr(GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
-                g_file_copy_attributes(srcFile, destFile, G_FILE_COPY_ALL_METADATA, nullptr, &err);
-                if (nullptr != err) {
-                    qWarning() <<destFileUri<<"copy attribute error:" << err->code << "  ---  " << err->message;
-                    g_error_free(err);
-                    err = nullptr;
-                }
-                QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(srcUri);
-                for(auto &labelId: labelIds){
-                    if(labelId <= 0)
-                        continue;
-                    FileLabelModel::getGlobalModel()->addLabelToFile(destFileUri, labelId);
-                }
-            }
         }
 
         if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
@@ -548,6 +529,14 @@ fallback_retry:
                                    m_parent_flags,
                                    nullptr,
                                    &error);
+
+            /* 文件夹copy成功后，如有标记需添加到全局对应的标记页面 */
+            QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(srcUri);
+            for(auto &labelId: labelIds){
+                if(labelId <= 0)
+                    continue;
+                FileLabelModel::getGlobalModel()->addLabelToFile(destFileUri, labelId);
+            }//end
         }
 
         if (error) {
