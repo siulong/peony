@@ -1,3 +1,9 @@
+peony (5.0.0.0-ok1~1211.1) huanghe; urgency=medium
+
+  * fix #IB7E4D
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 11 Dec 2024 20:29:11 +0800
+
 peony (5.0.0.0-ok1~1211) huanghe; urgency=medium
 
   * fix #I9VLQR
