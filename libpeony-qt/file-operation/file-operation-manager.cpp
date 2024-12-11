@@ -64,6 +64,7 @@
 #include <unistd.h>
 
 #include <QAction>
+#include <QWindow>
 
 using namespace Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
@@ -281,6 +282,16 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         QWidget *widget = QApplication::topLevelAt(QCursor::pos());
         qDebug()<<"top level widget:"<<widget<<",current QPoint:"<<QCursor::pos();
         FileOperationInternalDialog questionbox((QDialog*)widget);
+
+        auto windowProperty = property("rootWindow");
+        if (windowProperty.isValid()) {
+            auto window = windowProperty.value<QWindow *>();
+            if (window) {
+                questionbox.createWinId();
+                questionbox.windowHandle()->setTransientParent(window);
+            }
+        }
+
         auto okButton = questionbox.addButton(tr("OK"));
         connect(okButton, &QPushButton::clicked, &questionbox, [&]{
             questionbox.accept();
