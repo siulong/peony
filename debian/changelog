@@ -1,3 +1,10 @@
+peony (5.0.0.0-ok1~1211) huanghe; urgency=medium
+
+  * fix #I9VLQR
+  * 桌面图标显示区域适配三岛任务栏配置
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 11 Dec 2024 19:28:34 +0800
+
 peony (5.0.0.0-ok1~1204) huanghe; urgency=medium
 
   * new upstream release.
