@@ -238,7 +238,7 @@ AdvancedDesktopIconView::AdvancedDesktopIconView(QWidget *parent) : QAbstractIte
         if (!m_panelSetting)
             m_panelSetting = new QGSettings(PANEL_SETTINGS, QByteArray(), this);
         connect(m_panelSetting, &QGSettings::changed, this, [=](const QString &key){
-            if (key == "panelposition" || key == "panelsize") {
+            if (key == "panelposition" || key == "panelsize" || key == "settingsislandposition" || key == "paneltype") {
                 setMargins();
                 recalculateAvailableRowAndColumnCount();
             }
@@ -650,9 +650,15 @@ void AdvancedDesktopIconView::initDoubleClick()
 
 void AdvancedDesktopIconView::setMargins()
 {
+    int settingsislandposition = m_panelSetting->get("settingsislandposition").toInt();
+    int paneltype = m_panelSetting->get("paneltype").toInt();
     int position = m_panelSetting->get("panelposition").toInt();
     int margins = m_panelSetting->get("panelsize").toInt();
 
+    if (settingsislandposition == 1 && paneltype == 1) {
+        setViewportMargins(0, 32, 0, margins);
+        return;
+    }
     switch (position) {
     case 1: {
         setViewportMargins(0, margins, 0, 0);
