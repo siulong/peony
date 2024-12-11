@@ -58,9 +58,6 @@ Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
 
 Peony::ExtensionsManagerWidget::~ExtensionsManagerWidget()
 {
-    for (auto plugin : m_pluginMap) {
-        delete plugin;
-    }
     m_pluginMap.clear();
 }
 
@@ -152,11 +149,11 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
     int count = m_pluginMap.count();
     m_tableWidget->setRowCount(count);
 
-    QMap<QString, PluginInterface*>::iterator iter;
+    QMap<QString, PluginInfo>::iterator iter;
     int row = 0;
     for (iter = m_pluginMap.begin();  iter != m_pluginMap.end(); ++iter) {
         QString filePath = iter.key();
-        PluginInterface* iface = iter.value();
+        PluginInfo info = iter.value();
 
         //Add checkBox
         m_tableWidget->setCellWidget(row, 0, nullptr);
@@ -172,16 +169,15 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
         l->addWidget(checkBox);
         m_tableWidget->setCellWidget(row, 0, w);
 
-        QIcon icon = iface->icon();
         QLabel *iconLabel = new QLabel();
         iconLabel->setProperty("useIconHighlightEffect", 0x2);
-        iconLabel->setPixmap(QIcon::fromTheme(icon.name(), QIcon::fromTheme("unknown")).pixmap(QSize(24, 24)));
+        iconLabel->setPixmap(QIcon::fromTheme(info.icon.name(), QIcon::fromTheme("unknown")).pixmap(QSize(24, 24)));
         iconLabel->setAlignment(Qt::AlignCenter);
         m_tableWidget->setCellWidget(row, 1, iconLabel);
 
-        QTableWidgetItem* itemC2 = new QTableWidgetItem(iface->description());
+        QTableWidgetItem* itemC2 = new QTableWidgetItem(info.description);
         itemC2->setFlags(itemC2->flags() | Qt::ItemIsSelectable);
-        itemC2->setToolTip(iface->description());
+        itemC2->setToolTip(info.description);
         m_tableWidget->setItem(row, 2, itemC2);
         row++;
     }
@@ -216,7 +212,10 @@ void Peony::ExtensionsManagerWidget::initExtensionInfo()
         PluginInterface *piface = dynamic_cast<PluginInterface*>(plugin);
         if (!piface)
             continue;
-        m_pluginMap.insert(pluginLoader.fileName(), piface);
+        PluginInfo info;
+        info.icon = piface->icon();
+        info.description = piface->description();
+        m_pluginMap.insert(pluginLoader.fileName(), info);
 
         QFileInfo fileInfo(pluginLoader.fileName());
         if (fileInfo.exists()) {

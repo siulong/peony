@@ -39,6 +39,12 @@
 
 namespace Peony {
 
+struct PluginInfo {
+    QIcon icon;
+    QString description;
+};
+
+
 class PEONYCORESHARED_EXPORT ExtensionsManagerWidget : public QWidget
 {
     Q_OBJECT
@@ -65,7 +71,7 @@ private:
     QPushButton *m_okBtn = nullptr;
     QPushButton *m_cancelBtn = nullptr;
 
-    QMap<QString, PluginInterface*> m_pluginMap;
+    QMap<QString, PluginInfo> m_pluginMap;
     QStringList m_disabledList;
 };
 }
