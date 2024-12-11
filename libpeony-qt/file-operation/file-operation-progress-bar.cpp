@@ -320,6 +320,15 @@ bool FileOperationProgressBar::inhibit()
             printf("cannot block s4: %s\n", error->message);
         }
 
+
+        ret = g_dbus_connection_call_with_unix_fd_list_sync(pconnection, "org.freedesktop.login1", "/org/freedesktop/login1",
+                                                                      "org.freedesktop.login1.Manager", "Inhibit",
+                                                                      g_variant_new("(ssss)", "shutdown", "peony", "file operation", "block"),
+                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds, NULL, &error);
+        if (error) {
+            printf("cannot block s5: %s\n", error->message);
+        }
+
         Q_UNUSED(ret);
     }
 
