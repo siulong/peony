@@ -249,7 +249,9 @@ void FilePropertiesOperation::setPropertiesOne(FileNode *node)
         struct stat file_stat;
         int ret = stat(path, &file_stat);
         if (ret == -1) {
-            qCritical()<<"failed to get file permission"<<path;
+            qCritical()<<"failed to get file permission" ;
+//            保护箱场景下path可能存在崩溃问题
+//            qCritical()<<"failed to get file permission" << path;
         } else {
             unixMode = file_stat.st_mode;
         }
