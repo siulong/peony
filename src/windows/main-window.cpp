@@ -1327,6 +1327,11 @@ void MainWindow::beginSwitchView(const QString &viewId)
 
 void MainWindow::refresh()
 {
+    if (getCurrentPage()) {
+        if (getCurrentPage()->getView()) {
+            this->getCurrentPage()->getView()->setDirectoryUri(getCurrentUri());
+        }
+    }
     locationChangeStart();
     m_tab->refresh();
     //fix refresh clear copy files issue, link to bug#109247
