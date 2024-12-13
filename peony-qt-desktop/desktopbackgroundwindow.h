@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QGSettings>
 #include "advanced-desktop-icon-view.h"
+#include "windowmanager/windowmanager.h"
 
 namespace KWayland {
 namespace Client {
@@ -48,6 +49,8 @@ public:
     QScreen *screen() const;
     AdvancedDesktopIconView *getIconView();
     void setId(int id);
+    void setWindowId(kdk::WindowId id);
+    kdk::WindowId getWindowId();
 
     bool event(QEvent *event) override;
     void invaidScreen();
@@ -87,6 +90,7 @@ private:
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
     Peony::DesktopMenu *m_menu = nullptr;
+    kdk::WindowId m_windowId;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H
