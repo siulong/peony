@@ -26,7 +26,7 @@
 #include "peony-desktop-application.h"
 #include "advanced-desktop-item-model.h"
 #include <KWindowSystem>
-
+#include <QScreen>
 #include "common.h"
 #include "file-info.h"
 #include "file-info-job.h"
@@ -45,6 +45,21 @@ DesktopWindowManager *DesktopWindowManager::getInstance()
 
 DesktopWindowManager::DesktopWindowManager(QObject *parent) : QObject(parent)
 {
+    connect(kdk::WindowManager::self(),&kdk::WindowManager::windowAdded,this,[=](const kdk::WindowId& windowId){
+        if((quint32)getpid() == kdk::WindowManager::getPid(windowId)) {
+            for (auto window : m_bgWindows) {
+               QString title = kdk::WindowManager::getWindowTitle(windowId);
+                QString windowTitle = window->windowTitle();
+                if (title == windowTitle) {
+                    window->setWindowId(windowId);
+                    if (window->screen() == qApp->primaryScreen()) {
+                        kdk::WindowManager::activateWindow(window->getWindowId());
+                    }
+                    break;
+                }
+            }
+        }
+    });
     m_model = PeonyDesktopApplication::getModel();
     connect(m_model, &AdvancedDesktopItemModel::emitFinish, this, &DesktopWindowManager::initModelFinish);
     m_desktopAutoLayout = GlobalSettings::getInstance()->getValue(DESKTOP_USE_AUTO_LAYOUT).toBool();
@@ -229,6 +244,7 @@ void DesktopWindowManager::relocateIconView()
                 Q_EMIT window->getIconView()->updateView();
                 Q_EMIT primaryWindow->getIconView()->updateView();
                 KWindowSystem::raiseWindow(primaryWindow->winId());
+                kdk::WindowManager::activateWindow(primaryWindow->getWindowId());
                 return;
             }
         }
@@ -238,10 +254,12 @@ void DesktopWindowManager::relocateIconView()
         qDebug() << "screen name :" << window->screen()->name() << " id:" << window->id() ;
         if (window->screen() != qApp->primaryScreen()) {
             KWindowSystem::raiseWindow(window->winId());
+            kdk::WindowManager::activateWindow(window->getWindowId());
         }
     }
     if(primaryWindow) {
         KWindowSystem::raiseWindow(primaryWindow->winId());
+        kdk::WindowManager::activateWindow(primaryWindow->getWindowId());
     }
 }
 
@@ -286,6 +304,7 @@ void DesktopWindowManager::raiseWid()
         for (auto window : m_bgWindows) {
             if (window->screen() == QGuiApplication::primaryScreen() && window->screen()) {
                 KWindowSystem::raiseWindow(window->winId());
+                kdk::WindowManager::activateWindow(window->getWindowId());
                 return;
             }
         }
