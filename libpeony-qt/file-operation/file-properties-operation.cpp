@@ -245,24 +245,46 @@ void FilePropertiesOperation::setPropertiesOne(FileNode *node)
     if (m_options.testFlag(ChangeReadOnly) && !node->isFolder()) {
         g_autoptr (GFile) file = g_file_new_for_uri(node->destUri().toUtf8().constData());
         g_autofree gchar *path = g_file_get_path(file);
-        guint32 unixMode = 0755;
-        struct stat file_stat;
-        int ret = stat(path, &file_stat);
-        if (ret == -1) {
-            qCritical()<<"failed to get file permission" ;
-//            保护箱场景下path可能存在崩溃问题
-//            qCritical()<<"failed to get file permission" << path;
-        } else {
-            unixMode = file_stat.st_mode;
-        }
+        if (!node->destUri().startsWith("file://")) {
+            mode_t mod = 0;
+            quint32 mode = 0;
+            g_autoptr (GError) error = NULL;
+            g_autoptr (GFileInfo) info = g_file_query_info(file, "unix::mode", G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &error);
+            if (g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_UNIX_MODE)) {
+                mode = g_file_info_get_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE);
 
-        if (m_shouldSetReadOnly) {
-            unixMode &= 0555;
+                if (m_shouldSetReadOnly) {
+                    mode &= ~S_IWUSR;
+                    mode &= ~S_IWGRP;
+                    mode &= ~S_IWOTH;
+                } else {
+                    mode |= S_IWUSR;
+                    mode |= S_IWGRP;
+                    mode |= S_IWOTH;
+                }
+                mod = mode;
+                g_file_set_attribute_uint32(file, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+            }
         } else {
-            unixMode |= 0222;
-        }
-        if (path) {
-            g_chmod(path, unixMode);
+            guint32 unixMode = 0755;
+            struct stat file_stat;
+            int ret = stat(path, &file_stat);
+            if (ret == -1) {
+                qCritical()<<"failed to get file permission" ;
+    //            保护箱场景下path可能存在崩溃问题
+    //            qCritical()<<"failed to get file permission" << path;
+            } else {
+                unixMode = file_stat.st_mode;
+            }
+
+            if (m_shouldSetReadOnly) {
+                unixMode &= 0555;
+            } else {
+                unixMode |= 0222;
+            }
+            if (path) {
+                g_chmod(path, unixMode);
+            }
         }
     }
 

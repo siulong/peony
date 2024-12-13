@@ -875,12 +875,11 @@ void BasicPropertiesPage::saveAllChange()
             if (m_readOnly && m_isReadOnly != m_readOnly->isChecked()) {
                 mode_t mod = 0;
                 quint32 mode = 0;
+                g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
                 if(m_readOnly->isChecked()) {
         //            mod |= S_IRUSR;
         //            mod |= S_IRGRP;
         //            mod |= S_IROTH;
-
-                    g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
                     if (file) {
                         g_autoptr(GError) error = NULL;
                         g_autoptr(GFileInfo) info = g_file_query_info(file,
@@ -927,8 +926,9 @@ void BasicPropertiesPage::saveAllChange()
                     //mod |= S_IXGRP;
                     //mod |= S_IXOTH;
                 }
-                QUrl url = m_info.get()->uri();
-                g_chmod(url.path().toUtf8(), mod);
+//                QUrl url = m_info.get()->uri();
+//                g_chmod(url.path().toUtf8(), mod);
+                g_file_set_attribute_uint32(file, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
 
             }
 
