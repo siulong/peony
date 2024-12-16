@@ -368,10 +368,8 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         auto text = edit->toPlainText();
         //fix bug#220283, rename edit position wrong issue
         //short file name no need update to avoid position wrong
-        if (text.length() >= maxLength) {
-            edit->adjustText();
-            updateEditorGeometry(edit, option, index);
-        }
+        edit->adjustText();
+        updateEditorGeometry(edit, option, index);
     });
 
     connect(edit, &TextEdit::finishEditRequest, this, &ListViewDelegate::slot_finishEdit);
