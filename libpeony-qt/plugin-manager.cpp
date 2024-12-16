@@ -454,10 +454,10 @@ bool PluginManager::isCloudPlatform()
 {
     bool isCloudPlat = false;
 #ifdef KY_SDK_SYSINFO
-    g_autofree char *virtType = kdk_system_get_hostVirtType();
-    if (virtType != nullptr) {
-        qDebug() << "virtType is " << virtType;
-        if (strcmp(virtType, "none") != 0) {
+    g_autofree char *cloudPlat = kdk_system_get_hostCloudPlatform();
+    if (cloudPlat != nullptr) {
+        qDebug() << "cloudPlat is " << cloudPlat;
+        if (strcmp(cloudPlat, "none") != 0) {
             isCloudPlat = true;
         }
     }
