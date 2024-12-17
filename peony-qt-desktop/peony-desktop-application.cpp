@@ -356,14 +356,16 @@ PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const 
 //        }
 
         // enumerat network:///
-        QThread* t = QThread::create ([=] () {
-            FileEnumerator e;
-            e.setEnumerateDirectory ("network:///");
-            e.enumerateSync();
-            e.getChildrenUris ();
-        });
-        connect (t, &QThread::finished, t, &QObject::deleteLater);
-        t->start ();
+        // 适配2503内存优化任务，桌面不拉起gvfsd-dnssd和gvfsd-network
+        // note: 不后台启动可能会导致访问网络变慢，可能需要实际验证是否对用户体验有影响
+//        QThread* t = QThread::create ([=] () {
+//            FileEnumerator e;
+//            e.setEnumerateDirectory ("network:///");
+//            e.enumerateSync();
+//            e.getChildrenUris ();
+//        });
+//        connect (t, &QThread::finished, t, &QObject::deleteLater);
+//        t->start ();
     }
 
     connect(this, &SingleApplication::layoutDirectionChanged, this, &PeonyDesktopApplication::layoutDirectionChangedProcess);
