@@ -31,6 +31,10 @@ contains(DEFINES, KY_SDK_KABASE) {
     PKGCONFIG += kysdk-kabase
 }
 
+contains(DEFINES, KY_SDK_WAYLANDHELPER) {
+    PKGCONFIG += kysdk-waylandhelper
+}
+
 LIBS += -L$$PWD/../libpeony-qt/ -lpeony -lX11 -lukui-log4qt
 
 TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \

@@ -212,9 +212,7 @@ void OpenWithPropertiesPage::initFloorThree()
 void OpenWithPropertiesPage::chooseOtherApp()
 {
     AllFileLaunchDialog dialog(m_fileInfo.get()->uri());
-    if (QDialog::Accepted == dialog.exec()) {
-        m_defaultOpenWithWidget->setLaunchAction(FileLaunchManager::getDefaultAction(m_fileInfo->uri()));
-    }
+    dialog.exec();
 }
 
 void OpenWithPropertiesPage::openAppCenter()
@@ -271,6 +269,16 @@ NewFileLaunchDialog::NewFileLaunchDialog(const QString &uri, QWidget *parent) : 
             return ;
         FileLaunchAction *action = m_launchHashList->m_actionHash->value(m_launchHashList->m_actionList->currentItem());
         if (action) {
+            /**
+             * @bug #292495: [File Manager] File opening method modified, when adding apps from Select Other Apps page,
+             *      the added apps are not synchronized to the other list.
+             *
+             * default lauch Action is not set
+             *
+             * @author: Renyg <renyangguang@kylinos.cn>
+             * @date:   2024-12-02
+             */
+            FileLaunchManager::setDefaultLauchAction(uri, action);
             OpenWithPropertiesPage::setNewLaunchAction(action);
         }
     });

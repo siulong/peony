@@ -29,6 +29,7 @@
 #include "file-label-model.h"
 
 #include "emblem-provider.h"
+#include "file-utils.h"
 
 #include <gio/gdesktopappinfo.h>
 #include <global-settings.h>
@@ -146,9 +147,14 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
     info->m_finalDisplayName = info->getFinalDisplayName();
-    if (info->isDesktopFile()) {
+    if (info->uri().endsWith(".desktop")) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
+        if (url.scheme() == "trash" && info->targetUri() != "")
+        {
+            url = QUrl(info->targetUri());
+            info->setProperty("enable_trash_target", true);
+        }
         GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
         if (!desktop_info) {
             //info->m_mutex.unlock();
@@ -164,17 +170,22 @@ std::shared_ptr<FileInfo> FileInfosJob::queryFileDisplayName(std::shared_ptr<Fil
         auto key = "Name[" +  QLocale::system().name() + "]";
         g_autofree gchar* string = g_desktop_app_info_get_string(desktop_info, key.toUtf8().constData());
 #endif
-        qDebug() << "get name string:"<<string <<info->uri()<<info->displayName();
-        QString path = "/usr/share/applications/" + info->displayName();
-        if(QFileInfo::exists(url.path().toUtf8()) && QFileInfo::exists(path))
+        /*
+         * Show the application name whenever you have executable permissions.
+         * The /usr/share/applications/ path shows all application names.
+         * All other cases only show the file name.
+        */
+        if(info->canExecute() || (QFileInfo::exists(url.path().toUtf8()) && url.path().startsWith("/usr/share/applications/")))
         {
-            url = path;
-            desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
-            string = g_desktop_app_info_get_locale_string(desktop_info, "Name");
             info->m_display_name = string;
         }
-        else{
+        else if (FileUtils::isExecuteTargetUribyTrashUri(url, info.get()))
+        {
             info->m_display_name = string;
+        }
+        else
+        {
+            info->m_display_name = QString(g_file_info_get_display_name(new_info));
         }
         info->m_finalDisplayName = info->getFinalDisplayName();
 

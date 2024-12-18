@@ -230,7 +230,16 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
     FileInfo *file = FileInfo::fromUri(m_index.data(Qt::UserRole).toString()).get();
     if ((m_index.data(Qt::UserRole).toString() != "computer:///") && (m_index.data(Qt::UserRole).toString() != "trash:///")) {
         auto linkRect = QRect(QPoint(topLeftX, topLeftY), QSize(emblemsSize, emblemsSize));
-        if (! file->canRead())
+        /**
+         * @bug #262561: [File Manager] PDF desktop shortcut files with deleted source files
+         *  do not display the same icon on the desktop folder as on the desktop.
+         *
+         * If the source file of a symbolic link is deleted, an “X” icon will be displayed in the upper left corner.
+         *
+         * @author: Renyg <renyangguang@kylinos.cn>
+         * @date:   2024-09-11
+         */
+        if (! file->canRead() || !file->isExistTargetOfSymlink())
         {
             emblemPoses.removeOne(1);
             QIcon symbolicLinkIcon = QIcon::fromTheme("emblem-unreadable");

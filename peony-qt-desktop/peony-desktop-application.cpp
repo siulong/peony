@@ -37,6 +37,7 @@
 #include "desktopbackgroundwindow.h"
 #include "advanced-desktop-item-model.h"
 #include "desktop-window-manager.h"
+#include "windowmanager/windowmanager.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>

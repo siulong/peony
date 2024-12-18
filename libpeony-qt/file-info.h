@@ -358,6 +358,8 @@ public:
     FileInfo &operator=(const FileInfo &other);
     QString updateIconName(const QString& uri, const QString& iconName) const;
 
+    bool isExistTargetOfSymlink() const;
+
 Q_SIGNALS:
     void updated();
 

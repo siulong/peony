@@ -651,14 +651,16 @@ void LocationBar::doLayout()
     } else {
         // Display the visible buttons
         for (int index = m_sizeHints.count() - m_iVisibleButtonCount; index < m_sizeHints.count(); index++) {
-            auto button = m_buttons.values().at(index);
-            button->setVisible(true);
-            button->move(m_iOffset, 0);
-            if (index == m_sizeHints.count() - m_iVisibleButtonCount) {
-                button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-                button->adjustSize();
+            if (index >= 0 && index < m_buttons.values().size()) {
+                auto button = m_buttons.values().at(index);
+                button->setVisible(true);
+                button->move(m_iOffset, 0);
+                if (index == m_sizeHints.count() - m_iVisibleButtonCount) {
+                    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+                    button->adjustSize();
+                }
+                m_iOffset += button->width();
             }
-            m_iOffset += button->width();
         }
     }
 

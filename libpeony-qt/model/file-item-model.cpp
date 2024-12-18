@@ -311,12 +311,14 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 return QVariant(displayName);
         }
         case Qt::DecorationRole: {
+            if (!item->m_info->isExistTargetOfSymlink()) {
+                return QIcon::fromTheme("unknown");
+            }
             auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(item->m_info->uri());
             if (!thumbnail.isNull()) {
                 return thumbnail;
             }
-            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
-            return QVariant(icon);
+            return QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
         }
         case Qt::ToolTipRole: {
             /**
