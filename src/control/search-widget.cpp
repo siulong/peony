@@ -59,13 +59,11 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
                 QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(homePath, key, true, false, "", m_searchRecursive);
                 targetUri = targetUri.replace("&recursive=0", "&recursive=1");
-                Q_EMIT this->updateLocationRequest(targetUri, false);
                 this->updateSearch(homePath, key, true);
             } else {
                 Q_EMIT this->updateSearchRequest(searchMode);
                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(path, key, true, false, "", m_searchRecursive);
                 targetUri = targetUri.replace("&recursive=1", "&recursive=0");
-                Q_EMIT this->updateLocationRequest(targetUri, false);
                 this->updateSearch(path, key, true);
             }
         }

@@ -401,6 +401,19 @@ QString FileInfo::updateIconName(const QString &uri, const QString &iconName) co
     return iconName;
 }
 
+
+bool FileInfo::isExistTargetOfSymlink() const
+{
+    /**
+     * if the current file is a symbolic link and m_symlink_target is not null
+     *  and the path to the file where m_symlink_target is located exists, returns false, otherwise returns true.
+     */
+    if (m_is_symbol_link && !m_symlink_target.isEmpty() && !QFileInfo(m_symlink_target).exists()) {
+        return false;
+    }
+    return true;
+}
+
 const QString FileInfo::unixDeviceFile()
 {
     GFile* file;

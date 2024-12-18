@@ -454,6 +454,9 @@ QVariant AdvancedDesktopItemModel::data(const QModelIndex &index, int role) cons
         return QVariant(TooltipsManagerInstance.generateTooltip(info.get()));
     }
     case Qt::DecorationRole: {
+        if (!info->isExistTargetOfSymlink()) {
+            return QIcon::fromTheme("unknown");
+        }
         auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(info->uri());
         if (!thumbnail.isNull()) {
             return thumbnail;
