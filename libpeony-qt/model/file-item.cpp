@@ -250,10 +250,15 @@ void FileItem::findChildrenAsync()
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
         if (critical) {
+            QWidget *parent = nullptr;
+            if(this->parent() && this->parent()->parent() && this->parent()->parent()->property("KFileDialog").isValid()){
+                QObject *obj = this->parent()->parent()->property("KFileDialog").value<QObject *>();
+                parent = qobject_cast<QWidget *>(obj);
+            }
             if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
-                QMessageBox::warning(nullptr, tr("Warning"), err->message());
+                QMessageBox::warning(parent, tr("Warning"), err->message());
             } else {
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
+                QMessageBox::critical(parent, tr("Error"), err->message());
             }
             //QMessageBox::critical(nullptr, tr("Error"), err->message());
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
@@ -293,6 +298,11 @@ void FileItem::findChildrenAsync()
             qDebug()<<"file item error:" <<err->message()<<enumerator->getEnumerateUri();
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
 
+            QWidget *parent = nullptr;
+            if(this->parent() && this->parent()->parent() && this->parent()->parent()->property("KFileDialog").isValid()){
+                QObject *obj = this->parent()->parent()->property("KFileDialog").value<QObject *>();
+                parent = qobject_cast<QWidget *>(obj);
+            }
             //fix bug#214724, 214924， access smb-root error issue
             if ((err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) &&
                     this->uri() != "smb:///" && this->uri() != "network:///smb-root") {
@@ -313,7 +323,8 @@ void FileItem::findChildrenAsync()
                 auto fileInfo = FileInfo::fromUri(this->uri());
                 if (err.get()->code() == G_IO_ERROR_NOT_FOUND && fileInfo->isSymbolLink())
                 {
-                    auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
+
+                    auto result = QMessageBox::question(parent, tr("Open Link failed"),
                                           tr("File not exist, do you want to delete the link file?"),
                                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (result == QMessageBox::Yes) {
@@ -325,7 +336,7 @@ void FileItem::findChildrenAsync()
                 }
                 else if (err.get()->code() == G_IO_ERROR_PERMISSION_DENIED)
                 {
-                    QMessageBox *msgBox = new QMessageBox();
+                    QMessageBox *msgBox = new QMessageBox(parent);
                     msgBox->setWindowTitle(tr("Error"));
                     QString errorInfo = tr("Can not open path \"%1\"，permission denied.").arg(this->uri().unicode());
                     msgBox->setText(errorInfo);
@@ -338,7 +349,7 @@ void FileItem::findChildrenAsync()
                 else if(err.get()->code() == G_IO_ERROR_NOT_FOUND)
                 {
                     QString errorInfo = tr("Can not find path \"%1\"，are you moved or renamed it?").arg(fileInfo->uri().unicode());
-                    QMessageBox::critical(nullptr, tr("Error"), errorInfo);
+                    QMessageBox::critical(parent, tr("Error"), errorInfo);
                 }
                 enumerator->deleteLater();
                 return;
@@ -346,7 +357,7 @@ void FileItem::findChildrenAsync()
             else {
                 enumerator->cancel();
                 enumerator->deleteLater();
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
+                QMessageBox::critical(parent, tr("Error"), err->message());
                 return;
             }
         }
