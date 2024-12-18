@@ -102,7 +102,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
         QStringList favoriteUris;
         if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne && !m_batchProcessThread->isRunning()) {
             // do normal remove
-            for (auto uri : m_uris_to_be_removed) {
+            for (auto& uri : m_uris_to_be_removed) {
                 for (int row = 0; row < m_children->count(); row++) {
                     auto child = m_children->at(row);
                     // 此处实际可靠性还有待验证
