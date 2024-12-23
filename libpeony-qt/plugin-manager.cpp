@@ -79,6 +79,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
         qDebug()<<fileName;
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        if (fileName == "libsafe-context-menu.so") {
+            pluginLoader.setLoadHints(pluginLoader.loadHints() | QLibrary::DeepBindHint);
+        }
         qDebug()<<pluginLoader.fileName();
         qDebug()<<pluginLoader.metaData();
         qDebug()<<pluginLoader.load();

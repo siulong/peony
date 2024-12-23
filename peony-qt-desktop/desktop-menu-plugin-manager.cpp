@@ -75,6 +75,9 @@ void DesktopMenuPluginManager::loadAsync()
             if ("libpeony-filesafe-menu-plugin.so" == fileName)
                 continue;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            if (fileName == "libsafe-context-menu.so") {
+                pluginLoader.setLoadHints(pluginLoader.loadHints() | QLibrary::DeepBindHint);
+            }
             qDebug()<<pluginLoader.fileName();
             qDebug()<<pluginLoader.metaData();
             qDebug()<<pluginLoader.load();
