@@ -236,6 +236,13 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     connect(mFSCombox, &QComboBox::currentTextChanged, this, [=]{
         if (mFSCombox->currentText() == "ext4") {
             QMessageBox::warning(nullptr, tr("Warning"), tr("Formatting to the ext4 file system may cause other users to be unable to read or write to the USB drive"), QMessageBox::Ok);
+            // Only perform window promotion in Wayland
+            bool isWayland = qApp->property("isWayland").toBool();
+            if (isWayland) {
+                qDebug() << "Format_Dialog raise in wayland";
+                this->raise();
+                this->activateWindow();
+            }
             cryptCheckBox->setEnabled(true);
         } else {
             cryptCheckBox->setChecked(false);
