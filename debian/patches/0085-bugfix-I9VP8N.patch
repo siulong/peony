@@ -1,0 +1,45 @@
+From: renyangguang <renyangguang@kylinos.cn>
+Date: Tue, 24 Dec 2024 17:33:13 +0800
+Subject: =?utf-8?b?YnVnZml4OlsjSTlWUDhOXSDjgJDmlofku7bnrqHnkIblmajjgJHjgJA=?=
+ =?utf-8?b?5qyh6KaB44CR5Zyo5bGe5oCnLeaJk+W8gOaWueW8jy3pgInmi6nlhbbku5blupQ=?=
+ =?utf-8?b?55So6aG16Z2i5re75Yqg5paw55qE5omT5byA5bqU55So77yM54K55Ye76YCJ5oup?=
+ =?utf-8?b?5LiA5Liq5paw55qE5bqU55So6aG16Z2i5Lit55qE56Gu5a6a5ZCO77yM5bGe5oCn?=
+ =?utf-8?b?LeaJk+W8gOaWueW8j+mhtemdouS4reeahOm7mOiupOaJk+W8gOaWueW8j+acqg==?=
+ =?utf-8?b?5ZCM5q2l5Y+Y5YyW?=
+
+---
+ .../controls/property-page/open-with-properties-page.cpp   | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/libpeony-qt/controls/property-page/open-with-properties-page.cpp b/libpeony-qt/controls/property-page/open-with-properties-page.cpp
+index 58393ce..81a97f0 100644
+--- a/libpeony-qt/controls/property-page/open-with-properties-page.cpp
++++ b/libpeony-qt/controls/property-page/open-with-properties-page.cpp
+@@ -212,9 +212,7 @@ void OpenWithPropertiesPage::initFloorThree()
+ void OpenWithPropertiesPage::chooseOtherApp()
+ {
+     AllFileLaunchDialog dialog(m_fileInfo.get()->uri());
+-    if (QDialog::Accepted == dialog.exec()) {
+-        m_defaultOpenWithWidget->setLaunchAction(FileLaunchManager::getDefaultAction(m_fileInfo->uri()));
+-    }
++    dialog.exec();
+ }
+ 
+ void OpenWithPropertiesPage::openAppCenter()
+@@ -266,6 +264,16 @@ NewFileLaunchDialog::NewFileLaunchDialog(const QString &uri, QWidget *parent) :
+             return ;
+         FileLaunchAction *action = m_launchHashList->m_actionHash->value(m_launchHashList->m_actionList->currentItem());
+         if (action) {
++            /**
++             * @bug #292495: [File Manager] File opening method modified, when adding apps from Select Other Apps page,
++             *      the added apps are not synchronized to the other list.
++             *
++             * default lauch Action is not set
++             *
++             * @author: Renyg <renyangguang@kylinos.cn>
++             * @date:   2024-12-02
++             */
++            FileLaunchManager::setDefaultLauchAction(uri, action);
+             OpenWithPropertiesPage::setNewLaunchAction(action);
+         }
+     });
