@@ -1101,7 +1101,11 @@ int ListView::getCurrentCheckboxColumn()
 {
     int section =header()->sectionViewportPosition(3);
     int viewportWidth =viewport()->width()+viewport()->x();
+
     int selectBox = 3;
+    if (m_current_uri.startsWith("trash:///")) {
+        selectBox = 4;
+    }
 
     for(int i=1;i<=model()->columnCount()-1;i++)
     {
