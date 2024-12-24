@@ -1,0 +1,59 @@
+From: renyangguang <renyangguang@kylinos.cn>
+Date: Tue, 24 Dec 2024 17:16:46 +0800
+Subject: =?utf-8?b?YnVnZml4OlsjSTlWQTU1XSDjgJDmlofku7bnrqHnkIblmajjgJHjgJA=?=
+ =?utf-8?b?5qyh6KaB44CR5Zyo5pCc57Si55WM6Z2i5Y+M5Ye75paH5Lu25aS577yM54K55Ye7?=
+ =?utf-8?b?5LiA5qyh5ZCO6YCA5ZKM5YmN6L+b77yM5YaN54K55Ye75ZCO6YCA5pe277yM6L+U?=
+ =?utf-8?b?5Zue55qE5paH5Lu25aS56ZSZ6K+v?=
+
+---
+ .../controls/directory-view/directory-view-container.cpp     | 12 ++----------
+ src/control/search-widget.cpp                                |  2 --
+ 2 files changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/libpeony-qt/controls/directory-view/directory-view-container.cpp b/libpeony-qt/controls/directory-view/directory-view-container.cpp
+index 07cea2d..0ba37e7 100644
+--- a/libpeony-qt/controls/directory-view/directory-view-container.cpp
++++ b/libpeony-qt/controls/directory-view/directory-view-container.cpp
+@@ -155,10 +155,7 @@ void DirectoryViewContainer::goBack()
+         return;
+ 
+     auto uri = m_back_list.takeLast();
+-    //avoid same uri add twice
+-    int count = m_forward_list.count();
+-    if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
+-        m_forward_list.prepend(getCurrentUri());
++    m_forward_list.prepend(getCurrentUri());
+     Q_EMIT updateWindowLocationRequest(uri, false);
+ }
+ 
+@@ -173,12 +170,7 @@ void DirectoryViewContainer::goForward()
+         return;
+     qDebug() << "m_back_list.append goForward:"<<getCurrentUri();
+     auto uri = m_forward_list.takeFirst();
+-    //avoid same uri add twice
+-    int count = m_back_list.count();
+-    if (! getCurrentUri().contains("search://") &&
+-        (count <= 0 || m_back_list.at(count-1) != getCurrentUri()))
+-        m_back_list.append(getCurrentUri());
+-
++    m_back_list.append(getCurrentUri());
+     Q_EMIT updateWindowLocationRequest(uri, false);
+ }
+ 
+diff --git a/src/control/search-widget.cpp b/src/control/search-widget.cpp
+index a5585cc..ce5b69b 100644
+--- a/src/control/search-widget.cpp
++++ b/src/control/search-widget.cpp
+@@ -64,12 +64,10 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
+                 QString homePath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(homePath, key, true, false, "", m_searchRecursive);
+                 targetUri = targetUri.replace("&recursive=0", "&recursive=1");
+-                Q_EMIT this->updateLocationRequest(targetUri, false);
+                 this->updateSearch(homePath, key, true);
+             } else {
+                 auto targetUri = Peony::SearchVFSUriParser::parseSearchKey(path, key, true, false, "", m_searchRecursive);
+                 targetUri = targetUri.replace("&recursive=1", "&recursive=0");
+-                Q_EMIT this->updateLocationRequest(targetUri, false);
+                 this->updateSearch(path, key, true);
+             }
+         }
