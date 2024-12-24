@@ -155,10 +155,7 @@ void DirectoryViewContainer::goBack()
         return;
 
     auto uri = m_back_list.takeLast();
-    //avoid same uri add twice
-    int count = m_forward_list.count();
-    if (count <= 0 || m_forward_list.at(0) != getCurrentUri())
-        m_forward_list.prepend(getCurrentUri());
+    m_forward_list.prepend(getCurrentUri());
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -173,12 +170,7 @@ void DirectoryViewContainer::goForward()
         return;
     qDebug() << "m_back_list.append goForward:"<<getCurrentUri();
     auto uri = m_forward_list.takeFirst();
-    //avoid same uri add twice
-    int count = m_back_list.count();
-    if (! getCurrentUri().contains("search://") &&
-        (count <= 0 || m_back_list.at(count-1) != getCurrentUri()))
-        m_back_list.append(getCurrentUri());
-
+    m_back_list.append(getCurrentUri());
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
