@@ -174,7 +174,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
 
 bool FileOperationProgressBar::isInhibit()
 {
-    return m_fds != nullptr;
+    return m_fds1 != nullptr;
 }
 
 FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(parent)
@@ -315,7 +315,7 @@ bool FileOperationProgressBar::inhibit()
         g_autoptr(GVariant) ret = g_dbus_connection_call_with_unix_fd_list_sync(pconnection, "org.freedesktop.login1", "/org/freedesktop/login1",
                                                                       "org.freedesktop.login1.Manager", "Inhibit",
                                                                       g_variant_new("(ssss)", "sleep", "peony", "file operation", "block"),
-                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds, NULL, &error);
+                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds1, NULL, &error);
         if (error) {
             printf("cannot block s4: %s\n", error->message);
         }
@@ -324,7 +324,7 @@ bool FileOperationProgressBar::inhibit()
         ret = g_dbus_connection_call_with_unix_fd_list_sync(pconnection, "org.freedesktop.login1", "/org/freedesktop/login1",
                                                                       "org.freedesktop.login1.Manager", "Inhibit",
                                                                       g_variant_new("(ssss)", "shutdown", "peony", "file operation", "block"),
-                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds, NULL, &error);
+                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds2, NULL, &error);
         if (error) {
             printf("cannot block s5: %s\n", error->message);
         }
@@ -337,9 +337,13 @@ bool FileOperationProgressBar::inhibit()
 
 void FileOperationProgressBar::uninhibit()
 {
-    if (m_fds) {
-        g_object_unref(m_fds);
-        m_fds = nullptr;
+    if (m_fds1) {
+        g_object_unref(m_fds1);
+        m_fds1 = nullptr;
+    }
+    if (m_fds2) {
+        g_object_unref(m_fds2);
+        m_fds2 = nullptr;
     }
 }
 

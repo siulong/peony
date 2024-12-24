@@ -78,8 +78,8 @@ public:
     bool m_error = false;
 
 private:
-    GUnixFDList*            m_fds = nullptr;
-
+    GUnixFDList*            m_fds1 = nullptr;
+    GUnixFDList*            m_fds2 = nullptr;
     // layout
     QVBoxLayout* m_main_layout = nullptr;
     GDBusConnection* m_dbus_connection = nullptr;
