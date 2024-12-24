@@ -209,6 +209,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                if (!piface)
                    continue;
 
+               bool isFileSafe = isFileSafePlugin(pluginLoader.metaData());
                QFileInfo fileInfo(pluginLoader.fileName());
                if (fileInfo.exists()) {
                    if (disExtensions.contains(fileInfo.fileName()) && m_hash.keys().contains(piface->name())
@@ -272,6 +273,9 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
                            MenuPluginManager::getInstance()->registerPlugin(menuPlugin);
                            if ("libpeony-drive-rename.so" == fileInfo.fileName()) {
                                qApp->setProperty("deviceRenamePluginLoaded", true);
+                           }
+                           if (isFileSafe) {
+                               MenuPluginManager::getInstance()->insertFileSafePlugin(menuPlugin);
                            }
                            break;
                         }
