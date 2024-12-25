@@ -1119,8 +1119,12 @@ bool MainWindow::currentViewSupportZoom()
 
 void MainWindow::maximizeOrRestore()
 {
-    if (m_tab->currentPage()) {
-        m_tab->currentPage()->getView()->clearIndexWidget();
+    if (getCurrentPage()) {
+        if (auto view = getCurrentPage()->getView()) {
+            QStringList uris = view->getSelections();
+            view->clearIndexWidget();
+            view->setSelections(uris);
+        }
     }
     if (!this->isMaximized()) {
         this->showMaximized();
