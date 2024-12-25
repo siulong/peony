@@ -1448,9 +1448,8 @@ fallback_retry:
                     handleDuplicate(node);
                     node->resolveDestFileUri(m_dest_dir_uri);
                 }
-                auto handledDestFileUri = node->resolveDestFileUri(m_dest_dir_uri);
-                auto handledDestFile = wrapGFile(g_file_new_for_uri(handledDestFileUri.toUtf8()));
-                if (handledDestFileUri.length() > 255 &&
+                QString destFileBaseName = node->destBaseName();
+                if (destFileBaseName.length() > 255 &&
                     m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                     QString msg = tr("The file name exceeds the limit");
                     Q_EMIT operationInfoMsgBox(msg);
