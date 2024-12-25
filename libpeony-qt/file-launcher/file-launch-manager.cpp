@@ -169,6 +169,13 @@ FileLaunchAction *FileLaunchManager::getDefaultAction(const QString &uri)
         action->setProperty("isMdmApp", isMdmApp);
         g_object_unref(info);
 
+        //fix bug#312687, install 360 compress software, double click zip file wrong issue
+        if (action->getAppInfoName().isEmpty()){
+            auto recommentActions = getRecommendActions(uri);
+            if (recommentActions.length() > 0)
+                action = recommentActions.first();
+        }
+
         return action;
     }
 }
