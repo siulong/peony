@@ -695,7 +695,24 @@ void MainWindow::setShortCuts()
         auto remodelViewAction = new QAction(this);
         remodelViewAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
         connect(remodelViewAction, &QAction::triggered, this, [=]() {
-            this->getCurrentPage()->setZoomLevelRequest(25);
+            /**
+             * @bug #313689: Press Ctrl+"0" on the keyboard in the icon view of the file manager to turn it into a list view
+             *
+             * Set the default zoom level to the minimum value in icon mode.
+             * If the maximum zoom level value is less than 25 in list mode, set it to the maximum zoom level value; otherwise, set it to 25
+             *
+             * @author: Renyg <renyangguang@kylinos.cn>
+             * @date:   2024-12-27
+             */
+            auto view = this->getCurrentPage()->getView();
+            int defaultZoomLevel = 25;
+            if (view->viewId() == "Icon View") {
+                defaultZoomLevel = view->minimumZoomLevel();
+            } else if (view->viewId() == "List View" && view->maximumZoomLevel() < defaultZoomLevel) {
+                defaultZoomLevel = view->maximumZoomLevel();
+            }
+            qDebug() << QString("View Type: %1  defaultZoomLevel: %2").arg(view->viewId()).arg(defaultZoomLevel);
+            this->getCurrentPage()->setZoomLevelRequest(defaultZoomLevel);
         });
         addAction(remodelViewAction);
 
