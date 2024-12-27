@@ -382,6 +382,12 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 connect(l.last(), &QAction::triggered, this, [=]() {
                     if (!m_top_window)
                         return;
+
+                    if(info->uri().startsWith("file://") && !info->canExecute()){
+                        QMessageBox::critical(nullptr, tr("Open failed"), tr("Open directory failed, you have no permission!"));
+                        return;
+                    }
+
                     bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
                     if (check) {
                         auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(m_selections.first()));
