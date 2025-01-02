@@ -1546,6 +1546,7 @@ void TabWidget::updateFilter()
     if(!currentPage())
         return;
     currentPage()->updateFilter();
+    m_status_bar->update();
 }
 
 void TabWidget::updateAdvanceConditions()
