@@ -202,6 +202,9 @@ void IconView::setCutFiles(const QStringList &uris)
 //FIXME: implement location functions.
 void IconView::setDirectoryUri(const QString &uri)
 {
+    if (m_current_uri != uri) {
+        disableMultiSelect();
+    }
     m_current_uri = uri;
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
