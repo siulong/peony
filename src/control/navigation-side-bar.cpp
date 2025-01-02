@@ -866,9 +866,10 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     m_labelDialog->hide();
     m_layout->addWidget(m_labelDialog);
 
-    QWidget *w = new QWidget(this);
-    QVBoxLayout *l = new QVBoxLayout;
-    l->setContentsMargins(4, 4, 2, 4);
+    QWidget *buttonsContainer = new QWidget(this);
+    QVBoxLayout *buttonsLayout = new QVBoxLayout(buttonsContainer);
+    buttonsLayout->setContentsMargins(4, 4, 2, 4);
+    buttonsLayout->setSpacing(2);
 
     connect(m_labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
     {
@@ -906,10 +907,8 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         Peony::TagManagement::getInstance()->show();
     });
 
-    l->setSpacing(0);
-
-    l->addWidget(control);
-    l->addWidget(labelButton);
+    buttonsLayout->addWidget(control);
+    buttonsLayout->addWidget(labelButton);
     connect(labelButton, &QPushButton::clicked, this, [=](){
         bool checked = !labelButton->getShow();
         if (checked) {
@@ -926,8 +925,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         m_labelDialog->setVisible(checked);
     });
 
-    w->setLayout(l);
-    m_layout->addWidget(w);
+    m_layout->addWidget(buttonsContainer);
     setLayout(m_layout);
 
     setTabOrder(m_sidebar, labelButton);
