@@ -134,13 +134,11 @@ void FileDeleteOperation::run()
         return;
 
     Q_EMIT operationStarted();
-    auto standardPaths = FileUtils::standardPathList();
     for (auto src : m_src_uris) {
         // pre-check for delete special directory
-        QUrl srcUrl = src;
         if (src == "file:///data/home" || src == "file:///data/usershare" ||
                 src == "file:///data/root" || src == "file:///home" ||
-                standardPaths.contains(srcUrl.path()) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
+                FileUtils::isStandardPath(src) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
             FileOperationError except;
             except.srcUri = src;
             except.destDirUri = nullptr;
@@ -191,10 +189,8 @@ void FileDeleteOperation::run()
 
     //fix delete file not sync issue,link to bug#113826
     if (isMobileDevice) {
-        auto uri = FileUtils::getParentUri(m_src_uris.first());
-        if (! uri.isEmpty()) {
-            g_autoptr (GFile) ddir = g_file_new_for_uri (uri.toUtf8().constData());
-            char * path = g_file_get_path(ddir);
+        auto path = FileUtils::getParentUri(m_src_uris.first());
+        if (! path.isEmpty()) {
             operationStartSnyc();
             QProcess p;
             p.start(QString("/usr/bin/sync -f %1").arg(path));
@@ -204,7 +200,6 @@ void FileDeleteOperation::run()
             } else {
                 qDebug() << "sync failed with exit code:" << p.exitCode();
             }
-            g_free(path);
         }
     }
 

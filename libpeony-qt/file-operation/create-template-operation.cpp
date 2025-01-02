@@ -35,7 +35,7 @@
 
 using namespace Peony;
 
-#define TEMPLATE_DIR "file://" + GlobalSettings::getInstance()->getValue(TEMPLATES_DIR).toString()
+#define TEMPLATE_DIR "file://" + QString(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES)) + "/"
 
 void CreateTemplateOperation::handleDuplicate(const QString &uri)
 {
@@ -212,12 +212,12 @@ retry_create_template:
     //needSync = true;
 
     if (needSync) {
-        auto path = g_file_get_path(dest_dir_file);
+        char *path = g_file_get_path(dest_dir_file);
         if (path) {
             operationStartSnyc();
             QProcess p;
             p.start(QString("/usr/bin/sync -f %1").arg(path));
-            p.waitForFinished(-1);            
+            p.waitForFinished(-1);
             if (p.exitCode() == 0) {
                 qDebug() << "sync completed successfully";
             } else {

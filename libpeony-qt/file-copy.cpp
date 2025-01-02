@@ -115,7 +115,7 @@ void FileCopy::sync(const GFile* destFile)
         return;
     }
 
-    if(mTotalSize < BUF_SIZE * SYNC_INTERVAL || mIsDestFileLocal) {
+    if(mIsDestFileLocal) {
         return;
     }
 
