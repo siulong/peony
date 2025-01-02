@@ -52,7 +52,7 @@ private:
     QDir *m_dir;
     QStringList m_file_list;
     QSettings *m_settings;
-    bool m_do_not_thumbnail;
+    bool m_do_not_thumbnail = false;
     bool m_allow_parallel;
     bool m_showTrashDialog;
     int m_times = 9;

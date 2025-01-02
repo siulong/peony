@@ -744,10 +744,11 @@ void GlobalSettings::forceSync(const QString &key)
         }
     } else {
         m_cache.remove(key);
-        if (m_settings->allKeys().contains(key)) {
-            m_cache.insert(key, m_settings->value(key));
-        } else if (m_peony_gsettings->keys().contains(key)) {
+        // QGSettings takes priority over QSSettings
+        if (m_peony_gsettings->keys().contains(key)) {
             m_cache.insert(key, m_peony_gsettings ? m_peony_gsettings->get(key) : QVariant());
+        } else if (m_settings->allKeys().contains(key)) {
+            m_cache.insert(key, m_settings->value(key));
         } else {
             qWarning()<<"key"<<key<<"doesn't exsit either qsettings and gsettings";
         }
