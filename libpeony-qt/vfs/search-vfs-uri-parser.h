@@ -36,6 +36,7 @@ public:
     const static QString getSearchUriNameRegexp(const QString &searchUri);
     const static QString getSearchUriTargetDirectory(const QString &searchUri);
     const static QString addSearchKey(const QString &uri, const bool &search_engine = false);
+    const static QString getSearchUriPath(const QString &searchUri);
 private:
     SearchVFSUriParser();
 };

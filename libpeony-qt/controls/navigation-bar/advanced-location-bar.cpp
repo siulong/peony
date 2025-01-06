@@ -93,6 +93,24 @@ AdvancedLocationBar::AdvancedLocationBar(QWidget *parent) : QWidget(parent)
         auto key = m_search_bar->text();
         key = processSpecialChar(key);
         qDebug() << "search key:" <<key <<m_last_key;
+        // To fix the issue where the current search path is updated when switching tab
+        if (m_text.startsWith("search:///")) {
+            QString currentSearchPath = Peony::SearchVFSUriParser::getSearchUriPath(m_text);
+            if (!currentSearchPath.isEmpty() && currentSearchPath != m_last_non_search_path) {
+                if (key != m_last_key)
+                {
+                    Q_EMIT searchRequest(currentSearchPath, key);
+                    m_last_key = key;
+                    if (key == "") {
+                        m_search_bar->updateSearchProgress(false);
+                    } else {
+                        m_search_bar->updateSearchProgress(true);
+                    }
+                }
+                return;
+            }
+        }
+
         if (key != m_last_key)
         {
             m_in_search_mode = true;
@@ -189,6 +207,11 @@ void AdvancedLocationBar::setSearchBarFocus()
 {
     if (m_search_bar)
         return m_search_bar->setFocus();
+}
+
+void AdvancedLocationBar::setSearchText(const QString &text)
+{
+    m_search_bar->setText(text);
 }
 
 bool AdvancedLocationBar::isEditing()

@@ -45,6 +45,9 @@ public:
     bool getSearchMode() {
         return m_in_search_mode;
     }
+
+    void setSearchText(const QString& text);
+
 Q_SIGNALS:
     void updateWindowLocationRequest(const QString &uri, bool addHistory = true, bool forceUpdate = false);
     void refreshRequest();

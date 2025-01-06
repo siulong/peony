@@ -1734,6 +1734,16 @@ void MainWindow::initUI(const QString &uri)
         }
     });
 
+    connect(m_tab, &TabWidget::searchStateChanged, this, [this](bool isSearching, const QString &searchKey) {
+        if (isSearching) {
+            m_header_bar->startEdit(true); // 进入搜索状态
+            m_header_bar->m_searchWidget->setSearchMode(true);
+            m_header_bar->m_searchWidget->setSearchText(searchKey);
+        } else {
+            m_header_bar->m_searchWidget->clearSearchBox();
+        }
+    });
+
     //SideBar
     auto sideBarFactory = Peony::SideBarFactoryManager::getInstance()->getFactoryFromPlatformName();
     if (!sideBarFactory) {

@@ -1016,30 +1016,39 @@ void TabWidget::switchSearchPath(bool isCurrent)
 
 void TabWidget::updateSearchPathButton(const QString &uri)
 {
-    //search path not update
-    //qDebug() << "updateSearchPathButton:" <<uri;
-    if (uri.startsWith("search://"))
-        return;
     QString curUri = uri;
-    if (uri == "")
-    {
+    if (uri.startsWith("search:///")) {
+        // Extract the actual path from the search URI
+        curUri = Peony::SearchVFSUriParser::getSearchUriPath(uri);
+    } else if (uri.isEmpty()) {
         curUri = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        if (! getCurrentUri().isNull())
+        if (!getCurrentUri().isNull()) {
             curUri = getCurrentUri();
+        }
     }
-    auto info = Peony::FileInfo::fromUri(curUri);
-    if (info.get()->isEmptyInfo()) {
-        // TODO: use async method.
-        Peony::FileInfoJob j(info);
-        j.querySync();
-    }
-    auto iconName = Peony::FileUtils::getFileIconName(curUri);
-    auto displayName = Peony::FileUtils::getFileDisplayName(curUri);
-    qDebug() << "goToUri iconName:" <<iconName <<displayName<<curUri;
 
+    // Get the current display name
+    auto displayName = Peony::FileUtils::getFileDisplayName(curUri);
     if (displayName.contains("&")) {
         displayName = Peony::FileUtils::handleSpecialSymbols(displayName);
     }
+
+    // Check if updates are needed
+    QString currentRealDisplayName = m_current_search->property("realDisplayName").toString();
+    qDebug() << "curUri: " << curUri << " displayName: " << displayName << " currentRealDisplayName: " << currentRealDisplayName;
+    if (currentRealDisplayName == displayName) {
+        // If the display name has not changed, return directly
+        return;
+    }
+
+    // Update file information
+    auto info = Peony::FileInfo::fromUri(curUri);
+    m_search_button_info = info;
+    if (info.get()->isEmptyInfo()) {
+        Peony::FileInfoJob j(info);
+        j.querySync();
+    }
+
     //elide text if it is too long, Use ElideMiddle mode to design
     //related bug#155126, #185743
     m_current_search->setProperty("realDisplayName", displayName);
@@ -1657,24 +1666,35 @@ void TabWidget::onViewDoubleClicked(const QString &uri)
 
 void TabWidget::changeCurrentIndex(int index)
 {
-    m_tab_bar->setCurrentIndex(index);
-    m_stack->setCurrentIndex(index);
-
-    Q_EMIT currentIndexChanged(index);
-    Q_EMIT activePageChanged();
-
     //fix bug#291259, when index is -1 crash issue
-    if (index < 0) {
+    if (index < 0 || index >= m_tab_bar->getCurrentUris().count()) {
         return;
     }
 
-    if (m_tab_bar->getCurrentUris().count() > index) {
-        QString uri = m_tab_bar->getCurrentUris().at(index);
-        if (! uri.startsWith("search://"))
-        {
-            closeSearch();
-        }
+    m_tab_bar->setCurrentIndex(index);
+    m_stack->setCurrentIndex(index);
+
+    QString uri = m_tab_bar->getCurrentUris().at(index);
+    /**
+     * @bug #292259: Various abnormal phenomena that occur when switching tabs in search mode
+     *
+     * separate handling of tab switching scenarios that deal with search states
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2025-01-06
+     */
+    bool isSearching = uri.startsWith("search:///");
+    QString searchKey;
+    if (isSearching) {
+        searchKey = Peony::SearchVFSUriParser::getSearchUriNameRegexp(uri);
+        // emit a signal to update the search status of HeaderBar
+        Q_EMIT searchStateChanged(isSearching, searchKey);
+    } else {
+        closeSearch();
     }
+
+    Q_EMIT currentIndexChanged(index);
+    Q_EMIT activePageChanged();
 }
 
 int TabWidget::count()

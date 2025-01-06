@@ -144,6 +144,9 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void updateItemsNum(); /*显示隐藏文件，更新项目个数*/
 
+    // add new signals to notify changes in search status
+    void searchStateChanged(bool isSearching, const QString &searchKey);
+
 public Q_SLOTS:
     void setCurrentIndex(int index);
     void setPreviewPage(Peony::PreviewPageIface *previewPage = nullptr);
