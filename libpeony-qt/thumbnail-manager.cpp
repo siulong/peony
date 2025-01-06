@@ -187,8 +187,8 @@ void ThumbnailManager::createPdfFileThumbnail(const QString &uri, std::shared_pt
     QUrl url = uri;
 
     if (!uri.startsWith("file:///")) {
-        url = FileUtils::getTargetUri(uri);
-        //qDebug()<<url;
+        auto fileInfo = FileInfo::fromUri(uri);
+        url = fileInfo.get()->filePath();
     }
 
     PdfThumbnail pdfThumbnail(url.path());
@@ -219,7 +219,7 @@ void ThumbnailManager::createImageFileThumbnail(const QString &uri, std::shared_
         if (watcher) {
             watcher->fileChanged(uri);
         }
-    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://")) {
+    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://") || uri.startsWith("smb://")) {
         //手机传输和图片传输需要重定向path后获取对应缩略图
         auto fileInfo = FileInfo::fromUri(uri);
         QIcon thumbnail = GenericThumbnailer::generateThumbnail(fileInfo.get()->filePath(), true);
@@ -274,10 +274,11 @@ void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::share
 
     if (!uri.startsWith("file:///")) {
         g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
-        g_autoptr (GFileInfo) gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI, G_FILE_QUERY_INFO_NONE, 0, 0);
-        g_autofree gchar *target_uri = g_file_info_get_attribute_as_string(gfileinfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-        if (target_uri) {
-            url = QString(target_uri);
+        //g_autoptr (GFileInfo) gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI, G_FILE_QUERY_INFO_NONE, 0, 0);
+        //g_autofree gchar *target_uri = g_file_info_get_attribute_as_string(gfileinfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+        g_autofree gchar *filePath = g_file_get_path(gfile);
+        if (filePath) {
+            url = QString(filePath);
         }
     }
 

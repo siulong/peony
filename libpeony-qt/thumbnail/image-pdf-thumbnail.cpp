@@ -35,7 +35,8 @@
 ImagePdfThumbnail::ImagePdfThumbnail(const QString &uri)
 {
     if (!uri.startsWith("file:///")) {
-        m_url = FileUtils::getTargetUri(uri);
+        auto fileInfo = FileInfo::fromUri(uri);
+        m_url = fileInfo.get()->filePath();
         qDebug()<<"target uri:"<< m_url.path();
     }
     else {
