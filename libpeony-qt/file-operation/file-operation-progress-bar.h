@@ -326,7 +326,7 @@ private:
     bool m_stopping = false;
     float m_current_value = 0.0;
     float m_current_speed = 0.0;
-    QString m_current_estimated_time = tr("Time is being calculated");
+    QString m_current_estimated_time = tr("Calculating time");
     QString m_file_name = tr("starting ...");
     QIcon m_icon = QIcon::fromTheme("text");
 };

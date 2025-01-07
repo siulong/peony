@@ -528,6 +528,7 @@ void MainProgressBar::initPrarm()
     m_stopping = false;
     m_current_value = 0.0;
     m_file_name = tr("starting ...");
+    m_current_estimated_time = tr("Calculating time");
 }
 
 void MainProgressBar::setFileIcon(QIcon& icon)

@@ -29,7 +29,7 @@ QString progressBarHelper::timeToString(const int &time)
     int hours = (time % 86400) / 3600;
     int minutes = (time % 3600) / 60;
     int remainingSeconds = time % 60;
-    QString currentEstimatedTime = tr("Time is being calculated");
+    QString currentEstimatedTime = tr("Calculating time");
     if(days > 31) {
         //计算时长超过一个月认为数据有误，不进行展示
         return currentEstimatedTime;
@@ -51,8 +51,6 @@ QString progressBarHelper::timeToString(const int &time)
                          .arg(remainingSeconds, 2, 10, QLatin1Char('0'));
     } else if (remainingSeconds > 0){
         currentEstimatedTime = QString(tr("%1sec")).arg(remainingSeconds);
-    } else {
-        currentEstimatedTime = QString(tr("Time is being calculated"));
     }
     return currentEstimatedTime;
 }
