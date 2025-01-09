@@ -430,7 +430,6 @@ void AdvancedDesktopIconView::initShoutCut()
         auto selectedUris = this->getSelections();
         if (!meetSpecialConditions(selectedUris)){
             qDebug() << "delete" << selectedUris;
-            clearAllIndexWidgets();
             FileOperationUtils::executeRemoveActionWithDialog(selectedUris);
         }
     });
