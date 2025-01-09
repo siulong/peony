@@ -374,6 +374,11 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                     iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
                 }
 
+                if(m_fileInfo->unixDeviceFile().startsWith("/dev/sr")
+                        && (iconName.endsWith(".ico"))){/* 规范光盘图标，与竞品对比，光盘图标使用的是"media-optical",linkto bug#174770 */
+                    iconName = "media-optical";
+                }
+
                 if (!m_fileInfo->unixDeviceFile().isEmpty() && (m_fileInfo->unixDeviceFile().startsWith("/dev/sd")
                                                                 || m_fileInfo->unixDeviceFile().startsWith("/dev/dm"))) {
                     std::shared_ptr<Volume> volume = nullptr;
