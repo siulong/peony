@@ -39,9 +39,9 @@ StablePropertiesWindowFactory *StablePropertiesWindowFactory::getInstance()
     return global_instance;
 }
 
-QMainWindow *StablePropertiesWindowFactory::create(const QStringList &uris)
+QMainWindow *StablePropertiesWindowFactory::create(const QStringList &uris, QWidget *parent)
 {
-    m_window = new StablePropertiesWindow(uris);
+    m_window = new StablePropertiesWindow(uris, parent);
     return m_window;
 }
 

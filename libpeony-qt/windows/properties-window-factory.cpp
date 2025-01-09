@@ -39,9 +39,9 @@ PropertiesWindowFactory *PropertiesWindowFactory::getInstance()
     return globalInstance;
 }
 
-QMainWindow *PropertiesWindowFactory::create(const QStringList &uris)
+QMainWindow *PropertiesWindowFactory::create(const QStringList &uris, QWidget *parent)
 {
-    m_window = new PropertiesWindow(uris);
+    m_window = new PropertiesWindow(uris, parent);
     return m_window;
 }
 

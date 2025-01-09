@@ -136,14 +136,14 @@ bool PropertiesWindowFactoryPluginManager::unregisterFactory(PropertiesWindowTab
     return false;
 }
 
-QMainWindow *PropertiesWindowFactoryPluginManager::create(const QStringList &uris)
+QMainWindow *PropertiesWindowFactoryPluginManager::create(const QStringList &uris, QWidget *parentWidget)
 {
     QString version = qApp->property("version").toString();
     if (version == "") {
         version = "ukui4.0";
     }
     PropertiesWindowFactoryPluginIface *iface = getFactory(version);
-    return iface->create(uris);
+    return iface->create(uris, parentWidget);
 }
 
 PropertiesWindowFactoryPluginIface *PropertiesWindowFactoryPluginManager::getFactory(const QString &id)

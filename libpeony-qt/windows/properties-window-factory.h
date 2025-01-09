@@ -71,7 +71,7 @@ public:
         return true;
     }
 
-    QMainWindow *create(const QStringList &uris);
+    QMainWindow *create(const QStringList &uris, QWidget *parent);
     void closeFactory();
 
     explicit PropertiesWindowFactory(QObject *parent = nullptr);
