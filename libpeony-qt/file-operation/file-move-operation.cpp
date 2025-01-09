@@ -1379,6 +1379,12 @@ fallback_retry:
 //                node->setErrorResponse(OverWriteOne);
                 if (nodeErr){
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free(nodeErr);
                 }else{
                 }
@@ -1422,6 +1428,12 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, OverWriteAll);
                 if (nodeErr){
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free(nodeErr);
                 }else{
                 }
@@ -1471,6 +1483,12 @@ fallback_retry:
                 fileCopy.run();
                 if (nodeErr) {
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free (nodeErr);
                 } else {
                     // 设置node的状态为handled用于后续删除原文件的流程
