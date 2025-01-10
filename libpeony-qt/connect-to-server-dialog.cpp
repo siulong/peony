@@ -267,7 +267,8 @@ ConnectServerDialog::ConnectServerDialog(QWidget *parent) : QDialog(parent)
             m_port_editor->setEditText(sftpDefaultPortStr);
         }
     });
-    Q_EMIT m_remote_type_edit->currentTextChanged(ftpTypeStr);
+    m_remote_type_edit->setCurrentText(sftpTypeStr);
+    Q_EMIT m_remote_type_edit->currentTextChanged(sftpTypeStr);
 
     connect(m_btn_del, &QPushButton::clicked, this, [=] (bool checked) {
         QString delUri = uri();
