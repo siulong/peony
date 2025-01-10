@@ -983,8 +983,8 @@ void DesktopItemModel::refresh()
     beginResetModel();
     m_files.clear();
     m_items_need_relayout.clear();
-    auto app = static_cast<PeonyDesktopApplication *>(qApp);
-    app->clearViewCache();
+//    auto app = static_cast<PeonyDesktopApplication *>(qApp);
+//    app->clearViewCache();
     endResetModel();
 
     m_desktop_info = FileInfo::fromPath(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));

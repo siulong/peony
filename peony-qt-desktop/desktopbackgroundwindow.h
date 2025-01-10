@@ -1,32 +1,9 @@
-/*
- * Peony-Qt
- *
- * Copyright (C) 2023, KylinSoft Information Technology Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Authors: Yue Lan <lanyue@kylinos.cn>
- *
- */
-
 #ifndef DESKTOPBACKGROUNDWINDOW_H
 #define DESKTOPBACKGROUNDWINDOW_H
 
 #include <QMainWindow>
 #include <QGSettings>
 #include "desktop-icon-view.h"
-#include <KF5/KScreen/kscreen/output.h>
 
 namespace KWayland {
 namespace Client {
@@ -38,14 +15,12 @@ class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit DesktopBackgroundWindow(const KScreen::OutputPtr &output, int desktopWindowId, QWidget *parent = nullptr);
+    explicit DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent = nullptr);
     ~DesktopBackgroundWindow() override;
 
     int id() const;
 
-    KScreen::OutputPtr screen() const;
-    QRect getLogicalGeometryFromScreen();
-
+    QScreen *screen() const;
     Peony::DesktopIconView *getIconView();
     void setId(int id);
 
@@ -54,13 +29,12 @@ public:
 Q_SIGNALS:
     void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
+    void updateWindow(const QRect &geometry);
     void destroyed();
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
     void invaidScreen();
-
-    void setCentralView();
 
 protected Q_SLOTS:
     void updateWindowGeometry();
@@ -80,12 +54,11 @@ protected:
 
 private:
     int m_id = -1;
-    //QScreen *m_screen = nullptr;
+    QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
     Peony::DesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
-    KScreen::OutputPtr m_output = nullptr;
 };
 
 #endif // DESKTOPBACKGROUNDWINDOW_H

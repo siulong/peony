@@ -97,6 +97,7 @@ static bool iconSizeLessThan (const QPair<QRect, QString> &p1, const QPair<QRect
 
 static bool refreshing = false;
 static bool g_isHighVersion = false;
+//static bool g_initialized = false;
 
 DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 {
