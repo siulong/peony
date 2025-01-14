@@ -888,6 +888,106 @@ void PeonyDesktopApplication::volumeRemovedProcess(const std::shared_ptr<Peony::
    //     g_drive_stop(gdrive,G_MOUNT_UNMOUNT_NONE,NULL,NULL,NULL,NULL);
 };
 
+int PeonyDesktopApplication::checkScreenMode(const QRect &geometry)
+{
+    int mode = 1;
+    if (m_bg_windows.count() == 1) {
+        mode = 0;
+        return mode;
+    }
+
+    for (auto window : m_bg_windows) {
+        if (window->screen()->geometry() != geometry) {
+            mode = 2;
+            break;
+        }
+    }
+    return mode;
+}
+
+Peony::DesktopIconView *PeonyDesktopApplication::getNotFullView()
+{
+    for (auto window : m_bg_windows) {
+        Peony::DesktopIconView *view = window->getIconView();
+        if (view && !view->isFull()) {
+            return view;
+        }
+    }
+    return nullptr;
+}
+
+void PeonyDesktopApplication::setConfig(KScreen::ConfigOperation *op)
+{
+    m_config = op->config();
+    if (!m_config) {
+        qCritical("[PeonyDesktopApplication::setConfig] config is null");
+        return;
+    }
+    KScreen::ConfigMonitor::instance()->addConfig(m_config);
+
+    for (const KScreen::OutputPtr &output : m_config->outputs()) {
+        outputAdded(output);
+    }
+
+    connect(m_config.data(), &KScreen::Config::primaryOutputChanged,
+            this, [this](const KScreen::OutputPtr &output) {
+        QTimer::singleShot(500, this, [this, output] () {
+            relocateIconView(output);
+        });
+    });
+
+    connect(m_config.data(), &KScreen::Config::outputAdded,
+            this, [this](const KScreen::OutputPtr &output) {
+        QTimer::singleShot(500, this, [this, output] () {
+            outputAdded(output);
+        });
+    });
+
+    connect(m_config.data(), &KScreen::Config::outputRemoved,
+            this, &PeonyDesktopApplication::outputRemoved);
+
+}
+
+void PeonyDesktopApplication::outputRemoved(int outputId)
+{
+    for (auto window : m_bg_windows) {
+        if (outputId == window->screen()->id()) {
+            if (m_bg_windows.count() - 1 != window->id() && m_bg_windows.count() > 1) {
+                auto lastWindow = getWindow(m_bg_windows.count() - 1);
+                lastWindow->setId(m_bg_windows.count() - 2);
+                window->setId(m_bg_windows.count() - 1);
+                lastWindow->getIconView()->updateView();
+                window->getIconView()->updateView();
+            }
+            if (m_mode == 2) {
+                if (m_bg_windows.count() > 2) {
+                    //task#74174 销毁时保存扩展屏元素的坐标点
+                    window->getIconView()->saveExtendItemInfo();
+                    getIconView(0)->updateView();
+                } else if (m_bg_windows.count() == 2) {
+                    singleScreenMode();
+                    m_mode = 0;
+                }
+            }
+            window->invaidScreen();
+            m_bg_windows.removeOne(window);
+            window->deleteLater();
+            return;
+        }
+    }
+}
+
+void PeonyDesktopApplication::changeMode(int mode)
+{
+    if (m_mode != mode) {
+        m_mode = mode;
+        if (1 == mode) {
+            singleScreenMode();
+         } else if (2 == mode) {
+            multiscreenMode();
+        }
+    }
+}
 static void volume_mount_cb (GObject* source, GAsyncResult* res, gpointer udata)
 {
     g_volume_mount_finish(G_VOLUME (source), res, nullptr);
