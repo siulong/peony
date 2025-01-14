@@ -50,6 +50,7 @@ using namespace UdfBurn;
 #include <QTimer>
 
 #include <glib.h>
+#include <gio/gdesktopappinfo.h>
 
 using namespace Peony;
 
@@ -396,9 +397,13 @@ ComputerPropertiesPage::ComputerPropertiesPage(const QString &uri, QWidget *pare
             if (isCDDisk && QFile::exists("/usr/bin/kylin-burner")) {
                 auto pushbutton = new QPushButton(tr("Kylin Burner"));
                 connect(pushbutton, &QPushButton::clicked, pushbutton, [=](){
-                    QProcess p;
-                    p.startDetached("/usr/bin/kylin-burner");
-                    p.waitForStarted();
+                    QString path = "/usr/share/applications/kylin-burner.desktop";
+                    g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(path.toUtf8().constData());
+                    if (info) {
+                        g_app_info_launch_uris_async(G_APP_INFO(appInfo), nullptr,
+                                                     nullptr, nullptr,
+                                                     nullptr, nullptr);
+                    }
                 });
                 m_layout->addRow(new QLabel(tr("Open with: \t")), pushbutton);
             }
