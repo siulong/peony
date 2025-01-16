@@ -314,11 +314,7 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             if (!item->m_info->isExistTargetOfSymlink()) {
                 return QIcon::fromTheme("unknown");
             }
-            auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(item->m_info->uri());
-            if (!thumbnail.isNull()) {
-                return thumbnail;
-            }
-            return QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
+            return item->m_info->getIcon();
         }
         case Qt::ToolTipRole: {
             /**

@@ -20,6 +20,8 @@
  *
  */
 #include <gio/gunixmounts.h>
+#include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 
 #include "file-info.h"
 #include "file-info-manager.h"
@@ -416,23 +418,66 @@ bool FileInfo::isExistTargetOfSymlink() const
 
 QIcon FileInfo::getIcon()
 {
-    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(m_uri);
+    // Try getting thumbnail first
+    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(uri());
     if (!icon.isNull()) {
-        qDebug() << __FILE__ << __FUNCTION__ << "tryGetThumbnail icon is not null";
         return icon;
     }
 
-    icon = QIcon::fromTheme(m_icon_name, QIcon::fromTheme("unknown"));
-    if (icon.name() == "unknown") {
-        QFileInfo iconInfo(m_icon_name);
-        if (iconInfo.exists()) {
-            // Get the filename without suffix
-            QString iconNameWithoutSuffix = iconInfo.completeBaseName();
-            qDebug() << __FILE__ << __FUNCTION__ << m_icon_name << " iconNameWithoutSuffix: " << iconNameWithoutSuffix;
-            icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+    // Handle desktop file
+    if (m_uri.endsWith(".desktop")) {
+        QUrl url = uri();
+        if (url.scheme() == "trash" && !targetUri().isEmpty()) {
+            url = QUrl(targetUri());
+        }
+
+        GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
+        if (desktop_info) {
+            QString desktopIcon = g_desktop_app_info_get_string(desktop_info, "Icon");
+            if (!desktopIcon.isEmpty()) {
+                if (desktopIcon.startsWith("/")) {
+                    // absolute path, direct load
+                    QIcon directIcon(desktopIcon);
+                    if (!directIcon.isNull()) {
+                        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), directIcon);
+                        g_object_unref(desktop_info);
+                        return directIcon;
+                    }
+                } else {
+                    // icon name, loaded from theme
+                    QIcon themeIcon = QIcon::fromTheme(desktopIcon, QIcon::fromTheme("unknown"));
+                    if (themeIcon.name() != "unknown") {
+                        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), themeIcon);
+                        g_object_unref(desktop_info);
+                        return themeIcon;
+                    }
+                }
+            }
+            g_object_unref(desktop_info);
         }
     }
-    return icon;
+
+    // Get icon name and try theme icon
+    QString iconName = this->iconName();
+
+    // Try icon name without suffix as last resort
+    QFileInfo iconInfo(iconName);
+    if (iconInfo.exists()) {
+        QString iconNameWithoutSuffix = iconInfo.completeBaseName();
+        icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+        if (icon.name() != "unknown") {
+            ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
+            return icon;
+        }
+    }
+
+    icon = QIcon::fromTheme(iconName, QIcon::fromTheme("unknown"));
+    if (icon.name() != "unknown" ) {
+        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
+        return icon;
+    }
+
+    return QIcon::fromTheme("unknown");
 }
 
 const QString FileInfo::unixDeviceFile()

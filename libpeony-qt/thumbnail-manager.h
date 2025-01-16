@@ -45,6 +45,7 @@ class PEONYCORESHARED_EXPORT ThumbnailManager : public QObject
 {
     friend class UpdateThemedIconJob;
     friend class ThumbnailJob;
+    friend class FileInfo;
     Q_OBJECT
 public:
     static ThumbnailManager *getInstance();
