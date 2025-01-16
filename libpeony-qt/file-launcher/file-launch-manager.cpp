@@ -262,7 +262,7 @@ void FileLaunchManager::openSync(const QString &uri, bool forceWithArg, bool ski
     QString tmp = uri;
     auto targetUri = FileUtils::getTargetUri(uri);
     if (targetUri.isNull()) {
-        tmp = targetUri;
+        tmp = uri;
     }
     auto action = getDefaultAction(tmp);
     action->lauchFileSync(forceWithArg, skipDialog);
@@ -333,6 +333,14 @@ void FileLaunchManager::openFilesByDefaultApplications(const QStringList &files)
         }
     }
 }
+
+FileLaunchAction *FileLaunchManager::getPeonyAction(const QString &uri)
+{
+    auto app_info = g_desktop_app_info_new_from_filename("/usr/share/applications/peony.desktop");
+    auto action = new FileLaunchAction(uri, G_APP_INFO(app_info), true);
+    return action;
+}
+
 
 void FileLaunchManager::setDefaultLauchAction(const QString &uri, FileLaunchAction *action)
 {

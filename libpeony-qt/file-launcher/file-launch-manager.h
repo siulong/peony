@@ -64,6 +64,8 @@ public:
 
     static void openFilesByDefaultApplications(const QStringList &files);
 
+    static FileLaunchAction *getPeonyAction(const QString &uri);
+
 private:
     explicit FileLaunchManager(QObject *parent = nullptr);
 };
