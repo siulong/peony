@@ -148,34 +148,107 @@ QIcon textPlainThumbnail::generateThumbnail()
 QImage textPlainThumbnail::gernerateTextImage()
 {
     QImage thumbnailImg;
-    QSize size(128*0.707070, 128);
+    const int imageSize = 128;            ///< Final thumbnail size
+    const int leftMargin = 15;            ///< Left margin of content area
+    const int rightMargin = 18;           ///< Right margin of content area
+    const int topMargin = 1;              ///< Top margin of content area
+    const int bottomMargin = 8;           ///< Bottom margin of content area
+    const int cornerRadius = 12;          ///< Corner radius for rounded rectangle
+    const int textPadding = 5;            ///< Padding between text and border
+    const int maxReadSize = 2000;         ///< Maximum bytes to read from file
 
+    // Calculate content area dimensions
+    const int contentWidth = imageSize - leftMargin - rightMargin;
+    const int contentHeight = imageSize - topMargin - bottomMargin;
+
+    // Open and validate file
     QFile file(m_url.path());
-    if (! file.exists() || ! file.open(QIODevice::ReadOnly)) {
-        qWarning() << "file not exist or can not open: "<<m_url.path();
+    if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
+        qWarning() << "thumbnail: can not open this file." << m_url.path();
+        return thumbnailImg;
     }
 
-    QString text = file.read(800);
-    qDebug() << "read text: "<<text;
+    // Check file size
+    QFileInfo fileInfo(file);
+    if (fileInfo.size() <= 0) {
+        qWarning() << "thumbnail: file is empty." << m_url.path();
+        return thumbnailImg;
+    }
 
+    // Read and decode file content with size limitation
+    QByteArray content = file.read(maxReadSize);
+    QString text;
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+    if (!codec) {
+        codec = QTextCodec::codecForLocale();
+    }
+    text = codec->toUnicode(content);
+
+    // Validate text content
+    if (text.isEmpty()) {
+        qWarning() << "thumbnail: text content is empty." << m_url.path();
+        return thumbnailImg;
+    }
+
+    // Create final transparent image
+    thumbnailImg = QImage(imageSize, imageSize, QImage::Format_ARGB32_Premultiplied);
+    thumbnailImg.fill(Qt::transparent);
+
+    // Create content area image
+    QImage contentImg(contentWidth, contentHeight, QImage::Format_ARGB32_Premultiplied);
+    contentImg.fill(Qt::transparent);
+
+    // Setup content painter with high quality rendering hints
+    QPainter contentPainter(&contentImg);
+    contentPainter.setRenderHint(QPainter::Antialiasing, true);
+    contentPainter.setRenderHint(QPainter::TextAntialiasing, true);
+    contentPainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    contentPainter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+
+    // Create and draw rounded rectangle path
+    QPainterPath path;
+    path.addRoundedRect(0.5, 0.5, contentWidth - 1, contentHeight - 1,
+                       cornerRadius, cornerRadius);
+
+    // Fill white background
+    contentPainter.fillPath(path, Qt::white);
+
+    // Draw light border
+    QPen borderPen(QColor(0, 0, 0, 25));  ///< Semi-transparent black for border
+    borderPen.setWidth(1);
+    contentPainter.setPen(borderPen);
+    contentPainter.drawPath(path);
+
+    // Set clip path to contain text within rounded corners
+    contentPainter.setClipPath(path);
+
+    // Configure font settings
     QFont font;
     font.setPixelSize(13);
+    font.setHintingPreference(QFont::PreferFullHinting);
+    font.setStyleStrategy(QFont::PreferQuality);
+    contentPainter.setFont(font);
+    contentPainter.setPen(Qt::black);
 
-    QPen pen;
-    pen.setColor(Qt::black);
-
-    thumbnailImg = QImage(size, QImage::Format_ARGB32_Premultiplied);
-    thumbnailImg.fill(Qt::white);
-
-    QPainter painter(&thumbnailImg);
-    painter.setFont(font);
-    painter.setPen(pen);
-    painter.setRenderHint(QPainter::Antialiasing);
-
+    // Configure text layout options
     QTextOption option;
     option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    painter.drawText(thumbnailImg.rect(), text, option);
+    option.setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
+    // Calculate text area with padding
+    QRect textRect = contentImg.rect().adjusted(textPadding, textPadding,
+                                              -textPadding, -textPadding);
+
+    // Draw text content
+    contentPainter.drawText(textRect, text, option);
+    contentPainter.end();
+
+    // Draw content onto final image
+    QPainter finalPainter(&thumbnailImg);
+    finalPainter.setRenderHint(QPainter::Antialiasing, true);
+    finalPainter.drawImage(leftMargin, topMargin, contentImg);
+    finalPainter.end();
+
+    file.close();
     return thumbnailImg;
 }
-
