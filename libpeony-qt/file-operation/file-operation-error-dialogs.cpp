@@ -133,8 +133,9 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
         QString url;
         QString fileName = FileUtils::urlDecode(error.srcUri).split("/").back();
         //fix bug 148806, matches end path name
-        if (error.destDirUri.split("/").back().contains(fileName) ||
-                FileUtils::urlDecode(error.destDirUri).split("/").back().contains(fileName)) {
+        if (error.destDirUri.split("/").back().contains(fileName)
+                || FileUtils::urlDecode(error.destDirUri).split("/").back().contains(fileName)
+                || error.srcUri.startsWith("trash:///")) {
             url = error.destDirUri;
         } else {
             url = error.destDirUri + "/" + fileName;
