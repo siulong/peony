@@ -323,17 +323,24 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     bool hasSetRomSize = false;
     m_fs_type = FileUtils::getFileSystemType(m_uris);
     //U disk or other mobile device, only use in iso system install device
-    if (! m_unix_device.isEmpty() && m_fs_type.startsWith("iso")
-        && ! m_uris.startsWith("computer:///WDC")) {
-        char dev_name[256] ={0};
-        strncpy(dev_name, m_unix_device.toUtf8().constData(),sizeof(m_unix_device.toUtf8().constData()-1));
+    if (!m_unix_device.isEmpty() && m_fs_type.startsWith("iso")
+        && !m_uris.startsWith("computer:///WDC")) {
+        QByteArray deviceData = m_unix_device.toUtf8();
+        if (deviceData.size() >= 256) {
+            qWarning() << "Device name is too long!";
+            return; // 提前退出，避免潜在问题
+        }
+
+        char dev_name[256] = {0}; // 初始化为0
+        qstrncpy(dev_name, deviceData.constData(), sizeof(dev_name)); // 使用 qstrncpy
+
         auto size = FileUtils::getDeviceSize(dev_name);
         if (size > 0) {
             QString sizeInfo = QString::number(size, 'f', 1);
-            qDebug() << "size:" <<size;
+            qDebug() << "size:" << size;
             sizeInfo += "G";
-            mRomSizeCombox->clear ();
-            mRomSizeCombox->addItem (sizeInfo);
+            mRomSizeCombox->clear();
+            mRomSizeCombox->addItem(sizeInfo);
             hasSetRomSize = true;
         }
     }
@@ -388,16 +395,23 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
 void Format_Dialog::colseFormat(bool)
 {
-
-    char dev_name[256] ={0};
-    //get device name
+    char dev_name[256] = {0};
+    // get device name
     QString volname, devName, voldisplayname;
 
-    //FIXME: replace BLOCKING api in ui thread.
+    // FIXME: replace BLOCKING api in UI thread.
     FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
-    strncpy(dev_name,devName.toUtf8().constData(),sizeof(devName.toUtf8().constData()-1));
 
-    //cancel format function
+    // 使用 QByteArray 检查长度并安全复制
+    QByteArray devNameData = devName.toUtf8();
+    if (devNameData.size() >= sizeof(dev_name)) {
+        qWarning() << "Device name is too long!";
+        return; // 提前退出，避免潜在问题
+    }
+
+    qstrncpy(dev_name, devNameData.constData(), sizeof(dev_name)); // 使用 qstrncpy
+
+    // cancel format function
     cancel_format(dev_name);
 }
 
@@ -441,33 +455,60 @@ void Format_Dialog::slot_format(bool enable)
         cryptCheckBox->setDisabled(true);
 
         //init the value
-        char rom_size[1024] ={0},rom_type[1024]={0},rom_name[1024]={0},dev_name[1024]={0};
-
+        char rom_size[1024] = {0}, rom_type[1024] = {0}, rom_name[1024] = {0}, dev_name[1024] = {0};
 
         QString romType = mFSCombox->currentText();
         if (QString("vfat/fat32") == romType) {
             romType = "vfat";
-            if (mNameEdit->text().trimmed ().toUtf8().length() <= 11){
-               strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
-            }                    
+            if (mNameEdit->text().trimmed().toUtf8().length() <= 11) {
+                QByteArray nameData = mNameEdit->text().trimmed().toUtf8();
+                if (nameData.size() < sizeof(rom_name)) {
+                    qstrncpy(rom_name, nameData.constData(), sizeof(rom_name));
+                } else {
+                    qWarning() << "Name is too long!";
+                }
+            }
         } else {
-            strncpy(rom_name,mNameEdit->text().trimmed ().toUtf8().constData(), sizeof (rom_name) - 1);
+            QByteArray nameData = mNameEdit->text().trimmed().toUtf8();
+            if (nameData.size() < sizeof(rom_name)) {
+                qstrncpy(rom_name, nameData.constData(), sizeof(rom_name));
+            } else {
+                qWarning() << "Name is too long!";
+            }
         }
 
-        //get values from ui
-        strncpy(rom_size,mRomSizeCombox->currentText ().toUtf8().constData(), strlen(mRomSizeCombox->currentText ().toUtf8().constData()));
-        strncpy(rom_type, romType.toUtf8().constData(), strlen(romType.toUtf8().constData()));
+        // Get values from UI safely
+        QByteArray sizeData = mRomSizeCombox->currentText().toUtf8();
+        if (sizeData.size() < sizeof(rom_size)) {
+            qstrncpy(rom_size, sizeData.constData(), sizeof(rom_size));
+        } else {
+            qWarning() << "Size value is too long!";
+        }
 
+        QByteArray typeData = romType.toUtf8();
+        if (typeData.size() < sizeof(rom_type)) {
+            qstrncpy(rom_type, typeData.constData(), sizeof(rom_type));
+        } else {
+            qWarning() << "Type value is too long!";
+        }
         //disable name and rom size list
         //ui->comboBox_rom_size->setDisabled(true);
         this->mFSCombox->setDisabled(true);
 
-        QString volname, devName, voldisplayname ,devtype;
-        //get device name
-        //FIXME: replace BLOCKING api in ui thread.
+        QString volname, devName, voldisplayname, devtype;
+
+        // Get device name
+        // FIXME: replace BLOCKING API in UI thread.
         FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
 
-        strncpy(dev_name,devName.toUtf8().constData(), sizeof (dev_name) - 1);
+        // 使用 QByteArray 和 qstrncpy 来安全复制字符串
+        QByteArray devNameData = devName.toUtf8();
+        if (devNameData.size() < sizeof(dev_name)) {
+            qstrncpy(dev_name, devNameData.constData(), sizeof(dev_name));
+        } else {
+            qWarning() << "Device name is too long!";
+        }
+
         devtype = rom_type;
 
         int format_value = 0;
@@ -730,17 +771,22 @@ void Format_Dialog::formatloop(){
 //    }
 
     QString volname, devName, voldisplayname;
-    static char name_dev[256] ={0};
-//    char prestr[10] = {0};
+    static char name_dev[256] = {0};
 
-    //cost time count
+    // Cost time count
     m_cost_seconds++;
 
-    //FIXME: replace BLOCKING api in ui thread.
+    // FIXME: replace BLOCKING API in UI thread.
     FileUtils::queryVolumeInfo(fm_uris, volname, devName, voldisplayname);
 
-    if(nullptr != devName)
-    strcpy(name_dev,devName.toUtf8().constData());
+    if (!devName.isEmpty()) {
+        QByteArray devNameData = devName.toUtf8();
+        if (devNameData.size() < sizeof(name_dev)) {
+            qstrncpy(name_dev, devNameData.constData(), sizeof(name_dev));
+        } else {
+            qWarning() << "Device name is too long!";
+        }
+    }
 
     if (m_total_predict > 0) {
         double cost = m_cost_seconds * 100.0/m_total_predict;

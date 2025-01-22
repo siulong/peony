@@ -109,9 +109,10 @@ void FileCopy::sync(const GFile* destFile)
     // it's not possible
     g_return_if_fail(uri && path);
 
+    QString uriStr = QString::fromUtf8(uri);
     // uri is start with "file://"
     QString gvfsPath = QString("/run/user/%1/gvfs/").arg(getuid());
-    if (0 != g_ascii_strncasecmp(uri, "file:///", 8) || g_strstr_len(uri, strlen(uri), gvfsPath.toUtf8().constData())) {
+    if (!uriStr.startsWith("file:///") || uriStr.contains(gvfsPath)) {
         return;
     }
 
