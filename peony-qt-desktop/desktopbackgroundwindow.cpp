@@ -49,8 +49,9 @@ DesktopBackgroundWindow::DesktopBackgroundWindow(QScreen *screen, int desktopWin
     }
     connect(gTimeLine, &QTimeLine::finished, this, &DesktopBackgroundWindow::updateWindowGeometry);
 
-    QString title = QString("desktop%1").arg(desktopWindowId);
+    QString title = QString("desktop-%1").arg(output->name());
     setWindowTitle(title);
+    qInfo() << __func__ << "add Background Window, title:"<< title <<" output:"<<output;
 
     setAttribute(Qt::WA_X11NetWmWindowTypeDesktop);
     setAttribute(Qt::WA_TranslucentBackground);
