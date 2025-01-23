@@ -1307,19 +1307,23 @@ void ListView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, co
         return QTreeView::drawRow(painter, option, index);
     }
 
-    QString uri = m_model->getRootUri();
     auto clipedUris = ClipboardUtils::getInstance()->getCutFileUris();
-    if (!clipedUris.isEmpty() &&
-        FileUtils::isSamePath(ClipboardUtils::getClipedFilesParentUri(), uri)) {
-        if (!clipedUris.isEmpty()) {
+    if (!clipedUris.isEmpty()) {
+        bool bSearchTab = false;
+        QString actualDirUri = m_model->getRootUri();
+        if(actualDirUri.startsWith("search:///search_uris")){
+            actualDirUri = FileUtils::getActualDirFromSearchUri(actualDirUri);
+            bSearchTab = true;
+        }
+
+        QString clipedFilesParentUri = ClipboardUtils::getClipedFilesParentUri();
+        if (FileUtils::isSamePath(clipedFilesParentUri, actualDirUri) || (bSearchTab && clipedFilesParentUri.startsWith(actualDirUri))) {
             if (clipedUris.contains(index.data(Qt::UserRole).toString())) {
                 painter->setOpacity(0.5);
             }
             else {
                 painter->setOpacity(1.0);
             }
-        } else {
-            painter->setOpacity(1.0);
         }
     }
     QTreeView::drawRow(painter, option, index);
