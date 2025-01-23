@@ -75,8 +75,10 @@ FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri,
     QString srcId = "";
     if (m_src_uris.length() > 0)
         srcId = FileUtils::getFileSystemId(m_src_uris.first());
-    if (! srcId.startsWith("file://") && !srcId.contains("://"))
-        srcId = "file://" + srcId;
+
+    //comment to fix move file to other path, when has same file, not delete origin file issue
+//    if (! srcId.startsWith("file://") && !srcId.contains("://"))
+//        srcId = "file://" + srcId;
     QString destId = FileUtils::getFileSystemId(m_dest_dir_uri);
     if (srcId.length() > 0 && srcId == destId)
         m_is_same_fs = true;
