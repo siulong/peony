@@ -341,12 +341,12 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
-    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
-    int topLeftX = rect.x() + 10 + emblemOffset;
-    int topLeftY = rect.y() + 10 + emblemOffset;
-    int bottomRightX = rect.right() - 30 - emblemOffset;
-    int bottomRightY = opt.rect.y() + opt.decorationSize.height() - 10 - emblemOffset;
-    int emblemsSize = 20;
+    //int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
+    int emblemsSize = iconRect.width() / 3;
+    int topLeftX = iconRect.x() - emblemsSize * 0.2;
+    int topLeftY = iconRect.y();
+    int bottomRightX = iconRect.x() + iconRect.width() - emblemsSize * 0.8;
+    int bottomRightY = iconRect.y() + iconRect.height() - emblemsSize * 0.8;
 
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);

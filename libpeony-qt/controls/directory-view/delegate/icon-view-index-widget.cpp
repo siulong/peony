@@ -363,13 +363,13 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
     p.restore();
 
+    QRect iconRect = QApplication::style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
-    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
-    int topLeftX = rect().x() + 10 + emblemOffset;
-    int topLeftY = rect().y() + 10 + emblemOffset;
-    int bottomRightX = rect().right() - 30 - emblemOffset;
-    int bottomRightY = m_delegate->getView()->iconSize().height() - 10 - emblemOffset;
-    int emblemsSize = 20;
+    int emblemsSize = iconRect.width() / 3;
+    int topLeftX = iconRect.x() - emblemsSize * 0.2;
+    int topLeftY = iconRect.y();
+    int bottomRightX = iconRect.x() + iconRect.width() - emblemsSize * 0.8;
+    int bottomRightY = iconRect.y() + iconRect.height() - emblemsSize * 0.8;
 
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
@@ -409,7 +409,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, topLeftX, topLeftY, 20, 20);
+        icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize);
         p.restore();
     } else if (!info->canWrite()/* && !info->canExecute()*/) {
         //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
@@ -440,7 +440,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
                 break;
             }
             case 2: {
-                icon.paint(&p, bottomRightX, topLeftX, emblemsSize, emblemsSize, Qt::AlignCenter);
+                icon.paint(&p, bottomRightX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 3: {
