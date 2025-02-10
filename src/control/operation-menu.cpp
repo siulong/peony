@@ -122,6 +122,9 @@ OperationMenu::OperationMenu(MainWindow *window, QWidget *parent) : QMenu(parent
     if ("zh_CN" == QLocale::system().name() || "zh_HK" == QLocale::system().name()) {
         m_showRelativeTime->setDisabled(false);
     } else {
+        //fix bug#303823, other language set option unchecked then disabled
+        m_showRelativeTime->setChecked(false);
+        m_showRelativeTime->setCheckable(false);
         m_showRelativeTime->setDisabled(true);
     }
 
