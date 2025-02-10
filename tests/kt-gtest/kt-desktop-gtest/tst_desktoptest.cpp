@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
 #include <QWidget>
 #include "stubext.h"
 #include "global-settings.h"

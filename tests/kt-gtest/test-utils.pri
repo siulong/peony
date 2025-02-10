@@ -3,7 +3,7 @@
 CONFIG += console c++11 link_pkgconfig
 CONFIG += thread
 
-TEST_UTILS_PATH = $$_PRO_FILE_PWD_/../kt-test-utils
+TEST_UTILS_PATH = $$PWD/kt-test-utils
 INCLUDEPATH += $$TEST_UTILS_PATH/cpp-stub \
                $$TEST_UTILS_PATH/stub-ext \
 
