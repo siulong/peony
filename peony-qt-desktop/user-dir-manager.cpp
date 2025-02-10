@@ -46,6 +46,7 @@ UserdirManager::UserdirManager(QObject *parent) : QObject(parent)
     m_user_name = QString(userName);
 
     m_settings = new QSettings("org.ukui", "peony-qt-preferences", this);
+    m_do_not_thumbnail = m_settings->value(FORBID_THUMBNAIL_IN_VIEW).toBool();
     m_allow_parallel = m_settings->value(ALLOW_FILE_OP_PARALLEL).toBool();
     m_showTrashDialog = m_settings->value(SHOW_TRASH_DIALOG).toBool();
     m_user_dir_watcher = new QFileSystemWatcher(this);
@@ -100,6 +101,11 @@ UserdirManager::UserdirManager(QObject *parent) : QObject(parent)
         else if(uri == path1)
         {
             m_settings = new QSettings("org.ukui", "peony-qt-preferences", this);
+            if(m_do_not_thumbnail != m_settings->value(FORBID_THUMBNAIL_IN_VIEW).toBool())
+            {
+                m_do_not_thumbnail = m_settings->value(FORBID_THUMBNAIL_IN_VIEW).toBool();
+                Q_EMIT thumbnailSetingChange();
+            }
             if (m_allow_parallel != m_settings->value(ALLOW_FILE_OP_PARALLEL).toBool())
             {
                 m_allow_parallel = m_settings->value(ALLOW_FILE_OP_PARALLEL).toBool();
@@ -115,18 +121,6 @@ UserdirManager::UserdirManager(QObject *parent) : QObject(parent)
         m_user_dir_watcher->addPath(uri);
     });
 
-    if (GlobalSettings::getInstance()->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
-        m_do_not_thumbnail = GlobalSettings::getInstance()->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
-        connect(GlobalSettings::getInstance(), &GlobalSettings::valueChanged, this, [=] (const QString& key) {
-            if (FORBID_THUMBNAIL_IN_VIEW == key) {
-                if(m_do_not_thumbnail != GlobalSettings::getInstance()->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool())
-                {
-                    m_do_not_thumbnail = !m_do_not_thumbnail;
-                    Q_EMIT thumbnailSetingChange();
-                }
-            }
-        });
-    }
 }
 // read user-dirs.dirs for all XDG standard path.
 void UserdirManager::getUserdir()

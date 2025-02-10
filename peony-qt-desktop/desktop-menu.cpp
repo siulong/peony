@@ -229,9 +229,7 @@ const QList<QAction *> DesktopMenu::constructOpenOpActions()
                 if (!dirs.isEmpty())
                     this->openWindow(dirs);
 
-                if (!files.isEmpty()) {
-                    Peony::FileLaunchManager::openFilesByDefaultApplications(files);
-                }
+                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
             });
         }
 

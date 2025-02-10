@@ -639,7 +639,11 @@ QVariant DesktopItemModel::data(const QModelIndex &index, int role) const
         return QVariant(TooltipsManagerInstance.generateTooltip(info.get()));
     }
     case Qt::DecorationRole: {
-        return info->getIcon();
+        auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(info->uri());
+        if (!thumbnail.isNull()) {
+            return thumbnail;
+        }
+        return QIcon::fromTheme(info->iconName(), QIcon::fromTheme("unknown"));
     }
     case UriRole:
         return info->uri();

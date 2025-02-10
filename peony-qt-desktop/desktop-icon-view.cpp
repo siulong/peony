@@ -44,7 +44,6 @@
 #include "file-item-model.h"
 #include "file-info-job.h"
 #include "file-launch-manager.h"
-#include "file-launch-action.h"
 #include <QProcess>
 
 #include <QDesktopServices>
@@ -1047,7 +1046,6 @@ void DesktopIconView::openFileByUri(QString uri)
                 return;
             }
 
-#ifdef USE_QPROCESS_LAUNCH_DIR
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
             QProcess p;
             QUrl url = uri;
@@ -1083,11 +1081,6 @@ void DesktopIconView::openFileByUri(QString uri)
             }
 
             p.startDetached("/usr/bin/peony", QStringList()<<strq<<"%U&");
-#endif
-#else
-        auto action = Peony::FileLaunchManager::getPeonyAction(uri);
-        action->lauchFileAsync();
-        action->deleteLater();
 #endif
         } else {
             if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
@@ -1545,25 +1538,9 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Return:
     {
         auto selections = this->getSelections();
-        if (selections.count() >= 1)
+        for (auto uri : selections)
         {
-            QStringList files;
-            QStringList dirs;
-            for (auto uri : selections) {
-                auto info = Peony::FileInfo::fromUri(uri);
-                if (info->isDir() || info->isVolume()) {
-                    dirs<<uri;
-                } else {
-                    files<<uri;
-                }
-            }
-            for (auto uri : dirs) {
-                openFileByUri(uri);
-            }
-
-            if(!files.isEmpty()) {
-                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
-            }
+           openFileByUri(uri);
         }
     }
         break;
