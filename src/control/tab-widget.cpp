@@ -1043,7 +1043,7 @@ void TabWidget::updateSearchPathButton(const QString &uri)
 
     // Update file information
     auto info = Peony::FileInfo::fromUri(curUri);
-    m_search_button_info = info;
+    //m_search_button_info = info;
     if (info.get()->isEmptyInfo()) {
         Peony::FileInfoJob j(info);
         j.querySync();
