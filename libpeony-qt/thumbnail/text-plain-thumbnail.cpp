@@ -36,6 +36,7 @@
 #include <QPainter>
 #include <QTextOption>
 #include <qglobal.h>
+#include <QPainterPath>
 
 textPlainThumbnail::textPlainThumbnail(const QString &uri)
 {
