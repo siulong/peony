@@ -341,7 +341,6 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
-    //int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
     int emblemsSize = iconRect.width() / 3;
     int topLeftX = iconRect.x() - emblemsSize * 0.2;
     int topLeftY = iconRect.y();
