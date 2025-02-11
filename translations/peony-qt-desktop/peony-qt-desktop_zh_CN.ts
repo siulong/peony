@@ -4,27 +4,27 @@
 <context>
     <name>AdvancedDesktopIconView</name>
     <message>
-        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="467"/>
+        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="465"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="574"/>
+        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="572"/>
         <source>Open Link failed</source>
         <translation>打开快捷方式失败</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="575"/>
+        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="573"/>
         <source>File not exist, do you want to delete the link file?</source>
         <translation>目标文件夹不存在，是否删除该无效快捷方式？</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="591"/>
+        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="589"/>
         <source>Open failed</source>
         <translation>打开失败</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="592"/>
+        <location filename="../../peony-qt-desktop/advanced-desktop-icon-view.cpp" line="590"/>
         <source>Open directory failed, you have no permission!</source>
         <translation>打开文件夹失败，您没有该目录的权限！</translation>
     </message>
@@ -484,37 +484,37 @@
         <translation type="vanished">桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="483"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="485"/>
         <source>Close the peony desktop window</source>
         <translation>关闭桌面程序</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="486"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="488"/>
         <source>Take over the dbus service.</source>
         <translation>接管DBus服务。</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="489"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="491"/>
         <source>Take over the desktop displaying</source>
         <translation>接管桌面</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="492"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="494"/>
         <source>Setup backgrounds</source>
         <translation>Setup backgrounds</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="495"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="497"/>
         <source>Clear standard icons</source>
         <translation>Clear standard icons</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="498"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="500"/>
         <source>Layout item with top to bottom left to right</source>
         <translation>从左上到右下排列图标</translation>
     </message>
     <message>
-        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="502"/>
+        <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="504"/>
         <source>Force update backgrounds</source>
         <translation>强制更新背景</translation>
     </message>

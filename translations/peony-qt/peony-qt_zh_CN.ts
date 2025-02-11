@@ -409,19 +409,19 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在新窗口中打开(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="641"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="645"/>
         <source>warn</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="641"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="645"/>
         <source>This operation is not supported.</source>
         <translation>不支持此操作。</translation>
     </message>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="253"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="679"/>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="697"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="683"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="701"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
@@ -431,12 +431,12 @@ p, li { white-space: pre-wrap; }
         <translation>设备正忙, 请稍后执行此操作.</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="679"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="683"/>
         <source>This is an abnormal Udisk, please fix it or format it</source>
         <translation>这是个异常U盘，请将其修复或格式化</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="697"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="701"/>
         <source>This is an empty drive, please insert a Disc.</source>
         <translation>这是一个空光驱, 请插入光盘.</translation>
     </message>
@@ -468,12 +468,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">所有标记...</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="899"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="903"/>
         <source>Manager tags...</source>
         <translation>标识模式</translation>
     </message>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="902"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="906"/>
         <source>More tags...</source>
         <translation>更多标识</translation>
     </message>
@@ -1440,7 +1440,7 @@ Do you want to unmount forcely?</source>
 <context>
     <name>TitleLabel</name>
     <message>
-        <location filename="../../src/control/navigation-side-bar.cpp" line="1037"/>
+        <location filename="../../src/control/navigation-side-bar.cpp" line="1041"/>
         <source>Peony</source>
         <translation>文件管理器</translation>
     </message>
