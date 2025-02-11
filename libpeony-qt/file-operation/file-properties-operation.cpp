@@ -147,36 +147,44 @@ void FilePropertiesOperation::setPropertiesRecursively(FileNode *node, bool *can
         }
         if (m_options.testFlag(ChangeHidden)) {
             if (m_shouldSetHidden) {
-                //将该目录下所有非隐藏文件的名称写入.hidden中
-                g_autoptr (GFile) folder = g_file_new_for_uri(node->uri().toUtf8().constData());
-                g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(folder, ".hidden");
-                QStringList filenameList;
-                for (FileNode *childNode : *(node->children())) {
-                    g_autoptr (GFile) child_file = g_file_new_for_uri(childNode->uri().toUtf8().constData());
-                    g_autofree gchar *child_file_basename = g_file_get_basename(child_file);
-                    childNode->setDestFileName(child_file_basename);
-                    if (!childNode->destBaseName().startsWith(".")) {
-                        filenameList.append(childNode->destBaseName());
+                if (node->uri().startsWith("filesafe:///")) {
+                    setNodeHidden(node);
+                } else {
+                    //将该目录下所有非隐藏文件的名称写入.hidden中
+                    g_autoptr (GFile) folder = g_file_new_for_uri(node->uri().toUtf8().constData());
+                    g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(folder, ".hidden");
+                    QStringList filenameList;
+                    for (FileNode *childNode : *(node->children())) {
+                        g_autoptr (GFile) child_file = g_file_new_for_uri(childNode->uri().toUtf8().constData());
+                        g_autofree gchar *child_file_basename = g_file_get_basename(child_file);
+                        childNode->setDestFileName(child_file_basename);
+                        if (!childNode->destBaseName().startsWith(".")) {
+                            filenameList.append(childNode->destBaseName());
+                        }
+                    }
+                    g_autofree gchar *hidden_file_path = g_file_get_path(hidden_file);
+                    QString contents = filenameList.join('\n');
+                    if (hidden_file_path)
+                        g_file_set_contents(hidden_file_path, contents.toUtf8().constData(), -1, nullptr);
+
+                    //顶级目录需要隐藏自身
+                    if (!node->parent()) {
+                        setPropertiesOne(node);
                     }
                 }
-                g_autofree gchar *hidden_file_path = g_file_get_path(hidden_file);
-                QString contents = filenameList.join('\n');
-                if (hidden_file_path)
-                    g_file_set_contents(hidden_file_path, contents.toUtf8().constData(), -1, nullptr);
-
-                //顶级目录需要隐藏自身
-                if (!node->parent()) {
-                    setPropertiesOne(node);
-                }
             } else {
-                //删除该目录下的.hidden文件
-                g_autoptr (GFile) folder = g_file_new_for_uri (node->uri().toUtf8().constData());
-                g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(folder, ".hidden");
-                g_file_delete (hidden_file, nullptr, nullptr);
-
-                //顶级目录取消自身隐藏
-                if (!node->parent()) {
+                if (node->uri().startsWith("filesafe:///")) {
                     setPropertiesOne(node);
+                } else {
+                    //删除该目录下的.hidden文件
+                    g_autoptr (GFile) folder = g_file_new_for_uri (node->uri().toUtf8().constData());
+                    g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(folder, ".hidden");
+                    g_file_delete (hidden_file, nullptr, nullptr);
+
+                    //顶级目录取消自身隐藏
+                    if (!node->parent()) {
+                        setPropertiesOne(node);
+                    }
                 }
             }
         }
@@ -209,12 +217,16 @@ void FilePropertiesOperation::setPropertiesOne(FileNode *node)
         if (m_shouldSetHidden) {
             // FIXME: 兼容原来形式
             // FIXME: 优化性能，顶层节点如果在同一个目录下可以统一处理
-            if (!node->parent()) {
-                // 递归处理的隐藏设置由上一级目录设置时处理，此处仅处理顶级节点
-                g_autoptr (GFile) directory = g_file_get_parent(file);
-                g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(directory, ".hidden");
-                g_autofree gchar *hidden_file_path = g_file_get_path(hidden_file);
-                appendToFileLineByLine(hidden_file_path, node->destBaseName());
+            if (node->uri().startsWith("filesafe:///") && !node->isFolder()) {
+                setNodeHidden(node);
+            } else {
+                if (!node->parent()) {
+                    // 递归处理的隐藏设置由上一级目录设置时处理，此处仅处理顶级节点
+                    g_autoptr (GFile) directory = g_file_get_parent(file);
+                    g_autoptr (GFile) hidden_file = g_file_resolve_relative_path(directory, ".hidden");
+                    g_autofree gchar *hidden_file_path = g_file_get_path(hidden_file);
+                    appendToFileLineByLine(hidden_file_path, node->destBaseName());
+                }
             }
         } else {
             // 兼容"."前缀取消隐藏
@@ -293,5 +305,27 @@ void FilePropertiesOperation::setPropertiesOne(FileNode *node)
         g_autoptr (GFile) new_file = g_file_new_for_uri(node->destUri().toUtf8().constData());
         g_autoptr (GFileInfo) info = g_file_query_info(new_file, G_FILE_ATTRIBUTE_TIME_ACCESS, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
         g_file_set_attribute_uint64(new_file, G_FILE_ATTRIBUTE_TIME_ACCESS, g_file_info_get_attribute_uint64(info, G_FILE_ATTRIBUTE_TIME_ACCESS), G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    }
+}
+
+void FilePropertiesOperation::setNodeHidden(FileNode *node)
+{
+    QString newName = node->baseName();
+
+    if (newName.startsWith("."))
+        newName = newName.mid(1,-1);
+
+    if(!newName.startsWith(".")) {
+        newName = "." + newName;
+        g_autoptr (GFile) file = g_file_new_for_uri(node->uri().toUtf8().constData());
+        g_autoptr (GError) err = nullptr;
+        g_autoptr (GFile) new_file = g_file_set_display_name(file, newName.toUtf8().constData(), nullptr, &err);
+        if (!err) {
+            g_autofree gchar *new_uri = g_file_get_uri(new_file);
+            node->setDestUri(new_uri);
+        } else {
+            // FIXME: 与errorhandler交互
+            qWarning()<<"set file properties op error:"<<node->destBaseName()<<err->message;
+        }
     }
 }

@@ -56,6 +56,7 @@ public:
 protected:
     void setPropertiesRecursively(FileNode *node, bool *cancelled);
     void setPropertiesOne(FileNode *node);
+    void setNodeHidden(FileNode *node);
 
 private:
     QStringList m_uris;
