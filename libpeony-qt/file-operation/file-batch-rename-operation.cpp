@@ -108,7 +108,7 @@ void FileBatchRenameOperation::run()
             }
         }
     }
-    m_total_size = m_uris.count();
+    m_total_size = m_uris.count() * 102400;
     m_current_offset = 0;
     for (auto uri : m_uris) {
         if (isCancelled())
@@ -338,7 +338,8 @@ void FileBatchRenameOperation::run()
         if (successed)
             Q_EMIT remoteFileEvent(103, uri, destUri);
         fileSync(uri, destUri);
-        m_current_offset += 1;
+        //暂时使用大小进行计算,后续需要优化成项数
+        m_current_offset += 102400;
         Q_EMIT FileProgressCallback(uri, destUri, fileIconName, m_current_offset, m_total_size);
     }
     m_info->m_newnames = m_new_names;
