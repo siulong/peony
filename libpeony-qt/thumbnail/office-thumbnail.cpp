@@ -37,6 +37,9 @@ OfficeThumbnail::OfficeThumbnail(const QString &uri)
     if (!uri.startsWith("file:///")) {
         auto fileInfo = FileInfo::fromUri(uri);
         m_url = fileInfo.get()->filePath();
+        if (m_url.isEmpty()) {
+            m_url = FileUtils::getTargetUri(uri);
+        }
         qDebug()<<"target uri:"<< m_url.path();
     }
     else {

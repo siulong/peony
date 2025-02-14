@@ -189,6 +189,9 @@ void ThumbnailManager::createPdfFileThumbnail(const QString &uri, std::shared_pt
     if (!uri.startsWith("file:///")) {
         auto fileInfo = FileInfo::fromUri(uri);
         url = fileInfo.get()->filePath();
+        if (url.isEmpty()) {
+            url = FileUtils::getTargetUri(uri);
+        }
     }
 
     PdfThumbnail pdfThumbnail(url.path());
