@@ -135,7 +135,7 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
         //fix bug 148806, matches end path name
         if (error.destDirUri.split("/").back().contains(fileName)
                 || FileUtils::urlDecode(error.destDirUri).split("/").back().contains(fileName)
-                || error.srcUri.startsWith("trash:///")) {
+                || (error.srcUri.startsWith("trash:///") && error.op == Peony::FileOpCopy)) {
             url = error.destDirUri;
         } else {
             url = error.destDirUri + "/" + fileName;
