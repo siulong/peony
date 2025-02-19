@@ -456,7 +456,7 @@ QString ComputerPropertiesPage::getFileSystemType(QString uri)
         return fsType;
     QDBusInterface blockInterface("org.freedesktop.UDisks2",
                                   dbusPath,
-                                  "org.freedesktop.UDisks2.Block",
+                                  "org.freedesktop.DBus.Properties",
                                   QDBusConnection::systemBus());
 
     if(blockInterface.isValid())
