@@ -340,6 +340,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     painter->restore();
 
+    iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
     int emblemsSize = iconRect.width() / 3;
     int topLeftX = iconRect.x() - emblemsSize * 0.2;
