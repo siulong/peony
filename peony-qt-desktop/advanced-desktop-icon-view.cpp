@@ -218,11 +218,10 @@ AdvancedDesktopIconView::AdvancedDesktopIconView(QWidget *parent) : QAbstractIte
             key == HOME_ICON_VISIBLE ||
             key == TRASH_ICON_VISIBLE ||
             key == COMPUTER_ICON_VISIBLE) {
-            //this->refresh();
-            //m_proxy_model->invalidate();
             m_proxy_model->invalidateModel();
             this->resolutionChange();
             checkItemsOver();
+            viewport()->update();
         } else if (SHOW_HIDDEN_PREFERENCE == key) {
             m_show_hidden= GlobalSettings::getInstance()->getValue(key).toBool();
         }
