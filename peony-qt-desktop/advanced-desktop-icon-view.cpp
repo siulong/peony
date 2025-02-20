@@ -1236,6 +1236,8 @@ void AdvancedDesktopIconView::dropEvent(QDropEvent *event)
             }
 
             qDebug()<<" ----------- "<<m_itemPosHash;
+            m_resolutionItemPosHash.remove(index.data(Qt::UserRole).toString());
+            model()->setData(index, QPoint(-1, -1), ExceptedPositionRole);
             model()->setData(index, pos, PositionRole);
             setFileMetaInfoPos(uri, pos);
         }
@@ -1245,6 +1247,8 @@ void AdvancedDesktopIconView::dropEvent(QDropEvent *event)
             if (!isInvalidPoint(pos)) {
                 qDebug()<<" ----------- "<<m_itemPosHash;
                 auto index = relayoutIndexes.value(uri);
+                m_resolutionItemPosHash.remove(index.data(Qt::UserRole).toString());
+                model()->setData(index, QPoint(-1, -1), ExceptedPositionRole);
                 model()->setData(index, pos, PositionRole);
                 setFileMetaInfoPos(uri, pos);
             }
