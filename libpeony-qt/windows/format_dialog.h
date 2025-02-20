@@ -101,6 +101,7 @@ public:
 
     void setBtnStatus(bool enable);
 //    Ui::Format_Dialog *ui;
+    void adjustButtonText();
 
 public:
     bool renameOK = true;

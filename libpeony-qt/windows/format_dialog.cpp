@@ -49,6 +49,7 @@
 #include <QValidator>
 
 #include <QTime>
+#include <QGSettings>
 
 using namespace  Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
@@ -210,8 +211,9 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     });
 
     mEraseCkbox = new QCheckBox;
-    mEraseCkbox->setText (tr("Completely erase(Time is longer, please confirm!)"));
-    mEraseCkbox->setToolTip(mEraseCkbox->text());
+    QString explanatoryText = tr("Completely erase(Time is longer, please confirm!)");
+    mEraseCkbox->setText (explanatoryText);
+    mEraseCkbox->setToolTip(explanatoryText);
     mainLayout->addWidget(mEraseCkbox, 4, 1, 1, 12, Qt::AlignLeft);
 
     mProgress = new QProgressBar;
@@ -398,6 +400,16 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
 
     connect(mCancelBtn, SIGNAL(clicked(bool)), this, SLOT(colseFormat(bool)), Qt::UniqueConnection);
     connect(this,&Format_Dialog::ensure_format, this, &Format_Dialog::slot_format, Qt::UniqueConnection);
+
+    //监听字体大小改变
+    if (QGSettings::isSchemaInstalled("org.ukui.style")) {
+        QGSettings *fontSetting = new QGSettings(FONT_SETTINGS, QByteArray(), this);
+        connect(fontSetting, &QGSettings::changed, this, [=](const QString &key) {
+            if (key == "systemFont" || key == "systemFontSize") {
+                adjustButtonText();
+            }
+        });
+    }
 }
 
 void Format_Dialog::colseFormat(bool)
@@ -1398,15 +1410,7 @@ void Format_Dialog::closeEvent(QCloseEvent *e)
 
 void Format_Dialog::resizeEvent(QResizeEvent *event)
 {
-    int width = mEraseCkbox->width() - 25;
-
-    if (mEraseCkbox->fontMetrics().width(mEraseCkbox->text()) > width) {
-        mEraseCkbox->setText(mEraseCkbox->fontMetrics().elidedText(mEraseCkbox->text(), Qt::ElideRight, width));
-    }
-
-    updateButtonShow(mFormatBtn, mFormatBtn->text());
-    updateButtonShow(mCancelBtn, mCancelBtn->text());
-
+    adjustButtonText();
     QWidget::resizeEvent(event);
 }
 
@@ -1419,4 +1423,18 @@ void Format_Dialog::updateButtonShow(QPushButton *button, const QString &str)
         tmp = button->fontMetrics().elidedText(str, Qt::ElideRight, button->width() - 5);
     }
     button->setText(tmp);
+}
+
+void Format_Dialog::adjustButtonText()
+{
+    int eraseCkboxWidth = width() - contentsMargins().left() - contentsMargins().right() - 25;
+    QString explanatoryText = tr("Completely erase(Time is longer, please confirm!)");
+    if (mEraseCkbox->fontMetrics().width(explanatoryText) > eraseCkboxWidth) {
+        mEraseCkbox->setText(mEraseCkbox->fontMetrics().elidedText(explanatoryText, Qt::ElideRight, eraseCkboxWidth));
+    } else {
+        mEraseCkbox->setText(explanatoryText);
+    }
+
+    updateButtonShow(mFormatBtn, mFormatBtn->text());
+    updateButtonShow(mCancelBtn, mCancelBtn->text());
 }
