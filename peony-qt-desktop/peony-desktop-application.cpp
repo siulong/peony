@@ -207,6 +207,11 @@ QRect caculateVirtualDesktopGeometry() {
 
 PeonyDesktopApplication::PeonyDesktopApplication(int &argc, char *argv[], const QString &applicationName) : QtSingleApplication (applicationName, argc, argv)
 {
+    bool isWayland = QString(qgetenv("XDG_SESSION_DESKTOP")).contains("kylin-wlcom") ||
+            QString(qgetenv("XDG_SESSION_DESKTOP")).contains("ukui-wayland");
+
+    setProperty("isWayland", isWayland);
+
     GlobalSettings::getInstance()->setDesktopStartUp(true);
     // fix #172774
     QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths()<<"/usr/share/pixmaps");

@@ -2141,10 +2141,11 @@ void DesktopIconView::mouseDoubleClickEvent(QMouseEvent *event)
 
 void DesktopIconView::dragEnterEvent(QDragEnterEvent *e)
 {
+    //qDebug() << "DesktopIconView::dragEnterEvent";
     m_real_do_edit = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
-    qDebug()<<"drag enter event" <<action;
+    //qDebug()<<"drag enter event" <<action;
     if (e->mimeData()->hasUrls()) {
         if (FileUtils::containsStandardPath(e->mimeData()->urls())) {
             e->ignore();
@@ -2169,6 +2170,7 @@ void DesktopIconView::dragEnterEvent(QDragEnterEvent *e)
 
 void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
 {
+    //qDebug() << "DesktopIconView::dragMoveEvent";
     m_real_do_edit = false;
     if (e->keyboardModifiers() & Qt::ControlModifier)
         m_ctrl_key_pressed = true;
@@ -2176,18 +2178,21 @@ void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
         m_ctrl_key_pressed = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
-    auto index = indexAt(e->pos());
-    if (index.isValid() && index != m_last_index) {
-        QHoverEvent he(QHoverEvent::HoverMove, e->posF(), e->posF());
-        viewportEvent(&he);
-    } else {
-        QHoverEvent he(QHoverEvent::HoverLeave, e->posF(), e->posF());
-        viewportEvent(&he);
+    if (this == e->source() && !m_is_dragging_to_external) {
+        auto index = indexAt(e->pos());
+        if (index.isValid() && index != m_last_index) {
+            QHoverEvent he(QHoverEvent::HoverMove, e->posF(), e->posF());
+            viewportEvent(&he);
+        } else {
+            QHoverEvent he(QHoverEvent::HoverLeave, e->posF(), e->posF());
+            viewportEvent(&he);
+        }
     }
+
     e->setDropAction(action);
     if (e->isAccepted())
         return;
-    qDebug()<<"drag move event" <<action;
+    //qDebug()<<"drag move event" <<action;
     if (this == e->source()) {
         e->accept();
         return QListView::dragMoveEvent(e);
@@ -2198,7 +2203,7 @@ void DesktopIconView::dragMoveEvent(QDragMoveEvent *e)
 void DesktopIconView::dropEvent(QDropEvent *e)
 {
     // fix #122768, dirty region issues.
-    this->viewport()->update();
+    this->viewport()->update(m_drag_region);
     m_model->clearFloatItems();
     m_real_do_edit = false;
     //qDebug()<<"drop event";
@@ -2440,6 +2445,7 @@ void DesktopIconView::dropEvent(QDropEvent *e)
 
 void DesktopIconView::startDrag(Qt::DropActions supportedActions)
 {
+    qDebug() << "startDrag";
     auto indexes = selectedIndexes();
     if (indexes.count() > 0) {
         auto pos = m_press_pos;
@@ -2452,14 +2458,24 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
             }
         }
 
+        m_is_dragging_to_external = true;
         auto drag = new QDrag(this);
         drag->setMimeData(model()->mimeData(indexes));
 
+        connect(drag, &QDrag::targetChanged, this, [this, drag]() {
+            if (!drag->target()) {
+                qDebug() << "DesktopIconView::startDrag QDrag::targetChanged target";
+                m_disable_paint = true;
+            }
+        });
+
+        m_drag_region = QRegion();
         QRegion rect;
         QHash<QModelIndex, QRect> indexRectHash;
         for (auto index : indexes) {
-            rect += (visualRect(index));
-            indexRectHash.insert(index, visualRect(index));
+            auto _rect = visualRect(index);
+            rect += _rect;
+            indexRectHash.insert(index, _rect);
         }
 
         QRect realRect = rect.boundingRect();
@@ -2468,6 +2484,7 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
         //realRect.adjust(-5, -5, 5, 5);
 
         realRect.adjust(-15, -15, 15, 15);
+        m_drag_region = realRect;
         QPixmap pixmap(realRect.size() * scale);
         pixmap.fill(Qt::transparent);
         pixmap.setDevicePixelRatio(scale);
@@ -2494,7 +2511,9 @@ void DesktopIconView::startDrag(Qt::DropActions supportedActions)
         drag->setHotSpot(pos - rect.boundingRect().topLeft() - QPoint(viewportMargins().left(), viewportMargins().top()));
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
-
+        m_is_dragging_to_external = false;
+        m_disable_paint = false;
+        m_drag_region = QRegion();
     } else {
         return QListView::startDrag(Qt::MoveAction|Qt::CopyAction);
     }
@@ -2535,13 +2554,20 @@ void DesktopIconView::clearAllIndexWidgets(const QStringList &uris)
     if(uris.length()>0 )
        qDebug() << "clearAllIndexWidgets uris:"<<uris.first()<<uris.length();
 
+    bool needUpdate = false;
+    QRegion updateRegion;
+
     int row = 0;
     auto index = model()->index(row, 0);
     while (index.isValid()) {
         if (uris.isEmpty() || uris.contains(index.data(Qt::UserRole).toString())) {
             auto widget = indexWidget(index);
             if (widget) {
+                qDebug() << "  Clearing widget "<< "row:" << row
+                         << "widget geometry:" << widget->geometry();
+                updateRegion += widget->geometry(); // 记录需要更新的区域
                 widget->hide();
+                needUpdate = true;
             }
             setIndexWidget(index, nullptr);
             qDebug() << "clearAllIndexWidgets setIndexWidget"<<index;
@@ -2552,7 +2578,10 @@ void DesktopIconView::clearAllIndexWidgets(const QStringList &uris)
 
     // avoid dirty region out of index visual rect.
     // link to: #77272.
-    viewport()->update();
+    if (needUpdate) {
+        qDebug() << "  Updating viewport region:" << updateRegion.boundingRect();
+        viewport()->update(updateRegion);
+    }
 }
 
 void DesktopIconView::refresh()
@@ -2987,6 +3016,53 @@ QItemSelectionModel::SelectionFlags DesktopIconView::selectionCommand(const QMod
     return QListView::selectionCommand(index, event);
 }
 
+bool DesktopIconView::event(QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::Paint: {
+        qDebug() << "DesktopIconView: Paint";
+        break;
+    }
+    case QEvent::Leave: {
+        if (m_is_dragging_to_external && m_disable_paint) {
+            qDebug() << "DesktopIconView::event Leave m_disable_paint = true";
+            return true;
+        }
+        qDebug() << "DesktopIconView::event Leave";
+        break;
+    }
+    case QEvent::UpdateRequest: {
+        if (m_is_dragging_to_external && m_disable_paint) {
+            qDebug() << " DesktopIconView: UpdateRequest m_disable_paint";
+            return true;
+        }
+        qDebug() << "DesktopIconView: UpdateRequest";
+        break;
+    }
+    case QEvent::DragLeave: {
+        if (m_is_dragging_to_external) {
+            qDebug() << "DesktopIconView::event DragLeave m_disable_paint = true";
+            m_disable_paint = true;
+            return true;
+        }
+        qDebug() << "DesktopIconView::event DragLeave";
+        break;
+    }
+    default:
+        break;
+    }
+    return QListView::event(e);
+}
+
+void DesktopIconView::dragLeaveEvent(QDragLeaveEvent *e)
+{
+    if (m_is_dragging_to_external) {
+        qDebug() << "dragLeaveEvent m_disable_paint = true";
+        m_disable_paint = true;
+    }
+    QListView::dragLeaveEvent(e);
+}
+
 int DesktopIconView::radius() const
 {
     return m_radius;
@@ -3239,6 +3315,21 @@ QRect DesktopIconView::visualRectInRightToLeft(const QModelIndex &index)
         rect = QRect(x, rect.y(), rect.width(), rect.height());
     }
     return rect;
+}
+
+QModelIndexList DesktopIconView::getSelectedIndexes()
+{
+    return this->selectedIndexes();
+}
+
+bool DesktopIconView::isDraggingToExternal()
+{
+    return m_is_dragging_to_external;
+}
+
+bool DesktopIconView::isDisable_paint()
+{
+    return m_disable_paint;
 }
 
 static bool iconSizeLessThan (const QPair<QRect, QString>& p1, const QPair<QRect, QString>& p2)

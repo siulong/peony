@@ -139,6 +139,11 @@ public:
     void setMarginsBasedOnPosition(int position, int margins);
 
     QRect visualRectInRightToLeft(const QModelIndex &index);
+
+    QModelIndexList getSelectedIndexes();
+    bool isDraggingToExternal();
+    bool isDisable_paint();
+
 private:
     QRect getScreenArea(QScreen* screen);
     bool execSharedFileLink(const QString uri);
@@ -277,6 +282,13 @@ protected:
 
     QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const override;
 
+    bool event(QEvent *e) override;
+    void dragLeaveEvent(QDragLeaveEvent *e) override;
+public:
+    QModelIndex& lastIndex() {
+        return m_last_index;
+    }
+
 private:
     ZoomLevel m_zoom_level = Invalid;
     QMargins m_panel_margin;
@@ -328,6 +340,13 @@ private:
     QGSettings *m_panelSetting = nullptr;
 
     bool m_noSelectOnPress = false;
+
+    bool m_mouse_pressed = false;
+    bool m_needs_update = false;
+
+    bool m_is_dragging_to_external = false;
+    QRegion m_drag_region;
+    bool m_disable_paint = false;
 };
 
 }

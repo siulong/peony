@@ -350,6 +350,30 @@ bool DesktopBackgroundWindow::event(QEvent *event)
             break;
         }
     }
+
+    switch (event->type()) {
+    case QEvent::Paint: {
+        qDebug() << "DesktopBackgroundWindow Paint";
+        break;
+    }
+    case QEvent::UpdateRequest:
+        if (m_desktopIconView->isDraggingToExternal() && m_desktopIconView->isDisable_paint()) {
+            qDebug() << "DesktopBackgroundWindow UpdateRequest isDisable_paint(): " << m_desktopIconView->isDisable_paint() << "UpdateRequest inner";
+            return true;
+        }
+
+        qDebug() << "DesktopBackgroundWindow UpdateRequest";
+        break;
+    case QEvent::Leave:
+        if (m_desktopIconView->isDraggingToExternal() && m_desktopIconView->isDisable_paint()) {
+            qDebug() << "DesktopBackgroundWindow Leave inner";
+            return true;
+        }
+        qDebug() << "DesktopBackgroundWindow Leave";
+        break;
+    default:
+        break;
+    }
     return QMainWindow::event(event);
 }
 
