@@ -302,6 +302,13 @@ retry:
                     if (fileSystemType.contains("exfat") && err->code == G_IO_ERROR_EXISTS) {
                         break;
                     }
+                    auto newUir = g_file_get_uri(newFile.get()->get());
+                    bool isNewFileFolder = FileUtils::isFileDirectory(newUir);
+                    if (isNewFileFolder != isFolder) {
+                        QString msg = tr("A file and a directory with the same name cannot replace each other");
+                        Q_EMIT operationInfoMsgBox(msg);
+                        break;
+                    }
                     g_clear_error(&err);
                     g_file_delete(newFile.get()->get(), nullptr, &err);
                     if (err) {
