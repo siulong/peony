@@ -264,6 +264,9 @@ AdvancedDesktopItemModel::AdvancedDesktopItemModel(QObject *parent)
                 }
             }
         }
+
+        //fix bug#329662, deleted file not update thumbnail issue
+        ThumbnailManager::getInstance()->releaseThumbnail(uri);
     });
 
     m_desktop_watcher->connect(m_desktop_watcher.get(), &FileWatcher::fileChanged, [=](const QString &uri) {

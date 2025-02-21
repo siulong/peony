@@ -632,6 +632,10 @@ void FileItem::onChildRemoved(const QString &uri)
             }
         }
     }
+
+    //fix bug#329662, deleted file not update thumbnail issue
+    ThumbnailManager::getInstance()->releaseThumbnail(uri);
+
     return;
 }
 
@@ -682,6 +686,9 @@ void FileItem::onDeleted(const QString &thisUri)
             m_model->sendPathChangeRequest("file:///", tmpItem->uri());
         }
     }
+
+    //fix bug#329662, deleted file not update thumbnail issue
+    ThumbnailManager::getInstance()->releaseThumbnail(thisUri);
 }
 
 void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
@@ -723,6 +730,9 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
             m_model->endRemoveRows();
         }
     }
+
+    //fix bug#329662, deleted file not update thumbnail issue
+    ThumbnailManager::getInstance()->releaseThumbnail(oldUri);
 }
 
 void FileItem::onChanged(const QString &uri)
