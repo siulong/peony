@@ -44,11 +44,15 @@
 
 #include "file-utils.h"
 #include "rename-editor.h"
+#include "file-operation-helper.h"
 
 #include "global-settings.h"
 
 #define PEONY_TRUNCATE_NAME_LIMIT 225
+#define PEONY_ENCRYPTFS_TRUNCATE_LIMIT 125
 #define PEONY_RENAME_LIMIT 255
+#define PEONY_ENCRYPTFS_NAME_LIMIT 143
+#define PEONY_UDF_NAME_LIMIT 254
 
 KyFileDialogRename::KyFileDialogRename(QWidget *parent) : KyFileOperationDialog(parent), Peony::FileOperationErrorHandler()
 {
@@ -76,9 +80,20 @@ KyFileDialogRename::KyFileDialogRename(QWidget *parent) : KyFileOperationDialog(
 void KyFileDialogRename::handle(Peony::FileOperationError &error)
 {
     Peony::ExceptionResponse responseCode = Peony::ExceptionResponse::Cancel;
-    QString newName = Peony::FileUtils::getUriBaseName(error.destDirUri);
+    QString destDirUri = error.destDirUri;
+    QString newName = Peony::FileUtils::getUriBaseName(destDirUri);
     newName = Peony::FileUtils::urlDecode(newName);
-
+    QString filesafeRealPath = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.box";
+    if (destDirUri.startsWith("filesafe:///") || destDirUri.startsWith(filesafeRealPath)) {
+        m_nameLimit = PEONY_ENCRYPTFS_NAME_LIMIT;
+        m_truncateLimit = PEONY_ENCRYPTFS_TRUNCATE_LIMIT;
+    } else if (destDirUri.startsWith("file:///media/")) {
+        auto destParentDirUri = Peony::FileUtils::getParentUri(destDirUri);
+        auto fsType = Peony::FileUtils::getFsTypeFromFile(destParentDirUri);
+        if (fsType.contains("udf")) {
+            m_nameLimit = PEONY_UDF_NAME_LIMIT;
+        }
+    }
     auto stack = new QStackedWidget(this);
     stack->setContentsMargins(20, 0, 20, 20);
     auto layout = new QHBoxLayout;
@@ -100,7 +115,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     }
     case Peony::FileOpCopy:
         line1 = tr("Copying \"%1\"").arg(newName); {
-        auto destDir = Peony::FileUtils::urlDecode(error.destDirUri);
+        auto destDir = Peony::FileUtils::urlDecode(destDirUri);
         QString fileName = destDir.split("/").last();
         destDir.chop(fileName.count() + 1);
         line2 = tr("To \"%1\"").arg(destDir);
@@ -109,7 +124,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
     }
     case Peony::FileOpMove: {
         line1 = tr("Moving \"%1\"").arg(newName);
-        auto destDir = Peony::FileUtils::urlDecode(error.destDirUri);
+        auto destDir = Peony::FileUtils::urlDecode(destDirUri);
         QString fileName = destDir.split("/").last();
         destDir.chop(fileName.count() + 1);
         line2 = tr("To \"%1\"").arg(destDir);
@@ -205,7 +220,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
 //    textEdit->setFixedHeight(height);
 
     auto num = new QLabel;
-    QString totalNum = QString("<span style=\"color:red;\">%1</span>/%2%3").arg(newName.toLocal8Bit().count()).arg(PEONY_RENAME_LIMIT).arg(tr("Bytes"));
+    QString totalNum = QString("<span style=\"color:red;\">%1</span>/%2%3").arg(newName.toLocal8Bit().count()).arg(m_nameLimit).arg(tr("Bytes"));
     num->setText(totalNum);
     auto buttonBox2 = new QDialogButtonBox(this);
     buttonBox2->setStandardButtons(QDialogButtonBox::NoButton);
@@ -248,14 +263,14 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
 
     connect(textEdit, &QTextEdit::textChanged, this, [=](){
         QString currentNum ;
-        if (textEdit->toPlainText().toLocal8Bit().count() > PEONY_RENAME_LIMIT) {
+        if (textEdit->toPlainText().toLocal8Bit().count() > m_nameLimit) {
             ensure2->setEnabled(false);
             currentNum = QString("<span style=\"color:red;\">%1</span>").arg(textEdit->toPlainText().toLocal8Bit().count());
         } else {
             currentNum = QString("<span style=\"color:\">%1</span>").arg(textEdit->toPlainText().toLocal8Bit().count());
             ensure2->setEnabled(true);
         }
-        QString totalNum = QString("%1/%2%3").arg(currentNum).arg(PEONY_RENAME_LIMIT).arg(tr("Bytes"));
+        QString totalNum = QString("%1/%2%3").arg(currentNum).arg(m_nameLimit).arg(tr("Bytes"));
         num->setText(totalNum);
     });
 
@@ -307,7 +322,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
 
     connect(truncationGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [=](QAbstractButton* button) {
         const int id = truncationGroup->id(button);
-        const QString destName = truncateDestFileName(error.destDirUri, id);
+        const QString destName = truncateDestFileName(destDirUri, id);
         truncatedLabel->setText(destName);
     });
     Q_EMIT truncationGroup->buttonClicked(laterTruncation);
@@ -325,7 +340,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
             QString clickText = "<a href=\" \" style=\"color: #3D6BE5;text-decoration: none;\">"
                   + tr("truncate interval")
                   + "</a>" + tr(".");
-            QString text = tr("Explanation: Truncate the portion of the file name that exceeds 225 bytes and select");
+            QString text = tr("Explanation: Truncate the portion of the file name that exceeds %1 bytes and select").arg(m_truncateLimit);
             text = text + clickText;
             specificationLabel->setText(text);
             m_currentWidget = truncationWidget;
@@ -343,7 +358,7 @@ void KyFileDialogRename::handle(Peony::FileOperationError &error)
             QString clickText = "<a href=\"  \" style=\"color: #3D6BE5;text-decoration: none;\">"
                   + tr("modify the name")
                   + "</a>" + tr(".");
-            QString text = tr("Explanation: When renaming a file name, ensure it is within 255 bytes and ");
+            QString text = tr("Explanation: When renaming a file name, ensure it is within %1 bytes and ").arg(m_nameLimit);
             text = text + clickText;
             specificationLabel->setText(text);
             m_currentWidget = page2;
@@ -459,7 +474,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
     QString baseName = Peony::FileUtils::getUriBaseName(uri);
     baseName = Peony::FileUtils::urlDecode(baseName);
     auto destDirUri = Peony::FileUtils::getParentUri(uri);
-    auto fsType = Peony::FileUtils::getFsTypeFromFile(uri);
+    auto fsType = Peony::FileUtils::getFsTypeFromFile(destDirUri);
     bool setLimitBytes = true;
     if (fsType.contains("ntfs")) {
         setLimitBytes = false;
@@ -472,7 +487,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
     QString destName;
     if (setLimitBytes) {
         bool useForceChop = false;
-        if (suffix.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+        if (suffix.toLocal8Bit().count() > m_truncateLimit) {
             qWarning()<<"suffix too long:"<<uri<<"use force chop instead";
             useForceChop = true;
         } else if (newName == baseName) {
@@ -485,13 +500,13 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
             newName = baseName;
             int len = newName.length();
             if (Peony::TurnCateType::Post == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+                while (newName.toLocal8Bit().count() > m_truncateLimit) {
                     newName.chop(1);
                 }
                 truncatedText = baseName.right(len - newName.length());
                 destName = newName + "<s>" + truncatedText + "</s>";
             } else if (Peony::TurnCateType::Front == cateType) {
-                while (newName.toLocal8Bit().count() > PEONY_TRUNCATE_NAME_LIMIT) {
+                while (newName.toLocal8Bit().count() > m_truncateLimit) {
                     newName.remove(0,1);
                 }
                 truncatedText = baseName.left(len - newName.length());
@@ -500,7 +515,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
         } else {
             QString tmp = newName;
             int len = tmp.length();
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.toLocal8Bit().count();
+            int limitBytes = m_truncateLimit - suffix.toLocal8Bit().count();
             if (Peony::TurnCateType::Post == cateType) {
                 while (newName.toLocal8Bit().count() > limitBytes) {
                     newName.chop(1);
@@ -518,7 +533,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
         }
     } else {
         bool useForceChop = false;
-        if (suffix.length() > PEONY_TRUNCATE_NAME_LIMIT) {
+        if (suffix.length() > m_truncateLimit) {
             qWarning()<<"suffix too long:"<<uri<<"use force chop instead";
             useForceChop = true;
         } else if (newName == baseName) {
@@ -529,7 +544,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
         }
         if (useForceChop) {
             newName = baseName;
-            while (newName.length() > PEONY_TRUNCATE_NAME_LIMIT) {
+            while (newName.length() > m_truncateLimit) {
                 newName.chop(1);
             }
             int len = baseName.length();
@@ -537,7 +552,7 @@ const QString KyFileDialogRename::truncateDestFileName(const QString &uri, const
             destName = newName + "<s>" + truncatedText + "</s>";
         } else {
             QString tmp = newName;
-            int limitBytes = PEONY_TRUNCATE_NAME_LIMIT - suffix.length();
+            int limitBytes = m_truncateLimit - suffix.length();
             while (newName.length() > limitBytes) {
                 newName.chop(1);
             }

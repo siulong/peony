@@ -169,6 +169,13 @@ FileLaunchAction *FileLaunchManager::getDefaultAction(const QString &uri)
         action->setProperty("isMdmApp", isMdmApp);
         g_object_unref(info);
 
+        //fix bug#312687, install 360 compress software, double click zip file wrong issue
+        if (action->getAppInfoName().isEmpty()){
+            auto recommentActions = getRecommendActions(uri);
+            if (recommentActions.length() > 0)
+                action = recommentActions.first();
+        }
+
         return action;
     }
 }
@@ -262,7 +269,7 @@ void FileLaunchManager::openSync(const QString &uri, bool forceWithArg, bool ski
     QString tmp = uri;
     auto targetUri = FileUtils::getTargetUri(uri);
     if (targetUri.isNull()) {
-        tmp = targetUri;
+        tmp = uri;
     }
     auto action = getDefaultAction(tmp);
     action->lauchFileSync(forceWithArg, skipDialog);
@@ -277,6 +284,14 @@ void FileLaunchManager::openAsync(const QString &uri, bool forceWithArg, bool sk
     if (!targetUri.isNull()) {
         tmp = targetUri;
         qDebug()<<"open async"<<targetUri;
+        // fix #256959
+        // note: 当软链接指向的文件信息有缓存时，应该更新软链接指向文件信息后再进行打开操作
+        // 否则可能会导致打开文件异常报错
+        auto info = FileInfo::fromUri(tmp);
+        if (!info->isEmptyInfo()) {
+            FileInfoJob job(info);
+            job.querySync();
+        }
     }
     auto action = getDefaultAction(tmp);
     action->lauchFileAsync(forceWithArg, skipDialog);
@@ -308,6 +323,39 @@ bool FileLaunchManager::isGlibForceUsePortal()
     }
     return glib_force_use_portal;
 }
+
+void FileLaunchManager::openFilesByDefaultApplications(const QStringList &files)
+{
+    QMap<QString, QStringList> fileMap;
+    for (auto uri : files) {
+        QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
+        QStringList list;
+        if (fileMap.contains(defaultAppName)) {
+            list = fileMap[defaultAppName];
+            list << uri;
+            fileMap.insert(defaultAppName, list);
+        } else {
+            list << uri;
+            fileMap.insert(defaultAppName, list);
+        }
+    }
+    if(!fileMap.empty()) {
+        QMap<QString, QStringList>::iterator iter = fileMap.begin();
+        while (iter != fileMap.end())
+        {
+            Peony::FileLaunchManager::openAsync(iter.value());
+            iter++;
+        }
+    }
+}
+
+FileLaunchAction *FileLaunchManager::getPeonyAction(const QString &uri)
+{
+    auto app_info = g_desktop_app_info_new_from_filename("/usr/share/applications/peony.desktop");
+    auto action = new FileLaunchAction(uri, G_APP_INFO(app_info), true);
+    return action;
+}
+
 
 void FileLaunchManager::setDefaultLauchAction(const QString &uri, FileLaunchAction *action)
 {

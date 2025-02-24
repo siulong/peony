@@ -65,6 +65,9 @@ public:
     Volume* getOccupiedVolume(){
         return m_occupiedVolume;
     }
+    QString getOccupiedVolumeUri(){
+        return m_occupiedVolumeUri;
+    }
     QMutex* getMutex(){
         return &m_mutex;
     };
@@ -113,6 +116,7 @@ private:
     QHash<QString,Volume*>* m_volumeList = nullptr;
     GetOccupiedAppsInfoThread* m_occupiedAppsInfoThread = nullptr;
     Volume *m_occupiedVolume = nullptr; /* 被占用的volume，当前用于只有ffmpeg占用时强制弹出,link to bug#117263 */
+    QString m_occupiedVolumeUri;
     QMutex m_mutex;
 
     //我应该在检测到信号时更新卷设备列表？还是在用到时重新全部get一次？感觉前者好点?
@@ -182,7 +186,8 @@ private:
     QString m_icon;
     QString m_device;
     QString m_mountPoint;    
-    GUnixMountEntry * m_entry = nullptr;
+    GUnixMountEntry *m_entry = nullptr;
+
 private:
     void initMountInfo();
     void queryDeviceByMountpoint();

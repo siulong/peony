@@ -32,6 +32,7 @@
 #include "thumbnail/video-thumbnail.h"
 #include "thumbnail/office-thumbnail.h"
 #include "thumbnail/image-pdf-thumbnail.h"
+#include "thumbnail/text-plain-thumbnail.h"
 #include "generic-thumbnailer.h"
 #include "thumbnail-job.h"
 
@@ -186,8 +187,8 @@ void ThumbnailManager::createPdfFileThumbnail(const QString &uri, std::shared_pt
     QUrl url = uri;
 
     if (!uri.startsWith("file:///")) {
-        url = FileUtils::getTargetUri(uri);
-        //qDebug()<<url;
+        auto fileInfo = FileInfo::fromUri(uri);
+        url = fileInfo.get()->filePath();
     }
 
     PdfThumbnail pdfThumbnail(url.path());
@@ -218,7 +219,7 @@ void ThumbnailManager::createImageFileThumbnail(const QString &uri, std::shared_
         if (watcher) {
             watcher->fileChanged(uri);
         }
-    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://")) {
+    } else if (uri.startsWith("gphoto2://") || uri.startsWith("mtp://") || uri.startsWith("smb://")) {
         //手机传输和图片传输需要重定向path后获取对应缩略图
         auto fileInfo = FileInfo::fromUri(uri);
         QIcon thumbnail = GenericThumbnailer::generateThumbnail(fileInfo.get()->filePath(), true);
@@ -250,21 +251,46 @@ void ThumbnailManager::createOfficeFileThumbnail(const QString &uri, std::shared
     return;
 }
 
+void ThumbnailManager::createTextFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher)
+{
+    QIcon thumbnail;
+
+    textPlainThumbnail textThumbnail(uri);
+    thumbnail = textThumbnail.generateThumbnail();;
+    if (!thumbnail.isNull()) {
+        insertOrUpdateThumbnail(uri, thumbnail);
+        if (watcher) {
+            watcher->fileChanged(uri);
+        }
+    }
+
+    return;
+}
+
 void ThumbnailManager::createDesktopFileThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher)
 {
     QIcon thumbnail;
     QUrl url = uri;
-    QString path = url.path();
 
     if (!uri.startsWith("file:///")) {
         g_autoptr (GFile) gfile = g_file_new_for_uri(uri.toUtf8().constData());
-        g_autoptr (GFileInfo) gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI, G_FILE_QUERY_INFO_NONE, 0, 0);
-        g_autofree gchar *target_uri = g_file_info_get_attribute_as_string(gfileinfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-        if (target_uri) {
-            url = QString(target_uri);
+        //g_autoptr (GFileInfo) gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI, G_FILE_QUERY_INFO_NONE, 0, 0);
+        //g_autofree gchar *target_uri = g_file_info_get_attribute_as_string(gfileinfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+        g_autofree gchar *filePath = g_file_get_path(gfile);
+        if (filePath) {
+            url = QString(filePath);
         }
     }
 
+    /**
+     * @bug #260905: [File Manager] The icon of the Youhong Reader shortcut deleted to the Recycle Bin is displayed abnormally
+     *
+     * If the uri doesn't start with “file:///”, get the path correctly after re-fetching the url
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-09-10
+     */
+    QString path = url.path();
     QString string;
     g_autoptr (GDesktopAppInfo) desktop_app_info = g_desktop_app_info_new_from_filename(path.toUtf8().constData());
     if (desktop_app_info) {
@@ -393,6 +419,63 @@ void ThumbnailManager::findAtril()
 void ThumbnailManager::createThumbnailInternal(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
 {
     // deprecated
+    auto settings = GlobalSettings::getInstance();
+    if (settings->isExist(FORBID_THUMBNAIL_IN_VIEW)) {
+        bool do_not_thumbnail = settings->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+        if (do_not_thumbnail && !force) {
+            qDebug()<<"setting is not thumbnail";
+            return;
+        }
+    }
+
+    //NOTE: we should do createThumbnail() after we have queried the file's info.
+    auto info = FileInfo::fromUri(uri);
+    //qDebug()<<"file uri:"<< uri << " mime type:" << info->mimeType();
+    //qDebug()<<"file path:" << info->filePath();
+    //qDebug()<<"file modify time:" << info->modifiedTime();
+
+    if (!info->mimeType().isEmpty()) {
+        if (!info->customIcon().isEmpty()) {
+            auto icon = GenericThumbnailer::generateThumbnail(info->customIcon());
+            if (!icon.isNull()) {
+                insertOrUpdateThumbnail(uri, icon);
+                if (watcher) {
+                    watcher->fileChanged(uri);
+                }
+            }
+        }
+        else if (info->isImagePdfFile())
+        {
+             qDebug() <<"isImagePdfFile m_tril_exist:" <<m_tril_exist;
+             if (m_tril_exist)
+             {
+                 createImagePdfFileThumbnail(uri, watcher);
+             }
+        }
+        else if (info->isImageFile()) {
+            createImageFileThumbnail(uri, watcher);
+        }
+        else if (info->mimeType().contains("pdf")) {
+            createPdfFileThumbnail(uri, watcher);
+        }
+        else if(info->isVideoFile()) {
+            createVideFileThumbnail(uri, watcher);
+        }
+        else if (info->isOfficeFile()) {
+            createOfficeFileThumbnail(uri, watcher);
+        }
+        else if (info->isTextFile()){
+            //text file also use libreoffice create thumbnail,related to task#82064
+            createTextFileThumbnail(uri, watcher);
+        }
+        else if (info->isDesktopFile()) {
+            createDesktopFileThumbnail(uri, watcher);
+        }
+        else {
+            //qDebug()<<"the file type: " << info->mimeType();
+            //qDebug()<<"the mime type can not generate thumbnail.";
+        }
+    }
 }
 
 void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileWatcher> watcher, bool force)
@@ -430,6 +513,9 @@ void ThumbnailManager::createThumbnail(const QString &uri, std::shared_ptr<FileW
             needThumbnail = true;
         }
         else if (info->isOfficeFile()) {
+            needThumbnail = true;
+        }
+        else if (info->isTextFile()) {
             needThumbnail = true;
         }
         else if (info->uri().endsWith(".desktop")) {

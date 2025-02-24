@@ -39,6 +39,9 @@
 #include "navigation-tab-bar.h"
 #include "file-info.h"
 #include "tab-status-bar.h"
+#include "multi-select-combobox.h"
+#include "flowlayout.h"
+#include "file-label-model.h"
 
 class NavigationTabBar;
 class QStackedWidget;
@@ -51,6 +54,7 @@ namespace Peony {
 class PreviewPageIface;
 class DirectoryViewContainer;
 class FileInfo;
+class MultiSelectComboBox;
 }
 
 /*!
@@ -140,6 +144,9 @@ Q_SIGNALS:
     void signal_itemAdded(const QString& uri);/* 新增文件（夹），item创建完成 */
     void updateItemsNum(); /*显示隐藏文件，更新项目个数*/
 
+    // add new signals to notify changes in search status
+    void searchStateChanged(bool isSearching, const QString &searchKey);
+
 public Q_SLOTS:
     void setCurrentIndex(int index);
     void setPreviewPage(Peony::PreviewPageIface *previewPage = nullptr);
@@ -193,16 +200,11 @@ public Q_SLOTS:
     void updateTrashBarVisible(const QString &uri = "");
     void updateSearchPathButton(const QString &uri = "");
     void updateSearchBar(bool showSearch);
-    void updateSearchList();
-    void updateButtons();
-    void addNewConditionBar();
-    void removeConditionBar(int index);
     void searchUpdate();
     void searchChildUpdate();
     void browsePath();
 
     void handleZoomLevel(int zoomLevel);
-    void enableSearchBar(bool enable);
 
     void updateCurrentSearchPath();
     void switchSearchPath (bool isCurrent);
@@ -210,6 +212,12 @@ public Q_SLOTS:
     /* 设备卸载、弹出后，其所在标签页跳转到计算机页（保护箱标签除外），其余标签页均关闭 */
     void slot_responseUnmounted(const QString &destUri, const QString &sourceUri);
     void updateTabletModeValue(bool isTabletMode);
+    void updateSearchTypeShow();
+    void updateFilterContent(const QString& key);
+    bool isSearchIndex();
+    void setMutipleLabelConditions(QStringList names, QList<QColor> colors);
+    void updateMultiComboBoxCount();
+    void clearAllMapsCount();
 
 protected:
     void changeCurrentIndex(int index);
@@ -224,8 +232,6 @@ protected:
 
     void initAdvanceSearch();
 
-    QStringList getCurrentClassify(int rowCount);
-
     void updatePreviewPageVisible();
     void updateStatusBarSliderState();
     void updatePreviewButtonStatus(bool status);
@@ -235,6 +241,8 @@ protected:
     bool isMultFile(std::shared_ptr<Peony::FileInfo> info);
     void setCondWidthWithFont(QComboBox *conditionCombox, int fontSize);
     void setClassifyWidthWithFont(QComboBox *classifyCombox, int fontSize);
+    void updateSearchFilterHeight();
+    void updateAdvanceShow(bool isVisible);
 
 private:
     NavigationTabBar *m_tab_bar;
@@ -244,26 +252,14 @@ private:
     QTreeView *m_treeView;
     QStandardItemModel *m_model;
 
-    //QWidget *m_tab_bar_bg;
-    QWidget *m_header_bar_bg;
-
     QStackedWidget *m_stack;
-
-    PreviewPageButtonGroups *m_buttons;
-
-    QToolBar *m_tool_bar;
 
     Peony::PreviewPageIface *m_preview_page = nullptr;
     QStackedWidget *m_preview_page_container;
 
-    QAction *m_current_preview_action = nullptr;
-    QAction *m_preview_action = nullptr;
-    QActionGroup *m_preview_action_group = nullptr;
-
     QToolBar *m_trash_bar;
     QToolBar *m_search_bar;
     QVBoxLayout *m_top_layout;
-    QHBoxLayout *m_header_bar_layout;
     QHBoxLayout *m_trash_bar_layout;
     QHBoxLayout *m_search_bar_layout;
     QLabel *m_trash_label;
@@ -279,18 +275,23 @@ private:
     QPushButton* m_home_search;
     QPushButton* m_add_filter_button;
     QSplitter* m_preview_splitter;
+    QComboBox* m_search_type_box;
 
     //use qlist for dynamic generated search conditions list
-    QList<QHBoxLayout*> m_layout_list;
-    QList<QComboBox*> m_conditions_list;
+    //QList<QHBoxLayout*> m_layout_list;
     QList<QComboBox*> m_classify_list;
-    QList<QLabel*> m_link_label_list;
-    QList<QPushButton*> m_add_button_list;
-    QList<QPushButton*> m_remove_button_list;
-    QList<QToolBar*> m_search_bar_list;
-    QList<QLineEdit*> m_input_list;
-    QList<QSignalMapper*> m_add_mappper_list;
-    QList<QSignalMapper*> m_remove_mapper_list;
+
+    QList<Peony::MultiSelectComboBox *> m_conditions_list;
+    Peony::MultiSelectComboBox *m_file_type_box;
+    Peony::MultiSelectComboBox *m_file_mtime_box;
+    Peony::MultiSelectComboBox *m_file_size_box;
+    Peony::MultiSelectComboBox *m_file_label_box;
+    QLineEdit *m_input_edit;
+    QLabel *m_condition_label;
+    FlowLayout *m_search_filter_layout;
+    QWidget *m_filter_container;
+    QPushButton *m_conditions_clear_btn;
+    FileLabelModel *m_file_label_model;
 
     int m_search_bar_count = 0;
     const int ELIDE_TEXT_LENGTH = 6;
@@ -298,8 +299,6 @@ private:
     TabStatusBar *m_status_bar = nullptr;
 
     bool m_triggered_preview_page = false;
-    bool m_show_search_list = false;
-    bool m_show_search_bar = false;
     bool m_search_child_flag = true;
     bool m_isTabletMode = false;
     bool m_jumpToComputer = false;
@@ -311,14 +310,11 @@ private:
 
     //advance search filter options
     QStringList m_option_list = {tr("type"), tr("file size"), tr("modify time"), tr("name")};
-    QStringList m_file_type_list = {tr("all"), tr("file folder"), tr("image"), tr("video"),
+    QStringList m_file_type_list = {/*tr("all"), */tr("file folder"), tr("image"), tr("video"),
                                     tr("text file"), tr("audio"), tr("wps file"), tr("others")};
-    QStringList m_file_mtime_list = {tr("all"), tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
-    QStringList m_file_size_list = {tr("all"),tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
-
-    bool m_first_add_page = true;
-
-    std::shared_ptr<Peony::FileInfo> m_search_button_info;
+    QStringList m_file_mtime_list = {/*tr("all"), */tr("today"), tr("yesterday"), tr("this week"), tr("last week"), tr("this month"), tr("last month"), tr("this year"), tr("last year")};
+    QStringList m_file_size_list = {/*tr("all"),*/tr("empty(0K)"), tr("tiny(0-16K)"), tr("small(16k-1M)"), tr("medium(1M-128M)"), tr("big(128M-1G)"),tr("large(1-4G)"),tr("great(>4G)")};
+    QStringList m_search_type_list = {tr("file name and content"), tr("file name")};
 
     QWidget* m_parent = nullptr;
 };

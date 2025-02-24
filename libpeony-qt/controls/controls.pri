@@ -12,9 +12,11 @@ include(tab-page/tab-page.pri)
 
 HEADERS += \
     $$PWD/icon-container.h              \
+    $$PWD/multi-select-combobox.h       \
     $$PWD/tag-management.h
 
 SOURCES += \
     $$PWD/icon-container.cpp            \
+    $$PWD/multi-select-combobox.cpp     \
     $$PWD/tag-management.cpp
 

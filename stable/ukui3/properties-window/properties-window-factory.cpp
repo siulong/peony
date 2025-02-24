@@ -39,10 +39,10 @@ StablePropertiesWindowFactory *StablePropertiesWindowFactory::getInstance()
     return global_instance;
 }
 
-QMainWindow *StablePropertiesWindowFactory::create(const QStringList &uris)
+QMainWindow *StablePropertiesWindowFactory::create(const QStringList &uris, QWidget *parent)
 {
-    auto window = new StablePropertiesWindow(uris);
-    return window;
+    m_window = new StablePropertiesWindow(uris, parent);
+    return m_window;
 }
 
 void StablePropertiesWindowFactory::closeFactory()
@@ -60,4 +60,11 @@ bool StablePropertiesWindowFactory::unregisterFactory(QObject *factory)
 {
     PropertiesWindowTabPagePluginIface *Iface = dynamic_cast<PropertiesWindowTabPagePluginIface*>(factory);
     return PropertiesWindowPluginManager::getInstance()->unregisterFactory(Iface);
+}
+
+void StablePropertiesWindowFactory::show()
+{
+    if (m_window) {
+        m_window->show();
+    }
 }

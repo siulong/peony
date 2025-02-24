@@ -1,4 +1,4 @@
-/*
+ /*
  * Peony-Qt's Library
  *
  * Copyright (C) 2023, KylinSoft Co., Ltd.
@@ -48,6 +48,11 @@ FileOperationHelper::~FileOperationHelper()
 QString FileOperationHelper::getDiscType()
 {
     return m_disc_media_type;
+}
+
+QString FileOperationHelper::getDiscSystemType()
+{
+    return m_disc_system_type;
 }
 
 bool FileOperationHelper::isUnixCDDevice()
@@ -156,12 +161,9 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
                 } else {
                     m_disc_error_msg = tr("Burn failed");
                 }
-                qDebug() << "udf clint error message: " << errinfo;
+                qDebug() << "udf clint start error message: " << errinfo;
                 for (QString filePath : list) {
-                    QFile file(filePath);
-                    if (file.exists()) {
-                        file.remove();
-                    }
+                    deleteDirectoryRecursively(filePath);
                 }               
                 udfwrite->closeUdfClient();
                 free(errinfo);
@@ -175,10 +177,7 @@ bool FileOperationHelper::discWriteOperation(const QStringList &sourUrisList, co
                 m_disc_error_msg = tr("Burn failed");
                 qDebug() << "udf write error message: " << errinfo;
                 for (QString filePath : list) {
-                    QFile file(filePath);
-                    if (file.exists()) {
-                        file.remove();
-                    }
+                    deleteDirectoryRecursively(filePath);
                 }
                 udfwrite->closeUdfClient();
                 free(errinfo);
@@ -279,6 +278,35 @@ QString FileOperationHelper::getDestName(const QString &destUri)
         destName = list.join("/");
     }
     return destName;
+}
+
+void FileOperationHelper::deleteDirectoryRecursively(const QString &dirPath) {
+    QDir dir(dirPath);
+
+    if (!dir.exists()) {
+        QFile file(dirPath);
+        if (file.exists()) {
+            file.remove();
+        }
+        qDebug() << "Directory does not exist:" << dirPath;
+        return;
+    }
+
+    QFileInfoList filesAndDirs = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+    for (const QFileInfo &info : filesAndDirs) {
+        if (info.isDir()) {
+            deleteDirectoryRecursively(info.absoluteFilePath());
+        } else {
+            QFile file(info.absoluteFilePath());
+            if (!file.remove()) {
+                qDebug() << "Failed to delete file:" << info.absoluteFilePath();
+            }
+        }
+    }
+
+    if (!dir.rmdir(dirPath)) {
+        qDebug() << "Failed to remove directory:" << dirPath;
+    }
 }
 
 QString FileOperationHelper::getDiscError()

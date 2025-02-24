@@ -51,6 +51,10 @@ public:
     static FileOperation *restore(const QStringList &urisInTrash);
     static FileOperation *create(const QString &destDirUri, const QString &name = nullptr, CreateTemplateOperation::Type type = CreateTemplateOperation::EmptyFile);
 
+    static FileOperation *setReadOnly(const QStringList &srcUris, bool readOnly, bool recursive = false);
+    static FileOperation *setHidden(const QStringList &srcUris, bool hidden, bool recursive = false);
+    static FileOperation *setReadOnlyAndHidden(const QStringList &srcUris, bool readOnly, bool hidden, bool recursive = false);
+
     static void executeRemoveActionWithDialog(const QStringList &uris);
 
     static bool leftNameIsDuplicatedFileOfRightName(const QString &left, const QString &right);

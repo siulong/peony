@@ -412,9 +412,31 @@ void FileLaunchAction::lauchFileAsync(bool forceWithArg, bool skipDialog)
 
     if (isDesktopFileAction() && !forceWithArg) {
 #if GLIB_CHECK_VERSION(2, 60, 0)
+        // send startup info to kwindowsystem
+        quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+        KStartupInfoId* startInfoId = new KStartupInfoId();
+        startInfoId->initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+        startInfoId->setupStartupEnv();
+        KStartupInfoData data;
+        data.setHostname();
+        float scale = qApp->devicePixelRatio();
+        QRect rect = fileInfo.get()->property("iconGeometry").toRect();
+        rect.moveTo(rect.x()/* * scale*/, rect.y()/* * scale*/);
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+        if (rect.isValid()) {
+            data.setIconGeometry(rect);
+            qDebug() << "KStartupInfoData iconGeometry:" << m_uri <<rect ;
+        }
+#endif
+        data.setLaunchedBy(getpid());
+
+        KStartupInfo::sendStartup(*startInfoId, data);
+
+        auto context = getAppContext(this);
+        g_signal_connect(context, "launched", G_CALLBACK(contextLaunchedCallback), startInfoId);
         g_app_info_launch_uris_async(m_app_info, nullptr,
-                                     nullptr, nullptr,
-                                     nullptr, nullptr);
+                                     context, nullptr,
+                                     GAsyncReadyCallback(launchAsyncCallback), startInfoId);
 #else
         g_app_info_launch_uris(m_app_info, nullptr, nullptr, nullptr);
 #endif

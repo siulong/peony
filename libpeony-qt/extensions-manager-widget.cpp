@@ -30,6 +30,7 @@
 #include <QPluginLoader>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QCloseEvent>
 
 static Peony::ExtensionsManagerWidget *global_instance = nullptr;
 
@@ -41,6 +42,14 @@ Peony::ExtensionsManagerWidget *Peony::ExtensionsManagerWidget::getInstance()
     return global_instance;
 }
 
+void Peony::ExtensionsManagerWidget::deleteInstance()
+{
+    if (global_instance) {
+        global_instance->deleteLater();
+        global_instance = nullptr;
+    }
+}
+
 Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
     :QWidget(parent)
 {
@@ -49,9 +58,6 @@ Peony::ExtensionsManagerWidget::ExtensionsManagerWidget(QWidget *parent)
 
 Peony::ExtensionsManagerWidget::~ExtensionsManagerWidget()
 {
-    for (auto plugin : m_pluginMap) {
-        delete plugin;
-    }
     m_pluginMap.clear();
 }
 
@@ -62,7 +68,7 @@ void Peony::ExtensionsManagerWidget::initUI()
     this->resize(EXTENSIONS_SHOW_WIDTH, EXTENSIONS_SHOW_HEIGHT);
     this->setMinimumWidth(EXTENSIONS_SHOW_WIDTH);
     this->setWindowTitle(tr("Extensions Manager"));
-    this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
+    //this->setWindowIcon(QIcon::fromTheme("system-file-manager"));
 
     m_mainLayout = new QVBoxLayout(this);
     m_useLabel = new QLabel(tr("Available extensions"));
@@ -106,11 +112,9 @@ void Peony::ExtensionsManagerWidget::initUI()
 
     connect(m_cancelBtn, &QPushButton::clicked, this, [=](){
         this->close();
-        if (global_instance) {
-            delete global_instance;
-            global_instance = nullptr;
-        }
+        deleteInstance();
     });
+
 }
 
 void Peony::ExtensionsManagerWidget::initTableWidget()
@@ -145,11 +149,11 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
     int count = m_pluginMap.count();
     m_tableWidget->setRowCount(count);
 
-    QMap<QString, PluginInterface*>::iterator iter;
+    QMap<QString, PluginInfo>::iterator iter;
     int row = 0;
     for (iter = m_pluginMap.begin();  iter != m_pluginMap.end(); ++iter) {
         QString filePath = iter.key();
-        PluginInterface* iface = iter.value();
+        PluginInfo info = iter.value();
 
         //Add checkBox
         m_tableWidget->setCellWidget(row, 0, nullptr);
@@ -165,16 +169,15 @@ void Peony::ExtensionsManagerWidget::initTableWidget()
         l->addWidget(checkBox);
         m_tableWidget->setCellWidget(row, 0, w);
 
-        QIcon icon = iface->icon();
         QLabel *iconLabel = new QLabel();
         iconLabel->setProperty("useIconHighlightEffect", 0x2);
-        iconLabel->setPixmap(QIcon::fromTheme(icon.name(), QIcon::fromTheme("unknown")).pixmap(QSize(24, 24)));
+        iconLabel->setPixmap(QIcon::fromTheme(info.icon.name(), QIcon::fromTheme("unknown")).pixmap(QSize(24, 24)));
         iconLabel->setAlignment(Qt::AlignCenter);
         m_tableWidget->setCellWidget(row, 1, iconLabel);
 
-        QTableWidgetItem* itemC2 = new QTableWidgetItem(iface->description());
+        QTableWidgetItem* itemC2 = new QTableWidgetItem(info.description);
         itemC2->setFlags(itemC2->flags() | Qt::ItemIsSelectable);
-        itemC2->setToolTip(iface->description());
+        itemC2->setToolTip(info.description);
         m_tableWidget->setItem(row, 2, itemC2);
         row++;
     }
@@ -196,6 +199,9 @@ void Peony::ExtensionsManagerWidget::initExtensionInfo()
 
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        if (fileName == "libsafe-context-menu.so") {
+            pluginLoader.setLoadHints(pluginLoader.loadHints() | QLibrary::DeepBindHint);
+        }
         qDebug()<<pluginLoader.fileName();
         qDebug()<<pluginLoader.metaData();
         qDebug()<<pluginLoader.load();
@@ -209,7 +215,10 @@ void Peony::ExtensionsManagerWidget::initExtensionInfo()
         PluginInterface *piface = dynamic_cast<PluginInterface*>(plugin);
         if (!piface)
             continue;
-        m_pluginMap.insert(pluginLoader.fileName(), piface);
+        PluginInfo info;
+        info.icon = piface->icon();
+        info.description = piface->description();
+        m_pluginMap.insert(pluginLoader.fileName(), info);
 
         QFileInfo fileInfo(pluginLoader.fileName());
         if (fileInfo.exists()) {
@@ -239,4 +248,11 @@ void Peony::ExtensionsManagerWidget::addSeparator()
     separate->setFocusPolicy(Qt::NoFocus);
     separate->setEnabled(false);
     m_mainLayout->addWidget(separate);
+}
+
+void Peony::ExtensionsManagerWidget::closeEvent(QCloseEvent *event)
+{
+    if (event) {
+        deleteInstance();
+    }
 }

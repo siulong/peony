@@ -568,7 +568,8 @@ void MainWindow::setShortCuts()
             QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
             //Peony::PropertiesWindow *w = new Peony::PropertiesWindow(uris);
             w->setAttribute(Qt::WA_DeleteOnClose);
-            w->show();
+            Peony::PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //w->show();
         });
         addAction(propertiesWindowAction);
 

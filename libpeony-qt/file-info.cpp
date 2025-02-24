@@ -20,14 +20,17 @@
  *
  */
 #include <gio/gunixmounts.h>
-#include "file-info.h"
+#include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 
+#include "file-info.h"
 #include "file-info-manager.h"
 #include "file-info-job.h"
 #include "file-meta-info.h"
 #include "file-utils.h"
 #include "thumbnail-manager.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QUrl>
 #include <QtDBus/QDBusConnection>
@@ -296,18 +299,23 @@ const QString FileInfo::getFinalDisplayName()
     if (isEmptyInfo())
         return nullptr;
 
-    bool isMountPoint;
-    QString unixDevice,deviceName;
-
-    unixDevice = unixDeviceFile();
-    isMountPoint = FileUtils::isMountPoint(m_uri);
-
     if(m_uri == "file:///DATA"
             || m_uri == "file:///data"
             || m_target_uri == "file:///data")
     {
         return tr("data");
     }
+    if(GlobalSettings::getInstance()->isDesktopStartUp()){
+        return m_display_name;
+    }
+
+    bool isMountPoint;
+    QString unixDevice,deviceName;
+
+    unixDevice = unixDeviceFile();
+    isMountPoint = FileUtils::isMountPoint(m_uri);
+
+
 
     if((nullptr != m_display_name)
             && (!isMountPoint
@@ -379,6 +387,7 @@ FileInfo &FileInfo::operator=(const FileInfo &other)
         this->m_finalDisplayName = other.m_finalDisplayName;
         this->m_create_time = other.m_create_time;
         this->m_create_date = other.m_create_date;
+        this->m_is_hidden = other.m_is_hidden;
         this->setProperty("orig-path", other.property("orig-path"));
         this->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, other.property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
     }
@@ -392,6 +401,83 @@ QString FileInfo::updateIconName(const QString &uri, const QString &iconName) co
         return FileUtils::updateFileIconName(uri, true);
     }
     return iconName;
+}
+
+
+bool FileInfo::isExistTargetOfSymlink() const
+{
+    /**
+     * if the current file is a symbolic link and m_symlink_target is not null
+     *  and the path to the file where m_symlink_target is located exists, returns false, otherwise returns true.
+     */
+    if (m_is_symbol_link && !m_symlink_target.isEmpty() && !QFileInfo(m_symlink_target).exists()) {
+        return false;
+    }
+    return true;
+}
+
+QIcon FileInfo::getIcon()
+{
+    // Try getting thumbnail first
+    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(uri());
+    if (!icon.isNull()) {
+        return icon;
+    }
+
+    // Handle desktop file
+    if (m_uri.endsWith(".desktop")) {
+        QUrl url = uri();
+        if (url.scheme() == "trash" && !targetUri().isEmpty()) {
+            url = QUrl(targetUri());
+        }
+
+        GDesktopAppInfo *desktop_info = g_desktop_app_info_new_from_filename(url.path().toUtf8());
+        if (desktop_info) {
+            QString desktopIcon = g_desktop_app_info_get_string(desktop_info, "Icon");
+            if (!desktopIcon.isEmpty()) {
+                if (desktopIcon.startsWith("/")) {
+                    // absolute path, direct load
+                    QIcon directIcon(desktopIcon);
+                    if (!directIcon.isNull()) {
+                        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), directIcon);
+                        g_object_unref(desktop_info);
+                        return directIcon;
+                    }
+                } else {
+                    // icon name, loaded from theme
+                    QIcon themeIcon = QIcon::fromTheme(desktopIcon, QIcon::fromTheme("unknown"));
+                    if (themeIcon.name() != "unknown") {
+                        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), themeIcon);
+                        g_object_unref(desktop_info);
+                        return themeIcon;
+                    }
+                }
+            }
+            g_object_unref(desktop_info);
+        }
+    }
+
+    // Get icon name and try theme icon
+    QString iconName = this->iconName();
+
+    // Try icon name without suffix as last resort
+    QFileInfo iconInfo(iconName);
+    if (iconInfo.exists()) {
+        QString iconNameWithoutSuffix = iconInfo.completeBaseName();
+        icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+        if (icon.name() != "unknown") {
+            ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
+            return icon;
+        }
+    }
+
+    icon = QIcon::fromTheme(iconName, QIcon::fromTheme("unknown"));
+    if (icon.name() != "unknown" ) {
+        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
+        return icon;
+    }
+
+    return QIcon::fromTheme("unknown");
 }
 
 const QString FileInfo::unixDeviceFile()

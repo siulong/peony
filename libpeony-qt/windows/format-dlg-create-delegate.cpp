@@ -45,6 +45,7 @@ Format_Dialog *FormatDlgCreateDelegate::createUDiskDlg(const QString &uris, Side
 {
     if (m_udiskDlgMap.contains(uris)) {
         m_udiskDlgMap[uris]->raise();
+        m_udiskDlgMap[uris]->activateWindow();
         return m_udiskDlgMap[uris];
     }
 

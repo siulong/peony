@@ -92,8 +92,12 @@ static void peony_search_vfs_file_enumerator_init(PeonySearchVFSFileEnumerator *
 #ifdef KY_UKUI_SEARCH
     self->priv->m_search = new UkuiSearch::UkuiSearchTask();
     self->priv->m_queue = self->priv->m_search->init();
+    self->priv->m_contentSearch = new UkuiSearch::UkuiSearchTask();
+    self->priv->m_contentQueue = self->priv->m_contentSearch->init();
     self->priv->search_engine = false;
-    self->priv->search_first = true;
+    self->priv->search_status = SEARCHFILE;
+    self->priv->search_content = SEARCHFILECONTENT;
+    self->priv->m_duplicatesHash = new QHash<QString, QString>;
 #endif
 }
 
@@ -159,6 +163,12 @@ void enumerator_dispose(GObject *object)
         self->priv->m_search->stop();
     }
     delete self->priv->m_search;
+    if (self->priv->m_contentSearch->isSearching(UkuiSearch::SearchProperty::SearchType::FileContent)) {
+        self->priv->m_contentSearch->stop();
+    }
+    delete self->priv->m_contentSearch;
+    self->priv->m_duplicatesHash->clear();
+    delete self->priv->m_duplicatesHash;
 #endif
 }
 
@@ -199,14 +209,18 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
     bool search_engine = false;
 #ifdef KY_UKUI_SEARCH
     search_engine = search_enumerator->priv->search_engine;
-    if (search_enumerator->priv->search_first) {
+    if (search_enumerator->priv->search_status == SEARCHFILE) {
         search_enumerator->priv->m_search->startSearch(UkuiSearch::SearchProperty::SearchType::File);
-        search_enumerator->priv->search_first = false;
+        search_enumerator->priv->search_status = SEARCHFILEING;
+        qDebug() << __func__ << __LINE__ << "start file name search";
     }
 
     while (true) {
         if (!search_enumerator->priv->m_search->isSearching(UkuiSearch::SearchProperty::SearchType::File)
                 || !search_enumerator->priv->m_queue->isEmpty()) {
+            if (!search_enumerator->priv->m_search->isSearching(UkuiSearch::SearchProperty::SearchType::File)
+                    && search_enumerator->priv->search_status == SEARCHFILEING) {
+            }
             break;
         }
     }
@@ -218,6 +232,7 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
         g_autofree gchar* encoded_path = g_uri_escape_string(path.toUtf8().constData(), ":/", false);
         path = encoded_path;
         QString uri = "file://" + path;
+        search_enumerator->priv->m_duplicatesHash->insert(uri, "file");
         auto search_vfs_info = g_file_info_new();
         QString realUriSuffix = "real-uri:" + uri;
         g_file_info_set_name(search_vfs_info, realUriSuffix.toUtf8().constData());
@@ -228,6 +243,42 @@ static GFileInfo *enumerate_next_file(GFileEnumerator *enumerator,
             historyResults<<realUriSuffix;
         }
         //search_enumerator->priv->m_count++;
+        return search_vfs_info;
+    }
+
+
+    if (search_enumerator->priv->search_content == SEARCHFILECONTENT) {
+        search_enumerator->priv->m_contentSearch->startSearch(UkuiSearch::SearchProperty::SearchType::FileContent);
+        search_enumerator->priv->search_content = SEARCHFILECONTENTING;
+        qDebug() << __func__ << __LINE__ << "start file content search";
+    }
+
+    while (true) {
+        if (!search_enumerator->priv->m_contentSearch->isSearching(UkuiSearch::SearchProperty::SearchType::FileContent)
+                || !search_enumerator->priv->m_contentQueue->isEmpty()) {
+            break;
+        }
+    }
+
+    while (!search_enumerator->priv->m_contentQueue->isEmpty() && search_engine) {
+        UkuiSearch::ResultItem resultItem = search_enumerator->priv->m_contentQueue->dequeue();
+        //qDebug() << "resultItem-->" << resultItem.getItemKey();
+        QString path = resultItem.getItemKey();
+        g_autofree gchar* encoded_path = g_uri_escape_string(path.toUtf8().constData(), ":/", false);
+        path = encoded_path;
+        QString uri = "file://" + path;
+        if (search_enumerator->priv->m_duplicatesHash->contains(uri)) {
+            continue;
+        }
+        search_enumerator->priv->m_duplicatesHash->insert(uri, "fileContent");
+        auto search_vfs_info = g_file_info_new();
+        QString realUriSuffix = "real-uri:" + uri;
+        g_file_info_set_name(search_vfs_info, realUriSuffix.toUtf8().constData());
+
+        if (search_enumerator->priv->save_result) {
+            auto historyResults = manager->getHistroyResults(*search_enumerator->priv->search_vfs_directory_uri);
+            historyResults<<realUriSuffix;
+        }
         return search_vfs_info;
     }
 #endif

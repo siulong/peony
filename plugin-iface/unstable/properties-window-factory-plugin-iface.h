@@ -43,10 +43,11 @@ public:
     virtual ~PropertiesWindowFactoryPluginIface() {}
 
     virtual const QString version() = 0;
-    virtual QMainWindow *create(const QStringList &uris) = 0;
+    virtual QMainWindow *create(const QStringList &uris, QWidget *parent) = 0;
     virtual void closeFactory() = 0;
     virtual bool registerFactory(QObject *factory) = 0;
     virtual bool unregisterFactory(QObject *factory) = 0;
+    virtual void show() = 0;
 };
 }
 

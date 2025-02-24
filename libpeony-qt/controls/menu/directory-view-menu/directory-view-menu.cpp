@@ -51,7 +51,7 @@
 
 #include "volume-manager.h"
 
-//#include "properties-window.h"
+#include "properties-window.h"
 #include "properties-window-factory-plugin-manager.h"
 #include "windows/format_dialog.h"
 #include "file-launch-manager.h"
@@ -382,7 +382,20 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 connect(l.last(), &QAction::triggered, this, [=]() {
                     if (!m_top_window)
                         return;
-                    m_top_window->goToUri(m_selections.first(), true);
+
+                    if(info->uri().startsWith("file://") && !info->canExecute()){
+                        QMessageBox::critical(nullptr, tr("Open failed"), tr("Open directory failed, you have no permission!"));
+                        return;
+                    }
+
+                    bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
+                    if (check) {
+                        auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(m_selections.first()));
+                        newWindow->setAttribute(Qt::WA_DeleteOnClose);
+                        newWindow->show();
+                    } else {
+                        m_top_window->goToUri(m_selections.first(), true);
+                    }
                 });
 
                 auto recommendActions = FileLaunchManager::getRecommendActions(m_selections.first());
@@ -510,38 +523,30 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
             connect(l.last(), &QAction::triggered, this, [=]() {
                 qDebug()<<"triggered";
                 QStringList dirs;
-                QMap<QString, QStringList> fileMap;
-                /**step 1: Categorize files according to type.
-                 * step 2: Open files in batches to avoid loss of asynchronous messages due to program startup.
-                **/
+                QStringList files;
                 for (auto uri : m_selections) {
                     auto info = FileInfo::fromUri(uri);
                     if (info->isDir() || info->isVolume()) {
                         dirs<<uri;
                     } else {
-                        QString defaultAppName = FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
-                        QStringList list;
-                        if (fileMap.contains(defaultAppName)) {
-                            list = fileMap[defaultAppName];
-                            list << uri;
-                            fileMap.insert(defaultAppName, list);
-                        } else {
-                            list << uri;
-                            fileMap.insert(defaultAppName, list);
+                        files << uri;
+                    }
+                }
+                if (!dirs.isEmpty()) {
+                    bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
+                    if (check) {
+                        for (QString uri : dirs) {
+                            auto newWindow = dynamic_cast<QWidget *>(m_top_window->create(uri));
+                            newWindow->setAttribute(Qt::WA_DeleteOnClose);
+                            newWindow->show();
                         }
+                    } else {
+                        m_top_window->addNewTabs(dirs);
                     }
                 }
-                if (!dirs.isEmpty())
-                    m_top_window->addNewTabs(dirs);
 
-                if(!fileMap.empty()) {
-                    QMap<QString, QStringList>::iterator iter = fileMap.begin();
-                    while (iter != fileMap.end())
-                    {
-                        FileLaunchManager::openAsync(iter.value());
-                        iter++;
-                    }
-                }
+                if (!files.isEmpty())
+                    FileLaunchManager::openFilesByDefaultApplications(files);
             });
         }
     }
@@ -749,6 +754,10 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         if (m_top_window->getCurrentUri() != "trash:///") {
             tmp.last()->setVisible(false);
         }
+        if(m_top_window->getCurrentUri().startsWith("search:///")){
+            tmp<<sortTypeMenu->addAction(tr("Path"));
+        }
+
         int sortType = m_view->getSortType();
         if (sortType >= 0) {
             tmp.at(sortType)->setCheckable(true);
@@ -776,8 +785,20 @@ const QList<QAction *> DirectoryViewMenu::constructViewOpActions()
         tmp.clear();
         //fix bug#97408,change indicator meanings
         //箭头向上为升序，向下为降序，与通常的理解对应
-        tmp<<sortOrderMenu->addAction(tr("Descending Order"));
-        tmp<<sortOrderMenu->addAction(tr("Ascending Order"));
+        QStringList sortNames;
+        sortNames.append(tr("Descending Order"));
+        sortNames.append(tr("Ascending Order"));
+        if (sortType == 1) {
+            sortNames.clear();
+            sortNames.append(tr("Newest to oldest"));
+            sortNames.append(tr("Oldest to newest"));
+        } else if (sortType == 3) {
+            sortNames.clear();
+            sortNames.append(tr("Files from large to small"));
+            sortNames.append(tr("Files from small to large"));
+        }
+        tmp<<sortOrderMenu->addAction(sortNames.at(0));
+        tmp<<sortOrderMenu->addAction(sortNames.at(1));
         int sortOrder = m_view->getSortOrder();
         tmp.at(sortOrder)->setCheckable(true);
         tmp.at(sortOrder)->setChecked(true);
@@ -831,6 +852,29 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
 {
     QList<QAction *> l;
 
+#if 0
+    addAction("test set properties", this, [=]{
+        QDialog d;
+        QVBoxLayout *layout = new QVBoxLayout;
+        auto hiddenBox = new QCheckBox("hidden");
+        auto readonlyBox = new QCheckBox("readonly");
+        auto recursiveBox = new QCheckBox("recusive");
+        layout->addWidget(hiddenBox);
+        layout->addWidget(readonlyBox);
+        layout->addWidget(recursiveBox);
+        auto button = new QPushButton("ok");
+        layout->addWidget(button);
+        connect(button, &QPushButton::clicked, &d, &QDialog::accept);
+        d.setLayout(layout);
+        if (d.exec()) {
+            bool hidden = hiddenBox->isChecked();
+            bool readonly = readonlyBox->isChecked();
+            bool recursive = recursiveBox->isChecked();
+            FileOperationUtils::setReadOnlyAndHidden(m_selections, readonly, hidden, recursive);
+        }
+    });
+#endif
+
     if (!m_is_trash && !m_is_computer) {
         QString homeUri = "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         bool hasStandardPath = FileUtils::containsStandardPath(m_selections);
@@ -879,11 +923,10 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
                 auto info = FileInfo::fromUri(actualDir);
                 if (!info->canWrite()) {
                     canCut = false;
-                    if(m_is_search && !m_selections.isEmpty()){
-                        auto selectInfo = FileInfo::fromUri(m_selections.first());
-                        if(selectInfo->canWrite())
-                            canCut = true;
-                    }//end
+                }
+                if(m_is_search && !m_selections.isEmpty()){/* hotfix bug#222786 */
+                    auto selectInfo = FileInfo::fromUri(m_selections.first());
+                    canCut = FileUtils::isSearchFilesParentWriteable(m_selections, m_is_search);
                 }
                 if (canCut) {
                     l<<addAction(QIcon::fromTheme("edit-cut-symbolic"), tr("Cut"));
@@ -1077,6 +1120,9 @@ const QList<QAction *> DirectoryViewMenu::constructFileOpActions()
         });
     }
 
+    if (m_selections.isEmpty())
+        addActions(FileOperationManager::getInstance()->getUndoRedoActions());
+
     return l;
 }
 
@@ -1111,13 +1157,22 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
             if (m_selections.isEmpty()) {
                 QStringList uris;
                 uris<<m_directory;
-                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
+                //QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
                 //PropertiesWindow *p = new PropertiesWindow(uris);
+                //if(this->parentWidget() && this->parentWidget()->isModal()){
+                //    p->setParent(this->parentWidget());
+                //}
+                //p->setAttribute(Qt::WA_DeleteOnClose);
+                //PropertiesWindowFactoryPluginManager::getInstance()->show();
+                //p->show();
                 if(this->parentWidget() && this->parentWidget()->isModal()){
-                    p->setParent(this->parentWidget());
+                    QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris, this->parentWidget());
+                    p->setAttribute(Qt::WA_DeleteOnClose);
+                } else {
+                    QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
+                    p->setAttribute(Qt::WA_DeleteOnClose);
                 }
-                p->setAttribute(Qt::WA_DeleteOnClose);
-                p->show();
+                PropertiesWindowFactoryPluginManager::getInstance()->show();
             } else {
                 QStringList selectUriList;
                 if (m_selections.first().contains("favorite:///")) {
@@ -1127,12 +1182,21 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                             QStringList urisList;
                             urisList << FileUtils::getTargetUri(m_selections.at(uriIndex));
                             //PropertiesWindow *p = new PropertiesWindow(urisList);
-                            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                            //QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                            //if(this->parentWidget() && this->parentWidget()->isModal()){
+                            //    p->setParent(this->parentWidget());
+                            //}
+                            //p->setAttribute(Qt::WA_DeleteOnClose);
+                            //PropertiesWindowFactoryPluginManager::getInstance()->show();
+                            //p->show();
                             if(this->parentWidget() && this->parentWidget()->isModal()){
-                                p->setParent(this->parentWidget());
+                                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList, this->parentWidget());
+                                p->setAttribute(Qt::WA_DeleteOnClose);
+                            } else {
+                                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                                p->setAttribute(Qt::WA_DeleteOnClose);
                             }
-                            p->setAttribute(Qt::WA_DeleteOnClose);
-                            p->show();
+                            PropertiesWindowFactoryPluginManager::getInstance()->show();
                         } else {
                             selectUriList<< m_selections.at(uriIndex);
                         }
@@ -1141,26 +1205,44 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
                     for(auto &labelUri : m_selections){/* 标记模式页面为不同目录下的文件（夹），所以每个都需要一个属性对话框 */
                         QStringList urisList;
                         urisList.append(labelUri);
-                        QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                        //QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
                         //PropertiesWindow *p = new PropertiesWindow(urisList);
+                        //if(this->parentWidget() && this->parentWidget()->isModal()){
+                        //    p->setParent(this->parentWidget());
+                        //}
+                        //p->setAttribute(Qt::WA_DeleteOnClose);
+                        //PropertiesWindowFactoryPluginManager::getInstance()->show();
+                        //p->show();
                         if(this->parentWidget() && this->parentWidget()->isModal()){
-                            p->setParent(this->parentWidget());
+                            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList, this->parentWidget());
+                            p->setAttribute(Qt::WA_DeleteOnClose);
+                        } else {
+                            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(urisList);
+                            p->setAttribute(Qt::WA_DeleteOnClose);
                         }
-                        p->setAttribute(Qt::WA_DeleteOnClose);
-                        p->show();
+                        PropertiesWindowFactoryPluginManager::getInstance()->show();
                     }
                 }else {
                     selectUriList = m_selections;
                 }
 
                 if (selectUriList.count() > 0) {
-                    QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList);
+                    //QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList);
                     //PropertiesWindow *p = new PropertiesWindow(selectUriList);
+                    //if(this->parentWidget() && this->parentWidget()->isModal()){
+                    //    p->setParent(this->parentWidget());
+                    //}
+                    //p->setAttribute(Qt::WA_DeleteOnClose);
+                    //PropertiesWindowFactoryPluginManager::getInstance()->show();
+                    //p->show();
                     if(this->parentWidget() && this->parentWidget()->isModal()){
-                        p->setParent(this->parentWidget());
+                        QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList, this->parentWidget());
+                        p->setAttribute(Qt::WA_DeleteOnClose);
+                    } else {
+                        QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(selectUriList);
+                        p->setAttribute(Qt::WA_DeleteOnClose);
                     }
-                    p->setAttribute(Qt::WA_DeleteOnClose);
-                    p->show();
+                    PropertiesWindowFactoryPluginManager::getInstance()->show();
                 }
             }
         });
@@ -1168,13 +1250,22 @@ const QList<QAction *> DirectoryViewMenu::constructFilePropertiesActions()
         l<<addAction(QIcon::fromTheme("preview-file"), tr("Properties"));
         l.last()->setObjectName(PROPERTIES_ACTION);
         connect(l.last(), &QAction::triggered, this, [=]() {
-            QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections);
+            //QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections);
             //PropertiesWindow *p = new PropertiesWindow(m_selections);
+            //if(this->parentWidget() && this->parentWidget()->isModal()){
+            //    p->setParent(this->parentWidget());
+            //}
+            //p->setAttribute(Qt::WA_DeleteOnClose);
+            //PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //p->show();
             if(this->parentWidget() && this->parentWidget()->isModal()){
-                p->setParent(this->parentWidget());
+                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections, this->parentWidget());
+                p->setAttribute(Qt::WA_DeleteOnClose);
+            } else {
+                QMainWindow *p = PropertiesWindowFactoryPluginManager::getInstance()->create(m_selections);
+                p->setAttribute(Qt::WA_DeleteOnClose);
             }
-            p->setAttribute(Qt::WA_DeleteOnClose);
-            p->show();
+            PropertiesWindowFactoryPluginManager::getInstance()->show();
         });
     }
 
@@ -1304,8 +1395,16 @@ const QList<QAction *> DirectoryViewMenu::constructTrashActions()
                                           "these file will not be recoverable.").arg(m_selections.count());
                 }
 
-                result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-                if (result == QMessageBox::Yes) {
+
+                QMessageBox msgBox;
+                msgBox.setText(message);
+                msgBox.setIcon(QMessageBox::Question);
+                QPushButton *deleteButton = msgBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+                msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                deleteButton->setDefault(true);
+
+                result = msgBox.exec();
+                if (msgBox.clickedButton() == deleteButton) {
 //                    SoundEffect::getInstance()->recycleBinClearMusic();
                     FileOperationUtils::remove(m_selections);
                 }
@@ -1465,9 +1564,11 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
 
         for (auto id : pluginIds) {
             auto plugin = MenuPluginManager::getInstance()->getPlugin(id);
-
+            auto tPlugin = MenuPluginManager::getInstance()->getFileSafePlugin(id);
+            auto pluginObj = dynamic_cast<QObject *>(plugin);
             if(m_is_filesafe||m_is_filebox_file) {
-                if(plugin->name() == tr("Peony-Qt Filesafe Menu Extension") || plugin->name() == tr("Peony File Labels Menu Extension")) {
+                if((plugin && tPlugin && plugin == tPlugin)
+                        || pluginObj->property("IsFileSafeShow").toBool()) {
                     auto actions = plugin->menuActions(MenuPluginInterface::DirectoryView, m_directory, m_selections);
                     l<<actions;
                     for (auto action : actions) {
@@ -1477,7 +1578,7 @@ const QList<QAction *> DirectoryViewMenu::constructMenuPluginActions()
                     }
                 }
             } else {
-                if(plugin->name() != tr("Peony-Qt Filesafe Menu Extension")) {
+                if(plugin != tPlugin) {
                     auto a = Peony::FileOperationManager::getInstance()->isFsynchronizing();
                     if(m_is_mobile_file && Peony::FileOperationManager::getInstance()->isFsynchronizing()){
                         /* 往移动设备中进行文件拷贝fysnc时导致io阻塞，插件暂先屏蔽,待后续改进 */

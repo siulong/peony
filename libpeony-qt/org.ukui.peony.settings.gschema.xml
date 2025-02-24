@@ -2,6 +2,12 @@
 <schemalist>
   <schema id="org.ukui.peony.settings" path="/org/ukui/peony/settings/">
     <!--General-->
+    <key type="b" name="desktop-use-auto-layout">
+      <default>false</default>
+      <summary>setting layout mode for desktop icons</summary>
+      <description>Control the display of desktop icons, true for layout without space</description>
+    </key>
+
     <key type="b" name="trash-mobile-files">
       <default>false</default>
       <summary>trash mobile files</summary>
@@ -164,6 +170,12 @@
       <description>This list stores disabled extensions</description>
     </key>
 
+    <key type="b" name="show-share-properties">
+      <default>false</default>
+      <summary>show share properties</summary>
+      <description>Jump to Share Properties page</description>
+    </key>
+
     <!--directory-view-->
     <key type="b" name="multi-select-checkbox-enabled">
       <default>true</default>
@@ -213,6 +225,30 @@
      <default>4</default>
      <summary>default peony version</summary>
      <description>4 is ukui4.0 version, 3 is ukui3.0 version, other is ukui4.0</description>
+    </key>
+
+    <key type="b" name="show-open-terminal">
+      <default>true</default>
+      <summary>show open terminal</summary>
+      <description>Control show right menu open terminal option</description>
+    </key>
+
+    <key type="b" name="enable-start-peony">
+      <default>true</default>
+      <summary>enable start peony</summary>
+      <description>Control start peony or show peony UI</description>
+    </key>
+
+    <key type="b" name="enable-double-click-desktop">
+      <default>true</default>
+      <summary>enable double click desktop</summary>
+      <description>Control double click desktop files in desktop</description>
+    </key>
+
+    <key type="b" name="enable-shortcut-keys">
+      <default>true</default>
+      <summary>enable shortcut keys</summary>
+      <description>Control file operation of shortcut keys </description>
     </key>
 
   </schema>

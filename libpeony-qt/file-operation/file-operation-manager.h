@@ -76,7 +76,7 @@ public:
     bool isAllowParallel();
     void setFsyncStatus(bool synchronizing = true);
     bool isFsynchronizing();
-
+    bool isUdfBurnRunning();
 
     QStringList getFilesOpenedByProc(const QString &procName);
 
@@ -144,6 +144,8 @@ public Q_SLOTS:
     void slot_opreateFinishedOfEngrampa(const QString& path, bool finish);/* hotfix bug#188622 【文件管理器】连接共享文件夹后进行压缩/解压缩操作，需要手动刷新后才会显示 */
     void slot_moveFilesToAnotherProcCompleted(const QStringList& srcUris);/*跨进程move操作完成后更新视图，目前用于从搜索页面剪切或拖拽到桌面，linkto story#23915 */
 
+    QList<QAction *> getUndoRedoActions();
+
 private:
     explicit FileOperationManager(QObject *parent = nullptr);
     ~FileOperationManager();
@@ -173,6 +175,7 @@ private:
     QDBusInterface* m_iface = nullptr;
     bool m_isFsynchronizing = false;
     QMutex m_fsyncMutex;
+    bool m_isUdfBurnRunning = false;
 
     QThread *m_replicaThread = nullptr;
     RemoteFileEventHelper *m_replica = nullptr;
@@ -231,6 +234,8 @@ public:
     QString target() {
         return m_dest_dir_uri;
     }
+
+    QString getOperationName();
 
 //private:
     //normal operation src uris and dest uris

@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QMutex>
 #include <QDBusInterface>
+#include <QJsonObject>
 
 #include "peony-core_global.h"
 #include <gio/gio.h>
@@ -37,10 +38,11 @@
 //顶部菜单 - Top menu
 #define RESIDENT_IN_BACKEND         "resident"
 #define SHOW_HIDDEN_PREFERENCE      "showHiddenFile"
-#define ALLOW_FILE_OP_PARALLEL      "allow-file-op-parallel"
+#define ALLOW_FILE_OP_PARALLEL      "allowFileOpParallel"
 #define FORBID_THUMBNAIL_IN_VIEW    "doNotThumbnail"
 #define SHOW_IN_NEW_WINDOW          "showInNewWindow"
 #define DISABLED_EXTENSIONS         "disabledExtensions"
+#define SHOW_SHARE_PROPERTIES       "showShareProperties"
 
 //视图 - View
 #define DEFAULT_VIEW_ID             "defaultViewId"
@@ -81,6 +83,7 @@
 
 //桌面配置 - Desktop setting
 #define LAST_DESKTOP_SORT_ORDER     "lastDesktopSortOrder"
+#define DESKTOP_SORT_ORDER          "desktop-sort-order"
 #define TEMPLATES_DIR               "templatesDir"
 #define DEFAULT_DESKTOP_ZOOM_LEVEL  "defaultDesktopZoomLevel"
 #define DEFAULT_GRID_SIZE           "default-grid-size"
@@ -115,10 +118,25 @@
 //control the mobile device trash file issue, if be true can trash mobile files
 #define TRASH_MOBILE_FILES            "trashMobileFiles"
 
+//control the display of right menu terminal
+#define SHOW_OPEN_TERMINAL           "showOpenTerminal"
+
+//Control start peony
+#define ENABLE_START_PEONY           "enableStartPeony"
+
+//Control double click desktop file
+#define ENABLE_DOUBLE_CLICK_DESKTOP  "enableDoubleClickDesktop"
+
+//Control file operation of shortcut keys, such as Ctrl+C、Ctrl+V、Ctrl+A、Delete、Shift+Delete、Ctrl+X
+#define ENABLE_SHORTCUT_KEYS         "enableShortcutKeys"
+
 // control center
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN            "org.ukui.control-center.panel.plugins"                 // schema
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_TIME       "org.ukui.control-center.panel.plugins.time"            // time format key, value is '12' or '24'
 #define UKUI_CONTROL_CENTER_PANEL_PLUGIN_DATE       "org.ukui.control-center.panel.plugins.date"            // date format key, value is cn or en
+
+// desktop
+#define DESKTOP_USE_AUTO_LAYOUT      "desktopUseAutoLayout"
 
 // guestos machine
 #define IS_GUESTOS_MACHINE           "isGuestOSMachine"
@@ -153,6 +171,13 @@
 #define SDK_DATE_SERVER_INTERFACE "com.kylin.kysdk.DateInterface"
 #endif
 
+// Configuration paths and schema
+#define CONFIG_BASE_PATH          "/usr/share/ukui-config"
+#define PEONY_SCHEMA_ID           "org.ukui.peony.settings"
+#define PEONY_SCHEMA_PATH         "/org/ukui/peony/settings/"
+#define PEONY_CONFIG_NAME         "org.ukui.peony.settings"
+#define PEONY_SETTINGS_KEY        "org.ukui.peony.settings"
+
 class QGSettings;
 
 namespace Peony {
@@ -176,6 +201,9 @@ public:
     bool isExist(const QString &key);
     bool initDateFormatDBus();
     QString getProjectName();
+    bool isDesktopStartUp() const;
+    void setDesktopStartUp(bool startUp);/* 桌面启动和结束时使用，谨慎调用 */
+    void sendNotifyMessage(const QString &msg);
 
     bool getShowCreateTime() const;
 
@@ -216,6 +244,15 @@ public Q_SLOTS:
 
     bool isGuestOSMachine();
 
+    /**
+     * @brief Slot for handling configuration file changes
+     * @param username The username
+     * @param configName The configuration name
+     * @param configPath The configuration file path
+     */
+    void onConfigFileChanged(const QString &username, const QString &configName,
+                            const QString &configPath);
+
 private:
     explicit GlobalSettings(QObject *parent = nullptr);
     ~GlobalSettings();
@@ -223,6 +260,63 @@ private:
     void getUkuiStyle();
     void getMachineMode();
     void getDualScreenMode();
+    /**
+     * @brief Initialize safe manage control configuration sources
+     */
+    void initManageControl();
+
+    /**
+     * @brief Load and parse JSON configuration file
+     *
+     * This function attempts to load and parse a JSON configuration file from the specified path.
+     * If the file cannot be opened, parsed, or contains invalid data, the JSON cache will be cleared.
+     *
+     * The JSON structure should follow the format:
+     * {
+     *     "org.ukui.peony.settings": {
+     *         "setting-key1": "value1",
+     *         "setting-key2": "value2"
+     *     }
+     * }
+     *
+     * @param configPath The full path to the JSON configuration file
+     * @return bool Returns true if the configuration was successfully loaded and parsed,
+     *              false if any error occurred during the process
+     *
+     * @note On any failure (file not found, parse error, empty content),
+     *       the internal JSON cache (m_jsonCache) will be cleared
+     *
+     * @see updateConfigCache()
+     */
+    bool loadJsonConfig(const QString &configPath);
+
+    /**
+     * @brief Initialize DBus connection
+     */
+    void initDBus();
+
+    /**
+     * @brief Convert JSON configuration key to internal key format
+     * @param jsonKey The key in JSON format
+     * @return QString The converted internal key
+     */
+    QString convertJsonKeyToInternalKey(const QString &jsonKey);
+
+    /**
+     * @brief Update configuration cache and emit signals for changed values
+     * @param newConfig The new configuration object
+     */
+    void updateConfigCache(const QJsonObject &peonySettings);
+
+    /**
+     * @brief Construct configuration file path
+     * @param username The username
+     * @return QString The complete configuration file path
+     */
+    QString constructConfigPath(const QString &username) const;
+
+    QMap<QString, QVariant>     m_jsonCache;       ///< Cache for JSON configuration values
+    QString                     m_currentConfigPath;
 
     QSettings*                  m_settings;
     QMap<QString, QVariant>     m_cache;
@@ -242,6 +336,7 @@ private:
     QDBusInterface*             mDbusDateServer = nullptr;
     bool m_showCreateTime = false;
     bool m_showRelativeTime = false;
+    bool                        m_isDesktopStartUp = false; /* 桌面进程启动中 */
 };
 
 }

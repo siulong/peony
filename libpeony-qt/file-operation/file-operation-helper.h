@@ -51,6 +51,8 @@ public:
 
     QString getDestName(const QString &destUri);
 
+    QString getDiscSystemType();
+
     QString getDiscError();
 protected:
     /**
@@ -60,6 +62,8 @@ protected:
      * Matches the device mount point
      */
     QString matchingUnixDevice(QString uri);
+
+    void deleteDirectoryRecursively(const QString &dirPath);
 
 private:
     bool m_is_disk_work = false;

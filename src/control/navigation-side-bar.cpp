@@ -161,21 +161,50 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
         m_proxy_model->invalidate();//display udisk in real time after format it.
     });
 
-    connect(this, &QTreeView::expanded, [=](const QModelIndex &index) {
+    auto globalSettings = Peony::GlobalSettings::getInstance();
+    bool isShowNetwork = globalSettings->isExist(SHOW_NETWORK) ? globalSettings->getValue(SHOW_NETWORK).toBool() : true;
+    QStringList disExtensions = globalSettings->getValue(DISABLED_EXTENSIONS).toStringList();
+    connect(this, &QTreeView::expanded, this, [=](const QModelIndex &index) {
+        // 获取索引项并缓存到局部变量
         auto item = m_proxy_model->itemFromIndex(index);
-        qDebug()<<item->uri();
-        /*!
-          \bug can not expanded? enumerator can not get prepared signal, why?
-          */
-        bool isShowNetwork = Peony::GlobalSettings::getInstance()->isExist(SHOW_NETWORK) ?
-                    Peony::GlobalSettings::getInstance()->getValue(SHOW_NETWORK).toBool() : true;
-        if (item->type() == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+        auto itemType = item->type();
+        auto itemUri = item->uri();
+
+        // 延迟加载子项
+        item->findChildrenAsync();
+
+        if (itemType == SideBarAbstractItem::NetWorkItem && !isShowNetwork) {
+            // 如果不显示网络项目，则隐藏该行并退出
             this->setRowHidden(index.row(), index.parent(), true);
             return;
         }
 
-        item->findChildrenAsync();
-    });
+        // 使用 QMap 缓存插件实例
+        PluginManager* pluginManager = PluginManager::getInstance();
+        QMap<QString, VFSPluginIface*> cachedPlugins;
+
+        // 遍历禁用的扩展列表
+        for (auto extension : disExtensions) {
+            // 如果插件未缓存，则动态转换并缓存
+            if (!cachedPlugins.contains(extension)) {
+                VFSPluginIface* pIface = dynamic_cast<VFSPluginIface*>(pluginManager->getPluginByFileName(extension));
+                cachedPlugins.insert(extension, pIface);
+            } else {
+                auto pIface = cachedPlugins[extension];
+
+                if (pIface && pIface->pluginType() == PluginInterface::VFSPlugin) {
+                    bool isFileSystemItem = (itemType == SideBarAbstractItem::FileSystemItem);
+                    bool isFavoriteItem = (itemType == SideBarAbstractItem::FavoriteItem);
+
+                    if ((isFileSystemItem && !itemUri.contains("computer:///") && itemUri.contains(pIface->uriScheme())) ||
+                        (isFavoriteItem && pIface->uriScheme() == "kmre://" && itemUri.contains(pIface->uriScheme()))) {
+                        this->setRowHidden(index.row(), index.parent(), true);
+                        return;
+                    }
+                }
+            }
+        }
+    },Qt::QueuedConnection);
 
     connect(this, &QTreeView::collapsed, [=](const QModelIndex &index) {
         auto item = m_proxy_model->itemFromIndex(index);
@@ -254,6 +283,11 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
                 auto curUri = item->uri();
                 if (item->uri() == "computer:///ukui-data-volume") {
                     curUri = "file:///data";
+
+                    //story 28545, improve data block solution, when has no user file in /data, go to usershare
+                    //fix bug#239232, open in side bar menu not jump to usershare issue
+                    if (Peony::FileUtils::isFileExsit("file:///data/usershare"))
+                        curUri = "file:///data/usershare";
                 }
 
                 actionList << menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
@@ -447,6 +481,16 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
+
+    /**
+     * @bug #278107: [Requirement 35207] [Start Menu] [Ribbon] Shortcut Entry-Computer Jump to the left side of the computer interface positioning error
+     *
+     * comment the following code
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-11-01
+     */
+#if 0
     /* 打开文件管理器默认聚焦在家目录上 */
     QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QItemSelectionModel *selectionModel = this->selectionModel();
@@ -461,6 +505,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             selectionModel->select(selection, QItemSelectionModel::Select);
         }
     }//end
+#endif
 }
 
 void NavigationSideBar::sendKdkDataAsync()
@@ -537,6 +582,10 @@ bool NavigationSideBar::viewportEvent(QEvent *e)
         if (!isShow) {
             QToolTip::hideText();
             e->ignore();
+            return true;
+        } else {
+            QString itemText = firstColumnIndex.data(Qt::ToolTipRole).toString();
+            QToolTip::showText(helpEvent->globalPos(), itemText);
             return true;
         }
     }
@@ -821,9 +870,10 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
     m_labelDialog->hide();
     m_layout->addWidget(m_labelDialog);
 
-    QWidget *w = new QWidget(this);
-    QVBoxLayout *l = new QVBoxLayout;
-    l->setContentsMargins(4, 4, 2, 4);
+    QWidget *buttonsContainer = new QWidget(this);
+    QVBoxLayout *buttonsLayout = new QVBoxLayout(buttonsContainer);
+    buttonsLayout->setContentsMargins(4, 4, 2, 4);
+    buttonsLayout->setSpacing(2);
 
     connect(m_labelDialog->selectionModel(), &QItemSelectionModel::selectionChanged, [=]()
     {
@@ -832,8 +882,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         int id = index.data(Qt::UserRole).toInt();
         if (id)
         {
-            //QString uri = "label:///" + QString::number(id);
-            QString uri = "label:///" + name;
+            QString uri = "label:///" + QString::number(id);
             Q_EMIT m_sidebar->updateWindowLocationRequest(uri);
         }
     });
@@ -862,10 +911,8 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         Peony::TagManagement::getInstance()->show();
     });
 
-    l->setSpacing(0);
-
-    l->addWidget(control);
-    l->addWidget(labelButton);
+    buttonsLayout->addWidget(control);
+    buttonsLayout->addWidget(labelButton);
     connect(labelButton, &QPushButton::clicked, this, [=](){
         bool checked = !labelButton->getShow();
         if (checked) {
@@ -882,8 +929,7 @@ void NavigationSideBarContainer::addSideBar(NavigationSideBar *sidebar)
         m_labelDialog->setVisible(checked);
     });
 
-    w->setLayout(l);
-    m_layout->addWidget(w);
+    m_layout->addWidget(buttonsContainer);
     setLayout(m_layout);
 
     setTabOrder(m_sidebar, labelButton);
@@ -981,13 +1027,13 @@ TitleLabel::TitleLabel(QWidget *parent):QWidget(parent)
     X11WindowManager::getInstance()->registerWidget(this);
     m_pix_label = new QLabel(this);
     //task#106007 【文件管理器】文件管理器应用做平板UI适配，修改应用图标可以跟随主题框架
-    m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(32,32));
+    m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
 
     if (QGSettings::isSchemaInstalled("org.ukui.style")) {
         m_gSettings = new QGSettings("org.ukui.style", QByteArray(), this);
         connect(m_gSettings, &QGSettings::changed, this, [=](const QString &key) {
             if("iconThemeName" == key){
-                m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(32,32));
+                m_pix_label->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(24,24));
             }
         });
     }

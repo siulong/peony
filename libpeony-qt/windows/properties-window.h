@@ -41,8 +41,9 @@
 namespace Peony {
 
 class PropertiesWindowTabPagePluginIface;
+class PropertiesWindowPrivate;
 
-class PropertiesWindowPluginManager : public QObject
+class PEONYCORESHARED_EXPORT PropertiesWindowPluginManager : public QObject
 {
     friend class PropertiesWindow;
 
@@ -215,6 +216,9 @@ public:
      */
     bool handleKMREUri(QString &uri);
 
+    void onVolumeRemoveClosePropertiesPage();
+    void setOpenTabPage(const QString &className);
+
 protected:
     /**
      * 在窗口关闭时，将存储的窗口指针从openPropertiesWindows中删除
@@ -231,6 +235,7 @@ private:
     bool m_destroyThis = false;
     QStringList m_uris;
     QList<PropertiesWindowTabIface *> m_openTabPage;
+    PropertiesWindowPrivate* m_window = nullptr;
 
 
 public:

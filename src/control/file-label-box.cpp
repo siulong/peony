@@ -22,21 +22,17 @@
 
 #include "file-label-box.h"
 #include "file-label-model.h"
-
 #include "label-box-delegate.h"
+#include "fm-window.h"
 
 #include <QMenu>
-
 #include <QColorDialog>
 #include <QMouseEvent>
-
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QMap>
-
 #include <QStyleOptionViewItem>
-
 #include <QApplication>
 #include <QDebug>
 
@@ -68,6 +64,25 @@ FileLabelBox::FileLabelBox(QWidget *parent) : QListView(parent)
             int id = item->id();
 //            if (id > TOTAL_DEFAULT_COLOR)
 //                labelRemovable = true;
+
+            Peony::FMWindowIface *windowIface = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
+            menu.addAction(QIcon::fromTheme("window-new-symbolic"), tr("Open In New Window"), [=](){
+                int id = index.data(Qt::UserRole).toInt();
+                if (id)
+                {
+                    QString uri = "label:///" + QString::number(id);
+                    auto newWindow = windowIface->create(uri);
+                    dynamic_cast<QWidget *>(newWindow)->show();
+                }
+            });
+            menu.addAction(QIcon::fromTheme("tab-new-symbolic"), tr("Open In New Tab"), [=](){
+                int id = index.data(Qt::UserRole).toInt();
+                if (id)
+                {
+                    QString uri = "label:///" + QString::number(id);
+                    windowIface->addNewTabs(QStringList()<<uri);
+                }
+            });
 
             menu.addAction(tr("Rename"), [=]() {
                 //FIXME: edit
@@ -205,9 +220,9 @@ void LabelBoxStyle::drawControl(QStyle::ControlElement element, const QStyleOpti
 QSize LabelBoxStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &size, const QWidget *widget) const
 {
     if (type == CT_ItemViewItem) {
-        QSize size = QApplication::style()->sizeFromContents(type, option, size, widget);
-        size += QSize(0, 8);
-        return size;
+        QSize tmpsize = QApplication::style()->sizeFromContents(type, option, size, widget);
+        tmpsize += QSize(0, 8);
+        return tmpsize;
     }
     return QApplication::style()->sizeFromContents(type, option, size, widget);
 }

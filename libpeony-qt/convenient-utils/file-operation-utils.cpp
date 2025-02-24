@@ -33,6 +33,7 @@
 
 #include "file-untrash-operation.h"
 #include "file-count-operation.h"
+#include "file-properties-operation.h"
 
 #include "file-info-job.h"
 #include "file-info.h"
@@ -58,6 +59,7 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
     FileOperation *op = nullptr;
     bool canNotTrash = false;
     bool isBigFile = false;
+    bool skipDialog = false;
 
     QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
@@ -85,6 +87,21 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
         }
         if (uri.contains("kydrive") && uri.startsWith("file:///media")) {
             canNotTrash = true;
+        }
+    }
+
+    // 只读文件系统场景需要跳过确认弹框，直接走文件操作异常报错弹框流程
+    // fixme: 这里的判断条件不充分，只是必要条件
+    if (uris.count() > 0) {
+        auto uri = uris.first();
+        auto parentUri = FileUtils::getParentUri(uri);
+        auto info = FileInfo::fromUri(parentUri);
+        if (info->isEmptyInfo()) {
+            FileInfoJob j(info);
+            j.querySync();
+        }
+        if (!info->canWrite()) {
+            skipDialog = true;
         }
     }
 
@@ -140,7 +157,7 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
 //        }
 //    }
 
-    if (canNotTrash) {
+    if (canNotTrash && !skipDialog) {
         Peony::AudioPlayManager::getInstance()->playWarningAudio();
         //task #155670,155671 improve delete file permanently message
         QString message;
@@ -162,8 +179,16 @@ static FileOperation *trashInternal(const QStringList &uris, bool addHistory, bo
                                   "these file will not be recoverable.").arg(uris.length());
         }
 
-        auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        if (result == QMessageBox::Yes) {
+        //auto result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        QMessageBox msgBox;
+        msgBox.setText(message);
+        msgBox.setIcon(QMessageBox::Question);
+        QPushButton *deleteButton = msgBox.addButton(QObject::tr("Delete"), QMessageBox::AcceptRole);
+        msgBox.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
+        deleteButton->setDefault(true);
+
+        int result = msgBox.exec();
+        if (msgBox.clickedButton() == deleteButton) {
             op = FileOperationUtils::remove(uris);
         }
         return op;
@@ -378,6 +403,42 @@ FileOperation *FileOperationUtils::create(const QString &destDirUri, const QStri
     return createOp;
 }
 
+FileOperation *FileOperationUtils::setReadOnly(const QStringList &srcUris, bool readOnly, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::ChangeReadOnly;
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto readOnlyOp = new FilePropertiesOperation(srcUris, options, false, readOnly);
+    fileOpMgr->startOperation(readOnlyOp, false);
+    return readOnlyOp;
+}
+
+FileOperation *FileOperationUtils::setHidden(const QStringList &srcUris, bool hidden, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::ChangeHidden;
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto hiddenOp = new FilePropertiesOperation(srcUris, options, hidden, false);
+    fileOpMgr->startOperation(hiddenOp, false);
+    return hiddenOp;
+}
+
+FileOperation *FileOperationUtils::setReadOnlyAndHidden(const QStringList &srcUris, bool readOnly, bool hidden, bool recursive)
+{
+    auto fileOpMgr = FileOperationManager::getInstance();
+    FilePropertiesOperation::Options options = FilePropertiesOperation::Options(FilePropertiesOperation::ChangeReadOnly|FilePropertiesOperation::ChangeHidden);
+    if (recursive) {
+        options |= FilePropertiesOperation::ChangeRecursively;
+    }
+    auto propertiesOp = new FilePropertiesOperation(srcUris, options, hidden, readOnly);
+    fileOpMgr->startOperation(propertiesOp);
+    return propertiesOp;
+}
+
 void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
 {
     if (uris.isEmpty())
@@ -394,9 +455,16 @@ void FileOperationUtils::executeRemoveActionWithDialog(const QStringList &uris)
                               "these file will not be recoverable.").arg(uris.length());
     }
 
-    result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    //result = QMessageBox::question(nullptr, "", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    QMessageBox msgBox;
+    msgBox.setText(message);
+    msgBox.setIcon(QMessageBox::Question);
+    QPushButton *deleteButton = msgBox.addButton(QObject::tr("Delete"), QMessageBox::AcceptRole);
+    msgBox.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
+    deleteButton->setDefault(true);
 
-    if (result == QMessageBox::Yes) {
+    result = msgBox.exec();
+    if (msgBox.clickedButton() == deleteButton) {
         FileOperationUtils::remove(uris);
     }
 }

@@ -130,9 +130,16 @@ void Peony::FileOperationErrorDialogConflict::handle (FileOperationError& error)
         setTipFileicon(file.getInfo()->iconName());
         setTipFilename(file.getInfo()->displayName());
     } else {
-        QString fileName = error.srcUri.split("/").back();
+        QString url;
+        QString fileName = FileUtils::urlDecode(error.srcUri).split("/").back();
         //fix bug 148806, matches end path name
-        QString url = error.destDirUri.split("/").back().contains(fileName) ? error.destDirUri : error.destDirUri + "/" + fileName;
+        if (error.destDirUri.split("/").back().contains(fileName)
+                || FileUtils::urlDecode(error.destDirUri).split("/").back().contains(fileName)
+                || error.srcUri.startsWith("trash:///")) {
+            url = error.destDirUri;
+        } else {
+            url = error.destDirUri + "/" + fileName;
+        }
         FileInfoJob file(url, nullptr);
         file.querySync();
         setTipFileicon(file.getInfo()->iconName());
@@ -217,7 +224,17 @@ Peony::FileOperationErrorDialogWarning::FileOperationErrorDialogWarning(Peony::F
         m_cancel = true;
         done(QDialog::Rejected);
     });
-
+    QCheckBox* c = addCheckBoxLeft (tr("Skip all"));
+    connect(c, &QCheckBox::stateChanged, this, [=](int chose) {
+        switch (chose) {
+        case Qt::Checked:
+            m_do_same = true;
+            break;
+        case Qt::Unchecked:
+        default:
+            m_do_same = false;
+        }
+    });
 }
 
 Peony::FileOperationErrorDialogWarning::~FileOperationErrorDialogWarning()
@@ -255,14 +272,28 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
 
     int ret = exec();
 
+    if (QDialog::Rejected == ret || m_error->errorCode == G_IO_ERROR_CANCELLED) {
+        error.respCode = Cancel;
+        return;
+    }
+
+    // Delete file to the Recycle Bin error, prompt whether to force deletion
+    if (m_error->op == FileOpTrash && m_error->errorCode == G_IO_ERROR_FILENAME_TOO_LONG) {
+        error.respCode = Force;
+        return;
+    }
+
+    if (m_do_same) {
+        error.respCode = IgnoreAll;
+        return;
+    }
+
     switch (m_error->errorCode) {
     case G_IO_ERROR_BUSY:
     case G_IO_ERROR_PENDING:
     case G_IO_ERROR_NO_SPACE:
-    case G_IO_ERROR_CANCELLED:
     case G_IO_ERROR_INVALID_DATA:
     case G_IO_ERROR_NOT_SUPPORTED:
-    case G_IO_ERROR_PERMISSION_DENIED:
     case G_IO_ERROR_CANT_CREATE_BACKUP:
     case G_IO_ERROR_TOO_MANY_OPEN_FILES:
         error.respCode = Cancel;
@@ -271,17 +302,12 @@ void Peony::FileOperationErrorDialogWarning::handle(Peony::FileOperationError &e
         error.respCode = IgnoreAll;
         break;
     default:
-        error.respCode = IgnoreOne;
+        if (m_do_same) {
+            error.respCode = IgnoreAll;
+        } else {
+            error.respCode = IgnoreOne;
+        }
         break;
-    }
-
-    // Delete file to the Recycle Bin error, prompt whether to force deletion
-    if (QDialog::Accepted == ret && m_error->op == FileOpTrash && m_error->errorCode == G_IO_ERROR_FILENAME_TOO_LONG) {
-        error.respCode = Force;
-    }
-
-    if (QDialog::Rejected == ret) {
-        error.respCode = Cancel;
     }
 }
 
@@ -309,7 +335,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
 {
     setIcon ("dialog-warning");
 
-    QPushButton* b = addButton (tr("No"));
+    QPushButton* b = addButton (tr("Cancel"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = false;
@@ -317,7 +343,7 @@ Peony::FileOperationErrorDialogNotSupported::FileOperationErrorDialogNotSupporte
         done(QDialog::Rejected);
     });
 
-    b = addButton (tr("Yes"));
+    b = addButton (tr("Delete"));
     b->setBackgroundRole(QPalette::Button);
     connect(b, &QPushButton::pressed, this, [=] () {
         m_ok = true;

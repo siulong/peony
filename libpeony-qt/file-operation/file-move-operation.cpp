@@ -41,13 +41,19 @@ using namespace Peony;
 
 static void handleDuplicate(FileNode *node)
 {
-    node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    if (node->isFolder()) {
+        node->setDestFileName(FileUtils::handleFolderName(node->destBaseName()));
+    } else {
+        node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    }
 }
 
 FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    //origin code from dj, for sangfor clound project change
+    //fix bug#249783, copy absolute file crash issue
     for (auto u : sourceUris) {
-        if (u.split("://").length() != 2) {
+        if (u.split("://").length() > 2) {
             sourceUris.removeOne (u);
         }
     }
@@ -65,12 +71,21 @@ FileMoveOperation::FileMoveOperation(QStringList sourceUris, QString destDirUri,
     m_dest_dir_uri = FileUtils::urlEncode(destDirUri);
     m_info = std::make_shared<FileOperationInfo>(sourceUris, destDirUri, FileOperationInfo::Move);
 
-    QString srcId = FileUtils::getFileSystemId(m_src_uris.first());
+    //fix bug#249783, copy absolute file crash issue
+    QString srcId = "";
+    if (m_src_uris.length() > 0)
+        srcId = FileUtils::getFileSystemId(m_src_uris.first());
+
+    //comment to fix move file to other path, when has same file, not delete origin file issue
+//    if (! srcId.startsWith("file://") && !srcId.contains("://"))
+//        srcId = "file://" + srcId;
     QString destId = FileUtils::getFileSystemId(m_dest_dir_uri);
     if (srcId.length() > 0 && srcId == destId)
         m_is_same_fs = true;
     else
         m_is_same_fs = false;
+
+    m_reporter = new FileNodeReporter;
 }
 
 FileMoveOperation::~FileMoveOperation()
@@ -211,7 +226,6 @@ void FileMoveOperation::move()
     QList<FileNode*> errNode;
 
     GError *err = nullptr;
-    m_total_count = m_src_uris.count();
     auto destDir = wrapGFile(g_file_new_for_uri(m_dest_dir_uri.toUtf8().constData()));
 
     // file move
@@ -219,7 +233,7 @@ void FileMoveOperation::move()
         if (isCancelled())
             return;
 
-        auto node = new FileNode(srcUri, nullptr, nullptr);
+        auto node = new FileNode(srcUri, nullptr, m_reporter);
         node->setState(FileNode::Handling);
 
         auto srcFile = wrapGFile(g_file_new_for_uri(srcUri.toUtf8().constData()));
@@ -275,9 +289,9 @@ void FileMoveOperation::move()
     for (auto eNode : errNode) {
         if (isCancelled())
             return;
-
         eNode->findChildrenRecursively();
         eNode->computeTotalSize(total_size);
+        m_total_count += m_reporter->getTotalCount();
         if(eNode->isFolder())
             hasFolder = true;
     }
@@ -299,7 +313,7 @@ void FileMoveOperation::move()
             FileOperationError except;
             QString name;
             if (storage.rootPath() == "/") {
-                name = tr("File System");
+                name = tr("System Disk");
             } else if (storage.rootPath() == "/data") {
                 name = tr("Data");
             } else {
@@ -348,6 +362,11 @@ void FileMoveOperation::move()
     }
 
     operationStartSnyc();
+    if (m_total_count <= 500 && m_total_size < 300 * 1024 * 1024) {
+        syncDestUri(m_dest_dir_uri);
+    }
+
+
 
 #if 0
     for (auto file : nodes) {
@@ -583,6 +602,8 @@ void FileMoveOperation::move()
                 m_burn_uris.removeOne(file->uri());
                 break;
             case BackupOne:
+            case TruncateOne:
+            case RenameOne:
                 m_burn_uris.replaceInStrings(file->uri(), file->destUri());
                 break;
             default:
@@ -874,7 +895,12 @@ fallback_retry:
                 auto typeData = Invalid;
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     typeData = except.respCode;
                     break;
@@ -955,6 +981,21 @@ fallback_retry:
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
                 setHasError(true);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
+                            }
+                        }
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
@@ -995,6 +1036,21 @@ fallback_retry:
                 node->setErrorResponse(OverWriteOne);
                 setHasError(true);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
+                            }
+                        }
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     m_is_udf_warning = true;
                     auto result = udfCopyWarningDialog();
@@ -1228,7 +1284,12 @@ fallback_retry:
                 auto typeData = Invalid;
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     typeData = except.respCode;
                     break;
@@ -1320,6 +1381,12 @@ fallback_retry:
 //                node->setErrorResponse(OverWriteOne);
                 if (nodeErr){
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free(nodeErr);
                 }else{
                 }
@@ -1363,6 +1430,12 @@ fallback_retry:
                 m_prehandle_hash.insert(err->code, OverWriteAll);
                 if (nodeErr){
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free(nodeErr);
                 }else{
                 }
@@ -1389,9 +1462,8 @@ fallback_retry:
                     handleDuplicate(node);
                     node->resolveDestFileUri(m_dest_dir_uri);
                 }
-                auto handledDestFileUri = node->resolveDestFileUri(m_dest_dir_uri);
-                auto handledDestFile = wrapGFile(g_file_new_for_uri(handledDestFileUri.toUtf8()));
-                if (handledDestFileUri.length() > 255 &&
+                QString destFileBaseName = node->destBaseName();
+                if (destFileBaseName.length() > 255 &&
                     m_dest_dir_uri.startsWith(QString("file://" +  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/扩展"))) {
                     QString msg = tr("The file name exceeds the limit");
                     Q_EMIT operationInfoMsgBox(msg);
@@ -1413,6 +1485,12 @@ fallback_retry:
                 fileCopy.run();
                 if (nodeErr) {
                     node->setErrorResponse(Invalid);
+                    if (nodeErr->code == G_IO_ERROR_FAILED) {
+                        except.errorCode = nodeErr->code;
+                        except.errorStr = nodeErr->message;
+                        except.dlgType = ED_WARNING;
+                        Q_EMIT errored(except);
+                    }
                     g_error_free (nodeErr);
                 } else {
                     // 设置node的状态为handled用于后续删除原文件的流程
@@ -1702,6 +1780,27 @@ void FileMoveOperation::run()
         }
     }
 
+    bool writeable = true;
+
+    //fix bug 232253,手机管控下，拖拽至对应目录直接报错
+//    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
+//        int usbSafeMode = getUsbSafeMode();
+//        if (usbSafeMode != 0) {
+//            FileOperationError except;
+//            except.dlgType = ED_WARNING;
+//            except.errorType = ET_GIO;
+//            except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+//            except.destDirUri = m_dest_dir_uri;
+//            except.op = FileOpMove;
+//            except.title = tr("File move error");
+//            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
+//            errored(except);
+//            setHasError(true);
+//            Q_EMIT operationFinished();
+//            return;
+//        }
+//    }
+
 #ifdef KY_UDF_BURN
     std::shared_ptr<FileOperationHelper> mHelper = std::make_shared<FileOperationHelper>(m_dest_dir_uri);
     if (mHelper->isUnixCDDevice()) {
@@ -1731,6 +1830,38 @@ void FileMoveOperation::run()
         }
     }
 #endif
+
+    if (queryDirIsReadOnlyFS(m_dest_dir_uri, false, m_is_udf_burn_work, &writeable)) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpMove;
+        except.title = tr("File move error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not move %1 to %2: Read-only mode, can not write-in").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    } else if (!writeable) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpMove;
+        except.title = tr("File move error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not move %1 to %2: Permission denied").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    }
 
 start:
     if (!isValid()) {
@@ -1769,6 +1900,7 @@ start:
 end:
 #ifdef KY_UDF_BURN
     if (mHelper->isUnixCDDevice() && !isCancelled()) {
+        Q_EMIT operationUdfBurnRunning(true);
         if(!mHelper->discWriteOperation(m_burn_uris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
@@ -1781,6 +1913,7 @@ end:
             Q_EMIT errored(except);
         }
         m_is_udf_burn_work = false;
+        Q_EMIT operationUdfBurnRunning(false);
     } else {
         if (m_is_udf_burn_work) {
             m_is_udf_burn_work = false;
@@ -1992,6 +2125,45 @@ bool FileMoveOperation::saveAsOtherPath()
         m_is_long_name_file_operation = true;
     }
     return true;
+}
+
+int FileMoveOperation::getUsbSafeMode()
+{
+    return 0;
+    QFile file("/sys/devices/platform/hw_trans_bios_variable/usb_safe_mode");
+    if (!file.exists()) {
+        qDebug() << "The file does not exist";
+        return 0;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return 0;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    file.close();
+    return status;
+}
+
+bool FileMoveOperation::isDlpState()
+{
+    if (!m_dest_dir_uri.startsWith("file:///media/")) {
+        return false;
+    }
+    QFile file("/sys/kernel/security/dlp/usb_check_status");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return false;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    bool result = (status == 1);
+    file.close();
+    return result;
 }
 
 void FileMoveOperation::cancel()

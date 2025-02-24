@@ -202,6 +202,9 @@ void IconView::setCutFiles(const QStringList &uris)
 //FIXME: implement location functions.
 void IconView::setDirectoryUri(const QString &uri)
 {
+    if (m_current_uri != uri) {
+        disableMultiSelect();
+    }
     m_current_uri = uri;
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
@@ -405,15 +408,22 @@ void IconView::mousePressEvent(QMouseEvent *e)
     else
         m_ctrl_key_pressed = false;
 
-    QModelIndex itemIndex = indexAt(e->pos());
+    QModelIndex itemIndex = QModelIndex();
+    for (int i = 0; i < model()->rowCount(); i++) {
+        auto index = model()->index(i, 0);
+        if (visualRect(index).contains(e->pos())) {
+            itemIndex = index;
+            break;
+        }
+    }
+
     if (itemIndex.isValid() && m_multi_select) {
         m_mouse_release_unselect = selectedIndexes().contains(itemIndex);
     } else {
         m_mouse_release_unselect = false;
     }
 
-    auto index = indexAt(e->pos());
-    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(index)) {
+    if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier || selectionMode() == MultiSelection) && selectedIndexes().contains(itemIndex)) {
         m_noSelectOnPress = true;
     } else {
         m_noSelectOnPress = false;
@@ -790,6 +800,10 @@ void IconView::setIgnore_mouse_move_event(bool ignore_mouse_move_event)
 
 void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortModel *proxyModel)
 {
+    // fix: #239734 filedialog has dirty view region
+    if (topLevelWidget()->objectName() != "_peony_mainwindow")
+        setFrameShape(QFrame::NoFrame);
+
     m_model = sourceModel;
     m_sort_filter_proxy_model = proxyModel;
 
@@ -813,6 +827,11 @@ void IconView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortMode
         auto currentSelections = selection.indexes();
 
         for (auto index : deselection.indexes()) {
+            /* 解决：旧widget未及时delete还能接收鼠标事件，导致图标状态不对也选不中；link to bug#225660. */
+            auto widget = this->indexWidget(index);
+            if (widget) {
+                widget->hide();
+            }//end
             this->setIndexWidget(index, nullptr);
         }
 
@@ -1274,6 +1293,7 @@ void IconView2::clearIndexWidget()
         m_view->closePersistentEditor(index);
         m_view->setIndexWidget(index, nullptr);
     }
+    m_view->selectionModel()->clearSelection();
 }
 
 

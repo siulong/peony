@@ -433,6 +433,10 @@ void MainWindow::setShortCuts()
         auto trashAction = new QAction(this);
         trashAction->setShortcuts(QList<QKeySequence>()<<Qt::Key_Delete<<QKeySequence(Qt::CTRL + Qt::Key_D));
         connect(trashAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if(currentUri.startsWith("search://")){
                 currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
@@ -476,6 +480,10 @@ void MainWindow::setShortCuts()
         deleteAction->setShortcuts(QList<QKeySequence>()<<QKeySequence(Qt::SHIFT + Qt::Key_Delete));
         addAction(deleteAction);
         connect(deleteAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if(currentUri.startsWith("search://")){
                 currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
@@ -505,6 +513,8 @@ void MainWindow::setShortCuts()
         connect(searchAction, &QAction::triggered, this, [=]() {
             if (! m_is_search){
                 m_is_search = true;
+            }
+            if (m_is_search) {
                 m_header_bar->startEdit(m_is_search);
             }
         });
@@ -617,7 +627,8 @@ void MainWindow::setShortCuts()
             QMainWindow *w = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
             //Peony::PropertiesWindow *w = new Peony::PropertiesWindow(uris);
             w->setAttribute(Qt::WA_DeleteOnClose);
-            w->show();
+            Peony::PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //w->show();
         });
         addAction(propertiesWindowAction);
 
@@ -684,7 +695,24 @@ void MainWindow::setShortCuts()
         auto remodelViewAction = new QAction(this);
         remodelViewAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
         connect(remodelViewAction, &QAction::triggered, this, [=]() {
-            this->getCurrentPage()->setZoomLevelRequest(25);
+            /**
+             * @bug #313689: Press Ctrl+"0" on the keyboard in the icon view of the file manager to turn it into a list view
+             *
+             * Set the default zoom level to the minimum value in icon mode.
+             * If the maximum zoom level value is less than 25 in list mode, set it to the maximum zoom level value; otherwise, set it to 25
+             *
+             * @author: Renyg <renyangguang@kylinos.cn>
+             * @date:   2024-12-27
+             */
+            auto view = this->getCurrentPage()->getView();
+            int defaultZoomLevel = 25;
+            if (view->viewId() == "Icon View") {
+                defaultZoomLevel = view->minimumZoomLevel();
+            } else if (view->viewId() == "List View" && view->maximumZoomLevel() < defaultZoomLevel) {
+                defaultZoomLevel = view->maximumZoomLevel();
+            }
+            qDebug() << QString("View Type: %1  defaultZoomLevel: %2").arg(view->viewId()).arg(defaultZoomLevel);
+            this->getCurrentPage()->setZoomLevelRequest(defaultZoomLevel);
         });
         addAction(remodelViewAction);
 
@@ -734,6 +762,10 @@ void MainWindow::setShortCuts()
         auto *selectAllAction = new QAction(this);
         selectAllAction->setShortcut(QKeySequence::SelectAll);
         connect(selectAllAction, &QAction::triggered, this, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             if (this->getCurrentPage()->getView())
             {
                 /// note: 通过getAllFileUris设置的全选效率过低，如果增加接口则会导致二进制兼容性问题
@@ -750,6 +782,10 @@ void MainWindow::setShortCuts()
         auto *copyAction = new QAction(this);
         copyAction->setShortcut(QKeySequence::Copy);
         connect(copyAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             bool is_recent = false;
             QStringList currentSelections = this->getCurrentSelections();
             if (!currentSelections.isEmpty())
@@ -787,6 +823,10 @@ void MainWindow::setShortCuts()
         auto *pasteAction = new QAction(this);
         pasteAction->setShortcut(QKeySequence::Paste);
         connect(pasteAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             auto currentUri = getCurrentUri();
             if (currentUri.startsWith("trash://") || currentUri.startsWith("recent://")
                 || currentUri.startsWith("computer://") || currentUri.startsWith("favorite://")
@@ -840,6 +880,10 @@ void MainWindow::setShortCuts()
         auto *cutAction = new QAction(this);
         cutAction->setShortcut(QKeySequence::Cut);
         connect(cutAction, &QAction::triggered, [=]() {
+            if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_SHORTCUT_KEYS).toBool()) {
+                return ;
+            }
+
             QStringList currentSelections = this->getCurrentSelections();
             if (!currentSelections.isEmpty()) {
 //                if (currentSelections.first().startsWith("trash://", Qt::CaseInsensitive)) {
@@ -854,15 +898,14 @@ void MainWindow::setShortCuts()
 
                 QString currentUri = getCurrentUri();
                 if(currentUri.startsWith("search://")){
-                    currentUri =  Peony::FileUtils::getActualDirFromSearchUri(currentUri);
-                }
-                auto info = Peony::FileInfo::fromUri(currentUri);
-                if (!info->canWrite()) {
-                    if(getCurrentUri().startsWith("search://")){
-                        auto selectInfo = Peony::FileInfo::fromUri(currentSelections.first());
-                        if(!selectInfo->canWrite())
-                            return;
-                    }else{
+                    auto selections = this->getCurrentSelections();
+                    bool canCut = Peony::FileUtils::isSearchFilesParentWriteable(selections, getCurrentUri().startsWith("search://"));
+                    if(!canCut){
+                        return;
+                    }
+                }else{
+                    auto info = Peony::FileInfo::fromUri(currentUri);
+                    if (!info->canWrite()) {
                         return;
                     }
                 }
@@ -912,9 +955,10 @@ void MainWindow::createFolderOperation()
             return;
         auto opInfo = op->getOperationInfo();
         //auto targetUri = opInfo->target();
-        this->getCurrentPage()->getView()->clearIndexWidget();
+
         //set a short time delay, fix bug#86070, select two folders
-        QTimer::singleShot(10, this, [=](){
+        QTimer::singleShot(300, this, [=](){
+            this->getCurrentPage()->getView()->clearIndexWidget();
             this->editUri(opInfo->target());
         });
     }, Qt::BlockingQueuedConnection);
@@ -957,30 +1001,19 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                     files<<uri;
                 }
             }
+            bool check = Peony::GlobalSettings::getInstance()->getValue(SHOW_IN_NEW_WINDOW).toBool();
             for (auto uri : dirs) {
-                m_tab->addPage(uri);
+                if (check) {
+                    auto newWindow = dynamic_cast<QWidget *>(create(uri));
+                    newWindow->setAttribute(Qt::WA_DeleteOnClose);
+                    newWindow->show();
+                } else {
+                    m_tab->addPage(uri);
+                }
             }
 
-            QMap<QString, QStringList> fileMap;
-            for (auto uri : files) {
-                QString defaultAppName = Peony::FileLaunchManager::getDefaultAction(uri)->getAppInfoName();
-                QStringList list;
-                if (fileMap.contains(defaultAppName)) {
-                    list = fileMap[defaultAppName];
-                    list << uri;
-                    fileMap.insert(defaultAppName, list);
-                } else {
-                    list << uri;
-                    fileMap.insert(defaultAppName, list);
-                }
-            }
-            if(!fileMap.empty()) {
-                QMap<QString, QStringList>::iterator iter = fileMap.begin();
-                while (iter != fileMap.end())
-                {
-                    Peony::FileLaunchManager::openAsync(iter.value());
-                    iter++;
-                }
+            if (!files.isEmpty()) {
+                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
             }
         }
     }
@@ -1093,8 +1126,12 @@ bool MainWindow::currentViewSupportZoom()
 
 void MainWindow::maximizeOrRestore()
 {
-    if (m_tab->currentPage()) {
-        m_tab->currentPage()->getView()->clearIndexWidget();
+    if (getCurrentPage()) {
+        if (auto view = getCurrentPage()->getView()) {
+            QStringList uris = view->getSelections();
+            view->clearIndexWidget();
+            view->setSelections(uris);
+        }
     }
     if (!this->isMaximized()) {
         this->showMaximized();
@@ -1160,6 +1197,14 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     if (uri == "computer:///ukui-data-volume") {
         realUri = "file:///data";
     }
+
+    //story 28545, improve data block solution, when has no user file in /data, go to usershare
+    if ((uri == "file:///data" || realUri == "file:///data") &&
+            Peony::FileUtils::isFileExsit("file:///data/usershare") &&
+            ! Peony::FileUtils::isDataBlockHasUserFile()) {
+        realUri = "file:///data/usershare";
+    }
+
     //process open symbolic link
     auto info = Peony::FileInfo::fromUri(uri);
     if (info->isSymbolLink() && info->symlinkTarget().length() >0 &&
@@ -1182,7 +1227,7 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     }
 
     //Fix bug#132638, special # character use in symbolic link open fail issue
-    if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///"))
+    if (realUri.contains("\#") && ! realUri.startsWith("filesafe:///") && !realUri.startsWith("search:///"))
         realUri = Peony::FileUtils::urlEncode(realUri);
 
     //if in search mode and key is not null, need quit search mode, bug#93528
@@ -1190,7 +1235,7 @@ void MainWindow::goToUri(const QString &uri, bool addHistory, bool force)
     if (! m_is_clear_serach && m_is_search  && ! uri.startsWith("search://"))
     {
         m_is_search = false;
-        m_header_bar->updateSearchRequest(m_is_search);
+        m_tab->closeSearch();
     }
 
     if (getCurrentUri() == realUri) {
@@ -1221,6 +1266,10 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
        needUpdate = true;
     }
 
+    if (m_last_key != key && key != "") {
+        m_tab->clearAllMapsCount();
+    }
+
     if (updateKey)
     {
         needUpdate = true;
@@ -1236,6 +1285,7 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             goToUri(m_last_search_path, true);
             m_is_clear_serach = false;
             m_tab->m_status_bar->updateSearchProgress(false);
+            m_tab->updateFilterContent("");
             m_searching = false;
         }
         else
@@ -1261,6 +1311,7 @@ void MainWindow::updateSearch(const QString &uri, const QString &key, bool updat
             //qDebug() << "updateSearch targetUri:" <<targetUri;
             goToUri(targetUri, true);
             m_tab->m_status_bar->updateSearchProgress(true);
+            m_tab->updateFilterContent(m_last_key);
             m_searching = true;
         }
     }
@@ -1304,6 +1355,11 @@ void MainWindow::beginSwitchView(const QString &viewId)
 
 void MainWindow::refresh()
 {
+    if (getCurrentPage()) {
+        if (getCurrentPage()->getView()) {
+            this->getCurrentPage()->getView()->setDirectoryUri(getCurrentUri());
+        }
+    }
     locationChangeStart();
     m_tab->refresh();
     //fix refresh clear copy files issue, link to bug#109247
@@ -1440,6 +1496,10 @@ QString MainWindow::getLastSearchKey()
     return m_last_key;
 }
 
+void MainWindow::clearLastSearchPath()
+{
+    m_last_search_path = "";
+}
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
@@ -1681,6 +1741,16 @@ void MainWindow::initUI(const QString &uri)
         }
     });
 
+    connect(m_tab, &TabWidget::searchStateChanged, this, [this](bool isSearching, const QString &searchKey) {
+        if (isSearching) {
+            m_header_bar->startEdit(true); // 进入搜索状态
+            m_header_bar->m_searchWidget->setSearchMode(true);
+            m_header_bar->m_searchWidget->setSearchText(searchKey);
+        } else {
+            m_header_bar->m_searchWidget->clearSearchBox();
+        }
+    });
+
     //SideBar
     auto sideBarFactory = Peony::SideBarFactoryManager::getInstance()->getFactoryFromPlatformName();
     if (!sideBarFactory) {
@@ -1766,10 +1836,11 @@ void MainWindow::initUI(const QString &uri)
 
     });
     connect(m_tab, &TabWidget::closeWindowRequest, this, &QWidget::close);
-    connect(m_header_bar, &HeaderBar::updateSearchRequest, m_tab, &TabWidget::updateSearchBar);
-    connect(m_header_bar, &HeaderBar::updateSearchRequest, this, [=](bool showSearch){
+    connect(m_header_bar->m_searchWidget, &Peony::SearchWidget::updateSearchRequest, m_tab, &TabWidget::updateSearchBar);
+    connect(m_header_bar->m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, [=](bool showSearch){
         m_is_search = showSearch;
     });
+
     //connect(m_header_bar, &HeaderBar::updateSearchRequest, this, &MainWindow::updateSearchStatus);
     connect(m_header_bar->m_searchWidget, &Peony::SearchWidget::updateSearch, this, &MainWindow::updateSearch);
 
@@ -1800,7 +1871,7 @@ void MainWindow::initUI(const QString &uri)
 
     //bind signals
     connect(m_tab, &TabWidget::searchRecursiveChanged, m_header_bar, &HeaderBar::updateSearchRecursive);
-    connect(m_tab, &TabWidget::closeSearch, m_header_bar, &HeaderBar::closeSearch);
+    connect(m_tab, &TabWidget::closeSearch, m_header_bar->m_searchWidget, &Peony::SearchWidget::closeSearch);
     connect(m_tab, &TabWidget::closeSearch, this, [=](){
         this->updateSearchStatus(false);
     });
@@ -1848,6 +1919,10 @@ void MainWindow::initUI(const QString &uri)
                     m_tab->setUpdatesEnabled(true);
                 }
             });
+            //fix bug#250273，right menu not show complete issue
+            QScreen *screen=qApp->primaryScreen();
+            QRect geometry = screen->availableGeometry();
+            menu.setMaximumHeight(geometry.height());
             menu.exec(pos);
             m_tab->setUpdatesEnabled(true);//end
             m_uris_to_edit = menu.urisToEdit();

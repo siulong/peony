@@ -35,7 +35,8 @@
 OfficeThumbnail::OfficeThumbnail(const QString &uri)
 {
     if (!uri.startsWith("file:///")) {
-        m_url = FileUtils::getTargetUri(uri);
+        auto fileInfo = FileInfo::fromUri(uri);
+        m_url = fileInfo.get()->filePath();
         qDebug()<<"target uri:"<< m_url.path();
     }
     else {
@@ -124,7 +125,7 @@ QIcon OfficeThumbnail::generateThumbnail()
         }
 
         QString err=p.readAllStandardError();
-        QString read=p.readAll();
+        //QString read=p.readAll();
         if (!err.isEmpty()) {
             qWarning()<<"office convert jpg error: " << err;
             return thumbnailImage;

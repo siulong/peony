@@ -63,7 +63,7 @@ public:
         ModifiedDate,
         FileType,
         FileSize,
-        TrashOriginPath,
+        FilePath,
         Owner,
         Other
     };
@@ -225,6 +225,8 @@ public:
 
     void setShowFileExtensions(bool show);
 
+    void insetFileInfoData(std::vector<std::shared_ptr<FileInfo> >& fileInfoVec, FileItem *parentItem);
+
 private:
     const QModelIndex indexFromItemAndUri(FileItem *item, const QString &uri);
 
@@ -256,7 +258,9 @@ Q_SIGNALS:
      * \note proxy model should connect this signal and start sort and filter again.
      */
     void updated();
-
+    void updateFilter();
+    void signal_updateTabPageTitle(const QString& uri);
+    void signal_updateLocationBar(const QString& uri);
     void selectRequest(const QStringList &uris);
     void changePathRequest(const QString &destUri, const QString &sourceUri);
 

@@ -50,6 +50,7 @@ GFileIOStream *     vfs_label_file_open_readwrite(GFile* file, GCancellable* can
 GMount *            vfs_label_file_find_enclosing_mount(GFile* file, GCancellable* cancellable, GError** error);
 gboolean            vfs_label_file_make_symbolic_link(GFile* file, const char* svalue, GCancellable* cancellable, GError** error);
 GFileMonitor*       vfs_label_file_monitor_directory (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
+GFileMonitor*       vfs_label_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error);
 GFile*              vfs_label_file_set_display_name (GFile* file, const gchar* display_name, GCancellable* cancellable, GError** error);
 GFileInfo*          vfs_label_file_query_filesystem_info(GFile* file, const char* attributes, GCancellable* cancellable, GError** error);
 GFileInfo*          vfs_label_file_query_info(GFile *file, const char *attributes, GFileQueryInfoFlags flags, GCancellable *cancellable, GError **error);
@@ -94,6 +95,7 @@ static void vfs_label_file_g_file_iface_init(GFileIface *iface)
     iface->set_display_name         = vfs_label_file_set_display_name;
     iface->get_relative_path        = vfs_label_file_get_relative_path;
     iface->monitor_dir              = vfs_label_file_monitor_directory;
+    iface->monitor_file             = vfs_label_file_monitor_file;
     iface->make_symbolic_link       = vfs_label_file_make_symbolic_link;
     iface->enumerate_children       = vfs_label_file_enumerate_children;
     iface->find_enclosing_mount     = vfs_label_file_find_enclosing_mount;
@@ -258,7 +260,7 @@ gboolean vfs_label_file_delete (GFile* file, GCancellable* cancellable, GError**
     QUrl url(uri);
     QString realUri = QString("file:///").append(url.path().section("/", 2,-1));
     QString encodeUri = Peony::FileUtils::getEncodedUri(realUri);
-    int labelId = FileLabelModel::getGlobalModel()->getLabelIdFromLabelName(url.path().section("/", 1, 1));
+    int labelId = url.path().section("/", 1, 1).toInt();
     FileLabelModel::getGlobalModel()->removeFileLabel(encodeUri, labelId);
     return TRUE;
 }
@@ -293,6 +295,24 @@ GFileMonitor* vfs_label_file_monitor_directory (GFile* file, GFileMonitorFlags f
     priv->fileMonitor = (GFileMonitor*)g_object_new (VFS_TYPE_LABEL_FILE_MONITOR, nullptr);
     QString uri = g_file_get_uri(file);
     vfs_label_file_monitor_dir(VFS_LABEL_FILE_MONITOR(priv->fileMonitor), uri);
+
+
+    Q_UNUSED(file)
+    Q_UNUSED(flags)
+    Q_UNUSED(error)
+    Q_UNUSED(cancellable)
+
+    return priv->fileMonitor;
+}
+
+GFileMonitor* vfs_label_file_monitor_file (GFile* file, GFileMonitorFlags flags, GCancellable* cancellable, GError** error){
+
+    g_return_val_if_fail(VFS_IS_LABEL_FILE(file), nullptr);
+
+    LabelVFSFilePrivate* priv = VFS_LABEL_FILE((LabelVFSFile*)file)->priv;
+    priv->fileMonitor = (GFileMonitor*)g_object_new (VFS_TYPE_LABEL_FILE_MONITOR, nullptr);
+    QString uri = g_file_get_uri(file);
+    vfs_label_file_monitor_file(VFS_LABEL_FILE_MONITOR(priv->fileMonitor), uri);
 
 
     Q_UNUSED(file)
@@ -346,6 +366,9 @@ GFileInfo* vfs_label_file_query_info(GFile *file, const char *attributes, GFileQ
             auto icon = g_themed_icon_new("label");
             g_file_info_set_icon(info, icon);
             g_object_unref(icon);
+        }else if(!(url.toString().section("label:///", -1,-1).contains("/"))){
+            QString labelIdStr = url.toString().section("label:///", -1,-1);
+            name = FileLabelModel::getGlobalModel()->getLabelNameFromLabelId(labelIdStr.toInt());
         }else{
             name = url.toString().section("/", -1,-1);
         }
@@ -467,8 +490,7 @@ gboolean vfs_label_file_is_exist(const char *uri)
 void label_vfs_file_enumerator_parse_uri(LabelVFSFileEnumerator *enumerator, const QString& uri){
     LabelVFSFileEnumeratorPrivate *priv = enumerator->priv;
     *priv->label_vfs_directory_uri = uri;
-    auto tmp = priv->label_vfs_directory_uri->section("/", -1,-1);
-    int labelId = FileLabelModel::getGlobalModel()->getLabelIdFromLabelName(tmp);
+    auto labelId = priv->label_vfs_directory_uri->section("/", -1,-1).toInt();
     QSet<QString> uriSet = FileLabelModel::getGlobalModel()->getFileUrisFromLabelId(labelId);
     for(const QString &str: uriSet){
         QUrl url = QUrl(str);

@@ -188,6 +188,24 @@ void FileOperation::fileSync(QString srcFile, QString destDir)
     }
 }
 
+bool FileOperation::syncDestUri(const QString &destUri)
+{
+    bool ret = false;
+    g_autoptr (GFile) ddir = g_file_new_for_uri (destUri.toUtf8().constData());
+    char * path = g_file_get_path(ddir);
+    operationStartSnyc();
+    QProcess p;
+    p.start(QString("/usr/bin/sync -f %1").arg(path));
+    ret = p.waitForFinished(-1);
+    if (p.exitCode() == 0) {
+        qDebug() << "sync completed successfully";
+    } else {
+        qDebug() << "sync failed with exit code:" << p.exitCode();
+    }
+    g_free(path);
+    return ret;
+}
+
 void FileOperation::notifyFileWatcherOperationFinished()
 {
     if (!qApp->allWidgets().isEmpty()) {
@@ -230,6 +248,43 @@ void FileOperation::sendSrcAndDestUrisOfCopyDspsFiles()
     QDBusMessage response = QDBusConnection::sessionBus().call(msg);
     if (!response.type() == QDBusMessage::ReplyMessage)
         qDebug()<<"fail to send source and dest uris of copy!";
+}
+
+bool FileOperation::queryDirIsReadOnlyFS(const QString &dirUri, bool defaultResult, bool isUdfBurnWork, bool *writeable)
+{
+    // udf 刻录操作默认可写
+    if (isUdfBurnWork) {
+        if (writeable)
+            *writeable = true;
+        return false;
+    }
+
+    g_autoptr (GFile) dest_dir_file = g_file_new_for_uri(dirUri.toUtf8().constData());
+    g_autoptr (GFileInfo) dest_dir_info = g_file_query_info(dest_dir_file, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    if (g_file_info_has_attribute(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
+        if (writeable) {
+            *writeable = true;
+        }
+        if (!g_file_info_get_attribute_boolean(dest_dir_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
+            if (writeable) {
+                *writeable = false;
+            }
+            // 如果目录不可写，创建临时文件进行错误码匹配
+            g_autoptr (GFile) temp_file = g_file_resolve_relative_path(dest_dir_file, "peony-template-file");
+            GError *err = nullptr;
+            if (!g_file_create(temp_file, G_FILE_CREATE_NONE, nullptr, &err)) {
+                bool is_erofs = g_error_matches(err, G_IO_ERROR, G_IO_ERROR_READ_ONLY);
+                g_error_free (err);
+                return is_erofs;
+            }
+        }
+        return defaultResult;
+    } else {
+        if (writeable) {
+            *writeable = true;
+        }
+        return defaultResult;
+    }
 }
 
 bool FileOperation::URISorter::operator()(const QString &uri1, const QString &uri2) const {

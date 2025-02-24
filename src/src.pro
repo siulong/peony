@@ -21,6 +21,7 @@ include(windows/windows-peony.pri)
 include(control/control.pri)
 include(../plugin-iface/unstable/window-plugin-iface.pri)
 #include(view/view.pri)
+include(../3rd-parties/layouts/layouts.pri)
 DEFINES += QAPPLICATION_CLASS=QApplication
 
 PKGCONFIG +=gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libcanberra libnotify udisks2 openssl dconf polkit-gobject-1

@@ -72,7 +72,7 @@ DefaultPreviewPage::DefaultPreviewPage(QWidget *parent) : QStackedWidget (parent
 {
     setContentsMargins(10, 20, 10, 20);
 
-    auto label = new QLabel(tr("Select the file you want to preview..."), this);
+    auto label = new QLabel(tr("Select the file you want to preview"), this);
     label->setWordWrap(true);
     label->setAlignment(Qt::AlignCenter);
     m_empty_tab_widget = label;
@@ -213,7 +213,7 @@ void DefaultPreviewPage::cancel()
     m_preview_tab_widget->cancel();
     setCurrentWidget(m_empty_tab_widget);
     QLabel *label = qobject_cast<QLabel*>(m_empty_tab_widget);
-    label->setText(tr("Select the file you want to preview..."));
+    label->setText(tr("Select the file you want to preview"));
 }
 
 void DefaultPreviewPage::closePreviewPage()
@@ -247,6 +247,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     m_form->setContentsMargins(0, 0, 0, 0);
 
     m_display_name_label = new QLabel(this);
+    this->setLabelProperties(m_display_name_label);
     QFont font;
     font.setBold(true);
     m_display_name_label->setFont(font);
@@ -255,6 +256,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     m_layout->addSpacing(16);
 
     m_type_label = new QLabel(this);
+    this->setLabelProperties(m_type_label);
     m_form->addRow(tr("File Type:"), m_type_label);
     m_type_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_type_label, "");
@@ -262,6 +264,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_total_size_label = new QLabel(this);
+    this->setLabelProperties(m_total_size_label);
     m_form->addRow(tr("Size:"), m_total_size_label);
     m_total_size_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_total_size_label, "");
@@ -269,6 +272,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_time_create_label = new QLabel(this);
+    this->setLabelProperties(m_time_create_label);
     m_form->addRow(tr("Time Created:"), m_time_create_label);
     m_time_create_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_time_create_label, "");
@@ -276,6 +280,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_time_modified_label = new QLabel(this);
+    this->setLabelProperties(m_time_modified_label);
     m_form->addRow(tr("Time Modified:"), m_time_modified_label);
     m_time_modified_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_time_modified_label, "");
@@ -283,6 +288,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_time_access_label = new QLabel(this);
+    this->setLabelProperties(m_time_access_label);
     m_form->addRow(tr("Time Access:"), m_time_access_label);
     m_time_access_label->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_time_access_label, "");
@@ -290,6 +296,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_file_count_label = new QLabel(this);
+    this->setLabelProperties(m_file_count_label);
     QLabel *children_label = new QLabel(this);
     children_label->setAlignment(Qt::AlignTop);
     children_label->setText(tr("Children Count:"));
@@ -301,6 +308,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
 
     //image
     m_image_size = new QLabel(this);
+    this->setLabelProperties(m_image_size);
     m_form->addRow(tr("Image resolution:"), m_image_size);
     m_image_size->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_image_size, "");
@@ -308,6 +316,7 @@ FilePreviewPage::FilePreviewPage(QWidget *parent) : QFrame(parent)
     addSeparator();
 
     m_image_format = new QLabel(this);
+    this->setLabelProperties(m_image_format);
     m_form->addRow(tr("color model:"), m_image_format);
     m_image_format->setAlignment(Qt::AlignRight);
     m_form_label_map.insert(m_image_format, "");
@@ -586,4 +595,10 @@ void FilePreviewPage::addSeparator()
     auto separator = new QFrame(this);
     separator->setFrameShape(QFrame::HLine);
     m_form->addRow(separator);
+}
+
+void FilePreviewPage::setLabelProperties(QLabel *label)
+{
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    label->setCursor(Qt::IBeamCursor);
 }

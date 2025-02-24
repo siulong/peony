@@ -22,6 +22,8 @@
 
 #ifndef FILEOPERATIONPROGRESS_H
 #define FILEOPERATIONPROGRESS_H
+#include <gio/gio.h>
+
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QListWidget>
@@ -29,6 +31,7 @@
 #include <QToolButton>
 #include <gio/gio.h>
 
+#include "file-operation-progress-bar-helper.h"
 class ProgressBar;
 class OtherButton;
 class MainProgressBar;
@@ -56,6 +59,8 @@ private:
 
 protected:
     void showWidgetList(bool show);
+    void closeEvent(QCloseEvent *event);
+    bool event(QEvent *event);
 #if 0
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -75,8 +80,8 @@ public:
     bool m_error = false;
 
 private:
-    GUnixFDList*            m_fds = nullptr;
-
+    GUnixFDList*            m_fds1 = nullptr;
+    GUnixFDList*            m_fds2 = nullptr;
     // layout
     QVBoxLayout* m_main_layout = nullptr;
     GDBusConnection* m_dbus_connection = nullptr;
@@ -130,7 +135,7 @@ Q_SIGNALS:
     void resume();
     void cancelled();
     void finished(ProgressBar* fop);
-    void sendValue(QString&, QIcon&, double);
+    void sendValue(QString&, QIcon&, double, double, int);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -194,6 +199,8 @@ private:
     // value
     QIcon m_icon;
     double m_current_value = 0.0;
+    double m_current_speed = 0.0;
+    int m_estimated_time = 0;
 
     QString m_src_uri;
     QString m_dest_uri;
@@ -201,7 +208,9 @@ private:
     int m_current_count = 1;
     int m_update_count = 0;
     quint64 m_total_size = 0;
-    qint32 m_current_size = 0;
+    qint64 m_current_size = 0;
+    qint64 m_start_time = 0;
+    qint64 m_last_size = 0;
 
     bool m_pause = false;
 
@@ -241,7 +250,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void cancelld();
-    void updateValue (QString&, QIcon&, double);
+    void updateValue (QString&, QIcon&, double, double, int);
 
 private:
     bool m_sync = false;
@@ -316,6 +325,8 @@ private:
     float m_move_x = 0.5;
     bool m_stopping = false;
     float m_current_value = 0.0;
+    float m_current_speed = 0.0;
+    QString m_current_estimated_time = tr("Calculating time");
     QString m_file_name = tr("starting ...");
     QIcon m_icon = QIcon::fromTheme("text");
 };

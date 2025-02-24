@@ -23,8 +23,11 @@
 #include "file-utils.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-enumerator.h"
 #include "volume-manager.h"
 #include "linux-pwd-helper.h"
+#include "volumeManager.h"
+#include "global-fstabdata.h"
 #include <QUrl>
 #include <QFileInfo>
 #include <QFileInfoList>
@@ -43,6 +46,8 @@
 #include <gio/gunixmounts.h>
 #include <QCoreApplication>
 #include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 using namespace Peony;
 
@@ -217,6 +222,30 @@ QString FileUtils::handleDuplicateName(const QString& uri)
     return handledName;
 }
 
+QString FileUtils::handleFolderName(const QString &folderName)
+{
+    QRegExp regExpNum("\\(\\d+\\)");
+    QRegExp regExp (QString("\\ -\\ %1\\(\\d+\\)(\\.[0-9a-zA-Z\\.]+|)$").arg(QObject::tr("duplicate")));
+    QString handledName = nullptr;
+    QString name = folderName;
+    if (name.contains(regExp)) {
+        int num = 0;
+        QString numStr = "";
+        QString ext = regExp.cap(0);
+        if (ext.contains(regExpNum)) {
+            numStr = regExpNum.cap(0);
+        }
+        numStr.remove(0, 1);
+        numStr.chop(1);
+        num = numStr.toInt();
+        ++num;
+        handledName = name.replace(regExp, ext.replace(regExpNum, QString("(%1)").arg(num)));
+    } else {
+        handledName = name + QString(" - %1(1)").arg(QObject::tr("duplicate"));
+    }
+    return handledName;
+}
+
 QString FileUtils::handleDesktopFileName(const QString& uri, const QString& displayName)
 {
     //no need self handle, add return to fix bug#72642
@@ -336,6 +365,8 @@ QString FileUtils::getNonSuffixedBaseNameFromUri(const QString &uri)
                     suffix == ".sit") {
                 int secondIndex = suffixedBaseName.lastIndexOf('.');
                 suffixedBaseName.chop(suffixedBaseName.size() - secondIndex);
+            } else {
+                suffixedBaseName.chop(suffixedBaseName.size() - index);
             }
 #else
             suffixedBaseName.chop(suffixedBaseName.size() - index);
@@ -353,8 +384,7 @@ QString FileUtils::getFileDisplayName(const QString &uri)
         return QObject::tr("data");
     //fix bug#47597, show as root.link issue. 125255, file system show tip "/" issue
     if (uri == "file:///")
-        return QObject::tr("File System");
-
+        return QObject::tr("System Disk");
     //fix bug#139600，替换windows共享名称, “172.17.123.173上的Windows共享” 显示为 "172.17.123.173上的共享"
     bool isSmbPath = uri.startsWith("smb://");
     QString showName = fileInfo.get()->displayName();
@@ -366,14 +396,14 @@ QString FileUtils::getFileDisplayName(const QString &uri)
             return showName;
         }
     }
-    if(uri.startsWith("label://")){/* 标记模式uri的displayName */
-        if("label:///" == uri){
-            showName = QObject::tr("label");
-        }else{
-            showName = uri.section("/", -1,-1).replace("?schema=file","");
-        }
-        return showName;
-    }
+//    if(uri.startsWith("label://")){/* 标记模式uri的displayName */
+//        if("label:///" == uri){
+//            showName = QObject::tr("label");
+//        }else{
+//            showName = uri.section("/", -1,-1).replace("?schema=file","");
+//        }
+//        return showName;
+//    }
 
     return fileInfo.get()->displayName();
 }
@@ -664,6 +694,58 @@ bool FileUtils::isFileExsit(const QString &uri)
     return exist;
 }
 
+/*
+ * 1.用于默认安装创建的数据盘场景；
+ * 2.默认会有绑定挂载目录/data/root, /data/home, /data/usershare;
+ * 3.自定义安装的数据盘，没有绑定挂载，不适用；
+ * 4.除默认目录之外，还存在其他文件夹或文件，才属于用户数据；
+ * 5./data/.Trash-*,/data/lost+found此类目录也属于默认目录；
+*/
+bool FileUtils::isDataBlockHasUserFile()
+{
+    QString configFilePath = "/etc/xdg/peony-data.conf";
+    if (! QFile::exists(configFilePath))
+        return true;
+
+    QFile file(configFilePath);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString line = in.readLine();
+        // 判断标识是否为true, 是的话，存在用户数据，如果是false, 则是干净的数据盘，可以使用新方案
+        if (line != "true")
+            return false;
+        file.close();
+    } else {
+        qWarning() << "open /etc/xdg/peony-data.conf failed";
+    }
+
+    return true;
+
+    //之前的阻塞方法，文件量大时会造成卡顿，屏蔽
+//    Peony::FileEnumerator e;
+//    e.setEnumerateDirectory("file:///data");
+//    e.enumerateSync();
+//    QStringList systemUris;
+//    systemUris<< "file:///data/root"<< "file:///data/home" <<"file:///data/usershare" << "file:///data/lost+found";
+//    qDebug() << "/data children:"<<e.getChildrenUris().length();
+//    if (e.getChildrenUris().length() <= systemUris.length()) {
+//        return false;
+//    } else {
+//        for (auto fileInfo : e.getChildren()) {
+//           QString childUri = fileInfo->uri();
+//           qDebug() << "data childUri:"<<childUri;
+//           //确认别的子文件不是回收站目录，用户id不同，回收站目录名不同，则可以跳转/data目录
+//           if (! systemUris.contains(childUri) && ! childUri.startsWith("file:///data/.Trash") &&
+//                   childUri != "file:///home" && childUri != "file:///root"){
+//               return true;
+//           }
+//        }
+//    }
+
+//    return false;
+}
+
+
 const QStringList FileUtils::toDisplayUris(const QStringList &args)
 {
     QStringList uris;
@@ -715,7 +797,7 @@ bool FileUtils::queryVolumeInfo(const QString &volumeUri, QString &volumeName, Q
 
     GFile *file = g_file_new_for_uri(volumeUri.toUtf8().constData());
     GFileInfo *info = g_file_query_info(file,
-                                        G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE","G_FILE_ATTRIBUTE_STANDARD_TARGET_URI,
+                                        G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE "," G_FILE_ATTRIBUTE_STANDARD_TARGET_URI,
                                         G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                         nullptr,
                                         nullptr);
@@ -1180,6 +1262,72 @@ bool FileUtils::isRemoteServerUri(const QString &uri)
     return false;
 }
 
+bool FileUtils::isCompressedFile(const QString &contentType)
+{
+    // Check if the content type is in the list of compressed file types
+    return getCompressedTypes().contains(contentType);
+}
+
+const QStringList &FileUtils::getCompressedTypes()
+{
+    /**
+     * @brief Static list of MIME types for compressed files.
+     *
+     * This list is initialized only once and contains MIME types
+     * for various compressed file formats.
+     */
+    static const QStringList compressedTypes = {
+        "application/zip", "application/x-rar-compressed", "application/x-gzip",
+        "application/gzip", "application/x-bzip2", "application/x-7z-compressed",
+        "application/x-xz", "application/x-lzma", "application/x-lzip",
+        "application/x-lzop", "application/x-snappy-framed", "application/zstd",
+        "application/x-compress", "application/x-compressed", "application/x-zip-compressed",
+        "application/x-gtar", "application/x-tar", "application/x-bzip",
+        "application/x-lzh", "application/x-lha", "application/vnd.rar",
+        "application/x-ace-compressed", "application/x-astrotite-afa", "application/x-alz-compressed",
+        "application/x-arj", "application/x-b1", "application/vnd.ms-cab-compressed",
+        "application/x-cfs-compressed", "application/x-dar", "application/x-dgc-compressed",
+        "application/x-apple-diskimage", "application/x-gca-compressed", "application/java-archive",
+        "application/x-lzx", "application/x-lzh-compressed", "application/x-stuffit",
+        "application/x-stuffitx", "application/x-par2", "application/x-rar",
+        "application/x-sit", "application/x-squashfs-image", "application/x-xar",
+        "application/x-zoo"
+    };
+    return compressedTypes;
+}
+
+bool FileUtils::isExecuteTargetUribyTrashUri(const QUrl& url, FileInfo * fileInfo)
+{
+    if (QFileInfo::exists(url.path().toUtf8()) && fileInfo->property("enable_trash_target").toBool())
+    {
+        GFile * _file = g_file_new_for_uri(url.toString().toUtf8().constData());
+        GError *err = nullptr;
+        bool _can_excute = false;
+        auto gFileInfo = g_file_query_info(_file,
+                                       "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       &err);
+
+        if (err) {
+            qDebug()<<__func__<<__LINE__<<err->code<<err->message;
+            g_error_free(err);
+        }else{
+            if (g_file_info_has_attribute(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE)) {
+                _can_excute = g_file_info_get_attribute_boolean(gFileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+            } else {
+                _can_excute = true;
+            }
+        }
+
+        g_object_unref(_file);
+        if (_can_excute)
+            return true;
+    }
+
+    return false;
+}
+
 bool FileUtils::isEmptyDisc(const QString &unixDevice)
 {
     if (unixDevice.isEmpty()) //没有设备时不做后续处理
@@ -1343,6 +1491,11 @@ QString FileUtils::getFsTypeFromFile(const QString &fileUri)
 {
     QString fsType = "ext";
 
+    QString homeDir = "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    if (fileUri.startsWith("filesafe:///") || fileUri.startsWith(homeDir + "/.box"))
+        return "ecryptfs";
+
     g_autoptr (GFile) file = g_file_new_for_uri(fileUri.toUtf8().constData());
     g_autoptr (GMount) mount = g_file_find_enclosing_mount(file, nullptr, nullptr);
     if (!mount)
@@ -1472,6 +1625,45 @@ QString FileUtils::updateFileIconName(const QString &uri, bool checkValid)
     }
 
     return icon_name;
+}
+
+bool FileUtils::isSearchFilesParentWriteable(const QStringList &selectUris, bool isSearch)
+{
+    /* 经过讨论，对于搜索路径，判断每个选中文件的父目录的可写权限，都有可写权限时才返回true，反之则为false */
+    bool canWrite = true;
+    if(isSearch && !selectUris.isEmpty()){
+        for (auto selectUri : selectUris) {
+            auto fileInfo = FileInfo::fromUri(selectUri);
+            if(!fileInfo->canRename()){
+                canWrite = false;
+                break;
+            }
+        }
+    }
+    return canWrite;
+}
+
+bool FileUtils::isMountMatchFstab(GVolume *volume, const QString &mountPoint)
+{
+    if (G_IS_VOLUME(volume)) {
+        Experimental_Peony::Volume *vol = new Experimental_Peony::Volume(volume);
+        if(!Peony::GlobalFstabData::getInstance()->getUuidState()){
+            if(Peony::GlobalFstabData::getInstance()->isMountPoints(vol->device(), mountPoint)){
+                return true;
+            }
+        }else{
+            if(Peony::GlobalFstabData::getInstance()->isMountPoints(vol->uuid(), mountPoint)){
+                return true;
+            }
+        }
+
+        if (vol) {
+            delete vol;
+        }
+    }
+
+    return false;
+
 }
 
 QString FileUtilsPrivate::getFileIconName(const QString &uri)

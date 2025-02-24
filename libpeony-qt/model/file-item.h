@@ -110,6 +110,7 @@ public Q_SLOTS:
     void onDeleted(const QString &thisUri);
     void onRenamed(const QString &oldUri, const QString &newUri);
     void onChanged(const QString &uri);
+    void slot_directoryAttrChanged(const QString &uri);
 
     void onUpdateDirectoryRequest();
 

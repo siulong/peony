@@ -45,6 +45,10 @@ public:
         total_size = m_total_size;
     }
 
+    void setSkipUris(QStringList uris) {
+        m_skip_uris = uris;
+    }
+
 Q_SIGNALS:
     void countDone(quint64 file_count, quint64 hidden_file_count, quint64 total_size);
 
@@ -54,6 +58,7 @@ public Q_SLOTS:
 private:
     FileNodeReporter *m_reporter = nullptr;
     QStringList m_uris;
+    QStringList m_skip_uris;
 
     quint64 m_file_count = 0;
     quint64 m_hidden_file_count = 0;

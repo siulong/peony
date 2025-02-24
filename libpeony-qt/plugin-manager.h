@@ -30,6 +30,8 @@
 
 namespace Peony {
 
+class MenuPluginInterface;
+
 /*!
  * \brief The PluginManager class
  * \details
@@ -47,6 +49,9 @@ public:
     void close();
     PluginInterface* getPluginByFileName(QString &fileName);
     void registerPlugin(PluginInterface* piface, QObject* plugin);
+    bool isFileSafePlugin(const QJsonObject &metaData);
+    bool isCloudPlatform();
+    QList<MenuPluginInterface *> getComputerViewMenuPlugins();
 
 Q_SIGNALS:
     void pluginStateChanged(const QString &pluginName, bool enable);

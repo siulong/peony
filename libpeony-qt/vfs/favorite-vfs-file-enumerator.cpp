@@ -63,6 +63,7 @@ static void vfs_favorites_file_enumerator_init (FavoritesVFSFileEnumerator* self
     //self->priv->enumerate_queue->enqueue(QString("favorite://%1?schema=file").arg(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)));
     //self->priv->enumerate_queue->enqueue(QString("favorite://%1?schema=file").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)));
 
+    //fix bug#228435, show usershare issue
     if (Peony::FileUtils::isFileExsit("file:///data/usershare")) {
         self->priv->enumerate_queue->enqueue("favorite:///data/usershare?schema=file");
     }

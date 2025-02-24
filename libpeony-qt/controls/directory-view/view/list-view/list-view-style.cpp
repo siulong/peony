@@ -94,4 +94,3 @@ void ListViewStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
         return qApp->style()->drawPrimitive(element, option, painter, widget);
     }
 }
-

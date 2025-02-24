@@ -49,6 +49,7 @@
 #include <QtConcurrent>
 #include <QGSettings>
 #include <QComboBox>
+#include <QButtonGroup>
 
 #include "file-info.h"
 #include "file-info-job.h"
@@ -63,6 +64,8 @@
 #include "generic-thumbnailer.h"
 #include "file-operation-manager.h"
 #include "open-with-properties-page.h"
+#include "file-enumerator.h"
+#include "file-properties-operation.h"
 
 #include <QApplication>
 
@@ -207,10 +210,7 @@ void BasicPropertiesPage::loadData()
 
     this->loadPartOne();
     this->loadPartTwo();
-
-    if (m_fileType != BP_MultipleFIle) {
-        this->loadOptionalData();
-    }
+    this->loadOptionalData();
 }
 
 void BasicPropertiesPage::initFloorOne()
@@ -317,20 +317,24 @@ void BasicPropertiesPage::initFloorTwo()
             default:
                 break;
         }
-
-        //===只读和隐藏选择框===
-        m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
-        m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
-
-        QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
-        checkboxLayout->addSpacing(1);
-        checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
-        checkboxLayout->addSpacing(35);
-        checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
-        checkboxLayout->addStretch(1);
-
-        baseLayout->addRow(tr("Property:"), checkboxLayout);
     }
+
+    //===只读和隐藏选择框===
+    m_readOnly = new QCheckBox(tr("Readonly"), baseFrame);
+    m_hidden = new QCheckBox(tr("Hidden"), baseFrame);
+
+    if (m_info->isDir() && m_uris.count() == 1) {
+        m_readOnly->setText(tr("Readonly (just applied by subfiles)"));
+    }
+
+    QHBoxLayout *checkboxLayout = new QHBoxLayout(baseFrame);
+    checkboxLayout->addSpacing(1);
+    checkboxLayout->addWidget(m_readOnly, Qt::AlignLeft);
+    checkboxLayout->addSpacing(35);
+    checkboxLayout->addWidget(m_hidden, Qt::AlignLeft);
+    checkboxLayout->addStretch(1);
+
+    baseLayout->addRow(tr("Property:"), checkboxLayout);
 
     m_layout->addWidget(baseFrame);
 }
@@ -484,49 +488,73 @@ void BasicPropertiesPage::loadPartTwo()
 
 void BasicPropertiesPage::loadOptionalData()
 {
-    this->setSysTimeFormat();
-    // set time
-    if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
-        QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
-        connect(settings, &QGSettings::changed, this, [=](const QString &key) {
-            if ("hoursystem" == key) {
-                setSysTimeFormat();
-                updateInfo(m_info->uri());
-            }
+    if (m_fileType != BP_MultipleFIle) {
+        this->setSysTimeFormat();
+        // set time
+        if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
+            QGSettings* settings = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
+            connect(settings, &QGSettings::changed, this, [=](const QString &key) {
+                if ("hoursystem" == key) {
+                    setSysTimeFormat();
+                    updateInfo(m_info->uri());
+                }
+            });
+        }
+
+#ifdef KY_SDK_DATE
+        connect(GlobalSettings::getInstance(),
+                &GlobalSettings::updateLongDataFormat,
+                this,
+                &BasicPropertiesPage::updateDateFormat);
+#endif
+
+        updateInfo(m_info.get()->uri());
+        connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
+            this->updateInfo(uri);
         });
     }
 
-#ifdef KY_SDK_DATE
-    connect(GlobalSettings::getInstance(),
-            &GlobalSettings::updateLongDataFormat,
-            this,
-            &BasicPropertiesPage::updateDateFormat);
-#endif
+    if (m_fileType != BP_MultipleFIle && m_fileType != BP_Folder) {
+        bool isHidden = m_info.get()->property(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN).toBool();
+        if(m_info.get()->canRead() && !m_info.get()->canWrite()) {
+            m_readOnly->setCheckState(Qt::Checked);
 
-    updateInfo(m_info.get()->uri());
-    connect(m_watcher.get(), &FileWatcher::locationChanged, [=](const QString&, const QString &uri) {
-        this->updateInfo(uri);
-    });
+            if(m_info.get()->displayName().startsWith(".") || isHidden)
+                m_hidden->setCheckState(Qt::Checked);
 
-    //底部隐藏多选框和只读选择框
-    if(m_info.get()->canRead() && !m_info.get()->canWrite())
-        m_readOnly->setCheckState(Qt::Checked);
+            m_readOnly->setDisabled(!m_info->canRename());
 
-    if(m_info.get()->displayName().startsWith("."))
-        m_hidden->setCheckState(Qt::Checked);
-
-    m_readOnly->setDisabled(!m_info->canRename());
-
-    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
-    //fix bug#113890,hiden Desktop folder change desktop show
-    m_hidden->setDisabled(!m_info->canRename() || isDesktop);
-    m_isReadOnly = m_readOnly->isChecked();
-
+            QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+            bool isDesktop = FileUtils::isSamePath(m_info->uri(), desktopPath);
+            //fix bug#113890,hiden Desktop folder change desktop show
+            m_hidden->setDisabled(!m_info->canRename() || isDesktop);
+            m_isReadOnly = m_readOnly->isChecked();
+        }
+    } else {
+        BatchStatusThread *batchStatusThread = new BatchStatusThread(m_uris);
+        batchStatusThread->start();
+        connect(batchStatusThread, &BatchStatusThread::updateState, this, [=](Qt::CheckState readOnlyState, Qt::CheckState hiddenState){
+            if(m_fileType == BP_Folder){/* 单选一个文件夹的场景，参照windows 只读复选框显示为部分勾选状态；link to bug#265731 一级目录设置只读后再次打开属性界面，只读为未勾选状态  */
+                readOnlyState = Qt::CheckState::PartiallyChecked;
+            }//end
+            m_readOnly->setCheckState(readOnlyState);
+            m_hidden->setCheckState(hiddenState);
+            m_readOnlyState = readOnlyState;
+            m_hiddenState = hiddenState;
+        });
+        connect(batchStatusThread, &BatchStatusThread::updateDisabled, this, [=](const bool &readOnlyDisable, const bool &hiddenDisable){
+            m_readOnly->setDisabled(readOnlyDisable);
+            m_hidden->setDisabled(hiddenDisable);
+        });
+        connect(batchStatusThread, &BatchStatusThread::updateIsAllDir, this, [=](const bool &isAllDir){
+            m_isAllDir = isAllDir;
+        });
+        connect(batchStatusThread, &BatchStatusThread::finished, batchStatusThread, &BatchStatusThread::deleteLater);
+    }
 
     //确认被修改
-    connect(m_readOnly,&QCheckBox::stateChanged,this,&BasicPropertiesPage::thisPageChanged);
-    connect(m_hidden,&QCheckBox::stateChanged,this,&BasicPropertiesPage::thisPageChanged);
+    connect(m_readOnly, &QCheckBox::stateChanged, this, &BasicPropertiesPage::thisPageChanged);
+    connect(m_hidden, &QCheckBox::stateChanged, this, &BasicPropertiesPage::thisPageChanged);
 }
 
 BasicPropertiesPage::FileType BasicPropertiesPage::checkFileType(const QStringList &uris)
@@ -811,103 +839,160 @@ void BasicPropertiesPage::saveAllChange()
     if (!this->m_thisPageChanged)
         return;
 
-    //拒绝修改home目录
-    if (m_info.get()->uri() == ("file://"+QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())) {
-        return;
-    }
-    //修改图标
-    this->changeFileIcon();
+    if (BP_MultipleFIle != this->checkFileType(m_uris)) {
+        //拒绝修改home目录
+        if (m_info.get()->uri() == ("file://"+QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())) {
+            return;
+        }
+        //修改图标
+        this->changeFileIcon();
 
-    if (m_readOnly && m_isReadOnly != m_readOnly->isChecked()) {
-        mode_t mod = 0;
-        quint32 mode = 0;
-        if(m_readOnly->isChecked()) {
-//            mod |= S_IRUSR;
-//            mod |= S_IRGRP;
-//            mod |= S_IROTH;
+        if (m_info->isDir()) {
+            if ((m_readOnly && m_readOnlyState != m_readOnly->checkState())
+                    || (m_hidden && m_hiddenState != m_hidden->checkState())) {
+                bool isReadOnly = false;
+                bool isHidden = false;
 
-            g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
-            if (file) {
-                g_autoptr(GError) error = NULL;
-                g_autoptr(GFileInfo) info = g_file_query_info(file,
-                                                              "unix::mode",
-                                                              G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                                              nullptr,
-                                                              &error);
-                bool has_unix_mode = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_UNIX_MODE);
-                if (has_unix_mode) {
-                    mode = g_file_info_get_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                if (Qt::Checked == m_readOnly->checkState()) {
+                    isReadOnly = true;
+                }
+                if (Qt::Checked == m_hidden->checkState()) {
+                    isHidden = true;
+                }
+
+                PropertiesSetDialog *dialog = new PropertiesSetDialog();
+                connect(dialog, &PropertiesSetDialog::sendSelectRadioButton, this, [=](int id){
+                    //id == 0 设置当前所选项   id == 1 递归设置
+                    bool isRecursive = false;
+                    if (id) {
+                        isRecursive = true;
+                    }
+                    FileOperationUtils::setReadOnlyAndHidden(QStringList() << m_info->uri(), isReadOnly, isHidden, isRecursive);
+                });
+                dialog->exec();
+            }
+        } else {
+            if (m_readOnly && m_isReadOnly != m_readOnly->isChecked()) {
+                mode_t mod = 0;
+                quint32 mode = 0;
+                g_autoptr(GFile) file = g_file_new_for_uri(m_info.get()->uri().toUtf8().constData());
+                if(m_readOnly->isChecked()) {
+        //            mod |= S_IRUSR;
+        //            mod |= S_IRGRP;
+        //            mod |= S_IROTH;
+                    if (file) {
+                        g_autoptr(GError) error = NULL;
+                        g_autoptr(GFileInfo) info = g_file_query_info(file,
+                                                                      "unix::mode",
+                                                                      G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                                                      nullptr,
+                                                                      &error);
+                        bool has_unix_mode = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                        if (has_unix_mode) {
+                            mode = g_file_info_get_attribute_uint32(info, G_FILE_ATTRIBUTE_UNIX_MODE);
+                            auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
+                            if (metaInfo) {
+                                metaInfo->setMetaInfoInt(TEMP_PERMISSIONS, mode);
+                            }
+                        }
+                    }
+                    //去除写权限
+                    mode &= ~S_IWUSR;
+                    mode &= ~S_IWGRP;
+                    mode &= ~S_IWOTH;
+                    mod = mode;
+                } else {
                     auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
-                    if (metaInfo) {
-                        metaInfo->setMetaInfoInt(TEMP_PERMISSIONS, mode);
+                    if (metaInfo && metaInfo->getMetaInfoInt(TEMP_PERMISSIONS)) {
+                        mod = metaInfo->getMetaInfoInt(TEMP_PERMISSIONS);
+                    } else {
+                        mod |= S_IRUSR;
+                        mod |= S_IRGRP;
+                        mod |= S_IROTH;
+
+                        mod |= S_IWUSR;
+        //                mod |= S_IWGRP;
+        //                mod |= S_IWOTH;
                     }
                 }
+                //FIX:如果该文件之前就是可执行，那么应该保留可执行权限
+                if (m_info->canExecute())
+                    mod |= S_IXUSR;
+
+                //.desktop文件给予可执行,.desktop文件原本可执行才给可执行权限
+                if (((m_info.get()->isDesktopFile()) || m_info.get()->displayName().endsWith(".desktop")) && m_info->canExecute()) {
+                    //FIX:可执行范围 目前只给拥有者执行权限
+                    mod |= S_IXUSR;
+                    //mod |= S_IXGRP;
+                    //mod |= S_IXOTH;
+                }
+//                QUrl url = m_info.get()->uri();
+//                g_chmod(url.path().toUtf8(), mod);
+                g_file_set_attribute_uint32(file, G_FILE_ATTRIBUTE_UNIX_MODE, (guint32)mod, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+
             }
-            //去除写权限
-            mode &= ~S_IWUSR;
-            mode &= ~S_IWGRP;
-            mode &= ~S_IWOTH;
-            mod = mode;
-        } else {
-            auto metaInfo = FileMetaInfo::fromUri(m_info.get()->uri());
-            if (metaInfo && metaInfo->getMetaInfoInt(TEMP_PERMISSIONS)) {
-                mod = metaInfo->getMetaInfoInt(TEMP_PERMISSIONS);
+
+            //是否进行文件隐藏操作 - Whether to hide files
+            bool existHiddenOpt = false;
+            if (m_hidden) {
+                QString newName = m_info.get()->displayName();
+
+                if (newName.startsWith("."))
+                    newName = newName.mid(1,-1);
+
+                if (isNameChanged()) {
+                    newName = m_displayNameEdit->text();
+                }
+
+                bool isHidden = m_info.get()->displayName().startsWith(".");
+
+                //以前没隐藏，并且选中隐藏框
+                if(!isHidden && m_hidden->isChecked()) {
+                    newName = "." + newName;
+                    FileOperationUtils::rename(m_info.get()->uri(), newName, true);
+                    existHiddenOpt = true;
+
+                } else if(isHidden && !m_hidden->isChecked()) {
+                    //以前已经隐藏，并且取消选中隐藏框
+                    FileOperationUtils::rename(m_info.get()->uri(), newName, true);
+                    existHiddenOpt = true;
+                }
+            }
+
+            if (!existHiddenOpt) {
+                if (isNameChanged()) {
+                    FileOperationUtils::rename(m_info.get()->uri(), m_displayNameEdit->text(), true);
+                }
+            }
+        }
+    } else {
+        if ((m_readOnly && m_readOnlyState != m_readOnly->checkState())
+                || (m_hidden && m_hiddenState != m_hidden->checkState())) {
+
+            bool isReadOnly = false;
+            bool isHidden = false;
+
+            if (Qt::Checked == m_readOnly->checkState()) {
+                isReadOnly = true;
+            }
+            if (Qt::Checked == m_hidden->checkState()) {
+                isHidden = true;
+            }
+
+            if (m_isAllDir) {
+                PropertiesSetDialog *dialog = new PropertiesSetDialog();
+                connect(dialog, &PropertiesSetDialog::sendSelectRadioButton, this, [=](int id){
+                    //id == 0 设置当前所选项   id == 1 递归设置
+                    bool isRecursive = false;
+                    if (id) {
+                        isRecursive = true;
+                    }
+                    FileOperationUtils::setReadOnlyAndHidden(m_uris, isReadOnly, isHidden, isRecursive);
+                });
+                dialog->exec();
             } else {
-                mod |= S_IRUSR;
-                mod |= S_IRGRP;
-                mod |= S_IROTH;
-
-                mod |= S_IWUSR;
-//                mod |= S_IWGRP;
-//                mod |= S_IWOTH;
+                FileOperationUtils::setReadOnlyAndHidden(m_uris, isReadOnly, isHidden, false);
             }
-        }
-        //FIX:如果该文件之前就是可执行，那么应该保留可执行权限
-        if (m_info->canExecute())
-            mod |= S_IXUSR;
-
-        //.desktop文件给予可执行,.desktop文件原本可执行才给可执行权限
-        if (((m_info.get()->isDesktopFile()) || m_info.get()->displayName().endsWith(".desktop")) && m_info->canExecute()) {
-            //FIX:可执行范围 目前只给拥有者执行权限
-            mod |= S_IXUSR;
-            //mod |= S_IXGRP;
-            //mod |= S_IXOTH;
-        }
-        QUrl url = m_info.get()->uri();
-        g_chmod(url.path().toUtf8(), mod);
-
-    }
-
-    //是否进行文件隐藏操作 - Whether to hide files
-    bool existHiddenOpt = false;
-    if (m_hidden) {
-        QString newName = m_info.get()->displayName();
-
-        if (newName.startsWith("."))
-            newName = newName.mid(1,-1);
-
-        if (isNameChanged()) {
-            newName = m_displayNameEdit->text();
-        }
-
-        bool isHidden = m_info.get()->displayName().startsWith(".");
-
-        //以前没隐藏，并且选中隐藏框
-        if(!isHidden && m_hidden->isChecked()) {
-            newName = "." + newName;
-            FileOperationUtils::rename(m_info.get()->uri(), newName, true);
-            existHiddenOpt = true;
-
-        } else if(isHidden && !m_hidden->isChecked()) {
-            //以前已经隐藏，并且取消选中隐藏框
-            FileOperationUtils::rename(m_info.get()->uri(), newName, true);
-            existHiddenOpt = true;
-        }
-    }
-
-    if (!existHiddenOpt) {
-        if (isNameChanged()) {
-            FileOperationUtils::rename(m_info.get()->uri(), m_displayNameEdit->text(), true);
         }
     }
 
@@ -1252,7 +1337,7 @@ void FileNameThread::run()
         }
     } else {
         QStringList stringList;
-        for (auto uri : m_uris) {
+        for (const auto &uri : m_uris) {
             //FIXME: replace BLOCKING api in ui thread.(finish) **
             std::shared_ptr<FileInfo> fileInfo = FileInfo::fromUri(uri);
             FileInfoJob *fileInfoJob = new FileInfoJob(fileInfo);
@@ -1265,4 +1350,179 @@ void FileNameThread::run()
     }
 
     Q_EMIT fileNameReady(fileName);
+}
+
+BatchStatusThread::BatchStatusThread(const QStringList &uris)
+    : m_uris(uris)
+{
+    qRegisterMetaType<Qt::CheckState>("Qt::CheckState");
+}
+
+void BatchStatusThread::run()
+{
+    for (const auto &uri : m_uris) {
+        QStringList stringList;
+        FileEnumerator e;
+        e.setEnumerateDirectory(uri);
+        e.enumerateSync();
+        stringList.append(e.getChildrenUris());
+
+        for (auto u : stringList) {
+            queryInfoUpdate(u, false, false);
+        }
+        queryInfoUpdate(uri, true, true);
+    }
+
+    Qt::CheckState readOnlyState = Qt::CheckState::Unchecked;
+    Qt::CheckState hiddenState = Qt::CheckState::Unchecked;
+    if (m_existReadOnly && !m_existWrite) {
+        readOnlyState = Qt::CheckState::Checked;
+    } else if (m_existReadOnly && m_existWrite) {
+        readOnlyState = Qt::CheckState::PartiallyChecked;
+    } else {
+        readOnlyState = Qt::CheckState::Unchecked;
+    }
+
+    if (m_existHidden && !m_existShow) {
+        hiddenState = Qt::CheckState::Checked;
+    } else if (m_existHidden && m_existShow) {
+        hiddenState = Qt::CheckState::PartiallyChecked;
+    } else {
+        hiddenState = Qt::CheckState::Unchecked;
+    }
+
+    bool hiddenDisable = !m_canRename || m_isDesktop;
+
+    Q_EMIT updateState(readOnlyState, hiddenState);
+    Q_EMIT updateDisabled(!m_canRename, hiddenDisable);
+    Q_EMIT updateIsAllDir(m_isAllDir);
+}
+
+void BatchStatusThread::queryInfoUpdate(const QString &uri, const bool &queryHidden, const bool &queryIsAllDir)
+{
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    bool canRead = false;
+    bool canWrite = false;
+    g_autoptr(GFile) file = g_file_new_for_uri(uri.toUtf8().constData());
+    g_autoptr(GFileInfo) fileInfo = g_file_query_info(file,
+                                                      "standard::*," "access::*,",
+                                                      G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                                      nullptr,
+                                                      nullptr);
+
+    if (g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_READ)) {
+        canRead = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_READ);
+    } else {
+        canRead = true;
+    }
+
+    if (g_file_info_has_attribute(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)) {
+        canWrite = g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+    } else {
+        canWrite = true;
+    }
+
+    if (!g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_ACCESS_CAN_RENAME)) {
+        m_canRename = false;
+    }
+
+    if (queryHidden) {
+        if (g_file_info_get_attribute_boolean(fileInfo, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN)) {
+            m_existHidden = true;
+        } else {
+            m_existShow = true;
+        }
+    }
+
+    if (queryIsAllDir) {
+        GFileType fileType = g_file_info_get_file_type(fileInfo);
+        QString contentType = g_file_info_get_content_type (fileInfo);
+        if (fileType == G_FILE_TYPE_DIRECTORY || contentType == "inode/directory") {
+            m_isAllDir = true;
+        }
+    }
+
+    bool isDesktop = FileUtils::isSamePath(uri, desktopPath);
+    if (isDesktop) {
+        m_isDesktop = isDesktop;
+    }
+
+    if(canRead && !canWrite) {
+        m_existReadOnly = true;
+    } else {
+        m_existWrite = true;
+    }
+}
+
+PropertiesSetDialog::PropertiesSetDialog(QWidget *parent)
+    : QDialog(parent)
+{
+    this->initUI();
+    connect(m_okBtn, &QPushButton::clicked, this, [=](){
+        int id = m_group->checkedId();
+        Q_EMIT sendSelectRadioButton(id);
+        accept();
+    });
+    connect(m_cancelBtn, &QPushButton::clicked, this, &PropertiesSetDialog::reject);
+}
+
+PropertiesSetDialog::~PropertiesSetDialog()
+{
+
+}
+
+void PropertiesSetDialog::initUI()
+{
+    this->setAutoFillBackground(true);
+    this->setWindowTitle(tr("Confirming property settings"));
+    this->setFixedSize(460, 300);
+    this->setContentsMargins(0, 0, 0, 0);
+
+    m_layout = new QVBoxLayout(this);
+    m_layout->setMargin(0);
+    m_layout->setSpacing(0);
+
+    m_label = new QLabel(tr("Whether to apply to the current selected option or to selected options and subfolders and subfiles."));
+    m_label->setContentsMargins(22, 10, 22, 0);
+    m_label->setWordWrap(true);
+    m_label->setAutoFillBackground(true);
+    m_layout->addWidget(m_label);
+    m_layout->addStretch(1);
+
+    QGridLayout *gridLayout = new QGridLayout;
+    gridLayout->setContentsMargins(22, 0, 22, 0);
+    gridLayout->setSpacing(0);
+
+    QLabel *currentSelectLabel = new QLabel(tr("Apply the current selection"), this);
+    QLabel *recursiveLabel = new QLabel(tr("Apply the current selection as well as subfolders and subfiles"), this);
+    currentSelectLabel->setWordWrap(true);
+    recursiveLabel->setWordWrap(true);
+
+    m_currentSelectBtn = new QRadioButton(this);
+    m_recursiveBtn = new QRadioButton(this);
+    m_recursiveBtn->setChecked(true);
+
+    m_group = new QButtonGroup;
+    m_group->setExclusive(true);
+    m_group->addButton(m_currentSelectBtn, 0);
+    m_group->addButton(m_recursiveBtn, 1);
+    gridLayout->addWidget(m_currentSelectBtn, 0, 0, 1, 1);
+    gridLayout->addWidget(currentSelectLabel, 0, 1, 1, 15);
+    gridLayout->addWidget(m_recursiveBtn, 1, 0, 1, 1);
+    gridLayout->addWidget(recursiveLabel, 1, 1, 1, 15);
+    m_layout->addLayout(gridLayout);
+    m_layout->addSpacing(10);
+    m_layout->addStretch(1);
+
+    QHBoxLayout *hBoxLayout = new QHBoxLayout;
+    hBoxLayout->setContentsMargins(22, 0, 22, 0);
+    hBoxLayout->setSpacing(0);
+    m_okBtn = new QPushButton(tr("Ok"));
+    m_cancelBtn = new QPushButton(tr("Cancel"));
+    hBoxLayout->addStretch(1);
+    hBoxLayout->addWidget(m_cancelBtn);
+    hBoxLayout->addSpacing(10);
+    hBoxLayout->addWidget(m_okBtn);
+    m_layout->addLayout(hBoxLayout);
+    m_layout->addSpacing(16);
 }

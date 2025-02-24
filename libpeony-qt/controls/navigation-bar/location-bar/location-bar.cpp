@@ -56,6 +56,7 @@
 #include <QProxyStyle>
 #include <QStyleOptionToolButton>
 #include <syslog.h>
+#include <algorithm>
 
 using namespace Peony;
 
@@ -398,6 +399,7 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     button->setPopupMode(QToolButton::MenuButtonPopup);
 
     auto completeName = FileUtils::getFileDisplayName(uri);
+    button->setProperty("completeName", completeName);
     QString displayName = completeName;
     m_buttons.insert(QUrl(uri).toEncoded(), button);
     if (m_current_uri.startsWith("search://")) {
@@ -429,31 +431,16 @@ void LocationBar::addButton(const QString &uri, bool setIcon, bool setMenu)
     //comment to fix button text show incomplete issue, link to bug#72080
     //button->setStyleSheet("QToolButton{padding-left: 13px; padding-right: 13px}");
 
+    /* hotfix bug#226649 【文件管理器】安装系统时选择英文，安装后切换系统到中文，文件管理器图片等位置的路径栏也翻译成中文，但是点击回车会弹窗报错
     //fix bug#84324
     //    QUrl url = uri;
     QUrl url = FileUtils::urlEncode(uri);
     if (!url.fileName().isEmpty())
     {
-        button->setText(displayName);
         m_current_uri = uri.left(uri.lastIndexOf("/")+1) + displayName;
-    } else {
-        if (uri == "file:///") {
-//            auto text = FileUtils::getFileDisplayName("computer:///root.link");
-//            if (text.isNull()) {
-//                text = tr("File System");
-//            }
-            //fix bug#47597, show as root.link issue
-            QString text = tr("File System");
-            button->setText(text);
-            //comment to fix button text show incomplete issue, link to bug#72080
-            //button->setStyleSheet("QToolButton{padding-left: 15px; padding-right: 15px}");
-        } else {
-            button->setText(displayName);
-        }
-    }
+    } */
 
     //if button text is too long, elide it
-    displayName = button->text();
     if (displayName.length() > ELIDE_TEXT_LENGTH)
     {
         int  charWidth = fontMetrics().averageCharWidth();
@@ -605,83 +592,76 @@ void LocationBar::setAnimationMode(bool isAnimation)
 
 void LocationBar::doLayout()
 {
-    m_indicator->setVisible(false);
+    static int  charWidth = fontMetrics().averageCharWidth();
+    initLayout();
 
-    QList<int> sizeHints;
+    // Handle the truncation logic
+    if (m_iVisibleButtonCount < 2 && m_buttons.count() >= 2) {
+        auto buttonSecondLast = m_buttons.values().at(m_buttons.count() - 2);
+        auto buttonLast = m_buttons.values().last();
 
-    m_indicator_menu->clear();
-
-    int iconWidth = 0;
-    if (!m_buttons.isEmpty()) {
-        auto button = m_buttons.first();
-        button->setVisible(true);
-        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        iconWidth = button->sizeHint().width();
-        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        iconWidth = iconWidth - button->sizeHint().width();
-        button->setVisible(false);
-    }
-    int exceptTotalwidth = 0;
-    for (auto button : m_buttons) {
-        button->setVisible(true);
-        // 默认不做自动文字缩略
-        button->setProperty("elideText", QVariant());
-        button->resize(button->sizeHint().width(), button->height());
-        button->setFixedHeight(this->height()); //fixme
-        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        button->adjustSize();
-        int sizeHintWidth = button->sizeHint().width();
-        exceptTotalwidth += sizeHintWidth;
-        sizeHints<<sizeHintWidth;
-        button->setVisible(false);
-    }
-
-    int totalWidth = this->width() - iconWidth;
-    if (totalWidth < exceptTotalwidth) {
-        totalWidth = totalWidth - m_indicator->width() - 2;
-    }
-
-    int currentWidth = 0;
-    int visibleButtonCount = 0;
-    for (int index = sizeHints.count() - 1; index >= 0; index--) {
-        int tmp = currentWidth + sizeHints.at(index);
-        if (tmp <= totalWidth) {
-            visibleButtonCount++;
-            currentWidth = tmp;
-        } else {
-            break;
+        int buttonLastWidth = buttonLast->sizeHint().width();
+        int buttonSecondLastWidth = m_iTotalWidth - buttonLastWidth;
+        bool isbuttonLastWidthChange = false;
+         // If the width of the second-to-last button is less than the minimum folder name length
+        if (buttonSecondLastWidth <= MIN_FOLDER_NAME_LENGTH * charWidth) {
+            buttonSecondLastWidth = MIN_FOLDER_NAME_LENGTH * charWidth;
+            buttonLastWidth = m_iTotalWidth - buttonSecondLastWidth;
+            isbuttonLastWidthChange = true;
         }
-    }
 
-    int offset = 0;
+        QString completeNameBtnSecondLast = buttonSecondLast->property("completeName").toString();
+        QString completeNameBtnLast = buttonLast->property("completeName").toString();
+        // Truncate the text of the second-to-last button
+        if (completeNameBtnSecondLast.length() * charWidth > buttonSecondLastWidth)
+        {
+            int minValue = std::min({charWidth * (buttonSecondLastWidth / charWidth), charWidth * ELIDE_TEXT_LENGTH, m_iTotalWidth});
+            completeNameBtnSecondLast = fontMetrics().elidedText(completeNameBtnSecondLast, Qt::ElideRight, minValue);
+        }
 
-    bool indicatorVisible = visibleButtonCount < sizeHints.count();
-    if (indicatorVisible) {
-        m_indicator->setVisible(true);
-        offset += m_indicator->width() + 2;
+        if (completeNameBtnSecondLast != buttonSecondLast->text()) {
+            buttonSecondLast->setText(completeNameBtnSecondLast);
+        }
+        buttonSecondLast->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        buttonSecondLast->setVisible(true);
+        buttonSecondLast->adjustSize();
+
+        buttonSecondLast->move(m_iOffset, 0);
+        m_iOffset += buttonSecondLast->width();
+
+        // Truncate the text of the last button
+        //buttonLastWidth = m_iTotalWidth - buttonSecondLast->width() + m_iconWidth - 10;
+        buttonLastWidth = this->width() - m_iOffset - 28;
+        if (completeNameBtnLast.length() * charWidth > buttonLastWidth)
+        {
+            int minValue = std::min({charWidth * (buttonLastWidth / charWidth), charWidth * ELIDE_TEXT_LENGTH});
+            completeNameBtnLast = fontMetrics().elidedText(completeNameBtnLast, Qt::ElideRight, minValue);
+        }
+
+        if (completeNameBtnLast != buttonLast->text()) {
+            buttonLast->setText(completeNameBtnLast);
+        }
+
+        buttonLast->setVisible(true);
+        if (isbuttonLastWidthChange) {
+            buttonLast->adjustSize();
+        }
+
+        buttonLast->move(m_iOffset, 0);
     } else {
-        m_indicator->setVisible(false);
-    }
-
-    for (int index = sizeHints.count() - visibleButtonCount; index < sizeHints.count(); index++) {
-        auto button = m_buttons.values().at(index);
-        button->setVisible(true);
-        button->move(offset, 0);
-        if (index == sizeHints.count() - visibleButtonCount) {
-            button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            button->adjustSize();
+        // Display the visible buttons
+        for (int index = m_sizeHints.count() - m_iVisibleButtonCount; index < m_sizeHints.count(); index++) {
+            if (index >= 0 && index < m_buttons.values().size()) {
+                auto button = m_buttons.values().at(index);
+                button->setVisible(true);
+                button->move(m_iOffset, 0);
+                if (index == m_sizeHints.count() - m_iVisibleButtonCount) {
+                    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+                    button->adjustSize();
+                }
+                m_iOffset += button->width();
+            }
         }
-        offset += button->width();
-    }
-
-    if (visibleButtonCount == 0 && !m_buttons.isEmpty()) {
-        auto button = m_buttons.values().at(sizeHints.count() - 1);
-        button->setVisible(true);
-        // 设置自动文字缩略
-        button->setProperty("elideText", true);
-        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        button->move(offset, 0);
-        button->resize(totalWidth, button->height());
     }
 
     int spaceCount = 0;
@@ -709,6 +689,89 @@ void LocationBar::doLayout()
     //add some space for switch to edit
     for (int i = 0; i < 10; i++) {
          m_indicator_menu->addSeparator();
+    }
+}
+
+void LocationBar::initLayout()
+{
+    static int  charWidth = fontMetrics().averageCharWidth();
+    m_indicator->setVisible(false);
+    m_sizeHints.clear();
+    m_indicator_menu->clear();
+    m_iconWidth = 0;
+    if (!m_buttons.isEmpty()) {
+        auto button = m_buttons.first();
+        button->setVisible(true);
+        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        m_iconWidth = button->sizeHint().width();
+        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        m_iconWidth = m_iconWidth - button->sizeHint().width();
+        button->setVisible(false);
+    }
+    int exceptTotalwidth = 0;
+
+    // restore the text of the last two buttons
+    if (m_buttons.count() >= 2) {
+        auto buttonSecondLast = m_buttons.values().at(m_buttons.count() - 2);
+        auto buttonLast = m_buttons.values().last();
+        QString completeNameBtnSecondLast = buttonSecondLast->property("completeName").toString();
+        QString completeNameBtnLast = buttonLast->property("completeName").toString();
+        completeNameBtnSecondLast = fontMetrics().elidedText(completeNameBtnSecondLast, Qt::ElideRight, charWidth * ELIDE_TEXT_LENGTH);
+
+        if (buttonSecondLast->text() != completeNameBtnSecondLast) {
+            buttonSecondLast->setText(completeNameBtnSecondLast);
+            buttonSecondLast->setVisible(true);
+            buttonSecondLast->adjustSize();
+            buttonSecondLast->setVisible(false);
+        }
+
+        completeNameBtnLast = fontMetrics().elidedText(completeNameBtnLast, Qt::ElideRight, charWidth * ELIDE_TEXT_LENGTH);
+        if (buttonLast->text() != completeNameBtnLast) {
+            buttonLast->setText(completeNameBtnLast);
+            buttonLast->setVisible(true);
+            buttonLast->adjustSize();
+            buttonLast->setVisible(false);
+        }
+    }
+
+    for (auto button : m_buttons) {
+        button->setVisible(true);
+        button->setProperty("elideText", QVariant());
+        button->resize(button->sizeHint().width(), button->height());
+        button->setFixedHeight(this->height()); //fixme
+        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        button->adjustSize();
+        int sizeHintWidth = button->sizeHint().width();
+        exceptTotalwidth += sizeHintWidth;
+        m_sizeHints << sizeHintWidth;
+        button->setVisible(false);
+    }
+
+    m_iTotalWidth = this->width() - m_iconWidth;
+    if (m_iTotalWidth < exceptTotalwidth) {
+        m_iTotalWidth = m_iTotalWidth - m_indicator->width() - 2;
+    }
+
+    int currentWidth = 0;
+    m_iVisibleButtonCount = 0;
+    for (int index = m_sizeHints.count() - 1; index >= 0; index--) {
+        int tmp = currentWidth + m_sizeHints.at(index);
+        if (tmp <= m_iTotalWidth) {
+            m_iVisibleButtonCount++;
+            currentWidth = tmp;
+        } else {
+            break;
+        }
+    }
+
+    m_iOffset = 0;
+
+    bool indicatorVisible = m_iVisibleButtonCount < m_sizeHints.count();
+    if (indicatorVisible) {
+        m_indicator->setVisible(true);
+        m_iOffset += m_indicator->width() + 2;
+    } else {
+        m_indicator->setVisible(false);
     }
 }
 
@@ -742,6 +805,7 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
         } else {
             opt.rect.adjust(0, 1, 0, -1); //bug#165286 地址栏中“计算机”文字显示不完整，高度减小2，宽度不变
         }
+#if 0
         if (widget) {
             if (widget->property("elideText").toBool()) {
                 // 设置文字缩略
@@ -750,6 +814,7 @@ void LocationBarButtonStyle::drawComplexControl(QStyle::ComplexControl control, 
                 opt.text = opt.fontMetrics.elidedText(text, Qt::ElideRight, textWidth);
             }
         }
+#endif
         return qApp->style()->drawComplexControl(control, &opt, painter, widget);
     }
     return qApp->style()->drawComplexControl(control, option, painter, widget);
