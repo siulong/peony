@@ -241,7 +241,32 @@ bool FileItemProxyFilterSortModel::lessThan(const QModelIndex &left, const QMode
             {
                  goto default_sort;
             }
-            return leftItem->m_info->fileType() > rightItem->m_info->fileType();
+
+            //使用文件类型的显示名字排序，也遵循中文优先和文件夹优先规则，关联bug#328899
+            //排序条件下的值相等时，使用名称进行排序，保持排序稳定，刷新后不改变, 关联bug#92525
+            QString leftDisplayType = leftItem->m_info->fileType();
+            QString rightDisplayType= rightItem->m_info->fileType();
+            if (m_use_default_name_sort_order) {
+                //fix chinese first sort wrong issue, link to bug#70836
+                //fix bug#97408,change indicator meanings
+                bool lesser = true;
+                if(startWithChinese(leftDisplayType) && ! startWithChinese(rightDisplayType)) {
+                    // fix #103343
+                    lesser = true;
+                    if (sortOrder() == Qt::AscendingOrder)
+                        return lesser;
+                    return !lesser;
+                }
+                else if(! startWithChinese(leftDisplayType) && startWithChinese(rightDisplayType)) {
+                    lesser = false;
+                    if (sortOrder() == Qt::AscendingOrder)
+                        return lesser;
+                    return !lesser;
+                }
+                else
+                    return comparer.compare(leftDisplayType, rightDisplayType) > 0;
+            }
+            return comparer.compare(leftDisplayType, rightDisplayType) > 0;
         }
         case FileItemModel::ModifiedDate: {
             //delete time sort in trash, fix bug#63093

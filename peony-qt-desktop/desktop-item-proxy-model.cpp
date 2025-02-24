@@ -225,7 +225,25 @@ bool DesktopItemProxyModel::lessThan(const QModelIndex &source_left, const QMode
     case FileType: {
         if (leftInfo->fileType() == rightInfo->fileType())
             goto default_sort;
-        return leftInfo->fileType() > rightInfo->fileType();
+
+        QString leftDisplayType = leftInfo->fileType();
+        QString rightDisplayType = rightInfo->fileType();
+
+        if (startWithChinese(leftDisplayType)) {
+            if (!startWithChinese(rightDisplayType)) {
+                return (sortOrder()==Qt::AscendingOrder)? true: false;
+            } else {
+                //chinese pinyin sort order is reversed compared with english.
+                //return !QSortFilterProxyModel::lessThan(source_left, source_right);
+                //fix bug#89115, chinese files not sort by name pinyin
+                return comparer.compare(leftDisplayType, rightDisplayType) > 0;
+            }
+        } else {
+            if (startWithChinese(rightDisplayType)) {
+                return (sortOrder()==Qt::AscendingOrder)? false: true;
+            }
+            return comparer.compare(leftDisplayType, rightDisplayType) > 0;
+        }
     }
     case FileSize: {
         if (leftInfo->size() == rightInfo->size())
