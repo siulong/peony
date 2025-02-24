@@ -608,6 +608,9 @@ void FileItem::onChildAdded(const QString &uri)
         return;
     }
 
+    //fix bug#330399, new add file, should crear old thumbnail first and create new thumbnail
+    ThumbnailManager::getInstance()->releaseThumbnail(uri);
+
     m_waiting_add_queue.append(uri);
     m_addChildTimer->start();
     return;
@@ -699,6 +702,9 @@ void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
     if (m_uris_to_be_removed.contains(newUri)) {
         m_uris_to_be_removed.removeOne(newUri);
     }
+
+    //fix bug#330399, new add file, should crear old thumbnail first and create new thumbnail
+    ThumbnailManager::getInstance()->releaseThumbnail(newUri);
 
     // note that some times new file has arealy in directory view,
     // and there is no delete event triggered. for example. copy
