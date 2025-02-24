@@ -1286,7 +1286,13 @@ bool AdvancedDesktopIconView::dropWhenAotoArrange(QDropEvent *event)
         selectedItems = view->selectedIndexes();
     }
     if (m_dropIndicatorRect.isValid()) {
-        auto currentHoverIndex = indexAt(m_dropIndicatorRect.center() + (m_dropIndicatorPos == DropIndicatorPosition::BelowItem? QPoint(0, -m_gridSize.height()/2): QPoint()));
+        QPoint offsetPos = QPoint();
+        if (m_dropIndicatorPos == DropIndicatorPosition::BelowItem) {
+            offsetPos = QPoint(0, -m_gridSize.height()/2);
+        } else if (m_dropIndicatorPos == DropIndicatorPosition::AboveItem) {
+            offsetPos = QPoint(0, m_gridSize.height()/2);
+        }
+        auto currentHoverIndex = indexAt(m_dropIndicatorRect.center() + offsetPos);
         if (currentHoverIndex.isValid()) {
             auto currentHoverUri = currentHoverIndex.data(Qt::UserRole).toString();
             auto destSortedUris = m_autoArrange;
