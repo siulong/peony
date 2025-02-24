@@ -575,6 +575,11 @@ void DesktopItemModel::refreshInternal()
 {
     m_items_need_relayout.clear();
     ThumbnailManager::getInstance()->syncThumbnailPreferences();
+    // Empty thumbnail cache if thumbnails are disabled
+    bool do_not_thumbnail = GlobalSettings::getInstance()->getValue(FORBID_THUMBNAIL_IN_VIEW).toBool();
+    if (do_not_thumbnail) {
+        ThumbnailManager::getInstance()->clearThumbnail();
+    }
     beginResetModel();
     //removeRows(0, m_files.count());
     //m_trash_watcher->stopMonitor();

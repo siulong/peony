@@ -466,18 +466,27 @@ QIcon FileInfo::getIcon()
         QString iconNameWithoutSuffix = iconInfo.completeBaseName();
         icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
         if (icon.name() != "unknown") {
-            ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
+            //ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
             return icon;
         }
     }
 
     icon = QIcon::fromTheme(iconName, QIcon::fromTheme("unknown"));
-    if (icon.name() != "unknown" ) {
-        ThumbnailManager::getInstance()->insertOrUpdateThumbnail(uri(), icon);
-        return icon;
+    /**
+     * @bug #329882: [File Manager] When copying and pasting various types of audio files into the file manager
+     *  and refreshing the page, some audio icons are displayed abnormally.
+     *
+     * If icon is "unknown" and m_content_type starts with “audio/” to determine an audio file,
+     *  name the icon “audio-x-generic”.
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2025-02-19
+     */
+    if (icon.name() == "unknown" && m_content_type.startsWith("audio/", Qt::CaseInsensitive)) {
+        icon = QIcon::fromTheme("audio-x-generic", QIcon::fromTheme("unknown"));
     }
 
-    return QIcon::fromTheme("unknown");
+    return icon;
 }
 
 const QString FileInfo::unixDeviceFile()
