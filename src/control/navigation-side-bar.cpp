@@ -447,6 +447,16 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
 //            continue;
 //        expand(index);
     }
+
+    /**
+     * @bug #IB73X8: 【次要】【文件管理器】双击桌面计算机图标，打开的文官左侧选择栏高亮栏为个人栏，应不显示高亮
+     *
+     * comment the following code
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2025-02-24
+     */
+#if 0
     /* 打开文件管理器默认聚焦在家目录上 */
     QString homeUri =  "file://" +  QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QItemSelectionModel *selectionModel = this->selectionModel();
@@ -461,6 +471,7 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
             selectionModel->select(selection, QItemSelectionModel::Select);
         }
     }//end
+#endif
 }
 
 void NavigationSideBar::sendKdkDataAsync()
