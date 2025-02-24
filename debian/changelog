@@ -1,3 +1,15 @@
+peony (4.10.0.5-ok2~0224.1) nile; urgency=medium
+
+  * 删除symbols文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 24 Feb 2025 17:30:29 +0800
+
+peony (4.10.0.5-ok2~0224) nile; urgency=medium
+
+  * 同步upstream相关改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 24 Feb 2025 16:58:50 +0800
+
 peony (4.10.0.5-ok1~1224) nile; urgency=medium
 
   * fix #I9VA55, #I9VP8N
