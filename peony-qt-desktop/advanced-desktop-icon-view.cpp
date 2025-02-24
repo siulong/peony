@@ -1223,6 +1223,10 @@ void AdvancedDesktopIconView::dropEvent(QDropEvent *event)
         QHash<QString, QModelIndex> relayoutIndexes;
         for (QModelIndex index : selectedIndexes()) {
             QString uri = index.data(UriRole).toString();
+            m_itemPosHash.remove(uri);
+        }
+        for (QModelIndex index : selectedIndexes()) {
+            QString uri = index.data(UriRole).toString();
             tmpIndexes.insert(uri, index);
             bool ok = false;
             auto pos = getIndexGridPos(index, &ok);
