@@ -552,7 +552,8 @@ GAsyncReadyCallback FileEnumerator::mount_enclosing_volume_callback(GFile *file,
             if (err->code == G_IO_ERROR_CANCELLED) {
                 return nullptr;
             }
-            if (err->code == G_IO_ERROR_ALREADY_MOUNTED) {
+            if (err->code == G_IO_ERROR_ALREADY_MOUNTED || err->code == G_IO_ERROR_HOST_UNREACHABLE
+                    || err->code == G_IO_ERROR_NETWORK_UNREACHABLE || err->code == G_IO_ERROR_CONNECTION_REFUSED) {
                 Q_EMIT p_this->prepared(GErrorWrapper::wrapFrom(err));
                 return nullptr;
             }
