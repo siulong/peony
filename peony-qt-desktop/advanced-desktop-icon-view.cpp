@@ -893,7 +893,9 @@ void AdvancedDesktopIconView::startDrag(Qt::DropActions supportedActions)
         }
 
         drag->setPixmap(pixmap);
-        drag->setHotSpot(pos - rect.boundingRect().topLeft() - QPoint(viewportMargins().left(), viewportMargins().top()));
+        QRect hotspotRect = rect.boundingRect();
+        hotspotRect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
+        drag->setHotSpot(pos - hotspotRect.topLeft());
         drag->setDragCursor(QPixmap(), m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
         drag->exec(m_ctrl_key_pressed? Qt::CopyAction: Qt::MoveAction);
 
