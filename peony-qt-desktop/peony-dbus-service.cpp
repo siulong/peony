@@ -20,7 +20,7 @@
  *
  */
 
-#include "desktop-icon-view.h"
+#include "advanced-desktop-icon-view.h"
 #include "peony-dbus-service.h"
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -28,7 +28,7 @@
 #include <QDebug>
 using namespace Peony;
 
-PeonyDbusService::PeonyDbusService(DesktopIconView *view, QObject *parent) : QObject(parent)
+PeonyDbusService::PeonyDbusService(AdvancedDesktopIconView *view, QObject *parent) : QObject(parent)
 {
     m_desktopIconView = view;
 }

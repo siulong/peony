@@ -24,12 +24,12 @@
 #define DESKTOPICONVIEWDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <memory>
 
 class QPushButton;
-
+class AdvancedDesktopIconView;
 namespace Peony {
-
-class DesktopIconView;
+class FileInfo;
 
 class DesktopIconViewDelegate : public QStyledItemDelegate
 {
@@ -41,13 +41,20 @@ public:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override {
         return QStyledItemDelegate::initStyleOption(option, index);
     }
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-    DesktopIconView *getView() const;
+    AdvancedDesktopIconView *getView() const;
 
     //初始化option
      void initIndexOption(QStyleOptionViewItem *option,
                           const QModelIndex &index) const;
+
+     /**
+      * @brief Retrieves the FileInfo object associated with a given model index
+      * @param index The QModelIndex for which to retrieve the FileInfo
+      * @return std::shared_ptr<FileInfo> The FileInfo object, or nullptr if not found
+      */
+     std::shared_ptr<FileInfo> getFileInfo(const QModelIndex &index) const;
+
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 

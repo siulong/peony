@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient KScreen
+QT       += core gui x11extras dbus concurrent KWindowSystem KWaylandClient
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -51,13 +51,14 @@ TRANSLATIONS += ../translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts \
                 ../translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
 
 SOURCES += \
+    advanced-desktop-icon-view.cpp \
+    advanced-desktop-item-model.cpp \
     desktop-background-manager.cpp \
+    desktop-window-manager.cpp \
     desktopbackgroundwindow.cpp \
     main.cpp \
     peony-desktop-application.cpp \
     fm-dbus-service.cpp \
-    desktop-item-model.cpp \
-    desktop-icon-view.cpp \
     desktop-icon-view-delegate.cpp \
     desktop-index-widget.cpp \
     desktop-menu.cpp \
@@ -73,12 +74,14 @@ SOURCES += \
     ukui-output-core.c
 
 HEADERS += \
+    advanced-desktop-icon-view.h \
+    advanced-desktop-item-model.h \
+    common.h \
     desktop-background-manager.h \
+    desktop-window-manager.h \
     desktopbackgroundwindow.h \
     peony-desktop-application.h \
     fm-dbus-service.h \
-    desktop-item-model.h \
-    desktop-icon-view.h \
     desktop-icon-view-delegate.h \
     desktop-index-widget.h \
     desktop-menu.h \

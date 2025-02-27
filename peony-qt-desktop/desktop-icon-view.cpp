@@ -44,6 +44,7 @@
 #include "file-item-model.h"
 #include "file-info-job.h"
 #include "file-launch-manager.h"
+#include "file-launch-action.h"
 #include <QProcess>
 
 #include <QDesktopServices>
@@ -287,6 +288,14 @@ DesktopIconView::DesktopIconView(QWidget *parent) : QListView(parent)
 
         return;
     });
+
+    connect(m_model, &DesktopItemModel::refreshFilter, this, [=]() {
+        m_proxy_model->setShowHidden(GlobalSettings::getInstance()->getValue(SHOW_HIDDEN_PREFERENCE).toBool());
+        QTimer::singleShot(100, this, [=]() {
+            resetAllItemPositionInfos();
+            refresh();
+        });
+     });
 
     connect(m_model, &DesktopItemModel::requestClearIndexWidget, this, &DesktopIconView::clearAllIndexWidgets);
 
@@ -1038,6 +1047,7 @@ void DesktopIconView::openFileByUri(QString uri)
                 return;
             }
 
+#ifdef USE_QPROCESS_LAUNCH_DIR
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
             QProcess p;
             QUrl url = uri;
@@ -1073,6 +1083,11 @@ void DesktopIconView::openFileByUri(QString uri)
             }
 
             p.startDetached("/usr/bin/peony", QStringList()<<strq<<"%U&");
+#endif
+#else
+        auto action = Peony::FileLaunchManager::getPeonyAction(uri);
+        action->lauchFileAsync();
+        action->deleteLater();
 #endif
         } else {
             if (!(info->isDesktopFile() && execSharedFileLink(uri))) {
@@ -1530,9 +1545,25 @@ void DesktopIconView::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Return:
     {
         auto selections = this->getSelections();
-        for (auto uri : selections)
+        if (selections.count() >= 1)
         {
-           openFileByUri(uri);
+            QStringList files;
+            QStringList dirs;
+            for (auto uri : selections) {
+                auto info = Peony::FileInfo::fromUri(uri);
+                if (info->isDir() || info->isVolume()) {
+                    dirs<<uri;
+                } else {
+                    files<<uri;
+                }
+            }
+            for (auto uri : dirs) {
+                openFileByUri(uri);
+            }
+
+            if(!files.isEmpty()) {
+                Peony::FileLaunchManager::openFilesByDefaultApplications(files);
+            }
         }
     }
         break;
@@ -2089,6 +2120,14 @@ void DesktopIconView::mouseMoveEvent(QMouseEvent *e)
         if (QToolTip::isVisible()) {
             QToolTip::hideText();
         }
+    }
+
+    // fix #220390
+    if (state() == QListView::DragSelectingState) {
+        auto rubberbandRect = QRect(m_press_pos, e->pos());
+        rubberbandRect = rubberbandRect.normalized();
+        rubberbandRect.adjust(-5, -5, 5, 5);
+        viewport()->update(rubberbandRect);
     }
 
     QListView::mouseMoveEvent(e);

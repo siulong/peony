@@ -50,6 +50,14 @@ public:
         return m_sort_type;
     }
 
+    void setSortOrder(int sortOrder) {
+        m_sort_order = sortOrder;
+    }
+
+    int getSortOrder() {
+        return m_sort_order;
+    }
+
     void setShowHidden(bool showHidden);
     int updateBlackAndWriteLists();
     QString getBlackAndWhiteModel();
@@ -63,16 +71,28 @@ public:
     void invalidateModel();
     void setId(int id);
 
+    QModelIndexList getAllFileIndexes();
+
+    void setDesktopUseAutoLayout(bool desktopUseAutoLayout);
+    bool getDesktopUseAutoLayout() const;
+
+    QStringList getSortedUris() const;
+    void setSortedUris(const QStringList &sortedUris);
+
 Q_SIGNALS:
     void showHiddenFile();
+    void requestSyncSortedUrisWithDelay(int msec = 1000);
 
 private:
     int m_sort_type = Other;
     bool m_show_hidden;
-
+    int m_sort_order = 0;
     BWListInfo    *m_bwListInfo;
     PeonyJsonOperation *m_jsonOp;
     int m_id = 0;
+
+    bool m_desktopUseAutoLayout = false;
+    QStringList m_sortedUris;
 };
 
 }

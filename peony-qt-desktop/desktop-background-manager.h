@@ -50,6 +50,9 @@ public:
     bool getPaintBackground() const;
 
     const QString &getBackgroundOption();
+    void forceUpdateBackground();
+
+    bool AnimationRunning();
 
 Q_SIGNALS:
     void screensUpdated();
@@ -84,6 +87,7 @@ protected:
     QString m_backgroundOption;
 
     bool m_shouldSyncAccountBackground = true;
+    bool m_animationRunning = false;
 };
 
 #endif // DESKTOPBACKGROUNDMANAGER_H
