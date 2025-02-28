@@ -1,0 +1,23 @@
+From: yanglg1 <yangling@kylinos.cn>
+Date: Fri, 28 Feb 2025 16:24:27 +0800
+Subject: =?utf-8?b?5L+u5pS5UUdTZXR0aW5nc+eahGtleeWAvOS4jeWtmOWcqOmXrumimA==?=
+
+---
+ peony-qt-desktop/advanced-desktop-icon-view.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/peony-qt-desktop/advanced-desktop-icon-view.cpp b/peony-qt-desktop/advanced-desktop-icon-view.cpp
+index f505d1a..3caf402 100644
+--- a/peony-qt-desktop/advanced-desktop-icon-view.cpp
++++ b/peony-qt-desktop/advanced-desktop-icon-view.cpp
+@@ -648,8 +648,8 @@ void AdvancedDesktopIconView::initDoubleClick()
+ 
+ void AdvancedDesktopIconView::setMargins()
+ {
+-    int settingsislandposition = m_panelSetting->get("settingsislandposition").toInt();
+-    int paneltype = m_panelSetting->get("paneltype").toInt();
++    int settingsislandposition = m_panelSetting->keys().contains("settingsislandposition") ? m_panelSetting->get("settingsislandposition").toInt() : -1;
++    int paneltype = m_panelSetting->keys().contains("paneltype") ? m_panelSetting->get("paneltype").toInt() : -1;
+     int position = m_panelSetting->get("panelposition").toInt();
+     int margins = m_panelSetting->get("panelsize").toInt();
+ 
