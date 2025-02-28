@@ -648,8 +648,8 @@ void AdvancedDesktopIconView::initDoubleClick()
 
 void AdvancedDesktopIconView::setMargins()
 {
-    int settingsislandposition = m_panelSetting->get("settingsislandposition").toInt();
-    int paneltype = m_panelSetting->get("paneltype").toInt();
+    int settingsislandposition = m_panelSetting->keys().contains("settingsislandposition") ? m_panelSetting->get("settingsislandposition").toInt() : -1;
+    int paneltype = m_panelSetting->keys().contains("paneltype") ? m_panelSetting->get("paneltype").toInt() : -1;
     int position = m_panelSetting->get("panelposition").toInt();
     int margins = m_panelSetting->get("panelsize").toInt();
 
