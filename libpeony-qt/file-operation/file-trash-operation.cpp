@@ -22,6 +22,7 @@
 
 #include "file-trash-operation.h"
 #include "file-operation-manager.h"
+#include "file-meta-info.h"
 #include "file-enumerator.h"
 #include "global-settings.h"
 #include <QProcess>
@@ -249,6 +250,24 @@ retry:
                             g_error_free(error);
                         }
                         g_file_set_attribute_string(dest_file, "metadata::orig-path", orig_path, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                        // 获取当前时间并格式化为 "yyyy-MM-ddThh:mm:ss" 格式的字符串
+                        QString formattedTime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+
+                        // 从目标文件获取 URI，并构造文件信息对象
+                        QString uri = QString::fromUtf8(g_file_get_uri(dest_file));
+                        auto fileInfo = FileInfo::fromUri(uri);
+                        if (fileInfo) {
+                            auto metaInfo = FileMetaInfo::fromUri(fileInfo->uri());
+                            if (metaInfo) {
+                                // 设置 TRASH_TIME 元数据
+                                metaInfo->setMetaInfoString(TRASH_TIME, formattedTime);
+                            } else {
+                                qWarning() << "获取 FileMetaInfo 失败，URI:" << fileInfo->uri();
+                            }
+                        } else {
+                            qWarning() << "获取 FileInfo 失败，URI:" << uri;
+                        }
+
                         g_object_unref(dest_file);
                         if (orig_path) {
                             g_free(orig_path);

@@ -55,6 +55,7 @@ private:
 private:
     GCancellable *m_batchCanellable = nullptr;
     std::vector<std::shared_ptr<FileInfo> >m_infos;
+    QString getTrashTimeFromGFile(const QString &path);
 };
 
 }

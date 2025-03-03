@@ -359,15 +359,6 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
         info->m_create_date = nullptr;
     }
 
-    if (g_file_info_has_attribute(new_info, "trash::deletion-date"))
-    {
-       QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
-       info->m_deletion_date = deletionDate.replace("T", " ");
-       QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
-       info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
-       //time already processed, need /1000 to origin state
-       info->m_deletion_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_deletion_date_uint64/1000);
-    }
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH)) {
         auto origPath = g_file_info_get_attribute_byte_string(new_info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
         info->setProperty("orig-path", origPath);
@@ -385,6 +376,31 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
         }
     }
     info->m_colors = l;
+
+    if (g_file_info_has_attribute(new_info, "trash::deletion-date"))
+    {
+       QString deletionDate = g_file_info_get_attribute_as_string(new_info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
+       info->m_deletion_date = deletionDate.replace("T", " ");
+       QDateTime dateTime = QDateTime::fromString (deletionDate, "yyyy-MM-dd HH:mm:ss");
+       info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch ();
+       //time already processed, need /1000 to origin state
+       info->m_deletion_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_deletion_date_uint64/1000);
+    } else if (uri.startsWith("trash:///")) {
+        // 尝试从已有元数据中获取 trash-time
+        QString trashTime = info->m_meta_info->getMetaInfoString("trash-time");
+        // 如果为空，再通过 gio 查询
+        if (trashTime.isEmpty())
+        {
+            trashTime = getTrashTimeFromGFile(targetUrl.path());
+        }
+        if (!trashTime.isEmpty())
+        {
+            trashTime.replace("T", " ");
+            QDateTime dateTime = QDateTime::fromString(trashTime, "yyyy-MM-dd HH:mm:ss");
+            info->m_deletion_date_uint64 = dateTime.toMSecsSinceEpoch();
+            info->m_deletion_date = GlobalSettings::getInstance()->transToSystemTimeFormat(info->m_deletion_date_uint64 / 1000);
+        }
+    }
 
     auto customIconName = info->m_meta_info.get()->getMetaInfoString("custom-icon");
     if (!customIconName.isEmpty()/* && !customIconName.startsWith("/")*/) {
@@ -422,5 +438,42 @@ std::shared_ptr<FileInfo> FileInfosJob::refreshInfoContents(std::shared_ptr<File
     }
 
     return info;
+}
+
+QString FileInfosJob::getTrashTimeFromGFile(const QString &path)
+{
+    QString trashTime;
+    // 用 constData() 确保传入的是 C 字符串
+    GFile* file = g_file_new_for_path(path.toUtf8().constData());
+    if (!file) {
+        qDebug() << "无法创建 GFile 对象";
+        return trashTime;
+    }
+
+    GError* error = nullptr;
+    // 请求属性 metadata::trash-time
+    GFileInfo* trashInfo = g_file_query_info(file,
+                                             "metadata::trash-time",
+                                             G_FILE_QUERY_INFO_NONE,
+                                             nullptr,
+                                             &error);
+    if (!trashInfo) {
+        qDebug() << "查询文件信息失败:" << error->message;
+        g_error_free(error);
+    } else {
+        const char* metaDataTrashTime = g_file_info_get_attribute_string(trashInfo, "metadata::trash-time");
+        if (metaDataTrashTime)
+        {
+            trashTime = QString(metaDataTrashTime);
+            qDebug() << "metadata::trash-time:" << trashTime;
+        }
+        else
+        {
+            qDebug() << "没有找到 metadata::trash-time 属性";
+        }
+        g_object_unref(trashInfo);
+    }
+    g_object_unref(file);
+    return trashTime;
 }
 
