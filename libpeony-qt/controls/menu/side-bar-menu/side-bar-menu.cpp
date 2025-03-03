@@ -88,6 +88,10 @@ SideBarMenu::SideBarMenu(SideBarAbstractItem *item, SideBar *sideBar, QWidget *p
         constructNetWorkItemActions();
         break;
     }
+    case SideBarAbstractItem::VFSItem: {
+        constructFileSystemItemActions();
+        break;
+    }
     default: {
         auto action = addAction(QIcon::fromTheme("preview-file"), tr("Properties"));
         action->setEnabled(false);
