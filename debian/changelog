@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0303) nile; urgency=medium
+
+  * 修复三岛任务栏gsettings缺失导致的桌面崩溃问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 03 Mar 2025 09:26:07 +0800
+
 peony (4.10.0.5-ok2~0227) nile; urgency=medium
 
   * 桌面同步upstream相关改动
