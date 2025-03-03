@@ -250,23 +250,23 @@ retry:
                             g_error_free(error);
                         }
                         g_file_set_attribute_string(dest_file, "metadata::orig-path", orig_path, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
-                        // 获取当前时间并格式化为 "yyyy-MM-ddThh:mm:ss" 格式的字符串
+                        // 获取当前时间，并格式化为 "yyyy-MM-ddThh:mm:ss" 格式的字符串
                         QString formattedTime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
 
-                        // 从目标文件获取 URI，并构造文件信息对象
-                        QString uri = QString::fromUtf8(g_file_get_uri(dest_file));
-                        auto fileInfo = FileInfo::fromUri(uri);
-                        if (fileInfo) {
-                            auto metaInfo = FileMetaInfo::fromUri(fileInfo->uri());
-                            if (metaInfo) {
-                                // 设置 TRASH_TIME 元数据
-                                metaInfo->setMetaInfoString(TRASH_TIME, formattedTime);
-                            } else {
-                                qWarning() << "获取 FileMetaInfo 失败，URI:" << fileInfo->uri();
-                            }
-                        } else {
-                            qWarning() << "获取 FileInfo 失败，URI:" << uri;
+                        // 使用 gio 接口直接设置 metadata::trash-time 属性
+                        // dest_file 为 GFile* 对象
+                        GError *err = nullptr;
+                        if (!g_file_set_attribute_string(dest_file,
+                                                         "metadata::trash-time",
+                                                         formattedTime.toUtf8().constData(),
+                                                         G_FILE_QUERY_INFO_NONE,  // 新增 flags 参数
+                                                         nullptr,
+                                                         &err))
+                        {
+                            qWarning() << "设置 metadata::trash-time 属性失败:" << err->message;
+                            g_error_free(err);
                         }
+
 
                         g_object_unref(dest_file);
                         if (orig_path) {
