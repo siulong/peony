@@ -548,6 +548,15 @@ const QList<QAction *> DirectoryViewMenu::constructOpenOpActions()
                 if (!files.isEmpty())
                     FileLaunchManager::openFilesByDefaultApplications(files);
             });
+#ifdef MULTI_DISABLE
+            auto info = FileInfo::fromUri(m_selections.first());
+            if (info) {
+                QString uri = info->uri();
+                if (uri.startsWith("mult:///")) {
+                    l.last()->setEnabled(false);
+                }
+            }
+#endif
         }
     }
 
