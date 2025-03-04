@@ -613,6 +613,7 @@ void AdvancedDesktopIconView::openFileByUri(QString uri)
 #endif
             data.setLaunchedBy(getpid());
             KStartupInfo::sendStartup(startInfoId, data);
+            KStartupInfo::resetStartupEnv();
 #else
             QProcess p;
             QString strq;
