@@ -181,7 +181,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
     //paint text shadow
     painter->save();
-    painter->translate(1, 1 + iconSizeExpected.height() + 10);
+    painter->translate(1, 1 + iconSizeExpected.height() + 5);
 
     int maxLineCount = 2;
 
@@ -231,7 +231,7 @@ void DesktopIconViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
     //paint text
     painter->save();
-    painter->translate(0, 0 + iconSizeExpected.height() + 10);
+    painter->translate(0, 0 + iconSizeExpected.height() + 5);
     //painter->setFont(opt.font);
     painter->setFont(qApp->font());
     QColor textColor = Qt::white;

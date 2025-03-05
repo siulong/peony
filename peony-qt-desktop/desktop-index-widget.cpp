@@ -143,7 +143,7 @@ void DesktopIndexWidget::paintEvent(QPaintEvent *e)
     p.restore();
 
     p.save();
-    p.translate(0, 5 + m_delegate->getView()->iconSize().height() + 5);
+    p.translate(0,  m_delegate->getView()->iconSize().height() + 5);
 
     if (b_elide_text)
     {

@@ -1551,7 +1551,10 @@ void AdvancedDesktopIconView::recalculateAvailableRowAndColumnCount()
     m_gridSize = QSize(10, 10); // padding: 5
     m_gridSize += iconSize(); // icon size
     m_gridSize += QSize(0, 5); // text-icon-padding: 5
-    m_gridSize += QSize(0, qApp->fontMetrics().height()*2); // 2 line text height, todo: fix bo_CN
+    QFont font = qApp->font();
+    font.setPointSize(15);
+    QFontMetrics fm = QFontMetrics(font);
+    m_gridSize += QSize(0, fm.height()*2); // 2 line text height, todo: fix bo_CN
     m_gridSize.setWidth(qMax(qApp->fontMetrics().averageCharWidth()*5 + 10, m_gridSize.width() + 31));
 
     auto size = viewport()->rect().size();
