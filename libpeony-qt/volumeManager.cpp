@@ -219,14 +219,6 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
             dlg->setAttribute(Qt::WA_DeleteOnClose);
             dlg->exec();
         }
-        {
-            QMutexLocker lk(&m_mutex);
-            if(m_occupiedVolume){
-                delete m_occupiedVolume;
-                m_occupiedVolume = nullptr;
-                m_occupiedVolumeUri = QString();
-            }
-        }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
 }
@@ -674,6 +666,10 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
     if(pThis->m_volumeList->contains(volume->device())){
         {
             QMutexLocker lk(pThis->getMutex());
+            if(pThis->m_occupiedVolume){
+                delete pThis->m_occupiedVolume;
+                pThis->m_occupiedVolume = nullptr;
+            }
             pThis->m_occupiedVolume = volume;
             pThis->m_occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(volume->device());
             qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume<<pThis->m_occupiedVolumeUri ;
