@@ -259,6 +259,10 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     if((opt.state & QStyle::State_Enabled) && (opt.state & QStyle::State_Selected)) {
         opt.state &= ~QStyle::State_Selected;
     }
+    auto info = m_info.lock();
+    if (info->uri().startsWith("filesafe:///")) {/* hotfix bug#225885 保护箱锁定后图标没有变 */
+        opt.icon = qvariant_cast<QIcon>(m_index.data(Qt::DecorationRole));
+    }
     p.save();
     p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, &p, opt.widget);
@@ -272,8 +276,6 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     opt.text = std::move(tmp);
 
     //extra emblems
-    auto info = m_info.lock();
-
     // draw color symbols
     if(info->uri().startsWith("favorite://")){/* 快速访问须特殊处理 */
         info = FileInfo::fromUri(FileUtils::getEncodedUri(FileUtils::getTargetUri(info->uri())));
