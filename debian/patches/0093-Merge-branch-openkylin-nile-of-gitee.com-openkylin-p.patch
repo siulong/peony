@@ -1,0 +1,29 @@
+From: RenYangguang <14705561+renyangguang@user.noreply.gitee.com>
+Date: Tue, 11 Mar 2025 03:23:40 +0000
+Subject: Merge branch 'openkylin/nile' of gitee.com:openkylin/peony into
+ hotfix-bug#IB73X8-sidebar-personal-err
+
+Signed-off-by: RenYangguang <14705561+renyangguang@user.noreply.gitee.com>
+---
+ src/control/navigation-side-bar.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/control/navigation-side-bar.cpp b/src/control/navigation-side-bar.cpp
+index 317c1b1..d6c70eb 100644
+--- a/src/control/navigation-side-bar.cpp
++++ b/src/control/navigation-side-bar.cpp
+@@ -483,12 +483,12 @@ NavigationSideBar::NavigationSideBar(QWidget *parent) : QTreeView(parent)
+     }
+ 
+     /**
+-     * @bug #278107: [Requirement 35207] [Start Menu] [Ribbon] Shortcut Entry-Computer Jump to the left side of the computer interface positioning error
++     * @bug #IB73X8: 【次要】【文件管理器】双击桌面计算机图标，打开的文官左侧选择栏高亮栏为个人栏，应不显示高亮
+      *
+      * comment the following code
+      *
+      * @author: Renyg <renyangguang@kylinos.cn>
+-     * @date:   2024-11-01
++     * @date:   2025-02-24
+      */
+ #if 0
+     /* 打开文件管理器默认聚焦在家目录上 */
