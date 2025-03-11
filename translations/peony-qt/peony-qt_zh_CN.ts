@@ -85,12 +85,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="69"/>
         <source>Open In New Window</source>
-        <translation type="unfinished">在新窗口中打开</translation>
+        <translation>在新窗口中打开</translation>
     </message>
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="78"/>
         <source>Open In New Tab</source>
-        <translation type="unfinished">在新标签页中打开</translation>
+        <translation>在新标签页中打开</translation>
     </message>
     <message>
         <location filename="../../src/control/file-label-box.cpp" line="87"/>
@@ -589,12 +589,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="244"/>
         <source>Show Network</source>
-        <translation type="unfinished"></translation>
+        <translation>显示网上邻居</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="249"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"></translation>
+        <translation>连接远程服务器</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="261"/>
@@ -983,8 +983,12 @@ Do you want to unmount forcely?</source>
 <context>
     <name>SortTypeMenu</name>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>File Name</source>
+        <translation type="vanished">文件名称</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
+        <source>Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
@@ -1001,6 +1005,18 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/sort-type-menu.cpp" line="55"/>
         <source>Path</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="70"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="126"/>
+        <source>Descending Order</source>
+        <translation>降序</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="75"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="127"/>
+        <source>Ascending Order</source>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="86"/>
@@ -1051,16 +1067,12 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">修改日期</translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="75"/>
-        <location filename="../../src/control/sort-type-menu.cpp" line="127"/>
         <source>Ascending</source>
-        <translation>升序</translation>
+        <translation type="vanished">升序</translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="70"/>
-        <location filename="../../src/control/sort-type-menu.cpp" line="126"/>
         <source>Descending</source>
-        <translation>降序</translation>
+        <translation type="vanished">降序</translation>
     </message>
 </context>
 <context>

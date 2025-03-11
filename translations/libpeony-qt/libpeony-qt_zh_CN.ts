@@ -4,8 +4,12 @@
 <context>
     <name>ColorPushButton</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
         <source>label management ...</source>
+        <translation type="vanished">标识管理 ...</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
+        <source>Label Management ...</source>
         <translation>标识管理 ...</translation>
     </message>
     <message>
@@ -2758,6 +2762,11 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation>删除所有标记</translation>
     </message>
     <message>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="262"/>
+        <source>Label Management ...</source>
+        <translation>标识管理 ...</translation>
+    </message>
+    <message>
         <source>Peony File Labels Menu Extension</source>
         <translation type="vanished">文件标记</translation>
     </message>
@@ -2766,16 +2775,19 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <translation type="vanished">菜单中增加标记功能.</translation>
     </message>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="262"/>
         <source>label management ...</source>
-        <translation>标识管理 ...</translation>
+        <translation type="vanished">标识管理 ...</translation>
     </message>
 </context>
 <context>
     <name>Peony::FileLabelWidget</name>
     <message>
-        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="447"/>
         <source>label management ...</source>
+        <translation type="vanished">标识管理 ...</translation>
+    </message>
+    <message>
+        <location filename="../../libpeony-qt/controls/menu/menu-plugin-manager.cpp" line="447"/>
+        <source>Label Management ...</source>
         <translation>标识管理 ...</translation>
     </message>
 </context>
