@@ -48,6 +48,7 @@ public:
         Office = 6,
         Desktop = 7,
         CustomIcon = 8,
+        TextPlain = 9,
         Other
     };
     Q_ENUM (Type)
@@ -67,6 +68,7 @@ public Q_SLOTS:
 private:
     QString m_uri;
     std::weak_ptr<FileWatcher> m_watcher;
+
 };
 
 }

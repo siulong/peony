@@ -26,6 +26,7 @@
 #include <QStyledItemDelegate>
 #include <peony-core_global.h>
 #include <QFileSystemWatcher>
+#include <memory>
 
 class QPushButton;
 
@@ -33,6 +34,7 @@ namespace Peony {
 
 class DesktopIconViewDelegate;
 class DesktopIndexWidget;
+class FileInfo;
 
 namespace DirectoryView {
 
@@ -116,7 +118,8 @@ class PEONYCORESHARED_EXPORT IconViewTextHelper
                           const QModelIndex &index,
                           int textMaxHeight,
                           int horizalMargin = 0,
-                          int maxLineCount = 4, bool useSystemPalette = true, const QColor &customColor = Qt::transparent);
+                          int maxLineCount = 4, bool useSystemPalette = true, const QColor &customColor = Qt::transparent,
+                          std::shared_ptr<FileInfo> info = nullptr);
 
     static void paintText(QPainter *painter,
                           const QStyleOptionViewItem &option,
@@ -124,7 +127,8 @@ class PEONYCORESHARED_EXPORT IconViewTextHelper
                           int xOffset,
                           const QString &regFindKeyWords,
                           int horizalMargin = 0,
-                          int maxLineCount = 4) ;
+                          int maxLineCount = 4,
+                          std::shared_ptr<FileInfo> info = nullptr);
 
     static qreal drawText(QPainter *painter,
                           const QStyleOptionViewItem &option,
@@ -133,6 +137,7 @@ class PEONYCORESHARED_EXPORT IconViewTextHelper
                           const QString &regFindKeyWords,
                           int horizalMargin = 0,
                           int maxLineCount = 4) ;
+                          
 };
 
 }

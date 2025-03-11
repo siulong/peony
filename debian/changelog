@@ -1,3 +1,28 @@
+peony (4.10.0.5-ok2~0303) nile; urgency=medium
+
+  * 修复三岛任务栏gsettings缺失导致的桌面崩溃问题
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 03 Mar 2025 09:26:07 +0800
+
+peony (4.10.0.5-ok2~0227) nile; urgency=medium
+
+  * 桌面同步upstream相关改动
+  * 移除kscreen相关patch
+
+ -- Yue Lan <lanyue@kylinos.cn>  Thu, 27 Feb 2025 17:27:33 +0800
+
+peony (4.10.0.5-ok2~0224.1) nile; urgency=medium
+
+  * 删除symbols文件
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 24 Feb 2025 17:30:29 +0800
+
+peony (4.10.0.5-ok2~0224) nile; urgency=medium
+
+  * 同步upstream相关改动
+
+ -- Yue Lan <lanyue@kylinos.cn>  Mon, 24 Feb 2025 16:58:50 +0800
+
 peony (4.10.0.5-ok1~1224) nile; urgency=medium
 
   * fix #I9VA55, #I9VP8N

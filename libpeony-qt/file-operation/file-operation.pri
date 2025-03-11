@@ -12,7 +12,9 @@ HEADERS += \
     $$PWD/file-node.h                           \
     $$PWD/file-operation-helper.h \
     $$PWD/file-operation-internal-dialog.h \
+    $$PWD/file-operation-progress-bar-helper.h \
     $$PWD/shared-file-link-operation.h \
+    $$PWD/file-properties-operation.h \
     $$PWD/xatom-helper.h                        \
     $$PWD/file-operation.h                      \
     $$PWD/file-node-reporter.h                  \
@@ -38,7 +40,9 @@ SOURCES += \
     $$PWD/file-node.cpp                         \
     $$PWD/file-operation-helper.cpp \
     $$PWD/file-operation-internal-dialog.cpp \
+    $$PWD/file-operation-progress-bar-helper.cpp \
     $$PWD/shared-file-link-operation.cpp \
+    $$PWD/file-properties-operation.cpp \
     $$PWD/xatom-helper.cpp                      \
     $$PWD/file-operation.cpp                    \
     $$PWD/file-node-reporter.cpp                \

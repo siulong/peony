@@ -86,6 +86,7 @@ public:
     QSet<QString> getFileUrisFromLabelId(int labelId);
     QString getLabelNameFromLabelId(int id);
     int getLabelIdFromLabelName(const QString &colorName);
+    QColor getLableColorFromLabelName(const QString &colorName);
 
 
 Q_SIGNALS:
@@ -93,6 +94,7 @@ Q_SIGNALS:
     void fileLabelAdded(const QString &uri, bool successed);
     void fileLabelRemoved(const QString &uri, bool successed);
     void fileLabelRenamed(const QString oldUri, const QString newUri);
+    void labelColorNameChanged(const QString uri, const QString& oldColorName, const QString& newColorName);
 
 public Q_SLOTS:
     void setName(FileLabelItem *item, const QString &name);

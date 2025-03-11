@@ -44,19 +44,35 @@ using namespace Peony;
 
 static void handleDuplicate(FileNode *node)
 {
-    node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    if (node->isFolder()) {
+        node->setDestFileName(FileUtils::handleFolderName(node->destBaseName()));
+    } else {
+        node->setDestFileName(FileUtils::handleDuplicateName(node->destBaseName()));
+    }
 }
 
 FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri, QObject *parent) : FileOperation (parent)
 {
+    //origin code from dj, for sangfor clound project change
+    //fix bug#249783, copy absolute file crash issue
     for (auto u : sourceUris) {
-        if (u.split ("://").length () != 2) {
+        if (u.split("://").length () > 2) {
             sourceUris.removeOne (u);
         }
     }
 
     QUrl destDirUrl = Peony::FileUtils::urlEncode(destDirUri);
-    QUrl firstSrcUrl = Peony::FileUtils::urlEncode(sourceUris.first());
+    //fix bug#249783, copy absolute file crash issue
+    QString srcId = "";
+    if (sourceUris.length() > 0)
+        srcId = Peony::FileUtils::urlEncode(sourceUris.first());
+    if (! srcId.startsWith("file://") && !srcId.contains("://")) {
+    //关联bug# 261581蓝信复制失败问题，主要问题为蓝信的复制至剪切版MimeData中的url存在异常，导致url编码后是绝对路径
+    //由于蓝信无批量复制功能且不支持拖拽，故当前只处理拷贝第一个文件
+        srcId = "file://" + srcId;
+        sourceUris.replace(0, srcId);
+    }
+    QUrl firstSrcUrl = srcId;
     if("label" == firstSrcUrl.scheme())
     {
         QString scheme = firstSrcUrl.path().section("?schema=",-1,-1);
@@ -83,7 +99,7 @@ FileCopyOperation::FileCopyOperation(QStringList sourceUris, QString destDirUri,
         if(uri.startsWith("label://"))
         {
             QUrl url(uri);
-            QString scheme = url.path().section("?schema=",-1,-1);
+            QString scheme = uri.section("?schema=",-1,-1);
             QString path = url.path().section("?schema=", 0, 0).section("/",2,-1);
             uri = QString(scheme).append(":///").append(path);
         }
@@ -115,7 +131,7 @@ ExceptionResponse FileCopyOperation::prehandle(GError *err)
         case G_IO_ERROR_CANCELLED:
         case G_IO_ERROR_INVALID_DATA:
         case G_IO_ERROR_NOT_SUPPORTED:
-        case G_IO_ERROR_PERMISSION_DENIED:
+//        case G_IO_ERROR_PERMISSION_DENIED:
         case G_IO_ERROR_CANT_CREATE_BACKUP:
         case G_IO_ERROR_TOO_MANY_OPEN_FILES:
             return Other;
@@ -237,7 +253,12 @@ fallback_retry:
             if (handle_type == Other) {
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
@@ -314,6 +335,21 @@ fallback_retry:
                 setHasError(true);
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
+                            }
+                        }
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     auto result = udfCopyWarningDialog();
                     if (Cancel == result) {
@@ -339,6 +375,21 @@ fallback_retry:
                 node->setState(FileNode::Invalid);
                 node->setErrorResponse(OverWriteOne);
                 m_prehandle_hash.insert(err->code, OverWriteOne);
+                if (G_IO_ERROR_EXISTS == err->code) {
+                    g_autoptr(GFileInfo) info = g_file_query_info(destFile.get()->get()
+                                                        , G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET
+                                                        , G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+                    if (info) {
+                        if (G_FILE_TYPE_SYMBOLIC_LINK == g_file_info_get_file_type(info)) {
+                            g_file_delete(destFile.get()->get(), nullptr, &error);
+                            if (error) {
+                                qDebug() << error->code << error->message;
+                            } else {
+                                goto fallback_retry;
+                            }
+                        }
+                    }
+                }
                 if (!m_is_udf_warning && m_is_udf_burn_work) {
                     m_is_udf_warning = true;
                     auto result = udfCopyWarningDialog();
@@ -466,25 +517,6 @@ fallback_retry:
             }
         } else {
             node->setState(FileNode::Handled);
-            // if copy sucessed, flush all data
-            g_autoptr(GFile) destFile = g_file_new_for_uri(destFileUri.toUtf8().constData());
-            if (g_file_query_exists(destFile, nullptr)) {
-                // copy file attribute
-                // It is possible that some file systems do not support file attributes
-                g_autoptr(GFile) srcFile = g_file_new_for_uri(srcUri.toUtf8().constData());
-                g_file_copy_attributes(srcFile, destFile, G_FILE_COPY_ALL_METADATA, nullptr, &err);
-                if (nullptr != err) {
-                    qWarning() <<destFileUri<<"copy attribute error:" << err->code << "  ---  " << err->message;
-                    g_error_free(err);
-                    err = nullptr;
-                }
-                QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(srcUri);
-                for(auto &labelId: labelIds){
-                    if(labelId <= 0)
-                        continue;
-                    FileLabelModel::getGlobalModel()->addLabelToFile(destFileUri, labelId);
-                }
-            }
         }
 
         if (SaveOne == node->responseType() || SaveAll == node->responseType()) {
@@ -506,6 +538,14 @@ fallback_retry:
                                    m_parent_flags,
                                    nullptr,
                                    &error);
+
+            /* 文件夹copy成功后，如有标记需添加到全局对应的标记页面 */
+            QList<int> labelIds = FileLabelModel::getGlobalModel()->getFileLabelIds(srcUri);
+            for(auto &labelId: labelIds){
+                if(labelId <= 0)
+                    continue;
+                FileLabelModel::getGlobalModel()->addLabelToFile(destFileUri, labelId);
+            }//end
         }
 
         if (error) {
@@ -638,7 +678,12 @@ fallback_retry:
             if (handle_type == Other) {
                 switch (err->code) {
                 case G_IO_ERROR_EXISTS: {
-                    except.dlgType = ED_CONFLICT;
+                    if (isDlpState()) {
+                        except.dlgType = ED_WARNING;
+                        except.errorStr = tr("Cannot opening file, permission denied!");
+                    } else {
+                        except.dlgType = ED_CONFLICT;
+                    }
                     Q_EMIT errored(except);
                     auto typeData = except.respCode;
                     handle_type = typeData;
@@ -1016,7 +1061,58 @@ void FileCopyOperation::run()
     }
 #endif
 
+    bool writeable = true;
+    if (queryDirIsReadOnlyFS(m_dest_dir_uri, false, m_is_udf_burn_work, &writeable)) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_source_uris.isEmpty()? nullptr: m_source_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpCopy;
+        except.title = tr("File copy error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not copy %1 to %2: Read-only mode, can not write-in").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    } else if (!writeable) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_source_uris.isEmpty()? nullptr: m_source_uris.first();
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpCopy;
+        except.title = tr("File copy error");
+        QUrl srcUrl(except.srcUri);
+        QUrl destUrl(except.destDirUri);
+        except.errorStr = tr("Can not copy %1 to %2: Permission denied").arg(srcUrl.fileName()).arg(destUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    }
+
     Q_EMIT operationRequestShowWizard();
+
+//    if(m_dest_dir_uri.startsWith("mtp://") || m_dest_dir_uri.startsWith("gphoto2://")) {
+//        int usbSafeMode = getUsbSafeMode();
+//        if (usbSafeMode != 0) {
+//            FileOperationError except;
+//            except.dlgType = ED_WARNING;
+//            except.errorType = ET_GIO;
+//            except.srcUri = m_source_uris.isEmpty()? nullptr: m_source_uris.first();
+//            except.destDirUri = m_dest_dir_uri;
+//            except.op = FileOpCopy;
+//            except.title = tr("File copy error");
+//            except.errorStr = tr("open file %1 error: Read-only file system").arg(m_dest_dir_uri.split("://").last());
+//            errored(except);
+//            setHasError(true);
+//            Q_EMIT operationFinished();
+//            return;
+//        }
+//    }
 
     goffset *total_size = new goffset(0);
 
@@ -1039,6 +1135,7 @@ void FileCopyOperation::run()
         }
         node->findChildrenRecursively();
         node->computeTotalSize(total_size);
+        m_total_count += m_reporter->getTotalCount();
         nodes << node;
     }
 
@@ -1066,7 +1163,7 @@ void FileCopyOperation::run()
             FileOperationError except;
             QString name;
             if (storage.rootPath() == "/") {
-                name = tr("File System");
+                name = tr("System Disk");
             } else if (storage.rootPath() == "/data") {
                 name = tr("Data");
             } else {
@@ -1104,6 +1201,10 @@ void FileCopyOperation::run()
         }
     }
 
+    if (m_total_count <= 500 && m_total_size < 300 * 1024 * 1024) {
+        syncDestUri(m_dest_dir_uri);
+    }
+
     //comment to fix bug#177163, copy and paste file has error and play success sound issue
     //copy operation has finished, no need reset flag, keep the same with move-operation
     //setHasError(false);
@@ -1123,6 +1224,8 @@ void FileCopyOperation::run()
                     burnUris.removeOne(node->uri());
                     break;
                 case BackupOne:
+                case TruncateOne:
+                case RenameOne:
                     burnUris.replaceInStrings(node->uri(), node->destUri());
                     break;
                 default:
@@ -1134,8 +1237,10 @@ void FileCopyOperation::run()
     }
     m_info->m_dest_uris = m_info->m_node_map.values();
     nodes.clear();
+
 #ifdef KY_UDF_BURN
     if (mHelper->isUnixCDDevice() && !isCancelled()) {
+        Q_EMIT operationUdfBurnRunning(true);
         if(!mHelper->discWriteOperation(burnUris, m_dest_dir_uri)) {
             FileOperationError except;
             except.errorType = ET_CUSTOM;
@@ -1148,6 +1253,7 @@ void FileCopyOperation::run()
             Q_EMIT errored(except);
         }
         m_is_udf_burn_work = false;
+        Q_EMIT operationUdfBurnRunning(false);
     } else {
         if (m_is_udf_burn_work) {
             m_is_udf_burn_work = false;
@@ -1366,6 +1472,46 @@ bool FileCopyOperation::saveAsOtherPath()
         m_is_long_name_file_operation = true;
     }
     return true;
+}
+
+int FileCopyOperation::getUsbSafeMode()
+{
+    return 0;
+
+    QFile file("/sys/devices/platform/hw_trans_bios_variable/usb_safe_mode");
+    if (!file.exists()) {
+        qDebug() << "The file does not exist";
+        return 0;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return 0;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    file.close();
+    return status;
+}
+
+bool FileCopyOperation::isDlpState()
+{
+    if (!m_dest_dir_uri.startsWith("file:///media/")) {
+        return false;
+    }
+    QFile file("/sys/kernel/security/dlp/usb_check_status");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Error: Unable to open file";
+        return false;
+    }
+    // 读取文件内容
+    QTextStream in(&file);
+    QString content = in.readLine();
+    int status = content.toInt();
+    bool result = (status == 1);
+    file.close();
+    return result;
 }
 
 void FileCopyOperation::cancel()

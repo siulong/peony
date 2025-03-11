@@ -119,24 +119,6 @@ ListView::ListView(QWidget *parent) : QTreeView(parent)
     header()->setStretchLastSection(false);
     header()->setMinimumSectionSize(130);
     header()->setTextElideMode(Qt::ElideRight);
-    if (this->topLevelWidget()->objectName() == "_peony_mainwindow") {
-        connect(header(), &QHeaderView::sectionClicked, this, [=](){
-            //update sort policy
-            auto settings = GlobalSettings::getInstance();
-            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
-                settings->setValue(SORT_COLUMN, getSortType());
-                settings->setValue(SORT_ORDER, getSortOrder());
-            } else {
-                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
-                if (metaInfo) {
-                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
-                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
-                } else {
-                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
-                }
-            }
-        });
-    }
 
     connect(header(), &QHeaderView::sectionResized, this, [=]{
         m_header_section_resized_manually = true;
@@ -214,6 +196,28 @@ bool ListView::isDragging()
 
 void ListView::bindModel(FileItemModel *sourceModel, FileItemProxyFilterSortModel *proxyModel)
 {
+    if (topLevelWidget()->objectName() != "_peony_mainwindow") {
+        setFrameShape(QFrame::NoFrame);
+    } else {
+        // note: 如果在构造函数中判断topLevelWidget的objectName，不会找到mainwindow，因为此时还没有设置parent为directoryViewContainer
+        connect(header(), &QHeaderView::sectionClicked, this, [=](){
+            //update sort policy
+            auto settings = GlobalSettings::getInstance();
+            if (settings->getValue(USE_GLOBAL_DEFAULT_SORTING).toBool()) {
+                settings->setValue(SORT_COLUMN, getSortType());
+                settings->setValue(SORT_ORDER, getSortOrder());
+            } else {
+                auto metaInfo = FileMetaInfo::fromUri(getDirectoryUri());
+                if (metaInfo) {
+                    metaInfo->setMetaInfoVariant(SORT_COLUMN, getSortType());
+                    metaInfo->setMetaInfoVariant(SORT_ORDER, getSortOrder());
+                } else {
+                    qCritical()<<"failed to set meta info"<<getDirectoryUri();
+                }
+            }
+        });
+    }
+
     if (!sourceModel || !proxyModel)
         return;
     m_model = sourceModel;
@@ -413,6 +417,12 @@ void ListView::mousePressEvent(QMouseEvent *e)
         setCurrentIndex(index);
         return;
     }
+    /* hotfix bug#279385 选中一个文件后，鼠标左键点击文管空白位置，文件的选中状态未消失 */
+    if(e->button() == Qt::LeftButton && (!indexAt(e->pos()).isValid()) )
+    {
+        this->clearSelection();
+        return;
+    }//end
 
     //m_renameTimer
     if(!m_renameTimer->isActive())
@@ -464,12 +474,8 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
     QModelIndex itemIndex = indexAt(e->pos());
     if (!itemIndex.isValid()) {
         if (QToolTip::isVisible()) {
-            QToolTip::hideText();
-        }
-    } else {
-        if (0 != itemIndex.column() && QToolTip::isVisible()) {
-            QToolTip::hideText();
-        }
+             QToolTip::hideText();
+         }
     }
 
     QTreeView::mouseMoveEvent(e);
@@ -510,7 +516,18 @@ void ListView::mouseMoveEvent(QMouseEvent *e)
 void ListView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     m_editValid = false;
-
+    /**
+     * @bug #250731: [File Manager] Right clicking on the same folder several times in the file manager will take you to the folder
+     *
+     * Prevent double-click events from triggering on right-click
+     * Only double left clicks will be processed
+     *
+     * @author Renyg
+     * @date 2024-08-12
+     */
+    if (event->button() == Qt::RightButton) {
+        return;
+    }
     QTreeView::mouseDoubleClickEvent(event);
 }
 
@@ -693,6 +710,8 @@ void ListView::reUpdateScrollBar()
 
 void ListView::updateGeometries()
 {
+    if (m_flag)
+        return;
     setUpdatesEnabled(false);
     QTreeView::updateGeometries();
     reUpdateScrollBar();
@@ -1026,6 +1045,9 @@ const QString ListView::getDirectoryUri()
 
 void ListView::setDirectoryUri(const QString &uri)
 {
+    if (m_current_uri != uri) {
+        disableMultiSelect();
+    }
     m_current_uri = uri;
     if (m_current_uri.startsWith("search://")) {
         QString nameRegexp = SearchVFSUriParser::getSearchUriNameRegexp(uri);
@@ -1078,7 +1100,11 @@ int ListView::getCurrentCheckboxColumn()
 {
     int section =header()->sectionViewportPosition(3);
     int viewportWidth =viewport()->width()+viewport()->x();
+
     int selectBox = 3;
+    if (m_current_uri.startsWith("trash:///")) {
+        selectBox = 4;
+    }
 
     for(int i=1;i<=model()->columnCount()-1;i++)
     {
@@ -1380,6 +1406,9 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
     connect(m_model, &FileItemModel::updated, m_view->viewport(), QOverload<>::of(&QWidget::update));
 
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [=]() {
+        m_view->m_flag = true;
+        m_view->doItemsLayout();
+        m_view->m_flag = false;
         Q_EMIT viewSelectionChanged();
     });
 
@@ -1453,8 +1482,6 @@ void ListView2::bindModel(FileItemModel *model, FileItemProxyFilterSortModel *pr
         }
         m_need_resize_header = false;
     });
-
-    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_view, &QTreeView::doItemsLayout);
 }
 
 void ListView2::repaintView()
@@ -1478,4 +1505,5 @@ void ListView2::clearIndexWidget()
         m_view->setIndexWidget(index, nullptr);
         m_view->closePersistentEditor(index);
     }
+    m_view->selectionModel()->clearSelection();
 }

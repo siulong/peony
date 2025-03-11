@@ -35,6 +35,15 @@ class VideoThumbnail{
 public:
     explicit VideoThumbnail(const QString &uri);
     ~VideoThumbnail();
+    /**
+     * @brief Generates a thumbnail for a video file.
+     *
+     * This function attempts to create a thumbnail for the video file specified
+     * by the class member m_url. It first checks if a cached thumbnail exists,
+     * and if not, uses ffmpegthumbnailer to generate one.
+     *
+     * @return QIcon The generated thumbnail as a QIcon. Returns an empty QIcon if generation fails.
+     */
     QIcon generateThumbnail();
 
 private:

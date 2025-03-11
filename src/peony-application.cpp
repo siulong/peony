@@ -91,7 +91,7 @@
 #include <QThreadPool>
 
 #include "properties-window-factory-plugin-manager.h"
-//#include "properties-window.h"
+#include "properties-window.h"
 
 #include "complementary-style.h"
 
@@ -332,6 +332,13 @@ QString PeonyApplication::getUriMessage(QStringList& strList)
 
 void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
 {
+    //story 28077, control start of peony
+    if (! Peony::GlobalSettings::getInstance()->getValue(ENABLE_START_PEONY).toBool()){
+        qWarning() << "peony is diablsed to start";
+        Peony::GlobalSettings::getInstance()->sendNotifyMessage(tr("Peony is disabled to start !"));
+        return;
+    }
+
     QCommandLineParser parser;
     if (m_first_parse) {
         parser.addHelpOption();
@@ -431,8 +438,16 @@ void PeonyApplication::parseCmd(quint32 id, QByteArray msg)
             qApp->setProperty("showProperties", true);
             QMainWindow *window = Peony::PropertiesWindowFactoryPluginManager::getInstance()->create(uris);
             //Peony::PropertiesWindow *window = new Peony::PropertiesWindow(uris);
+            Peony::PropertiesWindow *w = qobject_cast<Peony::PropertiesWindow *>(window);
+            if (w) {
+                if (Peony::GlobalSettings::getInstance()->isExist(SHOW_SHARE_PROPERTIES) && Peony::GlobalSettings::getInstance()->getValue(SHOW_SHARE_PROPERTIES).toBool()) {
+                    w->setOpenTabPage("SharePage");
+                    Peony::GlobalSettings::getInstance()->setValue(SHOW_SHARE_PROPERTIES, false);
+                }
+            }
             window->setAttribute(Qt::WA_DeleteOnClose);
-            window->show();
+            Peony::PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //window->show();
             KWindowSystem::raiseWindow(window->winId());
             if (KWindowSystem::activeWindow() != window->winId()) {
                 KWindowSystem::activateWindow(window->winId());

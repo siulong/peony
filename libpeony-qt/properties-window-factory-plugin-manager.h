@@ -48,9 +48,11 @@ public:
     bool registerFactory(PropertiesWindowTabPagePluginIface *factory);
     bool unregisterFactory(PropertiesWindowTabPagePluginIface *factory);
 
-    QMainWindow *create(const QStringList &uris);
+    QMainWindow *create(const QStringList &uris, QWidget *parentWidget = nullptr);
 
     PropertiesWindowFactoryPluginIface *getFactory(const QString &id);
+
+    void show();
 
     explicit PropertiesWindowFactoryPluginManager(QObject *parent = nullptr);
 

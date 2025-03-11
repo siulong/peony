@@ -64,7 +64,15 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void resizeEvent(QResizeEvent *event) override;
 
+    /**
+     * @brief Performs the layout of the LocationBar.
+     */
     void doLayout();
+
+    /**
+     * @brief Initializes the layout of the LocationBar.
+     */
+    void initLayout();
 
 private:
     QString m_current_uri;
@@ -77,6 +85,7 @@ private:
     bool m_isAnimation = false;   //在动画过程中不会重新布局
 
     const int ELIDE_TEXT_LENGTH = 16;
+    const int MIN_FOLDER_NAME_LENGTH = 4;
 
     std::shared_ptr<FileInfo> m_current_info;
     QList<std::shared_ptr<FileInfo>> m_buttons_info;
@@ -84,6 +93,11 @@ private:
     QHash<QString, QList<std::shared_ptr<FileInfo>>> m_infos_hash;
 
     bool m_is_classical = false;
+    QList<int> m_sizeHints;
+    int m_iTotalWidth = 0;
+    int m_iOffset = 0;
+    int m_iVisibleButtonCount = 0;
+    int m_iconWidth = 0;
 };
 
 }

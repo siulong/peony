@@ -79,19 +79,6 @@ Peony::ThumbnailJob::~ThumbnailJob()
 
 void Peony::ThumbnailJob::run()
 {
-    /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
-    {
-        auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
-        QMutexLocker lk(mutex);
-        auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
-        if(occupiedVolume){
-            QString volumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(occupiedVolume->device());
-            qDebug()<<occupiedVolume->device()<<volumeUri<<m_uri;
-            if(m_uri.startsWith(volumeUri))
-                return;
-        }
-    }//end
-
     if (!parent())
         return;
 
@@ -102,6 +89,19 @@ void Peony::ThumbnailJob::run()
     if (type() == Invalid && !m_uri.endsWith(".desktop")|| !Peony::FileUtils::isFileExsit(m_uri)) {
         return;
     }
+
+    /* 移动设备弹出时被ffmpeg占用时，强制弹出过程中防止该设备的文件仍继续使用ffmpeg，link to bug#117263 */
+    if(!GlobalSettings::getInstance()->isDesktopStartUp()){
+        auto mutex = Experimental_Peony::VolumeManager::getInstance()->getMutex();
+        QMutexLocker lk(mutex);
+        auto occupiedVolume = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolume();
+        if(occupiedVolume){
+            QString occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getOccupiedVolumeUri();
+            qDebug()<<occupiedVolume->device()<<occupiedVolumeUri<<m_uri;
+            if(!occupiedVolumeUri.isEmpty() && m_uri.startsWith(occupiedVolumeUri))
+                return;
+        }
+    }//end
 
     runCount++;
 
@@ -131,12 +131,13 @@ void Peony::ThumbnailJob::run()
     } else if (mimeType.contains("djvu")) {
         setType(ImagePdf);
     } else if (mimeType.startsWith("video")
-               || mimeType.endsWith("vnd.trolltech.linguist")
                || mimeType.endsWith("vnd.adobe.flash.movie")
                || mimeType.endsWith("vnd.rn-realmedia")
-               || mimeType.endsWith("vnd.ms-asf")
-               || mimeType.endsWith("octet-stream")) {
+               || mimeType.endsWith("vnd.ms-asf")) {
         setType(Video);
+    } else if (mimeType.contains("text/plain") && m_uri.endsWith(".txt")) {
+        //task#383521, support pure txt file preview
+        setType(TextPlain);
     } else {
         int idx = 0;
         QString mtype = nullptr;
@@ -193,6 +194,11 @@ void Peony::ThumbnailJob::run()
                     strongPtr->fileChanged(m_uri);
                 }
             }
+            break;
+        }
+        case TextPlain: {
+            //task#383521, support pure txt file preview
+            ThumbnailManager::getInstance()->createTextFileThumbnail(m_uri, strongPtr);
             break;
         }
         default: {

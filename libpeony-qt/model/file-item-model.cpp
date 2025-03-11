@@ -38,12 +38,14 @@
 #include "global-settings.h"
 
 #include "file-operation-utils.h"
-
+#include "directory-view-container.h"
 #include "emblem-provider.h"
 #include "sound-effect.h"
 #ifdef KY_SDK_SOUND_EFFECTS
 #include "ksoundeffects.h"
 #endif
+
+#include "tooltips-manager.h"
 
 #include <QIcon>
 #include <QMimeData>
@@ -93,14 +95,17 @@ FileItemModel::~FileItemModel()
 {
     qDebug()<<"~FileItemModel";
     disconnect();
-    if (m_root_item)
+    if (m_root_item){
         delete m_root_item;
+        m_root_item = nullptr;
+    }
 
     if(m_fileManagerThread){
         m_fileManagerThread->quit();
         m_fileManagerThread->wait();
         // 无法使用deleteLater()删除，因为此线程已经被移入自身，而且已经退出无法处理事件
         delete m_fileManagerThread;
+        m_fileManagerThread = nullptr;
     }
 }
 
@@ -127,9 +132,16 @@ void FileItemModel::setRootUri(const QString &uri)
 void FileItemModel::setRootItem(FileItem *item)
 {
     beginResetModel();
-    m_root_item->deleteLater();
 
+    /* 解决使用'm_root_item->deleteLater();'时光盘弹出切换到计算机视图后，偶现旧数据没有析构的问题；link bug#208641 向UDF格式R盘拖拽添加文件，文管内文件图标显示错乱。修改于2024-8-13
+     * 解决使用'delete m_root_item;'时双击侧边栏远程服务，第二次m_root_item未被赋值新item，未挂载路径回退时导致二次析构；link bug#267007 双击共享文件夹链接地址文件管理闪退。修改于2024-9-25 */
+    FileItem *oldData = m_root_item;
     m_root_item = item;
+    if(oldData){
+        delete oldData;
+        oldData = nullptr;
+    }
+    //end hotfix bug#208641、267007
 
     m_root_item->connectFunc();
     if(m_infosJob){
@@ -237,7 +249,7 @@ QModelIndex FileItemModel::parent(const QModelIndex &child) const
 int FileItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (m_root_uri == "trash:///") {
+    if (m_root_uri == "trash:///" || m_root_uri.startsWith("search:///")) {
         return FileSize + 2;
     }
     return FileSize+1;
@@ -278,6 +290,12 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole: {
             //fix bug#53504, desktop files not show same name issue
             QString displayName = item->m_info->displayName();
+
+            if ("computer:///root.link" == item->m_info->uri()) {
+                displayName = tr("System Disk");
+                return QVariant(displayName);
+            }
+
             if (item->m_info->isDesktopFile())
             {
                 displayName = FileUtils::handleDesktopFileName(item->m_info->uri(), item->m_info->displayName());
@@ -293,21 +311,20 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
                 return QVariant(displayName);
         }
         case Qt::DecorationRole: {
-            auto thumbnail = ThumbnailManager::getInstance()->tryGetThumbnail(item->m_info->uri());
-            if (!thumbnail.isNull()) {
-                return thumbnail;
+            if (!item->m_info->isExistTargetOfSymlink()) {
+                return QIcon::fromTheme("unknown");
             }
-            QIcon icon = QIcon::fromTheme(item->m_info->iconName(), QIcon::fromTheme("unknown"));
-            return QVariant(icon);
+            return item->m_info->getIcon();
         }
         case Qt::ToolTipRole: {
-            //fix bug#53504, desktop files not show same name issue
-            if (item->m_info->isDesktopFile())
-            {
-                auto displayName = FileUtils::handleDesktopFileName(item->m_info->uri(), item->m_info->displayName());
-                return QVariant(displayName);
-            }
-            return QVariant(item->m_info->displayName());
+            /**
+             * @task #346285: 【Tooltips specification】Change the desktop icon (including the management-desktop-application icon) tooltips display,
+             *  add supplementary text
+             *
+             * @author: Renyg <renyangguang@kylinos.cn>
+             * @date:   2024-09-25
+             */
+            return QVariant(TooltipsManagerInstance.generateTooltip(item->m_info.get()));
         }
         case Qt::UserRole + 1: {
             return item->m_info->displayName();
@@ -364,22 +381,34 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     }
-    case TrashOriginPath: {
+    case FilePath: {
         switch (role) {
         case Qt::DisplayRole:
         case Qt::ToolTipRole: {
-            QString originPath = item->m_info->property("orig-path").toString();
-            if (originPath.isEmpty()) {
-                auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
-                if (targetInfo->isEmptyInfo()) {
-                    FileInfoJob j(targetInfo);
-                    j.querySync();
-                    originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
-                    item->m_info->setProperty("orig-path", originPath);
+            if(m_root_uri.startsWith("trash://")){
+                QString originPath = item->m_info->property("orig-path").toString();
+                if (originPath.isEmpty()) {
+                    auto targetInfo = FileInfo::fromUri(item->m_info->targetUri());
+                    if (targetInfo->isEmptyInfo()) {
+                        FileInfoJob j(targetInfo);
+                        j.querySync();
+                        originPath = FileMetaInfo::fromUri(targetInfo->uri())->getMetaInfoString("orig-path");
+                        item->m_info->setProperty("orig-path", originPath);
+                    }
+                    return originPath;
                 }
                 return originPath;
+            }else if(m_root_uri.startsWith("search:///")){
+                QString path = item->m_info->filePath();
+                if(!path.isEmpty()){
+                    return path;
+                }else if(item->uri().startsWith("trash://")){
+                    return item->m_info->property("orig-path").toString();
+                }else{
+                    QString targetUri = item->m_info.get()->targetUri();
+                    return QUrl(targetUri).path();
+                }
             }
-            return originPath;
             break;
         }
         default:
@@ -414,8 +443,12 @@ QVariant FileItemModel::headerData(int section, Qt::Orientation orientation, int
             return tr("File Type");
         case FileSize:
             return tr("File Size");
-        case TrashOriginPath:
-            return tr("Original Path");
+        case FilePath:{
+            if (m_root_uri.startsWith("trash:///"))
+                return tr("Original Path");
+            if(m_root_uri.startsWith("search:///"))
+                return tr("Path");
+        }
 
         default:
             return QVariant();
@@ -455,10 +488,13 @@ Qt::ItemFlags FileItemModel::flags(const QModelIndex &index) const
         return flags;
     } else {
         if (m_root_item) {
+            QString fsType = m_root_item->m_info.get()->fileSystemType();
             if (m_root_item->m_info->canWrite()) {
                 return Qt::ItemIsDropEnabled;
-            } else if(m_root_item->m_info.get()->fileSystemType().contains("udf")) {
+            } else if(fsType.contains("udf") || fsType.isEmpty()) {
                 return Qt::ItemIsDropEnabled;
+            } else {
+                return Qt::ItemIsEnabled;
             }
         }
         return Qt::ItemIsDropEnabled;
@@ -792,6 +828,28 @@ void FileItemModel::setShowFileExtensions(bool show)
 {
     m_showFileExtension = show;
     GlobalSettings::getInstance()->setGSettingValue(SHOW_FILE_EXTENSION, show);
+}
+
+void FileItemModel::insetFileInfoData(std::vector<std::shared_ptr<FileInfo> > &fileInfoVec, FileItem *parentItem)
+{
+    if(!parentItem || 0 == fileInfoVec.size())
+        return;
+
+    FileItem *oldData = m_root_item;
+    m_root_item = parentItem;
+    if(oldData){
+        delete oldData;
+        oldData = nullptr;
+    }
+    m_root_uri = m_root_item->uri();
+
+    beginInsertRows(QModelIndex(), 0, fileInfoVec.size() -1);
+    for (auto& info : fileInfoVec) {
+        FileItem *item = new FileItem(info, m_root_item, this);
+        m_root_item->m_children->append(item);
+        m_root_item->m_uri_item_hash.insert(item->uri(), item);
+    }
+    endInsertRows();
 }
 
 const QModelIndex FileItemModel::indexFromItemAndUri(FileItem *item, const QString &uri)

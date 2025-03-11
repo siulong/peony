@@ -33,6 +33,7 @@
 #include <QDBusReply>
 #include <QFile>
 #include <QProcess>
+#include <QTimer>
 #include <global-settings.h>
 
 #include <gio/gio.h>
@@ -40,7 +41,9 @@
 #include <QDebug>
 
 static DesktopBackgroundManager *global_instance = nullptr;
-#define BACKGROUND_SETTINGS "org.mate.background"
+
+#define BACKGROUND_MATE_SETTINGS "org.mate.background"
+#define BACKGROUND_SETTINGS "org.ukui.interface"
 
 DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(parent)
 {
@@ -61,6 +64,10 @@ DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(pa
             m_animation->start();
         }
         updateScreens();
+        QTimer::singleShot(200, this, [=](){
+             m_animationRunning = false;
+        });
+
     });
 
     initGSettings();
@@ -72,6 +79,13 @@ void DesktopBackgroundManager::initGSettings()
         m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
 
+//        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
+        g_autoptr (GSettings) settings = g_settings_new_with_path("org.ukui.interface", "/org/ukui/interface/");
+        if (settings) {
+            bool writable = g_settings_is_writable(settings, "picture-filename");
+            m_shouldSyncAccountBackground = writable;
+        }
+    } else if (QGSettings::isSchemaInstalled(BACKGROUND_MATE_SETTINGS)){
         g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
         if (settings) {
             bool writable = g_settings_is_writable(settings, "picture-filename");
@@ -84,8 +98,10 @@ void DesktopBackgroundManager::initGSettings()
     setBackground();
     if (m_backgroundSettings) {
         connect(m_backgroundSettings, &QGSettings::changed, this, [=](const QString &key){
+           m_animationRunning = true;
            if (key == "pictureFilename") {
                 m_current_bg_path = m_backgroundSettings->get("pictureFilename").toString();
+                m_shouldSyncAccountBackground = true;
                 setAccountBackground();
             }
             if (key == "pictureFilename" || key == "primaryColor" || key == "pictureOptions") {
@@ -132,11 +148,66 @@ void DesktopBackgroundManager::setBackground()
     }
 
     m_frontPixmap = QPixmap(defaultBg);
+    //ctyun项目反馈壁纸问题修复
+    //fix jpeg file change suffix name to png, set as wallpaper fail issue
+    //fix bug#242528, can not read jpg wallpaper issue
+    if (m_frontPixmap.isNull()){
+        QFile file(defaultBg);
+        if (file.open(QIODevice::ReadOnly)){
+            m_frontPixmap.loadFromData(file.readAll());
+            file.close();
+        }
+    }
     m_current_bg_path = defaultBg;
     if (defaultBg != accountBack)
         setAccountBackground();
 
     m_animation->finished();
+}
+
+/*
+* 1.为解决云桌面批量推送同名壁纸，重新设置壁纸不生效问题，增加强制更新接口；
+* 2.接口可以通过peony-qt-desktop -u 命令调用；
+* 3.接口目前只会使用gsettings设置的壁纸值做刷新，然后备份到个人壁纸数据；
+* 4.壁纸数据备份后，如果用户将壁纸文件本身删除，重新刷新也会使用备份的壁纸，不会丢失；
+*/
+void DesktopBackgroundManager::forceUpdateBackground()
+{
+    if (!m_backgroundSettings){
+        qWarning() << "forceUpdateBackground failed, m_backgroundSettings not exist";
+        return;
+    }
+
+    m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+    auto path = m_backgroundSettings->get("pictureFilename").toString();
+    if (! QFile::exists(path)){
+        qWarning() << "forceUpdateBackground failed, pictureFilename not exist";
+        return;
+    }
+
+    if (m_animation->state() == QVariantAnimation::Running) {
+        m_pendingPixmap = QPixmap(path);
+        m_current_bg_path = path;
+    } else {
+        m_frontPixmap = QPixmap(path);
+        //天翼云项目反馈壁纸问题修复
+        //fix jpeg file change suffix name to png, set as wallpaper fail issue
+        if (m_frontPixmap.isNull()){
+            QFile file(path);
+            if (file.open(QIODevice::ReadOnly)){
+                m_frontPixmap.loadFromData(file.readAll());
+                file.close();
+            }
+        }
+        if (m_backPixmap.isNull()) {
+            m_backPixmap = m_frontPixmap;
+        }
+        m_current_bg_path = path;
+        m_animation->start();
+    }
+
+    updateScreens();
+    setAccountBackground();
 }
 
 QString DesktopBackgroundManager::getAccountBackground()
@@ -311,4 +382,9 @@ QPixmap DesktopBackgroundManager::getBackPixmap() const
 const QString &DesktopBackgroundManager::getBackgroundOption()
 {
     return m_backgroundOption;
+}
+
+bool DesktopBackgroundManager::AnimationRunning()
+{
+    return m_animationRunning;
 }

@@ -80,12 +80,14 @@ public:
     bool acceptDropAction() const;
     void setAcceptDropAction(bool acceptDropAction);
     Peony::DesktopIconView *getIconView(const QString &uri);
+    std::shared_ptr<FileInfo> getFileInfo(const QModelIndex& index) const;
 
 Q_SIGNALS:
     void requestLayoutNewItem(const QString &uri);
     void requestClearIndexWidget(const QStringList &uris = QStringList());
     void requestUpdateItemPositions(const QString &uri = nullptr);
     void refreshed();
+    void refreshFilter();
 
    // void fileCreated(const QString &uri);
 

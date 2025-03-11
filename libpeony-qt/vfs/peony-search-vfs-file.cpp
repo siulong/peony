@@ -215,7 +215,7 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
     QStringList paths;
     QStringList keyWords;
 
-    if (args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
+    if (args.size() > 1 && args.at(1).contains("name_regexp=") && 12 == args.at(1).size()
             && !details->search_vfs_directory_uri->contains("search_hidden=")
             && !details->search_vfs_directory_uri->contains("use_regexp=")
             && !details->search_vfs_directory_uri->contains("case_sensitive=")
@@ -381,7 +381,6 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
         }
 
         details->m_search->initSearchPlugin(UkuiSearch::SearchProperty::SearchType::File);
-        details->m_search->initSearchPlugin(UkuiSearch::SearchProperty::SearchType::FileContent);
         details->m_queue = details->m_search->init();
         details->m_search->setMaxResultNum(9999999);
 
@@ -396,6 +395,26 @@ void peony_search_vfs_file_enumerator_parse_uri(PeonySearchVFSFileEnumerator *en
 //        l->exec();
 //        l->deleteLater();
     }
+
+    if (nullptr != details->m_contentSearch && details->search_engine) {
+        details->m_contentSearch->clearAllConditions();
+        details->m_contentQueue->clear();
+
+        for (QString &dir : paths) {
+            dir = Peony::FileUtils::urlDecode(dir);
+            details->m_contentSearch->addSearchDir(dir);
+        }
+
+        for (QString &key : keyWords) {
+            details->m_contentSearch->addKeyword(key);
+        }
+
+        details->m_contentSearch->initSearchPlugin(UkuiSearch::SearchProperty::SearchType::FileContent);
+        details->m_contentQueue = details->m_contentSearch->init();
+        details->m_contentSearch->setMaxResultNum(9999999);
+    }
+
+    details->m_duplicatesHash->clear();
 #endif
 }
 

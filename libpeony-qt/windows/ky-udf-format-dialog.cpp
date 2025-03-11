@@ -80,6 +80,8 @@ UdfFormatDialog::UdfFormatDialog(const QString &uri, DiscControl *discControl, Q
 
     m_okBtn = new QPushButton;
     m_okBtn->setText(tr("OK"));
+    m_okBtn->setDefault(true);
+    m_okBtn->setProperty("isImportant", true);
     m_cancelBtn = new QPushButton;
     m_cancelBtn->setText(tr("Cancel"));
     m_mainLayout->addWidget(m_cancelBtn, 4, 5, 1, 2);

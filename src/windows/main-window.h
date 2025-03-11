@@ -156,6 +156,7 @@ public Q_SLOTS:
 
     void setCurrentViewZoomLevel(int zoomLevel);
     QString getLastSearchKey();
+    void clearLastSearchPath();
     void updateTabletModeValue(bool isTabletMode);
 
     void updateSearchStatus(bool isSearching);

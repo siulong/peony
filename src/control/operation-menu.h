@@ -25,6 +25,8 @@
 
 #include "about-dialog.h"
 #include <QMenu>
+#include <QToolButton>
+#include <QEvent>
 
 class MainWindow;
 class QToolButton;
@@ -48,6 +50,7 @@ private:
     QAction *m_showCreateTime = nullptr;
     QAction *m_showFoldersInNewWindow = nullptr;
     QAction *m_showRelativeTime = nullptr;
+    QAction *m_showNetwork = nullptr;
 
 private:
     MainWindow *m_window = nullptr;
@@ -68,6 +71,24 @@ private:
     explicit OperationMenuEditWidget(MainWindow *window, QWidget *parent = nullptr);
 
     void updateActions(const QString &currentDirUri, const QStringList &selections);
+    /**
+     * @brief Handles events for watched objects
+     * @param watched The object being watched
+     * @param event The event that occurred
+     * @return true if the event was handled, false otherwise
+     *
+     * This event filter specifically handles tooltip events for QToolButtons,
+     * calculating and adjusting tooltip positions to ensure they remain visible
+     * within screen boundaries.
+     */
+    bool eventFilter(QObject *watched, QEvent *event);
+    /**
+     * @brief Installs tooltip event filter on a tool button
+     * @param btn The QToolButton to install the event filter on
+     *
+     * Sets up event filtering for tooltip display on the specified button.
+     */
+    void installTooltipFilter(QToolButton *btn);
 
     QToolButton *m_copy = nullptr;
     QToolButton *m_paste = nullptr;

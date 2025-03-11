@@ -209,7 +209,8 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
         if(0 == occupiedAppMap.size()){
             QTimer::singleShot(500,[=](){
                 QMutexLocker lk(&m_mutex);
-                m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
+                if(m_occupiedVolume)
+                    m_occupiedVolume->eject(G_MOUNT_UNMOUNT_NONE);
             });
             //QMessageBox::critical(nullptr, QObject::tr("Eject failed"), message);
         }else{
@@ -217,6 +218,14 @@ VolumeManager::VolumeManager(QObject *parent) : QObject(parent)
             dlg->init(occupiedAppMap, message);
             dlg->setAttribute(Qt::WA_DeleteOnClose);
             dlg->exec();
+        }
+        {
+            QMutexLocker lk(&m_mutex);
+            if(m_occupiedVolume){
+                delete m_occupiedVolume;
+                m_occupiedVolume = nullptr;
+                m_occupiedVolumeUri = QString();
+            }
         }
     }, Qt::QueuedConnection);
     m_occupiedAppsInfoThread->start();
@@ -252,6 +261,7 @@ VolumeManager::~VolumeManager(){
         if(m_occupiedVolume){
             delete m_occupiedVolume;
             m_occupiedVolume = nullptr;
+            m_occupiedVolumeUri = QString();
         }
     }
 }
@@ -362,7 +372,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->volumeRemove(device);
         pThis->m_volumeList->remove(device);
         pThis->m_volumeList->insert(device, addItem);
-        qDebug()<<__func__<<__LINE__<<device;
+        qDebug()<<__func__<<__LINE__<<device<<"isHidden:"<<addItem->getHidden();
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
         //情景1、关闭gparted时，所有具有卸载属性的设备均会触发volume-added信号
         //      该情景似乎不需要更新属性信息，确认一下name属性？
@@ -387,7 +397,7 @@ void VolumeManager::volumeAddCallback(GVolumeMonitor *monitor,
         //情景3、默认用数据线连接的手机("仅充电")
         pThis->m_volumeList->remove(addItem->device());
         pThis->m_volumeList->insert(addItem->device(),addItem);
-        qDebug()<<__func__<<__LINE__<<addItem->device();
+        qDebug()<<__func__<<__LINE__<<addItem->device()<<addItem->getHidden();
         Q_EMIT pThis->volumeAdd(Volume(*addItem));
     }
 }
@@ -430,13 +440,14 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
                 if (device.startsWith("/dev/sd")) {
                     QString uuid = getDeviceUUID(device.toUtf8().constData());
                     auto size = Peony::FileUtils::getDeviceSize(device.toUtf8().constData());
-                    qDebug()<<__func__<<__LINE__<<uuid<<size;
+                    qDebug()<<__func__<<__LINE__<<device<<"uuid:"<<uuid<<"size:"<<size;
                     if (uuid.isEmpty() && size == 0) {
                         addItem->setHidden(true);
                         // if drive has media, it is not represent a docking station.
                         // so it should not be hidden.
                         if (driveHasMedia(gdrive)) {
                             addItem->setHidden(false);
+                            qDebug()<<device<<"set hidden false";
                         }
                     }
                 }//end
@@ -469,7 +480,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
     QString device = gdevice;
     g_free(gdevice);
 
-    //qDebug()<<__func__<<__LINE__<<device<<endl;
+    qDebug()<<__func__<<__LINE__<<device<<endl;
     if(!pThis->m_volumeList->contains(device)){
         //情景3、已经发生了暴力拔出的情况，设备已经不存在了，这里不用做处理了
         //情景4、数据线连接的手机状态改变："仅充电"->"传输文件(mtp)"或"传输图片(gphoto)"
@@ -481,7 +492,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
     blankCDFlag = device.contains("/dev/sr") && pThis->m_volumeList->value(device)->mountPoint().isEmpty();
     phoneOrCD = device.contains("/dev/bus") || device.contains("/dev/sr");
     Q_UNUSED(phoneOrCD)
-    qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
+      qDebug()<<__func__<<__LINE__<<device<<"gmount not null:"<<(gmount!=nullptr)<<endl;
     if(gmount){
         if(!phoneFlag && !blankCDFlag){
             //情景5、手机的mtp与gphoto2状态相互转换时只能保留一个
@@ -491,7 +502,7 @@ void VolumeManager::volumeRemoveCallback(GVolumeMonitor *monitor,
         //情景8、空光盘弹出后空光驱应该被移除
         //Q_EMIT pThis->volumeUpdate();
     }
-    qDebug()<<__func__<<__LINE__<<device<<(gmount!=nullptr)<<endl;
+    qDebug()<<__func__<<__LINE__<<device<<"gmount not null:"<<(gmount!=nullptr)<<endl;
 
     if (blankCDFlag)
         return;
@@ -527,7 +538,7 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
 
     QHash<QString,Volume*>::iterator item = pThis->m_volumeList->begin();
     QHash<QString,Volume*>::iterator end = pThis->m_volumeList->end();
-    //qDebug()<<__func__<<__LINE__<<mountPoint<<endl;
+    qDebug()<<__func__<<__LINE__<<"mountPoint:"<<mountPoint<<endl;
     g_signal_connect(gmount, "changed", G_CALLBACK(mountChangedCallback),pThis);/* 监听mount的changed信号，获取mountPoint */
     //查看gparted进程是否存在,以便确定是否要移除设备
     pThis->gpartedIsOpening();
@@ -552,7 +563,14 @@ void VolumeManager::mountRemoveCallback(GVolumeMonitor *monitor,
         Q_EMIT pThis->mountRemove(mountPoint);
     }
 
-
+    {
+        QMutexLocker lk(&pThis->m_mutex);
+        if(pThis->m_occupiedVolume && volumeItem && volumeItem->device() == pThis->m_occupiedVolume->device()){
+            delete pThis->m_occupiedVolume;
+            pThis->m_occupiedVolume = nullptr;
+            pThis->m_occupiedVolumeUri = QString();
+        }
+    }
     delete mountItem;
 }
 
@@ -657,7 +675,8 @@ void VolumeManager::mountPreUnmountCallback(GVolumeMonitor *monitor, GMount *gmo
         {
             QMutexLocker lk(pThis->getMutex());
             pThis->m_occupiedVolume = volume;
-            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume;
+            pThis->m_occupiedVolumeUri = Experimental_Peony::VolumeManager::getInstance()->getTargetUriFromUnixDevice(volume->device());
+            qDebug()<<"mount pre-unmount: "<<volume->device()<<pThis->m_occupiedVolume<<pThis->m_occupiedVolumeUri ;
         }
     }
 }
@@ -697,6 +716,12 @@ void VolumeManager::driveConnectCallback(GVolumeMonitor *monitor,
                 // so it should not be hidden.
                 if (driveHasMedia(gdrive)) {
                     volume->setHidden(false);
+                    qDebug() << "uuid=0 && size=0 but has media, show volume:"<<volume->device();
+                }
+            }else if(uuid.isEmpty() && size != 0 && gdrive){/* hotfix bug#274521 【浪潮计算机】【CE520L2】红盘识别异常问题 */
+                qDebug()<<__func__<<__LINE__<<volume->device()<<"the icon of volume"<<volume->icon()<<"can-stop:"<<volume->canStop()<<"isHidden:"<<volume->getHidden();
+                if(!volume->canStop()){
+                    volume->setHidden(true);
                 }
             }
         }
@@ -746,6 +771,7 @@ void VolumeManager::driveDisconnectCallback(GVolumeMonitor *monitor,
         if(pThis->m_occupiedVolume){
             delete pThis->m_occupiedVolume;
             pThis->m_occupiedVolume = nullptr;
+            pThis->m_occupiedVolumeUri = QString();
         }
     }
 }
@@ -853,7 +879,7 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     for(int i=0; i<mountCount; ++i){
         Volume* volumeItem = new Volume(nullptr);
         volumeItem->setFromMount(*mounts.at(i));//从Mount对象构造Volume对象数据
-        //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+        qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
         m_volumeList->remove(volumeItem->device());
         m_volumeList->insert(volumeItem->device(),volumeItem);
         delete mounts.at(i);
@@ -863,12 +889,12 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
     if(!m_gpartedIsOpening){ //gparted未打开时，才考虑卷设备未挂载的情况
         for(int i=0; i<volumeCount; ++i){
             Volume* volumeItem = volumes.at(i);
-            //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<endl;
+            qDebug()<<__func__<<__LINE__<<volumeItem->device()<<endl;
             if(m_volumeList->contains(volumeItem->device())) {
                 delete volumeItem;
                 continue;
             }
-            //qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
+            qDebug()<<__func__<<__LINE__<<volumeItem->device()<<volumeItem->name();
             auto oldVolume = m_volumeList->take(volumeItem->device());
             delete oldVolume;
             m_volumeList->insert(volumeItem->device(),volumeItem);
@@ -931,17 +957,18 @@ QList<Volume>* VolumeManager::allVaildVolumes(){
                     if (entry->getGDrive()) {
                         if (driveHasMedia(entry->getGDrive())) {
                             volumeItem->setHidden(false);
+                            qDebug() << "uuid=0 && size=0 but has gdrive, show volume:"<<volumeItem->device();
                         }
                     }
-                }
-                else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
-                    qDebug()<<"the icon of volume"<<volumeItem->device()<<volumeItem->icon();
-                    if("drive-removable-media" == volumeItem->icon()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
+                }else if(uuid.isEmpty() && size != 0 && entry->getGDrive()){
+                    qDebug()<<__func__<<__LINE__<<volumeItem->device()<<"the icon of volume:"<<volumeItem->icon()<<"can-stop:"<<volumeItem->canStop()<<"isHidden:"<<volumeItem->getHidden()<<"hasVolume:"<<bHasVolume;
+                    if("drive-removable-media" == volumeItem->icon() || !volumeItem->canStop()){/* 由此判断区分本地固态硬盘(SATA、SSD等)和异常U盘 */
                         //fix show SATA, SSD unparted device /dev/sda issue, link to bug#135269,125009,206525
                         volumeItem->setHidden(true);
                     }
                 }
             }
+            qDebug()<<__func__<<__LINE__<<volumeItem->device()<<"isHidden:"<<volumeItem->getHidden()<<",hasVolume:"<<bHasVolume;
             if(bHasVolume){/* 解决:U盘多个分区时，侧边栏会显示drive */
                 volumeItem->setHidden(true);
             }
@@ -1342,7 +1369,7 @@ Volume* Volume::initRootVolume(){
     m_canEject = false;
     m_canStop = false;
     m_volume = nullptr;
-    m_name = "File System";
+    m_name = "System Disk";
 
     GUnixMountEntry* entry = g_unix_mount_at("/",nullptr);
     if(!entry)
@@ -1624,27 +1651,30 @@ void Mount::initMountInfo(){
 }
 
 void Mount::queryDeviceByMountpoint(){
-    const char* device;
-    char* mountPoint;
     if(m_mountPoint.isEmpty())
         return;
 
     //处理uri转码
     if(m_mountPoint.startsWith("file:///")){
-        mountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
+        char* mountPoint = g_filename_from_uri(m_mountPoint.toUtf8().constData(),nullptr,nullptr);
         m_mountPoint = mountPoint;
         g_free(mountPoint);
     }
-    //mountPoint = m_mountPoint.toUtf8().constData();
-    //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
-    m_entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
-    if(!m_entry)
-        m_entry = g_unix_mount_for(m_mountPoint.toUtf8().constData(),nullptr);
-    if(!m_entry)
+
+    qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
+    GUnixMountEntry* entry = g_unix_mount_at(m_mountPoint.toUtf8().constData(),nullptr);
+    if(!entry)
+        entry = g_unix_mount_for(m_mountPoint.toUtf8().constData(),nullptr);
+    if(!entry)
         return;
-    //qDebug()<<__func__<<__LINE__<<m_mountPoint<<endl;
-    device = g_unix_mount_get_device_path(m_entry);
-    m_device = device;
+
+    if(g_unix_mount_get_mount_path(entry) == m_mountPoint){
+        /* GUnixMountEntry 获取的mountpath与m_mountPoint相同时，由GUnixMountEntry获取到的device才正确；linkto bug#226673 */
+        const char* device = g_unix_mount_get_device_path(entry);
+        m_device = device;
+        g_unix_mount_free(entry);
+        qDebug()<<__func__<<__LINE__<<m_mountPoint<<m_device<<endl;
+    }
 }
 
 /*==================Volume property==============*/
@@ -1943,7 +1973,6 @@ void GetOccupiedAppsInfoThread::show_processes_cb(GMountOperation *MountOp, char
 
     auto thread = static_cast<GetOccupiedAppsInfoThread *>(user_data);
     thread->signal_occupiedAppInfo(occupiedAppMap, message);
-    g_mount_operation_reply(thread->getMountOp(), G_MOUNT_OPERATION_ABORTED);/* 解决一直弹出信息框问题，link to issue#I9VOWE. */
 }
 
 GMountOperation *GetOccupiedAppsInfoThread::getMountOp() const

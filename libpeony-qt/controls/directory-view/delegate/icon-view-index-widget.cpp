@@ -41,6 +41,7 @@
 #include "file-item.h"
 #include "file-utils.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
 
 #include <QDebug>
 #include <QTextLayout>
@@ -202,14 +203,25 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
     QWidget::paintEvent(e);
     QPainter p(this);
-//    p.fillRect(0, 0, 999, 999, qApp->palette().base());
 
-    //adjustPos();
+    auto opt = m_option;
+    auto rawRect = m_option.rect;
+    opt.rect = this->rect();
+
+    int horizalMargin = 2;
+    auto fontMetrics = opt.fontMetrics;
+    int pixelsWide = fontMetrics.width(opt.text);
+    int width = opt.rect.width() - 2*horizalMargin;
+
+    if(pixelsWide < width){
+       opt.rect = opt.rect.adjusted(0,0,0,-31);
+    }
+
     auto bgColor = QApplication::palette().base().color();
     p.save();
     p.setPen(Qt::transparent);
     p.setBrush(bgColor);
-    p.drawRoundedRect(this->rect(), 6, 6);
+    p.drawRoundedRect(opt.rect, 6, 6);
     p.restore();
     //qDebug()<<m_option.backgroundBrush;
     //qDebug()<<this->size() << m_delegate->getView()->iconSize();
@@ -227,19 +239,6 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         }
     }//end
 #endif
-
-    auto opt = m_option;
-    auto rawRect = m_option.rect;
-    opt.rect = this->rect();
-
-    int horizalMargin = 2;
-    auto fontMetrics = opt.fontMetrics;
-    int pixelsWide = fontMetrics.width(opt.text);
-    int width = opt.rect.width() - 2*horizalMargin;
-
-    if(pixelsWide < width){
-       opt.rect = opt.rect.adjusted(0,0,0,-31);
-    }
 
     opt.palette = QApplication::palette();
     //p.fillRect(opt.rect, m_delegate->selectedBrush());
@@ -278,6 +277,9 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     // draw color symbols
     if(info->uri().startsWith("favorite://")){/* 快速访问须特殊处理 */
         info = FileInfo::fromUri(FileUtils::getEncodedUri(FileUtils::getTargetUri(info->uri())));
+    }
+    if (info->uri().startsWith("filesafe:///")) {
+        opt.icon = qvariant_cast<QIcon>(m_index.data(Qt::DecorationRole));
     }
     auto colors = info->getColors();
     auto lineSpacing = opt.fontMetrics.lineSpacing();
@@ -360,6 +362,12 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
     p.restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
+    int topLeftX = rect().x() + 10 + emblemOffset;
+    int topLeftY = rect().y() + 10 + emblemOffset;
+    int bottomRightX = rect().right() - 30 - emblemOffset;
+    int bottomRightY = m_delegate->getView()->iconSize().height() - 10 - emblemOffset;
+    int emblemsSize = 20;
 
     //paint symbolic link emblems
     if (info->isSymbolLink()) {
@@ -370,7 +378,7 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         //Adjust link emblem to topLeft.link story#8354
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, this->rect().x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(&p, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
         p.restore();
     }
     if(view->isEnableMultiSelect())
@@ -381,17 +389,25 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
 
     //paint access emblems
     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
-    if (!info->uri().startsWith("file:")) {
+    if (!info->uri().startsWith("file:") && !info->uri().startsWith("filesafe:")) {
         return;
     }
 
-    auto rect = this->rect();
-    if (!info->canRead()) {
+    /**
+     * @bug #262561: [File Manager] PDF desktop shortcut files with deleted source files
+     *  do not display the same icon on the desktop folder as on the desktop.
+     *
+     * If the source file of a symbolic link is deleted, an “X” icon will be displayed in the upper left corner.
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-09-11
+     */
+    if (!info->canRead() || !info->isExistTargetOfSymlink()) {
         emblemPoses.removeOne(1);
         QIcon icon = QIcon::fromTheme("emblem-unreadable");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        icon.paint(&p, topLeftX, topLeftY, 20, 20);
         p.restore();
     } else if (!info->canWrite()/* && !info->canExecute()*/) {
         //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
@@ -399,47 +415,46 @@ void IconViewIndexWidget::paintEvent(QPaintEvent *e)
         QIcon icon = QIcon::fromTheme("emblem-readonly");
         p.save();
         p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-        icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20);
+        icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize);
         p.restore();
     }
 
     // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
-        auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
+    auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
 
-        for (auto extensionsEmblem : extensionsEmblems) {
-            if (emblemPoses.isEmpty()) {
-                break;
-            }
-
-            QIcon icon = QIcon::fromTheme(extensionsEmblem);
-            if (!icon.isNull()) {
-                p.save();
-                p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-                int pos = emblemPoses.takeFirst();
-                switch (pos) {
-                case 1: {
-                    icon.paint(&p, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 2: {
-                    icon.paint(&p, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 3: {
-                    icon.paint(&p, rect.x() + 10, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                case 4: {
-                    icon.paint(&p, rect.right() - 30, m_delegate->getView()->iconSize().height() - 10, 20, 20, Qt::AlignCenter);
-                    break;
-                }
-                default:
-                    break;
-                }
-                p.restore();
-            }
+    for (auto extensionsEmblem : extensionsEmblems) {
+        if (emblemPoses.isEmpty()) {
+            break;
         }
 
+        QIcon icon = QIcon::fromTheme(extensionsEmblem);
+        if (!icon.isNull()) {
+            p.save();
+            p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+            int pos = emblemPoses.takeFirst();
+            switch (pos) {
+            case 1: {
+                icon.paint(&p, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 2: {
+                icon.paint(&p, bottomRightX, topLeftX, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 3: {
+                icon.paint(&p, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            case 4: {
+                icon.paint(&p, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
+                break;
+            }
+            default:
+                break;
+            }
+            p.restore();
+        }
+    }
 }
 
 void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
@@ -497,7 +512,24 @@ void IconViewIndexWidget::mousePressEvent(QMouseEvent *e)
             view->m_editValid = false;
             view->m_renameTimer->start();
         }
-        e->ignore();
+        //e->accept();
+        //return;
+        /**
+         * @bug #239593: [File Manager] Click on any folder to enter and then return. After returning, cannot drag the folder directly
+         *
+         * Transfer the mousePressEvent event of IconViewIndexWidget to the IconView class for further processing
+         * Used to handle drag and drop events
+         *
+         * @author Renyg
+         * @date 2024-07-11
+         */
+        return QWidget::mousePressEvent(e);
+//        if (m_edit_trigger.isActive()) {
+//            qDebug()<<"IconViewIndexWidget::mousePressEvent: edit"<<e->type();
+//            m_delegate->getView()->setIndexWidget(m_index, nullptr);
+//            m_delegate->getView()->edit(m_index);
+//            return;
+//        }
     }
     if(e->button() == Qt::RightButton){
         e->accept();
@@ -521,6 +553,18 @@ void IconViewIndexWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void IconViewIndexWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    /**
+     * @bug #250731: [File Manager] Right clicking on the same folder several times in the file manager will take you to the folder
+     *
+     * Prevent double-click events from triggering on right-click
+     * Only double left clicks will be processed
+     *
+     * @author Renyg
+     * @date 2024-08-12
+     */
+    if (event->button() == Qt::RightButton) {
+        return;
+    }
     bool singleClicked = qApp->style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick);
     bool isPreviewMode = m_delegate->getView()->topLevelWidget()->property("isPreviewMode").toBool();
     if (!singleClicked || isPreviewMode) {

@@ -34,7 +34,10 @@
 #include "file-info.h"
 #include "file-info-job.h"
 #include "emblem-provider.h"
+#include "global-settings.h"
+#include "list-view-style.h"
 
+#include <memory>
 #include <QTimer>
 #include <QPushButton>
 
@@ -135,6 +138,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         opt.text = text1;
         painter->save();
 
+        setElidedNamePolicy(info, opt);
         QString text = opt.text;
         QFont font = opt.font;
         QFontMetrics fontMetrics = opt.fontMetrics;
@@ -185,6 +189,7 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         document.drawContents(painter, textRect);
         painter->restore();
     } else {
+        setElidedNamePolicy(info, opt);
         opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
     }
     if(view->isEnableMultiSelect()) {
@@ -211,13 +216,16 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //add link and read only icon support
     if (index.column() == 0) {
+        int emblemOffset = 4 - GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 5;
+        int bottomOff = 6 + GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 2;
         auto rect = view->visualRect(index);
         auto iconSize = view->iconSize();
         auto size = iconSize.width()/2;
         bool isSymbolicLink = info->isSymbolLink();
-        auto loc_x = rect.x() + iconSize.width() - size/2;
+        auto loc_x = rect.x() + emblemOffset;
         auto loc_y = rect.y();
-        auto iconSizeHeight = iconSize.height();
+        auto bottomY = rect.y() + rect.height() - (rect.height() - iconSize.height()) / 2;
+
         //paint symbolic link emblems
         if (isSymbolicLink) {
             emblemPoses.removeOne(3);
@@ -225,22 +233,25 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             //qDebug()<<info->symbolicIconName();
             //icon.paint(painter, loc_x, loc_y, size, size);
             //Adjust link emblem to topLeft.link story#8354
-            loc_x = rect.x();
-            //Special calculation emblems coordinates
-            if(iconSize.height() < 28){
-                iconSizeHeight = 28;
-            }
             painter->save();
             painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-            icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
+            icon.paint(painter, loc_x, bottomY  - bottomOff, size, size, Qt::AlignCenter);
             painter->restore();
         }
 
         //paint access emblems
         //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
-        loc_x = rect.x();
-        if (info->uri().startsWith("file:")) {
-            if (!info->canRead()) {
+        if (info->uri().startsWith("file:") || info->uri().startsWith("mtp:") || info->uri().startsWith("gphoto2:") || info->uri().startsWith("filesafe:")) {
+            /**
+             * @bug #262561: [File Manager] PDF desktop shortcut files with deleted source files
+             *  do not display the same icon on the desktop folder as on the desktop.
+             *
+             * If the source file of a symbolic link is deleted, an “X” icon will be displayed in the upper left corner.
+             *
+             * @author: Renyg <renyangguang@kylinos.cn>
+             * @date:   2024-09-11
+             */
+            if (!info->canRead()  || !info->isExistTargetOfSymlink()) {
                 emblemPoses.removeOne(1);
                 QIcon icon = QIcon::fromTheme("emblem-unreadable");
                 painter->save();
@@ -258,17 +269,12 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         }
 
-    // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
+        // paint extension emblems, FIXME: adjust layout, and implemet on indexwidget, other view.
         auto extensionsEmblems = EmblemProviderManager::getInstance()->getAllEmblemsForUri(info->uri());
-
-        //Special calculation emblems coordinates
-        if(iconSize.height() < 28){
-            iconSizeHeight = 28;
-        }
 
         for (auto extensionsEmblem : extensionsEmblems) {
             if (emblemPoses.isEmpty()) {
-               break;
+                break;
             }
 
             QIcon icon = QIcon::fromTheme(extensionsEmblem);
@@ -278,29 +284,28 @@ void ListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 int pos = emblemPoses.takeFirst();
                 switch (pos) {
                 case 1: {
-                   icon.paint(painter, loc_x, loc_y, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x, loc_y + emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 2: {
-                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + emblemOffset, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 3: {
-                   icon.paint(painter, loc_x, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x, bottomY - bottomOff, size, size, Qt::AlignCenter);
+                    break;
                 }
                 case 4: {
-                   icon.paint(painter, loc_x + iconSize.width() - size/2, loc_y + iconSizeHeight - size/2 - 5, size, size, Qt::AlignCenter);
-                   break;
+                    icon.paint(painter, loc_x + iconSize.width() - size/2, bottomY  - bottomOff, size, size, Qt::AlignCenter);
+                    break;
                 }
                 default:
-                   break;
+                    break;
                 }
                 painter->restore();
             }
         }
     }
-
 }
 
 QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -328,6 +333,12 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     }
     if (fsType.contains("ext")) {
         maxLength = 255 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
+    } else if (fsType == "ecryptfs") {
+        maxLength = 143 - suffix.toLocal8Bit().length();
+        edit->setMaxLengthLimit(maxLength);
+    } else if (fsType == "udf") {
+        maxLength = 254 - suffix.toLocal8Bit().length();
         edit->setMaxLengthLimit(maxLength);
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
@@ -357,10 +368,8 @@ QWidget *ListViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         auto text = edit->toPlainText();
         //fix bug#220283, rename edit position wrong issue
         //short file name no need update to avoid position wrong
-        if (text.length() >= maxLength) {
-            edit->adjustText();
-            updateEditorGeometry(edit, option, index);
-        }
+        edit->adjustText();
+        updateEditorGeometry(edit, option, index);
     });
 
     connect(edit, &TextEdit::finishEditRequest, this, &ListViewDelegate::slot_finishEdit);
@@ -400,13 +409,17 @@ void ListViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
     edit->setTextCursor(cursor);
 }
 
-//void ListViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-//{
-//    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
-//    TextEdit *edit = qobject_cast<TextEdit*>(editor);
-//    edit->setFixedHeight(editor->height());
-//    edit->resize(edit->document()->size().width(), -1);
-//}
+void ListViewDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+    TextEdit *edit = qobject_cast<TextEdit*>(editor);
+    edit->m_backgroundEdit->setGeometry(1, 2, edit->size().width() - 2, edit->size().height() - 4);
+    QTimer::singleShot(0, edit, [=]() {
+        int top = (edit->height() - edit->document()->size().height())/2;
+        top = top < 2 ? 2 : top;
+        edit->setMargins(1, top, 1, 2);
+    });
+}
 
 void ListViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
@@ -592,6 +605,21 @@ void ListViewDelegate::paintLabel(QStyleOptionViewItem &opt, int aalignment, QLi
     }
 }
 
+void ListViewDelegate::setElidedNamePolicy(const std::shared_ptr<FileInfo>& info, const QStyleOptionViewItem &opt)
+{
+    // Early return if the display name doesn't match the text in the style option
+    if (info->displayName() != opt.text) {
+        return;
+    }
+
+    const QFontMetrics fm(opt.font);
+    const QRect textRect = opt.widget->style()->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+    const QString elidedText = fm.elidedText(info->displayName(), Qt::ElideRight, textRect.width());
+
+    // Set the 'isElided' property based on whether the text is truncated
+    info->setProperty("isElided", elidedText != info->displayName());
+}
+
 //TextEdit
 TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
 {
@@ -600,6 +628,14 @@ TextEdit::TextEdit(QWidget *parent) : QTextEdit (parent)
     setFrameShape(QFrame::NoFrame);
     setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     setViewportMargins(1, 2, 1, 2);
+    if (m_backgroundEdit == nullptr) {
+        m_backgroundEdit = new QTextEdit(this);
+        m_backgroundEdit->setReadOnly(true);
+        m_backgroundEdit->setFrameShape(QTextEdit::NoFrame);
+
+        m_backgroundEdit->setGeometry(1, 2, size().width() - 2, size().height() - 4);
+        m_backgroundEdit->lower();
+    }
 }
 
 void TextEdit::adjustText()
@@ -650,4 +686,9 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
         return;
     }
     return QTextEdit::keyPressEvent(e);
+}
+
+void TextEdit::setMargins(int left, int top, int right, int bottom)
+{
+    setViewportMargins(left, top, right, bottom);
 }

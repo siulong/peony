@@ -33,6 +33,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QDebug>
+#include <QStringListIterator>
 
 using namespace Peony;
 
@@ -536,42 +537,70 @@ void DataCDROM::DVDRWCapacity()
 
     process.start("/usr/bin/dvd+rw-mediainfo", deviceName);
     process.waitForFinished(10000);
-    QString result = process.readAllStandardOutput();
-    QStringList ss = result.split("\n");
-    QStringList sss;
+    QString dvdrwMediaInfoResult = process.readAllStandardOutput();
+    QStringList devMediaInfoList = dvdrwMediaInfoResult.split("\n");
+    QStringList dvdRomCapaitiesInfo;
 
-    for (i = ss.size() - 1; i > 0; --i)
-    {
-        if (ss.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
+    QStringListIterator iter_devMediaInfoList(devMediaInfoList);
+    while (iter_devMediaInfoList.hasNext()) {
+        QString item = iter_devMediaInfoList.next();
+        if (item.startsWith("READ FORMAT CAPACITIES:"))
+            break;
     }
 
-    if (m_oMediumType.contains("DVD+RW") && ss.size() >= i+1)
-    {
-        ss = ss.takeAt(i + 1).split("=");
-        //ss = ss.last().split("=");
-        m_u64Capacity = ss.last().toULong();
+    bool states_err = false;
+
+    if (iter_devMediaInfoList.hasNext()) {
+        QString item = iter_devMediaInfoList.next();
+        if(item.contains("error")) {
+            states_err = true;
+            m_u64Capacity = 0;
+            return;
+        }
+        dvdRomCapaitiesInfo = item.split("=");
+        m_u64Capacity = dvdRomCapaitiesInfo.last().toULong();
+        qDebug()<< "DVD+RW get capacity is : " << m_u64Capacity;
     }
-    if (m_oMediumType.contains("DVD-RW") && ss.size() >= i+2)
-    {
-        //解决bug:70940和83628擦除后总容量显示错误
-#if 0
-        sss = ss.takeAt(i + 1).split("=");
-        t = 0;
-        u = 0;
-        u = sss.last().toULong();//unformatted的容量
-        sss = ss.takeAt(i + 2).split("=");
-        t = sss.last().toULong();//00h(800h)的容量
-        if (t > u) m_u64Size = t - u;
-        else m_u64Size = u;
-        //出现下面这种情况导致bug出现
-        //no media:		4101552*2048=8399978496
-        //00h(800):		2297888*2048=4706074624
-#else
-        sss = ss.takeAt(i + 2).split("=");
-        auto t = sss.last().toULong();
-        m_u64Capacity = t;
-#endif
+
+    if (!states_err && m_oMediumType.contains("DVD-RW") && iter_devMediaInfoList.hasNext()) {
+        QString item = iter_devMediaInfoList.next();
+        dvdRomCapaitiesInfo.clear();
+        dvdRomCapaitiesInfo = item.split("=");
+        m_u64Capacity = dvdRomCapaitiesInfo.last().toULong();
+        qDebug()<< "DVD-RW get capacity is : " << m_u64Capacity;
     }
+
+//    for (i = devMediaInfoList.size() - 1; i > 0; --i)
+//    {
+//        if (devMediaInfoList.at(i).startsWith("READ FORMAT CAPACITIES:")) break;
+//    }
+
+//    if (m_oMediumType.contains("DVD+RW") && devMediaInfoList.size() >= i+1)
+//    {
+//        dvdRomCapaitiesInfo = devMediaInfoList.takeAt(i + 1).split("=");
+//        m_u64Capacity = dvdRomCapaitiesInfo.last().toULong();
+//    }
+//    if (m_oMediumType.contains("DVD-RW") && devMediaInfoList.size() >= i+2)
+//    {
+//        //解决bug:70940和83628擦除后总容量显示错误
+//#if 0
+//        sss = ss.takeAt(i + 1).split("=");
+//        t = 0;
+//        u = 0;
+//        u = sss.last().toULong();//unformatted的容量
+//        sss = ss.takeAt(i + 2).split("=");
+//        t = sss.last().toULong();//00h(800h)的容量
+//        if (t > u) m_u64Size = t - u;
+//        else m_u64Size = u;
+//        //出现下面这种情况导致bug出现
+//        //no media:		4101552*2048=8399978496
+//        //00h(800):		2297888*2048=4706074624
+//#else
+//        dvdRomCapaitiesInfo = devMediaInfoList.takeAt(i + 2).split("=");
+//        auto t = dvdRomCapaitiesInfo.last().toULong();
+//        m_u64Capacity = t;
+//#endif
+//    }
 
 //    for (index = dvdInfo.size() - 1; index > 0; --index){
 //        if (dvdInfo.at(index).startsWith("READ FORMAT CAPACITIES:")) {

@@ -137,3 +137,18 @@ const QString SearchVFSUriParser::addSearchKey(const QString &uri, const bool &s
     }
     return search_str;
 }
+
+const QString SearchVFSUriParser::getSearchUriPath(const QString &searchUri)
+{
+    auto string = searchUri;
+    string.remove("search:///");
+    auto list = string.split("&");
+    for (auto arg : list) {
+        if (arg.startsWith("search_uris=")) {
+            qDebug()<<"arg:"<<arg;
+            auto tmp = arg.remove("search_uris=");
+            return tmp;
+        }
+    }
+    return QString();
+}

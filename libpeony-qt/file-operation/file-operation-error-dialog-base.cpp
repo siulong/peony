@@ -171,18 +171,32 @@ void Peony::FileOperationErrorDialogBase::adjustTextContent()
         text.remove(text.length() - 4, 4);
         text.remove(0, 3);
     }
+
+    // 获取文本的边界矩形
     auto rect = fontMetrics().boundingRect(text);
     bool oneline = rect.width() < m_tipcontent->width();
-    int topMargin = 0;
-    if (!oneline) {
-        topMargin = qMax(32 - fontMetrics().height(), 0);
-    } else {
-        topMargin = qMax(48 - fontMetrics().height(), 0);
-    }
+
+    // 计算缩放系数（考虑高 DPI 缩放）
+    qreal scaleFactor = devicePixelRatioF();
+    int adjustedHeight = qRound(fontMetrics().height() * scaleFactor);
+
+    // 设置文本的上边距
+    int topMargin = oneline ? qMax(48 - adjustedHeight, 0) : qMax(32 - adjustedHeight, 0);
     m_tipcontent->setContentsMargins(0, topMargin, 0, 0);
-    int pimageMargin = 0;
-    pimageMargin = qMax(topMargin - (m_tipimage->pixmap()->height()-fontMetrics().height())/2,  0);
+
+    // 获取图标的高度并考虑缩放
+    int imageHeight = qRound(m_tipimage->pixmap()->height() / scaleFactor);
+    int pimageMargin = qMax(topMargin - (imageHeight - adjustedHeight) / 2, 0);
     m_tipimage->setContentsMargins(0, pimageMargin, 0, 0);
+
+    // 额外居中调整：根据容器高度来居中
+    int totalHeight = rect.height() + imageHeight;
+    int containerHeight = m_tipcontent->height();
+    if (totalHeight < containerHeight) {
+        int verticalAlignOffset = (containerHeight - totalHeight) / 2;
+        m_tipcontent->setContentsMargins(0, topMargin + verticalAlignOffset, 0, 0);
+        m_tipimage->setContentsMargins(0, pimageMargin + verticalAlignOffset, 0, 0);
+    }
 }
 
 void Peony::FileOperationErrorDialogBase::setText(QString text)

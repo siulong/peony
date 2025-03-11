@@ -15,6 +15,7 @@ HEADERS += \
     $$PWD/connect-server-dialog.h       \
     $$PWD/connect-to-server-dialog.h    \
     $$PWD/private/file-vfs-info-private.h \
+    $$PWD/tooltips-manager.h            \
     $$PWD/volume-manager.h              \
     $$PWD/gerror-wrapper.h              \
     $$PWD/gobject-template.h            \
@@ -43,6 +44,7 @@ SOURCES += \
     $$PWD/connect-server-dialog.cpp     \
     $$PWD/connect-to-server-dialog.cpp  \
     $$PWD/private/file-vfs-info-private.cpp \
+    $$PWD/tooltips-manager.cpp \
     $$PWD/volume-manager.cpp            \
     $$PWD/gerror-wrapper.cpp            \
     $$PWD/gobject-template.cpp          \

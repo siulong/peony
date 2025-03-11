@@ -34,6 +34,8 @@
 #include "thumbnail-manager.h"
 #include "file-utils.h"
 #include "vfs-plugin-manager.h"
+#include "volume-manager.h"
+#include "volumeManager.h"
 #include "xatom-helper.h"
 //#include "properties-window-factory.h"
 
@@ -261,6 +263,8 @@ PropertiesWindow::PropertiesWindow(const QStringList &uris, QWidget *parent) : Q
             }
         });
     }
+
+   this->onVolumeRemoveClosePropertiesPage();
 }
 
 void PropertiesWindow::init()
@@ -370,9 +374,41 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
                     iconName = FileUtils::getFileIconName(m_fileInfo.get()->uri(), false);
                 }
 
+                if(m_fileInfo->unixDeviceFile().startsWith("/dev/sr")
+                        && (iconName.endsWith(".ico"))){/* 规范光盘图标，与竞品对比，光盘图标使用的是"media-optical",linkto bug#174770 */
+                    iconName = "media-optical";
+                }
+
+                if (!m_fileInfo->unixDeviceFile().isEmpty() && (m_fileInfo->unixDeviceFile().startsWith("/dev/sd")
+                                                                || m_fileInfo->unixDeviceFile().startsWith("/dev/dm"))) {
+                    std::shared_ptr<Volume> volume = nullptr;
+                    QString targetUri = FileUtils::getTargetUri(m_fileInfo->uri());
+                    if (!targetUri.isEmpty()) {
+                        volume = VolumeManager::getVolumeFromUri(targetUri.toUtf8().constData());
+                        if (volume) {
+                            iconName = volume->iconName();
+                        }
+                    }
+
+                    qDebug() << __LINE__ << __func__ << iconName << m_fileInfo->uri();
+
+                    if (iconName == "drive-harddisk-usb") {
+                        double size = FileUtils::getDeviceSize(m_fileInfo->unixDeviceFile().toUtf8().constData());
+                        if (size > 128) {
+                            iconName = "drive-harddisk-usb";
+                        } else {
+                            iconName = "drive-removable-media-usb";
+                        }
+                    }
+                }
+
                 if("computer:///ukui-data-volume" == m_fileInfo->uri()){
                     windowTitle = tr("Data");
                     iconName = "drive-harddisk";
+                }
+
+                if ("computer:///root.link" == m_fileInfo->uri()) {
+                    windowTitle = tr("System Disk");
                 }
             }
         }
@@ -394,10 +430,38 @@ void PropertiesWindow::setWindowTitleTextAndIcon()
         });
     }
 
-    this->setWindowIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("unknown")));
     this->setWindowTitle(windowTitle);
-    headerBar->setIcon(iconName);
     headerBar->setTitle(windowTitle);
+    /**
+     * @bug #267587: [Window Manager] Youhong Layout Reader has no icon in the upper left corner of the properties popup window.
+     *
+     * prioritize getting icons from the cache
+     *
+     * @author: Renyg <renyangguang@kylinos.cn>
+     * @date:   2024-09-26
+     */
+    auto icon = ThumbnailManager::getInstance()->tryGetThumbnail(m_fileInfo->uri());
+    if (!icon.isNull()) {
+        qDebug() << __FILE__ << __FUNCTION__ << "tryGetThumbnail icon is not null";
+        this->setWindowIcon(icon);
+        headerBar->setIcon(iconName);
+        return;
+    }
+
+    icon = QIcon::fromTheme(iconName, QIcon::fromTheme("unknown"));
+    if (icon.name() == "unknown") {
+        QFileInfo iconInfo(iconName);
+        if (iconInfo.exists()) {
+            // Get the filename without suffix
+            QString iconNameWithoutSuffix = iconInfo.completeBaseName();
+            qDebug() << __FILE__ << __FUNCTION__ << iconName << " iconNameWithoutSuffix: " << iconNameWithoutSuffix;
+            icon = QIcon::fromTheme(iconNameWithoutSuffix, QIcon::fromTheme("unknown"));
+            iconName = iconNameWithoutSuffix;
+        }
+    }
+    this->setWindowIcon(icon);
+    headerBar->setIcon(iconName);
+    return;
 }
 
 void PropertiesWindow::notDir()
@@ -483,6 +547,8 @@ void PropertiesWindow::initStatusBar()
 
     okButton->setMinimumSize(PropertiesWindow::s_bottomButtonSize);
     cancelButton->setMinimumSize(PropertiesWindow::s_bottomButtonSize);
+    okButton->setProperty("isImportant", true);
+    cancelButton->setProperty("useButtonPalette", true);
 
     //task#100231 trash page OK button set as restore
     //fix bug#143817, trash properties issue
@@ -508,12 +574,12 @@ void PropertiesWindow::initTabPage(const QStringList &uris)
     if(uris.isEmpty())
         return;
 
-    auto window = new PropertiesWindowPrivate(uris, this);
-    window->tabBar()->setStyle(new tabStyle);
+    m_window = new PropertiesWindowPrivate(uris, this);
+    m_window->tabBar()->setStyle(new tabStyle);
     //Warning: 不要设置tab高度，否则会导致tab页切换上下跳动
     //Do not set the tab height, otherwise it will cause the tab page to switch up and down
     //window->tabBar()->setMinimumHeight(72);
-    this->setCentralWidget(window);
+    this->setCentralWidget(m_window);
 }
 
 bool PropertiesWindow::checkUriIsOpen(QStringList &uris, PropertiesWindow *newWindow)
@@ -531,6 +597,7 @@ bool PropertiesWindow::checkUriIsOpen(QStringList &uris, PropertiesWindow *newWi
     qint64 index = PropertiesWindow::getOpenUriIndex(uris);
     if (index != WINDOW_NOT_OPEN) {
         openedPropertiesWindows->at(index)->raise();
+        openedPropertiesWindows->at(index)->activateWindow();
         return true;
     }
 
@@ -699,6 +766,20 @@ void PropertiesWindow::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
+void PropertiesWindow::onVolumeRemoveClosePropertiesPage()
+{
+    QString unixDevice;
+    if (m_uris.count() == 1 && m_uris.at(0).startsWith("computer:///")) {
+        unixDevice = FileUtils::getUnixDevice(m_uris.first());
+
+        connect(Experimental_Peony::VolumeManager::getInstance(), &Experimental_Peony::VolumeManager::volumeRemove, this, [=](const QString &removeDevice){
+            qDebug() << __func__ << removeDevice;
+            if (unixDevice == removeDevice) {
+                saveAllChanged();
+            }
+        });
+    }
+}
 
 #ifdef KY_SDK_QT_WIDGETS
 class TabBar : public kdk::KTabBar
@@ -720,6 +801,18 @@ protected:
     }
 };
 #endif
+
+void PropertiesWindow::setOpenTabPage(const QString &className)
+{
+    int index = -1;
+    for(auto &page : m_openTabPage) {
+        if (page->metaObject()->className() == className) {
+            index = m_openTabPage.indexOf(page);
+            break;
+        }
+    }
+    m_window->setCurrentIndex(index);
+}
 
 //properties window
 PropertiesWindowPrivate::PropertiesWindowPrivate(const QStringList &uris, QWidget *parent) : QTabWidget(parent)

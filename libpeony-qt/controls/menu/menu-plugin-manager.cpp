@@ -73,6 +73,12 @@ bool MenuPluginManager::registerPlugin(MenuPluginInterface *plugin)
     if (m_hash.value(plugin->name())) {
         return false;
     }
+    auto pluginObj = dynamic_cast<QObject *>(plugin);
+    if (pluginObj) {
+        if (pluginObj->property("showInComputerView").toBool()) {
+            m_computerViewPlugins.insert(plugin->name(), plugin);
+        }
+    }
     m_hash.insert(plugin->name(), plugin);
     return true;
 }
@@ -99,6 +105,11 @@ void MenuPluginManager::close()
     this->deleteLater();
 }
 
+QMap<QString, MenuPluginInterface *> MenuPluginManager::getComputerViewPlugins() const
+{
+    return m_computerViewPlugins;
+}
+
 const QStringList MenuPluginManager::getPluginIds()
 {
     return m_hash.keys();
@@ -107,6 +118,20 @@ const QStringList MenuPluginManager::getPluginIds()
 MenuPluginInterface *MenuPluginManager::getPlugin(const QString &pluginId)
 {
     return m_hash.value(pluginId);
+}
+
+bool MenuPluginManager::insertFileSafePlugin(MenuPluginInterface *plugin)
+{
+    if (m_fileSafeHash.value(plugin->name())) {
+        return false;
+    }
+    m_fileSafeHash.insert(plugin->name(), plugin);
+    return true;
+}
+
+MenuPluginInterface *MenuPluginManager::getFileSafePlugin(const QString &pluginId)
+{
+    return m_fileSafeHash.value(pluginId);
 }
 
 //CreateLinkInternalPlugin
@@ -178,7 +203,7 @@ QList<QAction *> CreateLinkInternalPlugin::menuActions(MenuPluginInterface::Type
 //FileLabelInternalMenuPlugin
 FileLabelInternalMenuPlugin::FileLabelInternalMenuPlugin(QObject *parent)
 {
-
+    this->setProperty("IsFileSafeShow", true);
 }
 
 QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::Types types, const QString &uri, const QStringList &selectionUris)

@@ -109,13 +109,14 @@ void FileCopy::sync(const GFile* destFile)
     // it's not possible
     g_return_if_fail(uri && path);
 
+    QString uriStr = QString::fromUtf8(uri);
     // uri is start with "file://"
     QString gvfsPath = QString("/run/user/%1/gvfs/").arg(getuid());
-    if (0 != g_ascii_strncasecmp(uri, "file:///", 8) || g_strstr_len(uri, strlen(uri), gvfsPath.toUtf8().constData())) {
+    if (!uriStr.startsWith("file:///") || uriStr.contains(gvfsPath)) {
         return;
     }
 
-    if(mTotalSize < BUF_SIZE * SYNC_INTERVAL || mIsDestFileLocal) {
+    if(mIsDestFileLocal) {
         return;
     }
 
@@ -432,7 +433,7 @@ out:
     if (FINISHED == mStatus && g_file_query_exists(destFile, nullptr)) {
         // copy file attribute
         // It is possible that some file systems do not support file attributes
-        //从只读文件系统复制文件，默认给与文件可写权限，hgzs项目前场反馈需求,task#138082
+        //从只读文件系统复制文件，默认给与文件可写权限，海关总署项目前场反馈需求,task#138082
         g_file_copy_attributes(srcFile, destFile, mParentFlags, nullptr, &error);
         if (nullptr != error) {
             qWarning() << "copy attribute error:" << error->code << "  ---  " << error->message;

@@ -24,7 +24,7 @@
 #define DESKTOPMENU_H
 
 #include <QMenu>
-#include "desktop-icon-view.h"
+#include "advanced-desktop-icon-view.h"
 
 namespace Peony {
 
@@ -43,8 +43,10 @@ public:
     void showProperties(const QStringList &uris);
 
 Q_SIGNALS:
-    void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
+    void setDefaultZoomLevel(AdvancedDesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
+    void setSortOrder(int sortOrder);
+    void markFilePos(QPoint pos);
 
 protected:
     void fillActions();

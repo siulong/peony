@@ -49,6 +49,10 @@
 
 #include <QStyleOption>
 
+#include <QtX11Extras/QX11Info>
+
+#include <kstartupinfo.h>
+
 #include "FMWindowIface.h"
 #include "main-window.h"
 #include "file-info.h"
@@ -60,8 +64,6 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
 {
     setProperty("isWindowButton", 0x1);
     setProperty("useIconHighlightEffect", 0x2);
-
-    setFocusPolicy(Qt::StrongFocus);
 
     setAcceptDrops(true);
     m_drag_timer.setInterval(750);
@@ -126,9 +128,7 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
         //qDebug() << "updateLocation text:" <<displayName <<uri << iconName;
         if (uri.startsWith("search:///"))
         {
-            QString nameRegexp = Peony::SearchVFSUriParser::getSearchUriNameRegexp(uri);
-            QString targetDirectory = Peony::SearchVFSUriParser::getSearchUriTargetDirectory(uri);
-            displayName = tr("Search \"%1\" in \"%2\"").arg(nameRegexp).arg(targetDirectory);
+            displayName = Peony::SearchVFSUriParser::getSearchUriTargetDirectory(uri);
         }
 
         //elide text if it is too long
@@ -315,6 +315,19 @@ void NavigationTabBar::mouseMoveEvent(QMouseEvent *e)
         if (auto tab = qobject_cast<NavigationTabBar *>(d->target())) {
             //do nothing for target tab bar helped us handling yet.
         } else {
+#ifdef KSTARTUPINFO_HAS_SET_ICON_GEOMETRY
+            quint32 timeStamp = QX11Info::isPlatformX11() ? QX11Info::appUserTime() : 0;
+            KStartupInfoId startInfoId;
+            startInfoId.initId(KStartupInfo::createNewStartupIdForTimestamp(timeStamp));
+            startInfoId.setupStartupEnv();
+            KStartupInfoData startData;
+            startData.setHostname();
+            startData.addPid(QCoreApplication::applicationPid());
+            QRect rect(-1, -1, -1, -1);
+            startData.setIconGeometry(rect);
+            startData.setLaunchedBy(QCoreApplication::applicationPid());
+            KStartupInfo::sendStartup(startInfoId, startData);
+#endif
             auto window = dynamic_cast<Peony::FMWindowIface *>(this->topLevelWidget());
             auto newWindow = dynamic_cast<QWidget *>(window->create(this->tabData(currentIndex()).toString()));
             newWindow->show();
@@ -381,23 +394,26 @@ int TabBarStyle::pixelMetric(QStyle::PixelMetric metric, const QStyleOption *opt
 
 QRect TabBarStyle::subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
+    int offset = 8;
     if (!m_need_adjust) {
-        return QProxyStyle::subElementRect(element, option, widget);
+        offset = 8;
     } else {
-        switch (element) {
-        case SE_TabBarScrollLeftButton:{
-            QRect tabRect = option->rect;
-            tabRect.setRight(tabRect.left() + 48);
-            return tabRect;
-        }
-        case SE_TabBarScrollRightButton:{
-            QRect tabRect = option->rect;
-            tabRect.setLeft(tabRect.right() - 48);
-            return tabRect;
-        }
-        default:
-            return QProxyStyle::subElementRect(element, option, widget);
-        }
+        offset = 48;
+    }
+
+    switch (element) {
+    case SE_TabBarScrollLeftButton:{
+        QRect tabRect = option->rect;
+        tabRect.setRight(tabRect.left() + offset);
+        return tabRect;
+    }
+    case SE_TabBarScrollRightButton:{
+        QRect tabRect = option->rect;
+        tabRect.setLeft(tabRect.right() - offset);
+        return tabRect;
+    }
+    default:
+        return QProxyStyle::subElementRect(element, option, widget);
     }
 }
 

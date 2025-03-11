@@ -40,6 +40,7 @@
 
 #include <QVBoxLayout>
 #include <QAction>
+#include <QTimer>
 
 #include <QApplication>
 
@@ -83,15 +84,28 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         }
     });
 
+    connect(m_model, &FileItemModel::signal_updateTabPageTitle, [=](const QString& uri){
+        Q_EMIT this->signal_updateTabPageTitle(uri);
+    });
+    connect(m_model, &FileItemModel::signal_updateLocationBar, [=](const QString& uri){
+        Q_EMIT this->signal_updateLocationBar(uri);
+    });
+
 //    connect(FileLabelModel::getGlobalModel(), &FileLabelModel::dataChanged, this, [=](){
 //        refresh();
 //    });
+    connect(m_model, &FileItemModel::updateFilter, [=](){
+        updateFilter();
+        QTimer::singleShot(400, this, [=](){
+            Q_EMIT this->statusBarChanged();
+        });
+    });
 
     if (QGSettings::isSchemaInstalled("org.ukui.control-center.panel.plugins")) {
         m_control_center_plugin = new QGSettings("org.ukui.control-center.panel.plugins", QByteArray(), this);
         connect(m_control_center_plugin, &QGSettings::changed, this, [=](const QString &key) {
            qDebug() << "panel settings changed:" <<key;
-           if (getView()->viewId() == "List View" && (key == "date" || key == "hoursystem"))
+           if (getView() && getView()->viewId() == "List View" && (key == "date" || key == "hoursystem"))
               refresh();
         });
     }
@@ -116,6 +130,22 @@ DirectoryViewContainer::DirectoryViewContainer(QWidget *parent) : QWidget(parent
         //qDebug() << "setZoomLevelRequest:" <<zoomLevel;
         if (m_view)
             m_view->setCurrentZoomLevel(zoomLevel);
+    });
+
+    connect(m_proxy_model, &FileItemProxyFilterSortModel::sortFinished, this, [=] () {
+        //task 143767, select previous folder when goBack or cdUp
+        //story 23918, improve select effect
+        bool mSelectPreviousFolder = this->property("mSelectPreviousFolder").toBool();
+        if (m_view && mSelectPreviousFolder){
+            //add 10ms delay to show and select previous folder
+            QTimer::singleShot(10, this, [=](){
+                QString mPreviousUri = this->property("mPreviousUri").toString();
+                qDebug() << "set mPreviousUri:"<<mPreviousUri;
+                m_view->setSelections(QStringList()<<mPreviousUri);
+                m_view->scrollToSelection(mPreviousUri);
+                this->setProperty("mSelectPreviousFolder", false);
+            });
+        }
     });
 }
 
@@ -156,6 +186,7 @@ void DirectoryViewContainer::goBack()
 
     auto uri = m_back_list.takeLast();
     m_forward_list.prepend(getCurrentUri());
+    this->setProperty("mSelectPreviousFolder", true);
     Q_EMIT updateWindowLocationRequest(uri, false);
 }
 
@@ -194,6 +225,7 @@ void DirectoryViewContainer::cdUp()
     if (uri.isNull())
         return;
 
+    this->setProperty("mSelectPreviousFolder", true);
     Q_EMIT updateWindowLocationRequest(uri, true);
 }
 
@@ -206,6 +238,11 @@ void DirectoryViewContainer::setSortFilter(int FileTypeIndex, int FileMTimeIndex
 void DirectoryViewContainer::setFilterLabelConditions(QString name)
 {
     m_proxy_model->setFilterLabelConditions(name);
+}
+
+void DirectoryViewContainer::setMutipleLabelConditions(QStringList names, QList<QColor> colors)
+{
+    m_proxy_model->setMutipleLabelConditions(names, colors);
 }
 
 void DirectoryViewContainer::setShowHidden(bool showHidden)
@@ -309,6 +346,7 @@ update:
     if (m_view)
         m_view->setCurrentZoomLevel(zoomLevel);
 
+    this->setProperty("mPreviousUri", m_current_uri);
     m_current_uri = uri;
 
     //special uri process
@@ -614,6 +652,41 @@ void DirectoryViewContainer::setSelectionMode(QAbstractItemView::SelectionMode m
 void DirectoryViewContainer::updateCurrentFilesThumbnails()
 {
     m_model->updateCurrentFilesThumbnails();
+}
+
+void DirectoryViewContainer::addFileContentFilter(QString key, bool updateNow)
+{
+    m_proxy_model->addFileContentFilter(key, updateNow);
+}
+
+void DirectoryViewContainer::clearFileContentConditions()
+{
+    m_proxy_model->clearFileContentConditions();
+}
+
+void DirectoryViewContainer::clearAllMapsCount()
+{
+    m_proxy_model->clearAllMapsCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileTypeCount()
+{
+    return m_proxy_model->getFileTypeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileModifyTimeCount()
+{
+    return m_proxy_model->getFileModifyTimeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileSizeCount()
+{
+    return m_proxy_model->getFileSizeCount();
+}
+
+QMap<int, int> DirectoryViewContainer::getFileLabelCount()
+{
+    return m_proxy_model->getFileLabelCount();
 }
 
 void DirectoryViewContainer::addFileDialogFiltersCondition(const QStringList &mimeTypeFilters, const QStringList &nameFilters, QDir::Filters dirFilters, Qt::CaseSensitivity caseSensitivity)

@@ -924,7 +924,7 @@ QString DiscControl::prepareFileBeforeBurn(const QString& srcFile){
         QProcess *createHardlink = new QProcess();
         hardLinkFileName = srcFileAttr.fileName();          //同名硬链接
         hardLinkParentDir = QDir::homePath()+"/.cache/KylinBurner/";
-    //hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//jxyh项目修改硬链接路径
+//        hardLinkParentDir = srcFileAttr.canonicalPath(() + ".cache/KylinBurner";//jxyh项目修改硬链接路径
         //先确保指定目录存在,不存在则递归创建
         dirObject.setPath(hardLinkParentDir);
         if(!dirObject.exists()){
@@ -1034,23 +1034,19 @@ bool DiscControl::supportUdf() const{
     //if(mProfile & (MEDIA_CD_RW|MEDIA_DVD_RW_ALL|MEDIA_DVD_PLUS_RW))
 
     // 判断当前系统中是否集成有udfclient包，如果没有则不支持DVD+RW格式化为udf格式
-    bool isExistUDFClient = false;
     QFileInfo binfile;
     binfile.setFile("/bin/newfs_udf");
-    if(!isExistUDFClient && binfile.exists() && binfile.isExecutable()) {
-        isExistUDFClient = true;
-    }
-    binfile.setFile("/usr/bin/newfs_udf");
-    if(!isExistUDFClient && binfile.exists() && binfile.isExecutable()) {
-        isExistUDFClient = true;
-    }
-    if (!isExistUDFClient) {
+    if(!binfile.exists() || !binfile.isExecutable()) {
         return false;
     }
 
-    if(mProfile & MEDIA_DVD_PLUS_RW) {					//2209仅提供DVD+RW的udf格式化
-        return true;
+    binfile.setFile("/usr/bin/newfs_udf");
+    if(!binfile.exists() || !binfile.isExecutable()) {
+        return false;
     }
+
+    if(mProfile & MEDIA_DVD_PLUS_RW)					//2209仅提供DVD+RW的udf格式化
+        return true;
 
     return false;
 }

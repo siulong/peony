@@ -36,6 +36,8 @@
 #include "vfs-plugin-iface.h"
 #include "vfs-plugin-manager.h"
 #include "emblem-plugin-iface.h"
+#include "properties-window-tab-page-plugin-iface.h"
+#include "properties-window.h"
 #include "file-watcher.h"
 
 using namespace Peony;
@@ -73,6 +75,9 @@ void DesktopMenuPluginManager::loadAsync()
             if ("libpeony-filesafe-menu-plugin.so" == fileName)
                 continue;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            if (fileName == "libsafe-context-menu.so") {
+                pluginLoader.setLoadHints(pluginLoader.loadHints() | QLibrary::DeepBindHint);
+            }
             qDebug()<<pluginLoader.fileName();
             qDebug()<<pluginLoader.metaData();
             qDebug()<<pluginLoader.load();

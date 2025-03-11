@@ -24,6 +24,7 @@
 #include "file-operation-manager.h"
 #include "file-utils.h"
 #include "file-info.h"
+#include "file-node.h"
 #include <gio/gdesktopappinfo.h>
 #include <glib/gprintf.h>
 #include <global-settings.h>
@@ -36,9 +37,14 @@ static QString set_desktop_name (QString file, QString& name, GError** error);
 
 using namespace Peony;
 
-static QString handleDuplicate(QString name)
+static QString handleDuplicate(QString name, bool isFolder)
 {
-    return FileUtils::handleDuplicateName(name);
+    if (isFolder) {
+        return FileUtils::handleFolderName(name);
+    } else {
+        return FileUtils::handleDuplicateName(name);
+    }
+
 }
 
 FileRenameOperation::FileRenameOperation(QString uri, QString newName)
@@ -272,7 +278,7 @@ retry:
                     setAutoBackup();
                 case BackupOne:{
                     while (FileUtils::isFileExsit(g_file_get_uri(newFile.get()->get()))) {
-                        QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile));
+                        QString fileUri = handleDuplicate(FileUtils::getFileUri(newFile), isFolder);
                         m_new_name = FileUtils::getUriBaseName(fileUri);
                         newFile = FileUtils::resolveRelativePath(parent, m_new_name);
                         getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
@@ -338,11 +344,23 @@ retry:
                     setHasError(false);
                     goto retry;
                 }
+                case TruncateOne: {
+                    int respValut = except.respValue.value("cateType").toInt();
+                    QString uri = g_file_get_uri(newFile.get()->get());
+                    FileNode *node = new FileNode(uri, nullptr, nullptr);
+                    node->setDestUri(uri);
+                    node->truncateDestFileName(respValut);
+                    m_new_name = node->destBaseName();
+                    newFile = FileUtils::resolveRelativePath(parent, m_new_name);
+                    getOperationInfo().get()->m_dest_dir_uri = FileUtils::getFileUri(newFile);
+                    setHasError(false);
+                    delete node;
+                    goto retry;
+                }
                 default:
                     break;
                 }
             }
-
             g_error_free(err);
         } else {
             successed = true;
@@ -437,3 +455,4 @@ static QString set_desktop_name (QString file, QString& name, GError** error)
 
     return oldName;
 }
+

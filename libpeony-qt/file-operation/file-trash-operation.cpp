@@ -23,7 +23,7 @@
 #include "file-trash-operation.h"
 #include "file-operation-manager.h"
 #include "file-enumerator.h"
-
+#include "global-settings.h"
 #include <QProcess>
 #include <file-info-job.h>
 #include <file-info.h>
@@ -48,13 +48,56 @@ void FileTrashOperation::run()
 
     if (m_is_search) {
         m_info.get()->m_is_search = true;
+    } else {
+        auto srcUri = m_src_uris.isEmpty()? nullptr: m_src_uris.first();
+        auto parentUri = FileUtils::getParentUri(srcUri);
+        if (queryDirIsReadOnlyFS(parentUri)) {
+            FileOperationError except;
+            except.dlgType = ED_WARNING;
+            except.errorType = ET_GIO;
+            except.srcUri = srcUri;
+            except.destDirUri = nullptr;
+            except.op = FileOpTrash;
+            except.title = tr("File trash error");
+            QUrl srcUrl(except.srcUri);
+            except.errorStr = tr("Can not trash %1: Read-only file system").arg(srcUrl.fileName());
+            errored(except);
+            setHasError(true);
+            Q_EMIT operationFinished();
+            return;
+        }
     }
 
+    // #Bug #218579 【模块单元测试】【需求25097】【文件管理器】删除两个同名文件，第一次撤销时还原的是第一次删除的文件，再次点击撤销时，文管闪退
+    // 由于gio trash逻辑对应用不可见，导致应用无法很好的处理撤销删除的操作，这里需要通过glib的改动配合处理此问题
+    GVfs *defaultvfs = g_vfs_get_default();
+    // 使用glib的缓存处理undo问题，不需要用原来遍历比较的方式，可以提高删除效率
+    bool useCacheInGlib = GPOINTER_TO_INT (g_object_get_data(G_OBJECT (defaultvfs), "use-glib-trash-cache"));
+
     QSet<QString> trashBefore;
-    FileEnumerator e;
-    e.setEnumerateDirectory("trash:///");
-    e.enumerateSync();
-    QStringList lsBefore = e.getChildrenUris ();
+    QStringList lsBefore;
+//    FileEnumerator e;
+//    e.setEnumerateDirectory("trash:///");
+//    e.enumerateSync();
+//    QStringList lsBefore = e.getChildrenUris ();
+//    trashBefore = lsBefore.toSet ();
+
+    g_autoptr (GFile) trashroot = g_file_new_for_uri("trash:///");
+    g_autoptr (GFileEnumerator) enumerator = g_file_enumerate_children(trashroot, G_FILE_ATTRIBUTE_STANDARD_NAME, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, nullptr);
+    if (enumerator && !useCacheInGlib) {
+        auto child_info = g_file_enumerator_next_file(enumerator, nullptr, nullptr);
+        while (child_info) {
+            auto child = g_file_enumerator_get_child(enumerator, child_info);
+            auto uri = g_file_get_uri(child);
+            lsBefore<<uri;
+            g_free(uri);
+            g_object_unref(child);
+            g_object_unref(child_info);
+            child_info = g_file_enumerator_next_file(enumerator, nullptr, nullptr);
+        }
+    } else {
+        m_info->m_dest_uris.clear();
+    }
     trashBefore = lsBefore.toSet ();
 
     //add file_count para for file trash progress
@@ -62,11 +105,13 @@ void FileTrashOperation::run()
     //all file total size, should use changed the calculate way
     quint64 total_size = 0;
     const quint64 ONE_GIB_SIZE = 1024*1024*1024;
+    auto standardPaths = FileUtils::standardPathList();
     for (auto src : m_src_uris) {
         // pre-check for trash special directory
+        QUrl srcUrl = src;
         if (src == "file:///data/home" || src == "file:///data/usershare" ||
                 src == "file:///data/root" || src == "file:///home" ||
-                FileUtils::isStandardPath(src) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
+                standardPaths.contains(srcUrl.path()) || src == "file://" + QStandardPaths::writableLocation(QStandardPaths::HomeLocation)) {
             FileOperationError except;
             except.srcUri = src;
             except.destDirUri = tr("trash:///");
@@ -258,6 +303,27 @@ retry:
                 quint64 time = QDateTime::currentMSecsSinceEpoch();
                 auto info = FileInfo::fromUri(src);
                 info.get()->setProperty(TRASH_TIME, time);
+
+                char *trashitem_escape_name = (char *)g_object_get_data(G_OBJECT (srcFile.get()->get()), "trash-escape-name");
+                bool is_home_dir_trash = GPOINTER_TO_INT (g_object_get_data(G_OBJECT (srcFile.get()->get()), "is-home-dir-trash"));
+                QString trashedFileUri;
+                if (is_home_dir_trash) {
+                    g_autoptr (GFile) trashedfile = g_file_get_child(trashroot, trashitem_escape_name);
+                    g_autofree gchar *trashedfileuri = g_file_get_uri(trashedfile);
+                    trashedFileUri = trashedfileuri;
+                } else {
+                    // 根据gvfs trash的uri构造规则，非家目录挂载点文件在回收站内的uri做了二次编码，故需要再次编码trashitem_escape_name
+                    g_autofree gchar *trashitem_escape_name2 = g_uri_escape_string(trashitem_escape_name, ":/\\", false);
+                    g_autoptr (GFile) trashedfile = g_file_get_child(trashroot, trashitem_escape_name2);
+                    g_autofree gchar *trashedfileuri = g_file_get_uri(trashedfile);
+                    trashedFileUri = trashedfileuri;
+                }
+
+
+                if (!trashedFileUri.isEmpty()) {
+                    useCacheInGlib = true;
+                    m_info.get()->m_dest_uris<<trashedFileUri;
+                }
             }
 
             Q_EMIT FileProgressCallback("trash:///", src, "", ++curSize, file_count);
@@ -265,7 +331,7 @@ retry:
 
         // fix dest uris in trash in FileOperationInfo
         // fileinfo关联被删除的时间，然后枚举trash中displayname相同的文件，对比时间差最近的文件作为待恢复的文件
-        if (!isCancelled()) {
+        if (!isCancelled() && !useCacheInGlib) {
             QSet<QString> trashAfter;
             FileEnumerator e;
             e.setEnumerateDirectory("trash:///");
@@ -300,6 +366,28 @@ retry:
                     m_info.get()->m_dest_uris.clear();
                     m_info.get()->m_dest_uris<<destUris;
                 }
+            }
+        }
+    }
+
+    bool trashMobileFile = GlobalSettings::getInstance()->getValue(TRASH_MOBILE_FILES).toBool();
+    if (trashMobileFile) {
+        bool isMobileDevice = FileUtils::isMobileDeviceFile(m_src_uris.first());
+        if (isMobileDevice) {
+            auto uri = FileUtils::getParentUri(m_src_uris.first());
+            if (! uri.isEmpty()) {
+                g_autoptr (GFile) ddir = g_file_new_for_uri (uri.toUtf8().constData());
+                char * path = g_file_get_path(ddir);
+                operationStartSnyc();
+                QProcess p;
+                p.start(QString("/usr/bin/sync -f %1").arg(path));
+                p.waitForFinished(-1);
+                if (p.exitCode() == 0) {
+                    qDebug() << "sync completed successfully";
+                } else {
+                    qDebug() << "sync failed with exit code:" << p.exitCode();
+                }
+                g_free(path);
             }
         }
     }

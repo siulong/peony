@@ -46,10 +46,16 @@ public:
     const QStringList getPluginIds();
     MenuPluginInterface *getPlugin(const QString &pluginId);
 
+    bool insertFileSafePlugin(MenuPluginInterface *plugin);
+    MenuPluginInterface *getFileSafePlugin(const QString &pluginId);
+    QMap<QString, MenuPluginInterface *> getComputerViewPlugins() const;
+
     void close();
 
 private:
     QHash<QString, MenuPluginInterface*> m_hash;
+    QHash<QString, MenuPluginInterface*> m_fileSafeHash;
+    QMap<QString, MenuPluginInterface*> m_computerViewPlugins;
 
     explicit MenuPluginManager(QObject *parent = nullptr);
     ~MenuPluginManager();

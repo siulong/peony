@@ -75,4 +75,11 @@ equals(USE_SET_ICON,1) {
     message("USE_SET_ICON_GEOMETRY is not set")
 }
 
+BUILD_WITH_SDK_FEEDBACK_MENU_ACTION=$$(USE_FEEDBACK_MENU_ACTION)
+equals(BUILD_WITH_SDK_FEEDBACK_MENU_ACTION, 1) {
+    DEFINES += BUILD_WITH_FEEDBACK_ACTION
+} else {
+    message("do not build with kdk feedback menu action")
+}
+
 DEFINES += VFS_CUSTOM_PLUGIN

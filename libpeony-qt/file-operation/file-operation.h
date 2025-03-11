@@ -347,6 +347,8 @@ Q_SIGNALS:
 
     void operationInfoMsgBox(const QString &uri);
 
+    void operationUdfBurnRunning(const bool &state);
+
     void remoteFileEvent(int eventType, const QString &arg1, const QString &arg2);
 
 public Q_SLOTS:
@@ -357,6 +359,7 @@ protected:
     bool nameIsValid (QString& uri);
     bool makeFileNameValidForDestFS (QString& srcPath, QString& destPath, QString* newFileName);
     void OperatorThreadPause();
+    bool syncDestUri(const QString &destUri);
 
     GCancellableWrapperPtr getCancellable() {
         return m_cancellable_wrapper;
@@ -370,6 +373,8 @@ protected:
 
     /* 发送给dbus服务关于：复制dsps文件时将复制成功文件的原路径和目的路径通过发信号通知WPS,Link to story#11452 */
     void sendSrcAndDestUrisOfCopyDspsFiles();
+
+    static bool queryDirIsReadOnlyFS(const QString &dirUri, bool defaultResult = false, bool isUdfBurnWork = false, bool *writeable = nullptr);
 
 protected:
     QAtomicInteger<bool>        m_is_pause = false;

@@ -335,11 +335,18 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                                   xoffset,
                                   m_regFindKeyWords,
                                   2,
-                                  2);
+                                  2,
+                                  info);
 
     painter->restore();
 
     QList<int> emblemPoses = {4, 3, 2, 1}; //bottom right, bottom left, top right, top left
+    int emblemOffset = GlobalSettings::getInstance()->getValue(DEFAULT_VIEW_ZOOM_LEVEL).toInt() / 10;
+    int topLeftX = rect.x() + 10 + emblemOffset;
+    int topLeftY = rect.y() + 10 + emblemOffset;
+    int bottomRightX = rect.right() - 30 - emblemOffset;
+    int bottomRightY = opt.rect.y() + opt.decorationSize.height() - 10 - emblemOffset;
+    int emblemsSize = 20;
 
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -350,7 +357,7 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         //qDebug()<<info->symbolicIconName();
         //icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
         //Adjust link emblem to topLeft.link story#8354
-        icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+        icon.paint(painter, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
     }
 
     if(view->isEnableMultiSelect()) {
@@ -365,16 +372,25 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //paint access emblems
     //NOTE: we can not query the file attribute in smb:///(samba) and network:///.
-    if (info->uri().startsWith("file:")) {
-        if (!info->canRead()) {
+    if (info->uri().startsWith("file:") || info->uri().startsWith("mtp:") || info->uri().startsWith("gphoto2:") || info->uri().startsWith("filesafe:")) {
+        /**
+         * @bug #262561: [File Manager] PDF desktop shortcut files with deleted source files
+         *  do not display the same icon on the desktop folder as on the desktop.
+         *
+         * If the source file of a symbolic link is deleted, an “X” icon will be displayed in the upper left corner.
+         *
+         * @author: Renyg <renyangguang@kylinos.cn>
+         * @date:   2024-09-11
+         */
+        if (!info->canRead() || !info->isExistTargetOfSymlink()) {
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-unreadable");
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+            icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize);
         } else if (!info->canWrite()/* && !info->canExecute()*/) {
             //只读图标对应可读不可写情况，与可执行权限无关，link to bug#99998
             emblemPoses.removeOne(1);
             QIcon icon = QIcon::fromTheme("emblem-readonly");
-            icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20);
+            icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize);
         }
     }
 
@@ -391,19 +407,19 @@ void IconViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             int pos = emblemPoses.takeFirst();
             switch (pos) {
             case 1: {
-                icon.paint(painter, rect.x() + 10, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, topLeftX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 2: {
-                icon.paint(painter, rect.x() + rect.width() - 30, rect.y() + 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, topLeftY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 3: {
-                icon.paint(painter, rect.x() + 10, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, topLeftX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             case 4: {
-                icon.paint(painter, rect.right() - 30, opt.rect.y() + opt.decorationSize.height() - 10, 20, 20, Qt::AlignCenter);
+                icon.paint(painter, bottomRightX, bottomRightY, emblemsSize, emblemsSize, Qt::AlignCenter);
                 break;
             }
             default:
@@ -448,6 +464,10 @@ QWidget *IconViewDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     }
     if (fsType.contains("ext")) {
         edit->setMaxLengthLimit(255 - suffix.toLocal8Bit().length());
+    } else if (fsType == "ecryptfs") {
+        edit->setMaxLengthLimit(143 - suffix.toLocal8Bit().length());
+    } else if (fsType == "udf") {
+        edit->setMaxLengthLimit(254 - suffix.toLocal8Bit().length());
     } else if (fsType.contains("ntfs")) {
         edit->setLimitBytes(false);
         edit->setMaxLengthLimit(255 - suffix.length());
@@ -563,6 +583,10 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                     auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
                     infoJob->setAutoDelete();
                     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        /* hotfix bug#225573 【文件管理器】多次进行重命名文档中的文件操作后，文档中文件选中、重命名异常;modified on 2024-08-01 */
+                        if(index != getView()->m_last_index && getView()->m_last_index.isValid() ){
+                            return;
+                        }//end
                         getView()->setSelections(QStringList()<<uri);
                         getView()->scrollToSelection(uri);
                         //set focus to fix bug#54061
@@ -583,6 +607,10 @@ void IconViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                     auto infoJob = new Peony::FileInfoJob(Peony::FileInfo::fromUri(uri));
                     infoJob->setAutoDelete();
                     connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=]() {
+                        /* hotfix bug#225573 【文件管理器】多次进行重命名文档中的文件操作后，文档中文件选中、重命名异常;modified on 2024-08-01 */
+                        if(index != getView()->m_last_index && getView()->m_last_index.isValid() ){
+                            return;
+                        }//end
                         getView()->setSelections(QStringList()<<uri);
                         getView()->scrollToSelection(uri);
                         //set focus to fix bug#54061
@@ -652,7 +680,7 @@ const QString IconViewDelegate::getRegFindKeyWords() const
     return m_regFindKeyWords;
 }
 
-void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount)
+void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, int textMaxHeight, int xOffset, const QString &regFindKeyWords, int horizalMargin, int maxLineCount, std::shared_ptr<FileInfo> info)
 {
     painter->save();
     QFont font = option.font;
@@ -709,6 +737,13 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     document.setPlainText(elidedText);
 
+    if (isElided && info != nullptr) {
+        if (option.text != elidedText) {
+            info->setProperty("isElided", true);
+        } else {
+            info->setProperty("isElided", false);
+        }
+    }
     painter->translate(horizalMargin, 0);
 
     //设置关键字高亮
@@ -916,7 +951,7 @@ QSize IconViewTextHelper::getTextSizeForIndex(const QStyleOptionViewItem &option
     return QSize(fixedWidth, textHight);
 }
 
-void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, int textMaxHeight, int horizalMargin, int maxLineCount, bool useSystemPalette, const QColor &customColor)
+void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, int textMaxHeight, int horizalMargin, int maxLineCount, bool useSystemPalette, const QColor &customColor, std::shared_ptr<FileInfo> info)
 {
     painter->save();
     painter->translate(horizalMargin, 0);
@@ -951,6 +986,8 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     int width = option.rect.width() - 2*horizalMargin;
 
     int y = 0;
+    bool isElided= false;
+    QString elidedText = option.text;
     while (true) {
         QTextLine line = textLayout.createLine();
         if (!line.isValid())
@@ -966,6 +1003,10 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
         } else {
             QString lastLine = option.text.mid(line.textStart());
             QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, width);
+            if (elidedLastLine != lastLine) {
+                isElided = true;
+                elidedText = elidedLastLine;
+            }
             auto rect = QRect(horizalMargin, y /*+ fontMetrics.ascent()*/, width, textMaxHeight);
             //opt.setWrapMode(QTextOption::NoWrap);
             opt.setWrapMode(QTextOption::NoWrap);
@@ -977,5 +1018,12 @@ void IconViewTextHelper::paintText(QPainter *painter, const QStyleOptionViewItem
     }
     textLayout.endLayout();
 
+    if (isElided && info != nullptr) {
+        if (option.text != elidedText) {
+            info->setProperty("isElided", true);
+        } else {
+            info->setProperty("isElided", false);
+        }
+    }
     painter->restore();
 }

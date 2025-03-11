@@ -25,8 +25,7 @@
 
 #include <QMainWindow>
 #include <QGSettings>
-#include "desktop-icon-view.h"
-#include <KF5/KScreen/kscreen/output.h>
+#include "advanced-desktop-icon-view.h"
 #include "windowmanager/windowmanager.h"
 
 namespace KWayland {
@@ -42,31 +41,30 @@ class DesktopBackgroundWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit DesktopBackgroundWindow(const KScreen::OutputPtr &output, int desktopWindowId, QWidget *parent = nullptr);
+    explicit DesktopBackgroundWindow(QScreen *screen, int desktopWindowId, QWidget *parent = nullptr);
     ~DesktopBackgroundWindow() override;
 
     int id() const;
 
-    KScreen::OutputPtr screen() const;
-    QRect getLogicalGeometryFromScreen();
-
-    Peony::DesktopIconView *getIconView();
+    QScreen *screen() const;
+    AdvancedDesktopIconView *getIconView();
     void setId(int id);
     void setWindowId(kdk::WindowId id);
     kdk::WindowId getWindowId();
 
     bool event(QEvent *event) override;
+    void invaidScreen();
 
 Q_SIGNALS:
-    void setDefaultZoomLevel(Peony::DesktopIconView::ZoomLevel level);
+    void setDefaultZoomLevel(AdvancedDesktopIconView::ZoomLevel level);
     void setSortType(int sortType);
-    void destroyed();
+    void setSortOrder(int sortOrder);
+    void updateWindow(const QRect &geometry);
+    void markFilePos(QPoint pos);
+    void clearOtherViewSelection();
 
 public Q_SLOTS:
     void setWindowGeometry(const QRect &geometry);
-    void invaidScreen();
-
-    void setCentralView();
 
 protected Q_SLOTS:
     void updateWindowGeometry();
@@ -86,13 +84,12 @@ protected:
 
 private:
     int m_id = -1;
-    //QScreen *m_screen = nullptr;
+    QScreen *m_screen = nullptr;
     QGSettings *m_panelSetting = nullptr;
-    Peony::DesktopIconView *m_desktopIconView = nullptr;
+    AdvancedDesktopIconView *m_desktopIconView = nullptr;
 
     KWayland::Client::PlasmaShellSurface *m_shellSurface = nullptr;
     Peony::DesktopMenu *m_menu = nullptr;
-    KScreen::OutputPtr m_output = nullptr;
     kdk::WindowId m_windowId;
 };
 

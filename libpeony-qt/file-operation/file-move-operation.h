@@ -102,6 +102,8 @@ public:
      */
     void rollbackNodeRecursively(FileNode *node);
 
+    bool isDlpState();
+
     void run() override;
 
     std::shared_ptr<FileOperationInfo> getOperationInfo() override {
@@ -148,6 +150,13 @@ protected:
      * specific type error occured.
      */
     ExceptionResponse prehandle(GError *err);
+
+    /*!
+     * \brief getUsbSafeMode
+     * \return
+     * \deprecated
+     */
+    int getUsbSafeMode();
 
 private:
     //QStringList m_source_uris;

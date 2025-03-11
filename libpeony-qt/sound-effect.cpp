@@ -81,11 +81,12 @@ void SoundEffect::playAlertSound(QString gsettingStr)
     const gchar *desc = "Alert Sound";
     QString filenameStr;
     QList<char *> existsPath = this->listExistsPath();
-    for (char * path : existsPath) {
-        char * prepath = QString(KEYBINDINGS_CUSTOM_DIR).toLatin1().data();
-        char * allpath = strcat(prepath, path);
+    for (const char* path : existsPath) {
+        QString prepath = QString(KEYBINDINGS_CUSTOM_DIR);
+        QString allpath = prepath + QString::fromUtf8(path);
+
         const QByteArray ba(KEYBINDINGS_CUSTOM_SCHEMA);
-        const QByteArray bba(allpath);
+        const QByteArray bba(allpath.toUtf8());
         if(QGSettings::isSchemaInstalled(ba)){
             QGSettings * settings = new QGSettings(ba, bba);
             filenameStr = settings->get(FILENAME_KEY).toString();

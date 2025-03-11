@@ -23,7 +23,6 @@
 #ifndef PEONYDBUSSERVICE_H
 #define PEONYDBUSSERVICE_H
 
-#include "desktop-icon-view.h"
 #include <QCoreApplication>
 #include <QTimer>
 #include <QtDBus>
@@ -37,10 +36,9 @@
 方法：GetSecurityConfigPath()//获取安全配置文件存放路径
      ReloadSecurityConfig()// 重新加载安全配置
 */
-
+class AdvancedDesktopIconView;
 namespace Peony {
 
-class DesktopIconView;
 
 class PeonyDbusService:public QObject
 {
@@ -48,7 +46,7 @@ class PeonyDbusService:public QObject
     Q_CLASSINFO("D-Bus Interface", "org.ukui.peony")
 
 public:    
-    explicit PeonyDbusService(DesktopIconView *view, QObject *parent=nullptr);
+    explicit PeonyDbusService(AdvancedDesktopIconView *view, QObject *parent=nullptr);
     ~PeonyDbusService();
 
    void DbusServerRegister();
@@ -68,7 +66,7 @@ public Q_SLOTS:
     void sendEngrampaOpreateFinishSig(const QString& path, bool finish);
 
 private:
-    DesktopIconView *m_desktopIconView = nullptr;
+    AdvancedDesktopIconView *m_desktopIconView = nullptr;
 };
 
 }

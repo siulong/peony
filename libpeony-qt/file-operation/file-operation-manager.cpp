@@ -63,6 +63,9 @@
 #include <QDebug>
 #include <unistd.h>
 
+#include <QAction>
+#include <QWindow>
+
 using namespace Peony;
 #ifdef KY_SDK_SOUND_EFFECTS
 using namespace kdk;
@@ -279,6 +282,16 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
         QWidget *widget = QApplication::topLevelAt(QCursor::pos());
         qDebug()<<"top level widget:"<<widget<<",current QPoint:"<<QCursor::pos();
         FileOperationInternalDialog questionbox((QDialog*)widget);
+
+        auto windowProperty = property("rootWindow");
+        if (windowProperty.isValid()) {
+            auto window = windowProperty.value<QWindow *>();
+            if (window) {
+                questionbox.createWinId();
+                questionbox.windowHandle()->setTransientParent(window);
+            }
+        }
+
         auto okButton = questionbox.addButton(tr("OK"));
         connect(okButton, &QPushButton::clicked, &questionbox, [&]{
             questionbox.accept();
@@ -288,6 +301,9 @@ void FileOperationManager::startOperation(FileOperation *operation, bool addToHi
             questionbox.reject();
         });
         okButton->setFocus();
+        okButton->setProperty("isImportant", true);
+        cancelButton->setProperty("useButtonPalette", true);
+
         questionbox.setText(tr("Do you want to put selected %1 item(s) into trash?").arg(operationInfo.get()->sources().count()));
         questionbox.setIcon("user-trash");
         auto checkbox = questionbox.addCheckBoxLeft(tr("Do not show again"));
@@ -458,7 +474,7 @@ start:
             QString name;
 
             if (mountRootName == "/") {
-                name = tr("File System");
+                name = tr("System Disk");
             } else if (mountRootName == "/data") {
                 name = tr("Data");
             } else {
@@ -553,7 +569,13 @@ start:
        }
        operation->setHasError(true);
    });
-
+#ifdef KY_UDF_BURN
+   operation->connect(operation, &FileOperation::operationUdfBurnRunning, this, [=](bool udfBurnRunning){
+       if  (m_isUdfBurnRunning != udfBurnRunning) {
+           m_isUdfBurnRunning = udfBurnRunning;
+       }
+   });
+#endif
    operation->connect(operation, &FileOperation::errored, this, &FileOperationManager::handleError, Qt::BlockingQueuedConnection);
    operation->connect(operation, &FileOperation::operationFinished, this, [=](){
        //story 19796,后续数据处理
@@ -613,6 +635,9 @@ start:
            } else {
                this->clearHistory();
            }
+       }
+       if (isUdfBurnRunning()) {
+           m_isUdfBurnRunning = false;
        }
    }, Qt::BlockingQueuedConnection);
 
@@ -736,6 +761,11 @@ bool FileOperationManager::canUndo()
 bool FileOperationManager::canRedo()
 {
     return !m_redo_stack.isEmpty();
+}
+
+bool FileOperationManager::isUdfBurnRunning()
+{
+    return m_isUdfBurnRunning;
 }
 
 std::shared_ptr<FileOperationInfo> FileOperationManager::getUndoInfo()
@@ -983,6 +1013,31 @@ void FileOperationManager::slot_moveFilesToAnotherProcCompleted(const QStringLis
 
 }
 
+QList<QAction *> FileOperationManager::getUndoRedoActions()
+{
+    QList<QAction *> l;
+    if (!qApp)
+        return l;
+    if (canUndo()) {
+        auto opInfo = m_undo_stack.top();
+        QString opName = opInfo->getOperationName();
+        auto action = new QAction(tr("Undo %1").arg(opName));
+        action->setShortcut(QKeySequence::Undo);
+        connect(action, &QAction::triggered, this, &FileOperationManager::undo);
+        l<<action;
+    }
+    if (canRedo()) {
+        auto opInfo = m_redo_stack.top();
+        QString opName = opInfo->getOperationName();
+        auto action = new QAction(tr("Redo %1").arg(opName));
+        action->setShortcut(QKeySequence::Redo);
+        connect(action, &QAction::triggered, this, &FileOperationManager::redo);
+        l<<action;
+    }
+    return l;
+}
+
+
 //FIXME: get opposite info correcty.
 FileOperationInfo::FileOperationInfo(QStringList srcUris,
                                      QString destDirUri,
@@ -1155,6 +1210,44 @@ void FileOperationInfo::setOperationRecording(bool state)
     if (m_operation_recording != state) {
         m_operation_recording = state;
     }
+}
+
+QString FileOperationInfo::getOperationName()
+{
+    QString opName;
+    switch (m_type) {
+    case FileOperationInfo::Copy:
+        opName = tr("Copy");
+        break;
+    case FileOperationInfo::Move:
+        opName = tr("Move");
+        break;
+    case FileOperationInfo::Rename:
+    case FileOperationInfo::BatchRename:
+    case FileOperationInfo::BatchRenameInternal:
+        opName = tr("Rename");
+        break;
+    case FileOperationInfo::Link:
+        opName = tr("Link");
+        break;
+    case FileOperationInfo::Trash:
+        opName = tr("Delete");
+        break;
+    case FileOperationInfo::Delete:
+        opName = tr("Delete Permanently");
+        break;
+    case FileOperationInfo::Untrash:
+        opName = tr("Restore");
+        break;
+    case FileOperationInfo::CreateFolder:
+    case FileOperationInfo::CreateTemplate:
+    case FileOperationInfo::CreateTxt:
+        opName = tr("New");
+        break;
+    default:
+        break;
+    }
+    return opName;
 }
 
 // S3/S4

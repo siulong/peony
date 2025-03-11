@@ -32,6 +32,7 @@
 #include "file-utils.h"
 #include "file-info.h"
 #include "file-info-job.h"
+#include "file-operation-manager.h"
 
 #include <QAction>
 #include <QModelIndex>
@@ -120,7 +121,8 @@ const QList<QAction *> SideBarMenu::constructFavoriteActions()
         if(this->parentWidget() && this->parentWidget()->isModal()){
             w->setParent(this->parentWidget());
         }
-        w->show();
+        PropertiesWindowFactoryPluginManager::getInstance()->show();
+        //w->show();
     });
     if (!m_item->firstColumnIndex().parent().isValid()) {
         l.last()->setEnabled(false);
@@ -139,7 +141,8 @@ const QList<QAction *> SideBarMenu::constructPersonalActions()
         if(this->parentWidget() && this->parentWidget()->isModal()){
             w->setParent(this->parentWidget());
         }
-        w->show();
+        PropertiesWindowFactoryPluginManager::getInstance()->show();
+        //w->show();
     });
 
     return l;
@@ -151,7 +154,19 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
     QList<QAction *> l;
     /* 卸载 */
     bool isWayland = qApp->property("isWayland").toBool(); // related to #105070
-    bool isReddisk = false;
+    bool isCloud = QFile::exists("/etc/ecloud") || QFile::exists("/usr/local/share/Ecloud");
+    bool hideUnmount = false;
+    bool hideFormat = false;
+    //除samba, ftp, sftp 外的远程目录，云桌面环境下，不显示卸载和格式化选项
+    if (isCloud) {
+        hideFormat = true;
+        if ( ! m_item->uri().startsWith("smb:///") &&
+             ! m_item->uri().startsWith("ftp:///") &&
+             ! m_item->uri().startsWith("sftp:///")) {
+             hideUnmount = true;
+        }
+    }
+
     QString unixDevice = m_item->getDevice();
     QString uri;
     if(m_uri=="file:///") /* 文件系统特殊处理 */
@@ -162,14 +177,19 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         uri=m_uri;
 
     if (!unixDevice.isEmpty() && uri.isEmpty()) {
-        //可能是加密分区数据未同步问题，尝试同步
-        auto fsItem = qobject_cast<SideBarFileSystemItem *>(m_item);
-        auto gvolume = fsItem->getVolume().getGVolume();
-        g_autofree gchar *unix_device = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-        unixDevice = unix_device;
-        uri = getComputerUriFromUnixDevice(unixDevice);
+        if ("kyfs" == unixDevice) {
+            uri = getComputerUriFromUri(m_uri);
+        } else {
+            //可能是加密分区数据未同步问题，尝试同步
+            auto fsItem = qobject_cast<SideBarFileSystemItem *>(m_item);
+            auto gvolume = fsItem->getVolume().getGVolume();
+            g_autofree gchar *unix_device = g_volume_get_identifier(gvolume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+            unixDevice = unix_device;
+            uri = getComputerUriFromUnixDevice(unixDevice);
+        }
     }
 
+    bool isReddisk = false;
     //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
     if (unixDevice.startsWith("/dev/dm") && QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui"))
         isReddisk = true;
@@ -184,7 +204,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
 //        }
 //    } else {
     /*  可用的U盘、外接移动硬盘、外接移动光盘, 右键菜单里不允许有“卸载”选项，bug#83206 */
-    if (! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
+    /* 云桌面重定向的盘，不显示卸载选项和格式化选项 bug#255725, task#185121 */
+    if (! hideFormat && ! isReddisk && !(m_item->isEjectable() || m_item->isStopable()) && m_item->isUnmountable()) {
         l<<addAction(QIcon::fromTheme("media-eject-symbolic"), tr("Unmount"), this, [=]() {
             m_item->unmount();
         });
@@ -216,7 +237,7 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             && (!unixDevice.isNull())
             && !unixDevice.startsWith("/dev/bus/usb")
             && (m_item->isVolume()) && !m_item->uri().isEmpty()
-            && ! isReddisk;
+            && ! isReddisk && ! hideFormat;
 
     //fix bug133116, not allow format data disk
     if(showFormatDialog && ! isData)
@@ -240,7 +261,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
                 }
             }
 #else
-            if(!FileUtils::isBusyDevice(m_item->getDevice())){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
+            auto isUdfBusy = Peony::FileOperationManager::getInstance()->isUdfBurnRunning();
+            if(!FileUtils::isBusyDevice(m_item->getDevice()) && !isUdfBusy){/* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
                 UdfBurn::DiscControl *discControl = new UdfBurn::DiscControl(unixDevice);
                 if(discControl->work()){
                    connect(discControl, &UdfBurn::DiscControl::workFinished, this, [=](UdfBurn::DiscControl *discCtrl){
@@ -294,8 +316,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
         QAction *actionBurn = addAction(QIcon::fromTheme("preview-file"), tr("burndata"));
         actionBurn->setEnabled(false);
         l.append(actionBurn);
-
-        if(!FileUtils::isBusyDevice(m_item->getDevice())) {
+        auto isUdfBusy = Peony::FileOperationManager::getInstance()->isUdfBurnRunning();
+        if(!FileUtils::isBusyDevice(m_item->getDevice()) && !isUdfBusy) {
             /* 光盘在刻录数据、镜像等操作时,即若处于busy状态时，该菜单置灰不可用。link to bug#143293  */
             DiscControl *discControl = new DiscControl(unixDevice);
             if(discControl->work()){
@@ -326,7 +348,8 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
             if(this->parentWidget() && this->parentWidget()->isModal()){
                 w->setParent(this->parentWidget());
             }
-            w->show();
+            PropertiesWindowFactoryPluginManager::getInstance()->show();
+            //w->show();
         }
     });
     if ((0 != QString::compare(m_uri, "computer:///")) &&
@@ -389,7 +412,8 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                         if(this->parentWidget() && this->parentWidget()->isModal()){
                             w->setParent(this->parentWidget());
                         }
-                        w->show();
+                        PropertiesWindowFactoryPluginManager::getInstance()->show();
+                        //w->show();
                         break;
                     }
                 }
@@ -400,7 +424,8 @@ const QList<QAction *> SideBarMenu::constructNetWorkItemActions()
                 if(this->parentWidget() && this->parentWidget()->isModal()){
                     w->setParent(this->parentWidget());
                 }
-                w->show();
+                PropertiesWindowFactoryPluginManager::getInstance()->show();
+                //w->show();
             }
         });
         if(m_item->isVolume())
@@ -429,4 +454,22 @@ QString SideBarMenu::getComputerUriFromUnixDevice(const QString &unixDevice){
         }
     }
     return uri;
+}
+
+QString SideBarMenu::getComputerUriFromUri(const QString &uri)
+{
+    FileEnumerator e;
+    e.setEnumerateDirectory("computer:///");
+    e.enumerateSync();
+    QString computerUri = uri;
+    for (auto fileInfo : e.getChildren()) {
+        FileInfoJob infoJob(fileInfo);
+        infoJob.querySync();
+        if((fileInfo.get()->targetUri() == uri
+            || FileUtils::urlDecode(fileInfo.get()->targetUri()) == uri) && !uri.isEmpty()){
+            computerUri = fileInfo.get()->uri();
+            break;
+        }
+    }
+    return computerUri;
 }

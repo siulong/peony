@@ -45,6 +45,13 @@ G_DECLARE_FINAL_TYPE(PeonySearchVFSFileEnumerator,
 
 PeonySearchVFSFileEnumerator *peony_search_vfs_file_enumerator_new(void);
 
+enum PeonySearchStatus {
+    SEARCHFILE,
+    SEARCHFILECONTENT,
+    SEARCHFILEING,
+    SEARCHFILECONTENTING
+};
+
 typedef struct {
     QString *search_vfs_directory_uri;
     /*!
@@ -64,8 +71,12 @@ typedef struct {
 #ifdef KY_UKUI_SEARCH
     UkuiSearch::UkuiSearchTask *m_search;
     UkuiSearch::DataQueue<UkuiSearch::ResultItem> *m_queue;
+    UkuiSearch::UkuiSearchTask *m_contentSearch;
+    UkuiSearch::DataQueue<UkuiSearch::ResultItem> *m_contentQueue;
     gboolean search_engine;
-    gboolean search_first;
+    PeonySearchStatus search_status;
+    PeonySearchStatus search_content;
+    QHash<QString, QString> *m_duplicatesHash;
 #endif
 } PeonySearchVFSFileEnumeratorPrivate;
 

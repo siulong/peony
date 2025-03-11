@@ -37,8 +37,8 @@ public:
     explicit SearchWidget(QWidget *parent = nullptr);
     void searchButtonClicked();
     void setSearchMode(bool mode);
-    void updateCloseSearch(QString icon);
     bool isSearchMode();
+    void setSearchText(const QString &text);
 
 Q_SIGNALS:
     void updateLocationRequest(const QString &uri, bool addHistory = true, bool force = true);
@@ -61,10 +61,6 @@ public Q_SLOTS:
     void updateSearchProgress(bool isSearching);
 
 private:
-    void initAnimation();
-
-    QToolButton *m_closeSearchButton;
-    QToolButton *m_searchButton;
     AdvancedLocationBar *m_locationBar;
 
     bool m_searchMode = false;

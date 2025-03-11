@@ -102,7 +102,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
         QStringList favoriteUris;
         if (m_uris_to_be_removed.count() < maxNumberOfDeletesByOne && !m_batchProcessThread->isRunning()) {
             // do normal remove
-            for (auto uri : m_uris_to_be_removed) {
+            for (auto& uri : m_uris_to_be_removed) {
                 for (int row = 0; row < m_children->count(); row++) {
                     auto child = m_children->at(row);
                     // 此处实际可靠性还有待验证
@@ -119,6 +119,7 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                         m_model->endRemoveRows();
                         FileLabelModel::getGlobalModel()->removeFileLabel(uri);
                         delete child;
+                        child = nullptr;
                         break;
                     }
                 }
@@ -172,10 +173,12 @@ FileItem::~FileItem()
 
     for (auto child : *m_children) {
         delete child;
+        child = nullptr;
     }
     m_children->clear();
 
     delete m_children;
+    m_children = nullptr;
     m_uri_item_hash.clear();
 
     if (m_batchProcessThread->isRunning()) {
@@ -247,10 +250,15 @@ void FileItem::findChildrenAsync()
     });
     enumerator->connect(enumerator, &FileEnumerator::prepared, this, [=](std::shared_ptr<GErrorWrapper> err, const QString &targetUri, bool critical) {
         if (critical) {
+            QWidget *parent = nullptr;
+            if(this->parent() && this->parent()->parent() && this->parent()->parent()->property("KFileDialog").isValid()){
+                QObject *obj = this->parent()->parent()->property("KFileDialog").value<QObject *>();
+                parent = qobject_cast<QWidget *>(obj);
+            }
             if (G_IO_ERROR_NOT_FOUND == err->code() || G_IO_ERROR_EXISTS == err->code()) {
-                QMessageBox::warning(nullptr, tr("Warning"), err->message());
+                QMessageBox::warning(parent, tr("Warning"), err->message());
             } else {
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
+                QMessageBox::critical(parent, tr("Error"), err->message());
             }
             //QMessageBox::critical(nullptr, tr("Error"), err->message());
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
@@ -290,6 +298,11 @@ void FileItem::findChildrenAsync()
             qDebug()<<"file item error:" <<err->message()<<enumerator->getEnumerateUri();
             //Peony::AudioPlayManager::getInstance()->playWarningAudio();
 
+            QWidget *parent = nullptr;
+            if(this->parent() && this->parent()->parent() && this->parent()->parent()->property("KFileDialog").isValid()){
+                QObject *obj = this->parent()->parent()->property("KFileDialog").value<QObject *>();
+                parent = qobject_cast<QWidget *>(obj);
+            }
             //fix bug#214724, 214924， access smb-root error issue
             if ((err.get()->code() == G_IO_ERROR_NOT_FOUND || err.get()->code() == G_IO_ERROR_PERMISSION_DENIED) &&
                     this->uri() != "smb:///" && this->uri() != "network:///smb-root") {
@@ -310,7 +323,8 @@ void FileItem::findChildrenAsync()
                 auto fileInfo = FileInfo::fromUri(this->uri());
                 if (err.get()->code() == G_IO_ERROR_NOT_FOUND && fileInfo->isSymbolLink())
                 {
-                    auto result = QMessageBox::question(nullptr, tr("Open Link failed"),
+
+                    auto result = QMessageBox::question(parent, tr("Open Link failed"),
                                           tr("File not exist, do you want to delete the link file?"),
                                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (result == QMessageBox::Yes) {
@@ -322,7 +336,7 @@ void FileItem::findChildrenAsync()
                 }
                 else if (err.get()->code() == G_IO_ERROR_PERMISSION_DENIED)
                 {
-                    QMessageBox *msgBox = new QMessageBox();
+                    QMessageBox *msgBox = new QMessageBox(parent);
                     msgBox->setWindowTitle(tr("Error"));
                     QString errorInfo = tr("Can not open path \"%1\"，permission denied.").arg(this->uri().unicode());
                     msgBox->setText(errorInfo);
@@ -335,7 +349,7 @@ void FileItem::findChildrenAsync()
                 else if(err.get()->code() == G_IO_ERROR_NOT_FOUND)
                 {
                     QString errorInfo = tr("Can not find path \"%1\"，are you moved or renamed it?").arg(fileInfo->uri().unicode());
-                    QMessageBox::critical(nullptr, tr("Error"), errorInfo);
+                    QMessageBox::critical(parent, tr("Error"), errorInfo);
                 }
                 enumerator->deleteLater();
                 return;
@@ -343,7 +357,7 @@ void FileItem::findChildrenAsync()
             else {
                 enumerator->cancel();
                 enumerator->deleteLater();
-                QMessageBox::critical(nullptr, tr("Error"), err->message());
+                QMessageBox::critical(parent, tr("Error"), err->message());
                 return;
             }
         }
@@ -436,7 +450,9 @@ void FileItem::findChildrenAsync()
                 Q_EMIT this->deleted(uri);
                 this->onDeleted(uri);
             });
-
+            connect(m_watcher.get(), &FileWatcher::directoryAttrChanged, this, [=](QString uri) {
+                this->slot_directoryAttrChanged(uri);
+            });
             connect(m_watcher.get(), &FileWatcher::locationChanged, this, [=](QString oldUri, QString newUri) {
                 //this might use FileItemModel::setRootItem()
                 Q_EMIT this->renamed(oldUri, newUri);
@@ -519,6 +535,9 @@ void FileItem::findChildrenAsync()
                 //this might use FileItemModel::setRootItem()
                 Q_EMIT this->deleted(uri);
                 this->onDeleted(uri);
+            });
+            connect(m_watcher.get(), &FileWatcher::directoryAttrChanged, this, [=](QString uri) {
+                this->slot_directoryAttrChanged(uri);
             });
             connect(m_watcher.get(), &FileWatcher::locationChanged, this, [=](QString oldUri, QString newUri) {
                 //this might use FileItemModel::setRootItem()
@@ -640,6 +659,7 @@ void FileItem::onDeleted(const QString &thisUri)
             m_parent->onChildAdded(m_info->uri());
         }
         this->deleteLater();
+        m_model->updated();
     } else {
         //cd up.
         auto tmpItem = this;
@@ -662,7 +682,6 @@ void FileItem::onDeleted(const QString &thisUri)
             m_model->sendPathChangeRequest("file:///", tmpItem->uri());
         }
     }
-    m_model->updated();
 }
 
 void FileItem::onRenamed(const QString &oldUri, const QString &newUri)
@@ -712,6 +731,23 @@ void FileItem::onChanged(const QString &uri)
     if (!m_changeChildTimer->isActive()) {
         m_changeChildTimer->start(100);
     }
+}
+
+void FileItem::slot_directoryAttrChanged(const QString &uri)
+{
+    auto fileInfo = FileInfo::fromUri(uri);
+    auto infoJob = new FileInfoJob(fileInfo);
+    infoJob->setAutoDelete();
+    connect(infoJob, &Peony::FileInfoJob::queryAsyncFinished, this, [=](bool successed){
+        if(!successed)
+            return;
+        qDebug()<<"__func__<<__LINE__"<<fileInfo->uri()<<fileInfo->displayName();
+        m_model->signal_updateTabPageTitle(uri);
+        m_model->signal_updateLocationBar(uri);
+
+    });
+    infoJob->connect(this, &FileItem::cancelFindChildren, infoJob, &FileInfoJob::cancel);
+    infoJob->queryAsync();
 }
 
 void FileItem::onUpdateDirectoryRequest()
@@ -780,6 +816,7 @@ void FileItem::updateInfoAsync()
         //m_model->dataChanged(this->firstColumnIndex(), this->lastColumnIndex());
         m_model->updated();
         ThumbnailManager::getInstance()->createThumbnail(this->uri(), m_thumbnail_watcher, true);
+        Q_EMIT m_model->updateFilter();
     });
 
     job->connect(this, &FileItem::cancelFindChildren, job, &FileInfoJob::cancel);
@@ -816,6 +853,7 @@ void FileItem::batchRemoveItems()
             auto old = m_children;
             m_children = children;
             delete old;
+            old = nullptr;
             m_uri_item_hash = uri_item_hash;
             m_model->endResetModel();
             m_model->updated();/* 更新状态栏 */
@@ -1000,6 +1038,12 @@ void FileItem::connectFunc()
                             item->setProperty("isFileForBurning", true);
                         }
             #endif
+
+                        //Fix bug#232425 Connecting to shared folders with confusing file sorting
+                        if (item->uri().startsWith("computer:///") && item->uri().endsWith(".mount")) {
+                            return;
+                        }
+
                         m_model->beginInsertRows(QModelIndex(), m_children->count(), m_children->count());
                         m_children->append(item);
                         m_uri_item_hash.insert(item->uri(), item);
@@ -1067,6 +1111,7 @@ void FileItem::clearChildren()
     m_model->removeRows(0, m_model->rowCount(parent), parent);
     for (auto child : *m_children) {
         delete child;
+        child = nullptr;
     }
     m_children->clear();
     m_uri_item_hash.clear();
@@ -1202,6 +1247,7 @@ void BatchProcessItems::slot_removeItems()
     Q_EMIT removeItemsFinished(m_children, m_uri_item_hash, needHandleLabelUris);
     for (auto child : itemsToBeDeleted) {
         delete child;
+        child = nullptr;
     }
     int time1 = QTime::currentTime().msecsSinceStartOfDay();
     qDebug()<<"execute deletion finished, cost"<<time1 - time0;

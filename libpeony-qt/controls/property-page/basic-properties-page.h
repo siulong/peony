@@ -34,6 +34,7 @@
 #include <QProxyStyle>
 #include <QComboBox>
 #include <QDBusInterface>
+#include <QRadioButton>
 
 #include "properties-window-tab-iface.h"
 #include "open-with-properties-page.h"
@@ -57,10 +58,55 @@ class FileInfo;
 class FileWatcher;
 class FileCountOperation;
 
+class PropertiesSetDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit PropertiesSetDialog(QWidget *parent = nullptr);
+    ~PropertiesSetDialog();
+    void initUI();
+
+Q_SIGNALS:
+    void sendSelectRadioButton(int Id);
+
+private:
+    QVBoxLayout *m_layout = nullptr;
+    QLabel *m_label = nullptr;
+    QRadioButton *m_currentSelectBtn = nullptr;
+    QRadioButton *m_recursiveBtn = nullptr;
+    QPushButton *m_okBtn = nullptr;
+    QPushButton *m_cancelBtn = nullptr;
+    QButtonGroup *m_group = nullptr;
+};
+
+class BatchStatusThread : public QThread {
+    Q_OBJECT
+public:
+    BatchStatusThread(const QStringList &uris);
+
+protected:
+    void run();
+    void queryInfoUpdate(const QString &uri, const bool &queryHidden = false, const bool &queryIsAllDir = false);
+
+Q_SIGNALS:
+    void updateState(Qt::CheckState readOnlyState, Qt::CheckState hiddenState);
+    void updateDisabled(const bool &readOnlyDisable, const bool &hiddenDisable);
+    void updateIsAllDir(const bool &isAllDir);
+
+private:
+    const QStringList m_uris;
+    bool m_existReadOnly = false;
+    bool m_existWrite = false;
+    bool m_existHidden = false;
+    bool m_existShow = false;
+    bool m_canRename = true;
+    bool m_isDesktop = false;
+    bool m_isAllDir = false;
+};
+
 class FileNameThread : public QThread {
     Q_OBJECT
 private:
-    const QStringList &m_uris;
+    const QStringList m_uris;
 public:
     FileNameThread(const QStringList &uris) : m_uris(uris){}
 
@@ -129,6 +175,7 @@ protected:
 
     void updateCountInfo(bool isDone = false);
     void addOpenWithLayout(QWidget *parent = nullptr);
+
     BasicPropertiesPage::FileType checkFileType(const QStringList &uris);
     void chooseFileIcon();
     void changeFileIcon();
@@ -207,6 +254,9 @@ private:
 
     QString m_date_format = "";
     QDBusInterface  *mDbusDateServer;
+    Qt::CheckState m_readOnlyState;
+    Qt::CheckState m_hiddenState;
+    bool m_isAllDir = false;
 };
 
 class PushButtonStyle : public QProxyStyle

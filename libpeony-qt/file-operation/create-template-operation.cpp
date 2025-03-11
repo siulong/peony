@@ -39,7 +39,10 @@ using namespace Peony;
 
 void CreateTemplateOperation::handleDuplicate(const QString &uri)
 {
-    m_target_uri = m_dest_dir_uri + "/" + FileUtils::handleDuplicateName(uri);
+    //fix task#372795, use file name to process duplicate file issue, avoid path has special char effect result
+    QString baseName = uri.split("/").last();
+    qDebug() << "CreateTemplateOperation handleDuplicate:"<<baseName<<m_dest_dir_uri;
+    m_target_uri = m_dest_dir_uri + "/" + FileUtils::handleDuplicateName(baseName);
 }
 
 CreateTemplateOperation::CreateTemplateOperation(const QString &destDirUri, Type type, const QString &templateName, QObject *parent) : FileOperation(parent)
@@ -71,15 +74,37 @@ void CreateTemplateOperation::run()
 {
     Q_EMIT operationStarted();
     Q_EMIT operationPrepared();
+
+    if (queryDirIsReadOnlyFS(m_dest_dir_uri)) {
+        FileOperationError except;
+        except.dlgType = ED_WARNING;
+        except.errorType = ET_GIO;
+        except.srcUri = m_src_uri;
+        except.destDirUri = m_dest_dir_uri;
+        except.op = FileOpCreateTemp;
+        except.title = tr("File create error");
+        QUrl srcUrl(except.srcUri);
+        except.errorStr = tr("Can not create %1: Read-only mode, can not write-in").arg(srcUrl.fileName());
+        errored(except);
+        setHasError(true);
+        Q_EMIT operationFinished();
+        return;
+    }
+
+    uint retryTime = 0;
     switch (m_type) {
     case EmptyFile: {
         m_target_uri = m_dest_dir_uri + "/" + tr("NewFile") + ".txt";
 retry_create_empty_file:
+        retryTime++;
         GError *err = nullptr;
         GFileOutputStream *newFile = g_file_create(wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_target_uri).toUtf8())).get()->get(), G_FILE_CREATE_NONE, nullptr, &err);
         if (err) {
+            //fix task#372795, create same name file in phone failed issue
             FileOperationError except;
-            if (err->code == G_IO_ERROR_EXISTS) {
+            qDebug() << "Create EmptyFile errCode:"<<err->code<<" m_target_uri:"<<m_target_uri<<retryTime;
+            if (retryTime <= 300 && (err->code == G_IO_ERROR_EXISTS ||
+                                     (m_target_uri.startsWith("mtp://") && err->code == G_IO_ERROR_FAILED))) {
                 g_error_free(err);
                 handleDuplicate(m_target_uri);
                 goto retry_create_empty_file;
@@ -104,13 +129,17 @@ retry_create_empty_file:
     case EmptyFolder: {
         m_target_uri = m_dest_dir_uri + "/" + tr("NewFolder");
 retry_create_empty_folder:
+        retryTime++;
         GError *err = nullptr;
         g_file_make_directory(wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_target_uri).toUtf8())).get()->get(),
                               nullptr,
                               &err);
         if (err) {
             // todo: Allow user naming
-            if (err->code == G_IO_ERROR_EXISTS) {
+            //fix task#372795, create same name file in phone failed issue
+            qDebug() << "Create EmptyFolder errCode:"<<err->code<<" m_target_uri:"<<m_target_uri<<retryTime;
+            if (retryTime <= 300 && (err->code == G_IO_ERROR_EXISTS ||
+                                     (m_target_uri.startsWith("mtp://") && err->code == G_IO_ERROR_FAILED))) {
                 g_error_free(err);
                 handleDuplicate(m_target_uri);
                 goto retry_create_empty_folder;
@@ -133,7 +162,8 @@ retry_create_empty_folder:
     }
     case Template: {
 retry_create_template:
-        qDebug() << "create tmp";
+        retryTime++;
+        qDebug() << "create tmp file such as wps empty file:"<<retryTime;
         GError *err = nullptr;
         g_file_copy(wrapGFile(g_file_new_for_uri(FileUtils::urlEncode(m_src_uri).toUtf8())).get()->get(),
                     wrapGFile(g_file_new_for_uri(m_target_uri.toUtf8())).get()->get(),
@@ -144,7 +174,10 @@ retry_create_template:
                     &err);
         if (err) {
             setHasError(true);
-            if (err->code == G_IO_ERROR_EXISTS) {
+            qDebug() << "Create Template errCode:"<<err->code<<" m_target_uri:"<<m_target_uri;
+            //fix task#372795, create same name file in phone failed issue
+            if (retryTime <= 300 && (err->code == G_IO_ERROR_EXISTS ||
+                                     (m_target_uri.startsWith("mtp://") && err->code == G_IO_ERROR_FAILED))) {
                 g_error_free(err);
                 handleDuplicate(m_target_uri);
                 goto retry_create_template;
@@ -212,12 +245,17 @@ retry_create_template:
     //needSync = true;
 
     if (needSync) {
-        auto path = g_file_get_path(dest_dir_file);
+        char *path = g_file_get_path(dest_dir_file);
         if (path) {
             operationStartSnyc();
             QProcess p;
-            p.start(QString("/usr/bin/sync -f '%1'").arg(path));
+            p.start(QString("/usr/bin/sync -f %1").arg(path));
             p.waitForFinished(-1);
+            if (p.exitCode() == 0) {
+                qDebug() << "sync completed successfully";
+            } else {
+                qDebug() << "sync failed with exit code:" << p.exitCode();
+            }
             g_free(path);
         }
     }

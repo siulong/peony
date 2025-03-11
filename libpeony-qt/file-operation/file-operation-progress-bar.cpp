@@ -29,6 +29,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QToolTip>
+#include <QTime>
 #include <QTimer>
 #include "file-utils.h"
 #include "xatom-helper.h"
@@ -41,6 +42,7 @@
 #include <QX11Info>
 #include "xatom-helper.h"
 #endif
+#define MEGABYTE 1048576.0
 
 QPushButton* btn;
 
@@ -172,7 +174,7 @@ void FileOperationProgressBar::removeFileOperation(ProgressBar *progress)
 
 bool FileOperationProgressBar::isInhibit()
 {
-    return m_fds != nullptr;
+    return m_fds1 != nullptr;
 }
 
 FileOperationProgressBar::FileOperationProgressBar(QWidget *parent) : QWidget(parent)
@@ -296,6 +298,28 @@ void FileOperationProgressBar::showMore()
     update();
 }
 
+void FileOperationProgressBar::closeEvent(QCloseEvent *event)
+{
+    if (event) {
+        for (auto pg = m_widget_list->constBegin(); pg != m_widget_list->constEnd(); ++pg) {
+            Q_EMIT pg.value()->cancelled();
+        }
+        Q_EMIT canceled();
+    }
+}
+
+bool FileOperationProgressBar::event(QEvent *event)
+{
+    if (event->type() == QEvent::Show) {
+        MotifWmHints hints;
+        hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+        hints.functions = MWM_FUNC_ALL;
+        hints.decorations = MWM_DECOR_BORDER;
+        XAtomHelper::getInstance()->setWindowMotifHint(winId(), hints);
+    }
+    return QWidget::event(event);
+}
+
 bool FileOperationProgressBar::inhibit()
 {
     g_autoptr(GError) error = NULL;
@@ -313,9 +337,18 @@ bool FileOperationProgressBar::inhibit()
         g_autoptr(GVariant) ret = g_dbus_connection_call_with_unix_fd_list_sync(pconnection, "org.freedesktop.login1", "/org/freedesktop/login1",
                                                                       "org.freedesktop.login1.Manager", "Inhibit",
                                                                       g_variant_new("(ssss)", "sleep", "peony", "file operation", "block"),
-                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds, NULL, &error);
+                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds1, NULL, &error);
         if (error) {
             printf("cannot block s4: %s\n", error->message);
+        }
+
+
+        ret = g_dbus_connection_call_with_unix_fd_list_sync(pconnection, "org.freedesktop.login1", "/org/freedesktop/login1",
+                                                                      "org.freedesktop.login1.Manager", "Inhibit",
+                                                                      g_variant_new("(ssss)", "shutdown", "peony", "file operation", "block"),
+                                                                      rtype, G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &m_fds2, NULL, &error);
+        if (error) {
+            printf("cannot block s5: %s\n", error->message);
         }
 
         Q_UNUSED(ret);
@@ -326,9 +359,13 @@ bool FileOperationProgressBar::inhibit()
 
 void FileOperationProgressBar::uninhibit()
 {
-    if (m_fds) {
-        g_object_unref(m_fds);
-        m_fds = nullptr;
+    if (m_fds1) {
+        g_object_unref(m_fds1);
+        m_fds1 = nullptr;
+    }
+    if (m_fds2) {
+        g_object_unref(m_fds2);
+        m_fds2 = nullptr;
     }
 }
 
@@ -435,7 +472,7 @@ MainProgressBar::MainProgressBar(QWidget *parent) : QWidget(parent)
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true);
 
-    m_title = tr("File operation");
+    m_title = tr("File Operation");
 
     m_btn_pause = new QToolButton (this);
     m_btn_close = new QPushButton(this);
@@ -491,6 +528,7 @@ void MainProgressBar::initPrarm()
     m_stopping = false;
     m_current_value = 0.0;
     m_file_name = tr("starting ...");
+    m_current_estimated_time = tr("Calculating time");
 }
 
 void MainProgressBar::setFileIcon(QIcon& icon)
@@ -536,6 +574,7 @@ QString MainProgressBar::elideText(const QFont &font, const int &width, const QS
     QString display_name = strInfo;
     if(fontMetrics.width(strInfo) > 2*width - 20) {
         display_name = QFontMetrics(font).elidedText(strInfo, Qt::ElideMiddle, 2*width-20);
+        this->setToolTip(m_file_name);
     }
     return display_name;
 
@@ -719,7 +758,7 @@ void MainProgressBar::paintContent(QPainter &painter)
             painter.drawText(m_file_name_x, m_file_name_y, m_file_name_w, m_file_name_height, Qt::AlignLeft | Qt::AlignVCenter, tr("sync ..."));
             painter.drawPixmap(m_progress_pause_x, m_progress_pause_y, drawSymbolicColoredPixmap(QIcon::fromTheme("media-playback-pause-symbolic").pixmap(m_pause_btn_height, m_pause_btn_height)));
         } else {
-            this->setToolTip(m_file_name);
+//            this->setToolTip(m_file_name);
             QString display_name;
             display_name = elideText(this->font(), m_file_name_w, m_file_name);
             //修改藏文下显示不全的问题
@@ -746,6 +785,9 @@ void MainProgressBar::paintContent(QPainter &painter)
     painter.drawText(m_percent_x, m_percent_y, m_fix_width - m_percent_margin, m_percent_height, Qt::AlignRight | Qt::AlignBottom,
                      QString(" %1 %").arg(QString::number(m_current_value * 100, 'f', 1)));
 
+    painter.drawText(m_percent_x, m_percent_y, m_fix_width - m_percent_margin, m_percent_height, Qt::AlignLeft | Qt::AlignBottom,
+                     QString(tr(" %1Mb/s Est. time left: %2")).arg(QString::number(m_current_speed, 'f', 1)).arg(m_current_estimated_time));
+
     painter.restore();
 }
 
@@ -771,10 +813,14 @@ void MainProgressBar::cancelld()
     update();
 }
 
-void MainProgressBar::updateValue(QString& name, QIcon& icon, double value)
+void MainProgressBar::updateValue(QString& name, QIcon& icon, double value, double speed, int time)
 {
     if (value >= 0 && value < 1) {
         m_current_value = value;
+        m_current_speed = speed;
+        if (speed > 0.0 && time > 0) {
+            m_current_estimated_time = progressBarHelper::timeToString(time);
+        }
     }
 
     m_file_name = Peony::FileUtils::urlDecode(name);
@@ -822,7 +868,7 @@ void OtherButton::paintEvent(QPaintEvent *event)
     painter.setFont(font);
     pen.setBrush(QBrush(btn->palette().color(QPalette::WindowText)));
     painter.setPen(pen);
-    painter.drawText(textArea, Qt::AlignLeft | Qt::AlignVCenter, tr("Other queue"));
+    painter.drawText(textArea, Qt::AlignLeft | Qt::AlignVCenter, tr("Other Queue"));
 
     painter.restore();
 
@@ -858,6 +904,9 @@ ProgressBar::ProgressBar(QWidget *parent) : QWidget(parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_update_count = 0;
     m_dest_uri = tr("starting ...");
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, this, &ProgressBar::calculateSpeed);
+//    timer->start(1000);
     connect(this, &ProgressBar::cancelled, this, &ProgressBar::onCancelled);
     connect(this, &ProgressBar::destroyed, this, [=] () {m_has_finished = true;});
 }
@@ -1089,7 +1138,7 @@ void ProgressBar::updateValue(double value)
         m_current_value = value;
     }
 
-    Q_EMIT sendValue(m_dest_uri, getIcon(), m_current_value);
+    Q_EMIT sendValue(m_dest_uri, getIcon(), m_current_value, m_current_speed, m_estimated_time);
     update();
 }
 
@@ -1139,14 +1188,25 @@ void ProgressBar::updateProgress(const QString &srcUri, const QString &destUri, 
     }
 
     double currentPercent = current * 1.0 / total;
+    m_current_size = current;
     //fix bug#133624,133380, delete all empty files, not update progress bar
 //    if (m_total_size <= 0 || 16 * m_total_count <= m_total_size){
 //        m_update_count++;
 //        currentPercent = m_update_count * 1.0 /m_total_count;
 //    }
-
+    if (m_last_size != m_current_size) {
+        qint64 elapsedMilliseconds = QDateTime::currentMSecsSinceEpoch() - m_start_time;
+        double elapsedSeconds = elapsedMilliseconds / 1000.0;
+        if (elapsedSeconds >= 1.0) {
+            auto size = m_current_size - m_last_size;
+            m_current_speed = progressBarHelper::calculateSpeed(size, elapsedSeconds);
+            auto residualSize = m_total_size - m_current_size;
+            m_estimated_time = progressBarHelper::calculateEstimatedTime(residualSize,m_current_speed);
+            m_last_size = m_current_size;
+            m_start_time = QDateTime::currentMSecsSinceEpoch();
+        }
+    }
     qDebug() << "progress bar: " << currentPercent <<current<<total<<m_update_count<<m_total_count;
-
     updateValue(currentPercent);
 
     Q_UNUSED(srcUri);

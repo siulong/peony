@@ -66,6 +66,17 @@ private:
     QString m_uri;
     QFormLayout *m_layout;
 
+    quint64 m_home_counted_size = 0;
+    quint64 m_root_counted_size = 0;
+    quint64 m_usershare_counted_size = 0;
+    quint64 m_others_counted_size = 0;
+
+    bool m_count_home_done = false;
+    bool m_count_usershare_done = false;
+    bool m_count_others_done = false;
+
+    QTimer *m_timer = nullptr;
+
     // PropertiesWindowTabIface interface
 public:
     void saveAllChange();

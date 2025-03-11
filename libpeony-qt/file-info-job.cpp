@@ -29,6 +29,7 @@
 #include "file-label-model.h"
 
 #include "emblem-provider.h"
+#include "file-utils.h"
 
 #include <gio/gdesktopappinfo.h>
 #include <global-settings.h>
@@ -247,9 +248,14 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
     info->m_finalDisplayName = info->m_display_name;
-    if (info->isDesktopFile()) {
+    if (info->uri().endsWith(".desktop")) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
+        if (url.scheme() == "trash" && info->targetUri() != "")
+        {
+            url = QUrl(info->targetUri());
+            info->setProperty("enable_trash_target", true);
+        }
         GKeyFile *desktop_key_file = g_key_file_new();
         bool is_loaded = g_key_file_load_from_file(desktop_key_file, url.path().toUtf8(), G_KEY_FILE_NONE, nullptr);
         if (!is_loaded) {
@@ -283,11 +289,17 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
             name_char = g_key_file_get_string(desktop_key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, nullptr);
         }
 
-        if (name_char) {
-            QString name = name_char;
-            g_free(name_char);
+        if(info->canExecute() || (QFileInfo::exists(url.path().toUtf8()) && url.path().startsWith("/usr/share/applications/")))
+        {
+            info->m_display_name = name_char;
+        }
+        else if (FileUtils::isExecuteTargetUribyTrashUri(url, info))
+        {
+            info->m_display_name = name_char;
+        }
 
-            info->m_display_name = name;
+        if (name_char) {
+            g_free(name_char);
         }
         info->m_finalDisplayName = info->m_display_name;
         g_key_file_free(desktop_key_file);
@@ -320,8 +332,8 @@ void FileInfoJob::refreshInfoContents(GFileInfo *new_info)
     queryFileType(new_info);
 
     /* 获取info的G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN字段的值 */
-    info->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN));
-
+    info->m_is_hidden = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN);
+    info->setProperty(G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN, info->m_is_hidden);
     info->m_is_symbol_link = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK);
     if (g_file_info_has_attribute(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ)) {
         info->m_can_read = g_file_info_get_attribute_boolean(new_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ);

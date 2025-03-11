@@ -179,6 +179,7 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(goBack, &QPushButton::clicked, m_window, [=]() {
         m_window->getCurrentPage()->goBack();
         Q_EMIT m_searchWidget->clearSearchBox();
+
     });
 
     connect(m_searchWidget, &Peony::SearchWidget::refreshRequest, [=]() {
@@ -188,14 +189,13 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
         m_window->getCurrentPage()->setSortFilter(index);
     });
 
-    connect(this, &HeaderBar::closeSearch, m_searchWidget, &Peony::SearchWidget::closeSearch );
     connect(this, &HeaderBar::setGlobalFlag, m_searchWidget, &Peony::SearchWidget::setGlobalFlag );
     connect(this, &HeaderBar::updateSearchRecursive, m_searchWidget, &Peony::SearchWidget::updateSearchRecursive);
     connect(this, &HeaderBar::setLocation, m_searchWidget, &Peony::SearchWidget::updateLocation);
     connect(this, &HeaderBar::cancelEdit, m_searchWidget, &Peony::SearchWidget::cancelEdit);
     connect(this, &HeaderBar::startEdit, m_searchWidget, &Peony::SearchWidget::startEdit);
     connect(this, &HeaderBar::finishEdit, m_searchWidget, &Peony::SearchWidget::finishEdit);
-    connect(m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, &HeaderBar::updateSearchRequest);
+    //connect(m_searchWidget, &Peony::SearchWidget::updateSearchRequest, this, &HeaderBar::updateSearchRequest);
     connect(m_searchWidget, &Peony::SearchWidget::updateLocationRequest, this, &HeaderBar::updateLocationRequest);
     connect(this, &HeaderBar::setLocation, this, &HeaderBar::quitMultiSelect);
 
@@ -300,6 +300,8 @@ HeaderBar::HeaderBar(MainWindow *parent) : QToolBar(parent)
     connect(m_sort_type_menu, &QMenu::aboutToShow, m_sort_type_menu, [=]() {
         bool originPathVisible = m_window->getCurrentUri() == "trash:///";
         m_sort_type_menu->setOriginPathVisible(originPathVisible);
+        bool isSearchTab = m_window->getCurrentUri().startsWith("search:///");
+        m_sort_type_menu->setFilePathVisible(isSearchTab);
         m_sort_type_menu->setSortType(m_window->getCurrentSortColumn());
         m_sort_type_menu->setSortOrder(m_window->getCurrentSortOrder());
     });
@@ -535,10 +537,8 @@ void HeaderBar::switchSelectStatus(bool select)
         m_actions.find(HeaderBarAction::Delete).value()->setVisible(false);
     }
     //fix bug#100105 After the selected status changes, the view type is grayed out.
-    if (!select) {
-        updateViewTypeEnable();
-        updateSortTypeEnable();
-    }
+    updateViewTypeEnable();
+    updateSortTypeEnable();
 }
 
 void HeaderBar::addSpacing(int pixel)
@@ -578,7 +578,7 @@ void HeaderBar::updatePreviewPageVisible()
     auto manager = Peony::PreviewPageFactoryManager::getInstance();
     auto pluginNames = manager->getPluginNames();
     for (auto name : pluginNames) {
-        if (m_view_type_menu->menuAction()->isVisible() && m_preview_action->isChecked()) {
+        if (m_preview_action->isChecked() && m_preview_action->isVisible()) {
             auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
             m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
         } else {

@@ -1,0 +1,4 @@
+debian/upgrade-utils/desktop-grid/meta-get usr/bin
+debian/upgrade-utils/desktop-grid/meta-set usr/bin
+debian/upgrade-utils/desktop-grid/update-desktop-grid usr/bin
+debian/upgrade-utils/desktop-grid/config-parser/paser/meta-conf-parser usr/bin

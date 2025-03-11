@@ -32,6 +32,7 @@
 namespace Peony {
 
 class PropertiesWindowTabPagePluginIface;
+class StablePropertiesWindow;
 
 /*!
  * \brief The StablePropertiesWindowFactory class
@@ -69,7 +70,7 @@ public:
         return true;
     }
 
-    QMainWindow *create(const QStringList &uris);
+    QMainWindow *create(const QStringList &uris, QWidget *parent);
     void closeFactory();
 
     explicit StablePropertiesWindowFactory(QObject *parent = nullptr);
@@ -77,11 +78,11 @@ public:
 
     bool registerFactory(QObject *factory);
     bool unregisterFactory(QObject *factory);
-//    Peony::PropertiesWindowPluginManager *getManager() {
-//        return m_manager;
-//    }
-//private:
-//    Peony::PropertiesWindowPluginManager *m_manager = nullptr;
+
+    void show();
+
+private:
+    StablePropertiesWindow* m_window = nullptr;
 };
 
 }

@@ -85,7 +85,8 @@ ClipboardUtils::ClipboardUtils(QObject *parent) : QObject(parent)
             gCutFileUris.clear();
         }
 
-        if (!QApplication::clipboard()->ownsClipboard()) {
+        qDebug()<<"XDG_SESSION_TYPE:"<<qgetenv("XDG_SESSION_TYPE")<<" ownsClipboard:"<<QApplication::clipboard()->ownsClipboard();
+        if ("wayland" != qgetenv("XDG_SESSION_TYPE").toLower() && !QApplication::clipboard()->ownsClipboard()) {
             gCutFileUris.clear();
         }
     });
@@ -218,22 +219,17 @@ void ClipboardUtils::setClipboardFiles(const QStringList &uris, bool isCut, bool
         encodedUris << QString(encodeUrl);
     }
     data->setUrls(urls);
-//    QString string = encodedUris.join(" ");
-//    data->setData("peony-qt/encoded-uris", string.toUtf8());
-//    data->setText(string);
+    QString string = encodedUris.join(" ");
+    data->setData("peony-qt/encoded-uris", string.toUtf8());
+    data->setText(string);
 
-    QString text;
     QByteArray target = (isCut) ? "cut" : "copy";
     for (const QUrl &qurl : urls) {
-        const QString &path = qurl.toLocalFile();
-        if (!path.isEmpty()) {
-            text += path + '\n';
-        }
         target.append("\n");
         target.append(qurl.toString());
     }
-    data->setText(text.endsWith('\n') ? text.left(text.length() - 1) : text);
     data->setData("x-special/gnome-copied-files", target);
+
     QVariant isSearchData = QVariant(isSearch);
     data->setData("peony-qt/is-search", isSearchData.toByteArray());
 
