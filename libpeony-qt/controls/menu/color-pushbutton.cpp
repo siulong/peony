@@ -49,7 +49,7 @@ void ColorPushButton::paintEvent(QPaintEvent *e)
 {
     m_pathrect = this->rect().adjusted(1, 1, -1, -1);
     m_bigpathrect = m_pathrect;
-    QString manager = tr("label management ...");
+    QString manager = tr("Label Management ...");
 
     if(this->underMouse()){
         if(this->isChecked() && m_checkInMultiSelect){

@@ -31,7 +31,7 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     m_sort_types = sortTypeGroup;
     sortTypeGroup->setExclusive(true);
 
-    auto fileName = addAction(tr("File Name"));
+    auto fileName = addAction(tr("Name"));
     fileName->setCheckable(true);
     sortTypeGroup->addAction(fileName);
 
@@ -67,12 +67,12 @@ SortTypeMenu::SortTypeMenu(QWidget *parent) : QMenu(parent)
     m_sort_orders = sortOrderGroup;
     sortOrderGroup->setExclusive(true);
 
-    auto descending = addAction(tr("Descending"));
+    auto descending = addAction(tr("Descending Order"));
     descending->setCheckable(true);
     sortOrderGroup->addAction(descending);
 
     //switch defautl Descending Ascending order, fix bug#99924
-    auto ascending = addAction(tr("Ascending"));
+    auto ascending = addAction(tr("Ascending Order"));
     ascending->setCheckable(true);
     sortOrderGroup->addAction(ascending);
 
@@ -123,8 +123,8 @@ void SortTypeMenu::updateSortOrderName(int type)
         names.append(tr("Files from large to small"));
         names.append(tr("Files from small to large"));
     } else {
-        names.append(tr("Descending"));
-        names.append(tr("Ascending"));
+        names.append(tr("Descending Order"));
+        names.append(tr("Ascending Order"));
     }
     if (m_sort_orders->actions().count() >= 2) {
         m_sort_orders->actions().at(0)->setText(names.at(0));

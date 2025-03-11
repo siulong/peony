@@ -259,16 +259,16 @@ QList<QAction *> FileLabelInternalMenuPlugin::menuActions(MenuPluginInterface::T
             labelWidgetContainer->setDefaultWidget(labelWidget);
             l<<labelWidgetContainer;
 
-            QAction *tagAction = new QAction(tr("label management ..."), this);
+            QAction *tagAction = new QAction(tr("Label Management ..."), this);
             connect(tagAction, &QAction::triggered, this, [=]() {
                 TagManagement *managent = TagManagement::getInstance();
                 managent->show();
             });
             l<<tagAction;
 
-           connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
-            tagAction->setText(text);
-           });
+            connect(labelWidget, &FileLabelWidget::changeText, this, [=](const QString &text) {
+                tagAction->setText(text);
+            });
         }
     }
     return l;
@@ -444,6 +444,6 @@ void FileLabelWidget::paintEvent(QPaintEvent *e)
         }
     }
     if (!isUnderMouse){
-        Q_EMIT changeText(tr("label management ..."));
+        Q_EMIT changeText(tr("Label Management ..."));
     }
 }
