@@ -195,7 +195,10 @@ const QList<QAction *> SideBarMenu::constructFileSystemItemActions()
 
     bool isReddisk = false;
     //fix bug#212689, 212690, 213120, 213121, hide reddisk format and unmount option
-    if (unixDevice.startsWith("/dev/dm") && QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui"))
+    //fix bug#333377, jc encrpt software change install path issue
+    if (unixDevice.startsWith("/dev/dm") &&
+            (QFile::exists("/opt/AQTJ/Client/JC/MAIN/bin/jc_main_ui") ||
+             QFile::exists("/opt/apps/com.jc.bmt/files/MAIN/bin/jc_main_ui") ))
         isReddisk = true;
 
     //fix bug#175330, wayland should be the same with mainline version
