@@ -983,8 +983,12 @@ Do you want to unmount forcely?</source>
 <context>
     <name>SortTypeMenu</name>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>File Name</source>
+        <translation type="vanished">文件名称</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
+        <source>Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
@@ -1001,6 +1005,18 @@ Do you want to unmount forcely?</source>
         <location filename="../../src/control/sort-type-menu.cpp" line="55"/>
         <source>Path</source>
         <translation>路径</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="70"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="126"/>
+        <source>Descending Order</source>
+        <translation>降序</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/sort-type-menu.cpp" line="75"/>
+        <location filename="../../src/control/sort-type-menu.cpp" line="127"/>
+        <source>Ascending Order</source>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="86"/>
@@ -1051,16 +1067,12 @@ Do you want to unmount forcely?</source>
         <translation type="vanished">修改日期</translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="75"/>
-        <location filename="../../src/control/sort-type-menu.cpp" line="127"/>
         <source>Ascending</source>
-        <translation>升序</translation>
+        <translation type="vanished">升序</translation>
     </message>
     <message>
-        <location filename="../../src/control/sort-type-menu.cpp" line="70"/>
-        <location filename="../../src/control/sort-type-menu.cpp" line="126"/>
         <source>Descending</source>
-        <translation>降序</translation>
+        <translation type="vanished">降序</translation>
     </message>
 </context>
 <context>
