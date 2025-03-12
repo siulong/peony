@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0312) nile; urgency=medium
+
+  * fix #IBQNI1、#IBQNLK、#IBQNXQ、#IB73X8
+
+ -- Yue Lan <lanyue@kylinos.cn>  Wed, 12 Mar 2025 14:55:32 +0800
+
 peony (4.10.0.5-ok2~0303) nile; urgency=medium
 
   * 修复三岛任务栏gsettings缺失导致的桌面崩溃问题
