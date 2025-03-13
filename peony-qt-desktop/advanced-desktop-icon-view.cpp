@@ -1109,6 +1109,10 @@ void AdvancedDesktopIconView::dropEvent(QDropEvent *event)
         action = Qt::TargetMoveAction;
     }
     qDebug() << "DesktopIconView dropEvent" <<action;
+    bool isdropbyukuiidm = (event->mimeData()->hasFormat("text/ukui_idm") && event->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm) {
+        action = Qt::CopyAction;
+    }
     auto view = qobject_cast<AdvancedDesktopIconView *>(event->source());
     if (m_proxy_model->getDesktopUseAutoLayout() && m_dropIndicatorPos != DropIndicatorPosition::OnItem && !m_ctrl_key_pressed) {
         qDebug()<<"drop do auto layout move";

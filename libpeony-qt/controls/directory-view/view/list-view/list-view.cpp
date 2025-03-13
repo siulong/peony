@@ -542,6 +542,11 @@ void ListView::dragEnterEvent(QDragEnterEvent *e)
         m_ctrl_key_pressed = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm){
+        action = Qt::CopyAction;
+     }
+
     qDebug()<<"dragEnterEvent()" <<action <<m_ctrl_key_pressed;
     if (e->mimeData()->hasUrls()) {
         if (FileUtils::containsStandardPath(e->mimeData()->urls())) {
@@ -564,6 +569,12 @@ void ListView::dragMoveEvent(QDragMoveEvent *e)
         m_ctrl_key_pressed = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
+
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+     if(isdropbyukuiidm)
+     {
+         action = Qt::CopyAction;
+     }
     //qDebug()<<"list view dragMoveEvent()" <<action <<m_ctrl_key_pressed;
     auto index = indexAt(e->pos());
     if (index.isValid() && index != m_last_index) {
@@ -574,7 +585,7 @@ void ListView::dragMoveEvent(QDragMoveEvent *e)
         viewportEvent(&he);
     }
 
-    if (this == e->source() || !QModelIndex().flags().testFlag(Qt::ItemIsDropEnabled)) {
+    if (this == e->source() || !QModelIndex().flags().testFlag(Qt::ItemIsDropEnabled) && !isdropbyukuiidm) {
         return QTreeView::dragMoveEvent(e);
     }
     e->setDropAction(action);
@@ -611,6 +622,13 @@ void ListView::dropEvent(QDropEvent *e)
         m_ctrl_key_pressed = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
+
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm)
+    {
+        action = Qt::CopyAction;
+    }
+
     e->setDropAction(action);
     if (e->keyboardModifiers() & Qt::ShiftModifier) {
         action = Qt::TargetMoveAction;

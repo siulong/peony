@@ -268,6 +268,10 @@ void IconView::dragEnterEvent(QDragEnterEvent *e)
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
     qDebug()<<"dragEnterEvent()" <<action <<m_ctrl_key_pressed;
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm){
+        action = Qt::CopyAction;
+     }
     if (e->mimeData()->hasUrls()) {
         if (FileUtils::containsStandardPath(e->mimeData()->urls())) {
             e->ignore();
@@ -301,6 +305,10 @@ void IconView::dragMoveEvent(QDragMoveEvent *e)
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
     //qDebug()<<"dragMoveEvent()" <<action <<m_ctrl_key_pressed;
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm){
+        action = Qt::CopyAction;
+     }
     auto index = indexAt(e->pos());
     if (index.isValid() && index != m_last_index) {
         QHoverEvent he(QHoverEvent::HoverMove, e->posF(), e->posF());
@@ -309,7 +317,7 @@ void IconView::dragMoveEvent(QDragMoveEvent *e)
         QHoverEvent he(QHoverEvent::HoverLeave, e->posF(), e->posF());
         viewportEvent(&he);
     }
-    if (this == e->source() || !QModelIndex().flags().testFlag(Qt::ItemIsDropEnabled)) {
+    if (this == e->source() || !QModelIndex().flags().testFlag(Qt::ItemIsDropEnabled)&& !isdropbyukuiidm) {
         return QListView::dragMoveEvent(e);
     }
     e->setDropAction(action);
@@ -326,6 +334,12 @@ void IconView::dropEvent(QDropEvent *e)
         m_ctrl_key_pressed = false;
 
     auto action = m_ctrl_key_pressed ? Qt::CopyAction : Qt::MoveAction;
+
+    bool isdropbyukuiidm = (e->mimeData()->hasFormat("text/ukui_idm") && e->mimeData()->data("text/ukui_idm") == "ukui_idm") ? true : false;
+    if(isdropbyukuiidm){
+        action = Qt::CopyAction;
+     }
+
     e->setDropAction(action);
     if (e->keyboardModifiers() & Qt::ShiftModifier) {
         action = Qt::TargetMoveAction;
