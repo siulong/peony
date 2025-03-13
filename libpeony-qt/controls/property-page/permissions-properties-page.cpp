@@ -793,7 +793,7 @@ void AdvancedPermissionsPage::init()
             }
         }
 
-        auto result = QMessageBox::question(nullptr, tr("Permission refinement settings tip"), tr("Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?"),
+        auto result = QMessageBox::question(this, tr("Permission refinement settings tip"), tr("Setting ACL permissions will result in a change in the user group permissions for basic permissions. Do you need to continue setting ACL permissions?"),
                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
         if (result == QMessageBox::Yes) {
             this->checkInheritsBoxInfo();
