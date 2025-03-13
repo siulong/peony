@@ -1865,7 +1865,7 @@ void TabWidget::updateStatusBarGeometry()
 {
     auto font = qApp->font();
     QFontMetrics fm(font);
-    m_status_bar->setGeometry(0, this->height() - fm.height() - 10, m_stack->width(), fm.height() + 10);
+    m_status_bar->setGeometry(width() - m_stack->width(), this->height() - fm.height() - 10 , m_stack->width(), fm.height() + 10);
     m_status_bar->raise();
     if (Peony::GlobalSettings::getInstance()->getValue(ZOOM_SLIDER_VISIBLE).toBool() && !m_isTabletMode) {
         m_status_bar->m_slider->show();

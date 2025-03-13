@@ -1552,9 +1552,6 @@ void MainWindow::paintEvent(QPaintEvent *e)
         colorBase.setAlphaF(sidebarOpacity/100.0);
     }
 
-    QPainterPath sidebarPath;
-    sidebarPath.setFillRule(Qt::FillRule::WindingFill);
-
     auto pos = m_tab->mapTo(this, QPoint());
     auto tmpRect = QRect(pos, m_tab->size());
     QPainterPath deletePath;
@@ -1562,15 +1559,18 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
     tmpPath.addRect(rect());
 
-    deletePath.addRoundedRect(tmpRect.adjusted(0, 48, 0, 0), 16, 16);
-    deletePath.addRect(rect().width()-18,rect().height()-18,18,18);
-    deletePath.addRect(tmpRect.x(),tmpRect.height()-18,18,18);
+    QPoint sideBarPos = m_side_bar->mapTo(this, QPoint());
 
-    sidebarPath = tmpPath - deletePath;
+    QPainterPath sideBarPath;
+    sideBarPath.setFillRule(Qt::FillRule::WindingFill);
+    sideBarPath.addRect(QRect(sideBarPos, m_side_bar->size()));
+    sideBarPath.addRect(0,0, rect().width(), 48);
+
+    deletePath = tmpPath - sideBarPath;
 
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing); // 抗锯齿
-    p.fillPath(sidebarPath,colorBase);
+    p.fillPath(sideBarPath,colorBase);
 
     QPainter painter(this);
     if(m_is_first_tab)
@@ -1763,9 +1763,9 @@ void MainWindow::initUI(const QString &uri)
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, this, &MainWindow::goToUri);
     connect(m_side_bar, &Peony::SideBar::updateWindowLocationRequest, m_header_bar, &HeaderBar::cancleSelect);
     if (layoutDirection() == Qt::RightToLeft) {
-        addDockWidget(Qt::RightDockWidgetArea, m_side_bar);
+        m_tab->addDockWidget(Qt::RightDockWidgetArea, m_side_bar);
     } else {
-        addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
+        m_tab->addDockWidget(Qt::LeftDockWidgetArea, m_side_bar);
     }
 
    // auto labelDialog = new FileLabelBox(this);
