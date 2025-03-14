@@ -132,6 +132,7 @@ private:
     void queryFileDisplayName(GFileInfo* new_info);
     void refreshFileSystemInfo (GFileInfo* new_info);
     void refreshInfoContents (GFileInfo *new_info);
+    QString getTrashTimeFromGFile(const QString &path);
 
 private:
     std::shared_ptr<FileInfo> m_info;
