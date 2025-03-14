@@ -435,8 +435,8 @@ void DesktopIndexWidget::updateItem()
 //    }
 
 //    qDebug() << "updateItem fixedHeight:" <<fixedHeight <<rawHeight <<m_option.text;
-//    if (fixedHeight < rawHeight)
-//        fixedHeight = rawHeight;
+    if (fixedHeight < visualRect.height())
+        fixedHeight = visualRect.height();
 
     m_option.text = m_index.data().toString();
     //qDebug()<<m_option.text;
