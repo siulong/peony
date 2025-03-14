@@ -598,8 +598,8 @@ static void unmount_finished(GFile* file, GAsyncResult* result, gpointer udata)
             return;
         }
         QMessageBox message_error(pthis);
-          
-        message_error.setText(QObject::tr("Error: %1\n").arg(err->message));
+        QString errorMsg = pthis->translateErrorMessage(QString::fromUtf8(err->message));
+        message_error.setText(QObject::tr("Error: %1\n").arg(errorMsg));
 
         message_error.setWindowTitle(QObject::tr("Format failed"));
 
@@ -1437,4 +1437,14 @@ void Format_Dialog::adjustButtonText()
 
     updateButtonShow(mFormatBtn, mFormatBtn->text());
     updateButtonShow(mCancelBtn, mCancelBtn->text());
+}
+
+QString Format_Dialog::translateErrorMessage(const QString &originalError)
+{
+    // 检测特定的错误模式并返回需要翻译的字符串ID
+    if (originalError.contains("Error locking") && originalError.contains("Device or resource busy")) {
+        return tr("Error locking device: Failed to deactivate device: Device or resource busy");
+    }
+
+    return originalError;
 }

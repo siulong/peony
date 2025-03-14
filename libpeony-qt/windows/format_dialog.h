@@ -103,6 +103,8 @@ public:
 //    Ui::Format_Dialog *ui;
     void adjustButtonText();
 
+    QString translateErrorMessage(const QString &originalError);
+
 public:
     bool renameOK = true;
 
