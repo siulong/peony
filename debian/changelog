@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0313) nile; urgency=medium
+
+  * task#439994 文件管理器UE体验升级/需求25446 文件管理器标题栏结构布局优化
+
+ -- Yue Lan <lanyue@kylinos.cn>  Sat, 15 Mar 2025 21:18:33 +0800
+
 peony (4.10.0.5-ok2~0312) nile; urgency=medium
 
   * fix #IBQNI1、#IBQNLK、#IBQNXQ、#IB73X8
