@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="32"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Đối thoại</translation>
     </message>
     <message>
         <location filename="../../src/windows/about-dialog.ui" line="88"/>
