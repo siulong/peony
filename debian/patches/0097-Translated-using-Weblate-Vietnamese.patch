@@ -1,0 +1,25 @@
+From: "2329574154@qq.com" <2329574154@qq.com>
+Date: Tue, 18 Mar 2025 04:43:56 +0000
+Subject: Translated using Weblate (Vietnamese)
+
+Currently translated at 1.0% (2 of 191 strings)
+
+Translation: openkylin-nile-new/peony-qt
+Translate-URL: http://weblate.openkylin.top/projects/openkylin-nile-new/peony-qt/vi/
+---
+ translations/peony-qt/peony-qt_vi.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/translations/peony-qt/peony-qt_vi.ts b/translations/peony-qt/peony-qt_vi.ts
+index 268f133..f0cd8c0 100644
+--- a/translations/peony-qt/peony-qt_vi.ts
++++ b/translations/peony-qt/peony-qt_vi.ts
+@@ -6,7 +6,7 @@
+     <message>
+         <location filename="../../src/windows/about-dialog.ui" line="32"/>
+         <source>Dialog</source>
+-        <translation type="unfinished"></translation>
++        <translation>Đối thoại</translation>
+     </message>
+     <message>
+         <location filename="../../src/windows/about-dialog.ui" line="88"/>
