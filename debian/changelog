@@ -1,3 +1,11 @@
+peony (4.0.0.2-1) unstable; urgency=medium
+
+  * Bugfix only:
+    - Use QScreen instead of KScreen to prevent FTBFS (Closes: #1079810)
+      and resolve incorrect display positioning (LP: #2103673)
+
+ -- handsome_feng <jianfengli@ubuntukylin.com>  Thu, 20 Mar 2025 11:44:47 +0800
+
 peony (4.0.0.1-1) unstable; urgency=medium
 
   * Disable the auto partition mount to fix UbuntuKylin install error.
