@@ -6,17 +6,17 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
         <source>Label Management ...</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤管理...</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="72"/>
         <source>Remove &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>移除 “%1”</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="92"/>
         <source>add  &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>增加 “%1”</translation>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="723"/>
         <source>DVD+RW udf format fail.</source>
-        <translation type="unfinished"></translation>
+        <translation>DVD+RW 格式化失敗</translation>
     </message>
     <message>
         <source>is not properly formatted.</source>
@@ -172,7 +172,7 @@
         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="162"/>
         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="177"/>
         <source>Burn failed</source>
-        <translation type="unfinished"></translation>
+        <translation>燒錄失敗</translation>
     </message>
 </context>
 <context>
@@ -1921,7 +1921,7 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1613"/>
         <source>MultiSelect</source>
-        <translation type="unfinished"></translation>
+        <translation>多選</translation>
     </message>
     <message>
         <source>Orignal Path</source>
@@ -2038,12 +2038,12 @@
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="752"/>
         <source>Original Path</source>
-        <translation type="unfinished">原始路徑</translation>
+        <translation>原始路徑</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="758"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>路徑</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="781"/>
@@ -4497,7 +4497,7 @@ Do you want to delete the link file?</source>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="95"/>
         <source>Quick Access</source>
-        <translation type="unfinished"></translation>
+        <translation>快速訪問</translation>
     </message>
     <message>
         <source>Favorite</source>
