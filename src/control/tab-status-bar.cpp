@@ -205,11 +205,7 @@ void TabStatusBar::resizeEvent(QResizeEvent *e)
     QStatusBar::resizeEvent(e);
     auto pos = this->rect().topRight();
     auto size = m_slider->size();
-    int x = pos.x() - size.width() - 20;
-    if (layoutDirection() == Qt::RightToLeft) {
-        x = 0;
-    }
-    m_slider->move(x, this->size().height()/2 - size.height()/2);
+    m_slider->move(pos.x() - size.width() - 20, this->size().height()/2 - size.height()/2);
 }
 
 void TabStatusBar::updateSearchProgress(bool searching)
