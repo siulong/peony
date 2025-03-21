@@ -1,0 +1,28 @@
+From: renyangguang <renyangguang@kylinos.cn>
+Date: Fri, 21 Mar 2025 10:04:19 +0800
+Subject: =?utf-8?b?YnVnZml4OltJQjFTRUddIOOAkOasoeimgeOAkeOAkOaWh+S7tueuoQ==?=
+ =?utf-8?b?55CG5Zmo44CR5Y+z6ZSu54K55Ye75L6n6L655qCP5qCH6K+G77yM5Lmf5Lya5pyJ?=
+ =?utf-8?b?5bem6ZSu55qE5Yqf6IO9?=
+
+---
+ src/control/file-label-box.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/control/file-label-box.cpp b/src/control/file-label-box.cpp
+index 39cce42..57eb928 100644
+--- a/src/control/file-label-box.cpp
++++ b/src/control/file-label-box.cpp
+@@ -141,7 +141,13 @@ QSize FileLabelBox::sizeHint() const
+ 
+ void FileLabelBox::mousePressEvent(QMouseEvent *e)
+ {
++    // issues#IB1SEG remove the effect of right mouse clicks on selected color labels
++    if (e->button() == Qt::RightButton) {
++        return;
++    }
++
+     QModelIndex index = indexAt(e->pos());
++
+     //qDebug() << "mousePressEvent:"<<e->pos() <<index.isValid() <<index.data() <<e->type();
+     if (!index.isValid() && e->button() == Qt::LeftButton)
+     {
