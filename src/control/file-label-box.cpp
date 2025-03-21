@@ -141,7 +141,13 @@ QSize FileLabelBox::sizeHint() const
 
 void FileLabelBox::mousePressEvent(QMouseEvent *e)
 {
+    // issues#IB1SEG remove the effect of right mouse clicks on selected color labels
+    if (e->button() == Qt::RightButton) {
+        return;
+    }
+
     QModelIndex index = indexAt(e->pos());
+
     //qDebug() << "mousePressEvent:"<<e->pos() <<index.isValid() <<index.data() <<e->type();
     if (!index.isValid() && e->button() == Qt::LeftButton)
     {
