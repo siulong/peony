@@ -846,6 +846,7 @@ NavigationSideBarContainer::NavigationSideBarContainer(QWidget *parent) : Peony:
     m_layout->setSpacing(0);
 
     QWidget *widget = new QWidget;
+    m_layout->addWidget(new TitleLabel(this));
     widget->setLayout(m_layout);
     setWidget(widget);
 
