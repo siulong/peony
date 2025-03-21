@@ -1,0 +1,307 @@
+From: MeihongHe <hemeihong@kylinos.cn>
+Date: Fri, 21 Mar 2025 16:24:20 +0800
+Subject: Update translations file.
+
+---
+ translations/libpeony-qt/libpeony-qt_ar.ts             |  0
+ translations/libpeony-qt/libpeony-qt_bo_CN.ts          |  0
+ translations/libpeony-qt/libpeony-qt_cs.ts             |  0
+ translations/libpeony-qt/libpeony-qt_de.ts             |  0
+ translations/libpeony-qt/libpeony-qt_es.ts             |  0
+ translations/libpeony-qt/libpeony-qt_fa.ts             |  0
+ translations/libpeony-qt/libpeony-qt_fr.ts             |  0
+ translations/libpeony-qt/libpeony-qt_kk.ts             |  0
+ translations/libpeony-qt/libpeony-qt_ky.ts             |  0
+ translations/libpeony-qt/libpeony-qt_mn.ts             |  0
+ translations/libpeony-qt/libpeony-qt_tr.ts             |  0
+ translations/libpeony-qt/libpeony-qt_ug.ts             |  0
+ translations/libpeony-qt/libpeony-qt_vi.ts             |  0
+ translations/libpeony-qt/libpeony-qt_zh_CN.ts          |  0
+ translations/libpeony-qt/libpeony-qt_zh_HK.ts          | 18 +++++++++---------
+ translations/peony-qt-desktop/peony-qt-desktop_ar.ts   |  0
+ .../peony-qt-desktop/peony-qt-desktop_bo_CN.ts         |  0
+ translations/peony-qt-desktop/peony-qt-desktop_cs.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_de.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_es.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_fa.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_fr.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_kk.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_ky.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_mn.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_tr.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_ug.ts   |  0
+ translations/peony-qt-desktop/peony-qt-desktop_vi.ts   |  0
+ .../peony-qt-desktop/peony-qt-desktop_zh_CN.ts         |  0
+ .../peony-qt-desktop/peony-qt-desktop_zh_HK.ts         |  0
+ translations/peony-qt/peony-qt_ar.ts                   |  0
+ translations/peony-qt/peony-qt_bo_CN.ts                |  0
+ translations/peony-qt/peony-qt_cs.ts                   |  0
+ translations/peony-qt/peony-qt_de.ts                   |  0
+ translations/peony-qt/peony-qt_es.ts                   |  0
+ translations/peony-qt/peony-qt_fa.ts                   |  0
+ translations/peony-qt/peony-qt_fr.ts                   |  0
+ translations/peony-qt/peony-qt_kk.ts                   |  0
+ translations/peony-qt/peony-qt_ky.ts                   |  0
+ translations/peony-qt/peony-qt_mn.ts                   |  0
+ translations/peony-qt/peony-qt_tr.ts                   |  0
+ translations/peony-qt/peony-qt_ug.ts                   |  0
+ translations/peony-qt/peony-qt_vi.ts                   |  0
+ translations/peony-qt/peony-qt_zh_CN.ts                |  0
+ translations/peony-qt/peony-qt_zh_HK.ts                |  0
+ 45 files changed, 9 insertions(+), 9 deletions(-)
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_ar.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_bo_CN.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_cs.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_de.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_es.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_fa.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_fr.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_kk.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_ky.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_mn.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_tr.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_ug.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_vi.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_zh_CN.ts
+ mode change 100644 => 100755 translations/libpeony-qt/libpeony-qt_zh_HK.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_ar.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_cs.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_de.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_es.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_fa.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_fr.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_kk.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_ky.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_tr.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_vi.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts
+ mode change 100644 => 100755 translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_ar.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_bo_CN.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_cs.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_de.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_es.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_fa.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_fr.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_kk.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_ky.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_mn.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_tr.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_ug.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_vi.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_zh_CN.ts
+ mode change 100644 => 100755 translations/peony-qt/peony-qt_zh_HK.ts
+
+diff --git a/translations/libpeony-qt/libpeony-qt_ar.ts b/translations/libpeony-qt/libpeony-qt_ar.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_bo_CN.ts b/translations/libpeony-qt/libpeony-qt_bo_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_cs.ts b/translations/libpeony-qt/libpeony-qt_cs.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_de.ts b/translations/libpeony-qt/libpeony-qt_de.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_es.ts b/translations/libpeony-qt/libpeony-qt_es.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_fa.ts b/translations/libpeony-qt/libpeony-qt_fa.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_fr.ts b/translations/libpeony-qt/libpeony-qt_fr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_kk.ts b/translations/libpeony-qt/libpeony-qt_kk.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_ky.ts b/translations/libpeony-qt/libpeony-qt_ky.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_mn.ts b/translations/libpeony-qt/libpeony-qt_mn.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_tr.ts b/translations/libpeony-qt/libpeony-qt_tr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_ug.ts b/translations/libpeony-qt/libpeony-qt_ug.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_vi.ts b/translations/libpeony-qt/libpeony-qt_vi.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_zh_CN.ts b/translations/libpeony-qt/libpeony-qt_zh_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/libpeony-qt/libpeony-qt_zh_HK.ts b/translations/libpeony-qt/libpeony-qt_zh_HK.ts
+old mode 100644
+new mode 100755
+index ab842fc..f2b9f22
+--- a/translations/libpeony-qt/libpeony-qt_zh_HK.ts
++++ b/translations/libpeony-qt/libpeony-qt_zh_HK.ts
+@@ -6,17 +6,17 @@
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="52"/>
+         <source>Label Management ...</source>
+-        <translation type="unfinished"></translation>
++        <translation>標籤管理...</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="72"/>
+         <source>Remove &quot;%1&quot;</source>
+-        <translation type="unfinished"></translation>
++        <translation>移除 “%1”</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/color-pushbutton.cpp" line="92"/>
+         <source>add  &quot;%1&quot;</source>
+-        <translation type="unfinished"></translation>
++        <translation>增加 “%1”</translation>
+     </message>
+ </context>
+ <context>
+@@ -87,7 +87,7 @@
+     <message>
+         <location filename="../../libpeony-qt/convenient-utils/disc/disccontrol.cpp" line="723"/>
+         <source>DVD+RW udf format fail.</source>
+-        <translation type="unfinished"></translation>
++        <translation>DVD+RW 格式化失敗</translation>
+     </message>
+     <message>
+         <source>is not properly formatted.</source>
+@@ -172,7 +172,7 @@
+         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="162"/>
+         <location filename="../../libpeony-qt/file-operation/file-operation-helper.cpp" line="177"/>
+         <source>Burn failed</source>
+-        <translation type="unfinished"></translation>
++        <translation>燒錄失敗</translation>
+     </message>
+ </context>
+ <context>
+@@ -1921,7 +1921,7 @@
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="1613"/>
+         <source>MultiSelect</source>
+-        <translation type="unfinished"></translation>
++        <translation>多選</translation>
+     </message>
+     <message>
+         <source>Orignal Path</source>
+@@ -2038,12 +2038,12 @@
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="752"/>
+         <source>Original Path</source>
+-        <translation type="unfinished">原始路徑</translation>
++        <translation>原始路徑</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="758"/>
+         <source>Path</source>
+-        <translation type="unfinished"></translation>
++        <translation>路徑</translation>
+     </message>
+     <message>
+         <location filename="../../libpeony-qt/controls/menu/directory-view-menu/directory-view-menu.cpp" line="781"/>
+@@ -4497,7 +4497,7 @@ Do you want to delete the link file?</source>
+     <message>
+         <location filename="../../libpeony-qt/model/side-bar-favorite-item.cpp" line="95"/>
+         <source>Quick Access</source>
+-        <translation type="unfinished"></translation>
++        <translation>快速訪問</translation>
+     </message>
+     <message>
+         <source>Favorite</source>
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ar.ts b/translations/peony-qt-desktop/peony-qt-desktop_ar.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts b/translations/peony-qt-desktop/peony-qt-desktop_bo_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_cs.ts b/translations/peony-qt-desktop/peony-qt-desktop_cs.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_de.ts b/translations/peony-qt-desktop/peony-qt-desktop_de.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_es.ts b/translations/peony-qt-desktop/peony-qt-desktop_es.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_fa.ts b/translations/peony-qt-desktop/peony-qt-desktop_fa.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_fr.ts b/translations/peony-qt-desktop/peony-qt-desktop_fr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_kk.ts b/translations/peony-qt-desktop/peony-qt-desktop_kk.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ky.ts b/translations/peony-qt-desktop/peony-qt-desktop_ky.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_mn.ts b/translations/peony-qt-desktop/peony-qt-desktop_mn.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_tr.ts b/translations/peony-qt-desktop/peony-qt-desktop_tr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_ug.ts b/translations/peony-qt-desktop/peony-qt-desktop_ug.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_vi.ts b/translations/peony-qt-desktop/peony-qt-desktop_vi.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts b/translations/peony-qt-desktop/peony-qt-desktop_zh_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts b/translations/peony-qt-desktop/peony-qt-desktop_zh_HK.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_ar.ts b/translations/peony-qt/peony-qt_ar.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_bo_CN.ts b/translations/peony-qt/peony-qt_bo_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_cs.ts b/translations/peony-qt/peony-qt_cs.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_de.ts b/translations/peony-qt/peony-qt_de.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_es.ts b/translations/peony-qt/peony-qt_es.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_fa.ts b/translations/peony-qt/peony-qt_fa.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_fr.ts b/translations/peony-qt/peony-qt_fr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_kk.ts b/translations/peony-qt/peony-qt_kk.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_ky.ts b/translations/peony-qt/peony-qt_ky.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_mn.ts b/translations/peony-qt/peony-qt_mn.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_tr.ts b/translations/peony-qt/peony-qt_tr.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_ug.ts b/translations/peony-qt/peony-qt_ug.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_vi.ts b/translations/peony-qt/peony-qt_vi.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_zh_CN.ts b/translations/peony-qt/peony-qt_zh_CN.ts
+old mode 100644
+new mode 100755
+diff --git a/translations/peony-qt/peony-qt_zh_HK.ts b/translations/peony-qt/peony-qt_zh_HK.ts
+old mode 100644
+new mode 100755
