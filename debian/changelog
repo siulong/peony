@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0324) nile; urgency=medium
+
+  * 更新繁体中文翻译，fix #IB1G8A, #IB1DUZ, #IB1VCD, #IB3GO5, #IB3GM2, #IB3GIS.
+
+ -- MeihongHe <hemeihong@kylinos.cn>  Mon, 24 Mar 2025 11:08:21 +0800
+
 peony (4.10.0.5-ok2~0321) nile; urgency=medium
 
   * revert task#439994 文件管理器UE体验升级/需求25446 文件管理器标题栏结构布局优化

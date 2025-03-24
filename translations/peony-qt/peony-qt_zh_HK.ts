@@ -45,7 +45,7 @@ p， li { white-space： pre-wrap;
         <location filename="../../src/windows/about-dialog.cpp" line="98"/>
         <location filename="../../src/windows/about-dialog.cpp" line="114"/>
         <source>Peony</source>
-        <translation>文件管理器</translation>
+        <translation>檔案管理員</translation>
     </message>
     <message>
         <source>peony</source>
@@ -55,7 +55,7 @@ p， li { white-space： pre-wrap;
         <location filename="../../src/windows/about-dialog.cpp" line="51"/>
         <location filename="../../src/windows/about-dialog.cpp" line="129"/>
         <source>Peony is a graphical software to help users manage system files. It provides common file operation functions for users, such as file viewing, file copy, paste, cut, delete, rename, file selection, application opening, file search, file sorting, file preview, etc. it is convenient for users to manage system files intuitively on the interface.</source>
-        <translation>文件管理器是一個圖形軟體，幫助使用者管理系統檔。它為使用者提供了常用的檔案操作功能，如檔查看、檔案複製、粘貼、剪切、刪除、重命名、檔案選擇、應用程式打開、檔案搜索、檔排序、檔預覽等，方便使用者在介面上直觀地管理系統檔。</translation>
+        <translation>檔案管理員是一個圖形軟體，幫助使用者管理系統檔。它為使用者提供了常用的檔案操作功能，如檔查看、檔案複製、粘貼、剪切、刪除、重命名、檔案選擇、應用程式打開、檔案搜索、檔排序、檔預覽等，方便使用者在介面上直觀地管理系統檔。</translation>
     </message>
     <message>
         <source>Hot Service: </source>
@@ -148,7 +148,7 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/control/header-bar.cpp" line="358"/>
         <source>Option</source>
-        <translation>選擇</translation>
+        <translation>選項</translation>
     </message>
     <message>
         <location filename="../../src/control/header-bar.cpp" line="474"/>
@@ -588,22 +588,22 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="244"/>
         <source>Show Network</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示網絡</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="249"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"></translation>
+        <translation>連接伺服器</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="261"/>
         <source>Help</source>
-        <translation>説明</translation>
+        <translation>幫助</translation>
     </message>
     <message>
         <location filename="../../src/control/operation-menu.cpp" line="265"/>
         <source>About</source>
-        <translation>大約</translation>
+        <translation>關於</translation>
     </message>
 </context>
 <context>
@@ -773,7 +773,7 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/peony-application.cpp" line="170"/>
         <source>peony-qt</source>
-        <translation>文件管理器</translation>
+        <translation>檔案管理員</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="177"/>
@@ -806,12 +806,12 @@ p， li { white-space： pre-wrap;
     <message>
         <location filename="../../src/peony-application.cpp" line="338"/>
         <source>Peony is disabled to start !</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案管理員被禁止啓動！</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="510"/>
         <source>Peony Qt</source>
-        <translation>文件管理器</translation>
+        <translation>檔案管理員</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.cpp" line="511"/>
@@ -877,7 +877,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
     <message>
         <location filename="../../src/peony-application.h" line="67"/>
         <source>Close all peony-qt windows and quit</source>
-        <translation>關閉所有peony-qt 視窗並退出</translation>
+        <translation>關閉所有檔案管理員視窗並退出</translation>
     </message>
     <message>
         <location filename="../../src/peony-application.h" line="68"/>
@@ -972,7 +972,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="700"/>
         <source>PeonyNotify</source>
-        <translation>文件管理器通知</translation>
+        <translation>檔案管理員通知</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="701"/>
@@ -989,7 +989,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="34"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>檔名</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="46"/>
@@ -1004,7 +1004,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="55"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>路徑</translation>
     </message>
     <message>
         <location filename="../../src/control/sort-type-menu.cpp" line="70"/>
@@ -1167,12 +1167,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="532"/>
         <source>Search Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索設置</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="532"/>
         <source>After the creation of the index, the next search can get the results of the document content containing the search term, during which you can exit the page at any time, we will continue to complete the creation in the background.</source>
-        <translation type="unfinished"></translation>
+        <translation>創建索引後，可以搜索到內容包含關鍵詞的文檔，退出當前頁面，索引會在後臺繼續創建完成。</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="556"/>
@@ -1182,27 +1182,27 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="581"/>
         <source>Condition</source>
-        <translation type="unfinished"></translation>
+        <translation>條件</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="584"/>
         <source>File Type</source>
-        <translation type="unfinished">檔案類型</translation>
+        <translation>檔案類型</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="588"/>
         <source>Modify time</source>
-        <translation type="unfinished"></translation>
+        <translation>修改時間</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="592"/>
         <source>File Size</source>
-        <translation type="unfinished">檔大小</translation>
+        <translation>檔大小</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.cpp" line="595"/>
         <source>File Label</source>
-        <translation type="unfinished"></translation>
+        <translation>檔名</translation>
     </message>
     <message>
         <source>Close Filter.</source>
@@ -1390,12 +1390,12 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>file name and content</source>
-        <translation type="unfinished"></translation>
+        <translation>檔名和內容</translation>
     </message>
     <message>
         <location filename="../../src/control/tab-widget.h" line="317"/>
         <source>file name</source>
-        <translation type="unfinished"></translation>
+        <translation>檔名</translation>
     </message>
     <message>
         <source>year ago</source>
@@ -1454,7 +1454,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../src/control/navigation-side-bar.cpp" line="1041"/>
         <source>Peony</source>
-        <translation>文件管理器</translation>
+        <translation>檔案管理員</translation>
     </message>
 </context>
 <context>
