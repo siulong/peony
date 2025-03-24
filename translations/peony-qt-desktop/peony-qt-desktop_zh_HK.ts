@@ -39,7 +39,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>背景設置</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
@@ -458,12 +458,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>背景設置</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>Display Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示設置</translation>
     </message>
 </context>
 </TS>
