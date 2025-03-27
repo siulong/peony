@@ -1,0 +1,23 @@
+From: renyangguang <renyangguang@kylinos.cn>
+Date: Thu, 27 Mar 2025 19:15:05 +0800
+Subject: =?utf-8?b?YnVnZml4OltJOUtLODZdIOOAkOaWh+S7tueuoeeQhuWZqOOAkeKAnA==?=
+ =?utf-8?b?5pi+56S66ZqQ6JeP5paH5Lu24oCd5ZKM4oCc6K6+572u6K+m57uG5L+h5oGv4oCd?=
+ =?utf-8?b?5YiH5o2i55uu5b2V5oiW6YeN5paw5omT5byA5ZCO5peg5rOV5L+d5a2Y54q25oCB?=
+
+---
+ src/control/header-bar.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/control/header-bar.cpp b/src/control/header-bar.cpp
+index 9ddaab0..910e22c 100644
+--- a/src/control/header-bar.cpp
++++ b/src/control/header-bar.cpp
+@@ -578,7 +578,7 @@ void HeaderBar::updatePreviewPageVisible()
+     auto manager = Peony::PreviewPageFactoryManager::getInstance();
+     auto pluginNames = manager->getPluginNames();
+     for (auto name : pluginNames) {
+-        if (m_preview_action->isChecked() && m_preview_action->isVisible()) {
++        if (!m_tablet_mode && m_preview_action->isChecked()) {
+             auto plugin = Peony::PreviewPageFactoryManager::getInstance()->getPlugin(name);
+             m_window->m_tab->setPreviewPage(plugin->createPreviewPage());
+         } else {
