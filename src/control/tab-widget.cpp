@@ -81,6 +81,9 @@
 
 #include <QWidgetAction>
 
+#include <QVariantAnimation>
+#include <QParallelAnimationGroup>
+
 #define PUSH_BUTTON_TOTAL_PADDING 14
 
 static PushButtonStyle *global_instance = nullptr;
@@ -196,6 +199,7 @@ TabWidget::TabWidget(QWidget *parent) : QMainWindow(parent)
         updateTabAllPages();
         updateTabBarGeometry();
     });
+    connect(m_tab_bar->m_slide_animation, &QVariantAnimation::valueChanged, this, &TabWidget::updateTabBarGeometry);
     connect(m_tab_bar, &NavigationTabBar::addPageRequest, this, &TabWidget::addPage);
     connect(m_tab_bar, &NavigationTabBar::locationUpdated, this, &TabWidget::updateSearchPathButton);
     connect(m_tab_bar, &NavigationTabBar::locationUpdated, this, [this]{
@@ -1817,6 +1821,11 @@ void TabWidget::updateTabBarGeometry()
     } else {
         tabBarWidth = this->width() - windowButtonsWidth;
         addPageX = m_tab_bar->sizeHint().width() + 2;
+
+        if (m_tab_bar->count() > 1 && m_tab_bar->m_slide_animation->state() != QAbstractAnimation::Stopped) {
+            auto tabWidth = m_tab_bar->tabSizeHint(m_tab_bar->count() - 1).width();
+            addPageX -= tabWidth * (1 - m_tab_bar->m_slide_animation->currentValue().toReal());
+        }
     }
 
     if (layoutDirection() == Qt::LeftToRight)

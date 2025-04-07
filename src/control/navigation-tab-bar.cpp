@@ -49,6 +49,14 @@
 
 #include <QStyleOption>
 
+#include <QParallelAnimationGroup>
+#include <QVariantAnimation>
+#include <QEasingCurve>
+#include <QTransform>
+
+#include <QChildEvent>
+#include <QAbstractButton>
+
 #include <QtX11Extras/QX11Info>
 
 #include <kstartupinfo.h>
@@ -64,6 +72,26 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
 {
     setProperty("isWindowButton", 0x1);
     setProperty("useIconHighlightEffect", 0x2);
+
+    m_animations = new QParallelAnimationGroup(this);
+    m_opacity_animation = new QVariantAnimation;
+    m_slide_animation = new QVariantAnimation;
+    m_zoom_animation = new QVariantAnimation;
+    m_opacity_animation->setDuration(200);
+    m_opacity_animation->setStartValue(qreal(0.0));
+    m_opacity_animation->setEndValue(qreal(1.0));
+    m_opacity_animation->setEasingCurve(QEasingCurve::InOutQuart);
+    m_slide_animation->setDuration(200);
+    m_slide_animation->setStartValue(qreal(0.0));
+    m_slide_animation->setEndValue(qreal(1.0));
+    m_slide_animation->setEasingCurve(QEasingCurve::InOutQuart);
+    m_zoom_animation->setDuration(200);
+    m_zoom_animation->setStartValue(qreal(0.0));
+    m_zoom_animation->setEndValue(qreal(1.0));
+    m_zoom_animation->setEasingCurve(QEasingCurve::InOutQuart);
+    m_animations->addAnimation(m_opacity_animation);
+    m_animations->addAnimation(m_slide_animation);
+    m_animations->addAnimation(m_zoom_animation);
 
     setAcceptDrops(true);
     m_drag_timer.setInterval(750);
@@ -97,6 +125,10 @@ NavigationTabBar::NavigationTabBar(QWidget *parent) : QTabBar(parent)
         //qDebug()<<"tab bar double clicked"<<index;
     });
 
+    connect(m_opacity_animation, &QVariantAnimation::valueChanged, this, [this]{
+        this->update();
+    });
+
     setDrawBase(false);
 }
 
@@ -107,7 +139,12 @@ void NavigationTabBar::addPages(const QStringList &uri)
 
 QStringList NavigationTabBar::getCurrentUris()
 {
-     return m_has_uris;
+    return m_has_uris;
+}
+
+bool NavigationTabBar::event(QEvent *ev)
+{
+    return QTabBar::event(ev);
 }
 
 void NavigationTabBar::updateLocation(int index, const QString &uri)
@@ -153,6 +190,11 @@ void NavigationTabBar::updateLocation(int index, const QString &uri)
 
 void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
 {
+    if (m_animations->state() != QAbstractAnimation::Stopped) {
+        m_animations->stop();
+    }
+    m_animations->start();
+
     //setFocus();
     if (uri.isEmpty())
         return;
@@ -176,6 +218,11 @@ void NavigationTabBar::addPage(const QString &uri, bool jumpToNewTab)
             QString uri = tabData(currentIndex()).toString();
             addPage(uri, jumpToNewTab);
         }
+    }
+
+    auto closeButton = tabButton(currentIndex(), QTabBar::RightSide);
+    if (closeButton) {
+        closeButton->setStyle(TabBarStyle::getStyle());
     }
 }
 
@@ -420,6 +467,25 @@ QRect TabBarStyle::subElementRect(QStyle::SubElement element, const QStyleOption
 void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     if (!m_need_adjust) {
+        if (element == PE_IndicatorTabClose) {
+            if (option->styleObject && option->styleObject->inherits("CloseButton")) {
+                auto tabbar = qobject_cast<const NavigationTabBar *>(option->styleObject->parent());
+                if (tabbar->m_animations->state() == QAbstractAnimation::Running && tabbar->currentIndex() > 0) {
+                    if (tabbar->tabButton(tabbar->currentIndex(), QTabBar::RightSide) == option->styleObject) {
+                        painter->save();
+                        painter->setOpacity(tabbar->m_opacity_animation->currentValue().toReal());
+                        painter->translate(option->rect.center());
+                        painter->scale(tabbar->m_zoom_animation->currentValue().toReal(), tabbar->m_zoom_animation->currentValue().toReal());
+                        painter->translate(-option->rect.center());
+                        qApp->style()->drawPrimitive(element, option, painter, widget);
+                        painter->restore();
+                        return;
+                    }
+                }
+                qApp->style()->drawPrimitive(element, option, painter, widget);
+                return;
+            }
+        }
         return QProxyStyle::drawPrimitive(element, option, painter, widget);
     } else {
         switch (element) {
@@ -435,6 +501,23 @@ void TabBarStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOp
             QStyleOption tmp = *option;
             tmp.palette.setColor(QPalette::HighlightedText, qApp->palette().buttonText().color());
             return qApp->style()->drawPrimitive(element, &tmp, painter, widget);
+        }
+        case PE_IndicatorTabClose: {
+            if (option->styleObject && option->styleObject->inherits("CloseButton")) {
+                auto tabbar = qobject_cast<const NavigationTabBar *>(option->styleObject->parent());
+                if (tabbar->m_animations->state() == QAbstractAnimation::Running  && tabbar->currentIndex() > 0) {
+                    if (tabbar->tabButton(tabbar->currentIndex(), QTabBar::RightSide) == option->styleObject) {
+                        painter->save();
+                        painter->setOpacity(tabbar->m_opacity_animation->currentValue().toReal());
+                        painter->scale(tabbar->m_zoom_animation->currentValue().toReal(), tabbar->m_zoom_animation->currentValue().toReal());
+                        qApp->style()->drawPrimitive(element, option, painter, widget);
+                        painter->restore();
+                        return;
+                    }
+                }
+                qApp->style()->drawPrimitive(element, option, painter, widget);
+                return;
+            }
         }
         default:
             return qApp->style()->drawPrimitive(element, option, painter, widget);
@@ -466,6 +549,35 @@ void TabBarStyle::drawControl(QStyle::ControlElement element, const QStyleOption
 {
     if (widget && widget->objectName() == "previewButtons") {
         return;
+    } else if (element == CE_TabBarTab && widget && qobject_cast<const NavigationTabBar *>(widget)) {
+        auto tabbar = qobject_cast<const NavigationTabBar *>(widget);
+        if (tabbar->m_animations->state() == QAbstractAnimation::Running) {
+            const QStyleOptionTab *tab = qstyleoption_cast<const QStyleOptionTab *>(option);
+            if (tab->position == QStyleOptionTab::End && tabbar->currentIndex() > 0) {
+                QStyleOptionTab tmpTab = *tab;
+                tmpTab.text = "";
+                painter->save();
+                painter->setClipRect(tab->rect.adjusted(-2, -2, 2, 2));
+                painter->setOpacity(tabbar->m_opacity_animation->currentValue().toReal());
+                painter->translate(-int(tab->rect.width() * (1 - tabbar->m_slide_animation->currentValue().toReal())), 0);
+                qApp->style()->drawControl(element, &tmpTab, painter, widget);
+                painter->restore();
+
+                auto textRect = qApp->style()->subElementRect(QStyle::SE_TabBarTabText, option, widget);
+                painter->save();
+                painter->translate(textRect.topLeft());
+                textRect.moveTo(0, 0);
+                painter->setOpacity(tabbar->m_opacity_animation->currentValue().toReal());
+                QTransform transform;
+                transform.translate(0, textRect.center().y());
+                transform.scale(tabbar->m_zoom_animation->currentValue().toReal(), tabbar->m_zoom_animation->currentValue().toReal());
+                transform.translate(0, -textRect.center().y());
+                painter->setTransform(transform, true);
+                qApp->style()->drawItemText(painter, textRect, Qt::AlignLeft|Qt::AlignVCenter, qApp->palette(), true, tab->text);
+                painter->restore();
+                return;
+            }
+        }
     }
     qApp->style()->drawControl(element, option, painter, widget);
 }

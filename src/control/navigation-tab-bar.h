@@ -30,16 +30,23 @@
 
 class QToolButton;
 class QDrag;
+class QParallelAnimationGroup;
+class QVariantAnimation;
+
 namespace Peony {
 class FileInfo;
 }
 
 class NavigationTabBar : public QTabBar
 {
+    friend class TabBarStyle;
+    friend class TabWidget;
     Q_OBJECT
 public:
     explicit NavigationTabBar(QWidget *parent = nullptr);
     QStringList getCurrentUris();
+
+    bool event(QEvent *ev) override;
 
 Q_SIGNALS:
     void pageAdded(const QString &uri);
@@ -77,6 +84,11 @@ private:
     QStringList m_has_uris;
 
     const int ELIDE_TEXT_LENGTH = 16;
+
+    QParallelAnimationGroup *m_animations = nullptr;
+    QVariantAnimation *m_opacity_animation = nullptr;
+    QVariantAnimation *m_slide_animation = nullptr;
+    QVariantAnimation *m_zoom_animation = nullptr;
 };
 
 class TabBarStyle : public QProxyStyle
