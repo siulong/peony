@@ -4881,7 +4881,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1065"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Định dạng</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1067"/>
@@ -4916,7 +4916,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1031"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="1033"/>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>Định dạng</translation>
     </message>
     <message>
         <source>begin format</source>
