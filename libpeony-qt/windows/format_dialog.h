@@ -102,6 +102,10 @@ public:
     void setBtnStatus(bool enable);
 //    Ui::Format_Dialog *ui;
 
+    void setupNameConstraints();
+
+    void validateFat32Name(const QString &text);
+
 public:
     bool renameOK = true;
 
@@ -154,6 +158,7 @@ private:
     QString fm_uris;
     SideBarAbstractItem *fm_item = nullptr;
 
+    QString mOriginalName;
 };
 
 class ButtonStyle : public QProxyStyle

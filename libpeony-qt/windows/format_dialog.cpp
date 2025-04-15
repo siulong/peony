@@ -190,23 +190,7 @@ Format_Dialog::Format_Dialog(const QString &m_uris,SideBarAbstractItem *m_item,Q
     {
         auto fsIndex = mFSCombox->currentIndex();
         qDebug() <<"index:"<<fsIndex<<"text:"<<mFSCombox->currentText();
-        //set default as 11, match with case 0
-        quint8 maxLength = 11;
-        switch (fsIndex) {
-        case 1:
-            maxLength = 15;
-            break;
-        case 2:
-            maxLength = 20;
-            break;
-        case 3:
-            maxLength = 16;
-            break;
-        default:
-            break;
-        }
-
-        mNameEdit->setMaxLength(maxLength);
+        setupNameConstraints();
     });
 
     mEraseCkbox = new QCheckBox;
@@ -1421,4 +1405,91 @@ void Format_Dialog::updateButtonShow(QPushButton *button, const QString &str)
         tmp = button->fontMetrics().elidedText(str, Qt::ElideRight, button->width() - 5);
     }
     button->setText(tmp);
+}
+
+void Format_Dialog::setupNameConstraints()
+{
+    QString currentFS = mFSCombox->currentText();
+    QString currentName = mNameEdit->text();
+
+    // 断开任何现有的文本变化连接
+    disconnect(mNameEdit, &QLineEdit::textChanged, this, nullptr);
+
+    quint8 maxLength = 11;
+    switch (mFSCombox->currentIndex()) {
+    case 1: // exfat
+        maxLength = 15;
+        break;
+    case 2: // ntfs
+        maxLength = 20;
+        break;
+    case 3: // ext4
+        maxLength = 16;
+        break;
+    default:
+        break;
+    }
+
+    // 对vfat/fat32特殊处理
+    if (currentFS == "vfat/fat32") {
+        // 保存当前的完整名称，以便之后恢复
+        mOriginalName = currentName;
+        mNameEdit->setMaxLength(32767); // 设置一个足够大的值
+
+        connect(mNameEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+            mOriginalName = text;
+            validateFat32Name(text);
+        }, Qt::UniqueConnection);
+
+        // 立即验证当前文本
+        validateFat32Name(currentName);
+    } else {
+        // 非vfat/fat32格式，应用标准长度限制
+        mNameEdit->setMaxLength(maxLength);
+
+        if (!mOriginalName.isEmpty() && currentName != mOriginalName) {
+            if (mOriginalName.length() <= maxLength) {
+                mNameEdit->setText(mOriginalName);
+            } else {
+                mNameEdit->setText(mOriginalName.left(maxLength));
+            }
+        }
+    }
+}
+
+void Format_Dialog::validateFat32Name(const QString &text)
+{
+    // 计算有效长度
+    int effectiveLength = 0;
+    for (int i = 0; i < text.length(); i++) {
+        if (text[i].unicode() > 127) { // 非ASCII字符
+            effectiveLength += 3; // 每个非ASCII字符算3个字符
+        } else {
+            effectiveLength += 1; // ASCII字符算1个字符
+        }
+    }
+
+    // 如果超过11个有效字符，截断文本
+    if (effectiveLength > 11) {
+        // 找出不超过11个有效字符的最长前缀
+        int validLength = 0;
+        int lastValidPos = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            int charWeight = (text[i].unicode() > 127) ? 3 : 1;
+            if (validLength + charWeight <= 11) {
+                validLength += charWeight;
+                lastValidPos = i;
+            } else {
+                break;
+            }
+        }
+
+        // 截断文本并更新
+        QString truncated = text.left(lastValidPos + 1);
+        mNameEdit->blockSignals(true); // 阻止信号递归
+        mNameEdit->setText(truncated);
+        mNameEdit->setCursorPosition(truncated.length());
+        mNameEdit->blockSignals(false);
+    }
 }
