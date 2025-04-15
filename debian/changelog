@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0415) nile; urgency=medium
+
+  * fix #I9KK86, #IB1SEG
+
+ -- Yue Lan <lanyue@kylinos.cn>  Tue, 15 Apr 2025 15:02:16 +0800
+
 peony (4.10.0.5-ok2~0324) nile; urgency=medium
 
   * 更新繁体中文翻译，fix #IB1G8A, #IB1DUZ, #IB1VCD, #IB3GO5, #IB3GM2, #IB3GIS.
