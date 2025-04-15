@@ -831,6 +831,7 @@ void Format_Dialog::formatloop(){
 
 void Format_Dialog::volume_disconnect(GVolumeMonitor *vm, GDrive *v, gpointer data)
 {
+    Q_UNUSED (vm)
     g_autofree char* devName = NULL;
 
     Format_Dialog* fd = (Format_Dialog*) data;
@@ -839,11 +840,12 @@ void Format_Dialog::volume_disconnect(GVolumeMonitor *vm, GDrive *v, gpointer da
         devName = g_drive_get_identifier ((GDrive*) v, G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE);
     }
 
-    if (fd && devName && !fd->mVolumeName.isNull () && !g_ascii_strcasecmp (devName, fd->mVolumeName.toUtf8 ().constData ())) {
-        fd->reject ();
+    if (fd && devName && !fd->mVolumeName.isNull()) {
+        // 检查 mVolumeName 是否以 devName 开头
+        if(fd->mVolumeName.startsWith(QString(devName))) {
+            fd->reject();
+        }
     }
-
-    Q_UNUSED (vm)
 }
 
 void Format_Dialog::cancel_format(const gchar* device_name){
