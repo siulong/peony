@@ -247,7 +247,7 @@ void FileInfoJob::queryFileDisplayName(GFileInfo* new_info){
     }
 
     info->m_display_name = QString (g_file_info_get_display_name(new_info));
-    info->m_finalDisplayName = info->m_display_name;
+    info->m_finalDisplayName = info->getFinalDisplayName();
     if (info->uri().endsWith(".desktop")) {
         info->m_desktop_name = info->displayName();
         QUrl url = info->uri();
