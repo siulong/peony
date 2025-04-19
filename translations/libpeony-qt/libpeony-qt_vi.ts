@@ -4950,14 +4950,15 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="542"/>
         <source>Error: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Lỗi: %1
+</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="142"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1755"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1805"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
@@ -4965,7 +4966,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1784"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1787"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Gỡ cài đặt thất bại</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1772"/>
@@ -4976,13 +4977,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1784"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Không thể gỡ cài đặt. Bạn cần đóng một số chương trình trước, ví dụ như trình chỉnh sửa phân vùng.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1787"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation type="unfinished"></translation>
+        <translation>Lỗi: %1
+Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
@@ -5001,13 +5003,13 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1255"/>
         <source>The device has been mount successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>Thiết bị đã được gắn kết (mount) thành công!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1450"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1488"/>
         <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Không thể ngắt kết nối thiết bị, có thể do thiết bị đã bị ngắt kết nối trước đó hoặc nguyên nhân khác.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1456"/>
@@ -5033,7 +5035,7 @@ Do you want to unmount forcely?</source>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1490"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1772"/>
         <source>Eject failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ngắt kết nối thất bại</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="266"/>
@@ -5161,7 +5163,7 @@ Do you want to unmount forcely?</source>
     <message>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="33"/>
         <source>It need to synchronize before operating the device,place wait!</source>
-        <translation type="unfinished"></translation>
+        <translation>Vui lòng chờ đồng bộ dữ liệu trước khi thao tác thiết bị!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="412"/>
