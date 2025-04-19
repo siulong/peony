@@ -4989,7 +4989,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Hủy</translation>
     </message>
     <message>
         <source>Eject Anyway</source>
