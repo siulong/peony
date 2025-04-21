@@ -887,7 +887,7 @@ Copyright (C): 2019-2020, Tianjin KYLIN Information Technology Co., Ltd.</source
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="455"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="494"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
+        <translation>&quot;Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="473"/>
@@ -911,7 +911,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="630"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="684"/>
         <source>Eject failed</source>
-        <translation>Ngắt kết nối thất bại</translation>
+        <translation>Tháo thiết bị thất bại</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="631"/>
@@ -923,7 +923,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="632"/>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="686"/>
         <source>Eject Anyway</source>
-        <translation>Ngắt kết nối bằng mọi giá</translation>
+        <translation>Buộc tháo thiết bị</translation>
     </message>
     <message>
         <location filename="../../src/control/intel/intel-side-bar-file-system-item.cpp" line="644"/>
