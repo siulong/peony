@@ -4958,7 +4958,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1755"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1805"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
+        <translation>&quot;Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
@@ -5003,13 +5003,13 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1255"/>
         <source>The device has been mount successfully!</source>
-        <translation>Thiết bị đã được gắn kết (mount) thành công!</translation>
+        <translation>Thiết bị đã được gắn kết thành công!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1450"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1488"/>
         <source>Eject device failed, the reason may be that the device has been removed, etc.</source>
-        <translation>Không thể ngắt kết nối thiết bị, có thể do thiết bị đã bị ngắt kết nối trước đó hoặc nguyên nhân khác.</translation>
+        <translation>Thao tác tháo thiết bị thất bại, có thể do thiết bị đã bị tháo ra hoặc vì lý do khác.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1456"/>
@@ -5035,7 +5035,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1490"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1772"/>
         <source>Eject failed</source>
-        <translation>Ngắt kết nối thất bại</translation>
+        <translation>Tháo thiết bị thất bại</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="266"/>
@@ -5163,7 +5163,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
     <message>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="33"/>
         <source>It need to synchronize before operating the device,place wait!</source>
-        <translation>Vui lòng chờ đồng bộ dữ liệu trước khi thao tác thiết bị!</translation>
+        <translation>Cần đồng bộ dữ liệu trước khi thao tác thiết bị. Vui lòng chờ!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/file-enumerator.cpp" line="412"/>
