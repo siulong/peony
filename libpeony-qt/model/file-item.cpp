@@ -113,11 +113,11 @@ FileItem::FileItem(std::shared_ptr<Peony::FileInfo> info, FileItem *parentItem, 
                             favoriteUris.append(uri2FavoriteUri(uri));
                         }
                         m_model->beginRemoveRows(this->firstColumnIndex(), row, row);
-                        m_uris_to_be_removed.removeOne(uri);
                         m_children->remove(row);
                         m_uri_item_hash.remove(child->uri());
                         m_model->endRemoveRows();
                         FileLabelModel::getGlobalModel()->removeFileLabel(uri);
+                        m_uris_to_be_removed.removeOne(uri);
                         delete child;
                         child = nullptr;
                         break;
