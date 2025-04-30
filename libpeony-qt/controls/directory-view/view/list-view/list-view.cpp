@@ -1006,6 +1006,9 @@ void ListView::multiSelect()
     if (selectionMode() == MultiSelection) {
         return;
     }
+    if (m_proxy_model->getSelectionModeHint() != NoSelection) {
+        return;
+    }
     if (GlobalSettings::getInstance()->getValue(MULTI_SELECT).toBool()) {
         m_multi_select = true;
     }
@@ -1017,6 +1020,9 @@ void ListView::multiSelect()
 void ListView::disableMultiSelect()
 {
     if (selectionMode() == ExtendedSelection) {
+        return;
+    }
+    if (m_proxy_model->getSelectionModeHint() != NoSelection) {
         return;
     }
     m_multi_select = false;
