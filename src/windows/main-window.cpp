@@ -1704,7 +1704,9 @@ void MainWindow::initUI(const QString &uri)
         this->setCursor(c);
         m_tab->setCursor(c);
         m_side_bar->setCursor(c);
-        updateHeaderBar();
+        if (!getCurrentUri().startsWith("search:///")) {
+            updateHeaderBar();
+        }
         //function for UKUI3.1, update window icon
         //updateWindowIcon();
         //m_status_bar->update();

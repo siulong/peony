@@ -146,9 +146,9 @@ SearchBarContainer::SearchBarContainer(QWidget *parent): QWidget(parent)
     //change QCompleter Mode from PopupCompletion to InlineCompletion，
     //show list in pop up window way will effect the input method
     //to fix can not input chinese continuous issue,link to bug#90621
-    completer->setCompletionMode(QCompleter::InlineCompletion);
+    //completer->setCompletionMode(QCompleter::InlineCompletion);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
-    m_search_box->setCompleter(completer);
+    //m_search_box->setCompleter(completer);
 
     m_search_trigger.setInterval(500);
     m_clear_action = true;
