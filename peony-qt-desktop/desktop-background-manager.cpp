@@ -75,8 +75,8 @@ DesktopBackgroundManager::DesktopBackgroundManager(QObject *parent) : QObject(pa
 
 void DesktopBackgroundManager::initGSettings()
 {
-    if (QGSettings::isSchemaInstalled(BACKGROUND_SETTINGS)) {
-        m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
+    if (QGSettings::isSchemaInstalled(BACKGROUND_MATE_SETTINGS)) {
+        m_backgroundSettings = new QGSettings(BACKGROUND_MATE_SETTINGS, QByteArray(), this);
         m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
 
 //        g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
@@ -85,7 +85,10 @@ void DesktopBackgroundManager::initGSettings()
             bool writable = g_settings_is_writable(settings, "picture-filename");
             m_shouldSyncAccountBackground = writable;
         }
-    } else if (QGSettings::isSchemaInstalled(BACKGROUND_MATE_SETTINGS)){
+    } else if (QGSettings::isSchemaInstalled(BACKGROUND_SETTINGS)){
+        m_backgroundSettings = new QGSettings(BACKGROUND_SETTINGS, QByteArray(), this);
+        m_backgroundOption = m_backgroundSettings->get("pictureOptions").toString();
+
         g_autoptr (GSettings) settings = g_settings_new_with_path("org.mate.background", "/org/mate/desktop/background/");
         if (settings) {
             bool writable = g_settings_is_writable(settings, "picture-filename");
