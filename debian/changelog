@@ -1,3 +1,9 @@
+peony (4.10.0.5-ok2~0523) nile; urgency=medium
+
+  * fix cd-#345506, #IC7833
+
+ -- Yue Lan <lanyue@kylinos.cn>  Fri, 23 May 2025 11:30:38 +0800
+
 peony (4.10.0.5-ok2~0415) nile; urgency=medium
 
   * fix #I9KK86, #IB1SEG
