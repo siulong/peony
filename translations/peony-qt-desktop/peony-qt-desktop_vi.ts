@@ -6,12 +6,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.h" line="89"/>
         <source>Desktop Icon View</source>
-        <translation type="unfinished"></translation>
+        <translation>Xem biểu tượng desktop</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="669"/>
         <source>New Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Thư mục mới</translation>
     </message>
     <message>
         <source>set background</source>
@@ -24,27 +24,27 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1031"/>
         <source>Open failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở thất bại</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1032"/>
         <source>Open directory failed, you have no permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở thư mục thất bại, bạn không có quyền truy cập thư mục này!</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1014"/>
         <source>Open Link failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở shortcut thất bại</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="763"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Cài đặt nền</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-icon-view.cpp" line="1015"/>
         <source>File not exist, do you want to delete the link file?</source>
-        <translation type="unfinished"></translation>
+        <translation>Thư mục đích không tồn tại, có muốn xóa shortcut không hợp lệ này không?</translation>
     </message>
 </context>
 <context>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="237"/>
         <source>Reverse Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Bỏ chọn</translation>
     </message>
     <message>
         <source>&amp;New...</source>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="355"/>
         <source>New Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Thư mục mới</translation>
     </message>
     <message>
         <source>View Type...</source>
@@ -149,12 +149,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="109"/>
         <source>Open in new Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở trong cửa sổ mới</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="114"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Chọn tất cả</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="137"/>
@@ -162,7 +162,7 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="199"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="210"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở</translation>
     </message>
     <message>
         <source>Can not open path &quot;%1&quot;，permission denied.</source>
@@ -172,63 +172,63 @@
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="145"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="170"/>
         <source>Open with...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cách mở...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="158"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="193"/>
         <source>More applications...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ứng dụng khác...</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="213"/>
         <source>Open %1 selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở %1 tệp đã chọn</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="251"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Tạo mới</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="339"/>
         <source>Empty File</source>
-        <translation type="unfinished"></translation>
+        <translation>Văn bản trống</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="351"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Thư mục</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="374"/>
         <source>View Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiểu hiển thị</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="380"/>
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation>Biểu tượng nhỏ</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="383"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Biểu tượng vừa</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="386"/>
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>Biểu tượng lớn</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="389"/>
         <source>Huge</source>
-        <translation type="unfinished"></translation>
+        <translation>Biểu tượng rất lớn</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="417"/>
         <source>Sort By</source>
-        <translation type="unfinished"></translation>
+        <translation>Cách sắp xếp</translation>
     </message>
     <message>
         <source>Sort By...</source>
@@ -237,32 +237,32 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="422"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tên tệp</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="424"/>
         <source>File Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Loại tệp</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="425"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Kích thước tệp</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="497"/>
         <source>Clean the trash</source>
-        <translation type="unfinished"></translation>
+        <translation>Dọn sạch thùng rác</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="518"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Sao chép</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="545"/>
         <source>Delete to trash</source>
-        <translation type="unfinished"></translation>
+        <translation>Xóa vào thùng rác</translation>
     </message>
     <message>
         <source>Error</source>
@@ -275,7 +275,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="423"/>
         <source>Modified Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Ngày sửa đổi</translation>
     </message>
     <message>
         <source>Delete file Warning</source>
@@ -284,7 +284,7 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="524"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Cắt</translation>
     </message>
     <message>
         <source>&amp;Delete to trash</source>
@@ -293,28 +293,28 @@
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="554"/>
         <source>Delete forever</source>
-        <translation type="unfinished"></translation>
+        <translation>Xóa vĩnh viễn</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="562"/>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="567"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi tên</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="574"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Dán</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="580"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Làm mới</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktop-menu.cpp" line="594"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Thuộc tính</translation>
     </message>
     <message>
         <source>P&amp;roperties</source>
@@ -435,7 +435,7 @@
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="226"/>
         <source>peony-qt-desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Desktop</translation>
     </message>
     <message>
         <source>Peony-Qt Desktop</source>
@@ -448,27 +448,27 @@
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="560"/>
         <source>Close the peony desktop window</source>
-        <translation type="unfinished"></translation>
+        <translation>Đóng ứng dụng desktop</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="563"/>
         <source>Take over the dbus service.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiếp nhận dịch vụ DBus.</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="566"/>
         <source>Take over the desktop displaying</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiếp quản desktop</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="569"/>
         <source>Setup backgrounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Đặt hình nền</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/peony-desktop-application.cpp" line="572"/>
         <source>Clear standard icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Xóa biểu tượng tiêu chuẩn</translation>
     </message>
     <message>
         <source>Open learning center.</source>
@@ -500,12 +500,12 @@
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="100"/>
         <source>Set Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Thiết lập nền</translation>
     </message>
     <message>
         <location filename="../../peony-qt-desktop/desktopbackgroundwindow.cpp" line="105"/>
         <source>Display Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Cài đặt hiển thị</translation>
     </message>
 </context>
 <context>
