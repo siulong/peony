@@ -4930,7 +4930,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/sync-thread.cpp" line="63"/>
         <location filename="../../libpeony-qt/windows/format_dialog.cpp" line="950"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Trình quản lý tệp</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/search-vfs-register.h" line="40"/>
@@ -4941,7 +4941,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="172"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1752"/>
         <source>Force unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Gỡ cài đặt cưỡng chế thất bại</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="136"/>
@@ -4958,7 +4958,7 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1755"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1805"/>
         <source>Data synchronization is complete,the device has been unmount successfully!</source>
-        <translation>&quot;Đồng bộ dữ liệu hoàn tất, thiết bị đã được ngắt kết nối an toàn!</translation>
+        <translation>Đồng bộ dữ liệu hoàn tất, thiết bị đã được gỡ an toàn!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
@@ -4977,14 +4977,14 @@ Copyright (C): 2019, Tianjin KYLIN Information Technology Co., Ltd.</source>
         <location filename="../../libpeony-qt/model/side-bar-net-work-item.cpp" line="131"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1784"/>
         <source>Unable to unmount it, you may need to close some programs, such as: GParted etc.</source>
-        <translation>Không thể gỡ cài đặt. Bạn cần đóng một số chương trình trước, ví dụ như trình chỉnh sửa phân vùng.</translation>
+        <translation>Không thể gỡ thiết bị, hãy thử đóng một số ứng dụng như GParted trước.</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1787"/>
         <source>Error: %1
 Do you want to unmount forcely?</source>
-        <translation>Lỗi: %1
-Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
+        <translation>Lỗi: %1   
+Bạn chắc chắn muốn gỡ cưỡng chế?</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/convenient-utils/file-operation-utils.cpp" line="326"/>
@@ -5015,7 +5015,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1456"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1495"/>
         <source>Data synchronization is complete and the device can be safely unplugged!</source>
-        <translation type="unfinished"></translation>
+        <translation>Đồng bộ dữ liệu hoàn tất, có thể tháo thiết bị an toàn!</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1991"/>
@@ -5035,7 +5035,7 @@ Bạn có muốn gỡ cài đặt cưỡng chế không?</translation>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1490"/>
         <location filename="../../libpeony-qt/volumeManager.cpp" line="1772"/>
         <source>Eject failed</source>
-        <translation>Tháo thiết bị thất bại</translation>
+        <translation>Đẩy ra thất bại</translation>
     </message>
     <message>
         <location filename="../../libpeony-qt/vfs/favorite-vfs-file.cpp" line="266"/>
